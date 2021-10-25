@@ -3,9 +3,11 @@ Copyright (c) 2021 Alex J. Best. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alex J. Best
 -/
-import number_theory.cyclotomic.basic
+
 import data.polynomial.field_division
 import number_theory.number_field
+
+import number_theory.cyclotomic.field.basic
 
 noncomputable theory
 open number_field cyclotomic_field polynomial
@@ -111,7 +113,6 @@ begin
   simp,
 end
 
-#check units.mk0
 def aux {r n : ℕ} (h : r.coprime n) : ℕ := ((r.gcd_a n) % n).nat_abs
 lemma aux_spec {r n : ℕ} (h : r.coprime n) : r * aux h ≡ 1 [MOD n] :=
 begin
