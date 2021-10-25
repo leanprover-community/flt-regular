@@ -6,7 +6,6 @@ Authors: Alex J. Best
 import number_theory.cyclotomic.basic
 import data.polynomial.field_division
 import number_theory.number_field
-import tactic.slim_check
 
 noncomputable theory
 open number_field cyclotomic_field
@@ -60,7 +59,7 @@ begin
 end
 
 @[simp]
-lemma zeta'_pow_prime : (zeta' p) ^ p = 1 := sorry
+lemma zeta'_pow_prime : zeta' p ^ p = 1 := sorry
 
 def zeta : units (ring_of_integers (cyclotomic_field p)) :=
 units.mk_of_mul_eq_one
@@ -206,83 +205,6 @@ open polynomial
 
 open nat
 
-
--- lemma mem_proper_divisors_prime_pow {p : ℕ} (pp : p.prime) (k : ℕ) {x : ℕ} :
---   x ∈ proper_divisors (p ^ k) ↔ ∃ (j : ℕ) (H : j < k), x = p ^ j :=
--- begin
---   rw [mem_proper_divisors, nat.dvd_prime_pow pp, ← exists_and_distrib_right],
---   simp only [exists_prop, and_assoc],
---   apply exists_congr,
---   intro a,
---   split; intro h,
---   { rcases h with ⟨h_left, rfl, h_right⟩,
---     rwa pow_lt_pow_iff pp.one_lt at h_right,
---     simpa, },
---   { rcases h with ⟨h_left, rfl⟩,
---     rwa pow_lt_pow_iff pp.one_lt,
---     simp [h_left, le_of_lt], },
--- end
-
--- lemma proper_divisors_prime_pow {p : ℕ} (pp : p.prime) (k : ℕ) :
---   proper_divisors (p ^ k) = (finset.range k).map ⟨pow p, pow_right_injective pp.two_le⟩ :=
--- by { ext, simp [mem_proper_divisors_prime_pow, pp, nat.lt_succ_iff, @eq_comm _ a], }
-
--- @[simp]
--- lemma sum_proper_divisors_prime_pow {α : Type*} [add_comm_monoid α] {k p : ℕ} {f : ℕ → α} (h : p.prime) :
---   ∑ x in (p ^ k).proper_divisors, f x = ∑ x in range k, f (p ^ x) :=
--- by simp [h, proper_divisors_prime_pow]
-
--- @[simp]
--- lemma prod_proper_divisors_prime_pow {α : Type*} [comm_monoid α] {k p : ℕ} {f : ℕ → α} (h : p.prime) :
---   ∏ x in (p ^ k).proper_divisors, f x = ∏ x in range k, f (p ^ x) :=
--- @sum_proper_divisors_prime_pow (additive α) _ _ _ _ h
-
--- open nat
-
--- /-- If `p ^ k` is prime power, then `cyclotomic (p ^ (n + 1)) R = geom_sum (X ^ p ^ n) p`. -/
--- lemma cyclotomic_prime_pow_eq_geom_sum {R : Type*} [comm_ring R] {p n : ℕ} (hp : nat.prime p) :
---   cyclotomic (p ^ (n + 1)) R = geom_sum (X ^ p ^ n) p :=
--- begin
---   have : ∀ m, cyclotomic (p ^ (m + 1)) R = geom_sum (X ^ (p ^ m)) p ↔
---     geom_sum (X ^ p ^ m) p * ∏ (x : ℕ) in range (m + 1), cyclotomic (p ^ x) R = X ^ p ^ (m + 1) - 1,
---   { intro m,
---     have := eq_cyclotomic_iff (pow_pos hp.pos (m + 1)) _,
---     rw eq_comm at this,
---     rw [this, prod_proper_divisors_prime_pow hp], },
---   induction n with n_n n_ih,
---   { simp [cyclotomic_eq_geom_sum hp], },
---   rw ((eq_cyclotomic_iff (pow_pos hp.pos (n_n.succ + 1)) _).mpr _).symm,
---   rw [prod_proper_divisors_prime_pow hp, prod_range_succ, n_ih],
---   rw this at n_ih,
---   rw [mul_comm _ (geom_sum _ _), n_ih, geom_sum_mul, sub_left_inj, ← pow_mul, pow_add, pow_one],
--- end
-
--- @[simp]
--- lemma eval_one_cyclotomic_prime {R : Type*} [comm_ring R] {n : ℕ} [hn : fact (nat.prime n)] :
---   eval 1 (cyclotomic n R) = n :=
--- begin
---   simp only [cyclotomic_eq_geom_sum hn.out, geom_sum_def, eval_X, one_pow, sum_const, eval_pow,
---     eval_finset_sum, card_range, smul_one_eq_coe]
--- end
-
--- @[simp]
--- lemma eval₂_one_cyclotomic_prime {R S : Type*} [comm_ring R] [semiring S] (f : R →+* S) {n : ℕ}
---   [fact n.prime] : eval₂ f 1 (cyclotomic n R) = n :=
--- by simp
-
--- @[simp]
--- lemma eval_one_cyclotomic_prime_power {R : Type*} [comm_ring R] {n : ℕ} (k : ℕ)
---   [hn : fact n.prime] : eval 1 (cyclotomic (n ^ (k + 1)) R) = n :=
--- begin
---   simp only [cyclotomic_prime_pow_eq_geom_sum hn.out, geom_sum_def, eval_X, one_pow, sum_const,
---     eval_pow, eval_finset_sum, card_range, smul_one_eq_coe]
--- end
-
--- @[simp]
--- lemma eval₂_one_cyclotomic_prime_pow {R S : Type*} [comm_ring R] [semiring S] (f : R →+* S) {n : ℕ}
--- (k : ℕ) [fact n.prime] :
---   eval₂ f 1 (cyclotomic (n ^ (k + 1)) R) = n :=
--- by simp
 end pos
 open units fractional_ideal submodule polynomial
 variables (n : ℕ)
