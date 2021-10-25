@@ -8,47 +8,45 @@ import data.polynomial.field_division
 import number_theory.number_field
 
 noncomputable theory
-open number_field cyclotomic_field
--- constant cyclotomic_field.zeta (p : ℕ) : units (ring_of_integers (cyclotomic_field p))
+open number_field cyclotomic_field polynomial
 
 namespace cyclotomic_field
 
 section
-variables (p : ℕ) [hn : fact (0 < p)]
-open polynomial
-def zeta' : cyclotomic_field p :=
-classical.some (polynomial.exists_root_of_splits _
-  (polynomial.is_splitting_field.splits (cyclotomic_field p) (@cyclotomic p ℚ _))
+variables (p : ℕ) [hn : fact (0 < p)] (K : Type*) [field K] [char_zero K] [is_cyclotomic_field p K]
+
+def zeta' : K :=
+classical.some (exists_root_of_splits (algebra_map ℚ K) (is_splitting_field.splits _ _)
   (degree_cyclotomic_pos p ℚ hn.out).ne.symm)
 
 @[simp]
 lemma zeta'_spec :
-  eval₂ (algebra_map ℚ (cyclotomic_field p)) (zeta' p) (cyclotomic p ℚ) = 0 :=
-classical.some_spec (polynomial.exists_root_of_splits _
-  (polynomial.is_splitting_field.splits (cyclotomic_field p) (@cyclotomic p ℚ _))
+  eval₂ (algebra_map ℚ K) (zeta' p _) (cyclotomic p ℚ) = 0 :=
+classical.some_spec (exists_root_of_splits _
+  (polynomial.is_splitting_field.splits K (@cyclotomic p ℚ _))
   (degree_cyclotomic_pos p ℚ hn.out).ne.symm)
 
 include hn
 
 lemma zeta'_spec' :
-  is_root (map (algebra_map ℚ (cyclotomic_field p)) (cyclotomic p ℚ)) (zeta' p) :=
+  is_root (map (algebra_map ℚ K) (cyclotomic p ℚ)) (zeta' p _) :=
 begin
-  simp,
-  convert zeta'_spec p,
-  rw eval₂_eq_eval_map,
+  simp only [is_root.def, map_cyclotomic],
+  convert zeta'_spec p K,
+  rw eval₂_eq_eval_map _,
   simp [-zeta'_spec],
 end
 
 @[simp]
-lemma zeta'_pow_prime : zeta' p ^ p = 1 :=
+lemma zeta'_pow_prime : (zeta' p K) ^ p = 1 :=
 begin
-  suffices : is_root (X^p - 1) (zeta' p),
+  suffices : is_root (X ^ p - 1) (zeta' p K),
   { simpa [sub_eq_zero], },
   rw [← prod_cyclotomic_eq_X_pow_sub_one hn.out, is_root.def, eval_prod, finset.prod_eq_zero_iff],
   use p,
   simp only [(fact.out (0 < p)).ne.symm, true_and, nat.mem_divisors, ne.def, not_false_iff,
     dvd_refl],
-  have := zeta'_spec p,
+  have := zeta'_spec p K,
   rw eval₂_eq_eval_map at this,
   convert this,
   rw map_cyclotomic,
@@ -64,8 +62,8 @@ begin
 end
 -- TODO make a constructor assuming prime, but don't need it here
 
-lemma zeta'_primitive_root : is_primitive_root (zeta' p) p :=
-{ pow_eq_one := zeta'_pow_prime p,
+lemma zeta'_primitive_root : is_primitive_root (zeta' p K) p :=
+{ pow_eq_one := zeta'_pow_prime p K,
   dvd_of_pow_eq_one := sorry }
 
 
@@ -73,19 +71,19 @@ lemma zeta'_primitive_root : is_primitive_root (zeta' p) p :=
 -- TODO prove in general that is_primitive root is integral,
 -- this exists as is_primitive_root.is_integral so use
 
-lemma zeta'_integral : zeta' p ∈ ring_of_integers (cyclotomic_field p) :=
+lemma zeta'_integral : zeta' p (cyclotomic_field p) ∈ ring_of_integers (cyclotomic_field p) :=
 begin
-  show is_integral ℤ (zeta' p),
+  show is_integral ℤ (zeta' p _),
   use [cyclotomic p ℤ, cyclotomic.monic p ℤ],
-  rw ← zeta'_spec,
+  rw [← zeta'_spec _ _],
   simp [eval₂_eq_eval_map],
 end
 
 
 def zeta : units (ring_of_integers (cyclotomic_field p)) :=
 units.mk_of_mul_eq_one
-  (⟨zeta' p, zeta'_integral p⟩)
-  (⟨zeta' p, zeta'_integral p⟩^(p-1))
+  (⟨zeta' p _, zeta'_integral p⟩)
+  (⟨zeta' p _, zeta'_integral p⟩ ^ (p - 1))
   begin
     ext,
     simp [← pow_succ, nat.sub_add_cancel hn.out],
@@ -244,11 +242,11 @@ begin
   -- rw ideal.span_singleton_eq_span_singleton,
   simp only [submodule.span_singleton_eq_span_singleton],
   rw ← eval_one_cyclotomic_prime,
-  rw calc
-    eval 1 (cyclotomic n (cyclotomic_field n)) = _ : by simp_rw
-      cyclotomic_eq_prod_X_sub_primitive_roots (zeta'_primitive_root n)
-                        ... = _ : by simp only [polynomial.eval_sub, polynomial.eval_C,
-                                    polynomial.eval_prod, polynomial.eval_X],
+  --rw calc
+  --  eval 1 (cyclotomic n (cyclotomic_field n)) = _ : by simp_rw
+  --    cyclotomic_eq_prod_X_sub_primitive_roots (zeta'_primitive_root n _)
+  --                      ... = _ : by simp only [polynomial.eval_sub, polynomial.eval_C,
+  --                                  polynomial.eval_prod, polynomial.eval_X],
 
   -- apply span_singleton_eq_span_singleton_,
   sorry,

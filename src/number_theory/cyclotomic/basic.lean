@@ -69,6 +69,8 @@ begin
   exact subsingleton.elim _ _,
 end
 
+instance [is_cyclotomic_field n K] : is_splitting_field ℚ K (cyclotomic n ℚ) := sorry
+
 end cyclotomic_field
 
 section cyclotomic_ring
