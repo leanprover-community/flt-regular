@@ -230,6 +230,5 @@ begin
                                     polynomial.eval_prod, polynomial.eval_X],
 
   -- apply span_singleton_eq_span_singleton_,
+  sorry,
 end
-
-#lint
