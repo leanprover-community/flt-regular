@@ -6,16 +6,22 @@ import number_theory.number_field
 import algebra.char_p.algebra
 
 open polynomial
-variable (n : ℕ)
+
+variables (n : ℕ)  [hn : fact (0 < n)] (K : Type*) [field K] [char_zero K]
+
 open_locale classical
-instance aaaaaaaa [hn : fact (0 < n)] : irreducible (cyclotomic n ℚ) :=
+
+include hn
+instance polynomial.cyclotomic_rat.irreducible :
+  irreducible (cyclotomic n ℚ) :=
 by { simpa using ((is_primitive.int.irreducible_iff_irreducible_map_cast
     (monic.is_primitive (cyclotomic.monic n ℤ))).1 (cyclotomic.irreducible hn.out)) }
 
 @[derive [field]]
 def cyclotomic_field [fact (0 < n)] : Type* := adjoin_root (cyclotomic n ℚ)
 
-variable [fact (0 < n)]
+class is_cyclotomic_field : Prop := (out : is_splitting_field ℚ K (X ^ n - 1))
+
 instance : char_zero (cyclotomic_field n) :=
 begin
   apply char_p.char_p_to_char_zero _,
@@ -25,7 +31,7 @@ begin
   exact char_p.of_char_zero ℚ,
 end
 
-instance : is_splitting_field ℚ (cyclotomic_field n) (cyclotomic n ℚ) :=
+instance : is_cyclotomic_field n (cyclotomic_field n) :=
 begin
   sorry
   -- delta cyclotomic_field, convert is_splitting_field.splitting_field (@cyclotomic n ℚ _),
@@ -33,17 +39,22 @@ begin
   -- apply subsingleton.elim,
 end
 
-instance : finite_dimensional ℚ (cyclotomic_field n) :=
-begin
-  delta cyclotomic_field,
-  exact polynomial.is_splitting_field.finite_dimensional (cyclotomic_field n) (@cyclotomic n ℚ _),
-end
+variable {K}
+
+instance is_cyclotomic_field.splitting_field [h : is_cyclotomic_field n K] :
+is_splitting_field ℚ K (X ^ n - 1) := h.out
+
+instance is_cyclotomic_field.finite_dimensional [is_cyclotomic_field n K] :
+  finite_dimensional ℚ K :=
+is_splitting_field.finite_dimensional _ (X ^ n - 1)
 
 namespace cyclotomic_field
 variable {n}
 
-instance : number_field (cyclotomic_field n) := number_field.mk
--- TODO why does apply instance niet doen
+instance is_cyclotomic_field.number_field [is_cyclotomic_field n K] :
+  number_field K :=
+{ to_char_zero := infer_instance,
+  to_finite_dimensional := infer_instance }
 
 open finite_dimensional
 lemma degree : finrank ℚ (cyclotomic_field n) = nat.totient n :=
@@ -63,13 +74,13 @@ end cyclotomic_field
 section cyclotomic_ring
 
 noncomputable
-def cyclotomic_ring (n : ℕ) [fact (0 < n)] :=
+def cyclotomic_ring :=
 number_field.ring_of_integers (cyclotomic_field n)
 
-instance (n : ℕ) [fact (0 < n)] : is_fraction_ring (cyclotomic_ring n) (cyclotomic_field n) :=
+instance : is_fraction_ring (cyclotomic_ring n) (cyclotomic_field n) :=
 number_field.ring_of_integers.is_fraction_ring
 
-instance (n : ℕ) [fact (0 < n)] : is_integral_closure (cyclotomic_ring n) ℤ (cyclotomic_field n) :=
+instance : is_integral_closure (cyclotomic_ring n) ℤ (cyclotomic_field n) :=
 integral_closure.is_integral_closure ℤ (cyclotomic_field n)
 
 end cyclotomic_ring
