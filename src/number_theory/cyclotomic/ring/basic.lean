@@ -1,7 +1,7 @@
 import number_theory.cyclotomic.field.basic
 
 variables (n : ℕ)  [hn : fact (0 < n)] (R : Type*) (K : Type*)
-variables [field K] [char_zero K] [is_cyclotomic_field n K] [comm_ring R] [algebra R K]
+variables [field K] [char_zero K] [is_cyclotomic_field n ℚ K] [comm_ring R] [algebra R K]
 
 open polynomial
 

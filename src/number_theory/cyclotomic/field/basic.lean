@@ -5,7 +5,7 @@ import field_theory.splitting_field
 import number_theory.number_field
 import algebra.char_p.algebra
 
-variables (n : ℕ) [hn : fact (0 < n)] (K : Type*) [field K] [char_zero K]
+variables (n : ℕ) [hn : fact (0 < n)] (F K : Type*) [field F] [field K] [algebra F K]
 
 open_locale classical
 
@@ -23,26 +23,27 @@ end cyclotomic_polynomial
 
 section is_cyclotomic_field
 
-class is_cyclotomic_field : Prop := (out : is_splitting_field ℚ K (X ^ n - 1))
+abbreviation is_cyclotomic_field := is_splitting_field F K (X ^ n - 1)
 
 namespace is_cyclotomic_field
 
-instance splitting_field [h : is_cyclotomic_field n K] :
-is_splitting_field ℚ K (X ^ n - 1) := h.out
+instance splitting_field [char_zero K] [h : is_cyclotomic_field n ℚ K] :
+is_splitting_field ℚ K (X ^ n - 1) := h
 
-instance finite_dimensional [is_cyclotomic_field n K] :
+instance finite_dimensional [char_zero K] [is_cyclotomic_field n ℚ K] :
   finite_dimensional ℚ K :=
 is_splitting_field.finite_dimensional _ (X ^ n - 1)
 
-instance number_field [is_cyclotomic_field n K] :
+instance number_field [char_zero K] [is_cyclotomic_field n ℚ K] :
   number_field K :=
 { to_char_zero := infer_instance,
   to_finite_dimensional := infer_instance }
 
-instance [is_cyclotomic_field n K] : is_splitting_field ℚ K (cyclotomic n ℚ) := sorry
+instance [char_zero K] [is_cyclotomic_field n ℚ K] : is_splitting_field ℚ K (cyclotomic n ℚ) :=
+sorry
 
 open finite_dimensional
-lemma degree : finrank ℚ K = nat.totient n :=
+lemma degree [char_zero K] [is_cyclotomic_field n ℚ K] : finrank ℚ K = nat.totient n :=
 begin
   have : (cyclotomic n ℚ) ≠ 0 := cyclotomic_ne_zero n ℚ,
   have := (adjoin_root.power_basis this).finrank, -- another diamond if I try to combine these lines
@@ -68,14 +69,14 @@ variable {n}
 include hn
 instance : char_zero (cyclotomic_field n) :=
 begin
-  apply char_p.char_p_to_char_zero _,
+  /-apply char_p.char_p_to_char_zero _,
   haveI : algebra ℚ (cyclotomic_field n),
   { delta cyclotomic_field, apply_instance, },
   rw ← algebra.char_p_iff ℚ,
-  exact char_p.of_char_zero ℚ,
+  exact char_p.of_char_zero ℚ,-/
 end
 
-instance : is_cyclotomic_field n (cyclotomic_field n) :=
+instance : is_cyclotomic_field n ℚ (cyclotomic_field n) :=
 begin
   sorry
   -- delta cyclotomic_field, convert is_splitting_field.splitting_field (@cyclotomic n ℚ _),

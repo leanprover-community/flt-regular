@@ -1,4 +1,4 @@
-import number_theory.cyclotomic.basic
+import number_theory.cyclotomic.ring.basic
 
 variable (n : ℕ)
 

@@ -15,7 +15,7 @@ open number_field cyclotomic_field polynomial
 namespace cyclotomic_field
 
 section
-variables (p : ℕ) [hn : fact (0 < p)] (K : Type*) [field K] [char_zero K] [is_cyclotomic_field p K]
+variables (p : ℕ) [hn : fact (0 < p)] (K : Type*) [field K] [char_zero K] [is_cyclotomic_field p ℚ K]
 
 def zeta' : K :=
 classical.some (exists_root_of_splits (algebra_map ℚ K) (is_splitting_field.splits _ _)
