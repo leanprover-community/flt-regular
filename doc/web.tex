@@ -555,10 +555,16 @@
 		\end{enumerate}
 		
 	\end{proof}
+	\begin{definition}\label{defn: is_regular_number}
+		\lean{number_theory.regular_primes.is_regular_number}
+		\leanok
+		A prime number $p$ is called regular if it does not divide the class number of $\QQ(\zeta_p)$.
+	\end{definition}
+	
 	
 	\begin{theorem}\label{theorem:FLT case one}
-		\uses{theorem:FLT facts}
-		Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$. Assume  that $p$ does not divide the size of  the class group $\Cl_K$. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $\gcd(xyz,p)=1$. 
+		\uses{theorem:FLT facts, defn: is_regular_number}
+		Let $p$ be a regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $\gcd(xyz,p)=1$. 
 	\end{theorem}
 	\begin{proof}
 		First thing is to note that if $x^p+y^p=z^p$ then \[z^p=(x+y)(x+\zeta_py)\cdots(x+y\zeta_p^{p-1})\] as ideals. Then since we know the ideals are coprime, then by lemma \ref{lemma: ideals mult to power} we have that each $(x+y\zeta_p^i)=\gotha^p$, for $\gotha$ some ideal. Note that, $[\gotha^p]=1$ in the class group. Now, since $p$ does not divide the size of the class group we have that $[\gotha]=1$ in the class group, so its principal. So we have $x+y\zeta_p^i=u_i\a_i^p$ with $u_i$ a unit. So by \ref{theorem:FLT facts} part $5$ we have some $k$ such that $x+y\zeta_p-\zeta_p^{2k}x-\zeta_p^{2k-1} \equiv 0 \pmod p$. If $1,\zeta_p,\zeta_p^{2k},\zeta_p^{2k-1}$ are distinct, then \ref{theorem:FLT facts} part $4$ (which uses that $p>3$) says that $p$  divides $x,y$, contrary to our assumption. So they cannot be distinct, but checking each case leads to a contradiction, therefore there can not be any such solutions.
