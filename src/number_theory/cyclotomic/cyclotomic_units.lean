@@ -29,6 +29,7 @@ classical.some_spec (polynomial.exists_root_of_splits _
   (degree_cyclotomic_pos p ℚ hn.out).ne.symm)
 
 include hn
+
 lemma zeta'_spec' :
   is_root (map (algebra_map ℚ (cyclotomic_field p)) (cyclotomic p ℚ)) (zeta' p) :=
 begin
@@ -38,12 +39,33 @@ begin
   simp [-zeta'_spec],
 end
 
+lemma zeta'_spec'' : zeta' p ^ p = 1 :=
+begin
+  suffices : is_root (X^p - 1) (zeta' p),
+  { simpa [sub_eq_zero], },
+  rw [← prod_cyclotomic_eq_X_pow_sub_one hn.out, is_root.def, eval_prod, finset.prod_eq_zero_iff],
+  use p,
+  simp only [(fact.out (0 < p)).ne.symm, true_and, nat.mem_divisors, ne.def, not_false_iff,
+    dvd_refl],
+  have := zeta'_spec p,
+  rw eval₂_eq_eval_map at this,
+  convert this,
+  rw map_cyclotomic,
+end
+
+
+lemma is_root_cyclotomic_iff {n : ℕ} {K : Type*} [field K] (hpos : 0 < n) {μ : K}
+  (h : ∃ ζ : K, is_primitive_root ζ n) : is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
+begin
+  obtain ⟨ζ, hζ⟩ := h,
+  rw [← mem_roots (cyclotomic_ne_zero n K), cyclotomic_eq_prod_X_sub_primitive_roots hζ,
+    roots_prod_X_sub_C, ← finset.mem_def, ← mem_primitive_roots hpos],
+end
 -- TODO make a constructor assuming prime, but don't need it here
 
 lemma zeta'_primitive_root : is_primitive_root (zeta' p) p :=
-{ pow_eq_one := sorry,
+{ pow_eq_one := zeta'_spec'' p,
   dvd_of_pow_eq_one := sorry }
--- is_primitive_root.of
 
 
 -- TODO use the fact that a primitive root is a unit.
