@@ -1,6 +1,6 @@
 import number_theory.class_number.finite
 import field_theory.splitting_field
-import number_theory.cyclotomic.basic
+import number_theory.cyclotomic.class_group
 import ring_theory.polynomial.cyclotomic
 
 /-!
@@ -36,7 +36,7 @@ open nat polynomial
 
 open number_field
 
-variables (p : ℕ) [fact (0 < p)]
+variables (n : ℕ) [fact (0 < n)]
 -- local attribute [priority 5, instance] rat.normed_field -- hack to avoid diamond?
 
 open_locale classical
@@ -44,15 +44,8 @@ open_locale classical
 -- set_option trace.class_instances true
 -- set_option pp.all true
 
--- sorrying data makes lean sad so we make it a constant instead, this should of course be provable
--- TODO this is a sorry
-constant a : fintype (class_group (ring_of_integers (cyclotomic_field p)) (cyclotomic_field p))
-
-instance todo_fintype :
-  fintype (class_group (ring_of_integers (cyclotomic_field p)) (cyclotomic_field p)) := a p
-
-def is_regular_prime : Prop :=
-p.coprime (fintype.card (class_group (ring_of_integers (cyclotomic_field p)) (cyclotomic_field p)))
+def is_regular_number : Prop :=
+n.coprime (fintype.card (class_group (cyclotomic_ring n) (cyclotomic_field n)))
 
 -- some nice results about class number of isom rings needed I guess
 -- example : is_regular_prime 2 := -- LOOL good luck
