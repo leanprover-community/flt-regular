@@ -52,7 +52,7 @@ instance todo_fintype :
   fintype (class_group (ring_of_integers (cyclotomic_field p)) (cyclotomic_field p)) := a p
 
 def is_regular_prime : Prop :=
-p.gcd (fintype.card (class_group (ring_of_integers (cyclotomic_field p)) (cyclotomic_field p))) = 1
+p.coprime (fintype.card (class_group (ring_of_integers (cyclotomic_field p)) (cyclotomic_field p)))
 
 -- some nice results about class number of isom rings needed I guess
 -- example : is_regular_prime 2 := -- LOOL good luck
