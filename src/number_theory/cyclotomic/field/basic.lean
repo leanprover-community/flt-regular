@@ -23,12 +23,13 @@ end cyclotomic_polynomial
 
 section is_cyclotomic_field
 
-abbreviation is_cyclotomic_field := is_splitting_field F K (X ^ n - 1)
+class is_cyclotomic_field :=
+(out : is_splitting_field F K (X ^ n - 1))
 
 namespace is_cyclotomic_field
 
 instance splitting_field [char_zero K] [h : is_cyclotomic_field n ℚ K] :
-is_splitting_field ℚ K (X ^ n - 1) := h
+is_splitting_field ℚ K (X ^ n - 1) := h.out
 
 instance finite_dimensional [char_zero K] [is_cyclotomic_field n ℚ K] :
   finite_dimensional ℚ K :=
