@@ -1,4 +1,5 @@
-import ring_theory.class_group
+import number_theory.class_number.finite
+import number_theory.class_number.admissible_abs
 import ring_theory.polynomial.cyclotomic
 import field_theory.splitting_field
 import number_theory.number_field
@@ -10,7 +11,6 @@ open_locale classical
 instance aaaaaaaa [hn : fact (0 < n)] : irreducible (cyclotomic n ℚ) :=
 by { simpa using ((is_primitive.int.irreducible_iff_irreducible_map_cast
     (monic.is_primitive (cyclotomic.monic n ℤ))).1 (cyclotomic.irreducible hn.out)) }
-
 
 @[derive [field]]
 def cyclotomic_field [fact (0 < n)] : Type* := adjoin_root (cyclotomic n ℚ)
@@ -58,18 +58,21 @@ begin
   exact subsingleton.elim _ _,
 end
 
+end cyclotomic_field
+
 section cyclotomic_ring
 
 noncomputable
 def cyclotomic_ring (n : ℕ) [fact (0 < n)] :=
 number_field.ring_of_integers (cyclotomic_field n)
 
-theorem cyclotomic_ring_eq_int_adjoin (n : ℕ) [fact (0 < n)] : cyclotomic_ring n =
-  algebra.adjoin ℤ {adjoin_root.root (cyclotomic n ℚ)} := sorry
+instance (n : ℕ) [fact (0 < n)] : is_fraction_ring (cyclotomic_ring n) (cyclotomic_field n) :=
+number_field.ring_of_integers.is_fraction_ring
+
+instance (n : ℕ) [fact (0 < n)] : is_integral_closure (cyclotomic_ring n) ℤ (cyclotomic_field n) :=
+integral_closure.is_integral_closure ℤ (cyclotomic_field n)
 
 end cyclotomic_ring
-
-end cyclotomic_field
 
 -- Junk here:
 -- set_option pp.all true
