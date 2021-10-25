@@ -39,7 +39,8 @@ begin
   simp [-zeta'_spec],
 end
 
-lemma zeta'_spec'' : zeta' p ^ p = 1 :=
+@[simp]
+lemma zeta'_pow_prime : zeta' p ^ p = 1 :=
 begin
   suffices : is_root (X^p - 1) (zeta' p),
   { simpa [sub_eq_zero], },
@@ -64,7 +65,7 @@ end
 -- TODO make a constructor assuming prime, but don't need it here
 
 lemma zeta'_primitive_root : is_primitive_root (zeta' p) p :=
-{ pow_eq_one := zeta'_spec'' p,
+{ pow_eq_one := zeta'_pow_prime p,
   dvd_of_pow_eq_one := sorry }
 
 
@@ -80,8 +81,6 @@ begin
   simp [eval₂_eq_eval_map],
 end
 
-@[simp]
-lemma zeta'_pow_prime : zeta' p ^ p = 1 := sorry
 
 def zeta : units (ring_of_integers (cyclotomic_field p)) :=
 units.mk_of_mul_eq_one
