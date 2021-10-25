@@ -1,6 +1,5 @@
 import ring_theory.class_group
+import number_theory.regular_primes
 
-def nat.prime.regular (p : ℕ) [fact p.prime] : Prop := sorry
-
-theorem flt_regular (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) :
+theorem flt_regular (p a b c : ℕ) [fact p.prime] (hp : is_regular_prime p) (h : a ^ p + b ^ p = c ^ p) :
   a * b * c = 0 := sorry
