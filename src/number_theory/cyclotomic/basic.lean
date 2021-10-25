@@ -8,14 +8,10 @@ open polynomial
 variable (n : ℕ)
 open_locale classical
 instance aaaaaaaa [hn : fact (0 < n)] : irreducible (cyclotomic n ℚ) :=
-begin
-  have := cyclotomic.irreducible hn.out,
-  rw polynomial.is_primitive.int.irreducible_iff_irreducible_map_cast at this,
-  swap,
-  have : monic (cyclotomic n ℤ) := cyclotomic.monic n ℤ,
-  exact monic.is_primitive this,
-  simpa using this,
-end
+by { simpa using ((is_primitive.int.irreducible_iff_irreducible_map_cast
+    (monic.is_primitive (cyclotomic.monic n ℤ))).1 (cyclotomic.irreducible hn.out)) }
+
+
 @[derive [field]]
 def cyclotomic_field [fact (0 < n)] : Type* := adjoin_root (cyclotomic n ℚ)
 
@@ -61,6 +57,17 @@ begin
   haveI : subsingleton (algebra ℚ (adjoin_root (cyclotomic n ℚ))) := rat.algebra_rat_subsingleton,
   exact subsingleton.elim _ _,
 end
+
+section cyclotomic_ring
+
+noncomputable
+def cyclotomic_ring (n : ℕ) [fact (0 < n)] :=
+number_field.ring_of_integers (cyclotomic_field n)
+
+theorem cyclotomic_ring_eq_int_adjoin (n : ℕ) [fact (0 < n)] : cyclotomic_ring n =
+  algebra.adjoin ℤ {adjoin_root.root (cyclotomic n ℚ)} := sorry
+
+end cyclotomic_ring
 
 end cyclotomic_field
 
