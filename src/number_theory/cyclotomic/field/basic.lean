@@ -69,11 +69,8 @@ variable {n}
 include hn
 instance : char_zero (cyclotomic_field n) :=
 begin
-  /-apply char_p.char_p_to_char_zero _,
-  haveI : algebra ℚ (cyclotomic_field n),
-  { delta cyclotomic_field, apply_instance, },
-  rw ← algebra.char_p_iff ℚ,
-  exact char_p.of_char_zero ℚ,-/
+  haveI : char_zero ℚ := sorry,
+  exact char_zero_of_injective_algebra_map (algebra_map ℚ (adjoin_root (cyclotomic n ℚ))).injective,
 end
 
 instance : is_cyclotomic_field n ℚ (cyclotomic_field n) :=
