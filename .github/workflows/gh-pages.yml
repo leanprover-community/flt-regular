@@ -1,5 +1,5 @@
 on: workflow_dispatch 
-
+ 
 
 jobs:
   deploy:
@@ -27,7 +27,7 @@ jobs:
         run: |
           leanproject get leanprover-community/flt-regular
           ln -s flt-regular project
-          cd project && yes | rm -rf doc && leanproject get-m && leanproject build && cd ..
+          cd project && yes | rm -rf src && leanproject get-m && leanproject build && cd ..
           inv decls
       - name: Install Leanblueprint and generate web in tex env
         uses: xu-cheng/texlive-action/full@v1
