@@ -60,6 +60,7 @@ end
 
 section cyclotomic_ring
 
+noncomputable
 def cyclotomic_ring (n : ℕ) [fact (0 < n)] :=
 number_field.ring_of_integers (cyclotomic_field n)
 
