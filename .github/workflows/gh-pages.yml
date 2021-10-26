@@ -26,8 +26,7 @@ jobs:
       - name: Link and fetch mathlib
         run: |
           leanproject get leanprover-community/flt-regular
-          ln -s flt-regular project
-          cd project && leanproject get-m && cd ..
+          cd flt-regular && leanproject get-m
           inv decls
       - name: Install Leanblueprint and generate web in tex env
         uses: xu-cheng/texlive-action/full@v1

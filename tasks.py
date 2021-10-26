@@ -30,9 +30,9 @@ def decls(ctx):
     from mathlibtools.lib import LeanProject
 
     """Rebuild the Lean declarations database"""
-    proj = LeanProject.from_path((ROOT/'project').resolve())
+    proj = LeanProject.from_path(ROOT.resolve())
     proj.build()
-    proj.pickle_decls(ROOT/'project'/'decls.pickle')
+    proj.pickle_decls(ROOT/'decls.pickle')
 
 @task(decls, pdf)
 def web(ctx):
