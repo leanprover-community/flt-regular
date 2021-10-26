@@ -538,22 +538,21 @@
 	
 	\begin{proof}
 		
-		\begin{enumerate}
-			\item   Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod $, then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd). 
+	
+		$(1)$  Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod $, then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd). 
 			
 			
-			\item  Lemma \ref{lemma: fac of p in p_th root} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. But from lectures we know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_+p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
+			$(2)$  Lemma \ref{lemma: fac of p in p_th root} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. But from lectures we know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_+p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
 			
-			\item This is easy. Just use $(x+y)^p \equiv x^p + y^p \pmod p$ and that $\zeta_p$ is a $p$-th root of unity.
+			$(3)$ This is easy. Just use $(x+y)^p \equiv x^p + y^p \pmod p$ and that $\zeta_p$ is a $p$-th root of unity.
 			
-			\item  Looking at $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$, if one of the $a_i$'s is zero and $\a/n \in \ZZ[\zeta_p]$, then $\a/n=\sum_i a_i/n \zeta_p^i$. Now, as $\a/n \in \ZZ[\zeta_p]$, pick the basis of $\ZZ[\zeta_p]$ which does not contain $\zeta_p$ (which is possible as any subset of $\{1,\zeta_p,\dots,\zeta_p^{p-1}\}$ with $p-1$ elements forms a basis of $\ZZ[\zeta_p]$.]). Then $\a=\sum_i b_i \zeta_p^i$ where $b_i \in \ZZ$. Therefore comparing coefficients, we get the result.
+			$(4)$  Looking at $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$, if one of the $a_i$'s is zero and $\a/n \in \ZZ[\zeta_p]$, then $\a/n=\sum_i a_i/n \zeta_p^i$. Now, as $\a/n \in \ZZ[\zeta_p]$, pick the basis of $\ZZ[\zeta_p]$ which does not contain $\zeta_p$ (which is possible as any subset of $\{1,\zeta_p,\dots,\zeta_p^{p-1}\}$ with $p-1$ elements forms a basis of $\ZZ[\zeta_p]$.]). Then $\a=\sum_i b_i \zeta_p^i$ where $b_i \in \ZZ$. Therefore comparing coefficients, we get the result.
 			
-			\item  Using lemma \ref{lemma: unit lemma} we have $(x+y\zeta_p^i) =\beta \zeta_p^k \a^p$ which is equivalent to $\beta \zeta_p^k a \pmod p$ with $a$ and integer (using part $3$). Now, if we consider the complex conjugate we have $\ov{(x+y\zeta_p^i)  }\equiv \beta \zeta_p^{-k}a \pmod p$. Looking at $(x+y\zeta_p^i)-\zeta_p^{2k}\ov{(x+y\zeta_p^i)  }$ then gives the result.
-			
-			
+			$(5)$  Using lemma \ref{lemma: unit lemma} we have $(x+y\zeta_p^i) =\beta \zeta_p^k \a^p$ which is equivalent to $\beta \zeta_p^k a \pmod p$ with $a$ and integer (using part $3$). Now, if we consider the complex conjugate we have $\ov{(x+y\zeta_p^i)  }\equiv \beta \zeta_p^{-k}a \pmod p$. Looking at $(x+y\zeta_p^i)-\zeta_p^{2k}\ov{(x+y\zeta_p^i)  }$ then gives the result.
 			
 			
-		\end{enumerate}
+			
+
 		
 	\end{proof}
 	\begin{definition}\label{defn: is_regular_number}
