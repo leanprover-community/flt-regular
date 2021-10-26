@@ -13,6 +13,10 @@ open polynomial
 
 section cyclotomic_polynomial
 
+instance polynomial.cyclotomic_rat.irreducible_pnat (n : ℕ+) : irreducible (cyclotomic n ℚ) :=
+by { simpa using ((is_primitive.int.irreducible_iff_irreducible_map_cast
+    (monic.is_primitive (cyclotomic.monic n ℤ))).1 (cyclotomic.irreducible n.pos)) }
+
 include hn
 instance polynomial.cyclotomic_rat.irreducible :
   irreducible (cyclotomic n ℚ) :=

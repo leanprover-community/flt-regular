@@ -5,11 +5,6 @@ open polynomial algebra finite_dimensional
 
 section basic
 
---PR this
-instance polynomial.cyclotomic_rat.irreducible (n : ℕ+) : irreducible (cyclotomic n ℚ) :=
-by { simpa using ((is_primitive.int.irreducible_iff_irreducible_map_cast
-    (monic.is_primitive (cyclotomic.monic n ℤ))).1 (cyclotomic.irreducible n.pos)) }
-
 variables (S : set ℕ+) (K L : Type*) [comm_ring K] [comm_ring L] [algebra K L]
 
 class is_cyclotomic_extension :=
