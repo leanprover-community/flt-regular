@@ -94,7 +94,7 @@ lemma cyclotomic_ring_eq_adjoin_single (μ : K) (h : μ ∈ primitive_roots n K)
 
 instance : comm_ring (cyclotomic_ring n A K) := sorry
 
-instance  : is_domain  (cyclotomic_ring n ℤ ℚ ) := sorry
+instance  : is_domain  (cyclotomic_ring n A K) := sorry
 
 instance : algebra A (cyclotomic_ring n A K) := sorry
 
