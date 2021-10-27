@@ -9,7 +9,6 @@ variables [field K] [field L] [algebra K L]
 
 noncomputable theory
 
-namespace new_cyclotomic_field
 section basic
 
 class is_cyclotomic_extension :=
@@ -93,6 +92,8 @@ lemma cyclotomic_ring_eq_adjoin_single (μ : K) (h : μ ∈ primitive_roots n K)
 
 instance : comm_ring (cyclotomic_ring n A K) := sorry
 
+instance  : is_domain  (cyclotomic_ring n ℤ ℚ ) := sorry
+
 instance : algebra A (cyclotomic_ring n A K) := sorry
 
 instance algebra_cycl_ring_field : algebra (cyclotomic_ring n A K) (cyclotomic_field n K) := sorry
@@ -113,4 +114,3 @@ lemma cyclotomic_ring_int_is_integral_closure :
 end integers
 
 end is_domain
-end new_cyclotomic_field
