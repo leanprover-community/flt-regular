@@ -92,8 +92,9 @@ instance cyclotomic_field_algebra : algebra A (cyclotomic_field n K) := sorry
 @[derive [comm_ring]]
 def cyclotomic_ring : Type* := adjoin A { b : (cyclotomic_field n K) | b ^ (n : ℕ) = 1 }
 
-lemma cyclotomic_ring_eq_adjoin_single (μ : K) (h : μ ∈ primitive_roots n K) :
-  cyclotomic_ring n A K = adjoin A ({μ} : set K) := sorry
+lemma cyclotomic_ring_eq_adjoin_single (μ : (cyclotomic_field n K))
+  (h : μ ∈ primitive_roots n ((cyclotomic_field n K))) :
+  cyclotomic_ring n A K = adjoin A ({μ} : set ((cyclotomic_field n K))) := sorry
 
 instance  : is_domain  (cyclotomic_ring n A K) := sorry
 
