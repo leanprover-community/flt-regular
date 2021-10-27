@@ -110,7 +110,7 @@ end cyclotomic_ring
 
 section integers
 
-lemma cyclotomic_ring_int_is_integral_closure :
+instance cyclotomic_ring_int_is_integral_closure :
   is_integral_closure (cyclotomic_ring n ℤ ℚ) ℤ (cyclotomic_field n ℚ) := sorry
 
 end integers
