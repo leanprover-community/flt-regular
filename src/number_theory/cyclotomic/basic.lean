@@ -15,9 +15,9 @@ namespace new_cyclotomic_field
 
 section basic
 
-class is_cyclotomic_extension :=
-( ex_root (a : ℕ+) (ha : a ∈ S) : ∃ r : B, aeval r (cyclotomic a A) = 0 )
-( adjoint_roots : ∀ x, x ∈ adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 } )
+class is_cyclotomic_extension : Prop :=
+(ex_root (a : ℕ+) (ha : a ∈ S) : ∃ r : B, aeval r (cyclotomic a A) = 0)
+(adjoint_roots : ∀ x, x ∈ adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 })
 
 --TODO: add equivalent definitions
 
@@ -31,6 +31,7 @@ variables [fintype S] [is_cyclotomic_extension S K L]
 
 namespace is_cyclotomic_extension
 
+@[priority 100] -- see Note [lower instance priority]
 instance finite_dimensional : finite_dimensional K L := sorry
 
 lemma number_field [number_field K] : number_field L := sorry
