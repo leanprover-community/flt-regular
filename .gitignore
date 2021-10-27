@@ -2,3 +2,9 @@
 /_target
 /leanpkg.path
 *.swp
+src/all.lean
+decls.pickle
+.python-version
+print/
+web/
+decls.yaml
