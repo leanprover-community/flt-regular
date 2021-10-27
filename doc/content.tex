@@ -1,0 +1,216 @@
+	\maketitle
+\tableofcontents
+\section{Introduction}
+We prove Fermat's Last Theorem for regular primes and give some of the necessary background. It uses \cite{Samuel,marcus,washington}.	
+
+\section{Discriminants of number fields}	
+\begin{lemma}\label{lemma: alt definition of norm and trace}
+	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a) \qquad N_{K/\QQ}(\a)=\prod_i \sigma_i(\a)  \]
+\end{lemma}
+
+\begin{lemma}\label{lemma: disc via embs}
+	Let $K$ be a number field with basis $B=\{b_1,\dots,b_n\}$ and let $\sigma_1,\dots,\sigma_n$ be the embeddings of $K$ into $\CC$. Now let $M$ be the matrix  \[\left (\begin{matrix} \sigma_1(b_1) &\cdots& \sigma_1(b_n)\\ \vdots & & \vdots \\  \sigma_n(b_1) &\cdots& \sigma_n(b_n)
+	\end{matrix} \right ).\] Then \[\Delta(B)=\det(M)^2.\]
+\end{lemma}
+
+
+\begin{proof}
+	By Proposition \ref{lemma: alt definition of norm and trace} we know that  $\Tr_{K/\QQ}(b_i b_j)= \sum_k \sigma_k(b_i)\sigma_k(b_j)$ which is the same as the $(i,j)$ entry of $M^t M$. Therefore \[\det(T_B)=\det(M^t M)=\det(M)^2.\]
+\end{proof}
+
+\begin{lemma}\label{lemma: disc of prim elt basis}
+	\uses{lemma: disc via embs }
+	Let $K$ be a number field and $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$ for some $\a \in K$. Then \[\Delta(B)=\prod_{i < j} (\sigma_i(\a)-\sigma_j(\a))^2\] where $\sigma_i$ are the embeddings of $K $ into $\CC$. Here $\Delta(B)$ denotes the discriminant.
+\end{lemma}
+\begin{proof}
+	First we recall a classical linear algebra result relating to the Vandermonde matrix, which states that  \[\det \left (\begin{matrix} 1 & x_1& x_1^2&\cdots&x_1^{n-1} \\ \vdots & & & \vdots \\   1 & x_n& x_n^2&\cdots&x_n^{n-1}
+	\end{matrix} \right ) =\prod_{i<j} (x_i-x_j).\] Combining this with Proposition \ref{lemma: disc via embs} gives the result.
+\end{proof}
+
+\begin{lemma}\label{lemma: diff of irr pol}
+	Let $f$ be a monic irreducible polynomial over a number field $K$ and let $\a$ be one of its roots in $\CC$. Then \[f'(\a)=\prod_{\beta \neq \a} (\a-\beta),  \] where the product is over the roots of $f$ different from $\a$.
+\end{lemma}
+
+\begin{proof}
+	We first write $f(x)=(x-\a)g(x)$ which we can do (over $\CC$) as $\a$ is a root of $f$, where now $g(x)=\prod_{\beta \neq \a} (x-\beta)$. Differentiating we get \[f'(x)=g(x)+(x-\a)g'(x).\] If we now evaluate at $\a$ we get the result.
+\end{proof}
+
+\begin{lemma}\label{lemma: num field disc in terms of norm}
+	\uses{lemma: disc of prim elt basis, lemma: alt definition of norm and trace }
+	Let $K=\QQ(\a)$ be a number field with $n=[K:\QQ]$ and let $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$. Then \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}N_{K/\QQ}(m_\a'(\a))\] where $m_\a'$ is the derivative of $m_\a(x)$ (which we recall denotes the minimal polynomial of $\a$).	
+\end{lemma}
+\begin{proof}
+	By Proposition \ref{lemma: disc of prim elt basis} we have $\Delta(B)=\prod_{i < j}(\a_i-\a_j)^2$ where $\a_k:=\sigma_k(\a)$. Next, we note that the number of terms in this product is $1+2+\cdots+(n-1)=\frac{n(n-1)}{2}$. So if we write each term as $(\a_i-\a_j)^2=-(\a_i-\a_j)(\a_j-\a_i)$ we get \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j). \]
+	
+	Now, by lemmama \ref{lemma: diff of irr pol} and Proposition \ref{lemma: alt definition of norm and trace} we see that \[N_{K/\QQ}(m_\a'(\a))=\prod_{i=1}^n m_\a'(\a_i)=\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j),\] which gives the result.	
+\end{proof}	
+
+\begin{lemma}\label{lemma: disc change of basis}
+	Let $K$ be a number field and $B,B'$ bases for $K/\QQ$. If $P$ denotes the change of basis matrix, then \[\Delta(B)=\det(P)^2 \Delta(B').\]
+\end{lemma}
+
+\begin{lemma}\label{lemma: norm trace of alg int is int}
+	If $K$ is a number field and $\a \in \OO_K$ then $\Tr_{K/\QQ}(\a)$ and $N_{K/\QQ}(\a)$ are both in $\ZZ$. 
+\end{lemma}	
+
+\begin{lemma}\label{lemma: int basis int disc}
+	Let $K$ be a number field and $B=\{b_1,\dots,b_n\}$ be elements in $\OO_K$, then $\Delta(B) \in \ZZ$.
+\end{lemma}	
+
+\begin{lemma}\label{lemma: disc int basis}
+	\uses{lemma: disc change of basis, lemma: int basis int disc }
+	Let $K$ be a number field and $B=\{b_1,\dots,b_n\}$ be a basis for $K/\QQ$ consisting of algebraic integers. If $B$ is not an integral basis then there exists an algebraic integer of the form \[\a=\frac{x_1b_1+\cdots+x_nb_n}{p}\] where $p$ is a prime and $x_i \in \{0,\dots,p-1\}$ with not all $x_i$ zero. Moreover, if $x_i \neq 0$ and we let $B'$ be the basis obtained by replacing $b_i$ with $\a$, then \[\Delta(B')= \frac{x_i^2}{p^2} \Delta(B).\] In particular $p^2 \mid \Delta(B)$.
+\end{lemma} 
+
+\begin{proof}
+	If $B$ is not an integral basis then we can find some element $\phi \in \OO_K$ such that \[\phi=y_1b_1+\dots y_nb_n\] with not all the $y_i$ in $\ZZ$. So, let $N$ be the least common multiple of the denominators of the $y_i$ (meaning $Ny_i \in \ZZ$ for all $i$). Now, let $p$ be a prime factor of $N$. If we now consider $(N/p)\phi$ then all of the coefficients of $b_i$ are in $\frac{1}{p} \ZZ$ (so they have denominator $1$ or $p$.) and at least one of them has denominator $p$ (since not all the $y_i$ where in $\ZZ$). So by relabelling, wlog we can assume \[\phi=y_1b_1+\dots y_nb_n\] with $y_i \in  \frac{1}{p} \ZZ$
+	
+	Now look at \[\psi:=\lfloor y_1 \rfloor b_1+\cdots+\lfloor y_n \rfloor b_n\] (here $\lfloor x \rfloor$ denotes the integer part of $x$). The both $\psi$ and $\phi$ are algebraic integers (as the $b_i$ are algebraic integers). Therefore, so is $\theta=\phi-\psi$. By construction, $\theta$ has coefficients of the for $\frac{x_i}{p}:=y_i-\lfloor y_i \rfloor$ where $x_i \in \{0,\dots,p-1\}$ and not all the $x_i$ are zero (since, again, not all the $y_i$ were in $\ZZ$). This gives the first part of the lemma.
+	
+	Now, assume $x_i \neq 0$, then let us replace $b_i \in B$ with $\theta$ to get a new basis $B'$ which again consists of algebraic integers. Next, we note that the change of basis matrix from $B$ to $B'$ is 
+	
+	\[ \left( \begin{matrix}
+		1&0&\cdots& \frac{x_1}{p}& \cdots &0 \\
+		0&1&\cdots& \frac{x_2}{p}& \cdots &0 \\
+		\vdots& \vdots&&\vdots&&\vdots \\
+		0&0&\cdots& \frac{x_n}{p}& \cdots &1 \\
+	\end{matrix}                          \right) \](here the column of $x_j/p$'s is in the $i$-th column).
+	
+	This matrix has determinant $\frac{x_i}{p}.$ Therefore, by 	Proposition \ref{lemma: disc change of basis} we see that $\Delta(B')=\frac{x_i^2}{p^2}\Delta(B)$. But both $\Delta(B),\Delta(B')$ are  in $\ZZ$ by Proposition \ref{lemma: int basis int disc}, therefore $p^2 \mid \Delta(B)$ giving the result.
+\end{proof}
+
+\begin{lemma}\label{lemma: eis crit and alg ints}
+	\uses{lemma: norm trace of alg int is int }
+	Let $K=\QQ(\a)$and $\a$ be an algebraic integer such that $m_\a$ satisfies Eisensteins Criterion for a prime $p$. Then none of the elements \[\phi=\frac{1}{p}(x_0+x_1\a+\cdots+x_{n-1}\a^{n-1})\] is an algebraic integer, where $n=\deg(m_\a)$ and $x_i \in \{0,\dots,p-1\}.$
+\end{lemma} 
+
+
+\begin{proof}
+	We will only prove the case when $m_\a$ is Eisenstein, since the proof of the more general case is identical.	
+	
+	Suppose for contradiction that $\phi \in \OO_K$ and let $x_d$ be the first non-zero coefficient, so \[\phi=\frac{1}{p}(x_d\a^d+x_{d+1}\a^{d+1}+\cdots+x_{n-1}\a^{n-1}) \in \OO_K.\]
+	
+	Now, rewrite this as $\phi=\frac{1}{p}(x_d\a^d +\a^{d+1}\beta)$ for some $\beta \in \OO_K$. Next, multiply through by $\a^{n-1-d}$, then we have \[\frac{x_d\a^{n-1}}{p}+\frac{\a^n\beta}{p} \in \OO_K.\]
+	
+	Now, since  $m_\a$ satisfies Eisenstein at $p$, we see that $\a^n=pf(\a)$ for some $f \in \ZZ[x]$ and therefore the above gives us that \[\frac{x_d\a^{n-1}}{p}+\beta f(\a) \in \OO_K.\] and thus \[\frac{x_d\a^{n-1}}{p} \in \OO_K.\]
+	
+	Lets now calculate the norm of this: \[N_{K/\QQ} \left(\frac{x_d\a^{n-1}}{p} \right)=\frac{x_d^n N_{K/\QQ}(\a)^{n-1}}{p^n}.\] By Eisenstein the constant coefficient of $m_\a$ is divisible by $p$ but not $p^2$, so since the constant coefficient of $m_\a$ is $N_{K/\QQ}(\a)$ we see that $N_{K/\QQ}(\a)=p a$ where $p \nmid a$. Therefore we have \[N_{K/\QQ} \left(\frac{x_d\a^{n-1}}{p} \right)=\frac{x_d^n p^{n-1}a^{n-1}}{p^n}= \frac{x_d^n a^{n-1}}{p}.\] But this cant be in $\ZZ$ since $p$ doesn't divide $x_d$ or $a$, and this gives us a contradiction since  Proposition \ref{lemma: norm trace of alg int is int} says that the norm of an algebraic integer must be an integer. So $\phi$ couldn't have been an algebraic integer. 
+	
+	
+\end{proof}	
+
+\section{Cyclotomic fields}
+
+
+\begin{lemma}\label{lemma: cyclo poly}
+	For $n$ any integer, $\Phi_n$ (the $n$-th cyclotomic polynomial) is an irreducible polynomial of degree $\varphi(n)$ (where $\varphi$ is Euler's Totient function).
+\end{lemma}
+
+
+
+
+\begin{theorem}\label{theorem: ring of ints of cyclo}
+	\uses{lemma: num field disc in terms of norm, lemma: disc int basis, lemma: eis crit and alg ints }
+	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$ moreover \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
+\end{theorem}	
+
+\begin{proof}
+	First note $[K:\QQ]=p-1$.
+	
+	Since $\zeta_p=1-\lam_p$ we at once get $\ZZ[\zeta_p]=\ZZ[\lam_p]$ (just do double inclusion). Next, let $\a_i=\sigma_i(\zeta_p)$ denote the conjugates of $\zeta_p$, which is the same as the image of $\zeta_p$ under one of the embeddings $\sigma_i: \QQ(\zeta_p) \to \CC$. Now  by Proposition $\ref{lemma: disc of prim elt basis}$ we have \begin{align*}\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\prod_{i < j}  (\a_i-\a_j)^2 &=\prod_{i < j}  ((1-\a_i)-(1-\a_j))^2\\&=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})\end{align*}
+	
+	Now, by Proposition \ref{lemma: num field disc in terms of norm}, we have \[\Delta(\{1,\zeta_p,\cdots,\zeta_p^{p-2}\})=(-1)^{\frac{(p-1)(p-2)}{2}}N_{K/\QQ}(\Phi_p'(\zeta_p)  )\]
+	Since $p$ is odd $(-1)^{\frac{(p-1)(p-2)}{2}}=(-1)^{\frac{(p-1)}{2}}$. Next, we see that \[\Phi_p'(x)=\frac{px^{p-1}(x-1)-(x^p-1)}{(x-1)^2}\] therefore \[\Phi_p'(\zeta_p)=-\frac{p\zeta_p^{p-1}}{\lam_p}.\]
+	
+	Lastly, note that $N_{K/\QQ}(\zeta_p)=1$, since this is the constant term in its minimal polynomial. Similarly, we see $N_{K/\QQ}(\lam_p)=p$. Putting this all together, we get \[N_{K/\QQ}(\Phi_p'(\zeta_p)  )=\frac{N_{K/\QQ}(p)N_{K\QQ}(\zeta_p)^{p-1}}{N_{K/\QQ}(-\lam_p)}=(-1)^{p-1}p^{p-2}=p^{p-2}\]
+	
+	So the last thing we need to prove is that $\OO_K=\ZZ[\zeta_p]$. From the calculation we just did, the only prime dividing the discriminant is $p$, therefore Lemma \ref{lemma: disc int basis} tells us the only prime we need to check is $p$. But from Lemma \ref{lemma: eis crit and alg ints} we know that dividing by $p$ wont give us any new integral elements, so this must be an integral basis which give the result.
+\end{proof}
+
+
+\begin{theorem}\label{theorem: ring of ints of cyclo field}
+	Let $n$ be a positive integer and $\zeta_n$ a root of unity. If $K=\QQ(\zeta_n)$ then \[\OO_K=\ZZ[\zeta_n].\]
+\end{theorem}
+
+
+\begin{lemma}\label{lemma: alg_int_abs_val_one}
+	Let $\a$ be an algebraic integer all of whose conjugates have absolute value one. Then $\a$ is a root of unity.
+\end{lemma}
+
+
+\begin{lemma}\label{lemma: unit lemma}
+	\uses{lemma: alg_int_abs_val_one}
+	Any unit $u$ in $\ZZ[\zeta_p]$ can be written in the form $\beta \zeta_p^k  $ with $k$ an integer and $\beta \in \RR$.
+\end{lemma}	
+
+\begin{lemma}\label{lemma: fac of p in p_th root}
+	Let $p$ be a prime and $n=p^k$. Then \[p=u(1-\zeta_n)^{\varphi(n)}\] where $u \in \ZZ[\zeta_n]^{\times}$.
+\end{lemma}
+
+\begin{lemma}\label{lemma: ideals mult to power}
+	Let $R$ be a Dedekind domain, $p$ a prime and $\gotha,\gothb,\gothc$ ideals such that \[\gotha\gothb=\gothc^p\] and suppose $\gotha,\gothb$ are coprime. Then there exist ideals $\mathfrak{e},\mathfrak{d}$ such that \[\gotha=\mathfrak{e}^p \qquad \gothb=\mathfrak{d}^p \qquad \mathfrak{e}\mathfrak{d}=\gothc\] 
+\end{lemma}
+
+
+\section{Fermats Last Theorem for regular primes}
+
+\begin{theorem}\label{theorem:FLT facts}
+	\uses{lemma: unit lemma, lemma: fac of p in p_th root, lemma: ideals mult to power, theorem: ring of ints of cyclo}
+	
+	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$.  Assume that we have $x,y,z \in \ZZ$ with $\gcd(xyz,p)=1$ and such that \[x^p+y^p=z^p.\] 
+	
+	\begin{enumerate}
+		\item We cannot have  \[x \equiv y \equiv -z \pmod p\] and, therefore, without loss of generality, we may assume \[x \not \equiv y \mod p.\]
+		
+		\item For $i \neq j$ we can write \[(\zeta_p^i-\zeta_p^j)=u(1-\zeta_p)\] with $u$ a unit in $\ZZ[\zeta_p]$. From this it follows that the ideals \[(x+y),(x+\zeta_py),(x+\zeta_p^2y),\dots,(x+\zeta_p^{p-1}y)\] are pairwise coprime. 
+		
+		\item Let $\a \in \ZZ[\zeta_p]$. Then $\a^p$ is congruent to an integer modulo $p$.
+		
+		\item Let $\a \in \ZZ[\zeta_p]$.   Suppose that $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$ with at least one $a_i=0$. Then there is an integer $n$ such that $\a/n \in \ZZ[\zeta_p]$, then $n$ divides each $a_i$. 
+		
+		
+		\item   Let $i \in \{1,\dots,p-1\}.$ Suppose that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. By considering $x+y\zeta_p^i$ and its complex conjugate then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
+		
+		
+	\end{enumerate}
+	
+\end{theorem}
+
+
+
+\begin{proof}
+	
+	
+	$(1)$  Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod,$ then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd). 
+	
+	
+	$(2)$  Lemma \ref{lemma: fac of p in p_th root} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. But from lectures we know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_+p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
+	
+	$(3)$ This is easy. Just use $(x+y)^p \equiv x^p + y^p \pmod p$ and that $\zeta_p$ is a $p$-th root of unity.
+	
+	$(4)$  Looking at $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$, if one of the $a_i$'s is zero and $\a/n \in \ZZ[\zeta_p]$, then $\a/n=\sum_i a_i/n \zeta_p^i$. Now, as $\a/n \in \ZZ[\zeta_p]$, pick the basis of $\ZZ[\zeta_p]$ which does not contain $\zeta_p$ (which is possible as any subset of $\{1,\zeta_p,\dots,\zeta_p^{p-1}\}$ with $p-1$ elements forms a basis of $\ZZ[\zeta_p]$.]). Then $\a=\sum_i b_i \zeta_p^i$ where $b_i \in \ZZ$. Therefore comparing coefficients, we get the result.
+	
+	$(5)$  Using lemma \ref{lemma: unit lemma} we have $(x+y\zeta_p^i) =\beta \zeta_p^k \a^p$ which is equivalent to $\beta \zeta_p^k a \pmod p$ with $a$ and integer (using part $3$). Now, if we consider the complex conjugate we have $\ov{(x+y\zeta_p^i)  }\equiv \beta \zeta_p^{-k}a \pmod p$. Looking at $(x+y\zeta_p^i)-\zeta_p^{2k}\ov{(x+y\zeta_p^i)  }$ then gives the result.
+\end{proof}
+
+\begin{definition}\label{defn: is_regular_number}
+	\lean{is_regular_number}
+	\leanok
+	A prime number $p$ is called regular if it does not divide the class number of $\QQ(\zeta_p)$.
+\end{definition}
+
+
+\begin{theorem}\label{theorem:FLT case one}
+	\uses{theorem:FLT facts, defn: is_regular_number}
+	Let $p$ be a regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $\gcd(xyz,p)=1$. 
+\end{theorem}
+\begin{proof}
+	First thing is to note that if $x^p+y^p=z^p$ then \[z^p=(x+y)(x+\zeta_py)\cdots(x+y\zeta_p^{p-1})\] as ideals. Then since we know the ideals are coprime, then by lemma \ref{lemma: ideals mult to power} we have that each $(x+y\zeta_p^i)=\gotha^p$, for $\gotha$ some ideal. Note that, $[\gotha^p]=1$ in the class group. Now, since $p$ does not divide the size of the class group we have that $[\gotha]=1$ in the class group, so its principal. So we have $x+y\zeta_p^i=u_i\a_i^p$ with $u_i$ a unit. So by \ref{theorem:FLT facts} part $5$ we have some $k$ such that $x+y\zeta_p-\zeta_p^{2k}x-\zeta_p^{2k-1} \equiv 0 \pmod p$. If $1,\zeta_p,\zeta_p^{2k},\zeta_p^{2k-1}$ are distinct, then \ref{theorem:FLT facts} part $4$ (which uses that $p>3$) says that $p$  divides $x,y$, contrary to our assumption. So they cannot be distinct, but checking each case leads to a contradiction, therefore there cannot be any such solutions.
+\end{proof}
+
+
+\begin{theorem}\label{FLT regular case}
+	\lean{flt_regular}
+	\uses{theorem:FLT case one}
+	Let $p$ be a regular prime.  Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $xyz \ne 0$. 
+\end{theorem}
