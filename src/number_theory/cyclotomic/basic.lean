@@ -100,7 +100,7 @@ lemma eq_adjoin_single (μ : (cyclotomic_field n K))
   (h : μ ∈ primitive_roots n ((cyclotomic_field n K))) :
   cyclotomic_ring n A K = adjoin A ({μ} : set ((cyclotomic_field n K))) := sorry
 
-instance : is_domain  (cyclotomic_ring n A K) := sorry
+instance : is_domain (cyclotomic_ring n A K) := sorry
 
 instance : algebra (cyclotomic_ring n A K) (cyclotomic_field n K) :=
 (adjoin A _).to_algebra
