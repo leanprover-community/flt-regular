@@ -3,7 +3,9 @@ import number_theory.number_field
 
 open polynomial algebra finite_dimensional
 
-variables (n : ℕ+) (S : set ℕ+) (A B K L : Type*)
+universes u v w z
+
+variables (n : ℕ+) (S : set ℕ+) (A : Type u) (B : Type v) (K : Type w) (L : Type z)
 variables [comm_ring A] [comm_ring B] [algebra A B]
 variables [field K] [field L] [algebra K L]
 
@@ -67,7 +69,7 @@ end rational
 
 section cyclotomic_field
 
-def cyclotomic_field : Type* := (cyclotomic n K).splitting_field
+def cyclotomic_field : Type w := (cyclotomic n K).splitting_field
 
 instance : field (cyclotomic_field n K) := sorry
 
@@ -87,12 +89,11 @@ section cyclotomic_ring
 
 instance cyclotomic_field_algebra : algebra A (cyclotomic_field n K) := sorry
 
-def cyclotomic_ring : Type* := adjoin A { b : K | b ^ (n : ℕ) = 1 }
+@[derive [comm_ring]]
+def cyclotomic_ring : Type* := adjoin A { b : (cyclotomic_field n K) | b ^ (n : ℕ) = 1 }
 
 lemma cyclotomic_ring_eq_adjoin_single (μ : K) (h : μ ∈ primitive_roots n K) :
   cyclotomic_ring n A K = adjoin A ({μ} : set K) := sorry
-
-instance : comm_ring (cyclotomic_ring n A K) := sorry
 
 instance  : is_domain  (cyclotomic_ring n A K) := sorry
 
