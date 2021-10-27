@@ -9,6 +9,8 @@ variables [field K] [field L] [algebra K L]
 
 noncomputable theory
 
+namespace new_cyclotomic_field
+
 section basic
 
 class is_cyclotomic_extension :=
@@ -114,3 +116,5 @@ lemma cyclotomic_ring_int_is_integral_closure :
 end integers
 
 end is_domain
+
+end new_cyclotomic_field
