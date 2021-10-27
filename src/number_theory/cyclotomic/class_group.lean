@@ -8,8 +8,6 @@ section finiteness
 
 open new_cyclotomic_field
 
-instance a  : is_domain  (cyclotomic_ring n ℤ ℚ ) := sorry
-
 noncomputable instance class_group.fintype_of_cyclotomic_ring (n : ℕ+) :
   fintype (class_group (cyclotomic_ring n ℤ ℚ) (cyclotomic_field n ℚ)) :=
 class_group.fintype_of_admissible_of_finite ℚ (cyclotomic_field n ℚ)
