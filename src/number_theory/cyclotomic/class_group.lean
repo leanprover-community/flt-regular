@@ -6,7 +6,7 @@ variable (n : ℕ+)
 section finiteness
 
 
-
+open new_cyclotomic_field
 
 instance a  : is_domain  (cyclotomic_ring n ℤ ℚ ) := sorry
 
