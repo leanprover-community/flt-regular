@@ -88,7 +88,7 @@ end movethis
 
 namespace is_cyclotomic_extension
 
-variables [field K] [field L] [algebra K L] [is_cyclotomic_extension {n} K L]
+variables [field L] [algebra K L] [is_cyclotomic_extension {n} K L]
 
 include K n
 def zeta' : L :=
@@ -177,8 +177,8 @@ begin
   simp,
 end
 
-def aux {r n : ℕ} (h : r.coprime n) : ℕ := ((r.gcd_a n) % n).nat_abs
-lemma aux_spec {r n : ℕ} (h : r.coprime n) : r * aux h ≡ 1 [MOD n] := sorry
+def aux (r n : ℕ) : ℕ := ((r.gcd_a n) % n).nat_abs
+lemma aux_spec {r n : ℕ} (h : r.coprime n) : r * aux r n ≡ 1 [MOD n] := sorry
 
 section cyclotomic_unit
 
@@ -191,10 +191,10 @@ local notation `L` := cyclotomic_field n K
 def cyclotomic_unit {r s : ℕ} (hr : r.coprime n) (hs : s.gcd n = 1) :
   units (ring_of_integers (cyclotomic_field n K)) :=
 units.mk_of_mul_eq_one
-  (geom_sum ((zeta n K) ^ s) (r * aux hs))
+  (geom_sum ((zeta n K) ^ s) (r * aux r n))
   -- (∑ t in range r, zeta hn ^ (s * t))
   --(( zeta n ^r - 1) * ((zeta n)^s - 1)⁻¹)
-  (geom_sum ((zeta n  K) ^ r) (s * aux hr))
+  (geom_sum ((zeta n  K) ^ r) (s * aux r n))
   -- (∑ t in range s,  zeta hn ^ (t * r))
   begin
     sorry;
