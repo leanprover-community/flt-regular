@@ -55,12 +55,12 @@ begin
 end
 
 
-lemma is_root_cyclotomic_iff {n : ℕ} {K : Type*} [field K] (hpos : 0 < n) {μ : K}
-  (h : ∃ ζ : K, is_primitive_root ζ n) : is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
+lemma is_root_cyclotomic_iff {K : Type*} [field K] {μ : K}
+  (h : ∃ ζ : K, is_primitive_root ζ p) : is_primitive_root μ p ↔ is_root (cyclotomic p K) μ :=
 begin
   obtain ⟨ζ, hζ⟩ := h,
-  rw [← mem_roots (cyclotomic_ne_zero n K), cyclotomic_eq_prod_X_sub_primitive_roots hζ,
-    roots_prod_X_sub_C, ← finset.mem_def, ← mem_primitive_roots hpos],
+  rw [← mem_roots (cyclotomic_ne_zero p K), cyclotomic_eq_prod_X_sub_primitive_roots hζ,
+    roots_prod_X_sub_C, ← finset.mem_def, ← mem_primitive_roots hn.out],
 end
 -- TODO make a constructor assuming prime, but don't need it here
 
@@ -113,8 +113,8 @@ begin
   simp,
 end
 
-def aux {r n : ℕ} (h : r.coprime n) : ℕ := ((r.gcd_a n) % n).nat_abs
-lemma aux_spec {r n : ℕ} (h : r.coprime n) : r * aux h ≡ 1 [MOD n] :=
+def aux (r n : ℕ) : ℕ := ((r.gcd_a n) % n).nat_abs
+lemma aux_spec {r n : ℕ} (h : r.coprime n) : r * aux r n ≡ 1 [MOD n] :=
 begin
   sorry,
 end
@@ -122,10 +122,10 @@ end
 def cyclotomic_unit {r s : ℕ} (hr : r.coprime n) (hs : s.gcd n = 1) :
   units (ring_of_integers (cyclotomic_field n)) :=
 units.mk_of_mul_eq_one
-  (geom_sum (zeta n ^ s) (r * aux hs))
+  (geom_sum (zeta n ^ s) (r * aux r n))
   -- (∑ t in range r, zeta hn ^ (s * t))
   --(( zeta n ^r - 1) * ((zeta n)^s - 1)⁻¹)
-  (geom_sum (zeta n ^ r) (s * aux hr))
+  (geom_sum (zeta n ^ r) (s * aux r n))
   -- (∑ t in range s,  zeta hn ^ (t * r))
   begin
     sorry;
