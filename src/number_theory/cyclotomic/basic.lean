@@ -75,7 +75,7 @@ def cyclotomic_field : Type w := (cyclotomic n K).splitting_field
 
 namespace cyclotomic_field
 
-lemma is_cyclotomic_extension : is_cyclotomic_extension {n} K (cyclotomic_field n K) := sorry
+instance is_cyclotomic_extension : is_cyclotomic_extension {n} K (cyclotomic_field n K) := sorry
 
 end cyclotomic_field
 
