@@ -100,7 +100,7 @@ begin
   may_assume h : a ≤ b,
   -- have : ∀ (a b c : ℕ) (hab : a^2 + b^2 < c) (this : ∀ (a' b' c' : ℕ) (hab : a'^2 + b'^2 < c') (h : a' ≤ b'), a' + b' < c'),
   --  a + b < c,
-  {
+  sorry;{
     -- clear_except this,
     -- intros,
     -- state here is
@@ -120,6 +120,5 @@ begin
   -- state here is
   -- (a b c : ℕ) (hab : a^2 + b^2 < c) (h : a ≤ b)
   -- ⊢ a + b < c
-  sorry,
 
 end
