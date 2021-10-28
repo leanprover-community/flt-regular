@@ -105,14 +105,14 @@ meta def enabled_linters : list name :=
     "has_coe_variable",
     "class_structure",
     "fails_quickly",
-    -- "dangerous_instance",
+    "dangerous_instance",
     "incorrect_type_class_argument",
     "impossible_instance",
-    -- "has_inhabited_instance",
+    "has_inhabited_instance",
     "instance_priority",
     "simp_comm",
     "simp_var_head"
-    -- "simp_nf"
+    "simp_nf"
     ] in
   mathlib_linters.filter $ λ x: name, x.to_string ∈ enabled_linter_names
 
@@ -121,7 +121,7 @@ meta def enabled_linters : list name :=
 Edit the list in `enabled_linters` to run additional linters.
 
 We currently rely on mathlib to provide the `nolints.txt` file and do not maintain a separate
-`nolints.txt` file for lean-liquid.
+`nolints.txt` file for flt-regular.
 -/
 meta def main : io unit := do
 env ← tactic.get_env,
@@ -135,6 +135,6 @@ let results := (do
   (linter_name, linter, decls) ← results₀,
   [(linter_name, linter, (nolint_file.find linter_name).foldl rb_map.erase decls)]),
 io.print $ to_string $ format_linter_results env results decls non_auto_decls
-  path_len "in lean-liquid" tt lint_verbosity.medium linters.length,
+  path_len "in flt-regular" tt lint_verbosity.medium linters.length,
 io.write_file "nolints.txt" $ to_string $ mk_nolint_file env path_len results₀,
 if results.all (λ r, r.2.2.empty) then pure () else io.fail ""
