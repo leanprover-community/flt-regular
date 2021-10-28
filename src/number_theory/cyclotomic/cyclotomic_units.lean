@@ -14,10 +14,11 @@ noncomputable theory
 open_locale big_operators non_zero_divisors
 open number_field polynomial finset module units fractional_ideal submodule
 
-universes u v w
+universes u v w z
 
-variables (n : ℕ+) (K : Type u) (L : Type v) (A : Type w)
-variables [comm_ring A] [field K]
+variables (n : ℕ+) (K : Type u) (L : Type v) (A : Type w) (B : Type z)
+variables [comm_ring A] [comm_ring B] [algebra A B]
+variables [field K] [field L] [algebra K L]
 
 section movethis
 
@@ -88,12 +89,12 @@ end movethis
 
 namespace is_cyclotomic_extension
 
-variables [field L] [algebra K L] [is_cyclotomic_extension {n} K L]
+variables [is_cyclotomic_extension {n} A B]
 
-include K n
-def zeta' : L :=
-classical.some (exists_root_of_splits (algebra_map K L) (is_splitting_field.splits _ _)
-  (degree_cyclotomic_pos n K n.pos).ne.symm)
+include A n
+def zeta' : B :=
+classical.some (((iff _ _ _).1 (show is_cyclotomic_extension {n} A B, from infer_instance)).1
+  n (set.mem_singleton n))
 
 @[simp]
 lemma zeta'_spec :
