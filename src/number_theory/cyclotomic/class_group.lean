@@ -6,8 +6,6 @@ variable (n : ℕ+)
 
 section finiteness
 
-open new_cyclotomic_field
-
 noncomputable instance class_group.fintype_of_cyclotomic_ring (n : ℕ+) :
   fintype (class_group (cyclotomic_ring n ℤ ℚ) (cyclotomic_field n ℚ)) :=
 class_group.fintype_of_admissible_of_finite ℚ (cyclotomic_field n ℚ)
