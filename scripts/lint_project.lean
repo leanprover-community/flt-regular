@@ -111,7 +111,7 @@ meta def enabled_linters : list name :=
     "has_inhabited_instance",
     "instance_priority",
     "simp_comm",
-    "simp_var_head"
+    "simp_var_head",
     "simp_nf"
     ] in
   mathlib_linters.filter $ λ x: name, x.to_string ∈ enabled_linter_names
