@@ -11,8 +11,6 @@ variables [field K] [field L] [algebra K L]
 
 noncomputable theory
 
-namespace new_cyclotomic_field
-
 section basic
 
 class is_cyclotomic_extension : Prop :=
@@ -93,7 +91,7 @@ section cyclotomic_ring
 lemma cyclotomic_field.algebra_base : algebra A (cyclotomic_field n K) :=
 ((algebra_map K (cyclotomic_field n K)).comp (algebra_map A K)).to_algebra
 
-local attribute [instance] new_cyclotomic_field.cyclotomic_field.algebra_base
+local attribute [instance] cyclotomic_field.algebra_base
 
 @[derive [comm_ring]]
 def cyclotomic_ring : Type w := adjoin A { b : (cyclotomic_field n K) | b ^ (n : ℕ) = 1 }
@@ -103,7 +101,7 @@ namespace cyclotomic_ring
 --Setting this an instance causes diamonds when `A = ℤ`.
 lemma algebra_base : algebra A (cyclotomic_ring n A K) := (adjoin A _).algebra
 
-local attribute [instance] new_cyclotomic_field.cyclotomic_ring.algebra_base
+local attribute [instance] cyclotomic_ring.algebra_base
 
 lemma eq_adjoin_single (μ : (cyclotomic_field n K))
   (h : μ ∈ primitive_roots n ((cyclotomic_field n K))) :
@@ -132,5 +130,3 @@ instance cyclotomic_ring_int_is_integral_closure :
 end integers
 
 end is_domain
-
-end new_cyclotomic_field
