@@ -62,89 +62,58 @@ setup_tactic_parser
 #check expr.erase_annotations
 #check expr.pi
 /-- auxiliary function for `apply_under_n_pis` -/
-private meta def insert_under_n_pis_aux (na : name) (ty : pexpr) (ine : pexpr) : ℕ → ℕ → pexpr → pexpr
-| n 0 bd := let naa : expr := (expr.const na []) in
-  -- let vars := ((list.range n).reverse.map (@expr.var ff)),
-  --     bd := vars.foldl expr.app arg.mk_explicit in
-  ``(Π (_ : %%ty), %%ine)
+private meta def insert_under_n_pis_aux (na : name) (ty : expr) : ℕ → ℕ → expr → expr
+| n 0 bd := expr.pi na binder_info.default ty (bd.lift_vars 0 1)
 | n (k+1) (expr.pi nm bi tp bd) :=
-  let x := (insert_under_n_pis_aux (n+1) k bd) in expr.pi nm binder_info.default (to_pexpr tp : pexpr) x
+  expr.pi nm binder_info.default tp (insert_under_n_pis_aux (n+1) k bd)
 | n (k+1) t := insert_under_n_pis_aux n 0 t
 /--
 Assumes `pi_expr` is of the form `Π x1 ... xn xn+1..., _`.
 Creates a pexpr of the form `Π x1 ... xn, func (arg x1 ... xn)`.
 All arguments (implicit and explicit) to `arg` should be supplied. -/
-meta def insert_under_n_pis (na : name) (ty : pexpr) (pi_expr : expr) (n : ℕ) : pexpr :=
-insert_under_n_pis_aux na ty (to_pexpr ((pi_expr.nth_binding_body n))).erase_annotations 0 n (to_pexpr pi_expr).erase_annotations
--- #check as_is
--- set_option pp.all true
-run_cmd (do
-  -- trace (insert_under_n_pis `h ``(1 = 1) `(∀ (a b : ℕ), 2 = 2))
-  trace (insert_under_n_pis `h ```(b = c) `(∀ (a b : ℕ), a = b) 2)
-  )
+meta def insert_under_n_pis (na : name) (ty : expr) (pi_expr : expr) (n : ℕ) : expr :=
+insert_under_n_pis_aux na ty 0 n (pi_expr)
 
 /--
 Assumes `pi_expr` is of the form `Π x1 ... xn, _`.
 Creates a pexpr of the form `Π x1 ... xn, func (arg x1 ... xn)`.
 All arguments (implicit and explicit) to `arg` should be supplied. -/
-meta def insert_under_pis (na : name) (ty : pexpr) (pi_expr : expr) : pexpr :=
+meta def insert_under_pis (na : name) (ty : expr) (pi_expr : expr) : expr :=
 insert_under_n_pis na ty pi_expr pi_expr.pi_arity
 
-meta def get_proof_state : tactic proof_state :=
-do gs ← get_goals,
-   gs.mmap $ λ g, do
-     ⟨n,g⟩ ← goal_of_mvar g,
-     g ← gs.mfoldl (λ g v, do
-       g ← kabstract g v reducible ff,
-       pure $ pi `goal binder_info.default `(true) g ) g,
-     pure (n,g)
-meta def may_assume --(print_use : parse $ tt <$ tk "!" <|> pure ff)
-(h : parse ident?) (q₁ : parse (tk ":" *> texpr))
-  -- (n : parse_) -- (vs : parse (tk "with" *> ident*)?)
+meta def may_assume (h : parse ident?) (q₁ : parse (tk ":" *> texpr))
+  (wi : parse (tk "with" *> ident)?) (ot : parse (tk "else")?)
   : tactic unit :=
-let h := h.get_or_else `this in
-focus1 $ do --tgt ← target,
-ls ← local_context,
-trace ls,
--- mk_mvar,
-tgt ← target >>= instantiate_mvars,
--- q₂,l⟩ ←
--- with_local_goals [] (to_expr q₁),
--- trace q₂,
--- trace "tgt",
--- trace tgt,
--- tgt ← pis (ls) tgt,
--- trace "tgt",
--- trace tgt,
-g ← get_goal,
-⟨n,g⟩ ← goal_of_mvar g,
-trace g,
--- q ← to_expr q₁,
-trace q₁,
-trace tgt,
-trace (insert_under_pis h q₁ g),
-ne ←
-(to_expr (insert_under_pis h q₁ g)),
--- trace ne,
--- assert `eh ne,
--- tactic.apply `(`eh),
--- set_goal,
-skip
+let h := h.get_or_else `this,
+wi := wi.get_or_else `h_red in
+focus1 $ do
+  ls ← local_context,
+  q₂ ← to_expr q₁,
+  g ← get_goal,
+  ⟨n,g⟩ ← goal_of_mvar g,
+  assert `wi (insert_under_pis h (q₂.abstract_locals (ls.map local_uniq_name)) g),
+  s ← get_local wi,
+  -- let t : ident := wi,
+  focus1 `[clear_except h_red, intros],
+  swap,
+  if ot.is_some then focus1 `[contrapose! h_red] else skip
+
 end tactic.interactive
 
 lemma ex' (a b c : ℕ) (hab : a^2 + b^2 < c) : a + b < c :=
 begin
+  wlog,
   may_assume h : a ≤ b,
   -- have : ∀ (a b c : ℕ) (hab : a^2 + b^2 < c) (this : ∀ (a' b' c' : ℕ) (hab : a'^2 + b'^2 < c') (h : a' ≤ b'), a' + b' < c'),
   --  a + b < c,
-  sorry; {
+  {
     -- clear_except this,
     -- intros,
     -- state here is
     -- (a b c : ℕ) (hab : a^2 + b^2 < c)
     -- (this : ∀ (a b c : ℕ) (hab : a^2 + b^2 < c) (h : a ≤ b), a + b < c)
     -- ⊢ a + b < c
-    cases le_total a b; specialize this _ _ c _ h,
+    cases le_total a b; specialize h_red _ _ c _ h,
     assumption,
     assumption,
     rw add_comm,
@@ -158,5 +127,57 @@ begin
   -- (a b c : ℕ) (hab : a^2 + b^2 < c) (h : a ≤ b)
   -- ⊢ a + b < c
   -- sorry,
+sorry
+end
+namespace tactic
 
+meta def take_pi_args : nat → expr → list name
+| (n+1) (expr.pi h _ _ e) := h :: take_pi_args n e
+| _ _ := []
+
+namespace interactive
+setup_tactic_parser
+
+meta def doneif (h : parse ident?) (t : parse (tk ":" *> texpr))
+  (revert : parse (
+    (tk "generalizing" *> ((none <$ tk "*") <|> some <$> ident*)) <|> pure (some []))) :
+  tactic unit := do
+  let h := h.get_or_else `this,
+  t ← i_to_expr ``(%%t : Sort*),
+  (num_generalized, goal) ← retrieve (do
+    assert_core h t, swap,
+    num_generalized ← match revert with
+    | none := revert_all
+    | some revert := revert.mmap tactic.get_local >>= revert_lst
+    end,
+    goal ← target,
+    return (num_generalized, goal)),
+  tactic.assert h goal,
+  goal ← target,
+  (take_pi_args num_generalized goal).reverse.mmap' $ λ h,
+    try (tactic.get_local h >>= tactic.clear),
+  intron (num_generalized + 1)
+
+meta def wlog' (h : parse ident?) (t : parse (tk ":" *> texpr)) : tactic unit :=
+doneif h t none >> swap
+
+end interactive
+end tactic
+
+
+lemma fermat (a b c n : ℕ) (hab : a^n + b^n = c^n) : a * b * c = 0 :=
+begin
+  may_assume h : a.coprime b with h_red else,
+  { use [(a / (a.gcd b)),(b / (a.gcd b)),(c / (a.gcd b)), n],
+    simp,
+    sorry, },
+  { sorry },
+end
+
+lemma fermat' (a b c d n : ℕ) (hab : a^n + b^n = c^n) (hd : d^2 = 4) : a * b * c = 0 :=
+begin
+  wlog' h : a.coprime b,
+  {
+    sorry, },
+  { sorry },
 end
