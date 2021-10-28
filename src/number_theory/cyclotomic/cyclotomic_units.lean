@@ -7,53 +7,19 @@ Authors: Alex J. Best
 import data.polynomial.field_division
 import number_theory.number_field
 
-import number_theory.cyclotomic.field.basic
+import number_theory.cyclotomic.basic
 
 noncomputable theory
-open number_field cyclotomic_field polynomial
 
-namespace cyclotomic_field
+open_locale big_operators non_zero_divisors
+open number_field polynomial finset module units fractional_ideal submodule
 
-section
-variables (p : ℕ) [hn : fact (0 < p)] (K : Type*) [field K] [char_zero K] [is_cyclotomic_field p ℚ K]
+universes u v w
 
-def zeta' : K :=
-classical.some (exists_root_of_splits (algebra_map ℚ K) (is_splitting_field.splits _ _)
-  (degree_cyclotomic_pos p ℚ hn.out).ne.symm)
+variables (n : ℕ+) (K : Type u) (L : Type v) (A : Type w)
+variables [comm_ring A] [field K]
 
-@[simp]
-lemma zeta'_spec :
-  eval₂ (algebra_map ℚ K) (zeta' p _) (cyclotomic p ℚ) = 0 :=
-classical.some_spec (exists_root_of_splits _
-  (polynomial.is_splitting_field.splits K (@cyclotomic p ℚ _))
-  (degree_cyclotomic_pos p ℚ hn.out).ne.symm)
-
-include hn
-
-lemma zeta'_spec' :
-  is_root (map (algebra_map ℚ K) (cyclotomic p ℚ)) (zeta' p _) :=
-begin
-  simp only [is_root.def, map_cyclotomic],
-  convert zeta'_spec p K,
-  rw eval₂_eq_eval_map _,
-  simp [-zeta'_spec],
-end
-
-@[simp]
-lemma zeta'_pow_prime : (zeta' p K) ^ p = 1 :=
-begin
-  suffices : is_root (X ^ p - 1) (zeta' p K),
-  { simpa [sub_eq_zero], },
-  rw [← prod_cyclotomic_eq_X_pow_sub_one hn.out, is_root.def, eval_prod, finset.prod_eq_zero_iff],
-  use p,
-  simp only [(fact.out (0 < p)).ne.symm, true_and, nat.mem_divisors, ne.def, not_false_iff,
-    dvd_refl],
-  have := zeta'_spec p K,
-  rw eval₂_eq_eval_map at this,
-  convert this,
-  rw map_cyclotomic,
-end
-
+section movethis
 
 lemma is_root_cyclotomic_iff {n : ℕ} {K : Type*} [field K] (hpos : 0 < n) {μ : K}
   (h : ∃ ζ : K, is_primitive_root ζ n) : is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
@@ -64,89 +30,6 @@ begin
 end
 -- TODO make a constructor assuming prime, but don't need it here
 
-lemma zeta'_primitive_root : is_primitive_root (zeta' p K) p :=
-{ pow_eq_one := zeta'_pow_prime p K,
-  dvd_of_pow_eq_one := sorry }
-
-
--- TODO use the fact that a primitive root is a unit.
--- TODO prove in general that is_primitive root is integral,
--- this exists as is_primitive_root.is_integral so use
-
-lemma zeta'_integral : zeta' p (cyclotomic_field p) ∈ ring_of_integers (cyclotomic_field p) :=
-begin
-  show is_integral ℤ (zeta' p _),
-  use [cyclotomic p ℤ, cyclotomic.monic p ℤ],
-  rw [← zeta'_spec _ _],
-  simp [eval₂_eq_eval_map],
-end
-
-
-def zeta : units (ring_of_integers (cyclotomic_field p)) :=
-units.mk_of_mul_eq_one
-  (⟨zeta' p _, zeta'_integral p⟩)
-  (⟨zeta' p _, zeta'_integral p⟩ ^ (p - 1))
-  begin
-    ext,
-    simp [← pow_succ, nat.sub_add_cancel hn.out],
-  end
-
-lemma zeta_primitive_root : is_primitive_root (zeta p : ring_of_integers (cyclotomic_field p)) p :=
-{ pow_eq_one := sorry,
-  dvd_of_pow_eq_one := sorry }
--- is_primitive_root.of
-end
-
-end cyclotomic_field
-
-open cyclotomic_field
-section pos
-
-variables {n : ℕ} [fact (0 < n)]
-open_locale big_operators
-open finset
-
-lemma zeta_pow_eq_one : (zeta n) ^ n = 1 :=
-begin
-  ext,
-  rw zeta,
-  simp,
-end
-
-def aux {r n : ℕ} (h : r.coprime n) : ℕ := ((r.gcd_a n) % n).nat_abs
-lemma aux_spec {r n : ℕ} (h : r.coprime n) : r * aux h ≡ 1 [MOD n] :=
-begin
-  sorry,
-end
-
-def cyclotomic_unit {r s : ℕ} (hr : r.coprime n) (hs : s.gcd n = 1) :
-  units (ring_of_integers (cyclotomic_field n)) :=
-units.mk_of_mul_eq_one
-  (geom_sum (zeta n ^ s) (r * aux hs))
-  -- (∑ t in range r, zeta hn ^ (s * t))
-  --(( zeta n ^r - 1) * ((zeta n)^s - 1)⁻¹)
-  (geom_sum (zeta n ^ r) (s * aux hr))
-  -- (∑ t in range s,  zeta hn ^ (t * r))
-  begin
-    sorry;
-    { simp,
-    rw sum_mul,
-    simp [mul_sum],
-    norm_cast,
-    simp only [← pow_add],
-    simp,
-    sorry, },
-  end
-
-open_locale non_zero_divisors
-local notation `RR` := ring_of_integers (cyclotomic_field n)
-local notation `K` := cyclotomic_field n
-lemma cyclotomic_unit_mul_denom {r s : ℕ} (hr : r.coprime n) (hs : s.coprime n) :
-  (cyclotomic_unit hr hs : RR) * (zeta n ^ s - 1) = zeta n ^ r - 1 :=
-sorry
-
-open units fractional_ideal
-
 -- TODO redefine span_singleton as a monoid hom so we get this for free?
 @[simp]
 lemma span_singleton_pow {R : Type*} {P : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
@@ -155,8 +38,6 @@ lemma span_singleton_pow {R : Type*} {P : Type*} [comm_ring R] {S : submonoid R}
 | 0 := by simp
 | (n + 1) := by simp [pow_succ, ← span_singleton_pow n]
 
-
-open submodule
 -- pretty sure there is an easier proof of this
 lemma submodule.span_singleton_eq_span_singleton {R : Type*} {M : Type*} [ring R] [add_comm_group M]
   [module R M] [no_zero_smul_divisors R M] (x y : M) :
@@ -203,38 +84,154 @@ begin
       simp only [one_smul, inv_mul], }, },
 end
 
-lemma exists_unit_mul_primitive_root_one_sub_zeta  (z : RR)
-  (hz : is_primitive_root z n) :
-  ∃ u : units RR, ↑u * (1 - z : RR) = 1 - zeta n :=
+end movethis
+
+namespace is_cyclotomic_extension
+
+variables [field K] [field L] [algebra K L] [is_cyclotomic_extension {n} K L]
+
+include K n
+def zeta' : L :=
+classical.some (exists_root_of_splits (algebra_map K L) (is_splitting_field.splits _ _)
+  (degree_cyclotomic_pos n K n.pos).ne.symm)
+
+@[simp]
+lemma zeta'_spec :
+  eval₂ (algebra_map K L) (zeta' n K L) (cyclotomic n K) = 0 :=
+classical.some_spec (exists_root_of_splits _
+  (polynomial.is_splitting_field.splits L (@cyclotomic n K _))
+  (degree_cyclotomic_pos n K n.pos).ne.symm)
+
+lemma zeta'_spec' :
+  is_root (map (algebra_map K L) (cyclotomic n K)) (zeta' n K L) :=
 begin
-  -- have := zeta_primitive_root n,
-  rw is_primitive_root.is_primitive_root_iff (zeta_primitive_root n) (fact.out _ : 0 < n) at hz,
-  obtain ⟨i, hip, hin, hi⟩ := hz,
-  rw ← hi,
-  refine ⟨(cyclotomic_unit (nat.gcd_one_left _) hin), _⟩,
-  rw ← neg_sub,
-  rw mul_neg_eq_neg_mul_symm,
-  simp [cyclotomic_unit_mul_denom (nat.gcd_one_left _) hin],
+  simp only [is_root.def, map_cyclotomic],
+  convert zeta'_spec n K L,
+  rw eval₂_eq_eval_map _,
+  simp [-zeta'_spec],
 end
 
+@[simp]
+lemma zeta'_pow_prime : (zeta' n K L) ^ (n : ℕ) = 1 :=
+begin
+  suffices : is_root (X ^ (n : ℕ) - 1) (zeta' n K L),
+  { simpa [sub_eq_zero], },
+  rw [← prod_cyclotomic_eq_X_pow_sub_one n.pos, is_root.def, eval_prod, finset.prod_eq_zero_iff],
+  use n,
+  simp only [n.pos.ne.symm, true_and, nat.mem_divisors, ne.def, not_false_iff, dvd_refl],
+  have := zeta'_spec n K L,
+  rw eval₂_eq_eval_map at this,
+  convert this,
+  rw map_cyclotomic,
+end
 
-open polynomial
+lemma zeta'_primitive_root : is_primitive_root (zeta' n K L) n :=
+{ pow_eq_one := zeta'_pow_prime n K L,
+  dvd_of_pow_eq_one := sorry }
 
+-- TODO use the fact that a primitive root is a unit.
+-- TODO prove in general that is_primitive root is integral,
+-- this exists as is_primitive_root.is_integral so use
 
+end is_cyclotomic_extension
 
+namespace cyclotomic_ring
 
-open nat
+variables [is_domain A] [algebra A K] [is_fraction_ring A K]
 
-end pos
-open units fractional_ideal submodule polynomial
-variables (n : ℕ)
-local notation `RR` := ring_of_integers (cyclotomic_field n)
-local notation `K` := cyclotomic_field n
-open_locale non_zero_divisors
+open is_cyclotomic_extension
 
-lemma prime_ideal_eq_pow_cyclotomic [hn : fact (n.prime)] :
-  (span_singleton _ (n : K) : fractional_ideal RR⁰ K) =
-  (span_singleton _ (1 - zeta n)^(n - 1) : fractional_ideal RR⁰ K) :=
+lemma zeta'_integral :
+  zeta' n K (cyclotomic_field n K) ∈ ring_of_integers (cyclotomic_field n K) :=
+begin
+  show is_integral ℤ (zeta' n _ _),
+  use [cyclotomic n ℤ, cyclotomic.monic n ℤ],
+  rw [← zeta'_spec n K (cyclotomic_field n K)],
+  simp [eval₂_eq_eval_map],
+end
+
+--zeta' should be in `(cyclotomic_ring n A K)` by definition.
+lemma zeta'_mem_base : ∃ (x : (cyclotomic_ring n A K)), algebra_map
+  (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta' n K (cyclotomic_field n K) := sorry
+
+--zeta should be in `units (cyclotomic_ring n A K)` by definition.
+def zeta : units (ring_of_integers (cyclotomic_field n K)) :=
+units.mk_of_mul_eq_one
+  (⟨zeta' n _ _, zeta'_integral n _⟩)
+  (⟨zeta' n K _, zeta'_integral n _⟩ ^ ((n : ℕ) - 1))
+  begin
+    ext,
+    simp [← pow_succ, nat.sub_add_cancel n.pos],
+  end
+
+lemma zeta_primitive_root :
+  is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
+{ pow_eq_one := sorry,
+  dvd_of_pow_eq_one := sorry }
+-- is_primitive_root.of
+
+lemma zeta_pow_eq_one : (zeta n K) ^ (n : ℕ) = 1 :=
+begin
+  ext,
+  rw zeta,
+  simp,
+end
+
+def aux {r n : ℕ} (h : r.coprime n) : ℕ := ((r.gcd_a n) % n).nat_abs
+lemma aux_spec {r n : ℕ} (h : r.coprime n) : r * aux h ≡ 1 [MOD n] := sorry
+
+section cyclotomic_unit
+
+variable {n}
+
+local notation `RR` := ring_of_integers (cyclotomic_field n K)
+local notation `L` := cyclotomic_field n K
+
+--cyclotomic_unit should be in `units (cyclotomic_ring n A K)` by definition.
+def cyclotomic_unit {r s : ℕ} (hr : r.coprime n) (hs : s.gcd n = 1) :
+  units (ring_of_integers (cyclotomic_field n K)) :=
+units.mk_of_mul_eq_one
+  (geom_sum ((zeta n K) ^ s) (r * aux hs))
+  -- (∑ t in range r, zeta hn ^ (s * t))
+  --(( zeta n ^r - 1) * ((zeta n)^s - 1)⁻¹)
+  (geom_sum ((zeta n  K) ^ r) (s * aux hr))
+  -- (∑ t in range s,  zeta hn ^ (t * r))
+  begin
+    sorry;
+    { simp,
+    rw sum_mul,
+    simp [mul_sum],
+    norm_cast,
+    simp only [← pow_add],
+    simp,
+    sorry, },
+  end
+
+lemma cyclotomic_unit_mul_denom {r s : ℕ} (hr : r.coprime n) (hs : s.coprime n) :
+  (cyclotomic_unit K hr hs : RR) * ((zeta n K) ^ s - 1) = (zeta n K) ^ r - 1 := sorry
+
+lemma exists_unit_mul_primitive_root_one_sub_zeta  (z : RR)
+  (hz : is_primitive_root z n) :
+  ∃ u : units RR, ↑u * (1 - z : RR) = 1 - (zeta n K) :=
+begin
+  -- have := zeta_primitive_root n,
+  rw is_primitive_root.is_primitive_root_iff (zeta_primitive_root n K) n.pos at hz,
+  obtain ⟨i, hip, hin, hi⟩ := hz,
+  rw ← hi,
+  refine ⟨(cyclotomic_unit K (nat.gcd_one_left _) hin), _⟩,
+  rw ← neg_sub,
+  rw mul_neg_eq_neg_mul_symm,
+  simp [cyclotomic_unit_mul_denom K (nat.gcd_one_left _) hin],
+end
+
+variable (n)
+
+instance : is_localization ((ring_of_integers (cyclotomic_field n K)))⁰ (cyclotomic_field n K) :=
+sorry
+
+lemma prime_ideal_eq_pow_cyclotomic [hn : fact ((n : ℕ).prime)] :
+  (span_singleton _ n : fractional_ideal RR⁰ L) =
+  (span_singleton _ (1 - (zeta n K)) ^ ((n : ℕ) - 1) : fractional_ideal RR⁰ L) :=
   --(mk0 (p : cyclotomic_field p) (by norm_num [hn.ne_zero]))
 begin
   rw ← span_singleton_pow,
@@ -252,3 +249,7 @@ begin
   -- apply span_singleton_eq_span_singleton_,
   sorry,
 end
+
+end cyclotomic_unit
+
+end cyclotomic_ring
