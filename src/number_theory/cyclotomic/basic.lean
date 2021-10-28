@@ -108,6 +108,7 @@ variables [is_domain A] [algebra A K] [is_fraction_ring A K]
 section cyclotomic_ring
 
 --Setting this an instance causes diamonds when `A = ℤ`.
+@[nolint unused_arguments]
 def cyclotomic_field.algebra_base : algebra A (cyclotomic_field n K) :=
 ((algebra_map K (cyclotomic_field n K)).comp (algebra_map A K)).to_algebra
 
