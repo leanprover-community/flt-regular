@@ -88,7 +88,7 @@ variables [is_domain A] [algebra A K] [is_fraction_ring A K]
 section cyclotomic_ring
 
 --Setting this an instance causes diamonds when `A = ℤ`.
-lemma cyclotomic_field.algebra_base : algebra A (cyclotomic_field n K) :=
+def cyclotomic_field.algebra_base : algebra A (cyclotomic_field n K) :=
 ((algebra_map K (cyclotomic_field n K)).comp (algebra_map A K)).to_algebra
 
 local attribute [instance] cyclotomic_field.algebra_base
@@ -99,7 +99,7 @@ def cyclotomic_ring : Type w := adjoin A { b : (cyclotomic_field n K) | b ^ (n :
 namespace cyclotomic_ring
 
 --Setting this an instance causes diamonds when `A = ℤ`.
-lemma algebra_base : algebra A (cyclotomic_ring n A K) := (adjoin A _).algebra
+def algebra_base : algebra A (cyclotomic_ring n A K) := (adjoin A _).algebra
 
 local attribute [instance] cyclotomic_ring.algebra_base
 
