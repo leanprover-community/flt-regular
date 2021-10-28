@@ -44,8 +44,10 @@ open_locale classical
 -- set_option trace.class_instances true
 -- set_option pp.all true
 
+open new_cyclotomic_field
 def is_regular_number : Prop :=
-n.coprime (fintype.card (class_group (cyclotomic_ring n) (cyclotomic_field n)))
+n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
+                                     (cyclotomic_field ⟨n, fact.out _⟩ ℚ)))
 
 -- some nice results about class number of isom rings needed I guess
 -- example : is_regular_prime 2 := -- LOOL good luck
