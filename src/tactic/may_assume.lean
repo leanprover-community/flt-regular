@@ -141,7 +141,7 @@ doneif h t none >> swap
 end interactive
 end tactic
 
-lemma div_pow {a b : ℕ} (n : ℕ) (h : b ∣ a) : (a / b) ^ n = a ^ n / b ^ n :=
+lemma div_pow''' {a b : ℕ} (n : ℕ) (h : b ∣ a) : (a / b) ^ n = a ^ n / b ^ n :=
 begin
   by_cases hb : b = 0,
   { simp only [hb, zero_dvd_iff, eq_self_iff_true, nat.div_zero] at *,
@@ -163,9 +163,9 @@ begin
     simp,
     push_neg,
     split,
-    rw div_pow,
-    rw div_pow,
-    rw div_pow,
+    rw div_pow''',
+    rw div_pow''',
+    rw div_pow''',
     sorry,
     sorry,
     exact nat.gcd_dvd_right a b,
