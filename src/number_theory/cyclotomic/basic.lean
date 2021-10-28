@@ -15,7 +15,27 @@ section basic
 
 class is_cyclotomic_extension : Prop :=
 (ex_root (a : ℕ+) (ha : a ∈ S) : ∃ r : B, aeval r (cyclotomic a A) = 0)
-(adjoint_roots : ∀ x, x ∈ adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 })
+(adjoint_roots : ∀ (x : B), x ∈ adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 })
+
+namespace is_cyclotomic_extension
+
+lemma iff : is_cyclotomic_extension S A B ↔
+ (∀ (a : ℕ+), a ∈ S → ∃ r : B, aeval r (cyclotomic a A) = 0) ∧
+ (∀ x, x ∈ adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) :=
+⟨λ h, ⟨h.ex_root, h.adjoint_roots⟩, λ h, ⟨h.1, h.2⟩⟩
+
+lemma iff_singleton : is_cyclotomic_extension {n} A B ↔
+ (∃ r : B, aeval r (cyclotomic n A) = 0) ∧
+ (∀ x, x ∈ adjoin A { b : B | b ^ (n : ℕ) = 1 }) :=
+begin
+  refine ⟨λ h, ⟨((iff _ _ _).1 h).1 n (set.mem_singleton _), by simpa using ((iff _ _ _).1 h).2⟩,
+  λ h, ⟨λ a ha, _, by simpa using h.2⟩⟩,
+  obtain ⟨⟨b, hb⟩, H⟩ := h,
+  exact ⟨b, (set.mem_singleton_iff.1 ha).symm ▸ hb⟩
+end
+--⟨λ h, ⟨h.ex_root, h.adjoint_roots⟩, λ h, ⟨h.1, h.2⟩⟩
+
+end is_cyclotomic_extension
 
 --TODO: add equivalent definitions
 
