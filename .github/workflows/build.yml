@@ -1,0 +1,164 @@
+# This file is based on mathlib's `build.yml.in` but we don't use mathlib's `mk_build_yml.sh` so
+# you can edit this file directly.
+# In fact we took this from the LTE version, so credit is due to @bentoner
+
+on:
+  push:
+    branches-ignore:
+      # ignore tmp branches used by bors
+      - 'staging.tmp*'
+      - 'trying.tmp*'
+      - 'staging*.tmp'
+      - 'nolints'
+      # do not build lean-x.y.z branch used by leanpkg
+      - 'lean-3.*'
+      # ignore staging branch used by bors, this is handled by bors.yml
+      - 'staging'
+
+name: continuous integration
+
+jobs:
+
+  # When you push to a branch, we cancel previous runs of jobs in this file on that branch.
+  cancel:
+    name: 'Cancel previous runs on branch'
+    # if: github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    # timeout-minutes: 3
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.0
+        with:
+          all_but_latest: true
+          access_token: ${{ github.token }}
+
+  build:
+    name: Build flt-regular
+    runs-on: ubuntu-latest
+    env:
+      # number of commits to check for olean cache
+      GIT_HISTORY_DEPTH: 20
+    outputs:
+      artifact_name: ${{ steps.setup_precompiled.outputs.artifact_name }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: ${{ env.GIT_HISTORY_DEPTH }}
+
+      - name: install elan
+        run: |
+          set -o pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
+          ~/.elan/bin/lean --version
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+          echo "short_lean_version=$(~/.elan/bin/lean --run scripts/lean_version.lean)" >> $GITHUB_ENV
+
+      - name: install Python
+        if: ${{ ! 0 }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: install mathlibtools
+        run: python -m pip install --upgrade pip mathlibtools
+
+      - name: leanpkg configure
+        run: leanpkg configure
+
+      - name: get mathlib cache
+        run: leanproject get-mathlib-cache || true
+
+      - name: try to find olean cache
+        continue-on-error: true
+        run: ./scripts/fetch_olean_cache.sh
+
+      - name: leanpkg build
+        id: build
+        run: |
+          echo "::set-output name=started::true"
+          lean --json --make src | python scripts/detect_errors.py
+          lean --json --make src | python scripts/detect_errors.py
+
+      - name: push release to azure
+        if: always() && (github.repository == 'leanprover-community/flt-regular') && steps.build.outputs.started == 'true' && github.ref == 'refs/heads/master'
+        continue-on-error: true
+        run: |
+          archive_name="$(git rev-parse HEAD).tar.xz"
+          find src/ -name "*.olean" -o -name ".noisy_files" | tar cJf "$archive_name" -T -
+          azcopy copy "$archive_name" "https://oleanstorage.blob.core.windows.net/mathlib/flt-regular/$archive_name${{ secrets.AZURE_SAS_TOKEN }}" --block-size-mb 99 --overwrite false
+
+      - name: setup precompiled zip file
+        if: always() && steps.build.outputs.started == 'true'
+        id: setup_precompiled
+        run: |
+          touch workspace.tar
+          tar -cf workspace.tar --exclude=*.tar* .
+          git_hash="$(git log -1 --pretty=format:%h)"
+          echo "::set-output name=artifact_name::precompiled-flt-regular-$short_lean_version-$git_hash"
+
+      - name: upload precompiled flt-regular zip file
+        if: always() && steps.build.outputs.started == 'true'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.setup_precompiled.outputs.artifact_name }}
+          path: workspace.tar
+
+  lint:
+    name: Lint flt-regular
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: retrieve build
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+
+      - name: untar build
+        run: tar -xf workspace.tar
+
+      - name: install elan
+        run: |
+          set -o pipefail
+          curl https://raw.githubusercontent.com/Kha/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
+          ~/.elan/bin/lean --version
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - name: lint
+        # Uncomment the following line to make the build succeed even if there are linting errors
+        # continue-on-error: true
+        run: |
+          ./scripts/mk_all.sh
+          lean --run scripts/lint_project.lean
+
+  stats:
+    name: Stats for flt-regular
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install ripgrep
+        run: sudo apt install -y ripgrep
+
+      - name: count lines in src
+        run: |
+          shopt -s globstar
+          wc -l src/**/*.lean
+
+      - name: count sorries
+        run: |
+          rg --count-matches sorry src | awk -F ':' 'BEGIN {sum = 0} {sum += $2} {print $2 " " $1} END {print sum " total"}'
+
+  update-branch:
+    # This should be configured so that failure (which is likely whenever there is a force-push to
+    # master) doesn't cause the rest of the build to fail, e.g., by putting it in its own job.
+    name: Update lean-3.3x branch
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: update lean-3.3x branch
+      if: github.ref == 'refs/heads/master'
+      uses: leanprover-contrib/update-versions-action@master
