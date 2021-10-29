@@ -36,7 +36,7 @@ you are all set to start exploring the code.
 There are two pieces of functionality that help a lot when browsing through Lean code:
 
 * "Go to definition": If you right-click on a name of a definition or lemma
-  (such as `Mbar`, or `Tinv_continuous`), then you can choose "Go to definition" from the menu,
+  (such as `is_regular_number`, or `flt_regular_case_one`), then you can choose "Go to definition" from the menu,
   and you will be taken to the relevant location in the source files.
   This also works by `Ctrl`-clicking on the name.
 * "Goal view": in the event that you would like to read a *proof*,
