@@ -75,20 +75,6 @@ end is_cyclotomic_extension
 
 end singleton
 
-section rational
-
-variables [char_zero L]
-
-section singleton
-
-variables [is_cyclotomic_extension {n} ℚ L]
-
-lemma degree : finrank ℚ L = (n : ℕ).totient := sorry
-
-end singleton
-
-end rational
-
 section cyclotomic_field
 
 /-- Given `n : ℕ+` and a field `K`, we define `cyclotomic n K` as the splitting field of
@@ -151,12 +137,5 @@ instance : is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) := so
 end cyclotomic_ring
 
 end cyclotomic_ring
-
-section integers
-
-instance cyclotomic_ring_int_is_integral_closure :
-  is_integral_closure (cyclotomic_ring n ℤ ℚ) ℤ (cyclotomic_field n ℚ) := sorry
-
-end integers
 
 end is_domain
