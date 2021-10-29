@@ -52,7 +52,7 @@ There are two pieces of functionality that help a lot when browsing through Lean
   regular primes.
 * The ingredients that go into the theorem statement are defined in several other files.
   The most important pieces are:
-  - `number_theory/regular_primes.lean` we give the definition of a regular number is.
+  - `number_theory/regular_primes.lean` we give the definition of what a regular number is.
   - `number_theory/cyclotomic/` contains the definition of a cyclotomic extension
     and the result we need. Results specific to `ℚ` are in `number_theory/cyclotomic/rat.lean`.
   - `number_theory/discriminant` contains the definition and the result we need about
