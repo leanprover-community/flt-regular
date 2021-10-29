@@ -50,7 +50,8 @@ There are two pieces of functionality that help a lot when browsing through Lean
 ### Organization of the project
 
 * All the Lean code (the juicy stuff) is contained in the directory `src/`.
-* The file `flt_regular.lean` contains the statement of the theorem that we want to check.
+* The file `flt_regular.lean` contains the statement of Fermat's Last Theorem for
+  regular primes.
 * The ingredients that go into the theorem statement are defined in several other files.
   The most important pieces are:
   - `number_theory/regular_primes.lean` we give the definition of a regular number is.
