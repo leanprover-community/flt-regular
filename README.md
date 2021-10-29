@@ -12,16 +12,9 @@ Here is a draft [blueprint](https://leanprover-community.github.io/flt-regular/)
 
 ### Getting the project
 
-At the moment, the recommended way of browsing this repository,
-is by using a Lean development environment.
+The recommended way of browsing this repository, is by using a Lean development environment.
 Crucially, this will allow you to introspect Lean's "Goal state" during proofs,
-and easily jump to definitions or otherwise follow paths through the code.
-
-We are looking into ways to setup an online interactive website
-that will provide the same experience without the hassle of installing a complete
-Lean development environment.
-
-For the time being: please use the
+and easily jump to definitions or otherwise follow paths through the code. Please use the
 [installation instructions](https://leanprover-community.github.io/get_started.html#regular-install)
 to install Lean and a supporting toolchain.
 After that, download and open a copy of the repository
@@ -30,6 +23,9 @@ by executing the following command in a terminal:
 leanproject get flt-regular
 code flt-regular
 ```
+
+You can also use gitpod and do everything directly in your browser, without installing anything.
+Just click on [![Gitpod](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](https://gitpod.io/#https://github.com/leanprover-community/flt-regular), but beware that everything will be slower than on your computer.
 
 ### Reading the project
 
