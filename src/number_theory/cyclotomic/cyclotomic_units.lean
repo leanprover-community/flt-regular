@@ -91,6 +91,8 @@ namespace is_cyclotomic_extension
 variables [field L] [algebra K L] [is_cyclotomic_extension {n} K L]
 
 include K n
+/-- If `L` is a `n`-th cyclotomic extension of `K`, then `zeta' n K L` is any root of
+`cyclotomic n K` in L. -/
 def zeta' : L :=
 classical.some (exists_root_of_splits (algebra_map K L) (is_splitting_field.splits _ _)
   (degree_cyclotomic_pos n K n.pos).ne.symm)
@@ -155,6 +157,8 @@ lemma zeta'_mem_base : ∃ (x : (cyclotomic_ring n A K)), algebra_map
   (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta' n K (cyclotomic_field n K) := sorry
 
 --zeta should be in `units (cyclotomic_ring n A K)` by definition.
+/-- `zeta n K L` is a root of `cyclotomic n K` in
+`units (ring_of_integers (cyclotomic_field n K))`. -/
 def zeta : units (ring_of_integers (cyclotomic_field n K)) :=
 units.mk_of_mul_eq_one
   (⟨zeta' n _ _, zeta'_integral n _⟩)
@@ -177,7 +181,10 @@ begin
   simp,
 end
 
+/-- `aux` is a hacky way to define the inverse mod `n`, probably its best to replace it with an
+actual inverse in `zmod n`. -/
 def aux (r n : ℕ) : ℕ := ((r.gcd_a n) % n).nat_abs
+
 lemma aux_spec {r n : ℕ} (h : r.coprime n) : r * aux r n ≡ 1 [MOD n] := sorry
 
 section cyclotomic_unit
@@ -188,6 +195,9 @@ local notation `RR` := ring_of_integers (cyclotomic_field n K)
 local notation `L` := cyclotomic_field n K
 
 --cyclotomic_unit should be in `units (cyclotomic_ring n A K)` by definition.
+--Also think if generalize, maybe a group?
+--Once final def is done, add docstring and remove noling.
+@[nolint doc_blame unused_arguments]
 def cyclotomic_unit {r s : ℕ} (hr : r.coprime n) (hs : s.gcd n = 1) :
   units (ring_of_integers (cyclotomic_field n K)) :=
 units.mk_of_mul_eq_one
@@ -207,7 +217,9 @@ units.mk_of_mul_eq_one
     sorry, },
   end
 
-lemma cyclotomic_unit_mul_denom {r s : ℕ} (hr : r.coprime n) (hs : s.coprime n) :
+namespace cyclotomic_unit
+
+lemma mul_denom {r s : ℕ} (hr : r.coprime n) (hs : s.coprime n) :
   (cyclotomic_unit K hr hs : RR) * ((zeta n K) ^ s - 1) = (zeta n K) ^ r - 1 := sorry
 
 lemma exists_unit_mul_primitive_root_one_sub_zeta  (z : RR)
@@ -221,7 +233,7 @@ begin
   refine ⟨(cyclotomic_unit K (nat.gcd_one_left _) hin), _⟩,
   rw ← neg_sub,
   rw mul_neg_eq_neg_mul_symm,
-  simp [cyclotomic_unit_mul_denom K (nat.gcd_one_left _) hin],
+  simp [mul_denom K (nat.gcd_one_left _) hin],
 end
 
 variable (n)
@@ -249,6 +261,8 @@ begin
   -- apply span_singleton_eq_span_singleton_,
   sorry,
 end
+
+end cyclotomic_unit
 
 end cyclotomic_unit
 
