@@ -1,3 +1,5 @@
 import .all
 run_cmd tactic.skip
 
+--tactic/may_assume
+apply_nolint tactic.may_assume doc_blame
