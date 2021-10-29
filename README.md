@@ -2,17 +2,17 @@
 The goal of this project is to prove Fermat's Last Theorem for [regular primes](https://en.wikipedia.org/wiki/Regular_prime)
 in [Lean](https://leanprover-community.github.io/).
 
-The following readme has been shameless copied from the [Liquid Tensor Experiment](https://github.com/leanprover-community/lean-liquid/).
+The following readme has been shamelessly copied from the [Liquid Tensor Experiment](https://github.com/leanprover-community/lean-liquid/).
 
 ## How to browse this repository
 
 ### Blueprint
 
-Here is a draft [blueprint](https://leanprover-community.github.io/flt-regular/) and  [dependency graph](https://leanprover-community.github.io/flt-regular/dep_graph.html).
+Here are a draft [blueprint](https://leanprover-community.github.io/flt-regular/) and  [dependency graph](https://leanprover-community.github.io/flt-regular/dep_graph.html).
 
 ### Getting the project
 
-The recommended way of browsing this repository, is by using a Lean development environment.
+The recommended way of browsing this repository is by using a Lean development environment.
 Crucially, this will allow you to introspect Lean's "Goal state" during proofs,
 and easily jump to definitions or otherwise follow paths through the code. Please use the
 [installation instructions](https://leanprover-community.github.io/get_started.html#regular-install)
