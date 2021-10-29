@@ -17,7 +17,7 @@ open number_field polynomial finset module units fractional_ideal submodule
 universes u v w z
 
 variables (n : ℕ+) (K : Type u) (L : Type v) (A : Type w) (B : Type z)
-variables [comm_ring A] [comm_ring B] [algebra A B] [is_domain B]
+variables [comm_ring A] [comm_ring B] [algebra A B]
 variables [field K] [field L] [algebra K L]
 
 section movethis
@@ -101,6 +101,9 @@ begin
   rw [aeval_def, eval₂_eq_eval_map],
   simp [-zeta'_spec]
 end
+
+--This shouldn't be needed.
+variable [is_domain B]
 
 @[simp]
 lemma zeta'_pow_prime : (zeta' n A B) ^ (n : ℕ) = 1 :=
