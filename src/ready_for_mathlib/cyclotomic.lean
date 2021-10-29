@@ -10,5 +10,5 @@ begin
     roots_prod_X_sub_C, ← finset.mem_def, ← mem_primitive_roots hpos],
 end
 
-lemma is_root_cyclotomic_iff {n : ℕ} {R : Type*} [comm_ring R] (hpos : 0 < n) {μ : R}
+lemma is_root_cyclotomic_iff {n : ℕ} {R : Type*} [comm_ring R] {μ : R}
   : is_primitive_root μ n ↔ is_root (cyclotomic n R) μ := sorry
