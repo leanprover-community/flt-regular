@@ -1,5 +1,6 @@
 import number_theory.class_number.finite
 import field_theory.splitting_field
+
 import number_theory.cyclotomic.class_group
 import ring_theory.polynomial.cyclotomic
 
@@ -8,25 +9,8 @@ import ring_theory.polynomial.cyclotomic
 
 ## Main definitions
 
-* `foo_bar`
-
-## Main statements
-
-* foo_bar_unique
-
-## Notation
-
-
-
-## Implementation details
-
-
-
-## References
-
-* [F. Bar, *Quuxes*][]
-
-## Tags
+* `is_regular_number`: a natural number `n` is regular if `n` is comprime with the cardinal of the
+  class group.
 
 -/
 
@@ -44,6 +28,7 @@ open_locale classical
 -- set_option trace.class_instances true
 -- set_option pp.all true
 
+/-- A natural number `n` is regular if `n` is comprime with the cardinal of the class group -/
 def is_regular_number : Prop :=
 n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
                                      (cyclotomic_field ⟨n, fact.out _⟩ ℚ)))
