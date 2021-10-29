@@ -36,7 +36,7 @@ open nat polynomial
 
 open number_field
 
-variables (n : ℕ+)
+variables (n : ℕ) [fact (0 < n)]
 -- local attribute [priority 5, instance] rat.normed_field -- hack to avoid diamond?
 
 open_locale classical
@@ -44,10 +44,10 @@ open_locale classical
 -- set_option trace.class_instances true
 -- set_option pp.all true
 
-/-- A natural number `n` is regular if `n` is comprime with the cardinal of
-`class_group (cyclotomic_ring n ℤ ℚ) (cyclotomic_field n ℚ)`. -/
+/-- A natural number `n` is regular if `n` is comprime with the cardinal of the class group -/
 def is_regular_number : Prop :=
-(n : ℕ).coprime (fintype.card (class_group (cyclotomic_ring n ℤ ℚ) (cyclotomic_field n ℚ)))
+n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
+                                     (cyclotomic_field ⟨n, fact.out _⟩ ℚ)))
 
 -- some nice results about class number of isom rings needed I guess
 -- example : is_regular_prime 2 := -- LOOL good luck
