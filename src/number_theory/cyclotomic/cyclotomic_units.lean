@@ -17,7 +17,7 @@ open number_field polynomial finset module units fractional_ideal submodule
 universes u v w z
 
 variables (n : ℕ+) (K : Type u) (L : Type v) (A : Type w) (B : Type z)
-variables [comm_ring A] [comm_ring B] [algebra A B]
+variables [comm_ring A] [comm_ring B] [algebra A B] [is_domain B]
 variables [field K] [field L] [algebra K L]
 
 section movethis
@@ -91,36 +91,33 @@ classical.some (((iff _ _ _).1 (show is_cyclotomic_extension {n} A B, from infer
 
 @[simp]
 lemma zeta'_spec :
-  eval₂ (algebra_map K L) (zeta' n K L) (cyclotomic n K) = 0 :=
-classical.some_spec (exists_root_of_splits _
-  (polynomial.is_splitting_field.splits L (@cyclotomic n K _))
-  (degree_cyclotomic_pos n K n.pos).ne.symm)
+  aeval (zeta' n A B) (cyclotomic n A) = 0 := sorry
 
 lemma zeta'_spec' :
-  is_root (map (algebra_map K L) (cyclotomic n K)) (zeta' n K L) :=
+  is_root (map (algebra_map A B) (cyclotomic n A)) (zeta' n A B) :=
 begin
   simp only [is_root.def, map_cyclotomic],
-  convert zeta'_spec n K L,
-  rw eval₂_eq_eval_map _,
-  simp [-zeta'_spec],
+  convert zeta'_spec n A B,
+  rw [aeval_def, eval₂_eq_eval_map],
+  simp [-zeta'_spec]
 end
 
 @[simp]
-lemma zeta'_pow_prime : (zeta' n K L) ^ (n : ℕ) = 1 :=
+lemma zeta'_pow_prime : (zeta' n A B) ^ (n : ℕ) = 1 :=
 begin
-  suffices : is_root (X ^ (n : ℕ) - 1) (zeta' n K L),
+  suffices : is_root (X ^ (n : ℕ) - 1) (zeta' n A B),
   { simpa [sub_eq_zero], },
   rw [← prod_cyclotomic_eq_X_pow_sub_one n.pos, is_root.def, eval_prod, finset.prod_eq_zero_iff],
   use n,
   simp only [n.pos.ne.symm, true_and, nat.mem_divisors, ne.def, not_false_iff, dvd_refl],
-  have := zeta'_spec n K L,
-  rw eval₂_eq_eval_map at this,
+  have := zeta'_spec n A B,
+  rw [aeval_def, eval₂_eq_eval_map] at this,
   convert this,
   rw map_cyclotomic,
 end
 
-lemma zeta'_primitive_root : is_primitive_root (zeta' n K L) n :=
-{ pow_eq_one := zeta'_pow_prime n K L,
+lemma zeta'_primitive_root : is_primitive_root (zeta' n A B) n :=
+{ pow_eq_one := zeta'_pow_prime n A B,
   dvd_of_pow_eq_one := sorry }
 
 -- TODO use the fact that a primitive root is a unit.
@@ -141,7 +138,7 @@ begin
   show is_integral ℤ (zeta' n _ _),
   use [cyclotomic n ℤ, cyclotomic.monic n ℤ],
   rw [← zeta'_spec n K (cyclotomic_field n K)],
-  simp [eval₂_eq_eval_map],
+  simp [aeval_def, eval₂_eq_eval_map],
 end
 
 --zeta' should be in `(cyclotomic_ring n A K)` by definition.
