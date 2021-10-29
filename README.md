@@ -23,6 +23,8 @@ by executing the following command in a terminal:
 leanproject get flt-regular
 code flt-regular
 ```
+For detailed instructions on how to work with Lean projects,
+see [this](https://leanprover-community.github.io/install/project.html).
 
 You can also use gitpod and do everything directly in your browser, without installing anything.
 Just click on [![Gitpod](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](https://gitpod.io/#https://github.com/leanprover-community/flt-regular), but beware that everything will be slower than on your computer.
