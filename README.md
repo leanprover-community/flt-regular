@@ -28,6 +28,7 @@ After that, download and open a copy of the repository
 by executing the following command in a terminal:
 ```
 leanproject get flt-regular
+code flt-regular
 ```
 
 ### Reading the project
