@@ -117,7 +117,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \begin{proof}
 	First note $[K:\QQ]=p-1$.
 	
-	Since $\zeta_p=1-\lam_p$ we at once get $\ZZ[\zeta_p]=\ZZ[\lam_p]$ (just do double inclusion). Next, let $\a_i=\sigma_i(\zeta_p)$ denote the conjugates of $\zeta_p$, which is the same as the image of $\zeta_p$ under one of the embeddings $\sigma_i: \QQ(\zeta_p) \to \CC$. Now  by Proposition $\ref{lemma:_disc_of_prim_elt_basis}$ we have \begin{align*}\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\prod_{i < j}  (\a_i-\a_j)^2 &=\prod_{i < j}  ((1-\a_i)-(1-\a_j))^2\\&=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})\end{align*}
+	Since $\zeta_p=1-\lam_p$ we at once get $\ZZ[\zeta_p]=\ZZ[\lam_p]$ (just do double inclusion). Next, let $\a_i=\sigma_i(\zeta_p)$ denote the conjugates of $\zeta_p$, which is the same as the image of $\zeta_p$ under one of the embeddings $\sigma_i: \QQ(\zeta_p) \to \CC$. Now  by Proposition \ref{lemma:_disc_of_prim_elt_basis} we have \begin{align*}\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\prod_{i < j}  (\a_i-\a_j)^2 &=\prod_{i < j}  ((1-\a_i)-(1-\a_j))^2\\&=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})\end{align*}
 	
 	Now, by Proposition \ref{lemma:_num_field_disc_in_terms_of_norm}, we have \[\Delta(\{1,\zeta_p,\cdots,\zeta_p^{p-2}\})=(-1)^{\frac{(p-1)(p-2)}{2}}N_{K/\QQ}(\Phi_p'(\zeta_p)  )\]
 	Since $p$ is odd $(-1)^{\frac{(p-1)(p-2)}{2}}=(-1)^{\frac{(p-1)}{2}}$. Next, we see that \[\Phi_p'(x)=\frac{px^{p-1}(x-1)-(x^p-1)}{(x-1)^2}\] therefore \[\Phi_p'(\zeta_p)=-\frac{p\zeta_p^{p-1}}{\lam_p}.\]
