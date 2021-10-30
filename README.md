@@ -2,18 +2,18 @@
 The goal of this project is to prove Fermat's Last Theorem for [regular primes](https://en.wikipedia.org/wiki/Regular_prime)
 in [Lean](https://leanprover-community.github.io/).
 
-The following readme has been shameless copied from the [Liquid Tensor Experiment](https://github.com/leanprover-community/lean-liquid/).
+The following readme has been shamelessly copied from the [Liquid Tensor Experiment](https://github.com/leanprover-community/lean-liquid/).
 
 ## How to browse this repository
 
 ### Blueprint
 
-Here is a draft [blueprint](https://leanprover-community.github.io/flt-regular/) and  [dependency graph](https://leanprover-community.github.io/flt-regular/dep_graph.html).
+Here are a draft [blueprint](https://leanprover-community.github.io/flt-regular/) and  [dependency graph](https://leanprover-community.github.io/flt-regular/dep_graph.html).
 
 ### Getting the project
 
-The recommended way of browsing this repository, is by using a Lean development environment.
-Crucially, this will allow you to introspect Lean's "Goal state" during proofs,
+The recommended way of browsing this repository is by using a Lean development environment.
+Crucially, this will allow you to inspect Lean's "Goal state" during proofs,
 and easily jump to definitions or otherwise follow paths through the code. Please use the
 [installation instructions](https://leanprover-community.github.io/get_started.html#regular-install)
 to install Lean and a supporting toolchain.
@@ -35,7 +35,7 @@ With the project opened in VScode,
 you are all set to start exploring the code.
 There are two pieces of functionality that help a lot when browsing through Lean code:
 
-* "Go to definition": If you right-click on a name of a definition or lemma
+* "Go to definition": if you right-click on a name of a definition or lemma
   (such as `is_regular_number`, or `flt_regular_case_one`), then you can choose "Go to definition" from the menu,
   and you will be taken to the relevant location in the source files.
   This also works by `Ctrl`-clicking on the name.
@@ -52,9 +52,9 @@ There are two pieces of functionality that help a lot when browsing through Lean
   regular primes.
 * The ingredients that go into the theorem statement are defined in several other files.
   The most important pieces are:
-  - `number_theory/regular_primes.lean` we give the definition of a regular number is.
+  - `number_theory/regular_primes.lean` we give the definition of what a regular number is.
   - `number_theory/cyclotomic/` contains the definition of a cyclotomic extension
-    and the result we need. Results specific to `ℚ` are in `number_theory/cyclotomic/rat.lean`
+    and the result we need. Results specific to `ℚ` are in `number_theory/cyclotomic/rat.lean`.
   - `number_theory/discriminant` contains the definition and the result we need about
     the discriminant.
 

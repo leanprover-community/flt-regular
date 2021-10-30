@@ -8,3 +8,5 @@ decls.pickle
 print/
 web/
 decls.yaml
+src/list_decls.lean
+src/.noisy_files
