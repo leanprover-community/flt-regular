@@ -70,7 +70,7 @@ begin
     sorry, },
   norm_num [discriminant, sylvester_matrix, this],
   rw det_apply,
-  simp,
+  sorry,
 end
 
 lemma discriminant_mul_X_pow_add_C_mul_X_add_C [comm_ring R] {n : ℕ} {a b c : R} (h : a ≠ 0) :
