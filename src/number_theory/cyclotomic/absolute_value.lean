@@ -111,6 +111,173 @@ begin
 end
 end choose_lemma
 
+section polynomial
+variables {R : Type*} [ring R]
+open polynomial
+
+@[simp]
+lemma X_pow_mul_coeff_succ (p : polynomial R) (j i : ℕ) : (X ^ j * p).coeff (i + j) = p.coeff i :=
+begin
+  rw coeff_mul,
+  simp only [coeff_X_pow, boole_mul],
+  have : ∀ x ∈ finset.nat.antidiagonal (i + j), prod.fst x = j ↔ (j, i) = x,
+  simp only [prod.forall, iff_self_and, finset.nat.mem_antidiagonal, prod.mk.inj_iff, eq_comm],
+  intros a b hs hb,
+  linarith,
+  conv in (prod.fst _ = _)
+  { simp only [this x H], },
+  simp [add_comm],
+end
+
+@[simp]
+lemma X_mul_coeff_succ (p : polynomial R) (i : ℕ) : (X * p).coeff (i + 1) = p.coeff i :=
+by simpa using X_pow_mul_coeff_succ p 1 i
+
+end polynomial
+section polynomial
+variables {R : Type*} [comm_ring R]
+open polynomial
+/--
+The degree of a product of polynomials is at most the sum of the degrees,
+where the degree of the zero polynomial is ⊥.
+-/
+lemma degree_multiset_prod_le [nontrivial R] (t : multiset (polynomial R)) :
+  t.prod.degree ≤ (t.map polynomial.degree).sum :=
+begin
+  refine multiset.induction_on t _ (λ a t ht, _), { simp },
+  { simp only [multiset.prod_cons, multiset.map_cons, multiset.sum_cons],
+    exact le_trans (degree_mul_le _ _) (add_le_add_left ht _), }
+end
+
+-- TODO lol I hope this monstrosity is golfable
+-- TODO remove the hi hypothesis, lemma is true without
+lemma multiset_prod_X_sub_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
+  (t.map (λ x, (X - C x))).prod.coeff i =
+  (-1) ^ (t.card - i) * ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
+begin
+-- sorry; { -- hack to not recompile constantly TODO remove
+  revert t i,
+  apply' multiset.induction,
+  { intros i hi,
+    simp only [multiset.card_zero, le_zero_iff] at hi,
+    simp only [hi, multiset.card_zero, mul_one, multiset.map_singleton, coeff_one_zero,
+      multiset.sum_singleton, multiset.prod_zero, multiset.map_zero,
+      multiset.powerset_len_zero_left, pow_zero], },
+  intros a s h i his,
+  simp only [sub_mul, multiset.map_cons, multiset.prod_cons, coeff_C_mul, coeff_sub,
+    multiset.card_cons],
+  simp only [multiset.card_cons] at his,
+  by_cases his' : i = s.card + 1,
+  { simp only [his', mul_one, multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
+      tsub_self, multiset.powerset_len_zero_left, pow_zero],
+    have : degree (multiset.map (λ (x : R), X - C x) s).prod ≤ s.card,
+    { have := degree_multiset_prod_le (multiset.map (λ (x : R), X - C x) s),
+      simpa, },
+    have : degree (multiset.map (λ (x : R), X - C x) s).prod < s.card + 1,
+    { calc _ ≤ _ : this
+          ...< _ : _,
+      norm_cast,
+      exact lt_add_one s.card, },
+    have : (multiset.map (λ (x : R), X - C x) s).prod.coeff (s.card + 1) = 0,
+    { apply coeff_eq_zero_of_degree_lt this, },
+    simp only [this, sub_zero, mul_zero, X_mul_coeff_succ,
+      h (le_refl _), mul_one, multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
+      tsub_self, multiset.powerset_len_zero_left, pow_zero], },
+  have : i ≤ s.card := nat.lt_succ_iff.mp (lt_of_le_of_ne his his'),
+  rw [nat.succ_sub this, multiset.powerset_len_cons],
+  simp only [h this, multiset.prod_cons, function.comp_app, multiset.map_map, multiset.map_add,
+    multiset.sum_add],
+  cases i,
+  { simp only [tsub_zero, multiset.prod_cons, mul_coeff_zero, nat.nat_zero_eq_zero, zero_sub,
+      zero_mul, function.comp_app, coeff_X_zero],
+    specialize h this,
+    simp at h, sorry, },
+  rw [X_mul_coeff_succ, mul_add, sub_eq_add_neg],
+  congr,
+  { have hii : i ≤ multiset.card s := nat.le_of_succ_le this,
+    have : multiset.card s - i = multiset.card s - i.succ + 1, -- I miss omega :'(
+    { zify [his, hii, this],
+      simp only [int.coe_nat_succ],
+      abel, },
+    rw [h hii, this], },
+  { rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
+      mul_assoc],
+    congr,
+    have := (add_monoid_hom.mul_left a).map_multiset_sum,
+    simp only [add_monoid_hom.coe_mul_left] at this,
+    simp [this], }
+-- }
+end
+
+section
+open multiset
+@[simp] theorem multiset.powerset_len_map {α β : Type*} (f : α → β) (n : ℕ) (s : multiset α) :
+  powerset_len n (s.map f) =
+  (powerset_len n s).map (map f) :=
+quotient.induction_on s $ λ l, sorry
+
+@[simp] theorem powerset_len_val {α : Type*} (s : finset α) (i : ℕ) : (s.powerset_len i).val.map finset.val = s.1.powerset_len i :=
+begin
+  rw finset.powerset_len,
+  dsimp only,
+  rw map_pmap,
+  dsimp only,
+  rw pmap_eq_map,
+  rw map_id',
+end
+end
+
+open_locale big_operators
+lemma prod_X_sub_C_coeff {ι : Type*} [nontrivial R] (s : finset ι)
+  (f : ι → R) {i : ℕ} (hs : i ≤ s.card) :
+  (∏ i in s, (X - C (f i))).coeff i =
+  (-1) ^ (s.card - i) * ∑ i in s.powerset_len (s.card - i), i.prod f :=
+begin
+  have := multiset_prod_X_sub_C_coeff (s.1.map f) (by simpa using hs),
+  simp only [multiset.card_map, function.comp_app, multiset.map_map,
+    multiset.powerset_len_map] at this,
+  convert this,
+  rw finset.sum_eq_multiset_sum,
+  refine congr_arg multiset.sum _,
+  rw ← powerset_len_val,
+  rw multiset.map_map,
+  congr,
+end
+
+end polynomial
+
+section abv_sum
+variables {R S ι : Type*} [ordered_semiring S] [semiring R] (abv : R → S)
+variables [is_absolute_value abv] (f : ι → R) (s : finset ι)
+
+open_locale big_operators
+
+theorem is_absolute_value.abv_sum : abv (∑ i in s, f i) ≤ ∑ i in s, abv (f i) :=
+begin
+  classical,
+  induction s using finset.induction with i s hi ih,
+  { simp [is_absolute_value.abv_zero abv], },
+  { rw [finset.sum_insert hi, finset.sum_insert hi],
+    calc _ ≤ _ : is_absolute_value.abv_add abv _ _
+       ... ≤ _ : add_le_add_left ih _, }
+end
+end abv_sum
+
+section abv_prod
+variables {R S ι : Type*} [linear_ordered_field S] [comm_semiring R] [nontrivial R] (abv : R → S)
+variables [is_absolute_value abv] (f : ι → R) (s : finset ι)
+open_locale big_operators
+
+theorem is_absolute_value.abv_prod : abv (∏ i in s, f i) = ∏ i in s, abv (f i) :=
+begin
+  classical,
+  induction s using finset.induction with i s hi ih,
+  { simp [is_absolute_value.abv_one abv], },
+  { rw [finset.prod_insert hi, finset.prod_insert hi],
+    simp [is_absolute_value.abv_mul abv, ih], },
+end
+end abv_prod
+
 section backwards
 
 open set finite_dimensional complex
@@ -122,6 +289,7 @@ open polynomial
 
 -- There are finitely many complex embeddings of a number field
 instance : fintype (K →+* ℂ) := sorry
+lemma card_embeddings : fintype.card (K →+* ℂ) = finrank ℚ K := sorry
 
 open polynomial.gal
 local attribute [instance] splits_ℚ_ℂ
@@ -135,15 +303,30 @@ lemma minpoly_coeff_le_of_all_abs_eq_one (hx : x ∈ {x : K | ∀ (φ : K →+* 
 begin
   have : minpoly ℚ x = (minpoly ℤ x).map (algebra_map ℤ ℚ),
   from minpoly.gcd_domain_eq_field_fractions ℚ hxi,
-  suffices : abs (((minpoly ℚ x).coeff i) : ℂ) ≤ (minpoly ℚ x).nat_degree.choose i,
+  suffices : abs ((minpoly ℚ x).coeff i : ℂ) ≤ (finrank ℚ K).choose i,
   { sorry, },
   rw (by simp [coeff_map, ring_hom.eq_rat_cast] :
     ((minpoly ℚ x).coeff i : ℂ) = ((minpoly ℚ x).map (algebra_map ℚ ℂ)).coeff i),
   rw (_ : map (algebra_map ℚ ℂ) (minpoly ℚ x) = ∏ φ : K →+* ℂ, (X - C (φ x))),
-  { sorry,
-    --rw prod_X_sub_C_coeff, -- maybe need a lemma like this, should be provable by induction
-    -- likely one version for fintypes and another for finsets
-    },
+  { rw prod_X_sub_C_coeff,
+    simp [is_absolute_value.abv_pow complex.abs],
+    calc _ ≤ _ : is_absolute_value.abv_sum _ _ _
+       ... ≤ _ : _,
+    conv in (complex.abs _)
+    { rw [is_absolute_value.abv_prod complex.abs],
+      congr,
+      skip,
+      funext,
+      rw hx i, },
+    simp only [finset.prod_const_one, finset.sum_const, finset.card_powerset_len,
+      nat.cast_le, nat.smul_one_eq_coe],
+    rw nat.choose_symm,
+    apply le_of_eq,
+    congr,
+    rw ← card_embeddings,
+    exact finset.card_univ,
+    sorry,
+    sorry, },
   { have : splits (algebra_map ℚ ℂ) (minpoly ℚ x), from is_alg_closed.splits_codomain (minpoly ℚ x),
     rw eq_prod_roots_of_splits this,
     simp [monic.def.mp (minpoly.monic (is_separable.is_integral ℚ x))],
