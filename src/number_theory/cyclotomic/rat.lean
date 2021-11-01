@@ -1,5 +1,6 @@
 import number_theory.cyclotomic.basic
 import number_theory.cyclotomic.cyclotomic_units
+import number_theory.cyclotomic.number_field_embeddings
 
 universes u
 
@@ -35,6 +36,10 @@ section int_facts
 
 variables (p : ℕ+)
 
+
+
+local notation `K` := cyclotomic_field p ℚ
+
 local notation `RR` := number_field.ring_of_integers (cyclotomic_field p ℚ)
 
 --A.K.A theorem:FLT_facts 3
@@ -46,5 +51,11 @@ noncomputable def flt_ideals (x y : ℤ) (i  : ℕ) : ideal RR :=
 
 lemma flt_fact_2 [fact (p : ℕ).prime] (ph: 5 ≤ p) (x y : ℤ) (i j : ℕ) (h : i ≠ j) (hp: is_coprime x y) :
   (flt_ideals p x y i) + (flt_ideals p x y i) = ⊤ := sorry
+
+instance : number_field K := sorry
+
+lemma unit_lemma (u : units RR) : ∃ ( x : K) (n : ℤ), embeddings.element_is_real x ∧
+  (u : K) = x * (cyclotomic_ring.zeta p ℚ)^n := sorry
+
 
 end int_facts
