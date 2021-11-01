@@ -68,14 +68,16 @@ local notation `c2` := fintype.card { φ  : K →+* ℂ // is_complex  φ}
 lemma not_real_eq_complex (φ : K →+* ℂ) : is_real φ ↔ ¬ is_complex φ :=
 begin
   rw [is_real, is_complex],
-  simp,
+  simp only [not_not],
 end
 
 lemma real_Eq_rank_sub_complex :
   r1 = finrank ℚ K  - c2 :=
 begin
   rw ← card_embeddings,
-  convert  fintype.card_subtype_compl, simp, simp_rw ← not_real_eq_complex,
+  convert  fintype.card_subtype_compl,
+  simp only,
+  simp_rw ← not_real_eq_complex,
 end
 
 
