@@ -304,6 +304,18 @@ begin
 end
 end abv_prod
 
+-- section ajoin
+-- variables {E : Type*} [field E] [number_field E] (x : E)
+-- instance : char_zero ℚ⟮x⟯ := sorry
+-- instance : number_field ℚ⟮x⟯ :=
+-- begin
+--   haveI : finite_dimensional ℚ ℚ⟮x⟯ := intermediate_field.adjoin.finite_dimensional (is_separable.is_integral ℚ x),
+--   convert number_field.mk,
+--   exact char_p.char_p_to_char_zero ℚ⟮x⟯,
+--   convert _inst,
+-- end
+-- end ajoin
+
 section backwards
 
 open set finite_dimensional complex
@@ -335,9 +347,6 @@ instance : fintype (K →+* ℂ) := fintype.of_equiv (K →ₐ[ℚ] ℂ) equiv_a
 lemma card_embeddings : fintype.card (K →+* ℂ) = finrank ℚ K :=
 by rw [fintype.of_equiv_card equiv_alg, alg_hom.card]
 
-open polynomial.gal
-local attribute [instance] splits_ℚ_ℂ
-
 -- something like this will be useful
 -- note this wouldn't be true as multisets
 -- probably will make use of `alg_hom_adjoin_integral_equiv`
@@ -356,7 +365,6 @@ begin
   rw [this, nat_degree_map' _],
   exact is_fraction_ring.injective ℤ ℚ,
 end
-
 
 lemma minpoly_coeff_le_of_all_abs_eq_one (hx : x ∈ {x : K | ∀ (φ : K →+* ℂ), abs (φ x) = 1})
   (hxi : is_integral ℤ x) (i : ℕ) : |(minpoly ℤ x).coeff i| ≤ (finrank ℚ K).choose i :=
