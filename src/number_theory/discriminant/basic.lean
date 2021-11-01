@@ -41,9 +41,9 @@ end basic
 section field
 
 variables (K : Type u) {L : Type v} (E : Type z) [field K] [field L] [field E]
-variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E] (b : ι → L)
-variables (hcard : fintype.card ι = finrank K L) (pb : power_basis K L)
+variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E]
 variables [module.finite K L] [is_separable K L] [is_alg_closed E]
+variables (b : ι → L) (hcard : fintype.card ι = finrank K L) (pb : power_basis K L)
 
 local notation `n` := finrank K L
 
