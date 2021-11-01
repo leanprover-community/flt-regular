@@ -47,6 +47,8 @@ variables (hfin : module.finite K L) [is_alg_closed E]
 
 local notation `n` := finrank K L
 
+--I think we need to assume n ≠ 0?
+
 --I don't think we need (and can) prove a more general result
 lemma linear_independent_of_not_zero [is_separable K L] (h : discriminant K b ≠ 0) :
   linear_independent K b := sorry
@@ -62,15 +64,20 @@ sorry
 variables (K L)
 
 --this is probably already in mathlib in some form
-instance : fintype (L →ₐ[K] E) := sorry
+instance  [is_separable K L] [finite_dimensional K L] : fintype (L →ₐ[K] E) := infer_instance
 
 --this is probably already in mathlib in some form
-lemma card_embeddings_eq_finrank : fintype.card (L →ₐ[K] E) = n := sorry
+lemma card_embeddings_eq_finrank [is_separable K L] [finite_dimensional K L] :
+fintype.card (L →ₐ[K] E) = n :=
+begin
+  convert alg_hom.card K L E,
+end
 
 variable {L}
 
 --give a name to the matrix first
-lemma eq_det_embeddings : algebra_map K E (discriminant K b) = (reindex (equiv.refl ι)
+lemma eq_det_embeddings [is_separable K L] [finite_dimensional K L] :
+  algebra_map K E (discriminant K b) = (reindex (equiv.refl ι)
   (equiv_of_card_eq ((card_embeddings_eq_finrank K L E).trans hcard.symm))
   (λ i (σ : L →ₐ[K] E), σ ( b i))).det := sorry
 
