@@ -5,10 +5,8 @@ Authors: Alex J. Best
 -/
 import ring_theory.roots_of_unity
 import number_theory.number_field
-import data.complex.basic
 import data.real.nnreal
 import analysis.special_functions.pow
-import algebra.abs
 import field_theory.splitting_field
 -- import generalisation_linter
 import field_theory.is_alg_closed.basic
@@ -134,6 +132,45 @@ lemma X_mul_coeff_succ (p : polynomial R) (i : ℕ) : (X * p).coeff (i + 1) = p.
 by simpa using X_pow_mul_coeff_succ p 1 i
 
 end polynomial
+section
+open multiset
+@[simp] theorem multiset.powerset_len_empty {α : Type*} (n : ℕ) {s : multiset α} (h : s.card < n) :
+  powerset_len n s = 0 :=
+multiset.card_eq_zero.mp (by rw [card_powerset_len, nat.choose_eq_zero_of_lt h])
+
+-- TODO maybe a finset version of this too
+@[simp]
+lemma multiset.powerset_len_card_add {α : Type*} (s : multiset α) {i : ℕ} (hi : 0 < i) :
+  s.powerset_len (s.card + i) = 0 :=
+begin
+  apply multiset.powerset_len_empty,
+  exact lt_add_of_pos_right (card s) hi,
+end
+
+@[simp] theorem multiset.powerset_len_map {α β : Type*} (f : α → β) (n : ℕ) (s : multiset α) :
+  powerset_len n (s.map f) = (powerset_len n s).map (map f) :=
+begin
+  induction s using multiset.induction with t s ih generalizing n,
+  { cases n,
+    { simp [powerset_len_zero_left], },
+    { simp [powerset_len_zero_right], }, },
+  { cases n,
+    { simp, },
+    { simp [ih], }, },
+end
+
+@[simp] theorem powerset_len_val {α : Type*} (s : finset α) (i : ℕ) :
+  (s.powerset_len i).val.map finset.val = s.1.powerset_len i :=
+begin
+  rw finset.powerset_len,
+  dsimp only,
+  rw map_pmap,
+  dsimp only,
+  rw pmap_eq_map,
+  rw map_id',
+end
+end
+
 section polynomial
 variables {R : Type*} [comm_ring R]
 open polynomial
@@ -191,7 +228,13 @@ begin
   { simp only [tsub_zero, multiset.prod_cons, mul_coeff_zero, nat.nat_zero_eq_zero, zero_sub,
       zero_mul, function.comp_app, coeff_X_zero],
     specialize h this,
-    simp at h, sorry, },
+    simp only [tsub_zero, nat.nat_zero_eq_zero] at h,
+    rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
+      mul_assoc],
+    congr,
+    have := (add_monoid_hom.mul_left a).map_multiset_sum,
+    simp only [add_monoid_hom.coe_mul_left] at this,
+    simp [this], },
   rw [X_mul_coeff_succ, mul_add, sub_eq_add_neg],
   congr,
   { have hii : i ≤ multiset.card s := nat.le_of_succ_le this,
@@ -201,7 +244,7 @@ begin
       abel, },
     rw [h hii, this], },
   { rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
-      mul_assoc],
+      mul_assoc], -- TODO this rearranging is repeat of above, is it golfable?
     congr,
     have := (add_monoid_hom.mul_left a).map_multiset_sum,
     simp only [add_monoid_hom.coe_mul_left] at this,
@@ -209,23 +252,6 @@ begin
 -- }
 end
 
-section
-open multiset
-@[simp] theorem multiset.powerset_len_map {α β : Type*} (f : α → β) (n : ℕ) (s : multiset α) :
-  powerset_len n (s.map f) =
-  (powerset_len n s).map (map f) :=
-quotient.induction_on s $ λ l, sorry
-
-@[simp] theorem powerset_len_val {α : Type*} (s : finset α) (i : ℕ) : (s.powerset_len i).val.map finset.val = s.1.powerset_len i :=
-begin
-  rw finset.powerset_len,
-  dsimp only,
-  rw map_pmap,
-  dsimp only,
-  rw pmap_eq_map,
-  rw map_id',
-end
-end
 
 open_locale big_operators
 lemma prod_X_sub_C_coeff {ι : Type*} [nontrivial R] (s : finset ι)
@@ -287,72 +313,114 @@ open_locale big_operators
 variables {K : Type*} [field K] [number_field K] {n : ℕ} (x : K)
 open polynomial
 
+noncomputable theory
+def equiv_alg : (K →ₐ[ℚ] ℂ) ≃ (K →+* ℂ) :=
+{ to_fun := coe,
+  inv_fun := λ f : K →+* ℂ, alg_hom.mk' f (λ (c : ℚ) x,
+    add_monoid_hom.map_rat_module_smul f.to_add_monoid_hom _ _),
+  left_inv := begin
+    intro f,
+    ext x : 1,
+    simp,
+  end,
+  right_inv :=
+  begin
+    intro f,
+    ext x : 1,
+    erw alg_hom.coe_mk' f
+      (λ (c : ℚ) x, add_monoid_hom.map_rat_module_smul f.to_add_monoid_hom _ _),
+  end}
 -- There are finitely many complex embeddings of a number field
-instance : fintype (K →+* ℂ) := sorry
-lemma card_embeddings : fintype.card (K →+* ℂ) = finrank ℚ K := sorry
+instance : fintype (K →+* ℂ) := fintype.of_equiv (K →ₐ[ℚ] ℂ) equiv_alg
+lemma card_embeddings : fintype.card (K →+* ℂ) = finrank ℚ K :=
+by rw [fintype.of_equiv_card equiv_alg, alg_hom.card]
 
 open polynomial.gal
 local attribute [instance] splits_ℚ_ℂ
 
 -- something like this will be useful
+-- note this wouldn't be true as multisets
+-- probably will make use of `alg_hom_adjoin_integral_equiv`
 lemma roots_equal_embeddings : ((map (algebra_map ℚ ℂ) (minpoly ℚ x)).roots.to_finset : finset ℂ) =
   (range (λ φ : K →+* ℂ, φ x)).to_finset := sorry
 
-lemma minpoly_coeff_le_of_all_abs_eq_one (hx : x ∈ {x : K | ∀ (φ : K →+* ℂ), abs (φ x) = 1})
-  (hxi : is_integral ℤ x) (i : ℕ) : |(minpoly ℤ x).coeff i| ≤ (minpoly ℤ x).nat_degree.choose i :=
+lemma nat_degree_le_finrank {K : Type*} [field K] [number_field K] {x : K} (hx : is_integral ℤ x) :
+  (minpoly ℤ x).nat_degree ≤ finrank ℚ K :=
 begin
+  rw (_ : (minpoly ℤ x).nat_degree = (minpoly ℚ x).nat_degree),
+  rw [← intermediate_field.adjoin.finrank (is_separable.is_integral ℚ x),
+    ← intermediate_field.finrank_eq_finrank_subalgebra],
+  convert submodule.finrank_le (ℚ⟮x⟯.to_subalgebra.to_submodule : submodule _ _),
   have : minpoly ℚ x = (minpoly ℤ x).map (algebra_map ℤ ℚ),
-  from minpoly.gcd_domain_eq_field_fractions ℚ hxi,
-  suffices : abs ((minpoly ℚ x).coeff i : ℂ) ≤ (finrank ℚ K).choose i,
-  { sorry, },
-  rw (by simp [coeff_map, ring_hom.eq_rat_cast] :
-    ((minpoly ℚ x).coeff i : ℂ) = ((minpoly ℚ x).map (algebra_map ℚ ℂ)).coeff i),
-  rw (_ : map (algebra_map ℚ ℂ) (minpoly ℚ x) = ∏ φ : K →+* ℂ, (X - C (φ x))),
-  { rw prod_X_sub_C_coeff,
-    simp [is_absolute_value.abv_pow complex.abs],
-    calc _ ≤ _ : is_absolute_value.abv_sum _ _ _
-       ... ≤ _ : _,
-    conv in (complex.abs _)
-    { rw [is_absolute_value.abv_prod complex.abs],
+  from minpoly.gcd_domain_eq_field_fractions ℚ hx,
+  rw [this, nat_degree_map' _],
+  exact is_fraction_ring.injective ℤ ℚ,
+end
+
+
+lemma minpoly_coeff_le_of_all_abs_eq_one (hx : x ∈ {x : K | ∀ (φ : K →+* ℂ), abs (φ x) = 1})
+  (hxi : is_integral ℤ x) (i : ℕ) : |(minpoly ℤ x).coeff i| ≤ (finrank ℚ K).choose i :=
+begin
+  by_cases hi : i ≤ (finset.univ : finset (K →+* ℂ)).card,
+  { have h_mins : minpoly ℚ x = (minpoly ℤ x).map (algebra_map ℤ ℚ),
+    from minpoly.gcd_domain_eq_field_fractions ℚ hxi,
+    suffices : abs ((minpoly ℚ x).coeff i : ℂ) ≤ (finrank ℚ K).choose i,
+    { suffices : (|(minpoly ℤ x).coeff i| : ℝ) ≤ ↑((finrank ℚ K).choose i),
+      { exact_mod_cast this, },
+      convert this,
+      simp only [h_mins, coeff_map, ring_hom.eq_int_cast, rat.cast_coe_int],
+      norm_cast, },
+    rw (by simp [coeff_map, ring_hom.eq_rat_cast] :
+      ((minpoly ℚ x).coeff i : ℂ) = ((minpoly ℚ x).map (algebra_map ℚ ℂ)).coeff i),
+    rw (_ : map (algebra_map ℚ ℂ) (minpoly ℚ x) = ∏ φ : K →+* ℂ, (X - C (φ x))),
+    { rw prod_X_sub_C_coeff,
+      swap, exact hi,
+      simp [is_absolute_value.abv_pow complex.abs],
+      calc _ ≤ _ : is_absolute_value.abv_sum _ _ _
+        ... ≤ _ : _,
+      conv in (complex.abs _)
+      { rw [is_absolute_value.abv_prod complex.abs],
+        congr,
+        skip,
+        funext,
+        rw hx i, },
+      simp only [finset.prod_const_one, finset.sum_const, finset.card_powerset_len,
+        nat.cast_le, nat.smul_one_eq_coe],
+      rw nat.choose_symm hi,
+      apply le_of_eq,
       congr,
-      skip,
-      funext,
-      rw hx i, },
-    simp only [finset.prod_const_one, finset.sum_const, finset.card_powerset_len,
-      nat.cast_le, nat.smul_one_eq_coe],
-    rw nat.choose_symm,
-    apply le_of_eq,
-    congr,
-    rw ← card_embeddings,
-    exact finset.card_univ,
-    sorry,
-    sorry, },
-  { have : splits (algebra_map ℚ ℂ) (minpoly ℚ x), from is_alg_closed.splits_codomain (minpoly ℚ x),
-    rw eq_prod_roots_of_splits this,
-    simp [monic.def.mp (minpoly.monic (is_separable.is_integral ℚ x))],
-    sorry, }
+      rw ← card_embeddings,
+      exact finset.card_univ, },
+    { -- this goal isn't true as stated right now, the rhs could be a power of the lhs
+      have : splits (algebra_map ℚ ℂ) (minpoly ℚ x),
+      from is_alg_closed.splits_codomain (minpoly ℚ x),
+      rw eq_prod_roots_of_splits this,
+      simp only [monic.def.mp (minpoly.monic (is_separable.is_integral ℚ x)),
+        one_mul, ring_hom.map_one],
+      sorry, }, },
+  { push_neg at hi,
+    rw finset.card_univ at hi,
+    rw card_embeddings at hi,
+    rw nat.choose_eq_zero_of_lt hi,
+    rw coeff_eq_zero_of_nat_degree_lt,
+    simp [hi, le_refl, int.coe_nat_zero],
+    calc _ ≤ finrank ℚ K : nat_degree_le_finrank hxi
+       ... < _           : by exact_mod_cast hi, },
 end
 
 lemma finite_all_abs_eq_one : finite {x : K | is_integral ℤ x ∧ ∀ φ : K →+* ℂ, abs (φ x) = 1} :=
 begin
   suffices :
     finite (⋃ (f : polynomial ℤ)
-      (hf : f.nat_degree ≤ finrank ℚ K ∧ ∀ i, |f.coeff i| ≤ f.nat_degree.choose i),
+      (hf : f.nat_degree ≤ finrank ℚ K ∧ ∀ i, |f.coeff i| ≤ (finrank ℚ K).choose i),
       ((f.map (algebra_map ℤ K)).roots.to_finset : set K)),
   { refine this.subset _,
     intros x hx,
     rw mem_Union,
-    use (minpoly ℤ x),
+    use minpoly ℤ x,
     simp only [exists_prop, mem_Union, multiset.mem_to_finset, finset.mem_coe],
     refine ⟨⟨_, _⟩, _⟩,
-    { rw (_ : (minpoly ℤ x).nat_degree = (minpoly ℚ x).nat_degree),
-      rw [← intermediate_field.adjoin.finrank (is_separable.is_integral ℚ x),
-        ← intermediate_field.finrank_eq_finrank_subalgebra],
-      convert submodule.finrank_le (ℚ⟮x⟯.to_subalgebra.to_submodule : submodule _ _),
-      have : minpoly ℚ x = (minpoly ℤ x).map (algebra_map ℤ ℚ),
-      from minpoly.gcd_domain_eq_field_fractions ℚ hx.1,
-      rw [this, nat_degree_map' _],
-      exact is_fraction_ring.injective ℤ ℚ, },
+    { exact nat_degree_le_finrank hx.1, },
     { exact minpoly_coeff_le_of_all_abs_eq_one x hx.2 hx.1, },
     rw [polynomial.mem_roots_map_of_injective, polynomial.eval₂_eq_eval_map, ← coe_aeval_eq_eval,
         aeval_map, minpoly.aeval],
@@ -361,7 +429,7 @@ begin
   refine finite.bUnion _ _,
   { have : inj_on (λ g : polynomial ℤ, λ d : fin (finrank ℚ K + 1), g.coeff d)
       { f | f.nat_degree ≤ finrank ℚ K
-            ∧ ∀ (i : ℕ), |f.coeff i| ≤ f.nat_degree.choose i },
+            ∧ ∀ (i : ℕ), |f.coeff i| ≤ (finrank ℚ K).choose i },
     { intros x hx y hy he,
       ext,
       by_cases n < finrank ℚ K + 1,
@@ -395,6 +463,8 @@ begin
     exact polynomial.root_set_finite p K, },
 end
 
+-- TODO we don't really need K to be a number field here, more general field extensions are fine
+-- as long as we keep the condition that x is integral over ℤ
 variables (hx : ∀ φ : K →+* ℂ, abs (φ x) = 1) (hxi : is_integral ℤ x)
 include hx hxi
 lemma mem_roots_of_unity_of_abs_eq_one : ∃ (n : ℕ) (hn : 0 < n), x ^ n = 1 :=
