@@ -147,6 +147,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 
 
 \begin{lemma}\label{lemma:unit_lemma}
+	\lean{unit_lemma}
 	\uses{lemma:alg_int_abs_val_one}
 	Any unit $u$ in $\ZZ[\zeta_p]$ can be written in the form $\beta \zeta_p^k  $ with $k$ an integer and $\beta \in \RR$.
 \end{lemma}
@@ -176,7 +177,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \begin{lemma}\label{lem:flt_fact_3}
 	\lean{flt_fact_3}
 	
-	 	Let $p$ be an prime number, $\zeta_p$ a $p$-th root of unity and $\a \in \a \in \ZZ[\zeta_p]$. Then $\a^p$ is congruent to an integer modulo $p$.
+	 	Let $p$ be an prime number, $\zeta_p$ a $p$-th root of unity and $\a \in \ZZ[\zeta_p]$. Then $\a^p$ is congruent to an integer modulo $p$.
 \end{lemma}
 
 \begin{proof}
@@ -184,7 +185,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lem:flt_fact_4}
-	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $\a \in \a \in \ZZ[\zeta_p]$. If there is an integer $n$ such that $\a/n \in \ZZ[\zeta_p]$, then $n$ divides each $a_i$.
+	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$. If there is an integer $n$ such that $\a/n \in \ZZ[\zeta_p]$, then $n$ divides each $a_i$.
 \end{lemma}
 
 \begin{proof}
@@ -192,8 +193,8 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lem:flt_fact_5}
-	\uses{lem:flt_fact_4}
-	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $\a \in \a \in \ZZ[\zeta_p]$.  Suppose that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. Then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
+	\uses{lem:flt_fact_4,lem:flt_fact_3}
+	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$.  Suppose that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. Then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
 \end{lemma}
 
 \begin{proof}
