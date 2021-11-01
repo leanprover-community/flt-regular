@@ -1,13 +1,17 @@
 import linear_algebra.matrix.determinant
 import ring_theory.trace
+import ring_theory.norm
 
-universes u v w
+universes u v w z
 
 variables (A : Type u) {B : Type v} {ι : Type w}
 variables [comm_ring A] [comm_ring B] [algebra A B]
 
 open_locale classical matrix
+
 noncomputable theory
+
+open matrix finite_dimensional fintype polynomial
 
 namespace algebra
 
@@ -36,18 +40,44 @@ end basic
 
 section field
 
-variables (K : Type u) (L : Type v) [field K] [field L] [algebra K L] (b : ι → L)
-variables (hfin : module.finite K L) (hcard : fintype.card ι = finite_dimensional.finrank K L)
+variables (K : Type u) {L : Type v} (E : Type z) [field K] [field L] [field E]
+variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E] (b : ι → L)
+variables (hcard : fintype.card ι = finrank K L)
+variables (hfin : module.finite K L) [is_alg_closed E]
+
+local notation `n` := finrank K L
 
 --I don't think we need (and can) prove a more general result
 lemma linear_independent_of_not_zero [is_separable K L] (h : discriminant K b ≠ 0) :
   linear_independent K b := sorry
+
+variable {K}
 
 --TODO state this first of all for matrix.trace
 --is using matrix.col and unit.star the best way to do this?
 lemma of_matrix_mul (P : matrix ι ι K) : discriminant K
   (λ i, (P.map (algebra_map K L) ⬝ (matrix.col b)) i unit.star) = P.det ^ 2 * discriminant K b :=
 sorry
+
+variables (K L)
+
+--this is probably already in mathlib in some form
+instance : fintype (L →ₐ[K] E) := sorry
+
+--this is probably already in mathlib in some form
+lemma card_embeddings_eq_finrank : fintype.card (L →ₐ[K] E) = n := sorry
+
+variable {L}
+
+--give a name to the matrix first
+lemma eq_det_embeddings : algebra_map K E (discriminant K b) = (reindex (equiv.refl ι)
+  (equiv_of_card_eq ((card_embeddings_eq_finrank K L E).trans hcard.symm))
+  (λ i (σ : L →ₐ[K] E), σ ( b i))).det := sorry
+
+variable (pb : power_basis K L)
+
+lemma of_power_basis_eq_norm : discriminant K pb.basis =
+  (-1) ^ (n * (n - 1) / 2) *(norm K (aeval pb.gen (minpoly K pb.gen).derivative)) := sorry
 
 end field
 
