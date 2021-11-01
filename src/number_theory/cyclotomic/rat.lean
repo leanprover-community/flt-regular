@@ -43,7 +43,6 @@ lemma flt_fact_3 (a : RR) : ∃ (n : ℤ), (a^(p : ℕ) -n) ∈ ideal.span ({p} 
 noncomputable def flt_ideals (x y : ℤ) (i  : ℕ) : ideal RR :=
   ideal.span ({ x+y*(cyclotomic_ring.zeta p ℚ)^i} : set RR)
 
-
 lemma flt_fact_2 (x y : ℤ) (i j : ℕ) (h : i ≠ j) (hp: is_coprime x y) :
   (flt_ideals p x y i) + (flt_ideals p x y i) = ⊤ := sorry
 
