@@ -15,7 +15,9 @@ namespace embeddings
 
 noncomputable theory
 
-variables {K : Type*} [field K] [number_field K] {n : ℕ} (x : K)
+variables {K : Type*} [field K]
+section number_field
+variables [number_field K] {n : ℕ} (x : K)
 variables (φ : K →* ℂ)
 
 -- TODO generalize to other targets
@@ -45,6 +47,8 @@ instance : fintype (K →+* ℂ) := fintype.of_equiv (K →ₐ[ℚ] ℂ) equiv_a
 lemma card_embeddings : fintype.card (K →+* ℂ) = finrank ℚ K :=
 by rw [fintype.of_equiv_card equiv_alg, alg_hom.card]
 
+end number_field
+
 /-- An embedding is real if its fixed by complex conjugation-/
 def is_real (φ : K →+* ℂ) : Prop := conj ∘ φ = φ
 
@@ -73,7 +77,7 @@ begin
   simp only [not_not],
 end
 
-lemma real_Eq_rank_sub_complex :
+lemma real_Eq_rank_sub_complex [number_field K] :
   r1 = finrank ℚ K  - c2 :=
 begin
   rw ← card_embeddings,
