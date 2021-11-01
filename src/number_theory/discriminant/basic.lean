@@ -50,7 +50,7 @@ local notation `n` := finrank K L
 --I think we need to assume n ≠ 0?
 
 --I don't think we need (and can) prove a more general result
-lemma linear_independent_of_not_zero [is_separable K L] (h : discriminant K b ≠ 0) :
+lemma linear_independent_of_not_zero (h : discriminant K b ≠ 0) :
   linear_independent K b := sorry
 
 variable {K}
