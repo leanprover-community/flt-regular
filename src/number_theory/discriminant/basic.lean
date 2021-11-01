@@ -31,7 +31,7 @@ variable [fintype ι]
 
 section basic
 
-lemma zero_of_not_linear_independent (b : ι → B) (hli : ¬linear_independent A b) :
+lemma zero_of_not_linear_independent [is_domain A] (b : ι → B) (hli : ¬linear_independent A b) :
   discriminant A b = 0 := sorry
 
 --discriminant of zero family and similar stuff
@@ -58,8 +58,7 @@ variable {K}
 --TODO state this first of all for matrix.trace
 --is using matrix.col and unit.star the best way to do this?
 lemma of_matrix_mul (P : matrix ι ι K) : discriminant K
-  (λ i, (P.map (algebra_map K L) ⬝ (matrix.col b)) i unit.star) = P.det ^ 2 * discriminant K b :=
-sorry
+  ((P.map (algebra_map K L)).mul_vec b) = P.det ^ 2 * discriminant K b := sorry
 
 variables (K L)
 
