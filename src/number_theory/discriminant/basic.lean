@@ -67,7 +67,7 @@ variables (K L)
 instance  [is_separable K L] [finite_dimensional K L] : fintype (L →ₐ[K] E) := infer_instance
 
 --this is probably already in mathlib in some form
-lemma card_embeddings_eq_finrank [is_separable K L] [finite_dimensional K L] :
+lemma card_embeddings_eq_finrank [is_alg_closed E] [is_separable K L] [finite_dimensional K L] :
 fintype.card (L →ₐ[K] E) = n :=
 begin
   convert alg_hom.card K L E,
@@ -76,12 +76,13 @@ end
 variable {L}
 
 --give a name to the matrix first
-lemma eq_det_embeddings [is_separable K L] [finite_dimensional K L] :
+lemma eq_det_embeddings [is_alg_closed E] [is_separable K L] [finite_dimensional K L] :
   algebra_map K E (discriminant K b) = (reindex (equiv.refl ι)
   (equiv_of_card_eq ((card_embeddings_eq_finrank K L E).trans hcard.symm))
   (λ i (σ : L →ₐ[K] E), σ ( b i))).det := sorry
 
-lemma of_power_basis_eq_prod : algebra_map K E (discriminant K pb.basis) ^ 2 =
+lemma of_power_basis_eq_prod [is_alg_closed E]  [is_separable K L] [finite_dimensional K L] :
+  algebra_map K E (discriminant K pb.basis) ^ 2 =
   (univ : finset ((L →ₐ[K] E) × (L →ₐ[K] E))).off_diag.prod
   (λ σ, (σ.1.1 pb.gen - σ.1.2 pb.gen) ^ 2) := sorry
 
