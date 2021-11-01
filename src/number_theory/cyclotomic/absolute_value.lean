@@ -12,6 +12,7 @@ import field_theory.splitting_field
 import field_theory.is_alg_closed.basic
 import field_theory.polynomial_galois_group
 import field_theory.adjoin
+import number_theory.cyclotomic.number_field_embeddings
 
 open_locale nnreal
 -- probably this isn't needed but is another annoying example of 0 < n vs n ≠ 0 causing library
@@ -326,29 +327,6 @@ variables {K : Type*} [field K] [number_field K] {n : ℕ} (x : K)
 open polynomial
 
 noncomputable theory
--- TODO generalize to other targets
-/-- The equivalence between algebra maps from a number field to the complexes and plain
-ring morphisms between them. -/
-def equiv_alg : (K →ₐ[ℚ] ℂ) ≃ (K →+* ℂ) :=
-{ to_fun := coe,
-  inv_fun := λ f : K →+* ℂ, alg_hom.mk' f (λ (c : ℚ) x,
-    add_monoid_hom.map_rat_module_smul f.to_add_monoid_hom _ _),
-  left_inv := begin
-    intro f,
-    ext x : 1,
-    simp,
-  end,
-  right_inv :=
-  begin
-    intro f,
-    ext x : 1,
-    erw alg_hom.coe_mk' f
-      (λ (c : ℚ) x, add_monoid_hom.map_rat_module_smul f.to_add_monoid_hom _ _),
-  end}
--- There are finitely many complex embeddings of a number field
-instance : fintype (K →+* ℂ) := fintype.of_equiv (K →ₐ[ℚ] ℂ) equiv_alg
-lemma card_embeddings : fintype.card (K →+* ℂ) = finrank ℚ K :=
-by rw [fintype.of_equiv_card equiv_alg, alg_hom.card]
 
 -- something like this will be useful
 -- note this wouldn't be true as multisets
@@ -400,7 +378,7 @@ begin
       rw nat.choose_symm hi,
       apply le_of_eq,
       congr,
-      rw ← card_embeddings,
+      rw ← embeddings.card_embeddings,
       exact finset.card_univ, },
     { -- this goal isn't true as stated right now, the rhs could be a power of the lhs
       have : splits (algebra_map ℚ ℂ) (minpoly ℚ x),
@@ -411,7 +389,7 @@ begin
       sorry, }, },
   { push_neg at hi,
     rw finset.card_univ at hi,
-    rw card_embeddings at hi,
+    rw embeddings.card_embeddings at hi,
     rw nat.choose_eq_zero_of_lt hi,
     rw coeff_eq_zero_of_nat_degree_lt,
     simp [hi, le_refl, int.coe_nat_zero],

@@ -2,6 +2,9 @@ import ring_theory.class_group
 import number_theory.regular_primes
 import tactic.may_assume
 
+lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (hab: a.coprime b)
+    : b.coprime c ∧  a.coprime c := sorry
+
 lemma flt_three_case_one_aux {A B C : zmod 9} (h : A ^ 3 + B ^ 3 = C ^ 3) : 3 ∣ A * B * C :=
 by revert A B C; dec_trivial
 
