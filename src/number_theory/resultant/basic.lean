@@ -40,7 +40,8 @@ by norm_num [sylvester_matrix]
 /-- The resultant of two polynomials -/
 def resultant [comm_ring R] (p q : polynomial R) : R := det (sylvester_matrix p q)
 -- include (-1)^(n(n-1)/2)/a_n part by updating sylvester first col
-def discriminant [comm_ring R] (p : polynomial R) : R := det (sylvester_matrix p p.derivative)
+/-- The discriminant of a polynomial defined as the resultant of p and its derivative -/
+def discriminant' [comm_ring R] (p : polynomial R) : R := resultant p p.derivative
 
 -- translation invariance
 -- scaling by a^n(n-1)
@@ -59,8 +60,8 @@ begin
 end
 
 -- does this work without taking n >= 2? be careful with signs
-lemma discriminant_C_mul_X_add_C [comm_ring R] {n : ℕ} {b c : R} (h : b ≠ 0) :
-  discriminant (C b * X + C c) = 1 :=
+lemma discriminant'_C_mul_X_add_C [comm_ring R] {n : ℕ} {b c : R} (h : b ≠ 0) :
+  discriminant' (C b * X + C c) = 1 :=
 begin
   have : (C b * X + C c).nat_degree = 1,
   { apply nat_degree_eq_of_degree_eq_some,
@@ -68,18 +69,18 @@ begin
     rw degree_add_C;
     simp [h, this],
     sorry, },
-  norm_num [discriminant, sylvester_matrix, this],
+  norm_num [discriminant', sylvester_matrix, resultant, this],
   rw det_apply,
   sorry,
 end
 
-lemma discriminant_mul_X_pow_add_C_mul_X_add_C [comm_ring R] {n : ℕ} {a b c : R} (h : a ≠ 0) :
-  discriminant (C a * (X : polynomial R)^n + C b * X + C c) =
+lemma discriminant'_mul_X_pow_add_C_mul_X_add_C [comm_ring R] {n : ℕ} {a b c : R} (h : a ≠ 0) :
+  discriminant' (C a * (X : polynomial R)^n + C b * X + C c) =
     -(n - 1)^(n-1) * b^n + n^n * a^(n-1) * (-c)^(n-1) :=
 begin
   by_cases hn0 : n = 0,
   norm_num [hn0],
-  norm_num [discriminant, sylvester_matrix],
+  norm_num [discriminant', sylvester_matrix],
   sorry,
   sorry,
 end
@@ -89,7 +90,7 @@ end
 -- example of computing this thing
 example : false :=
 begin
-  have := @discriminant_mul_X_pow_add_C_mul_X_add_C _ _ 5 (1 : ℚ) (-1) (-1),
+  have := @discriminant'_mul_X_pow_add_C_mul_X_add_C _ _ 5 (1 : ℚ) (-1) (-1),
   norm_num at this,
   sorry,
 end
