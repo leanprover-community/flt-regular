@@ -8,6 +8,20 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a) \qquad N_{K/\QQ}(\a)=\prod_i \sigma_i(\a)  \]
 \end{lemma}
 
+\begin{definition}\label{defn_of_disc}
+	Let $K$ be a number field and let $B=\{b_1,\dots,b_n\}$ be a set of elements in $K$. The discriminant of $B$ is defined as \[\Delta(B)=  \det \left (\begin{matrix} \Tr_{K/\QQ}(b_1b_1) &\cdots& \Tr_{K/\QQ}(b_1b_n)\\ \vdots & & \vdots \\  \Tr_{K/\QQ}(b_nb_1) &\cdots& \Tr_{K/\QQ}(b_nb_n)
+	\end{matrix} \right ).\] If needed we will denote the matrix \[\left (\begin{matrix} \Tr_{K/\QQ}(b_1b_1) &\cdots& \Tr_{K/\QQ}(b_1b_n)\\ \vdots & & \vdots \\  \Tr_{K/\QQ}(b_nb_1) &\cdots& \Tr_{K/\QQ}(b_nb_n)
+	\end{matrix} \right )\] by $T_B$.
+\end{definition}
+
+\begin{lemma}\label{lem:_lin_indep_iff_disc_ne_zero}
+	Let $K$ be a number field and let $B=\{b_1,\dots,b_n\}$ be a set of elements in $K$. Then $\Delta(B) \neq 0$ if and only if the elements in $B$ are linearly independent.
+\end{lemma}
+
+\begin{lemma}\label{lem:_disc_change_of_basis}
+	Let $K$ be a number field and $B,B'$ bases for $K/\QQ$. If $P$ denotes the change of basis matrix, then \[\Delta(B)=\det(P)^2 \Delta(B').\]
+\end{lemma}
+
 \begin{lemma}\label{lemma:_disc_via_embs}
 	Let $K$ be a number field with basis $B=\{b_1,\dots,b_n\}$ and let $\sigma_1,\dots,\sigma_n$ be the embeddings of $K$ into $\CC$. Now let $M$ be the matrix  \[\left (\begin{matrix} \sigma_1(b_1) &\cdots& \sigma_1(b_n)\\ \vdots & & \vdots \\  \sigma_n(b_1) &\cdots& \sigma_n(b_n)
 	\end{matrix} \right ).\] Then \[\Delta(B)=\det(M)^2.\]
@@ -42,7 +56,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \begin{proof}
 	By Proposition \ref{lemma:_disc_of_prim_elt_basis} we have $\Delta(B)=\prod_{i < j}(\a_i-\a_j)^2$ where $\a_k:=\sigma_k(\a)$. Next, we note that the number of terms in this product is $1+2+\cdots+(n-1)=\frac{n(n-1)}{2}$. So if we write each term as $(\a_i-\a_j)^2=-(\a_i-\a_j)(\a_j-\a_i)$ we get \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j). \]
 	
-	Now, by lemmama \ref{lemma:_diff_of_irr_pol} and Proposition \ref{lemma:_alt_definition_of_norm_and_trace} we see that \[N_{K/\QQ}(m_\a'(\a))=\prod_{i=1}^n m_\a'(\a_i)=\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j),\] which gives the result.	
+	Now, by lemma \ref{lemma:_diff_of_irr_pol} and Proposition \ref{lemma:_alt_definition_of_norm_and_trace} we see that \[N_{K/\QQ}(m_\a'(\a))=\prod_{i=1}^n m_\a'(\a_i)=\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j),\] which gives the result.	
 \end{proof}	
 
 \begin{lemma}\label{lemma:_disc_change_of_basis}
