@@ -15,14 +15,17 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{definition}
 
 \begin{lemma}\label{lem:lin_indep_iff_disc_ne_zero}
+    \uses{defn_of_disc}
 	Let $K$ be a number field and let $B=\{b_1,\dots,b_n\}$ be a set of elements in $K$. Then $\Delta(B) \neq 0$ if and only if the elements in $B$ are linearly independent.
 \end{lemma}
 
 \begin{lemma}\label{lem:disc_change_of_basis}
+    \uses{defn_of_disc}
 	Let $K$ be a number field and $B,B'$ bases for $K/\QQ$. If $P$ denotes the change of basis matrix, then \[\Delta(B)=\det(P)^2 \Delta(B').\]
 \end{lemma}
 
 \begin{lemma}\label{lemma:disc_via_embs}
+    \uses{defn_of_disc}
 	Let $K$ be a number field with basis $B=\{b_1,\dots,b_n\}$ and let $\sigma_1,\dots,\sigma_n$ be the embeddings of $K$ into $\CC$. Now let $M$ be the matrix  \[\left (\begin{matrix} \sigma_1(b_1) &\cdots& \sigma_1(b_n)\\ \vdots & & \vdots \\  \sigma_n(b_1) &\cdots& \sigma_n(b_n)
 	\end{matrix} \right ).\] Then \[\Delta(B)=\det(M)^2.\]
 \end{lemma}
@@ -33,7 +36,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lemma:disc_of_prim_elt_basis}
-	\uses{lemma:disc_via_embs}
+    \uses{defn_of_disc,lemma:disc_via_embs}
 	Let $K$ be a number field and $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$ for some $\a \in K$. Then \[\Delta(B)=\prod_{i < j} (\sigma_i(\a)-\sigma_j(\a))^2\] where $\sigma_i$ are the embeddings of $K $ into $\CC$. Here $\Delta(B)$ denotes the discriminant.
 \end{lemma}
 \begin{proof}
