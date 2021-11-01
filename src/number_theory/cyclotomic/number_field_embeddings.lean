@@ -1,7 +1,5 @@
 import ring_theory.roots_of_unity
 import number_theory.number_field
-import data.real.nnreal
-import analysis.special_functions.pow
 import field_theory.splitting_field
 -- import generalisation_linter
 import field_theory.is_alg_closed.basic
@@ -47,12 +45,16 @@ instance : fintype (K →+* ℂ) := fintype.of_equiv (K →ₐ[ℚ] ℂ) equiv_a
 lemma card_embeddings : fintype.card (K →+* ℂ) = finrank ℚ K :=
 by rw [fintype.of_equiv_card equiv_alg, alg_hom.card]
 
+/-- An embedding is real if its fixed by complex conjugation-/
 def is_real (φ : K →+* ℂ) : Prop := conj ∘ φ = φ
 
+/-- An embedding is real if its not fixed by complex conjugation-/
 def is_complex (φ : K →+* ℂ) : Prop := conj ∘ φ ≠ φ
 
+/-- Two embeddings are conjuate if `conj` takes one to the other-/
 def are_conj (φ θ : K →+* ℂ) : Prop := conj ∘ φ = θ
 
+/--An element of a number field is real if its image under any embedding is fixed by conj-/
 def element_is_real (x : K) : Prop := ∀  φ : K →+* ℂ, conj (φ x)= φ x
 
 instance  real_embeddings  {K : Type*} [field K] [number_field K] :
