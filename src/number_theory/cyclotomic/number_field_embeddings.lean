@@ -58,10 +58,10 @@ def is_complex (φ : K →+* ℂ) : Prop := conj ∘ φ ≠ φ
 /-- Two embeddings are conjuate if `conj` takes one to the other-/
 def are_conj (φ θ : K →+* ℂ) : Prop := conj ∘ φ = θ
 
-/--An element of a number field is real if its image under any embedding is fixed by conj-/
-def element_is_real (x : K) : Prop := ∀  φ : K →+* ℂ, conj (φ x)= φ x
+/-- An element of a number field is real if its image under any embedding is fixed by conj-/
+def element_is_real (x : K) : Prop := ∀ φ : K →+* ℂ, conj (φ x) = φ x
 
-instance  real_embeddings  {K : Type*} [field K] [number_field K] :
+instance real_embeddings {K : Type*} [field K] [number_field K] :
   fintype { φ  : K →+* ℂ // is_real φ} := infer_instance
 
 instance complex_embeddings {K : Type*} [field K] [number_field K]:
