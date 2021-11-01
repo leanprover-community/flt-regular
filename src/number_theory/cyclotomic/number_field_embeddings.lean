@@ -97,8 +97,10 @@ begin
   exact h1,
 end
 
-def in_totally_real {K : Type*} [field K] [number_field K] : Prop := ∀ φ : K →+* ℂ, is_real φ
+/-- A number field all of whose embeddings are real -/
+def in_totally_real {K : Type*} [field K] : Prop := ∀ φ : K →+* ℂ, is_real φ
 
-def in_totally_complex {K : Type*} [field K] [number_field K] : Prop := ∀ φ : K →+* ℂ, is_complex φ
+/-- A number field all of whose embeddings are complex -/
+def in_totally_complex {K : Type*} [field K] : Prop := ∀ φ : K →+* ℂ, is_complex φ
 
 end embeddings
