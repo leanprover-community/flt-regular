@@ -326,6 +326,9 @@ variables {K : Type*} [field K] [number_field K] {n : ℕ} (x : K)
 open polynomial
 
 noncomputable theory
+-- TODO generalize to other targets
+/-- The equivalence between algebra maps from a number field to the complexes and plain
+ring morphisms between them. -/
 def equiv_alg : (K →ₐ[ℚ] ℂ) ≃ (K →+* ℂ) :=
 { to_fun := coe,
   inv_fun := λ f : K →+* ℂ, alg_hom.mk' f (λ (c : ℚ) x,
@@ -475,6 +478,7 @@ end
 -- as long as we keep the condition that x is integral over ℤ
 variables (hx : ∀ φ : K →+* ℂ, abs (φ x) = 1) (hxi : is_integral ℤ x)
 include hx hxi
+/-- Lemma 1.6 of Washington's Introduction to cyclotomic fields -/
 lemma mem_roots_of_unity_of_abs_eq_one : ∃ (n : ℕ) (hn : 0 < n), x ^ n = 1 :=
 begin
   have : ∃ (a : ℕ) (ha : a ∈ univ) (b : ℕ) (hb : b ∈ univ), a ≠ b ∧ x ^ a = x ^ b :=
@@ -503,4 +507,4 @@ begin
 end
 end backwards
 
--- #lint only generalisation_linter
+-- #lint generalisation_linter
