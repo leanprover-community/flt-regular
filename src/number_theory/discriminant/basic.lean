@@ -2,6 +2,8 @@ import linear_algebra.matrix.determinant
 import ring_theory.trace
 import ring_theory.norm
 
+import ready_for_mathlib.linear_independent
+
 universes u v w z
 
 variables (A : Type u) {B : Type v} {ι : Type w}
@@ -19,6 +21,9 @@ namespace algebra
 `trace_matrix A ι b` as the matrix whose `(i j)`-th element is the trace of `b i * b j`. -/
 def trace_matrix (b : ι → B) : matrix ι ι A := (λ i j, trace_form A B (b i) (b j))
 
+lemma trace_matrix_apply (b : ι → B) (i j : ι) :
+  trace_matrix A b i j = trace_form A B (b i) (b j) := rfl
+
 /-- Given an `A`-algebra `B` and `b`, an `ι`-indexed family of elements of `B`, we define
 `discriminant A ι b` as the determinant of `trace_matrix A ι b`. -/
 def discriminant [fintype ι] (b : ι → B) := (trace_matrix A b).det
@@ -31,8 +36,19 @@ variable [fintype ι]
 
 section basic
 
-lemma zero_of_not_linear_independent (b : ι → B) (hli : ¬linear_independent A b) :
-  discriminant A b = 0 := sorry
+lemma zero_of_not_linear_independent [is_domain A] {b : ι → B} (hli : ¬linear_independent A b) :
+  discriminant A b = 0 :=
+begin
+  obtain ⟨g, hg, i, hi⟩ := fintype.linear_independent_iff''.1 hli,
+  have : (trace_matrix A b).mul_vec g = 0,
+  { ext i,
+    have : ∀ j, (trace A B) (b i * b j) * g j = (trace A B) (((g j) • (b j)) * b i),
+    { intro j, simp [mul_comm], },
+    simp only [mul_vec, dot_product, trace_matrix_apply, pi.zero_apply, trace_form_apply,
+      λ j, this j, ← linear_map.map_sum, ← finset.sum_mul, hg, zero_mul, linear_map.map_zero] },
+  by_contra h,
+  simpa [matrix.eq_zero_of_mul_vec_eq_zero h this] using hi
+end
 
 --discriminant of zero family and similar stuff
 
@@ -41,16 +57,16 @@ end basic
 section field
 
 variables (K : Type u) {L : Type v} (E : Type z) [field K] [field L] [field E]
-variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E] (b : ι → L)
-variables (hcard : fintype.card ι = finrank K L) (pb : power_basis K L)
-variables (hfin : module.finite K L) (hsplits : splits (algebra_map K E) (minpoly K pb.gen))
+variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E]
+variables [module.finite K L] [is_separable K L] [is_alg_closed E]
+variables (b : ι → L) (hcard : fintype.card ι = finrank K L) (pb : power_basis K L)
 
 local notation `n` := finrank K L
 
 --I think we need to assume n ≠ 0?
 
 --I don't think we need (and can) prove a more general result
-lemma linear_independent_of_not_zero [is_separable K L] (h : discriminant K b ≠ 0) :
+lemma linear_independent_of_not_zero (h : discriminant K b ≠ 0) :
   linear_independent K b := sorry
 
 variable {K}
@@ -58,27 +74,15 @@ variable {K}
 --TODO state this first of all for matrix.trace
 --is using matrix.col and unit.star the best way to do this?
 lemma of_matrix_mul (P : matrix ι ι K) : discriminant K
-  (λ i, (P.map (algebra_map K L) ⬝ (matrix.col b)) i unit.star) = P.det ^ 2 * discriminant K b :=
-sorry
+  ((P.map (algebra_map K L)).mul_vec b) = P.det ^ 2 * discriminant K b := sorry
 
 variables (K L)
-
---this is probably already in mathlib in some form
-instance  [is_separable K L] [finite_dimensional K L] : fintype (L →ₐ[K] E) := infer_instance
-
---this is probably already in mathlib in some form
-lemma card_embeddings_eq_finrank [is_alg_closed E] [is_separable K L] [finite_dimensional K L] :
-fintype.card (L →ₐ[K] E) = n :=
-begin
-  convert alg_hom.card K L E,
-end
 
 variable {L}
 
 --give a name to the matrix first
-lemma eq_det_embeddings [is_alg_closed E] [is_separable K L] [finite_dimensional K L] :
-  algebra_map K E (discriminant K b) = (reindex (equiv.refl ι)
-  (equiv_of_card_eq ((card_embeddings_eq_finrank K L E).trans hcard.symm))
+lemma eq_det_embeddings : algebra_map K E (discriminant K b) =
+  (reindex (equiv.refl ι) (equiv_of_card_eq ((alg_hom.card K L E).trans hcard.symm))
   (λ i (σ : L →ₐ[K] E), σ ( b i))).det := sorry
 
 lemma of_power_basis_eq_prod [is_alg_closed E]  [is_separable K L] [finite_dimensional K L] :
