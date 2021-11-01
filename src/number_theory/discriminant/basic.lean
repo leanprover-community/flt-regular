@@ -7,11 +7,11 @@ universes u v w z
 variables (A : Type u) {B : Type v} {ι : Type w}
 variables [comm_ring A] [comm_ring B] [algebra A B]
 
-open_locale classical matrix
+open_locale classical matrix big_operators
 
 noncomputable theory
 
-open matrix finite_dimensional fintype polynomial
+open matrix finite_dimensional fintype polynomial finset
 
 namespace algebra
 
@@ -42,8 +42,8 @@ section field
 
 variables (K : Type u) {L : Type v} (E : Type z) [field K] [field L] [field E]
 variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E] (b : ι → L)
-variables (hcard : fintype.card ι = finrank K L)
-variables (hfin : module.finite K L) [is_alg_closed E]
+variables (hcard : fintype.card ι = finrank K L) (pb : power_basis K L)
+variables (hfin : module.finite K L) (hsplits : splits (algebra_map K E) (minpoly K pb.gen))
 
 local notation `n` := finrank K L
 
@@ -81,7 +81,9 @@ lemma eq_det_embeddings [is_separable K L] [finite_dimensional K L] :
   (equiv_of_card_eq ((card_embeddings_eq_finrank K L E).trans hcard.symm))
   (λ i (σ : L →ₐ[K] E), σ ( b i))).det := sorry
 
-variable (pb : power_basis K L)
+lemma of_power_basis_eq_prod : algebra_map K E (discriminant K pb.basis) ^ 2 =
+  (univ : finset ((L →ₐ[K] E) × (L →ₐ[K] E))).off_diag.prod
+  (λ σ, (σ.1.1 pb.gen - σ.1.2 pb.gen) ^ 2) := sorry
 
 lemma of_power_basis_eq_norm : discriminant K pb.basis =
   (-1) ^ (n * (n - 1) / 2) *(norm K (aeval pb.gen (minpoly K pb.gen).derivative)) := sorry
