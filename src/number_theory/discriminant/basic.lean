@@ -2,6 +2,8 @@ import linear_algebra.matrix.determinant
 import ring_theory.trace
 import ring_theory.norm
 
+import ready_for_mathlib.linear_independent
+
 universes u v w z
 
 variables (A : Type u) {B : Type v} {ι : Type w}
@@ -19,6 +21,9 @@ namespace algebra
 `trace_matrix A ι b` as the matrix whose `(i j)`-th element is the trace of `b i * b j`. -/
 def trace_matrix (b : ι → B) : matrix ι ι A := (λ i j, trace_form A B (b i) (b j))
 
+lemma trace_matrix_apply (b : ι → B) (i j : ι) :
+  trace_matrix A b i j = trace_form A B (b i) (b j) := rfl
+
 /-- Given an `A`-algebra `B` and `b`, an `ι`-indexed family of elements of `B`, we define
 `discriminant A ι b` as the determinant of `trace_matrix A ι b`. -/
 def discriminant [fintype ι] (b : ι → B) := (trace_matrix A b).det
@@ -31,8 +36,19 @@ variable [fintype ι]
 
 section basic
 
-lemma zero_of_not_linear_independent [is_domain A] (b : ι → B) (hli : ¬linear_independent A b) :
-  discriminant A b = 0 := sorry
+lemma zero_of_not_linear_independent [is_domain A] {b : ι → B} (hli : ¬linear_independent A b) :
+  discriminant A b = 0 :=
+begin
+  obtain ⟨g, hg, i, hi⟩ := fintype.linear_independent_iff''.1 hli,
+  have : (trace_matrix A b).mul_vec g = 0,
+  { ext i,
+    have : ∀ j, (trace A B) (b i * b j) * g j = (trace A B) (((g j) • (b j)) * b i),
+    { intro j, simp [mul_comm], },
+    simp only [mul_vec, dot_product, trace_matrix_apply, pi.zero_apply, trace_form_apply,
+      λ j, this j, ← linear_map.map_sum, ← finset.sum_mul, hg, zero_mul, linear_map.map_zero] },
+  by_contra h,
+  simpa [matrix.eq_zero_of_mul_vec_eq_zero h this] using hi
+end
 
 --discriminant of zero family and similar stuff
 
