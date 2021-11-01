@@ -43,7 +43,7 @@ section field
 variables (K : Type u) {L : Type v} (E : Type z) [field K] [field L] [field E]
 variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E] (b : ι → L)
 variables (hcard : fintype.card ι = finrank K L) (pb : power_basis K L)
-variables (hfin : module.finite K L) (hsplits : splits (algebra_map K E) (minpoly K pb.gen))
+variables [module.finite K L] [is_separable K L] [is_alg_closed E]
 
 local notation `n` := finrank K L
 
@@ -63,22 +63,11 @@ sorry
 
 variables (K L)
 
---this is probably already in mathlib in some form
-instance  [is_separable K L] [finite_dimensional K L] : fintype (L →ₐ[K] E) := infer_instance
-
---this is probably already in mathlib in some form
-lemma card_embeddings_eq_finrank [is_alg_closed E] [is_separable K L] [finite_dimensional K L] :
-fintype.card (L →ₐ[K] E) = n :=
-begin
-  convert alg_hom.card K L E,
-end
-
 variable {L}
 
 --give a name to the matrix first
-lemma eq_det_embeddings [is_alg_closed E] [is_separable K L] [finite_dimensional K L] :
-  algebra_map K E (discriminant K b) = (reindex (equiv.refl ι)
-  (equiv_of_card_eq ((card_embeddings_eq_finrank K L E).trans hcard.symm))
+lemma eq_det_embeddings : algebra_map K E (discriminant K b) =
+  (reindex (equiv.refl ι) (equiv_of_card_eq ((alg_hom.card K L E).trans hcard.symm))
   (λ i (σ : L →ₐ[K] E), σ ( b i))).det := sorry
 
 lemma of_power_basis_eq_prod [is_alg_closed E]  [is_separable K L] [finite_dimensional K L] :
