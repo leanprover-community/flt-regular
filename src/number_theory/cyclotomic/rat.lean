@@ -92,6 +92,7 @@ begin
   refl,
 end
 
+/-- The power basis of the p-th cyclotomic field given by the chosen pth root of unity. -/
 def power_basis_zeta : power_basis ℚ KK :=
 { gen := zeta' p ℚ KK,
   dim := (minpoly ℚ (zeta' p ℚ (cyclotomic_field p ℚ))).nat_degree,
@@ -102,7 +103,7 @@ def power_basis_zeta : power_basis ℚ KK :=
 @[simp]
 lemma power_basis_zeta_gen : (power_basis_zeta p).gen = ζ := rfl
 
--- complex conjugation as a Galois automorphism
+/-- complex conjugation as a Galois automorphism -/
 def gal_conj : KK →ₐ[ℚ] KK := power_basis.lift (power_basis_zeta p) ζ⁻¹
 begin
   simp only [power_basis_zeta_gen, minpoly_zeta'],
@@ -139,6 +140,9 @@ begin
   simp,
 end
 
+-- TODO we should generlize this and have a way to automatically transfer galois automorphisms
+-- to automorphisms of the unit group
+/-- The conjugate as a map from units to itself -/
 def unit_gal_conj : units RR → units RR :=
 λ ⟨u_val, u_inv, u_val_inv, u_inv_val⟩,
   ⟨⟨gal_conj p u_val, sorry⟩, ⟨gal_conj p u_inv, sorry⟩,
@@ -215,3 +219,5 @@ end
 
 
 end int_facts
+
+#lint
