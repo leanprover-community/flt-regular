@@ -9,9 +9,8 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{lemma}
 
 \begin{definition}\label{defn_of_disc}
-	Let $K$ be a number field and let $B=\{b_1,\dots,b_n\}$ be a set of elements in $K$. The discriminant of $B$ is defined as \[\Delta(B)=  \det \left (\begin{matrix} \Tr_{K/\QQ}(b_1b_1) &\cdots& \Tr_{K/\QQ}(b_1b_n)\\ \vdots & & \vdots \\  \Tr_{K/\QQ}(b_nb_1) &\cdots& \Tr_{K/\QQ}(b_nb_n)
-	\end{matrix} \right ).\] If needed we will denote the matrix \[\left (\begin{matrix} \Tr_{K/\QQ}(b_1b_1) &\cdots& \Tr_{K/\QQ}(b_1b_n)\\ \vdots & & \vdots \\  \Tr_{K/\QQ}(b_nb_1) &\cdots& \Tr_{K/\QQ}(b_nb_n)
-	\end{matrix} \right )\] by $T_B$.
+	Let $A,K$ be commutative rings with $K$ and $A$-algebra. let $B=\{b_1,\dots,b_n\}$ be a set of elements in $K$. The discriminant of $B$ is defined as \[\Delta(B)=  \det \left (\begin{matrix} \Tr_{K/A}(b_1b_1) &\cdots& \Tr_{K/A}(b_1b_n)\\ \vdots & & \vdots \\  \Tr_{K/A}(b_nb_1) &\cdots& \Tr_{K/A}(b_nb_n)
+	\end{matrix} \right ).\]
 \end{definition}
 
 \begin{lemma}\label{lem:_lin_indep_iff_disc_ne_zero}
@@ -174,7 +173,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 		
 		\item Let $\a \in \ZZ[\zeta_p]$. Then $\a^p$ is congruent to an integer modulo $p$.
 		
-		\item Let $\a \in \ZZ[\zeta_p]$.   Suppose that $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$ with at least one $a_i=0$. Then there is an integer $n$ such that $\a/n \in \ZZ[\zeta_p]$, then $n$ divides each $a_i$. 
+		\item Let $\a \in \ZZ[\zeta_p]$.   Suppose that $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$ with at least one $a_i=0$. If there is an integer $n$ such that $\a/n \in \ZZ[\zeta_p]$, then $n$ divides each $a_i$. 
 		
 		
 		\item   Let $i \in \{1,\dots,p-1\}.$ Suppose that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. Then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
@@ -189,7 +188,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \begin{proof}
 	
 	
-	$(1)$  Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod,$ then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd). 
+	$(1)$  Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod p,$ then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd). 
 	
 	
 	$(2)$  Lemma \ref{lemma:_fac_of_p_in_p_th_root} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. We know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_+p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
