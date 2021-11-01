@@ -25,7 +25,8 @@ begin
     -- use f_val,
     sorry, },
   { have hp_five: 5 ≤ p,
-    sorry, }
+    sorry,
+    sorry }
 end
 
 theorem flt_regular_case_two (p a b c : ℕ) [fact p.prime] (hp : is_regular_number p)
