@@ -71,6 +71,7 @@ begin
 sorry,
 end
 
+/-
 lemma unit_lemma_gal_conj (u : units RR) :
   ∃ (x : units RR) (n : ℤ), (is_gal_conj_real p (x : KK)) ∧ (u : KK) = x * (zeta p ℚ) ^ n :=
 
@@ -85,7 +86,11 @@ begin
     { rw is_gal_conj_real,
     have hy : u * ((zeta p ℚ)⁻¹)  ^ ( m) = (unit_gal_conj p u) *  (zeta p ℚ) ^ ( m), by {sorry,},
     dsimp,
-    simp,
+    simp only [inv_pow, alg_hom.map_mul],
+    have hz: gal_conj p ((zeta p ℚ)  ^ ( m))⁻¹ =(zeta p ℚ)  ^ ( m) , by {sorry,},
+    rw ← coe_coe,
+    rw ← coe_coe,
+
 
 
     sorry,
@@ -106,7 +111,6 @@ begin
      },
 end
 
-/-
 lemma unit_lemma (u : units RR) :
   ∃ (x : units RR) (n : ℤ), element_is_real (x : KK) ∧ (u : KK) = x * (zeta p ℚ) ^ n :=
 begin
