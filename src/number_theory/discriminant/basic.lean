@@ -2,7 +2,7 @@ import linear_algebra.matrix.determinant
 import ring_theory.trace
 import ring_theory.norm
 
-import ready_for_mathlib.linear_independent
+import ready_for_mathlib.linear_algebra
 
 universes u v w z
 
@@ -23,6 +23,17 @@ def trace_matrix (b : ι → B) : matrix ι ι A := (λ i j, trace_form A B (b i
 
 lemma trace_matrix_apply (b : ι → B) (i j : ι) :
   trace_matrix A b i j = trace_form A B (b i) (b j) := rfl
+
+variable {A}
+
+lemma trace_matrix_of_basis [fintype ι] (b : basis ι A B) :
+  trace_matrix A b = bilin_form.to_matrix b (trace_form A B) :=
+begin
+  ext i j,
+  rw [trace_matrix_apply, trace_form_apply, trace_form_to_matrix]
+end
+
+variable (A)
 
 /-- Given an `A`-algebra `B` and `b`, an `ι`-indexed family of elements of `B`, we define
 `discriminant A ι b` as the determinant of `trace_matrix A ι b`. -/
@@ -50,8 +61,6 @@ begin
   simpa [matrix.eq_zero_of_mul_vec_eq_zero h this] using hi
 end
 
---discriminant of zero family and similar stuff
-
 end basic
 
 section field
@@ -63,11 +72,16 @@ variables (b : ι → L) (hcard : fintype.card ι = finrank K L) (pb : power_bas
 
 local notation `n` := finrank K L
 
---I think we need to assume n ≠ 0?
-
---I don't think we need (and can) prove a more general result
-lemma linear_independent_of_not_zero (h : discriminant K b ≠ 0) :
-  linear_independent K b := sorry
+include hcard
+lemma not_zero_of_linear_independent [nonempty ι] (hli : linear_independent K b) :
+  discriminant K b ≠ 0 :=
+begin
+  have := span_eq_top_of_linear_independent_of_card_eq_finrank hli hcard,
+  rw [discriminant, trace_matrix],
+  simp_rw [← basis.mk_apply hli this],
+  rw [← trace_matrix, trace_matrix_of_basis, ← bilin_form.nondegenerate_iff_det_ne_zero],
+  exact trace_form_nondegenerate _ _
+end
 
 variable {K}
 
