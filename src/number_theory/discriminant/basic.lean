@@ -86,7 +86,6 @@ end
 variable {K}
 
 --TODO state this first of all for matrix.trace
---is using matrix.col and unit.star the best way to do this?
 lemma of_matrix_mul (P : matrix ι ι K) : discriminant K
   ((P.map (algebra_map K L)).mul_vec b) = P.det ^ 2 * discriminant K b := sorry
 
