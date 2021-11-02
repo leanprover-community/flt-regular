@@ -119,14 +119,6 @@ def unit_gal_conj : units RR → units RR :=
     simp,
   end⟩
 
-
-lemma unit_gal_conj_idempotent (u : units RR) : (unit_gal_conj p (unit_gal_conj p u)) = u :=
-begin
-
-   sorry,
-end
-
-
 lemma unit_gal_conj_spec (u : units RR) : gal_conj p u = unit_gal_conj p u :=
 begin
   cases u,
@@ -143,4 +135,11 @@ begin
   rw ← unit_gal_conj_spec,
   rw ← embedding_conj,
   simp [-embedding_conj],
+end
+
+lemma unit_gal_conj_idempotent (u : units RR) : (unit_gal_conj p (unit_gal_conj p u)) = u :=
+begin
+   have:=  (unit_gal_conj_spec p u),
+   simp at this,
+   sorry,
 end
