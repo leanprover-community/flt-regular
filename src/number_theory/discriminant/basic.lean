@@ -24,7 +24,9 @@ def trace_matrix (b : ι → B) : matrix ι ι A := (λ i j, trace_form A B (b i
 lemma trace_matrix_apply (b : ι → B) (i j : ι) :
   trace_matrix A b i j = trace_form A B (b i) (b j) := rfl
 
-lemma trace_matrix_of_matrix_mul_vec [fintype ι] (b : ι → B) (P : matrix ι ι A) :
+variable {A}
+
+lemma trace_matrix_of_matrix_vec_mul [fintype ι] (b : ι → B) (P : matrix ι ι A) :
  trace_matrix A ((P.map (algebra_map A B)).vec_mul b) = Pᵀ ⬝ (trace_matrix A b) ⬝ P :=
 begin
   ext α β,
@@ -42,7 +44,14 @@ begin
   simp,
 end
 
-variable {A}
+lemma trace_matrix_of_matrix_mul_vec [fintype ι] (b : ι → B) (P : matrix ι ι A) :
+ trace_matrix A ((P.map (algebra_map A B)).mul_vec b) = P ⬝ (trace_matrix A b) ⬝ Pᵀ :=
+begin
+  refine add_equiv.injective transpose_add_equiv _,
+  rw [transpose_add_equiv_apply, transpose_add_equiv_apply, ← vec_mul_transpose,
+    ← transpose_map, trace_matrix_of_matrix_vec_mul, transpose_transpose, transpose_mul,
+    transpose_transpose, transpose_mul]
+end
 
 lemma trace_matrix_of_basis [fintype ι] (b : basis ι A B) :
   trace_matrix A b = bilin_form.to_matrix b (trace_form A B) :=
@@ -79,8 +88,15 @@ begin
   simpa [matrix.eq_zero_of_mul_vec_eq_zero h this] using hi
 end
 
+variable {A}
+
 lemma of_matrix_vec_mul (b : ι → B) (P : matrix ι ι A) :
   discriminant A ((P.map (algebra_map A B)).vec_mul b) = P.det ^ 2 * discriminant A b :=
+by rw [discriminant, trace_matrix_of_matrix_vec_mul, det_mul, det_mul, det_transpose, mul_comm,
+    ← mul_assoc, discriminant, pow_two]
+
+lemma of_matrix_mul_vec (b : ι → B) (P : matrix ι ι A) :
+  discriminant A ((P.map (algebra_map A B)).mul_vec b) = P.det ^ 2 * discriminant A b :=
 by rw [discriminant, trace_matrix_of_matrix_mul_vec, det_mul, det_mul, det_transpose, mul_comm,
     ← mul_assoc, discriminant, pow_two]
 
