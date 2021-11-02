@@ -219,5 +219,3 @@ end
 
 
 end int_facts
-
-#lint
