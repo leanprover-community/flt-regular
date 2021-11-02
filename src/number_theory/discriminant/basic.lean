@@ -79,6 +79,11 @@ begin
   simpa [matrix.eq_zero_of_mul_vec_eq_zero h this] using hi
 end
 
+lemma of_matrix_vec_mul (b : ι → B) (P : matrix ι ι A) :
+  discriminant A ((P.map (algebra_map A B)).vec_mul b) = P.det ^ 2 * discriminant A b :=
+by rw [discriminant, trace_matrix_of_matrix_mul_vec, det_mul, det_mul, det_transpose, mul_comm,
+    ← mul_assoc, discriminant, pow_two]
+
 end basic
 
 section field
@@ -100,15 +105,6 @@ begin
   rw [← trace_matrix, trace_matrix_of_basis, ← bilin_form.nondegenerate_iff_det_ne_zero],
   exact trace_form_nondegenerate _ _
 end
-
-variable {K}
-
-lemma of_matrix_vec_mul (P : matrix ι ι K) : discriminant K ((P.map (algebra_map K L)).vec_mul b) =
-  P.det ^ 2 * discriminant K b :=
-by rw [discriminant, trace_matrix_of_matrix_mul_vec, det_mul, det_mul, det_transpose, mul_comm,
-    ← mul_assoc, discriminant, pow_two]
-
-variables (K L)
 
 variable {L}
 
