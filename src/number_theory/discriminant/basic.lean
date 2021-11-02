@@ -24,6 +24,24 @@ def trace_matrix (b : ι → B) : matrix ι ι A := (λ i j, trace_form A B (b i
 lemma trace_matrix_apply (b : ι → B) (i j : ι) :
   trace_matrix A b i j = trace_form A B (b i) (b j) := rfl
 
+lemma trace_matrix_of_matrix_mul_vec [fintype ι] (b : ι → B) (P : matrix ι ι A) :
+ trace_matrix A ((P.map (algebra_map A B)).vec_mul b) = Pᵀ ⬝ (trace_matrix A b) ⬝ P :=
+begin
+  ext α β,
+  rw [trace_matrix_apply, vec_mul, dot_product, vec_mul, dot_product, trace_matrix, mul_apply,
+    bilin_form.sum_left, fintype.sum_congr _ _ (λ (i : ι), @bilin_form.sum_right _ _ _ _ _ _ _ _
+    (b i * P.map (algebra_map A B) i α) (λ (y : ι), b y * P.map (algebra_map A B) y β)), sum_comm],
+  refine sum_congr _ _ (λ x, _),
+  rw [mul_apply, sum_mul],
+  refine sum_congr _ _ (λ y, _),
+  rw [map_apply, trace_form_apply, mul_comm (b y), ← smul_def],
+  simp only [id.smul_eq_mul, ring_hom.id_apply, map_apply, transpose_apply, linear_map.map_smulₛₗ,
+    trace_form_apply, algebra.smul_mul_assoc],
+  rw [mul_comm (b x), ← smul_def],
+  ring_nf,
+  simp,
+end
+
 variable {A}
 
 lemma trace_matrix_of_basis [fintype ι] (b : basis ι A B) :
@@ -56,7 +74,7 @@ begin
     have : ∀ j, (trace A B) (b i * b j) * g j = (trace A B) (((g j) • (b j)) * b i),
     { intro j, simp [mul_comm], },
     simp only [mul_vec, dot_product, trace_matrix_apply, pi.zero_apply, trace_form_apply,
-      λ j, this j, ← linear_map.map_sum, ← finset.sum_mul, hg, zero_mul, linear_map.map_zero] },
+      λ j, this j, ← linear_map.map_sum, ← sum_mul, hg, zero_mul, linear_map.map_zero] },
   by_contra h,
   simpa [matrix.eq_zero_of_mul_vec_eq_zero h this] using hi
 end
@@ -85,9 +103,10 @@ end
 
 variable {K}
 
---TODO state this first of all for matrix.trace
-lemma of_matrix_mul (P : matrix ι ι K) : discriminant K
-  ((P.map (algebra_map K L)).mul_vec b) = P.det ^ 2 * discriminant K b := sorry
+lemma of_matrix_vec_mul (P : matrix ι ι K) : discriminant K ((P.map (algebra_map K L)).vec_mul b) =
+  P.det ^ 2 * discriminant K b :=
+by rw [discriminant, trace_matrix_of_matrix_mul_vec, det_mul, det_mul, det_transpose, mul_comm,
+    ← mul_assoc, discriminant, pow_two]
 
 variables (K L)
 
