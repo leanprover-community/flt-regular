@@ -17,7 +17,7 @@ section basic
 that `cyclotomic a A` has a root in `B` for all `a ∈ S` and that `B` is generated over `A` by the
 roots of `X ^ n - 1`. -/
 class is_cyclotomic_extension : Prop :=
-(ex_root (a : ℕ+) (ha : a ∈ S) : ∃ r : B, aeval r (cyclotomic a A) = 0)
+(ex_root {a : ℕ+} (ha : a ∈ S) : ∃ r : B, aeval r (cyclotomic a A) = 0)
 (adjoint_roots : ∀ (x : B), x ∈ adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 })
 
 namespace is_cyclotomic_extension

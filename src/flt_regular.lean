@@ -35,9 +35,8 @@ theorem flt_regular (p a b c : ℕ) [fact p.prime] (hp : is_regular_number p) (h
   (h : a ^ p + b ^ p = c ^ p) : a * b * c = 0 :=
 begin
   by_cases hpabc : p ∣ a * b * c,
-  exact flt_regular_case_two p a b c hp hpne_two h hpabc,
-  have : p.coprime (a * b * c),
-  refine (nat.prime.coprime_iff_not_dvd (fact.out _)).mpr hpabc,
+  { exact flt_regular_case_two p a b c hp hpne_two h hpabc, },
+  have : p.coprime (a * b * c), from (nat.prime.coprime_iff_not_dvd (fact.out _)).mpr hpabc,
   exfalso,
   exact flt_regular_case_one p a b c hp hpne_two h this,
 end

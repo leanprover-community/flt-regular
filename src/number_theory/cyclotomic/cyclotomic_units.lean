@@ -67,8 +67,7 @@ include A n
 /-- If `B` is a `n`-th cyclotomic extension of `A`, then `zeta' n A B` is any root of
 `cyclotomic n A` in L. -/
 def zeta' : B :=
-classical.some (((iff _ _ _).1 (show is_cyclotomic_extension {n} A B, from infer_instance)).1
-  n (set.mem_singleton n))
+classical.some (ex_root n (set.mem_singleton n) : ∃ r : B, aeval r (cyclotomic n A) = 0)
 
 @[simp]
 lemma zeta'_spec :
