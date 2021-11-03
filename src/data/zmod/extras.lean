@@ -1,11 +1,6 @@
 import data.zmod.basic
 
 
--- PRed to mathlib #10128
-lemma zmod.nat_coe_eq_nat_coe_iff' (a b c : ℕ) :
-  (a : zmod c) = (b : zmod c) ↔ a % c = b % c :=
-zmod.nat_coe_eq_nat_coe_iff a b c
-
 -- TODO wow another horrible proof
 lemma dvd_of_dvd_zmod {m n a : ℕ} (hmn : m ∣ n) (h : (m : zmod n) ∣ a) : m ∣ a :=
 begin
