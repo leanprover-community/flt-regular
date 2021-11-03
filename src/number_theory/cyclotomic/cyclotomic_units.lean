@@ -6,7 +6,6 @@ Authors: Alex J. Best
 
 import data.polynomial.field_division
 import number_theory.number_field
-
 import number_theory.cyclotomic.basic
 
 noncomputable theory
