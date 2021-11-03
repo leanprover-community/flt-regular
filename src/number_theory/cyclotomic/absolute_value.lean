@@ -311,38 +311,6 @@ end
 
 end polynomial
 
-section abv_sum
-variables {R S ι : Type*} [ordered_semiring S] [semiring R] (abv : R → S)
-variables [is_absolute_value abv] (f : ι → R) (s : finset ι)
-
-open_locale big_operators
-
-theorem is_absolute_value.abv_sum : abv (∑ i in s, f i) ≤ ∑ i in s, abv (f i) :=
-begin
-  classical,
-  induction s using finset.induction with i s hi ih,
-  { simp [is_absolute_value.abv_zero abv], },
-  { rw [finset.sum_insert hi, finset.sum_insert hi],
-    calc _ ≤ _ : is_absolute_value.abv_add abv _ _
-       ... ≤ _ : add_le_add_left ih _, }
-end
-end abv_sum
-
-section abv_prod
-variables {R S ι : Type*} [linear_ordered_field S] [comm_semiring R] [nontrivial R] (abv : R → S)
-variables [is_absolute_value abv] (f : ι → R) (s : finset ι)
-open_locale big_operators
-
-theorem is_absolute_value.abv_prod : abv (∏ i in s, f i) = ∏ i in s, abv (f i) :=
-begin
-  classical,
-  induction s using finset.induction with i s hi ih,
-  { simp [is_absolute_value.abv_one abv], },
-  { rw [finset.prod_insert hi, finset.prod_insert hi],
-    simp [is_absolute_value.abv_mul abv, ih], },
-end
-end abv_prod
-
 -- section ajoin
 -- variables {E : Type*} [field E] [number_field E] (x : E)
 -- instance : char_zero ℚ⟮x⟯ := sorry
@@ -406,7 +374,7 @@ begin
       calc _ ≤ _ : is_absolute_value.abv_sum _ _ _
         ... ≤ _ : _,
       conv in (complex.abs _)
-      { rw [is_absolute_value.abv_prod complex.abs],
+      { rw [is_absolute_value.map_prod complex.abs],
         congr,
         skip,
         funext,
