@@ -169,14 +169,8 @@ end
 
 @[simp] theorem powerset_len_val {α : Type*} (s : finset α) (i : ℕ) :
   (s.powerset_len i).val.map finset.val = s.1.powerset_len i :=
-begin
-  rw finset.powerset_len,
-  dsimp only,
-  rw map_pmap,
-  dsimp only,
-  rw pmap_eq_map,
-  rw map_id',
-end
+by simp only [finset.powerset_len, map_pmap, pmap_eq_map, map_id']
+
 end
 
 section polynomial
@@ -217,6 +211,8 @@ begin
         -- so fix that assumption in mathlib so we can generalize this lemma
 end
 
+
+-- TODO turns out this is already in ring_theory.polynomial.vieta in one form
 -- TODO lol I hope this monstrosity is golfable
 -- unfortunately this lemma isn't true without the hi hypothesis, due to nat subtraction weirdness
 lemma multiset_prod_X_add_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
