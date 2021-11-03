@@ -141,6 +141,7 @@ begin
   exact trace_form_nondegenerate _ _
 end
 
+@[nolint unused_arguments]
 lemma _root_.trace_matrix_eq_embeddings_matrix_mul_trans [is_alg_closed E] :
   (trace_matrix K b).map (algebra_map K E) =
   (embeddings_matrix K E b) ⬝ (embeddings_matrix K E b)ᵀ :=
