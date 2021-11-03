@@ -3,11 +3,9 @@ import ring_theory.trace
 import ring_theory.norm
 
 import ready_for_mathlib.linear_algebra
+import ready_for_mathlib.matrix
 
 universes u v w z
-
-variables (A : Type u) {B : Type v} {ι : Type w}
-variables [comm_ring A] [comm_ring B] [algebra A B]
 
 open_locale classical matrix big_operators
 
@@ -17,11 +15,16 @@ open matrix finite_dimensional fintype polynomial finset
 
 namespace algebra
 
+variables (A : Type u) {B : Type v} (C : Type z) {ι : Type w}
+variables [comm_ring A] [comm_ring B] [algebra A B] [comm_ring C] [algebra A C]
+
+section matrix
+
 /-- Given an `A`-algebra `B` and `b`, an `ι`-indexed family of elements of `B`, we define
 `trace_matrix A ι b` as the matrix whose `(i j)`-th element is the trace of `b i * b j`. -/
 def trace_matrix (b : ι → B) : matrix ι ι A := (λ i j, trace_form A B (b i) (b j))
 
-lemma trace_matrix_apply (b : ι → B) (i j : ι) :
+@[simp] lemma trace_matrix_apply (b : ι → B) (i j : ι) :
   trace_matrix A b i j = trace_form A B (b i) (b j) := rfl
 
 variable {A}
@@ -61,6 +64,23 @@ begin
 end
 
 variable (A)
+
+/-- `embeddings_matrix A C b : matrix ι (B →ₐ[A] C) C` is the matrix whose `(i, σ)` coefficient is
+  `σ (b i)`. It is mostly useful for fields when `fintype.card ι = finrank A B` and `C` is
+  algebraically closed. -/
+def embeddings_matrix (b : ι → B) : matrix ι (B →ₐ[A] C) C := (λ i (σ : B →ₐ[A] C), σ (b i))
+
+/-- `embeddings_matrix_reindex A C b e : matrix ι ι C` is the matrix whose `(i, j)` coefficient
+  is `σⱼ (b i)`, where `σⱼ : B →ₐ[A] C` is the embedding corresponding to `j : ι` given by a
+  bijection `e : (B →ₐ[A] C) ≃ ι`. It is mostly useful for fields and `C` is algebraically closed.
+  In this case, in presnce of `h : fintype.card ι = finrank A B`, one can take
+  `e := equiv_of_card_eq ((alg_hom.card A B C).trans h.symm)`. -/
+def embeddings_matrix_reindex (b : ι → B) (e : (B →ₐ[A] C) ≃ ι) :=
+  reindex (equiv.refl ι) e (embeddings_matrix A C b)
+
+end matrix
+
+section discriminant
 
 /-- Given an `A`-algebra `B` and `b`, an `ι`-indexed family of elements of `B`, we define
 `discriminant A ι b` as the determinant of `trace_matrix A ι b`. -/
@@ -106,14 +126,13 @@ section field
 
 variables (K : Type u) {L : Type v} (E : Type z) [field K] [field L] [field E]
 variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E]
-variables [module.finite K L] [is_separable K L] [is_alg_closed E]
-variables (b : ι → L) (hcard : fintype.card ι = finrank K L) (pb : power_basis K L)
+variables [module.finite K L] [is_separable K L]
+variables (b : ι → L) (pb : power_basis K L)
 
 local notation `n` := finrank K L
 
-include hcard
-lemma not_zero_of_linear_independent [nonempty ι] (hli : linear_independent K b) :
-  discriminant K b ≠ 0 :=
+lemma not_zero_of_linear_independent [nonempty ι] (hcard : fintype.card ι = finrank K L)
+  (hli : linear_independent K b) : discriminant K b ≠ 0 :=
 begin
   have := span_eq_top_of_linear_independent_of_card_eq_finrank hli hcard,
   rw [discriminant, trace_matrix],
@@ -122,12 +141,27 @@ begin
   exact trace_form_nondegenerate _ _
 end
 
-variable {L}
+lemma _root_.trace_matrix_eq_embeddings_matrix_mul_trans [is_alg_closed E] :
+  (trace_matrix K b).map (algebra_map K E) =
+  (embeddings_matrix K E b) ⬝ (embeddings_matrix K E b)ᵀ :=
+begin
+  ext i j,
+  have h := is_separable.is_integral K (b i * b j),
+  rw [map_apply, trace_matrix_apply, trace_form_apply, trace_eq_sum_embeddings E h,
+    embeddings_matrix, mul_apply],
+  simp
+end
 
---give a name to the matrix first
-lemma eq_det_embeddings : algebra_map K E (discriminant K b) =
-  (reindex (equiv.refl ι) (equiv_of_card_eq ((alg_hom.card K L E).trans hcard.symm))
-  (λ i (σ : L →ₐ[K] E), σ ( b i))).det := sorry
+lemma _root_.trace_matrix_eq_embeddings_matrix_reindex_mul_trans [is_alg_closed E]
+  (e : (L →ₐ[K] E) ≃ ι) : (trace_matrix K b).map (algebra_map K E) =
+  (embeddings_matrix_reindex K E b e) ⬝ (embeddings_matrix_reindex K E b e)ᵀ :=
+by rw [trace_matrix_eq_embeddings_matrix_mul_trans, embeddings_matrix_reindex,
+  mul_transpose_eq_reindex_mul_reindex_transpose]
+
+lemma eq_det_embeddings_matrix_reindex_pow_two [is_alg_closed E] (e : (L →ₐ[K] E) ≃ ι) :
+  algebra_map K E (discriminant K b) = (embeddings_matrix_reindex K E b e).det ^ 2 :=
+by rw [discriminant, ring_hom.map_det, ring_hom.map_matrix_apply,
+    trace_matrix_eq_embeddings_matrix_reindex_mul_trans K E b e, det_mul, det_transpose, pow_two]
 
 lemma of_power_basis_eq_prod [is_alg_closed E]  [is_separable K L] [finite_dimensional K L] :
   algebra_map K E (discriminant K pb.basis) ^ 2 =
@@ -138,6 +172,8 @@ lemma of_power_basis_eq_norm : discriminant K pb.basis =
   (-1) ^ (n * (n - 1) / 2) *(norm K (aeval pb.gen (minpoly K pb.gen).derivative)) := sorry
 
 end field
+
+end discriminant
 
 end discriminant
 
