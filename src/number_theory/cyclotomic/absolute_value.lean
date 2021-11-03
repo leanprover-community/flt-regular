@@ -189,9 +189,9 @@ end
 
 -- TODO lol I hope this monstrosity is golfable
 -- TODO remove the hi hypothesis, lemma is true without
-lemma multiset_prod_X_sub_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
-  (t.map (λ x, (X - C x))).prod.coeff i =
-  (-1) ^ (t.card - i) * ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
+lemma multiset_prod_X_add_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
+  (t.map (λ x, (X + C x))).prod.coeff i =
+  ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
 begin
 -- sorry; { -- hack to not recompile constantly TODO remove
   revert t i,
@@ -202,41 +202,49 @@ begin
       multiset.sum_singleton, multiset.prod_zero, multiset.map_zero,
       multiset.powerset_len_zero_left, pow_zero], },
   intros a s h i his,
-  simp only [sub_mul, multiset.map_cons, multiset.prod_cons, coeff_C_mul, coeff_sub,
+  simp only [add_mul, multiset.map_cons, multiset.prod_cons, coeff_C_mul, coeff_add,
     multiset.card_cons],
   simp only [multiset.card_cons] at his,
   by_cases his' : i = s.card + 1,
-  { simp only [his', mul_one, multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
-      tsub_self, multiset.powerset_len_zero_left, pow_zero],
-    have : degree (multiset.map (λ (x : R), X - C x) s).prod ≤ s.card,
-    { have := degree_multiset_prod_le (multiset.map (λ (x : R), X - C x) s),
-      simpa, },
-    have : degree (multiset.map (λ (x : R), X - C x) s).prod < s.card + 1,
+  { simp only [his', multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
+      tsub_self, multiset.powerset_len_zero_left, X_mul_coeff_succ],
+    have : degree (multiset.map (λ (x : R), X + C x) s).prod ≤ s.card,
+    { have := degree_multiset_prod_le (multiset.map (λ (x : R), X + C x) s),
+      simpa, -- TODO this simpa breaks when we only assume comm_semiring due to degree_X_add_C
+             -- so fix that assumption in mathlib so we can generalize this lemma
+       },
+    have : degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1,
     { calc _ ≤ _ : this
           ...< _ : _,
       norm_cast,
       exact lt_add_one s.card, },
-    have : (multiset.map (λ (x : R), X - C x) s).prod.coeff (s.card + 1) = 0,
+    have : (multiset.map (λ (x : R), X + C x) s).prod.coeff (s.card + 1) = 0,
     { apply coeff_eq_zero_of_degree_lt this, },
-    simp only [this, sub_zero, mul_zero, X_mul_coeff_succ,
+
+    simp [this, sub_zero, mul_zero, X_mul_coeff_succ,
       h (le_refl _), mul_one, multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
-      tsub_self, multiset.powerset_len_zero_left, pow_zero], },
+      tsub_self, multiset.powerset_len_zero_left, pow_zero, h (le_refl _), multiset.map_singleton,
+      multiset.sum_singleton,
+      multiset.prod_zero, tsub_self, multiset.powerset_len_zero_left, add_right_eq_self], },
   have : i ≤ s.card := nat.lt_succ_iff.mp (lt_of_le_of_ne his his'),
   rw [nat.succ_sub this, multiset.powerset_len_cons],
   simp only [h this, multiset.prod_cons, function.comp_app, multiset.map_map, multiset.map_add,
     multiset.sum_add],
   cases i,
   { simp only [tsub_zero, multiset.prod_cons, mul_coeff_zero, nat.nat_zero_eq_zero, zero_sub,
-      zero_mul, function.comp_app, coeff_X_zero],
+      zero_mul, function.comp_app, coeff_X_zero, tsub_zero, multiset.prod_cons,
+      multiset.powerset_len_card_add, mul_coeff_zero, nat.nat_zero_eq_zero,
+    zero_mul, eq_self_iff_true, function.comp_app, coeff_X_zero, zero_add, nat.lt_one_iff,
+    multiset.map_zero, multiset.sum_zero],
     specialize h this,
-    simp only [tsub_zero, nat.nat_zero_eq_zero] at h,
-    rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
-      mul_assoc],
-    congr,
+    simp [tsub_zero, nat.nat_zero_eq_zero] at h,
+    -- rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
+    --   mul_assoc],
+    -- congr,
     have := (add_monoid_hom.mul_left a).map_multiset_sum,
     simp only [add_monoid_hom.coe_mul_left] at this,
     simp [this], },
-  rw [X_mul_coeff_succ, mul_add, sub_eq_add_neg],
+  rw [X_mul_coeff_succ],--, mul_add],
   congr,
   { have hii : i ≤ multiset.card s := nat.le_of_succ_le this,
     have : multiset.card s - i = multiset.card s - i.succ + 1, -- I miss omega :'(
@@ -244,13 +252,43 @@ begin
       simp only [int.coe_nat_succ],
       abel, },
     rw [h hii, this], },
-  { rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
-      mul_assoc], -- TODO this rearranging is repeat of above, is it golfable?
-    congr,
+  {
+    --rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
+    --  mul_assoc], -- TODO this rearranging is repeat of above, is it golfable?
+    -- congr,
     have := (add_monoid_hom.mul_left a).map_multiset_sum,
     simp only [add_monoid_hom.coe_mul_left] at this,
-    simp [this], }
+    simp [this], },
 -- }
+end
+
+
+-- TODO lol I hope this monstrosity is golfable
+-- TODO remove the hi hypothesis, lemma is true without
+lemma multiset_prod_X_sub_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
+  (t.map (λ x, (X - C x))).prod.coeff i =
+  (-1) ^ (t.card - i) * ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
+begin
+  simp_rw [sub_eq_add_neg, ← C_neg],
+  rw (by simp : t.map (λ x, X + C (-x)) = (t.map (((*) (-1 : R)) : R → R)).map (λ x, X + C x)),
+  rw multiset_prod_X_add_C_coeff,
+  simp only [multiset.card_map, one_mul, function.comp_app, multiset.map_map,
+    multiset.powerset_len_map],
+  have := (add_monoid_hom.mul_left ((-1 : R) ^ (t.card - i))).map_multiset_sum,
+  simp only [add_monoid_hom.coe_mul_left] at this,
+  simp [this],
+  congr' 1, -- TODO its weird that congr doesn't do what we want here without hand-holding
+  apply multiset.map_congr,
+  intros s hs,
+  simp at hs,
+  rw ← hs.2,
+  have : (λ (x : R), -x) = (λ x, (-1 : R) * x),
+  { ext x,
+    simp, },
+  rw this, -- TODO there should really be lemma for prod_neg
+  rw multiset.prod_map_mul,
+  simp,
+  simp [hi],
 end
 
 
