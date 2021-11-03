@@ -161,8 +161,7 @@ lemma _root_.algebra.trace_matrix_eq_embeddings_matrix_mul_trans :
   (embeddings_matrix K E b) ⬝ (embeddings_matrix K E b)ᵀ :=
 begin
   ext i j,
-  have h := is_separable.is_integral K (b i * b j),
-  rw [map_apply, trace_matrix_apply, trace_form_apply, trace_eq_sum_embeddings E h,
+  rw [map_apply, trace_matrix_apply, trace_form_apply, trace_eq_sum_embeddings E,
     embeddings_matrix, mul_apply],
   simp
 end
