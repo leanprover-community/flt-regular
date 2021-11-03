@@ -89,13 +89,11 @@ end matrix
 
 section discriminant
 
-section
-open_locale classical
 /-- Given an `A`-algebra `B` and `b`, an `ι`-indexed family of elements of `B`, we define
 `discriminant A ι b` as the determinant of `trace_matrix A ι b`. -/
 noncomputable
-def discriminant [fintype ι] (b : ι → B) := (trace_matrix A b).det
-end
+def discriminant (A : Type u) {B : Type v} [comm_ring A] [comm_ring B] [algebra A B] [fintype ι]
+  (b : ι → B) := by { classical, exact (trace_matrix A b).det }
 
 lemma discriminant_def [decidable_eq ι] [fintype ι] (b : ι → B) :
   discriminant A b = (trace_matrix A b).det := by convert rfl
