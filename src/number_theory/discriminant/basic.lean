@@ -155,16 +155,10 @@ begin
   exact trace_form_nondegenerate _ _
 end
 
-@[nolint unused_arguments]
 lemma _root_.algebra.trace_matrix_eq_embeddings_matrix_mul_trans :
   (trace_matrix K b).map (algebra_map K E) =
   (embeddings_matrix K E b) ⬝ (embeddings_matrix K E b)ᵀ :=
-begin
-  ext i j,
-  rw [map_apply, trace_matrix_apply, trace_form_apply, trace_eq_sum_embeddings E,
-    embeddings_matrix, mul_apply],
-  simp
-end
+by { ext i j, simp [trace_eq_sum_embeddings, embeddings_matrix, mul_apply] }
 
 lemma _root_.algebra.trace_matrix_eq_embeddings_matrix_reindex_mul_trans
   (e : ι ≃ (L →ₐ[K] E)) : (trace_matrix K b).map (algebra_map K E) =
