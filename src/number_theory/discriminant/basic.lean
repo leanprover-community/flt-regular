@@ -178,11 +178,6 @@ lemma eq_det_embeddings_matrix_reindex_pow_two [decidable_eq ι]
 by rw [discriminant_def, ring_hom.map_det, ring_hom.map_matrix_apply,
     trace_matrix_eq_embeddings_matrix_reindex_mul_trans, det_mul, det_transpose, pow_two]
 
-example (a b : ℕ) (h : a = b) : a ^ 2 = b ^ 2 :=
-begin
-  exact congr_fun (congr_arg pow h) 2
-end
-
 lemma of_power_basis_eq_prod (e : fin pb.dim ≃ (L →ₐ[K] E)) :
   algebra_map K E (discriminant K pb.basis) =
   ∏ i : fin pb.dim, ∏ j in finset.univ.filter (λ j, i < j), (e j pb.gen- (e i pb.gen)) ^ 2 :=
