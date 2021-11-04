@@ -140,7 +140,7 @@ end basic
 section field
 
 variables (K : Type u) {L : Type v} (E : Type z) [field K] [field L] [field E]
-variables [algebra K L] [algebra K E] [algebra L E] [is_scalar_tower K L E]
+variables [algebra K L] [algebra K E] [algebra L E]
 variables [module.finite K L] [is_separable K L] [is_alg_closed E]
 variables (b : ι → L) (pb : power_basis K L)
 
@@ -155,7 +155,6 @@ begin
   exact trace_form_nondegenerate _ _
 end
 
-@[nolint unused_arguments]
 lemma _root_.algebra.trace_matrix_eq_embeddings_matrix_mul_trans :
   (trace_matrix K b).map (algebra_map K E) =
   (embeddings_matrix K E b) ⬝ (embeddings_matrix K E b)ᵀ :=
@@ -228,7 +227,19 @@ begin
 end
 
 lemma of_power_basis_eq_norm : discriminant K pb.basis =
-  (-1) ^ (n * (n - 1) / 2) * (norm K (aeval pb.gen (minpoly K pb.gen).derivative)) := sorry
+  (-1) ^ (n * (n - 1) / 2) * (norm K (aeval pb.gen (minpoly K pb.gen).derivative)) :=
+begin
+  let E := algebraic_closure L,
+  have e : fin pb.dim ≃ (L →ₐ[K] E),
+  { refine equiv_of_card_eq _,
+    rw [fintype.card_fin, alg_hom.card],
+    exact (power_basis.finrank pb).symm },
+  apply (algebra_map K E).injective,
+  rw [ring_hom.map_mul, ring_hom.map_pow, ring_hom.map_neg, ring_hom.map_one,
+    of_power_basis_eq_prod'' _ _ _ e],
+  congr,
+  sorry
+end
 
 end field
 
