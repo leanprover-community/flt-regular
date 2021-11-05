@@ -6,7 +6,7 @@ universes u v w
 
 variables {R S T : Type*} [comm_ring R] [comm_ring S] [comm_ring T]
 variables [algebra R S] [algebra R T]
-variables {K L E : Type*} [field K] [field L] [field E] [algebra K L] [algebra K E] [algebra L E]
+variables {K L E : Type*} [field K] [field L] [field E] [algebra K L] [algebra K E]
 variables {ι : Type w} [fintype ι]
 
 open finite_dimensional intermediate_field matrix polynomial
