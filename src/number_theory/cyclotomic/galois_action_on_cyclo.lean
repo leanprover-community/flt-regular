@@ -132,6 +132,7 @@ def unit_gal_conj : units RR → units RR :=
     simp,
   end⟩
 
+/-- `unit_gal_conj` as boundled hom. -/
 def unit_gal_conj_m : units RR →* units RR :={
   to_fun := unit_gal_conj  p,
   map_one' := by {simp_rw (unit_gal_conj ),  sorry, },
