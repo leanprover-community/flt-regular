@@ -7,6 +7,8 @@ import ready_for_mathlib.linear_algebra
 import ready_for_mathlib.matrix
 import ready_for_mathlib.fin
 import ready_for_mathlib.nat
+import ready_for_mathlib.norm
+import ready_for_mathlib.polynomial
 
 universes u v w z
 
@@ -206,7 +208,7 @@ begin
   congr,
   simp only [prod_pow_eq_pow_sum, prod_const],
   congr,
-  simp_rw [fin.filter_gt_card],
+  simp_rw [fin.filter_lt_card],
   apply (@nat.cast_inj ℚ _ _ _ _ _).1,
   rw [nat.cast_sum],
   have : ∀ (x : fin pb.dim), (↑x + 1) ≤ pb.dim := by simp [nat.succ_le_iff, fin.is_lt],
@@ -239,6 +241,20 @@ begin
   rw [ring_hom.map_mul, ring_hom.map_pow, ring_hom.map_neg, ring_hom.map_one,
     of_power_basis_eq_prod'' _ _ _ e],
   congr,
+  rw [norm_eq_prod_embeddings],
+  have H : ∀ i j, (e i) pb.gen - (e j) pb.gen = -((e j) pb.gen - (e i) pb.gen) := by simp,
+  simp_rw [prod_mul_distrib],
+
+
+
+
+  --refine fintype.prod_equiv e _ _ (λ i, _),
+  --rw [← aeval_alg_hom_apply, @eval_root_derivative_of_split _ _ (classical.dec_eq E) _ _ _ _
+  --  (minpoly.monic (is_separable.is_integral K pb.gen)) (is_alg_closed.splits_codomain _) _ _],
+  --swap,
+  --{ rw [mem_roots, is_root.def, eval_map, ← aeval_def, aeval_alg_hom_apply],
+  --  { simp },
+  --  { simp [minpoly.ne_zero (is_separable.is_integral K pb.gen)] } },
   sorry
 end
 
