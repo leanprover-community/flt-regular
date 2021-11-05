@@ -139,6 +139,8 @@ units.mk_of_mul_eq_one
     simp [← pow_succ, nat.sub_add_cancel n.pos],
   end
 
+lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic_field n K)) := rfl
+
 lemma zeta_primitive_root :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
 { pow_eq_one := sorry,
