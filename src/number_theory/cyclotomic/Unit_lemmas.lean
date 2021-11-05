@@ -15,7 +15,6 @@ local notation `ζ` := zeta' p ℚ KK
 def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
 
 
-
 --bunch of lemmas that should be stated more generally if we decide to go this way
 lemma unit_coe (u : units RR) : (u : RR) * ((u⁻¹ : units RR) : RR) = 1 :=
 begin
@@ -61,13 +60,46 @@ begin
 sorry,
 end
 
-lemma unit_inv_conj_is_root_of_unity (u : units RR) :
+lemma zeta_pow_even (h : 2 < p)  (n : ℕ) : ∃ (m : ℕ), (zeta p ℚ)^n = (zeta p ℚ)^(2*m) :=
+begin
+  sorry, --2 is invertible if `p≠ 2`.
+end
+
+lemma unit_inv_conj_not_neg_zeta (h : 2 < p)  (u : units RR) (n  : ℕ) :
+  u * (unit_gal_conj p u)⁻¹ ≠  -(zeta p ℚ) ^ n :=
+begin
+  by_contra H,
+sorry,
+end
+
+
+lemma unit_inv_conj_is_root_of_unity (h : 2 < p)  (u : units RR) :
   ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta p ℚ) ^ (m))^2 :=
 begin
  have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
  have H:= roots_of_unity_in_cyclo p ((u * (unit_gal_conj p u)⁻¹ : KK)) this,
  rw ← zeta_coe at H,
-sorry,
+ obtain ⟨n, k, hz⟩ := H,
+ simp_rw ← pow_mul,
+ have hk := nat.even_or_odd k,
+ cases hk,
+ {simp [nat.neg_one_pow_of_even hk] at hz,
+ simp_rw  coe_life at hz,
+ norm_cast at hz,
+ rw hz,
+ have := zeta_pow_even p h n,
+ obtain ⟨m , Hm⟩ := this,
+ use m,
+ rw mul_comm,
+ exact Hm},
+ {by_contra hc,
+ simp [nat.neg_one_pow_of_odd hk] at hz,
+ simp_rw  coe_life at hz,
+ norm_cast at hz,
+ have := unit_inv_conj_not_neg_zeta p h u n,
+ rw hz at this,
+ simp at this,
+ exact this,},
   { exact unit_lemma_val_one p u,},
   { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
@@ -81,11 +113,11 @@ sorry,
 end
 
 
-lemma unit_lemma_gal_conj (u : units RR) :
+lemma unit_lemma_gal_conj (h : 2 < p)  (u : units RR) :
   ∃ (x : units RR) (n : ℤ), (is_gal_conj_real p (x : KK)) ∧ (u : KK) = x * (zeta p ℚ) ^ n :=
 
 begin
-  have := unit_inv_conj_is_root_of_unity p u,
+  have := unit_inv_conj_is_root_of_unity p h u,
   obtain ⟨m, hm⟩ := this,
   use [u * (zeta p ℚ)⁻¹ ^ (m), m],
   split,
