@@ -62,6 +62,7 @@ open is_cyclotomic_extension
 
 local notation `ζ` := zeta' p ℚ KK
 
+/-- `is_gal_conj_real x` means that `x` is real. -/
 def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
 
 --do more generally

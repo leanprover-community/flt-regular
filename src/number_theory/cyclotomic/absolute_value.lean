@@ -139,13 +139,20 @@ open multiset
   powerset_len n s = 0 :=
 multiset.card_eq_zero.mp (by rw [card_powerset_len, nat.choose_eq_zero_of_lt h])
 
--- TODO maybe a finset version of this too
 @[simp]
 lemma multiset.powerset_len_card_add {α : Type*} (s : multiset α) {i : ℕ} (hi : 0 < i) :
   s.powerset_len (s.card + i) = 0 :=
 begin
   apply multiset.powerset_len_empty,
   exact lt_add_of_pos_right (card s) hi,
+end
+-- not needed for the project but a nice complement to the above
+@[simp]
+lemma finset.powerset_len_card_add {α : Type*} (s : finset α) {i : ℕ} (hi : 0 < i) :
+  s.powerset_len (s.card + i) = ∅ :=
+begin
+  apply finset.powerset_len_empty,
+  exact lt_add_of_pos_right (finset.card s) hi,
 end
 
 @[simp] theorem multiset.powerset_len_map {α β : Type*} (f : α → β) (n : ℕ) (s : multiset α) :
@@ -162,14 +169,8 @@ end
 
 @[simp] theorem powerset_len_val {α : Type*} (s : finset α) (i : ℕ) :
   (s.powerset_len i).val.map finset.val = s.1.powerset_len i :=
-begin
-  rw finset.powerset_len,
-  dsimp only,
-  rw map_pmap,
-  dsimp only,
-  rw pmap_eq_map,
-  rw map_id',
-end
+by simp only [finset.powerset_len, map_pmap, pmap_eq_map, map_id']
+
 end
 
 section polynomial
@@ -187,13 +188,37 @@ begin
     exact le_trans (degree_mul_le _ _) (add_le_add_left ht _), }
 end
 
--- TODO lol I hope this monstrosity is golfable
--- TODO remove the hi hypothesis, lemma is true without
-lemma multiset_prod_X_sub_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
-  (t.map (λ x, (X - C x))).prod.coeff i =
-  (-1) ^ (t.card - i) * ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
+
+lemma multiset_prod_X_add_C_degree [nontrivial R] (s : multiset R) :
+  degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1 :=
 begin
--- sorry; { -- hack to not recompile constantly TODO remove
+  have : degree (multiset.map (λ (x : R), X + C x) s).prod ≤ s.card,
+  { have := degree_multiset_prod_le (multiset.map (λ (x : R), X + C x) s),
+    simpa, -- TODO this simpa breaks when we only assume comm_semiring due to degree_X_add_C
+          -- so fix that assumption in mathlib so we can generalize this lemma
+    },
+  { calc _ ≤ _ : this
+        ...< _ : _,
+    norm_cast,
+    exact lt_add_one s.card, },
+end
+
+lemma multiset_prod_X_add_C_degree' [nontrivial R] (s : multiset R) :
+  degree (multiset.map (λ (x : R), X + C x) s).prod ≤ s.card :=
+begin
+  have := degree_multiset_prod_le (multiset.map (λ (x : R), X + C x) s),
+  simpa, -- TODO this simpa breaks when we only assume comm_semiring due to degree_X_add_C
+        -- so fix that assumption in mathlib so we can generalize this lemma
+end
+
+
+-- TODO turns out this is already in ring_theory.polynomial.vieta in one form
+-- TODO lol I hope this monstrosity is golfable
+-- unfortunately this lemma isn't true without the hi hypothesis, due to nat subtraction weirdness
+lemma multiset_prod_X_add_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
+  (t.map (λ x, (X + C x))).prod.coeff i =
+  ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
+begin
   revert t i,
   apply' multiset.induction,
   { intros i hi,
@@ -202,41 +227,36 @@ begin
       multiset.sum_singleton, multiset.prod_zero, multiset.map_zero,
       multiset.powerset_len_zero_left, pow_zero], },
   intros a s h i his,
-  simp only [sub_mul, multiset.map_cons, multiset.prod_cons, coeff_C_mul, coeff_sub,
+  simp only [add_mul, multiset.map_cons, multiset.prod_cons, coeff_C_mul, coeff_add,
     multiset.card_cons],
   simp only [multiset.card_cons] at his,
   by_cases his' : i = s.card + 1,
-  { simp only [his', mul_one, multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
-      tsub_self, multiset.powerset_len_zero_left, pow_zero],
-    have : degree (multiset.map (λ (x : R), X - C x) s).prod ≤ s.card,
-    { have := degree_multiset_prod_le (multiset.map (λ (x : R), X - C x) s),
-      simpa, },
-    have : degree (multiset.map (λ (x : R), X - C x) s).prod < s.card + 1,
-    { calc _ ≤ _ : this
-          ...< _ : _,
-      norm_cast,
-      exact lt_add_one s.card, },
-    have : (multiset.map (λ (x : R), X - C x) s).prod.coeff (s.card + 1) = 0,
-    { apply coeff_eq_zero_of_degree_lt this, },
-    simp only [this, sub_zero, mul_zero, X_mul_coeff_succ,
+  { simp only [his', multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
+      tsub_self, multiset.powerset_len_zero_left, X_mul_coeff_succ],
+
+    have : (multiset.map (λ (x : R), X + C x) s).prod.coeff (s.card + 1) = 0,
+    from coeff_eq_zero_of_degree_lt (multiset_prod_X_add_C_degree _),
+    simp [this, sub_zero, mul_zero, X_mul_coeff_succ,
       h (le_refl _), mul_one, multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
-      tsub_self, multiset.powerset_len_zero_left, pow_zero], },
+      tsub_self, multiset.powerset_len_zero_left, pow_zero, h (le_refl _), multiset.map_singleton,
+      multiset.sum_singleton,
+      multiset.prod_zero, tsub_self, multiset.powerset_len_zero_left, add_right_eq_self], },
   have : i ≤ s.card := nat.lt_succ_iff.mp (lt_of_le_of_ne his his'),
   rw [nat.succ_sub this, multiset.powerset_len_cons],
   simp only [h this, multiset.prod_cons, function.comp_app, multiset.map_map, multiset.map_add,
     multiset.sum_add],
   cases i,
   { simp only [tsub_zero, multiset.prod_cons, mul_coeff_zero, nat.nat_zero_eq_zero, zero_sub,
-      zero_mul, function.comp_app, coeff_X_zero],
+      zero_mul, function.comp_app, coeff_X_zero, tsub_zero, multiset.prod_cons,
+      multiset.powerset_len_card_add, mul_coeff_zero, nat.nat_zero_eq_zero,
+    zero_mul, eq_self_iff_true, function.comp_app, coeff_X_zero, zero_add, nat.lt_one_iff,
+    multiset.map_zero, multiset.sum_zero],
     specialize h this,
-    simp only [tsub_zero, nat.nat_zero_eq_zero] at h,
-    rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
-      mul_assoc],
-    congr,
+    simp [tsub_zero, nat.nat_zero_eq_zero] at h,
     have := (add_monoid_hom.mul_left a).map_multiset_sum,
     simp only [add_monoid_hom.coe_mul_left] at this,
     simp [this], },
-  rw [X_mul_coeff_succ, mul_add, sub_eq_add_neg],
+  rw [X_mul_coeff_succ],
   congr,
   { have hii : i ≤ multiset.card s := nat.le_of_succ_le this,
     have : multiset.card s - i = multiset.card s - i.succ + 1, -- I miss omega :'(
@@ -244,13 +264,42 @@ begin
       simp only [int.coe_nat_succ],
       abel, },
     rw [h hii, this], },
-  { rw [← mul_assoc, mul_comm a, neg_eq_neg_one_mul, ← mul_assoc, ← mul_assoc, ← pow_succ,
-      mul_assoc], -- TODO this rearranging is repeat of above, is it golfable?
-    congr,
+  { -- TODO this rearranging is repeat of above, is it golfable?
     have := (add_monoid_hom.mul_left a).map_multiset_sum,
     simp only [add_monoid_hom.coe_mul_left] at this,
-    simp [this], }
--- }
+    simp [this], },
+end
+
+lemma multiset.prod_map_neg (s : multiset R) : (s.map (λ x, -x)).prod = (-1) ^ s.card * s.prod :=
+begin
+  have : (λ (x : R), -x) = (λ x, (-1 : R) * x),
+  { ext x,
+    simp, },
+  rw [this, multiset.prod_map_mul],
+  simp,
+end
+
+-- TODO lol I hope this monstrosity is golfable
+-- TODO remove the hi hypothesis, lemma is true without
+lemma multiset_prod_X_sub_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
+  (t.map (λ x, (X - C x))).prod.coeff i =
+  (-1) ^ (t.card - i) * ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
+begin
+  simp_rw [sub_eq_add_neg, ← C_neg],
+  rw (by simp : t.map (λ x, X + C (-x)) = (t.map (((*) (-1 : R)) : R → R)).map (λ x, X + C x)),
+  rw multiset_prod_X_add_C_coeff,
+  simp only [multiset.card_map, one_mul, function.comp_app, multiset.map_map,
+    multiset.powerset_len_map],
+  have := (add_monoid_hom.mul_left ((-1 : R) ^ (t.card - i))).map_multiset_sum,
+  simp only [add_monoid_hom.coe_mul_left] at this,
+  simp [this],
+  congr' 1, -- TODO its weird that congr doesn't do what we want here without hand-holding
+  apply multiset.map_congr,
+  intros s hs,
+  simp at hs,
+  rw ← hs.2,
+  rw multiset.prod_map_neg,
+  simp [hi],
 end
 
 
@@ -272,38 +321,6 @@ begin
 end
 
 end polynomial
-
-section abv_sum
-variables {R S ι : Type*} [ordered_semiring S] [semiring R] (abv : R → S)
-variables [is_absolute_value abv] (f : ι → R) (s : finset ι)
-
-open_locale big_operators
-
-theorem is_absolute_value.abv_sum : abv (∑ i in s, f i) ≤ ∑ i in s, abv (f i) :=
-begin
-  classical,
-  induction s using finset.induction with i s hi ih,
-  { simp [is_absolute_value.abv_zero abv], },
-  { rw [finset.sum_insert hi, finset.sum_insert hi],
-    calc _ ≤ _ : is_absolute_value.abv_add abv _ _
-       ... ≤ _ : add_le_add_left ih _, }
-end
-end abv_sum
-
-section abv_prod
-variables {R S ι : Type*} [linear_ordered_field S] [comm_semiring R] [nontrivial R] (abv : R → S)
-variables [is_absolute_value abv] (f : ι → R) (s : finset ι)
-open_locale big_operators
-
-theorem is_absolute_value.abv_prod : abv (∏ i in s, f i) = ∏ i in s, abv (f i) :=
-begin
-  classical,
-  induction s using finset.induction with i s hi ih,
-  { simp [is_absolute_value.abv_one abv], },
-  { rw [finset.prod_insert hi, finset.prod_insert hi],
-    simp [is_absolute_value.abv_mul abv, ih], },
-end
-end abv_prod
 
 -- section ajoin
 -- variables {E : Type*} [field E] [number_field E] (x : E)
@@ -368,7 +385,7 @@ begin
       calc _ ≤ _ : is_absolute_value.abv_sum _ _ _
         ... ≤ _ : _,
       conv in (complex.abs _)
-      { rw [is_absolute_value.abv_prod complex.abs],
+      { rw [is_absolute_value.map_prod complex.abs],
         congr,
         skip,
         funext,
