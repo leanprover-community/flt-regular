@@ -143,3 +143,10 @@ begin
    simp at this,
    sorry,
 end
+
+lemma coe_life (u : units RR) : ((u : RR) : KK)⁻¹ = ((u⁻¹ : units RR) : RR) :=
+begin
+  rw ← coe_coe,
+  rw ← coe_coe,
+  sorry,
+end
