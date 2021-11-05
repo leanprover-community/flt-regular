@@ -146,10 +146,19 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 	Let $\a$ be an algebraic integer all of whose conjugates have absolute value one. Then $\a$ is a root of unity.
 \end{lemma}
 
+\begin{lemma}\label{lem:roots_of_unity_in_cyclo}
+	\lean{roots_of_unity_in_cyclo}
+	Let $p$ be a prime, $K=\QQ(\zeta_p)$ $\a \in K$ such that there exists $n \in \NN$ such that $\a^n=1$, then $\a =\pm \zeta_p^k$ for some $k$.
+\end{lemma}
+
+\begin{proof}
+	If $n$ is different to $p$ then $K$ contains a $2pn$-th root of unity. Therefore $\QQ(\zeta_{2pn}) \subset K$, but this cannot happen as $[K : \QQ]=p-1$ and $[\QQ(\zeta_{2pn}): \QQ ] = \varphi(2np)$.
+	
+\end{proof}
 
 \begin{lemma}\label{lemma:unit_lemma}
 	\lean{unit_lemma}
-	\uses{lemma:alg_int_abs_val_one}
+	\uses{lemma:alg_int_abs_val_one,lem:roots_of_unity_in_cyclo}
 	Any unit $u$ in $\ZZ[\zeta_p]$ can be written in the form $\beta \zeta_p^k  $ with $k$ an integer and $\beta \in \RR$.
 \end{lemma}
 
@@ -160,6 +169,8 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \begin{lemma}\label{lemma:ideals_mult_to_power}
 	Let $R$ be a Dedekind domain, $p$ a prime and $\gotha,\gothb,\gothc$ ideals such that \[\gotha\gothb=\gothc^p\] and suppose $\gotha,\gothb$ are coprime. Then there exist ideals $\mathfrak{e},\mathfrak{d}$ such that \[\gotha=\mathfrak{e}^p \qquad \gothb=\mathfrak{d}^p \qquad \mathfrak{e}\mathfrak{d}=\gothc\]
 \end{lemma}
+
+
 
 
 \section{Fermats Last Theorem for regular primes}
