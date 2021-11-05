@@ -10,7 +10,7 @@ open_locale big_operators
 lemma Ioi_eq_filter {n : ℕ} (a : fin (n + 1)) : Ioi a = finset.univ.filter (λ j, a < j) :=
 by { ext, simp }
 
-lemma Ico_eq_filter {n : ℕ} (a : fin (n + 1)) : Ico 0 a = finset.univ.filter (λ j, a > j) :=
+lemma Ico_eq_filter {n : ℕ} (a : fin (n + 1)) : Ico 0 a = finset.univ.filter (λ j, j < a) :=
 by { ext, simp [zero_le] }
 
 lemma filter_lt_card {n : ℕ} (a : fin n) : (finset.univ.filter (λ j, a < j)).card = n - a - 1 :=
@@ -20,7 +20,7 @@ begin
   { rw [← Ioi_eq_filter, card_Ioi, nat.sub.right_comm, nat.succ_sub_succ_eq_sub, nat.sub_zero] }
 end
 
-lemma filter_gt_card {n : ℕ} (a : fin n) : (finset.univ.filter (λ j, a > j)).card = a :=
+lemma filter_gt_card {n : ℕ} (a : fin n) : (finset.univ.filter (λ j, j < a)).card = a :=
 begin
   cases n,
   { exact fin.elim0 a },
