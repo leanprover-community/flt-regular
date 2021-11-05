@@ -53,7 +53,7 @@ begin
     nth_rewrite 0 [mul_comm],
     congr' 1,
     rw [finset.prod_sigma', finset.prod_sigma'],
-    refine finset.prod_bij' (λ i hi, ⟨i.2, i.1⟩) (by simp) (by simp) (λ i hi, ⟨i.2, i.1⟩)
+    exact finset.prod_bij' (λ i hi, ⟨i.2, i.1⟩) (by simp) (by simp) (λ i hi, ⟨i.2, i.1⟩)
       (by simp) (by simp) (by simp) },
   { rintro x hx,
     obtain ⟨⟨_, hl⟩, ⟨_, hg⟩⟩ := (finset.mem_inter.1 hx).imp finset.mem_filter.1 finset.mem_filter.1,
