@@ -27,7 +27,7 @@ begin
   { rw [← Ico_eq_filter, card_Ico, coe_zero, nat.sub_zero] }
 end
 
-example {R : Type*} [comm_ring R] {n : ℕ} (f : fin n → R) :
+lemma prod_filter_lt_mul_neg_eq_prod_off_diag {R : Type*} [comm_ring R] {n : ℕ} (f : fin n → R) :
   ∏ i, (∏ j in finset.univ.filter (λ j, j < i), (f j - f i) * (f i - f j)) =
   ∏ i, (∏ j in finset.univ.filter (λ j, i ≠ j), (f j - f i)) :=
 begin
