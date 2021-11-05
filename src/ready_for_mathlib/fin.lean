@@ -4,10 +4,12 @@ namespace fin
 
 open finset
 
+open_locale big_operators
+
 lemma Ioi_eq_filter {n : ℕ} (a : fin (n + 1)) : Ioi a = finset.univ.filter (λ j, a < j) :=
 by { ext, simp }
 
-lemma filter_gt_card {n : ℕ} (a : fin n) : (finset.univ.filter (λ j, a < j)).card = n - a - 1 :=
+lemma filter_lt_card {n : ℕ} (a : fin n) : (finset.univ.filter (λ j, a < j)).card = n - a - 1 :=
 begin
   cases n,
   { simp },
