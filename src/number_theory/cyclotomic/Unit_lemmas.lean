@@ -27,9 +27,7 @@ begin
 sorry,
 end
 
-
-
-
+--bunch of lemmas that should be stated more generally if we decide to go this way
 lemma unit_coe (u : units RR) : (u : RR) * ((u⁻¹ : units RR) : RR) = 1 :=
 begin
 norm_cast,
