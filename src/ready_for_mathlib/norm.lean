@@ -38,8 +38,7 @@ section eq_prod_embeddings
 
 open intermediate_field.adjoin_simple
 
-variables (F : Type*) [field F] [algebra L F] [algebra K F] [is_scalar_tower K L E]
-variables [is_scalar_tower K L F]
+variables (F : Type*) [field F] [algebra L F] [algebra K F] [is_scalar_tower K L F]
 
 variable (E)
 
