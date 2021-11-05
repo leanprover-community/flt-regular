@@ -103,11 +103,6 @@ begin
   { simp, },
   exact le_trans b_ih (nat.choose_add_one (a + b_n) c),
 end
-lemma nat.choose_mono {a b : ℕ} (c : ℕ) (h : a ≤ b) : nat.choose a c ≤ nat.choose b c :=
-begin
-  rw ← add_tsub_cancel_of_le h,
-  exact nat.choose_add_le a (b - a) c,
-end
 end choose_lemma
 
 section polynomial
