@@ -76,6 +76,19 @@ end
 
 @[simp]
 lemma gal_conj_zeta : gal_conj p ζ = ζ⁻¹ := power_basis.lift_gen _ _ _
+
+lemma gal_conj_zeta_pow (n : ℕ) :  gal_conj p (ζ^n) = (ζ⁻¹)^n :=
+begin
+induction n,
+simp only [alg_hom.map_one, pow_zero],
+simp only [alg_hom.map_pow, gal_conj_zeta],
+end
+
+lemma gal_conj_zeta_coe :  gal_conj p (ζ) =  gal_conj p (ζ : KK) :=
+begin
+refl,
+end
+
 open_locale complex_conjugate
 
 lemma conj_norm_one (x : ℂ) (h : complex.abs x = 1) : conj x = x⁻¹ := sorry
@@ -119,10 +132,23 @@ def unit_gal_conj : units RR → units RR :=
     simp,
   end⟩
 
+def unit_gal_conj_m : units RR →* units RR :={
+  to_fun := unit_gal_conj  p,
+  map_one' := by {simp_rw (unit_gal_conj ),  sorry, },
+  map_mul' := by {sorry,},
+ }
+
 lemma unit_gal_conj_spec (u : units RR) : gal_conj p u = unit_gal_conj p u :=
 begin
   cases u,
   simp [unit_gal_conj],
+end
+
+lemma uni_gal_conj_inv (u : units RR) : (unit_gal_conj p u)⁻¹ = (unit_gal_conj p u⁻¹) :=
+begin
+rw unit_gal_conj,
+simp,
+sorry,
 end
 
 lemma unit_lemma_val_one (u : units RR) (φ : KK →+* ℂ) :
@@ -142,11 +168,4 @@ begin
    have:=  (unit_gal_conj_spec p u),
    simp at this,
    sorry,
-end
-
-lemma coe_life (u : units RR) : ((u : RR) : KK)⁻¹ = ((u⁻¹ : units RR) : RR) :=
-begin
-  rw ← coe_coe,
-  rw ← coe_coe,
-  sorry,
 end
