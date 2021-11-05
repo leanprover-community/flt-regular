@@ -14,18 +14,7 @@ local notation `ζ` := zeta' p ℚ KK
 /-- `is_gal_conj_real x` means that `x` is real. -/
 def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
 
---do more generally
-lemma roots_of_unity_in_cyclo (x  : KK) (h : ∃ (n : ℕ+), x^(n: ℕ) =1 ) :
-  ∃ (m k: ℕ+), x = (-1)^(k : ℕ) * ζ^(m : ℕ) :=
-begin
-sorry,
-end
 
-lemma unit_inv_conj_is_root_of_unity (u : units RR) :
-  ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta p ℚ) ^ (m))^2 :=
-begin
-sorry,
-end
 
 --bunch of lemmas that should be stated more generally if we decide to go this way
 lemma unit_coe (u : units RR) : (u : RR) * ((u⁻¹ : units RR) : RR) = 1 :=
@@ -65,52 +54,22 @@ rw mul_assoc,
 rw mul_comm,
 end
 
+--do more generally
+lemma roots_of_unity_in_cyclo (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) =1 ) :
+  ∃ (m k: ℕ+), x = (-1)^(k : ℕ) * ζ^(m : ℕ) :=
+begin
+sorry,
+end
 
-lemma unit_lemma_gal_conj (u : units RR) :
-  ∃ (x : units RR) (n : ℤ), (is_gal_conj_real p (x : KK)) ∧ (u : KK) = x * (zeta p ℚ) ^ n :=
-
+lemma unit_inv_conj_is_root_of_unity (u : units RR) :
+  ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta p ℚ) ^ (m))^2 :=
 begin
  have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
-  { have := unit_inv_conj_is_root_of_unity p u,
-    obtain ⟨m, hm⟩ := this,
-    use [u * (zeta p ℚ)⁻¹ ^ (m), m],
-    split,
-    { rw is_gal_conj_real,
-    have hy : u * ((zeta p ℚ) ^ ( m))⁻¹ = (unit_gal_conj p u) *  (zeta p ℚ) ^ ( m), by {
-    rw pow_two at hm,
-    have := auxil p u (unit_gal_conj p u)  ((zeta p ℚ) ^ (m)) ((zeta p ℚ) ^ (m)),
-    apply this hm,},
-    dsimp,
-    simp only [inv_pow, alg_hom.map_mul],
-    have hz: gal_conj p ((zeta p ℚ)  ^ ( m))⁻¹ =(zeta p ℚ)  ^ ( m) , by {simp, rw ← coe_coe,
-     rw zeta_coe,
-     rw gal_conj_zeta_coe,
-     simp only [inv_pow₀, gal_conj_zeta, inv_inv₀],},
-    rw ← coe_coe,
-    rw ← coe_coe,
-    rw (_ : (↑(zeta p ℚ ^ m)⁻¹ : KK) = (zeta p ℚ ^ m : KK)⁻¹),
-    rw hz,
-    have hzz := unit_gal_conj_spec p u,
-    rw hzz,
-    simp only [coe_coe],
-    norm_cast,
-    rw ← hy,
-    simp only [subalgebra.coe_pow, subalgebra.coe_eq_zero, mul_eq_mul_left_iff,
-    units.ne_zero, or_false, subalgebra.coe_mul, units.coe_pow, units.coe_mul],
-    rw ← coe_life,
-    simp only [subalgebra.coe_pow, units.coe_pow],
-    simp_rw ← inv_pow,
-    simp only [inv_pow, coe_coe],
-    rw ← coe_life,
-    simp only [subalgebra.coe_pow, units.coe_pow],
-    },
-    dsimp at *,
-    simp only [exists_prop, inv_pow, zpow_coe_nat] at *,
-    norm_cast,
-    simp only [inv_mul_cancel_right] at *,
-  },
-  exact unit_lemma_val_one p u,
-   { apply is_integral_mul,
+ have H:= roots_of_unity_in_cyclo p ((u * (unit_gal_conj p u)⁻¹ : KK)) this,
+ rw ← zeta_coe at H,
+sorry,
+  { exact unit_lemma_val_one p u,},
+  { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
     rw (_ : ((unit_gal_conj p u)⁻¹ : KK) = (↑(unit_gal_conj p u⁻¹))),
     exact number_field.ring_of_integers.is_integral_coe (coe_b _),
@@ -119,6 +78,50 @@ begin
     norm_cast,
     apply uni_gal_conj_inv,
      },
+end
+
+
+lemma unit_lemma_gal_conj (u : units RR) :
+  ∃ (x : units RR) (n : ℤ), (is_gal_conj_real p (x : KK)) ∧ (u : KK) = x * (zeta p ℚ) ^ n :=
+
+begin
+  have := unit_inv_conj_is_root_of_unity p u,
+  obtain ⟨m, hm⟩ := this,
+  use [u * (zeta p ℚ)⁻¹ ^ (m), m],
+  split,
+  { rw is_gal_conj_real,
+  have hy : u * ((zeta p ℚ) ^ ( m))⁻¹ = (unit_gal_conj p u) *  (zeta p ℚ) ^ ( m), by {
+  rw pow_two at hm,
+  have := auxil p u (unit_gal_conj p u)  ((zeta p ℚ) ^ (m)) ((zeta p ℚ) ^ (m)),
+  apply this hm,},
+  dsimp,
+  simp only [inv_pow, alg_hom.map_mul],
+  have hz: gal_conj p ((zeta p ℚ)  ^ ( m))⁻¹ =(zeta p ℚ)  ^ ( m) , by {simp, rw ← coe_coe,
+  rw zeta_coe,
+  rw gal_conj_zeta_coe,
+  simp only [inv_pow₀, gal_conj_zeta, inv_inv₀],},
+  rw ← coe_coe,
+  rw ← coe_coe,
+  rw (_ : (↑(zeta p ℚ ^ m)⁻¹ : KK) = (zeta p ℚ ^ m : KK)⁻¹),
+  rw hz,
+  have hzz := unit_gal_conj_spec p u,
+  rw hzz,
+  simp only [coe_coe],
+  norm_cast,
+  rw ← hy,
+  simp only [subalgebra.coe_pow, subalgebra.coe_eq_zero, mul_eq_mul_left_iff,
+  units.ne_zero, or_false, subalgebra.coe_mul, units.coe_pow, units.coe_mul],
+  rw ← coe_life,
+  simp only [subalgebra.coe_pow, units.coe_pow],
+  simp_rw ← inv_pow,
+  simp only [inv_pow, coe_coe],
+  rw ← coe_life,
+  simp only [subalgebra.coe_pow, units.coe_pow],
+  },
+  dsimp at *,
+  simp only [exists_prop, inv_pow, zpow_coe_nat] at *,
+  norm_cast,
+  simp only [inv_mul_cancel_right] at *,
 end
 
 /-
