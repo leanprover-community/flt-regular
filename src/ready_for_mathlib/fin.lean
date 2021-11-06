@@ -27,9 +27,10 @@ begin
   { rw [← Ico_eq_filter, card_Ico, coe_zero, nat.sub_zero] }
 end
 
-lemma prod_filter_lt_mul_neg_eq_prod_off_diag {R : Type*} [comm_ring R] {n : ℕ} (f : fin n → R) :
-  ∏ i, (∏ j in finset.univ.filter (λ j, j < i), (f j - f i) * (f i - f j)) =
-  ∏ i, (∏ j in finset.univ.filter (λ j, i ≠ j), (f j - f i)) :=
+lemma prod_filter_lt_mul_neg_eq_prod_off_diag {R : Type*} [comm_ring R] {n : ℕ}
+  {f : fin n → fin n → R} (hf : ∀ i j, f j i = - f i j) :
+  ∏ i, (∏ j in finset.univ.filter (λ j, j < i), (f j i) * (f i j)) =
+  ∏ i, (∏ j in finset.univ.filter (λ j, i ≠ j), (f j i)) :=
 begin
   simp_rw [ne_iff_lt_or_gt, finset.filter_or],
   refine eq.trans _ (congr_arg (finset.prod _) (funext $ λ i, (finset.prod_union _).symm)),
@@ -38,7 +39,7 @@ begin
       congr, skip, congr, skip, funext,
       conv {
         congr, skip, funext,
-        rw [← neg_sub, neg_eq_neg_one_mul] },
+        rw [hf, neg_eq_neg_one_mul] },
       rw [finset.prod_mul_distrib, finset.prod_const] },
     simp_rw [finset.prod_mul_distrib],
     rw [← mul_assoc],
@@ -47,7 +48,7 @@ begin
       congr, skip, funext,
       conv {
         congr, skip, funext,
-        rw [← neg_sub, neg_eq_neg_one_mul] },
+        rw [hf, neg_eq_neg_one_mul] },
       rw [finset.prod_mul_distrib, finset.prod_const] },
     simp_rw [finset.prod_mul_distrib, filter_gt_card],
     nth_rewrite 0 [mul_comm],
