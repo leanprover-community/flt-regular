@@ -18,17 +18,17 @@ def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
 --bunch of lemmas that should be stated more generally if we decide to go this way
 lemma unit_coe (u : units RR) : (u : RR) * ((u⁻¹ : units RR) : RR) = 1 :=
 begin
-norm_cast,
-simp only [mul_right_inv, units.coe_one],
+  norm_cast,
+  simp only [mul_right_inv, units.coe_one],
 end
 
 lemma unit_coe_non_zero (u  : units RR) : (u : KK) ≠ 0 :=
 begin
- by_contra h,
- have : (u : KK) * ((u⁻¹ : units RR ) : KK) = 1, by {simp,norm_cast, apply unit_coe,},
- rw h at this,
- simp at this,
- exact this,
+  by_contra h,
+  have : (u : KK) * ((u⁻¹ : units RR ) : KK) = 1, by {simp,norm_cast, apply unit_coe,},
+  rw h at this,
+  simp at this,
+  exact this,
 end
 
 lemma coe_life (u : units RR) : ((u : RR) : KK)⁻¹ = ((u⁻¹ : units RR) : RR) :=
@@ -46,18 +46,18 @@ end
 
 lemma auxil (a b c d : units RR) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
 begin
-rw mul_inv_eq_iff_eq_mul at *,
-rw h,
-apply symm,
-rw mul_assoc,
-rw mul_comm,
+  rw mul_inv_eq_iff_eq_mul at *,
+  rw h,
+  apply symm,
+  rw mul_assoc,
+  rw mul_comm,
 end
 
 --do more generally
 lemma roots_of_unity_in_cyclo (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) =1 ) :
   ∃ (m k: ℕ+), x = (-1)^(k : ℕ) * ζ^(m : ℕ) :=
 begin
-sorry,
+  sorry,
 end
 
 lemma zeta_pow_even (h : 2 < p)  (n : ℕ) : ∃ (m : ℕ), (zeta p ℚ)^n = (zeta p ℚ)^(2*m) :=
@@ -69,37 +69,37 @@ lemma unit_inv_conj_not_neg_zeta (h : 2 < p)  (u : units RR) (n  : ℕ) :
   u * (unit_gal_conj p u)⁻¹ ≠  -(zeta p ℚ) ^ n :=
 begin
   by_contra H,
-sorry,
+  sorry,
 end
 
 
 lemma unit_inv_conj_is_root_of_unity (h : 2 < p)  (u : units RR) :
   ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta p ℚ) ^ (m))^2 :=
 begin
- have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
- have H:= roots_of_unity_in_cyclo p ((u * (unit_gal_conj p u)⁻¹ : KK)) this,
- rw ← zeta_coe at H,
- obtain ⟨n, k, hz⟩ := H,
- simp_rw ← pow_mul,
- have hk := nat.even_or_odd k,
- cases hk,
- {simp [nat.neg_one_pow_of_even hk] at hz,
- simp_rw  coe_life at hz,
- norm_cast at hz,
- rw hz,
- have := zeta_pow_even p h n,
- obtain ⟨m , Hm⟩ := this,
- use m,
- rw mul_comm,
- exact Hm},
- {by_contra hc,
- simp [nat.neg_one_pow_of_odd hk] at hz,
- simp_rw  coe_life at hz,
- norm_cast at hz,
- have := unit_inv_conj_not_neg_zeta p h u n,
- rw hz at this,
- simp at this,
- exact this,},
+  have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
+  have H:= roots_of_unity_in_cyclo p ((u * (unit_gal_conj p u)⁻¹ : KK)) this,
+  rw ← zeta_coe at H,
+  obtain ⟨n, k, hz⟩ := H,
+  simp_rw ← pow_mul,
+  have hk := nat.even_or_odd k,
+  cases hk,
+  { simp [nat.neg_one_pow_of_even hk] at hz,
+    simp_rw  coe_life at hz,
+    norm_cast at hz,
+    rw hz,
+    have := zeta_pow_even p h n,
+    obtain ⟨m , Hm⟩ := this,
+    use m,
+    rw mul_comm,
+    exact Hm},
+  { by_contra hc,
+    simp [nat.neg_one_pow_of_odd hk] at hz,
+    simp_rw  coe_life at hz,
+    norm_cast at hz,
+    have := unit_inv_conj_not_neg_zeta p h u n,
+    rw hz at this,
+    simp at this,
+    exact this, },
   { exact unit_lemma_val_one p u,},
   { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
@@ -108,8 +108,7 @@ begin
     simp,
     rw coe_life,
     norm_cast,
-    apply uni_gal_conj_inv,
-     },
+    apply uni_gal_conj_inv, },
 end
 
 
