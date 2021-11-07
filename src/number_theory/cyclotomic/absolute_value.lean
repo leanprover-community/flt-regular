@@ -299,6 +299,23 @@ end
 
 
 open_locale big_operators
+
+lemma prod_X_add_C_coeff {ι : Type*} [nontrivial R] (s : finset ι)
+  (f : ι → R) {i : ℕ} (hs : i ≤ s.card) :
+  (∏ i in s, (X + C (f i))).coeff i =
+  ∑ i in s.powerset_len (s.card - i), i.prod f :=
+begin
+  have := multiset_prod_X_add_C_coeff (s.1.map f) (by simpa using hs),
+  simp only [multiset.card_map, function.comp_app, multiset.map_map,
+    multiset.powerset_len_map] at this,
+  convert this,
+  rw finset.sum_eq_multiset_sum,
+  refine congr_arg multiset.sum _,
+  rw ← powerset_len_val,
+  rw multiset.map_map,
+  congr,
+end
+
 lemma prod_X_sub_C_coeff {ι : Type*} [nontrivial R] (s : finset ι)
   (f : ι → R) {i : ℕ} (hs : i ≤ s.card) :
   (∏ i in s, (X - C (f i))).coeff i =
