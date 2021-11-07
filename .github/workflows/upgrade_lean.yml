@@ -16,4 +16,4 @@ jobs:
           repo: ${{ github.repository }}
           access-token: ${{ secrets.GITHUB_TOKEN }}
       - name: update version branches
-        uses: leanprover-contrib/update-versions-action@master
+        uses: alexjbest/update-versions-action@docker-iamge
