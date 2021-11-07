@@ -161,7 +161,7 @@ jobs:
 
     - name: update lean-3.3x branch
       if: github.ref == 'refs/heads/master'
-      uses: leanprover-contrib/update-versions-action@master
+      uses: alexjbest/update-versions-action@docker-iamge
   deploy:
     runs-on: ubuntu-latest
     needs: build
