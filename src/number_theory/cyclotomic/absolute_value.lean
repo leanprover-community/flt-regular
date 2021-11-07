@@ -13,6 +13,8 @@ import field_theory.is_alg_closed.basic
 import field_theory.polynomial_galois_group
 import field_theory.adjoin
 import number_theory.cyclotomic.number_field_embeddings
+import order.succ_pred
+import data.nat.succ_pred
 
 open_locale nnreal
 -- probably this isn't needed but is another annoying example of 0 < n vs n ≠ 0 causing library
@@ -184,6 +186,20 @@ begin
 end
 
 
+-- another ugly proof, TODO cleanup and add to mathlib (also the with_top version)
+instance {α : Type*} [preorder α] [no_top_order α] [nonempty α] : no_top_order (with_bot α) := ⟨
+begin
+  apply with_bot.rec_bot_coe,
+  apply nonempty.elim _inst_4,
+  intro a,
+  use a,
+  refine with_bot.bot_lt_coe a,
+  intro a,
+  obtain ⟨b, ha⟩ := no_top a,
+  use b,
+  refine with_bot.coe_lt_coe.mpr ha,
+end⟩
+
 lemma multiset_prod_X_add_C_degree [nontrivial R] (s : multiset R) :
   degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1 :=
 begin
@@ -192,10 +208,7 @@ begin
     simpa, -- TODO this simpa breaks when we only assume comm_semiring due to degree_X_add_C
           -- so fix that assumption in mathlib so we can generalize this lemma
     },
-  { calc _ ≤ _ : this
-        ...< _ : _,
-    norm_cast,
-    exact lt_add_one s.card, },
+  rwa ← succ_order.lt_succ_iff at this,
 end
 
 lemma multiset_prod_X_add_C_degree' [nontrivial R] (s : multiset R) :
