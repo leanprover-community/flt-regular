@@ -241,17 +241,17 @@ begin
     exact (power_basis.finrank pb).symm },
   have hnodup : (map (algebra_map K E) (minpoly K pb.gen)).roots.nodup :=
     nodup_roots (separable.map (is_separable.separable K pb.gen)),
+  have H : ∀ i j, (e j) pb.gen - (e i) pb.gen = -((e i) pb.gen - (e j) pb.gen) := by simp,
+  have hroots : ∀ σ : L →ₐ[K] E, σ pb.gen ∈ (map (algebra_map K E) (minpoly K pb.gen)).roots,
+  { intro σ,
+    rw [mem_roots, is_root.def, eval_map, ← aeval_def, aeval_alg_hom_apply],
+    repeat { simp [minpoly.ne_zero (is_separable.is_integral K pb.gen)] } },
 
   apply (algebra_map K E).injective,
   rw [ring_hom.map_mul, ring_hom.map_pow, ring_hom.map_neg, ring_hom.map_one,
     of_power_basis_eq_prod'' _ _ _ e],
   congr,
-  have H : ∀ i j, (e j) pb.gen - (e i) pb.gen = -((e i) pb.gen - (e j) pb.gen) := by simp,
   rw [norm_eq_prod_embeddings, fin.prod_filter_gt_mul_neg_eq_prod_off_diag H],
-  have hroots : ∀ σ : L →ₐ[K] E, σ pb.gen ∈ (map (algebra_map K E) (minpoly K pb.gen)).roots,
-  { intro σ,
-    rw [mem_roots, is_root.def, eval_map, ← aeval_def, aeval_alg_hom_apply],
-    repeat { simp [minpoly.ne_zero (is_separable.is_integral K pb.gen)] } },
   conv_rhs {
     congr, skip, funext,
     rw [← aeval_alg_hom_apply, @eval_root_derivative_of_split _ _ (classical.dec_eq E) _ _ _ _
@@ -270,8 +270,7 @@ begin
   { simp only [equiv.apply_eq_iff_eq, heq_iff_eq] at hij,
     have h := hij.2,
     rw [← power_basis.lift_equiv_apply_coe, ← power_basis.lift_equiv_apply_coe] at h,
-    refine sigma.eq (equiv.injective e (equiv.injective _ (subtype.eq h))) _,
-    simp [hij.1] },
+    refine sigma.eq (equiv.injective e (equiv.injective _ (subtype.eq h))) (by simp [hij.1]) },
   { simp only [true_and, mem_mk, mem_univ, mem_sigma] at hσ,
     simp only [sigma.exists, true_and, exists_prop, mem_filter, mem_univ, ne.def, mem_sigma],
     refine ⟨e.symm (power_basis.lift pb σ.2 _), e.symm σ.1, ⟨λ h, _, sigma.eq _ _⟩⟩,
