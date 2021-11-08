@@ -2,16 +2,8 @@ import data.nat.parity
 
 namespace nat
 
---I didn't find this
-lemma even_mul_self_pred (n : ℕ) : even (n * (n - 1)) :=
-begin
-  rw [even_mul],
-  by_cases h : even n,
-  { exact or.inl h},
-  { right,
-    cases n,
-    { simp },
-    { simpa with parity_simps using h } }
-end
+lemma even_mul_self_pred : ∀ (n : ℕ), even (n * (n - 1))
+| 0 := even_zero
+| (n+1) := by { rw mul_comm, apply even_mul_succ_self }
 
 end nat
