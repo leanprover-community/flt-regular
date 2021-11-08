@@ -11,6 +11,8 @@ variables {A : Type*} [has_mul A] {B : Type*} [has_mul B] [has_le B]
 
 namespace function
 
+/-- We say that a function is `super_multipicative` if
+  `∀ (a b : A), f (a) * f(b) ≤ f(a * b)`. -/
 def super_multiplicative (f : A → B) : Prop := ∀ (a b : A), f (a) * f(b) ≤ f(a * b)
 
 end function
