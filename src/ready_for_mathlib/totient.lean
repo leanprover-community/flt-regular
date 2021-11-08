@@ -2,6 +2,7 @@ import algebra.big_operators.basic
 import data.nat.totient
 import tactic.ring_exp
 import algebra.gcd_monoid.basic
+import data.nat.mul_ind
 
 open finset
 open_locale big_operators
@@ -70,6 +71,90 @@ begin
   simp only [gcd_one_left, mul_one, one_mul, pow_zero],
 end
 
+/-- We say that a function `f` satisfies `is_pseudo_mult` if
+  `∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)`. -/
+def is_pseudo_mult (f : ℕ → ℕ) : Prop :=
+  ∀ (a b: ℕ), f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)
+
+/- Chris: your `mul_ind` lemma seemed completely wrong to me at its current stage
+  (how do you multiply things together?) For proving a modified version, the import that I added
+  (`data.nat.mul_ind`) should be much help. You can see my toying below, but I don't think it's
+  going anywhere without much, much casework - maybe the best shot is to prove a "proper" version
+  of `mul_ind`. I've left your original code below mine, too. ~Eric -/
+
+
+lemma totient_mul_gen : is_pseudo_mult φ :=
+begin
+  intro a,
+  rcases eq_or_ne a 0 with rfl | ha,
+  { simp },
+  apply nat.rec_on_prime_coprime,
+  { simp only [zero_mul, mul_zero, totient_zero] },
+  { intros p n hp,
+    rcases n.eq_zero_or_pos with rfl | hn,
+    { simp only [mul_one, one_mul, gcd_one_right, totient_one, pow_zero] },
+    rcases coprime_or_dvd_of_prime hp a,
+    { -- p.coprime a
+      have key : a.gcd (p ^ n) = 1 := (coprime.pow_right n h.symm).gcd_eq_one,
+      simpa only [key, mul_one, one_mul, totient_one] using totient_mul key },
+    { -- gcd needs more api!
+      -- p ∣ a
+      have key := @gcd_pow_right_dvd_pow_gcd _ _ _ a p n,
+      have : a.gcd p = p := sorry, -- !!
+      simp only [gcd_eq_nat_gcd, this, dvd_prime_pow hp] at key,
+      obtain ⟨k, hkn, hk⟩ := key,
+      cases k,
+      { rw [((coprime_pow_right_iff hn _ _).mp hk).gcd_eq_one] at this,
+        exact absurd this hp.one_lt.ne },
+      simp [succ_eq_add_one, hk, totient_prime_pow hp, hn],
+      rw pow_succ,
+      suffices : (a * p ^ n).totient = p * a.totient * p ^ (n - 1),
+      { /- boring arguments that ring_exp/linarith refuses to solve... -/ sorry },
+      induction a using nat.rec_on_prime_coprime,
+      { simp only [zero_mul, mul_zero, totient_zero] },
+      case hp : q m hq { sorry },
+      sorry } },
+  intros c d hcd hc hd,
+  -- yikes, but doable...
+  sorry
+end
+
+lemma totient_is_super_multiplicative :  function.super_multiplicative φ :=
+begin
+  intros a b,
+  let d := a.gcd b,
+  by_cases d ≠ 0,
+  {have := totient_mul_gen a b,
+  simp at *,
+  have hd: 0 < d.totient,  by {apply totient_pos, exact pos_iff_ne_zero.mpr h, },
+  by_cases HA : a ≠ 0,
+  by_cases HB : b ≠ 0,
+  have ha: 0 < a.totient,
+    by {apply totient_pos, by_contra H, simp at *, rw H at HA, simp at HA, exact HA,},
+  have hb: 0 < b.totient,
+    by {apply totient_pos, by_contra H, simp at *, rw H at HB, simp at HB, exact HB},
+  have hdd: φ( d ) ≤ d, by {apply totient_le,},
+  have hr :  φ (d) * (φ (a) * φ (b)) ≤ φ (d) * φ (a * b) ↔ (φ (a) * φ (b)) ≤ φ (a * b) ,
+  by {apply mul_le_mul_left hd,},
+  simp_rw ← hr,
+  rw this,
+  rw mul_comm,
+  exact mul_le_mul_left' hdd (φ a * φ b),
+  simp at HB,
+  rw HB,
+  simp,
+  simp at HA,
+  rw HA,
+  simp,
+  },
+  simp at h,
+  simp_rw d at h,
+  rw gcd_eq_zero_iff at h,
+  simp [h.1],
+end
+
+/-
+
 theorem mul_ind {P : ℕ → ℕ → Prop}
   (H0 : ∀ (n : ℕ), P 0 n)
   (H1 : ∀ (n m : ℕ), (m.coprime n) → P m  n)
@@ -78,12 +163,6 @@ theorem mul_ind {P : ℕ → ℕ → Prop}
 begin
 sorry,
 end
-
-/-- We say that a function `f` satisfies `is_pseudo_mult` if
-  `∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)`. -/
-def is_pseudo_mult (f : ℕ → ℕ) : Prop :=
-  ∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)
-
 
 lemma totient_mul_gen : is_pseudo_mult φ :=
 
@@ -129,41 +208,6 @@ have HH := totient_mul_self d,
 
 end
 
-lemma totient_is_super_multiplicative :  function.super_multiplicative φ :=
-begin
-  rw function.super_multiplicative,
-  intros a b,
-  let d:= a.gcd b,
-  by_cases d ≠  0,
-  {have := totient_mul_gen a b,
-  simp at *,
-  have hd: 0 < d.totient,  by {apply totient_pos, exact pos_iff_ne_zero.mpr h, },
-  by_cases HA : a ≠ 0,
-  by_cases HB : b ≠ 0,
-  have ha: 0 < a.totient,
-    by {apply totient_pos, by_contra H, simp at *, rw H at HA, simp at HA, exact HA,},
-  have hb: 0 < b.totient,
-    by {apply totient_pos, by_contra H, simp at *, rw H at HB, simp at HB, exact HB},
-  have hdd: φ( d ) ≤ d, by {apply totient_le,},
-  have hr :  φ (d) * (φ (a) * φ (b)) ≤ φ (d) * φ (a * b) ↔ (φ (a) * φ (b)) ≤ φ (a * b) ,
-  by {apply mul_le_mul_left hd,},
-  simp_rw ← hr,
-  rw this,
-  rw mul_comm,
-  exact mul_le_mul_left' hdd (φ a * φ b),
-  simp at HB,
-  rw HB,
-  simp,
-  simp at HA,
-  rw HA,
-  simp,
-  },
-  simp at h,
-  simp_rw d at h,
-  rw gcd_eq_zero_iff at h,
-  simp [h.1],
-end
-
-
+-/
 
 end nat
