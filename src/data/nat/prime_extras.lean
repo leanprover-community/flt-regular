@@ -21,12 +21,7 @@ begin
   norm_num,
 end
 
-lemma odd (h_two : p ≠ 2) : odd p :=
-begin
-  cases hp.eq_two_or_odd,
-  contradiction,
-  exact odd_iff.mpr h,
-end
+lemma odd (h_two : p ≠ 2) : odd p := odd_iff.mpr (or_iff_not_imp_left.mp hp.eq_two_or_odd h_two)
 
 end prime
 end nat
