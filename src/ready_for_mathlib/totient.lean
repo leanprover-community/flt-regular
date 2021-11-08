@@ -11,7 +11,7 @@ variables {A : Type*} [has_mul A] {B : Type*} [has_mul B] [has_le B]
 
 namespace function
 
-/-- We say that a function is `super_multipicative` if
+/-- We say that a function `f` is `super_multipicative` if
   `∀ (a b : A), f (a) * f(b) ≤ f(a * b)`. -/
 def super_multiplicative (f : A → B) : Prop := ∀ (a b : A), f (a) * f(b) ≤ f(a * b)
 
@@ -79,7 +79,10 @@ begin
 sorry,
 end
 
-def is_pseudo_mult (f : ℕ → ℕ) : Prop := ∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)
+/-- We say that a function `f` satisfies `is_pseudo_mult` if
+  `∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)`. -/
+def is_pseudo_mult (f : ℕ → ℕ) : Prop :=
+  ∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)
 
 
 lemma totient_mul_gen : is_pseudo_mult φ :=
