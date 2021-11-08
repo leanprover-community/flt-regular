@@ -233,6 +233,7 @@ lemma of_power_basis_eq_norm : discriminant K pb.basis =
   (-1) ^ (n * (n - 1) / 2) * (norm K (aeval pb.gen (minpoly K pb.gen).derivative)) :=
 begin
   let E := algebraic_closure L,
+  letI := classical.dec_eq E,
   have e : fin pb.dim ≃ (L →ₐ[K] E),
   { refine equiv_of_card_eq _,
     rw [fintype.card_fin, alg_hom.card],
@@ -241,21 +242,47 @@ begin
   rw [ring_hom.map_mul, ring_hom.map_pow, ring_hom.map_neg, ring_hom.map_one,
     of_power_basis_eq_prod'' _ _ _ e],
   congr,
-  rw [norm_eq_prod_embeddings],
-  have H : ∀ i j, (e i) pb.gen - (e j) pb.gen = -((e j) pb.gen - (e i) pb.gen) := by simp,
-  simp_rw [prod_mul_distrib],
-
-
-
-
-  --refine fintype.prod_equiv e _ _ (λ i, _),
-  --rw [← aeval_alg_hom_apply, @eval_root_derivative_of_split _ _ (classical.dec_eq E) _ _ _ _
-  --  (minpoly.monic (is_separable.is_integral K pb.gen)) (is_alg_closed.splits_codomain _) _ _],
-  --swap,
-  --{ rw [mem_roots, is_root.def, eval_map, ← aeval_def, aeval_alg_hom_apply],
-  --  { simp },
-  --  { simp [minpoly.ne_zero (is_separable.is_integral K pb.gen)] } },
-  sorry
+  have H : ∀ i j, (e j) pb.gen - (e i) pb.gen = -((e i) pb.gen - (e j) pb.gen) := by simp,
+  rw [norm_eq_prod_embeddings, fin.prod_filter_gt_mul_neg_eq_prod_off_diag H],
+  have hroots : ∀ σ : L →ₐ[K] E, σ pb.gen ∈ (map (algebra_map K E) (minpoly K pb.gen)).roots,
+  { intro σ,
+    rw [mem_roots, is_root.def, eval_map, ← aeval_def, aeval_alg_hom_apply],
+    repeat { simp [minpoly.ne_zero (is_separable.is_integral K pb.gen)] } },
+  conv_rhs {
+    congr, skip, funext,
+    rw [← aeval_alg_hom_apply, @eval_root_derivative_of_split _ _ (classical.dec_eq E) _ _ _ _
+      (minpoly.monic (is_separable.is_integral K pb.gen)) (is_alg_closed.splits_codomain _)
+      _ (hroots σ), ← finset.prod_mk _ (@multiset.nodup_erase_of_nodup E _ _ _
+      (nodup_roots (separable.map (is_separable.separable _ _))))] },
+  rw [prod_sigma', prod_sigma'],
+  refine prod_bij (λ i hi, ⟨e i.2, e i.1 pb.gen⟩) (λ i hi, _) (λ i hi, by simp at hi)
+    (λ i j hi hj hij, _) (λ σ hσ, _),
+  { apply_instance },
+  { simp only [true_and, mem_mk, mem_univ, mem_sigma],
+    rw [multiset.mem_erase_of_ne (λ h, _)],
+    { exact hroots _ },
+    { simp only [true_and, mem_filter, mem_univ, ne.def, mem_sigma] at hi,
+      refine hi (equiv.injective e (equiv.injective (power_basis.lift_equiv pb) _)),
+      rw [← power_basis.lift_equiv_apply_coe, ← power_basis.lift_equiv_apply_coe] at h,
+      exact subtype.eq h } },
+  { simp only [equiv.apply_eq_iff_eq, heq_iff_eq] at hij,
+    have h := hij.2,
+    rw [← power_basis.lift_equiv_apply_coe, ← power_basis.lift_equiv_apply_coe] at h,
+    refine sigma.eq (equiv.injective e (equiv.injective _ (subtype.eq h))) _,
+    simp [hij.1] },
+  { simp only [true_and, mem_mk, mem_univ, mem_sigma] at hσ,
+    simp only [sigma.exists, true_and, exists_prop, mem_filter, mem_univ, ne.def, mem_sigma],
+    refine ⟨e.symm (power_basis.lift pb σ.2 _), e.symm σ.1, ⟨λ h, _, sigma.eq _ _⟩⟩,
+    { rw [aeval_def, eval₂_eq_eval_map, ← is_root.def, ← mem_roots],
+      { exact multiset.erase_subset _ _ hσ },
+      { simp [minpoly.ne_zero (is_separable.is_integral K pb.gen)] } },
+    { replace h := alg_hom.congr_fun (equiv.injective _ h) pb.gen,
+      rw [power_basis.lift_gen] at h,
+      rw [← h] at hσ,
+      refine multiset.mem_erase_of_nodup _ hσ,
+      exact (nodup_roots (separable.map (is_separable.separable _ _))) },
+    { simp },
+    { simp } }
 end
 
 end field
