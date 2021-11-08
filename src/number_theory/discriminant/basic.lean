@@ -234,10 +234,14 @@ lemma of_power_basis_eq_norm : discriminant K pb.basis =
 begin
   let E := algebraic_closure L,
   letI := classical.dec_eq E,
+
   have e : fin pb.dim ≃ (L →ₐ[K] E),
   { refine equiv_of_card_eq _,
     rw [fintype.card_fin, alg_hom.card],
     exact (power_basis.finrank pb).symm },
+  have hnodup : (map (algebra_map K E) (minpoly K pb.gen)).roots.nodup :=
+    nodup_roots (separable.map (is_separable.separable K pb.gen)),
+
   apply (algebra_map K E).injective,
   rw [ring_hom.map_mul, ring_hom.map_pow, ring_hom.map_neg, ring_hom.map_one,
     of_power_basis_eq_prod'' _ _ _ e],
@@ -252,12 +256,10 @@ begin
     congr, skip, funext,
     rw [← aeval_alg_hom_apply, @eval_root_derivative_of_split _ _ (classical.dec_eq E) _ _ _ _
       (minpoly.monic (is_separable.is_integral K pb.gen)) (is_alg_closed.splits_codomain _)
-      _ (hroots σ), ← finset.prod_mk _ (@multiset.nodup_erase_of_nodup E _ _ _
-      (nodup_roots (separable.map (is_separable.separable _ _))))] },
+      _ (hroots σ), ← finset.prod_mk _ (multiset.nodup_erase_of_nodup _ hnodup)] },
   rw [prod_sigma', prod_sigma'],
   refine prod_bij (λ i hi, ⟨e i.2, e i.1 pb.gen⟩) (λ i hi, _) (λ i hi, by simp at hi)
     (λ i j hi hj hij, _) (λ σ hσ, _),
-  { apply_instance },
   { simp only [true_and, mem_mk, mem_univ, mem_sigma],
     rw [multiset.mem_erase_of_ne (λ h, _)],
     { exact hroots _ },
@@ -279,10 +281,8 @@ begin
     { replace h := alg_hom.congr_fun (equiv.injective _ h) pb.gen,
       rw [power_basis.lift_gen] at h,
       rw [← h] at hσ,
-      refine multiset.mem_erase_of_nodup _ hσ,
-      exact (nodup_roots (separable.map (is_separable.separable _ _))) },
-    { simp },
-    { simp } }
+      refine multiset.mem_erase_of_nodup hnodup hσ, },
+    all_goals { simp } }
 end
 
 end field
