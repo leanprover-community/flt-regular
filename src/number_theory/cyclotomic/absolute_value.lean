@@ -15,6 +15,8 @@ import field_theory.adjoin
 import number_theory.cyclotomic.number_field_embeddings
 import order.succ_pred
 import data.nat.succ_pred
+import data.nat.choose
+import tactic.may_assume
 
 open_locale nnreal
 -- probably this isn't needed but is another annoying example of 0 < n vs n ≠ 0 causing library
@@ -95,18 +97,6 @@ end
 end polynomial
 end polynomial_map_lemmas
 
-section choose_lemma
-lemma nat.choose_add_one (a c : ℕ) : nat.choose a c ≤ nat.choose (a + 1) c :=
-by cases c; simp [nat.choose_succ_succ]
-
-lemma nat.choose_add_le (a b c : ℕ) : nat.choose a c ≤ nat.choose (a + b) c :=
-begin
-  induction b with b_n b_ih,
-  { simp, },
-  exact le_trans b_ih (nat.choose_add_one (a + b_n) c),
-end
-end choose_lemma
-
 section polynomial
 variables {R : Type*} [ring R]
 open polynomial
@@ -184,21 +174,6 @@ begin
   { simp only [multiset.prod_cons, multiset.map_cons, multiset.sum_cons],
     exact le_trans (degree_mul_le _ _) (add_le_add_left ht _), }
 end
-
-
--- another ugly proof, TODO cleanup and add to mathlib (also the with_top version)
-instance {α : Type*} [preorder α] [no_top_order α] [nonempty α] : no_top_order (with_bot α) := ⟨
-begin
-  apply with_bot.rec_bot_coe,
-  apply nonempty.elim _inst_4,
-  intro a,
-  use a,
-  refine with_bot.bot_lt_coe a,
-  intro a,
-  obtain ⟨b, ha⟩ := no_top a,
-  use b,
-  refine with_bot.coe_lt_coe.mpr ha,
-end⟩
 
 lemma multiset_prod_X_add_C_degree [nontrivial R] (s : multiset R) :
   degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1 :=
