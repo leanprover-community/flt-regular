@@ -103,7 +103,7 @@ begin
     { -- gcd needs more api!
       -- p ∣ a
       have key := @gcd_pow_right_dvd_pow_gcd _ _ _ a p n,
-      have : a.gcd p = p := sorry, --why not p^2? !!
+      have : a.gcd p = p := gcd_eq_right h, -- this is why! needed some sleep...
       simp only [gcd_eq_nat_gcd, this, dvd_prime_pow hp] at key,
       obtain ⟨k, hkn, hk⟩ := key,
       cases k,
