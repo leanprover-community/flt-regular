@@ -42,10 +42,14 @@ begin
         -- a ^ p % d ^ p + b ^ p % d ^ p < d ^ p, does this maybe only hold in case one?
         -- I haven't read the proof for case two, so I'm not sure if this requires coprimeness
         sorry },
-      -- lifting arguments and d ∣ x (`finset.gcd_dvd`) should do quick work of this
-      have key : ∀ x ∈ ({a, b, c} : set ℕ), x ^ p / d ^ p = (x / d) ^ p := sorry,
-      simpa only [this, key, set.mem_insert_iff, set.mem_singleton_iff,
-                  true_or, eq_self_iff_true, or_true] using habc },
+      have key : ∀ x ∈ ({a, b, c} : finset ℕ), x ^ p / d ^ p = (x / d) ^ p,
+      { intros x xh,
+        symmetry,
+        apply div_pow''', -- TODO move this lemma to a reasonable place / name and mathlib
+        simp only [d],
+        exact (finset.gcd_dvd xh), },
+      simpa only [this, key, true_or, eq_self_iff_true, or_true, finset.mem_insert,
+        finset.mem_singleton] using habc},
     { sorry /- {a / d, b / d, c / d}.pairwise nat.coprime
                this should be a finset.gcd lemma, although has to be special-cased for ℕ :/ -/ },
     { have habc := congr_arg (* d^3) h_red,
