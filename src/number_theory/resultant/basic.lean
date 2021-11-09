@@ -50,47 +50,52 @@ def discriminant' [comm_ring R] (p : polynomial R) : R := resultant p p.derivati
 -- disc prod is prod discs times resultant square
 
 
-lemma degree_C_mul_X [comm_ring R] {a : R} (h : a ≠ 0) : degree (C a * X) = 1 :=
-begin
-  rw degree_eq_nat_degree,
-  rw nat_degree_C_mul_X _ h,
-  norm_cast,
-  -- simp,
-  sorry
-end
+lemma degree_C_mul_X [comm_ring R] {a : R} (ha : a ≠ 0) : degree (C a * X) = 1 :=
+by { convert degree_C_mul_X_pow 1 ha, rw pow_one }
 
--- does this work without taking n >= 2? be careful with signs
-lemma discriminant'_C_mul_X_add_C [comm_ring R] {n : ℕ} {b c : R} (h : b ≠ 0) :
-  discriminant' (C b * X + C c) = 1 :=
+lemma discriminant'_C_mul_X_add_C [comm_ring R] {b c : R} (h : b ≠ 0) :
+  discriminant' (C b * X + C c) = b := --big note: this used to be `discriminat' = 1`!!
 begin
   have : (C b * X + C c).nat_degree = 1,
   { apply nat_degree_eq_of_degree_eq_some,
-    have := degree_C_mul_X h,
-    rw degree_add_C;
-    simp [h, this],
-    sorry, },
-  norm_num [discriminant', sylvester_matrix, resultant, this],
-  rw det_apply,
-  sorry,
+    simp only [degree_add_C, degree_C_mul_X h, ←with_bot.coe_zero,
+               ←with_bot.coe_one, with_bot.coe_lt_coe, zero_lt_one] },
+  -- I'm squeezing the simps to make working on the file faster, if later someone wants to put
+  -- back the original one: `simp only [discriminant', resultant, sylvester_matrix]`.
+  simp only [discriminant', resultant, sylvester_matrix, tsub_zero, add_zero, derivative_X,
+             mul_one, derivative_add, derivative_mul, coeff_C_mul, zero_mul, if_false,
+             nat_degree_C, zero_add, derivative_C, not_lt_zero'],
+  convert_to det (λ (i j : fin 1), b * (X ^ ↑i).coeff ↑j) = b,
+  { congr, any_goals { rw [this, nat_degree_C, add_zero] } },
+  norm_num
+end
+-- does this work without taking n ≥ 2? be careful with signs
+-- Eric: doesn't work for n=0 or n=1:
+/-
+  (with n = 0 substituted)
+  simp only [mul_one, nat.cast_zero, add_left_neg, pow_zero],
+  rw [add_right_comm, ←C_add, add_comm, discriminant'_C_mul_X_add_C]
+
+  (with n=1 substituted)
+  simp only [neg_mul_eq_neg_mul_symm, one_mul, pow_one, nat.cast_one, pow_zero],
+  rw [←add_mul, ←C_add, discriminant'_C_mul_X_add_C]
+-/
+lemma discriminant'_mul_X_pow_add_C_mul_X_add_C [comm_ring R] {a b c : R}
+  (ha : a ≠ 0) : ∀ {n : ℕ}, 2 ≤ n → discriminant' (C a * (X : polynomial R)^n + C b * X + C c) =
+    -(n - 1)^(n-1) * b^n + n^n * a^(n-1) * (-c)^(n-1)
+| 0     hn := (hn.not_lt zero_lt_two).rec _
+| 1     hn := (hn.not_lt one_lt_two).rec _
+| (n+2) _ := begin
+  sorry
 end
 
-lemma discriminant'_mul_X_pow_add_C_mul_X_add_C [comm_ring R] {n : ℕ} {a b c : R} (h : a ≠ 0) :
-  discriminant' (C a * (X : polynomial R)^n + C b * X + C c) =
-    -(n - 1)^(n-1) * b^n + n^n * a^(n-1) * (-c)^(n-1) :=
-begin
-  by_cases hn0 : n = 0,
-  norm_num [hn0],
-  norm_num [discriminant', sylvester_matrix],
-  sorry,
-  sorry,
-end
 -- this should give quadratic as b^2 - 4ac and depressed cubic as
 -- -4ac^3 - 27 a^2d^2 = -(n-1)^(n-1)a c ^n - n^n a^(n-1) b^(n-1)
 
 -- example of computing this thing
 example : false :=
 begin
-  have := @discriminant'_mul_X_pow_add_C_mul_X_add_C _ _ 5 (1 : ℚ) (-1) (-1),
+  have := @discriminant'_mul_X_pow_add_C_mul_X_add_C _ _ (1 : ℚ) (-1) (-1) one_ne_zero 5,
   norm_num at this,
   sorry,
 end
