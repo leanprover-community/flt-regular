@@ -71,6 +71,7 @@ begin
   simp only [gcd_one_left, mul_one, one_mul, pow_zero],
 end
 
+--This is a made-up name, I just wanted to call it something ~Chris
 /-- We say that a function `f` satisfies `is_pseudo_mult` if
   `∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)`. -/
 def is_pseudo_mult (f : ℕ → ℕ) : Prop :=
@@ -81,6 +82,8 @@ def is_pseudo_mult (f : ℕ → ℕ) : Prop :=
   (`data.nat.mul_ind`) should be much help. You can see my toying below, but I don't think it's
   going anywhere without much, much casework - maybe the best shot is to prove a "proper" version
   of `mul_ind`. I've left your original code below mine, too. ~Eric -/
+
+/-Yes you are right, what I had was non-sense! Thank you. I'll think more about what it is I wanted-/
 
 
 lemma totient_mul_gen : is_pseudo_mult φ :=
@@ -100,7 +103,7 @@ begin
     { -- gcd needs more api!
       -- p ∣ a
       have key := @gcd_pow_right_dvd_pow_gcd _ _ _ a p n,
-      have : a.gcd p = p := sorry, -- !!
+      have : a.gcd p = p := sorry, --why not p^2? !!
       simp only [gcd_eq_nat_gcd, this, dvd_prime_pow hp] at key,
       obtain ⟨k, hkn, hk⟩ := key,
       cases k,
