@@ -33,11 +33,12 @@ begin
   rw [mem_nth_roots_finset n.pos, mem_nth_roots n.pos]
 end
 
+/-- `ζ F n` is a primitive `n`-th root of unity in `F`. -/
 noncomputable def ζ (F : Type*) [field F] (n : ℕ+) :
   roots_of_unity n ((X ^ (n : ℕ) - 1 : polynomial F).splitting_field) :=
 (roots_of_unity.is_cyclic _ n).exists_generator.some
 
-def ζ_spec {F : Type*} [field F] {n : ℕ+} : ∀ x, x ∈ subgroup.zpowers (ζ F n) :=
+lemma ζ_spec {F : Type*} [field F] {n : ℕ+} : ∀ x, x ∈ subgroup.zpowers (ζ F n) :=
 (roots_of_unity.is_cyclic _ n).exists_generator.some_spec
 
 variables {n : ℕ+} (hn : (n : F) ≠ 0)
