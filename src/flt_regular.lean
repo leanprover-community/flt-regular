@@ -10,7 +10,7 @@ lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (ha
     : b.coprime c ∧ a.coprime c := sorry
 
 lemma flt_three_case_one_aux {A B C : zmod 9} (h : A ^ 3 + B ^ 3 = C ^ 3) : 3 ∣ A * B * C :=
-by sorry --revert A B C ; dec_trivial
+by dec_trivial!
 
 theorem flt_regular_case_one (p a b c : ℕ) [h_prime : fact p.prime] (hp : is_regular_number p)
   (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hpabc : p.coprime (a * b * c)) : false :=
@@ -52,9 +52,7 @@ begin
           simp } },
       have key : ∀ x ∈ ({a, b, c} : finset ℕ), x ^ p / d ^ p = (x / d) ^ p,
       { intros x xh,
-        symmetry,
-        apply div_pow''', -- TODO move this lemma to a reasonable place / name and mathlib
-        simp only [d],
+        rw div_pow''', -- TODO move this lemma to a reasonable place / name and mathlib
         exact (finset.gcd_dvd xh), },
       simpa only [this, key, true_or, eq_self_iff_true, or_true, finset.mem_insert,
                   finset.mem_singleton] using habc },
