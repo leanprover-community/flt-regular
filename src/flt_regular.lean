@@ -33,15 +33,23 @@ theorem flt_regular (p a b c : ℕ) [fact p.prime] (hp : is_regular_number p) (h
 begin
   may_assume hcoprime : set.pairwise {a, b, c} nat.coprime,
   { let d : ℕ := finset.gcd {a, b, c} id,
+    cases d.eq_zero_or_pos with hd hd,
+    { rw finset.gcd_eq_zero_iff at hd,
+      rw mul_eq_zero,
+      exact or.inr (hd c $ by simp) },
     specialize h_red p (a/d) (b/d) (c/d) ‹_› hp hpne_two _ _,
     { have habc := congr_arg (/ d^p) h,
       simp only at habc,
-      rw nat.add_div (sorry /- 0 < d, finset.gcd api! (requires nonempty set) -/) at habc,
+      rw nat.add_div (pow_pos hd p) at habc,
       have : ite (d ^ p ≤ a ^ p % d ^ p + b ^ p % d ^ p) 1 0 = 0,
       { simp only [nat.one_ne_zero, ite_eq_right_iff, imp_false, not_le],
-        -- a ^ p % d ^ p + b ^ p % d ^ p < d ^ p, does this maybe only hold in case one?
-        -- I haven't read the proof for case two, so I'm not sure if this requires coprimeness
-        sorry },
+        convert pow_pos hd p,
+        rw add_eq_zero_iff,
+        split;
+        { apply nat.mod_eq_zero_of_dvd,
+          apply pow_dvd_pow_of_dvd,
+          apply finset.gcd_dvd,
+          simp } },
       have key : ∀ x ∈ ({a, b, c} : finset ℕ), x ^ p / d ^ p = (x / d) ^ p,
       { intros x xh,
         symmetry,
@@ -49,7 +57,7 @@ begin
         simp only [d],
         exact (finset.gcd_dvd xh), },
       simpa only [this, key, true_or, eq_self_iff_true, or_true, finset.mem_insert,
-        finset.mem_singleton] using habc},
+                  finset.mem_singleton] using habc },
     { sorry /- {a / d, b / d, c / d}.pairwise nat.coprime
                this should be a finset.gcd lemma, although has to be special-cased for ℕ :/ -/ },
     { have habc := congr_arg (* d^3) h_red,
