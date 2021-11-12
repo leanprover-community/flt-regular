@@ -16,9 +16,9 @@ lemma is_root_prod {R : Type*} [comm_ring R] [is_domain R] {ι : Type*}
   is_root (∏ j in s, p j) x ↔ ∃ i ∈ s, is_root (p i) x :=
 by simp only [is_root, eval_prod, finset.prod_eq_zero_iff]
 
--- trying out this order and the ⦃⦄ to solve some `rw` issues, c.f.
+-- trying out this order to solve some `rw` issues, c.f.
 -- https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/rw.20.2B.20apply_instance
-lemma is_root_of_unity_iff {n : ℕ} (h : 0 < n) ⦃R : Type*⦄ [comm_ring R] [is_domain R] {ζ : R} :
+lemma is_root_of_unity_iff {n : ℕ} (h : 0 < n) (R : Type*) [comm_ring R] [is_domain R] {ζ : R} :
   ζ ^ n = 1 ↔ ∃ i ∈ n.divisors, (cyclotomic i R).is_root ζ :=
 by rw [←mem_nth_roots h, nth_roots, mem_roots $ X_pow_sub_C_ne_zero h _,
        C_1, ←prod_cyclotomic_eq_X_pow_sub_one h, is_root_prod]; apply_instance
@@ -32,7 +32,7 @@ lemma is_primitive_root.zero {R : Type*} [comm_semiring R] [nontrivial R] :
 -- why does simpa need so much hand-holding...
 ⟨pow_zero 0, λ l hl, by simpa [zero_pow_eq, show ∀ p, ¬p → false ↔ p, by tauto!] using hl⟩
 
-lemma is_primitive_root.order_of {M : Type*} [comm_monoid M] {ζ : M} :
+lemma is_primitive_root.order_of {M : Type*} [comm_monoid M] (ζ : M) :
   is_primitive_root ζ (order_of ζ) :=
 ⟨pow_order_of_eq_one ζ, λ l, order_of_dvd_of_pow_eq_one⟩
 
@@ -49,8 +49,9 @@ end
 
 lemma is_primitive_root.eq_order_of {n : ℕ} {M : Type*} [comm_monoid M] {ζ : M}
   (h : is_primitive_root ζ n) : n = order_of ζ :=
-h.unique is_primitive_root.order_of
+h.unique (is_primitive_root.order_of ζ)
 
+-- equivalent statement for n : ℕ availab,e but too lazy
 lemma is_primitive_root_iff {n : ℕ+} {M : Type*} [comm_monoid M] (ζ : M) :
   is_primitive_root ζ n ↔ ζ ^ (n : ℕ) = 1 ∧ ∀ l : ℕ, 0 < l → l < n → ζ ^ l ≠ 1 :=
 begin
@@ -59,22 +60,52 @@ begin
   exact pow_ne_one_of_lt_order_of' hl'.ne' hl,
 end
 
-lemma is_root_cyclotomic_iff {n : ℕ} {K : Type*} [field K] {μ : K} (hn : (↑n : K) ≠ 0)
-  : is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
+lemma is_not_primitive_root_iff {n : ℕ} {M : Type*} [comm_monoid M] (ζ : M) :
+  ¬ is_primitive_root ζ n ↔ order_of ζ ≠ n :=
+⟨λ h hn, h $ hn ▸ is_primitive_root.order_of ζ,
+ λ h hn, h.symm $ hn.unique $ is_primitive_root.order_of ζ⟩
+
+open finset
+
+lemma nat.mem_divisors_self (n : ℕ) (h : n ≠ 0) : n ∈ n.divisors := by simpa
+
+lemma is_root_cyclotomic_iff {n : ℕ} {K : Type*} [field K] {μ : K} (hn : (↑n : K) ≠ 0) :
+  is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
 begin
-  have : n ≠ 0, by { rintro rfl, contradiction },
-  lift n to ℕ+ using this.bot_lt,
-  refine ⟨is_root_cyclotomic n.pos, λ hμ, _⟩,
-  have hμ' : μ ^ (n : ℕ) = 1,
-  { rw is_root_of_unity_iff n.pos,
-    exact ⟨n, by simp /- n ∈ divisors n is not a lemma... -/, hμ⟩ },
-  rw is_primitive_root_iff,
-  refine ⟨hμ', λ l hl' hl hlμ, _⟩,
-  rw is_root_of_unity_iff hl' at hlμ,
-  obtain ⟨i, hi, hμ⟩ := hlμ,
-  have : i < n := (nat.le_of_dvd hl' (nat.dvd_of_mem_divisors hi)).trans_lt hl,
-  sorry
-  -- WILL FINISH TODAY!
-  -- this isn't the right way, `by_contra` earlier is better because we get
-  -- direct access to `order_of`, which has a good api
+  -- in this proof, `o` stands for `order_of μ`
+  have hnpos : 0 < n := (show n ≠ 0, by { rintro rfl, contradiction }).bot_lt,
+  refine ⟨is_root_cyclotomic hnpos, λ hμ, _⟩,
+  have hμn : μ ^ n = 1,
+  { rw is_root_of_unity_iff hnpos,
+    exact ⟨n, n.mem_divisors_self hnpos.ne', hμ⟩ },
+  by_contra hnμ,
+  have ho : 0 < order_of μ,
+  { apply order_of_pos',
+    rw is_of_fin_order_iff_pow_eq_one,
+    exact ⟨n, hnpos, hμn⟩ },
+  have := pow_order_of_eq_one μ,
+  rw is_root_of_unity_iff ho at this,
+  obtain ⟨i, hio, hiμ⟩ := this,
+  replace hio := nat.dvd_of_mem_divisors hio,
+  rw is_not_primitive_root_iff at hnμ,
+  rw ←order_of_dvd_iff_pow_eq_one at hμn,
+  have key  : i < n := (nat.le_of_dvd ho hio).trans_lt ((nat.le_of_dvd hnpos hμn).lt_of_ne hnμ),
+  have key' : i ∣ n := hio.trans hμn,
+  rw ←polynomial.dvd_iff_is_root at hμ hiμ,
+  have := prod_cyclotomic_eq_X_pow_sub_one hnpos K,
+  have hni : {i, n} ⊆ n.divisors,
+  { simpa [insert_subset, key'] using hnpos.ne' },
+  obtain ⟨k, hk⟩ := hiμ,
+  obtain ⟨j, hj⟩ := hμ,
+  rw [←prod_sdiff hni, prod_pair key.ne, hk, hj] at this,
+  replace hn := (X_pow_sub_one_separable_iff.mpr hn).squarefree,
+  rw ←this at hn,
+  suffices :¬ squarefree ((∏ x in n.divisors \ {i, n}, cyclotomic x K)
+                          * ((X - C μ) * k * ((X - C μ) * j))),
+  { by contradiction },
+  rw squarefree,
+  push_neg,
+  refine ⟨X - C μ, ⟨(∏ x in n.divisors \ {i, n}, cyclotomic x K) * k * j, by ring⟩, _⟩,
+  rw polynomial.is_unit_iff_degree_eq_zero,
+  simp
 end
