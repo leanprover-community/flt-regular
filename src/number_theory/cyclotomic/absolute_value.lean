@@ -15,17 +15,16 @@ import field_theory.adjoin
 import number_theory.cyclotomic.number_field_embeddings
 import order.succ_pred
 import data.nat.succ_pred
+import data.nat.choose
+import tactic.may_assume
 
 open_locale nnreal
 -- probably this isn't needed but is another annoying example of 0 < n vs n ≠ 0 causing library
 -- search to fail on "obvious" lemmas
 lemma eq_one_of_pow_eq_one {n : ℕ} (hn : 0 < n) {t : ℝ≥0} (h_pow : t ^ n = 1) : t = 1 :=
-(pow_eq_one_iff hn.ne.symm).mp h_pow
+(pow_eq_one_iff hn.ne').mp h_pow
 
 section forward
-
-lemma complex.abs_pow {n : ℕ} (x : ℂ) : complex.abs (x ^ n) = complex.abs x ^ n :=
-is_absolute_value.abv_pow complex.abs x n
 
 -- TODO maybe gen to is_R_or_C?
 variables {K : Type*} [monoid K] {n : ℕ} (x : K) (hx : x ^ n = 1) (hn : 0 < n)
@@ -49,35 +48,26 @@ begin
   lift t to ℝ≥0 using this,
   norm_cast at *,
   rwa pow_eq_one_iff at h_pow,
-  exact hn.ne.symm,
+  exact hn.ne',
 end
 
 end forward
 section polynomial_map_lemmas
 
 @[simp] lemma apply_eq_zero_iff_of_injective {R S : Type*} [add_zero_class R] [add_zero_class S]
-  {f : R →+ S} (hf : function.injective f) : ∀ x, f x = 0 ↔ x = 0 :=
-begin
-  intro x,
-  split; intro h,
-  focus { apply hf,
-    rw h, },
-  all_goals { simp [h], },
-end
+  {f : R →+ S} (hf : function.injective f) (x : R) : f x = 0 ↔ x = 0 :=
+ ⟨λ h, hf $ by rw [h, f.map_zero], λ h, by rw [h, f.map_zero]⟩
 
 variables {R S : Type*} [semiring R]
 
 @[simp] lemma ring_hom.apply_eq_zero_iff_of_injective {R S : Type*} [non_assoc_semiring R]
-  [non_assoc_semiring S] {f : R →+* S} (hf : function.injective f) : ∀ x, f x = 0 ↔ x = 0 :=
-begin
-  intro x,
-  split; intro h,
-  focus { apply hf,
-    rw h, },
-  all_goals { simp [h], },
-end
-variables {p : polynomial R}
+  [non_assoc_semiring S] {f : R →+* S} (hf : function.injective f) (x : R) : f x = 0 ↔ x = 0 :=
+⟨λ h, hf $ by rw [h, f.map_zero], λ h, by rw [h, f.map_zero]⟩
+
 namespace polynomial
+
+variables {p : polynomial R}
+
 @[simp] lemma map_eq_zero_of_injective [semiring S] {f : R →+* S}
   (hf : function.injective f) : p.map f = 0 ↔ p = 0 :=
 by simp [polynomial.ext_iff, coeff_map, ring_hom.apply_eq_zero_iff_of_injective hf, coeff_zero]
@@ -87,25 +77,10 @@ lemma map_ne_zero_of_injective [semiring S] {f : R →+* S}
 
 lemma mem_roots_map_of_injective [comm_ring S] [is_domain S] {f : R →+* S} {x : S}
   (hf : function.injective f) (hp : p ≠ 0) : x ∈ (p.map f).roots ↔ p.eval₂ f x = 0 :=
-begin
-  rw mem_roots (show p.map f ≠ 0, by exact map_ne_zero_of_injective hf hp),
-  dsimp only [is_root],
-  rw polynomial.eval_map,
-end
+by rw [mem_roots (map_ne_zero_of_injective hf hp), is_root, polynomial.eval_map]
+
 end polynomial
 end polynomial_map_lemmas
-
-section choose_lemma
-lemma nat.choose_add_one (a c : ℕ) : nat.choose a c ≤ nat.choose (a + 1) c :=
-by cases c; simp [nat.choose_succ_succ]
-
-lemma nat.choose_add_le (a b c : ℕ) : nat.choose a c ≤ nat.choose (a + b) c :=
-begin
-  induction b with b_n b_ih,
-  { simp, },
-  exact le_trans b_ih (nat.choose_add_one (a + b_n) c),
-end
-end choose_lemma
 
 section polynomial
 variables {R : Type*} [ring R]
@@ -184,21 +159,6 @@ begin
   { simp only [multiset.prod_cons, multiset.map_cons, multiset.sum_cons],
     exact le_trans (degree_mul_le _ _) (add_le_add_left ht _), }
 end
-
-
--- another ugly proof, TODO cleanup and add to mathlib (also the with_top version)
-instance {α : Type*} [preorder α] [no_top_order α] [nonempty α] : no_top_order (with_bot α) := ⟨
-begin
-  apply with_bot.rec_bot_coe,
-  apply nonempty.elim _inst_4,
-  intro a,
-  use a,
-  refine with_bot.bot_lt_coe a,
-  intro a,
-  obtain ⟨b, ha⟩ := no_top a,
-  use b,
-  refine with_bot.coe_lt_coe.mpr ha,
-end⟩
 
 lemma multiset_prod_X_add_C_degree [nontrivial R] (s : multiset R) :
   degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1 :=
@@ -501,29 +461,18 @@ include hx hxi
 /-- Lemma 1.6 of Washington's Introduction to cyclotomic fields -/
 lemma mem_roots_of_unity_of_abs_eq_one : ∃ (n : ℕ) (hn : 0 < n), x ^ n = 1 :=
 begin
-  have : ∃ (a : ℕ) (ha : a ∈ univ) (b : ℕ) (hb : b ∈ univ), a ≠ b ∧ x ^ a = x ^ b :=
-    @infinite.exists_ne_map_eq_of_maps_to _ _ _ _
+  obtain ⟨a, -, b, -, habne, h⟩ := @infinite.exists_ne_map_eq_of_maps_to _ _ _ _
       ((^) x : ℕ → K) infinite_univ _ (finite_all_abs_eq_one),
-  { have : ∃ (a b : ℕ), a ≠ b ∧ x ^ a = x ^ b,
-    { simpa, },
-    obtain ⟨a, b, habne, h⟩ := this,
-    replace habne := habne.lt_or_lt,
+  { replace habne := habne.lt_or_lt,
     wlog : a < b := habne using [a b],
-    use b - a,
-    split,
-    exact tsub_pos_of_lt habne,
+    refine ⟨b - a, tsub_pos_of_lt habne, _⟩,
     have hxne : x ≠ 0,
     { contrapose! hx,
-      simp [hx],
-      use is_alg_closed.lift ℚ K ℂ (number_field.is_algebraic K), },
-    rw [pow_sub₀ _ hxne habne.le, h, mul_inv_cancel (pow_ne_zero b hxne)], },
-  { simp only [set.maps_univ_to],
-    intro a,
-    split,
-    exact is_integral.pow hxi a,
-    intro φ,
-    specialize hx φ,
-    simp [hx, is_absolute_value.abv_pow complex.abs], },
+      simp only [hx, complex.abs_zero, ring_hom.map_zero, ne.def, not_false_iff, zero_ne_one],
+      use is_alg_closed.lift ℚ K ℂ (number_field.is_algebraic K) },
+    rw [pow_sub₀ _ hxne habne.le, h, mul_inv_cancel (pow_ne_zero b hxne)] },
+  { rw [set.maps_univ_to],
+    exact λ a, ⟨hxi.pow a, λ φ, by simp [hx φ, is_absolute_value.abv_pow complex.abs]⟩ },
 end
 end backwards
 
