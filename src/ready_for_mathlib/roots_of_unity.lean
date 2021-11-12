@@ -20,3 +20,7 @@ begin
   exact pow_ne_one_of_lt_order_of' hl'.ne' (by rwa h) hn
   -- in bump will be renamed to `pow_ne_one_of_lt_order_of'`, the correct name
 end
+
+lemma is_primitive_root.of_injective {S : Type*} [comm_ring S] [is_domain S] {f : R →+* S}
+  (hf : function.injective f) {x : R} {n : ℕ} (hx : is_primitive_root x n) :
+  is_primitive_root (f x) n := sorry
