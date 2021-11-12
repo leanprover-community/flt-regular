@@ -72,9 +72,9 @@ begin
 end
 
 --This is a made-up name, I just wanted to call it something ~Chris
-/-- We say that a function `f` satisfies `is_pseudo_mult` if
+/-- We say that a function `f` satisfies `is_gcd_mult` if
   `∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)`. -/
-def is_pseudo_mult (f : ℕ → ℕ) : Prop :=
+def is_gcd_mult (f : ℕ → ℕ) : Prop :=
   ∀ (a b: ℕ), f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)
 
 /- Chris: your `mul_ind` lemma seemed completely wrong to me at its current stage
@@ -86,7 +86,7 @@ def is_pseudo_mult (f : ℕ → ℕ) : Prop :=
 /-Yes you are right, what I had was non-sense! Thank you. I'll think more about what it is I wanted-/
 
 
-lemma totient_mul_gen : is_pseudo_mult φ :=
+lemma totient_mul_gen : is_gcd_mult φ :=
 begin
   intro a,
   rcases eq_or_ne a 0 with rfl | ha,
@@ -118,7 +118,7 @@ begin
       case hp : q m hq { sorry },
       sorry } },
   intros c d hcd hc hd,
-  -- yikes, but doable...
+  -- yikes, but doable... is it? it seems as hard as the original goal?
   sorry
 end
 
@@ -156,46 +156,70 @@ begin
   simp [h.1],
 end
 
-/-
+
 
 theorem mul_ind {P : ℕ → ℕ → Prop}
   (H0 : ∀ (n : ℕ), P 0 n)
-  (H1 : ∀ (n m : ℕ), (m.coprime n) → P m  n)
-  (H2 : ∀ (p n m: ℕ), (prime p) →  P (p^n) (p^m)) :
+  (H1 : ∀ (n : ℕ), P 1 n)
+  (Hc : ∀ (x y z w : ℕ), (w.coprime y) → (x.coprime z)  →  P w x → P y z →  P (w*y)  (x*z))
+  (Hp : ∀ (p n m: ℕ), (prime p) →  P (p^n) (p^m)) :
   ∀ n m,   P n m :=
 begin
+let Pl:= λ n, P n 1,
+let Pr:= λ m, P 1 m,
+
+have h1: ∀ n, Pl n, by {sorry,},
+have h2: ∀ m, Pr m, by {sorry,},
+intros n m,
+have hc:= Hc 1 1 m n,
+simp at hc,
+simp_rw Pl at h1,
+simp_rw Pr at h2,
+apply hc (h1 n) (h2 m),
+end
+
+lemma gcd_mul_fun (x y w z : ℕ) (hzy : z.coprime y) (hxw: x.coprime w) :
+  (z*y).gcd (x*w)= (z.gcd x)*(y.gcd w)*(z.gcd w)*(y.gcd x) :=
+begin
+rw coprime.gcd_mul (z*y) hxw,
+simp_rw gcd_comm,
+rw coprime.gcd_mul x hzy,
+rw coprime.gcd_mul w hzy,
+rw ← mul_assoc,
 sorry,
 end
 
-lemma totient_mul_gen : is_pseudo_mult φ :=
+lemma totient_mul_gen' : is_gcd_mult φ :=
 
 begin
+
+
 apply mul_ind,
-intro n,
 simp,
-intros n m hnm,
-have := totient_mul hnm,
-rw coprime at hnm,
-rw hnm,
-simp [this],
+simp,
+intros x y w z hzy hxw hpwx hpyz,
+
+
+sorry,
+
 intros p n m hp,
 apply totient_pow_mul_self p n m hp,
 
-  /-
+/-
+  rw is_pseudo_mult,
+  intros a b,
  by_cases a.coprime b ,
- have : d = 1, by {simp [coprime] at h, rw h at hab, exact hab,},
- rw this,
- simp,
- apply totient_mul h,
- have hd : 0 < d, by {sorry,},
- rw hab at hd,
+ rw coprime at h,
+ rw h,
+ simp [totient_mul h],
+
+ have hd : 0 < a.gcd b, by {sorry,},
  have := exists_coprime hd,
  obtain ⟨n,m, hnm, hn, hm⟩ := this,
- simp_rw ← hab at *,
  rw [hn, hm],
  simp [← mul_assoc],
- by_cases hnd: n.coprime d,
- by_cases hmd: m.coprime d,
+ by_cases hnd: n.coprime (a.gcd b),
+ by_cases hmd: m.coprime (a.gcd b),
  rw totient_mul hnd,
 rw totient_mul hmd,
 have eq1: ( n*d*m*d = (n* m) * d^2), by {sorry,},
@@ -205,12 +229,11 @@ rw totient_mul hnmd,
 rw totient_mul hnm,
 simp_rw ← mul_assoc,
 have HH := totient_mul_self d,
--/
 
 --rw totient_mul hnd,
-
+-/
 end
 
--/
+
 
 end nat
