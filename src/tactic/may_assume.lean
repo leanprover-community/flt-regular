@@ -88,7 +88,7 @@ focus1 $ do
   assert `h_red (insert_under_pis h (q₂.abstract_locals (ls.map local_uniq_name)) g),
   -- s ← get_local wi,
   -- let t : ident := wi,
-  focus1 `[clear_except h_red, intros],
+  focus1 `[clear_except h_red, introsI],
   swap,
   if ot.is_some then focus1 `[contrapose! h_red] else skip
 

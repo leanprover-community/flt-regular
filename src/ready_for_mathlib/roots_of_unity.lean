@@ -18,7 +18,6 @@ begin
     rw [←h,order_of_eq_card_of_forall_mem_zpowers hζ] },
   rw ←order_of_eq_card_of_forall_mem_zpowers hζ at h,
   exact pow_ne_one_of_lt_order_of' hl'.ne' (by rwa h) hn
-  -- in bump will be renamed to `pow_ne_one_of_lt_order_of'`, the correct name
 end
 
 lemma is_primitive_root.of_injective {S : Type*} [comm_ring S] [is_domain S] {f : R →+* S}
