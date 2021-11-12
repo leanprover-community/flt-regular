@@ -7,8 +7,6 @@ import ready_for_mathlib.linear_algebra
 import ready_for_mathlib.matrix
 import ready_for_mathlib.fin
 import ready_for_mathlib.nat
-import ready_for_mathlib.norm
-import ready_for_mathlib.polynomial
 
 universes u v w z
 
@@ -229,11 +227,13 @@ begin
   ring,
 end
 
+--set_option pp.all true
+
 lemma of_power_basis_eq_norm : discriminant K pb.basis =
   (-1) ^ (n * (n - 1) / 2) * (norm K (aeval pb.gen (minpoly K pb.gen).derivative)) :=
 begin
   let E := algebraic_closure L,
-  letI := classical.dec_eq E,
+  letI := λ (a b : E), classical.prop_decidable (eq a b),
 
   have e : fin pb.dim ≃ (L →ₐ[K] E),
   { refine equiv_of_card_eq _,
@@ -252,11 +252,10 @@ begin
     of_power_basis_eq_prod'' _ _ _ e],
   congr,
   rw [norm_eq_prod_embeddings, fin.prod_filter_gt_mul_neg_eq_prod_off_diag H],
-  conv_rhs {
-    congr, skip, funext,
-    rw [← aeval_alg_hom_apply, @eval_root_derivative_of_split _ _ (classical.dec_eq E) _ _ _ _
-      (minpoly.monic (is_separable.is_integral K pb.gen)) (is_alg_closed.splits_codomain _)
-      _ (hroots σ), ← finset.prod_mk _ (multiset.nodup_erase_of_nodup _ hnodup)] },
+  conv_rhs { congr, skip, funext,
+    rw [← aeval_alg_hom_apply, aeval_root_derivative_of_splits (minpoly.monic
+      (is_separable.is_integral K pb.gen)) (is_alg_closed.splits_codomain _) (hroots σ),
+      ← finset.prod_mk _ (multiset.nodup_erase_of_nodup _ hnodup)] },
   rw [prod_sigma', prod_sigma'],
   refine prod_bij (λ i hi, ⟨e i.2, e i.1 pb.gen⟩) (λ i hi, _) (λ i hi, by simp at hi)
     (λ i j hi hj hij, _) (λ σ hσ, _),
