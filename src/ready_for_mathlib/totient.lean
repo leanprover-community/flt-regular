@@ -161,7 +161,7 @@ end
 theorem mul_ind {P : ℕ → ℕ → Prop}
   (H0 : ∀ (n : ℕ), P 0 n)
   (H1 : ∀ (n : ℕ), P 1 n)
-  (Hc : ∀ (x y z w : ℕ), (w.coprime y) → (x.coprime z)  →  P w x → P y z →  P (w*y)  (x*z))
+  (Hc : ∀ (x y z w : ℕ), (w.coprime y) → (x.coprime z)  →  P w x → P y z → (w*y).coprime (x*z) →  P (w*y)  (x*z))
   (Hp : ∀ (p n m: ℕ), (prime p) →  P (p^n) (p^m)) :
   ∀ n m,   P n m :=
 begin
@@ -206,7 +206,7 @@ intros p n m hp,
 apply totient_pow_mul_self p n m hp,
 
 /-
-  rw is_pseudo_mult,
+  rw is_gcd_mult,
   intros a b,
  by_cases a.coprime b ,
  rw coprime at h,
@@ -234,6 +234,40 @@ have HH := totient_mul_self d,
 -/
 end
 
+
+lemma prime_extraction {m n : ℕ} (h : ¬ n.coprime m) :
+  ∃ (kn km p n' m': ℕ), p.prime ∧ coprime (p^(kn+km)) (n'*m') ∧ coprime (p^kn) (n') ∧
+  coprime (p^km) (m') ∧ n=p^kn*n' ∧ m = p^(km)*m' ∧ n' < n ∧ m' < m :=
+begin
+sorry,
+end
+
+
+def is_gcd_mult' (f : ℕ → ℕ) : Prop :=
+  ∀ (a b: ℕ),  f (a * b) = (f a * f b * (a.gcd b))/f(a.gcd b)
+
+--How do you do double strong induction???
+lemma tot_mul_gen : is_gcd_mult' φ :=
+begin
+rw is_gcd_mult',
+intros a b,
+ apply nat.strong_induction_on a,
+ intros aa haa,
+ revert haa,
+ apply nat.strong_rec_on b,
+ intros bb hbb hg,
+ by_cases aa.coprime bb ,
+ rw coprime at h,
+ rw h,
+ simp [totient_mul h],
+ have H:= prime_extraction h,
+ obtain ⟨ka,kb,p,n',m',hp,hc,hn, hm, hhn, hhm, hind1, hind2⟩ := H,
+ have hab: aa*bb=p^(ka+kb)*(n'*m'), by {sorry,},
+ rw [hab, hhn],
+ have HH:= hbb m' hind2,
+sorry,
+
+end
 
 
 end nat
