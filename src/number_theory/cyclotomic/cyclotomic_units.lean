@@ -7,6 +7,7 @@ Authors: Alex J. Best
 import data.polynomial.field_division
 import number_theory.number_field
 import number_theory.cyclotomic.basic
+import ready_for_mathlib.roots_of_unity
 
 noncomputable theory
 
@@ -103,11 +104,29 @@ lemma zeta'_primitive_root : is_primitive_root (zeta' n A B) n :=
   dvd_of_pow_eq_one := sorry }
 
 /-- The `power_basis` given by `zeta' n A B`. -/
-def zeta'_power_basis : power_basis A B :=
+def zeta'.power_basis : power_basis A B :=
 { gen := zeta' n A B,
   dim := (n : ℕ).totient,
   basis := sorry,
   basis_eq_pow := sorry }
+
+/-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
+  `primitive_roots n C` given by the choice of `zeta'`. -/
+--this should be proved using `power_basis.lift_equiv` (check if a more general version is ok).
+def zeta'.embeddings_equiv_primitive_roots (K C : Type*) [field K] [algebra A K]
+  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [algebra K C]
+  [is_scalar_tower A K C] [is_domain C] : (K →ₐ[A] C) ≃ primitive_roots n C :=
+{ to_fun := λ σ, ⟨σ (zeta' n A K), (mem_primitive_roots n.pos).2 (is_primitive_root.of_injective
+    (alg_hom.to_ring_hom σ).injective (zeta'_primitive_root n A K))⟩,
+  inv_fun := sorry,
+  left_inv := sorry,
+  right_inv := sorry }
+
+--This proof will be `rfl` or not depending on the def of `zeta'.embeddings_equiv_primitive_roots`.
+lemma zeta'.embeddings_equiv_primitive_roots_apply {K C : Type*} [field K] [algebra A K]
+  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [algebra K C]
+  [is_scalar_tower A K C] [is_domain C] (σ : K →ₐ[A] C) :
+  ↑(zeta'.embeddings_equiv_primitive_roots n A K C σ) = σ (zeta' n A K) := sorry
 
 -- TODO use the fact that a primitive root is a unit.
 -- TODO prove in general that is_primitive root is integral,
