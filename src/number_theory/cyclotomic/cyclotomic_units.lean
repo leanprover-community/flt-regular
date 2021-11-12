@@ -102,6 +102,8 @@ lemma zeta'_primitive_root : is_primitive_root (zeta' n A B) n :=
 { pow_eq_one := zeta'_pow_prime n A B,
   dvd_of_pow_eq_one := sorry }
 
+lemma adjoin_zeta'_eq_top : (algebra.adjoin A ({zeta' n A B} : set B) = ⊤) := sorry
+
 -- TODO use the fact that a primitive root is a unit.
 -- TODO prove in general that is_primitive root is integral,
 -- this exists as is_primitive_root.is_integral so use
