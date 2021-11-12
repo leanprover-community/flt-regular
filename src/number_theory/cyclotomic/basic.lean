@@ -36,7 +36,6 @@ begin
   obtain ⟨⟨b, hb⟩, H⟩ := h,
   exact ⟨b, (set.mem_singleton_iff.1 ha).symm ▸ hb⟩
 end
---⟨λ h, ⟨h.ex_root, h.adjoint_roots⟩, λ h, ⟨h.1, h.2⟩⟩
 
 end is_cyclotomic_extension
 
