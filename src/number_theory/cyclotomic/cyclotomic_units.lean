@@ -108,6 +108,15 @@ lemma adjoin_zeta'_eq_top : (algebra.adjoin A ({zeta' n A B} : set B) = ⊤) := 
 -- TODO prove in general that is_primitive root is integral,
 -- this exists as is_primitive_root.is_integral so use
 
+/-- `zeta'.is_integral` shows integrality of `zeta' n A B` over `A`. See `zeta'_integral` for a
+  similar result about the ring of integers. -/
+lemma zeta'.is_integral : is_integral A (zeta' n A B) :=
+begin
+  use [cyclotomic n A, cyclotomic.monic n A],
+  rw [← zeta'_spec n A B],
+  simp [aeval_def, eval₂_eq_eval_map],
+end
+
 end is_cyclotomic_extension
 
 namespace cyclotomic_ring
