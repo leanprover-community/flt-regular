@@ -176,8 +176,10 @@ simp at hc,
 simp_rw Pl at h1,
 simp_rw Pr at h2,
 apply hc (h1 n) (h2 m),
+sorry
 end
 
+-- this is atrocious!
 lemma gcd_mul_fun (x y w z : ℕ) (hzy : z.coprime y) (hxw: x.coprime w) :
   (z*y).gcd (x*w)= (z.gcd x)*(y.gcd w)*(z.gcd w)*(y.gcd x) :=
 begin
@@ -186,7 +188,9 @@ simp_rw gcd_comm,
 rw coprime.gcd_mul x hzy,
 rw coprime.gcd_mul w hzy,
 rw ← mul_assoc,
-sorry,
+rcases x.eq_zero_or_pos with rfl | hx; rcases z.eq_zero_or_pos with rfl | hz;
+rcases y.eq_zero_or_pos with rfl | hy; rcases w.eq_zero_or_pos with rfl | hw;
+simp [*]; ac_refl
 end
 
 lemma totient_mul_gen' : is_gcd_mult φ :=

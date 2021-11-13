@@ -25,10 +25,8 @@ begin
   { apply nodup_roots,
     rw [C_1, ←map_X_pow_sub_one],
     apply separable.map,
-    -- depends on #9779 in mathlib, if you want to unsorry this!
-    sorry
-    /- rw X_pow_sub_one_separable_iff,
-    exact_mod_cast hn -/ },
+    rw X_pow_sub_one_separable_iff,
+    exact_mod_cast hn },
   intro x,
   rw [mem_nth_roots_finset n.pos, mem_nth_roots n.pos]
 end
