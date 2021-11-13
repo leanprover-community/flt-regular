@@ -188,9 +188,7 @@ simp_rw gcd_comm,
 rw coprime.gcd_mul x hzy,
 rw coprime.gcd_mul w hzy,
 rw ← mul_assoc,
-rcases x.eq_zero_or_pos with rfl | hx; rcases z.eq_zero_or_pos with rfl | hz;
-rcases y.eq_zero_or_pos with rfl | hy; rcases w.eq_zero_or_pos with rfl | hw;
-simp [*]; ac_refl
+ac_refl,
 end
 
 lemma totient_mul_gen' : is_gcd_mult φ :=
