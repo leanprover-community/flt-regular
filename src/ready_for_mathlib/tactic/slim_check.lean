@@ -61,7 +61,7 @@ end total_function
 end slim_check
 lemma all_finsupp_eq_zero (f : ℕ →₀ ℕ) : f = 0 :=
 begin
-  slim_check, --outputs a counterexample
+  -- slim_check, --outputs a counterexample
   success_if_fail {slim_check,},
   sorry,
 end
