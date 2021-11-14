@@ -24,67 +24,41 @@ open nat
 
 localized "notation `φ` := nat.totient" in nat
 
-lemma gcd_self_pow (p n m : ℕ) : (p^n).gcd (p^m) = p^(min n m) :=
+lemma gcd_self_pow (p n m : ℕ) : (p ^ n).gcd (p ^ m) = p ^ (min n m) :=
 begin
-apply dvd_antisymm,
-
-sorry,
-rw dvd_gcd_iff,
-split,
-apply pow_dvd_pow,
-simp,
-apply pow_dvd_pow,
-simp,
+  wlog h : n ≤ m,
+  rw [min_eq_left h],
+  apply gcd_eq_left,
+  exact pow_dvd_pow p h,
 end
 
 lemma totient_pow_mul_self (p n m : ℕ) (h : prime p)  :
-   φ ((p^n).gcd (p^m)) * φ (p^n * p^m) = φ (p^n) * φ (p^m) * (p^n).gcd (p^m) :=
+   φ ((p ^ n).gcd (p ^ m)) * φ (p ^ n * p ^ m) = φ (p ^ n) * φ (p ^ m) * (p ^ n).gcd (p ^ m) :=
 begin
-
-  by_cases h0: 0 < n,
-  by_cases h00: 0 < m,
-  have hp := totient_prime_pow h h0,
-  have hpp := totient_prime_pow h h00,
-  rw hp,
-  rw hpp,
-  have h20 :  0 < n + m , by {linarith,},
-  have hp2 := totient_prime_pow h h20,
-  rw pow_add at hp2,
-  rw hp2,
-  have  hpg := gcd_self_pow p n m,
-  rw hpg,
-  have hmin : 0 < min n m, by {exact lt_min h0 h00,},
-  simp_rw (totient_prime_pow h hmin),
-  ring_exp,
-  simp_rw ← mul_assoc,
-  simp only [succ_pos', tsub_eq_zero_iff_le, mul_eq_mul_right_iff, pow_eq_zero_iff],
-  have hh :  ¬ p ≤ 1, by {simp only [h.one_lt, not_le],},
-  simp only [hh, or_false],
-  simp_rw ← pow_add,
-  apply congr_arg (λ (b : ℕ), p ^ b),
-  linarith,
-  simp only [not_lt, nonpos_iff_eq_zero] at *,
-  rw h00 at *,
-  simp only [mul_one, one_mul, gcd_one_right, totient_one, pow_zero] at *,
-  simp only [not_lt, nonpos_iff_eq_zero] at h0,
-  rw h0,
-  simp only [gcd_one_left, mul_one, one_mul, pow_zero],
+  --wlog hnm : n ≤ m using [n m], -- chris: this is a nice tactic you'll be interested in!
+  have hnm : n ≤ m, sorry,
+  rcases n.eq_zero_or_pos with rfl | hn,
+  { simp only [gcd_one_left, mul_one, one_mul, pow_zero]},
+  rcases m.eq_zero_or_pos with rfl | hm,
+  { simp only [mul_one, one_mul, gcd_one_right, totient_one, pow_zero]},
+  have h20 : 0 < n + m, by linarith,
+  rw [totient_prime_pow h hn, totient_prime_pow h hm, ←pow_add, totient_prime_pow h h20,
+      gcd_self_pow, min_eq_left hnm, totient_prime_pow h hn, ← mul_assoc],
+  /- temporarily sorrying the change and the wlog, as they're super slow!
+  ac_change p ^ (n - 1) * ((p - 1) * ((p - 1) * p ^ (n + m - 1))) =
+            p ^ (n - 1) * ((p - 1) * ((p - 1) * (p ^ (m - 1) * p ^ n))), -/
+  suffices : p ^ (n - 1) * ((p - 1) * ((p - 1) * p ^ (n + m - 1))) =
+              p ^ (n - 1) * ((p - 1) * ((p - 1) * (p ^ (m - 1) * p ^ n))), sorry,
+  rw ←pow_add,
+  congr,
+  linarith
 end
 
 --This is a made-up name, I just wanted to call it something ~Chris
 /-- We say that a function `f` satisfies `is_gcd_mult` if
-  `∀ (a b: ℕ), f ( a.gcd b ) * f (a * b) = f (a) * f (b) * (a.gcd b)`. -/
+  `∀ (a b: ℕ), f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)`. -/
 def is_gcd_mult (f : ℕ → ℕ) : Prop :=
-  ∀ (a b: ℕ), f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)
-
-/- Chris: your `mul_ind` lemma seemed completely wrong to me at its current stage
-  (how do you multiply things together?) For proving a modified version, the import that I added
-  (`data.nat.mul_ind`) should be much help. You can see my toying below, but I don't think it's
-  going anywhere without much, much casework - maybe the best shot is to prove a "proper" version
-  of `mul_ind`. I've left your original code below mine, too. ~Eric -/
-
-/-Yes you are right, what I had was non-sense! Thank you. I'll think more about what it is I wanted-/
-
+  ∀ a b: ℕ, f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)
 
 lemma totient_mul_gen : is_gcd_mult φ :=
 begin
@@ -244,9 +218,10 @@ begin
 sorry,
 end
 
-
+/-- We say that a function `f` satisfies `is_gcd_mult'` if
+  `∀ a b : ℕ, f (a * b) = (f a * f b * a.gcd b) / f (a.gcd b)`. -/
 def is_gcd_mult' (f : ℕ → ℕ) : Prop :=
-  ∀ (a b: ℕ),  f (a * b) = (f a * f b * (a.gcd b))/f(a.gcd b)
+  ∀ a b : ℕ, f (a * b) = (f a * f b * (a.gcd b)) / f (a.gcd b)
 
 --How do you do double strong induction???
 lemma tot_mul_gen : is_gcd_mult' φ :=
