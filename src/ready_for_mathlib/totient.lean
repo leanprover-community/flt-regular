@@ -32,7 +32,7 @@ begin
   exact pow_dvd_pow p h,
 end
 
-lemma totient_pow_mul_self (p n m : ℕ) (h : prime p)  :
+lemma totient_pow_mul_self {p n m : ℕ} (h : prime p)  :
    φ ((p ^ n).gcd (p ^ m)) * φ (p ^ n * p ^ m) = φ (p ^ n) * φ (p ^ m) * (p ^ n).gcd (p ^ m) :=
 begin
   --wlog hnm : n ≤ m using [n m], -- chris: this is a nice tactic you'll be interested in!
@@ -63,7 +63,7 @@ def is_gcd_mult (f : ℕ → ℕ) : Prop :=
 lemma totient_mul_gen : is_gcd_mult φ :=
 begin
   intro a,
-  rcases eq_or_ne a 0 with rfl | ha,
+  rcases a.eq_zero_or_pos with rfl | ha,
   { simp },
   apply nat.rec_on_prime_coprime,
   { simp only [zero_mul, mul_zero, totient_zero] },
@@ -74,25 +74,28 @@ begin
     { -- p.coprime a
       have key : a.gcd (p ^ n) = 1 := (coprime.pow_right n h.symm).gcd_eq_one,
       simpa only [key, mul_one, one_mul, totient_one] using totient_mul key },
-    { -- gcd needs more api!
-      -- p ∣ a
-      have key := @gcd_pow_right_dvd_pow_gcd _ _ _ a p n,
-      have : a.gcd p = p := gcd_eq_right h, -- this is why! needed some sleep...
-      simp only [gcd_eq_nat_gcd, this, dvd_prime_pow hp] at key,
-      obtain ⟨k, hkn, hk⟩ := key,
-      cases k,
-      { rw [((coprime_pow_right_iff hn _ _).mp hk).gcd_eq_one] at this,
-        exact absurd this hp.one_lt.ne },
-      simp [succ_eq_add_one, hk, totient_prime_pow hp, hn],
-      rw pow_succ,
-      suffices : (a * p ^ n).totient = p * a.totient * p ^ (n - 1),
-      { /- boring arguments that ring_exp/linarith refuses to solve... -/ sorry },
+    { -- p ∣ a
       induction a using nat.rec_on_prime_coprime,
       { simp only [zero_mul, mul_zero, totient_zero] },
-      case hp : q m hq { sorry },
-      sorry } },
+      case hp : q m hq
+      { have := (prime_dvd_prime_iff_eq hp hq).mp (hp.dvd_of_dvd_pow h),
+        subst this,
+        exact totient_pow_mul_self hp },
+      case h : a b hab ha hb
+      { rw hp.dvd_mul at h,
+        cases h,
+        rw mul_comm at ha,
+        all_goals { sorry }
+      } } },
   intros c d hcd hc hd,
-  -- yikes, but doable... is it? it seems as hard as the original goal?
+  rw [coprime.gcd_mul _ hcd, totient_mul hcd],
+  apply (mul_right_inj' (totient_pos ha).ne').mp,
+  ac_change _ = (a.totient * d.totient * a.gcd d) * (a.totient * c.totient * a.gcd c),
+  rw [←hc, ←hd],
+  -- we'd like wlog a divides one (or they're all coprime)
+  have : ((a.coprime c) ∧ (a.coprime d)) ∨ (¬a.coprime c ∨ ¬a.coprime d), by tauto,
+  rcases this with ⟨hac, had⟩ | hacd,
+  { sorry },
   sorry
 end
 
