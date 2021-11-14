@@ -69,6 +69,7 @@ open finset
 
 lemma nat.mem_divisors_self (n : ℕ) (h : n ≠ 0) : n ∈ n.divisors := by simpa
 
+-- this needs to replace `polynomial.order_of_root_cyclotomic_eq` when it is merged
 lemma is_root_cyclotomic_iff {n : ℕ} {K : Type*} [field K] {μ : K} (hn : (↑n : K) ≠ 0) :
   is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
 begin
@@ -92,20 +93,15 @@ begin
   have key  : i < n := (nat.le_of_dvd ho hio).trans_lt ((nat.le_of_dvd hnpos hμn).lt_of_ne hnμ),
   have key' : i ∣ n := hio.trans hμn,
   rw ←polynomial.dvd_iff_is_root at hμ hiμ,
-  have := prod_cyclotomic_eq_X_pow_sub_one hnpos K,
   have hni : {i, n} ⊆ n.divisors,
   { simpa [insert_subset, key'] using hnpos.ne' },
   obtain ⟨k, hk⟩ := hiμ,
   obtain ⟨j, hj⟩ := hμ,
+  have := prod_cyclotomic_eq_X_pow_sub_one hnpos K,
   rw [←prod_sdiff hni, prod_pair key.ne, hk, hj] at this,
   replace hn := (X_pow_sub_one_separable_iff.mpr hn).squarefree,
-  rw ←this at hn,
-  suffices :¬ squarefree ((∏ x in n.divisors \ {i, n}, cyclotomic x K)
-                          * ((X - C μ) * k * ((X - C μ) * j))),
-  { by contradiction },
-  rw squarefree,
-  push_neg,
+  rw [←this, squarefree] at hn,
+  contrapose! hn,
   refine ⟨X - C μ, ⟨(∏ x in n.divisors \ {i, n}, cyclotomic x K) * k * j, by ring⟩, _⟩,
-  rw polynomial.is_unit_iff_degree_eq_zero,
-  simp
+  simp [polynomial.is_unit_iff_degree_eq_zero]
 end
