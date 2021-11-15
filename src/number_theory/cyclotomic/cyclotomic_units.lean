@@ -110,6 +110,8 @@ def zeta'.power_basis : power_basis A B :=
   basis := sorry,
   basis_eq_pow := sorry }
 
+lemma zeta'.power_basis_gen : (zeta'.power_basis n A B).gen = zeta' n A B := rfl
+
 /-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
   `primitive_roots n C` given by the choice of `zeta'`. -/
 --this should be proved using `power_basis.lift_equiv` (check if a more general version is ok).
