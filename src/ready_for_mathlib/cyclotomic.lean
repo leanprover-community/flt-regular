@@ -1,6 +1,6 @@
 import ring_theory.polynomial.cyclotomic
 
-open polynomial
+open polynomial nat
 open_locale big_operators
 
 lemma is_root_cyclotomic_iff' {n : ℕ} {K : Type*} [field K] (hpos : 0 < n) {μ : K}
@@ -105,3 +105,14 @@ begin
   refine ⟨X - C μ, ⟨(∏ x in n.divisors \ {i, n}, cyclotomic x K) * k * j, by ring⟩, _⟩,
   simp [polynomial.is_unit_iff_degree_eq_zero]
 end
+
+namespace polynomial
+
+lemma cyclotomic_prime_mul_X_sub_one (R : Type*) [comm_ring R] (n : ℕ) [hn : fact (nat.prime n)] :
+  (cyclotomic n R) * (X - 1) = X ^ n - 1 :=
+begin
+  rw [← (eq_cyclotomic_iff (prime.pos hn.out) _).1 rfl, prime.proper_divisors hn.out,
+    prod_singleton, cyclotomic_one]
+end
+
+end polynomial
