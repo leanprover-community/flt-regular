@@ -227,8 +227,6 @@ begin
   ring,
 end
 
---set_option pp.all true
-
 lemma of_power_basis_eq_norm : discriminant K pb.basis =
   (-1) ^ (n * (n - 1) / 2) * (norm K (aeval pb.gen (minpoly K pb.gen).derivative)) :=
 begin
