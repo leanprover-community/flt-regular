@@ -10,3 +10,4 @@ apply_nolint tactic.interactive.doneif doc_blame
 --ready_for_mathlib/tactic/slim_check.lean
 apply_nolint slim_check.total_function.zero_default unused_arguments
 apply_nolint slim_check.total_function.zero_default_supp unused_arguments
+apply_nolint slim_check.total_function.apply_finsupp doc_blame
