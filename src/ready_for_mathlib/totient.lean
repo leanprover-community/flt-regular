@@ -182,7 +182,7 @@ intros x y w z hzy hxw hpwx hpyz,
 sorry,
 
 intros p n m hp,
-apply totient_pow_mul_self p n m hp,
+apply totient_pow_mul_self hp,
 
 /-
   rw is_gcd_mult,
