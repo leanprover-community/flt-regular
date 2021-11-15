@@ -6,3 +6,7 @@ apply_nolint tactic.interactive.may_assume doc_blame
 apply_nolint tactic.take_pi_args doc_blame
 apply_nolint tactic.interactive.wlog' doc_blame
 apply_nolint tactic.interactive.doneif doc_blame
+
+--ready_for_mathlib/tactic/slim_check.lean
+apply_nolint slim_check.total_function.zero_default doc_blame
+apply_nolint slim_check.total_function.zero_default_supp doc_blame
