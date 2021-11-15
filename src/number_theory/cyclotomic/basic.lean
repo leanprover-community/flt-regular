@@ -70,6 +70,8 @@ instance splitting_field_X_pow_sub_one : is_splitting_field K L (X ^ (n : ℕ) -
 
 instance splitting_field_cyclotomic : is_splitting_field K L (cyclotomic n K) := sorry
 
+lemma singleton_finrank : finrank K L = (n : ℕ).totient := sorry
+
 end is_cyclotomic_extension
 
 end singleton
