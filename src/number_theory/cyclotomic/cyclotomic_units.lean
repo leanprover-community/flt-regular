@@ -122,9 +122,8 @@ def zeta'.embeddings_equiv_primitive_roots (K C : Type*) [field K] [algebra A K]
   right_inv := sorry }
 
 --This proof will be `rfl` or not depending on the def of `zeta'.embeddings_equiv_primitive_roots`.
-lemma zeta'.embeddings_equiv_primitive_roots_apply {K C : Type*} [field K] [algebra A K]
-  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [algebra K C]
-  [is_scalar_tower A K C] [is_domain C] (σ : K →ₐ[A] C) :
+@[simp] lemma zeta'.embeddings_equiv_primitive_roots_apply {K C : Type*} [field K] [algebra A K]
+  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] (σ : K →ₐ[A] C) :
   ↑(zeta'.embeddings_equiv_primitive_roots n A K C σ) = σ (zeta' n A K) := sorry
 
 -- TODO use the fact that a primitive root is a unit.
