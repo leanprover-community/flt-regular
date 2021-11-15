@@ -114,8 +114,7 @@ def zeta'.power_basis : power_basis A B :=
   `primitive_roots n C` given by the choice of `zeta'`. -/
 --this should be proved using `power_basis.lift_equiv` (check if a more general version is ok).
 def zeta'.embeddings_equiv_primitive_roots (K C : Type*) [field K] [algebra A K]
-  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [algebra K C]
-  [is_scalar_tower A K C] [is_domain C] : (K →ₐ[A] C) ≃ primitive_roots n C :=
+  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] : (K →ₐ[A] C) ≃ primitive_roots n C :=
 { to_fun := λ σ, ⟨σ (zeta' n A K), (mem_primitive_roots n.pos).2 (is_primitive_root.of_injective
     (alg_hom.to_ring_hom σ).injective (zeta'_primitive_root n A K))⟩,
   inv_fun := sorry,
