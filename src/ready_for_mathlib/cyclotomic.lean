@@ -63,13 +63,54 @@ begin
   simpa only [f.map_nat_cast, hn] using f.injective_iff.mp hf n
 end
 
+lemma multiset.empty_or_exists_mem {α} (s : multiset α) : s = 0 ∨ ∃ a, a ∈ s :=
+begin
+  rcases eq_or_ne s 0 with rfl | h,
+  { exact or.inl rfl },
+  exact or.inr (multiset.exists_mem_of_ne_zero h)
+end
+
+lemma roots.le_of_dvd {R} [comm_ring R] [is_domain R] {p q : polynomial R} (h : q ≠ 0) :
+   p ∣ q → roots p ≤ roots q :=
+begin
+  classical,
+  rintro ⟨k, rfl⟩,
+  rw multiset.le_iff_exists_add,
+  exact ⟨k.roots, roots_mul h⟩
+end
+
+lemma cyclotomic.dvd_X_pow_sub_one {n : ℕ} {R} [comm_ring R] :(cyclotomic n R) ∣ X ^ n - 1 :=
+begin
+  rcases n.eq_zero_or_pos with rfl | hn,
+  { simp },
+  refine ⟨∏ i in n.proper_divisors, cyclotomic i R, _⟩,
+  rw [←prod_cyclotomic_eq_X_pow_sub_one hn,
+      divisors_eq_proper_divisors_insert_self_of_pos hn, prod_insert],
+  exact proper_divisors.not_self_mem
+end
+
 --if there are no roots OK, otherwise use `is_primitive_root.nth_roots_nodup`
 lemma roots_cyclotomic_nodup {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] (hn : (n : R) ≠ 0) :
-  (cyclotomic n R).roots.nodup := sorry
+  (cyclotomic n R).roots.nodup :=
+begin
+  have hn' : 0 < n := (show n ≠ 0, by { rintro rfl, contradiction }).bot_lt,
+  obtain h | ⟨ζ, hζ⟩ := (cyclotomic n R).roots.empty_or_exists_mem,
+  { exact h.symm ▸ multiset.nodup_zero },
+  rw [mem_roots $ cyclotomic_ne_zero n R, ←is_root_cyclotomic_iff hn] at hζ,
+  refine multiset.nodup_of_le (roots.le_of_dvd (X_pow_sub_C_ne_zero hn' 1)
+                              cyclotomic.dvd_X_pow_sub_one) _,
+  rw ←nth_roots,
+  exact hζ.nth_roots_nodup
+end
 
 lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
   (hn : (n : R) ≠ 0) :
-  primitive_roots n R = ⟨(cyclotomic n R).roots, roots_cyclotomic_nodup hn⟩ := sorry
+  primitive_roots n R = ⟨(cyclotomic n R).roots, roots_cyclotomic_nodup hn⟩ :=
+begin
+  have hn' : 0 < n := (show n ≠ 0, by { rintro rfl, contradiction }).bot_lt,
+  ext,
+  simp [mem_roots, cyclotomic_ne_zero n R, ←is_root_cyclotomic_iff hn, mem_primitive_roots hn'],
+end
 
 namespace polynomial
 
