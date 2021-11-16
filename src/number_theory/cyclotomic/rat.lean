@@ -16,8 +16,6 @@ variables (n : ℕ+) [is_cyclotomic_extension {n} ℚ L]
 
 lemma finrank : finrank ℚ L = (n : ℕ).totient := sorry
 
-#print finrank
-
 end singleton
 
 end rat
