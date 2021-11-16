@@ -1,7 +1,7 @@
 import ring_theory.adjoin.power_basis
 import algebra.char_p.algebra
 
-import number_theory.discriminant.basic
+import ready_for_mathlib.discriminant.basic
 import number_theory.cyclotomic.cyclotomic_units
 import ready_for_mathlib.nat
 import ready_for_mathlib.cyclotomic
