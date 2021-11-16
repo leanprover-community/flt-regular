@@ -23,7 +23,7 @@ lemma is_root_of_unity_iff {n : ℕ} (h : 0 < n) (R : Type*) [comm_ring R] [is_d
 by rw [←mem_nth_roots h, nth_roots, mem_roots $ X_pow_sub_C_ne_zero h _,
        C_1, ←prod_cyclotomic_eq_X_pow_sub_one h, is_root_prod]; apply_instance
 
-@[nontriviality] lemma is_primitive_root.trivial {M : Type*}
+@[nontriviality] lemma is_primitive_root.of_subsingleton {M : Type*}
   [comm_monoid M] [subsingleton M] (x : M) : is_primitive_root x 1 :=
 ⟨subsingleton.elim _ _, λ _ _, one_dvd _⟩
 
@@ -64,6 +64,36 @@ lemma is_not_primitive_root_iff {n : ℕ} {M : Type*} [comm_monoid M] (ζ : M) :
   ¬ is_primitive_root ζ n ↔ order_of ζ ≠ n :=
 ⟨λ h hn, h $ hn ▸ is_primitive_root.order_of ζ,
  λ h hn, h.symm $ hn.unique $ is_primitive_root.order_of ζ⟩
+
+lemma is_primitive_root.of_injective {R S : Type*} [comm_semiring R] [comm_semiring S] {f : R →+* S}
+  (hf : function.injective f) {x : R} {n : ℕ} (hx : is_primitive_root x n) :
+  is_primitive_root (f x) n :=
+{ pow_eq_one := by rw [←f.map_pow, hx.pow_eq_one, f.map_one],
+  dvd_of_pow_eq_one := begin
+    have := hx.eq_order_of,
+    subst this,
+    intros l hl,
+    rw [←f.map_pow, ←f.map_one] at hl,
+    exact order_of_dvd_of_pow_eq_one (hf hl)
+  end }
+
+lemma is_primitive_root.of_injective' {R S : Type*} [comm_semiring R] [comm_semiring S]
+  {f : R →+* S} (hf : function.injective f) {x : R} {n : ℕ} (hx : is_primitive_root (f x) n) :
+  is_primitive_root x n :=
+{ pow_eq_one := by { apply_fun f, rw [f.map_pow, f.map_one, hx.pow_eq_one] },
+  dvd_of_pow_eq_one := begin
+    have := hx.eq_order_of,
+    subst this,
+    intros l hl,
+    apply_fun f at hl,
+    rw [f.map_pow, f.map_one] at hl,
+    exact order_of_dvd_of_pow_eq_one hl
+  end }
+
+lemma is_primitive_root.injective_iff {R S : Type*} [comm_semiring R] [comm_semiring S]
+  {f : R →+* S} (hf : function.injective f) {x : R} {n : ℕ} :
+  is_primitive_root x n ↔ is_primitive_root (f x) n :=
+⟨λ h, h.of_injective hf, λ h, h.of_injective' hf⟩
 
 open finset
 
