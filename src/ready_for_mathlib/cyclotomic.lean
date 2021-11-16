@@ -1,13 +1,9 @@
 import ring_theory.polynomial.cyclotomic
 import ready_for_mathlib.roots_of_unity
+import ready_for_mathlib.is_root
 
 open polynomial nat
 open_locale big_operators
-
-lemma is_root_prod {R : Type*} [comm_ring R] [is_domain R] {ι : Type*}
-  (s : finset ι) (p : ι → polynomial R) (x : R) :
-  is_root (∏ j in s, p j) x ↔ ∃ i ∈ s, is_root (p i) x :=
-by simp only [is_root, eval_prod, finset.prod_eq_zero_iff]
 
 -- trying out this order to solve some `rw` issues, c.f.
 -- https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/rw.20.2B.20apply_instance
@@ -56,10 +52,6 @@ begin
   refine ⟨X - C μ, ⟨(∏ x in n.divisors \ {i, n}, cyclotomic x K) * k * j, by ring⟩, _⟩,
   simp [polynomial.is_unit_iff_degree_eq_zero]
 end
-
-lemma is_root_map {R S : Type*} [comm_ring R] [comm_semiring S] {f : R →+* S} {x : R}
-  {p : polynomial R} (hf : function.injective f) : is_root p x ↔ is_root (p.map f) (f x) :=
-by simp only [is_root, eval_map, eval₂_hom, f.injective_iff'.mp hf]
 
 -- this needs to replace `polynomial.order_of_root_cyclotomic_eq` when it is merged
 lemma is_root_cyclotomic_iff {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
