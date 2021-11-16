@@ -51,17 +51,16 @@ lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
   discriminant ℚ (zeta'.power_basis p ℚ K).basis =
   (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) :=
 begin
-  letI := char_zero_of_injective_algebra_map (algebra_map ℚ K).injective,
   have hprim := zeta'_primitive_root p ℚ K,
   have hzero : zeta' p ℚ K - 1 ≠ 0 := λ h, by simpa [eval_one_cyclotomic_prime, sub_eq_zero.1 h]
     using is_root.def.1 (is_root_cyclotomic p.pos hprim),
   have hodd' : (p : ℕ) ≠ 2 := λ hn, by exact hodd.symm (pnat.coe_inj.1 hn.symm),
-  have hpos : 0 < (p : ℕ) - 1 := sorry,
-  have hzero : (p : ℚ) ≠ 0 := sorry,
+  have hpos := pos_iff_ne_zero.2 (λ h, (tsub_pos_of_lt (prime.one_lt hp.out)).ne.symm h),
+  have heven := even_of_prime_neq_two_sub_one hp.out hodd',
 
-  rw [discriminant.of_power_basis_eq_norm, zeta'.power_basis_gen,
+  rw [discriminant.of_power_basis_eq_norm, zeta'.power_basis_gen, singleton_finrank p,
     minpoly.gcd_domain_eq_field_fractions ℚ (is_primitive_root.is_integral hprim p.pos),
-    ← cyclotomic_eq_minpoly hprim p.pos, map_cyclotomic],
+    ← cyclotomic_eq_minpoly hprim p.pos, map_cyclotomic, totient_prime hp.out],
   have H := congr_arg derivative (cyclotomic_prime_mul_X_sub_one ℚ p),
   rw [derivative_mul, derivative_sub, derivative_one, derivative_X, sub_zero, mul_one,
     derivative_sub, derivative_one, sub_zero, derivative_X_pow] at H,
@@ -73,9 +72,13 @@ begin
     norm_zeta' K (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out) hodd')),
     one_pow, mul_one, ← ring_hom.map_nat_cast (algebra_map ℚ K), norm_algebra_map,
     singleton_finrank p, totient_prime hp.out, ← succ_pred_eq_of_pos hpos, pow_succ,
-    mul_comm _ (p : ℚ), ← coe_coe] at H,
-  rw [(mul_right_inj' hzero).1 H, singleton_finrank p, totient_prime hp.out],
-  sorry
+    mul_comm _ (p : ℚ), coe_coe] at H,
+  rw [(mul_right_inj' (cast_ne_zero.2 hp.out.ne_zero : (p : ℚ) ≠ 0)).1 H],
+  congr' 1,
+  rw [← mul_one 2, ← nat.div_mul_div (even_iff_two_dvd.1 heven) (one_dvd _),
+    nat.div_one, mul_one, mul_comm, pow_mul],
+  congr' 1,
+  exact neg_one_pow_of_odd (even.sub_odd (one_le_iff_ne_zero.2 hpos.ne.symm) heven (odd_iff.2 rfl)),
 end
 
 
