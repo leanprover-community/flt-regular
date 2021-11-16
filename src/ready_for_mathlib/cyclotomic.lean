@@ -3,14 +3,6 @@ import ring_theory.polynomial.cyclotomic
 open polynomial nat
 open_locale big_operators
 
-lemma is_root_cyclotomic_iff' {n : ℕ} {K : Type*} [field K] (hpos : 0 < n) {μ : K}
-  (h : ∃ ζ : K, is_primitive_root ζ n) : is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
-begin
-  obtain ⟨ζ, hζ⟩ := h,
-  rw [← mem_roots (cyclotomic_ne_zero n K), cyclotomic_eq_prod_X_sub_primitive_roots hζ,
-    roots_prod_X_sub_C, ← finset.mem_def, ← mem_primitive_roots hpos],
-end
-
 lemma is_root_prod {R : Type*} [comm_ring R] [is_domain R] {ι : Type*}
   (s : finset ι) (p : ι → polynomial R) (x : R) :
   is_root (∏ j in s, p j) x ↔ ∃ i ∈ s, is_root (p i) x :=
@@ -100,7 +92,7 @@ open finset
 lemma nat.mem_divisors_self (n : ℕ) (h : n ≠ 0) : n ∈ n.divisors := by simpa
 
 -- this needs to replace `polynomial.order_of_root_cyclotomic_eq` when it is merged
-lemma is_root_cyclotomic_iff {n : ℕ} {K : Type*} [field K] {μ : K} (hn : (↑n : K) ≠ 0) :
+lemma is_root_cyclotomic_iff' {n : ℕ} {K : Type*} [field K] {μ : K} (hn : (n : K) ≠ 0) :
   is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
 begin
   -- in this proof, `o` stands for `order_of μ`
@@ -134,6 +126,20 @@ begin
   contrapose! hn,
   refine ⟨X - C μ, ⟨(∏ x in n.divisors \ {i, n}, cyclotomic x K) * k * j, by ring⟩, _⟩,
   simp [polynomial.is_unit_iff_degree_eq_zero]
+end
+
+lemma is_root_map {R S : Type*} [comm_ring R] [comm_semiring S] {f : R →+* S} {x : R}
+  {p : polynomial R} (hf : function.injective f) : is_root p x ↔ is_root (p.map f) (f x) :=
+by simp only [is_root, eval_map, eval₂_hom, f.injective_iff'.mp hf]
+
+lemma is_root_cyclotomic_iff {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
+  {μ : R} (hn : (n : R) ≠ 0) : is_primitive_root μ n ↔ is_root (cyclotomic n R) μ :=
+begin
+  let f := algebra_map R (fraction_ring R),
+  have hf : function.injective f := is_localization.injective _ le_rfl,
+  rw [is_root_map hf, is_primitive_root.injective_iff hf, map_cyclotomic, ←is_root_cyclotomic_iff'],
+  -- missing `norm_cast` lemmas?
+  sorry,
 end
 
 namespace polynomial
