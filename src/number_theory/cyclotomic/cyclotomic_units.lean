@@ -8,6 +8,7 @@ import data.polynomial.field_division
 import number_theory.number_field
 import number_theory.cyclotomic.basic
 import ready_for_mathlib.roots_of_unity
+import ready_for_mathlib.cyclotomic
 
 noncomputable theory
 
