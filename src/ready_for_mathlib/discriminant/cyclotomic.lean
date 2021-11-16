@@ -43,7 +43,7 @@ begin
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
     exact fintype.prod_equiv (zeta'.embeddings_equiv_primitive_roots p ℚ K E) _ _ (λ σ, by simp) },
   rw [this, cyclotomic', ← cyclotomic_eq_prod_X_sub_primitive_roots
-    ((is_root_cyclotomic_iff' hpE).2 hz), eval_one_cyclotomic_prime],
+    ((is_root_cyclotomic_iff hpE).2 hz), eval_one_cyclotomic_prime],
   simp,
 end
 
