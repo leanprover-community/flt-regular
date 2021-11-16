@@ -142,6 +142,14 @@ begin
     ((ring_hom.injective_iff f).1 (is_fraction_ring.injective R _) n))],
 end
 
+--if there are no roots OK, otherwise use `is_primitive_root.nth_roots_nodup`
+lemma roots_cyclotomic_nodup {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] (hn : (n : R) ≠ 0) :
+  (cyclotomic n R).roots.nodup := sorry
+
+lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
+  (hn : (n : R) ≠ 0) :
+  primitive_roots n R = ⟨(cyclotomic n R).roots, roots_cyclotomic_nodup hn⟩ := sorry
+
 namespace polynomial
 
 lemma cyclotomic_prime_mul_X_sub_one (R : Type*) [comm_ring R] (n : ℕ) [hn : fact (nat.prime n)] :
