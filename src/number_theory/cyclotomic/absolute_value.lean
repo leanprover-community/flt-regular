@@ -146,15 +146,16 @@ by simp only [finset.powerset_len, map_pmap, pmap_eq_map, map_id']
 end
 
 section polynomial
-variables {R : Type*} [comm_ring R]
+variables {R : Type*} [comm_ring R] -- todo: this can be generalized, as noted below
 open polynomial
 /--
 The degree of a product of polynomials is at most the sum of the degrees,
 where the degree of the zero polynomial is ⊥.
 -/
-lemma degree_multiset_prod_le [nontrivial R] (t : multiset (polynomial R)) :
+lemma degree_multiset_prod_le (t : multiset (polynomial R)) :
   t.prod.degree ≤ (t.map polynomial.degree).sum :=
 begin
+  nontriviality R,
   refine multiset.induction_on t _ (λ a t ht, _), { simp },
   { simp only [multiset.prod_cons, multiset.map_cons, multiset.sum_cons],
     exact le_trans (degree_mul_le _ _) (add_le_add_left ht _), }
