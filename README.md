@@ -55,7 +55,7 @@ There are two pieces of functionality that help a lot when browsing through Lean
   - `number_theory/regular_primes.lean` we give the definition of what a regular number is.
   - `number_theory/cyclotomic/` contains the definition of a cyclotomic extension
     and the results we need. Results specific to `ℚ` are in `number_theory/cyclotomic/rat.lean`.
-  - `ready_for_mathlib/discriminant` contains the definition and the result we need about
+  - `ready_for_mathlib/discriminant` contains the definition and the results we need about
     the discriminant.
 
 ## Brief note on type theory
