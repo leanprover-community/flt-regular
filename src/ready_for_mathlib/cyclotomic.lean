@@ -98,19 +98,14 @@ begin
   { exact h.symm ▸ multiset.nodup_zero },
   rw [mem_roots $ cyclotomic_ne_zero n R, ←is_root_cyclotomic_iff hn] at hζ,
   refine multiset.nodup_of_le (roots.le_of_dvd (X_pow_sub_C_ne_zero hn' 1)
-                              cyclotomic.dvd_X_pow_sub_one) _,
-  rw ←nth_roots,
+                               cyclotomic.dvd_X_pow_sub_one) _,
   exact hζ.nth_roots_nodup
 end
 
 lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
-  (hn : (n : R) ≠ 0) :
-  primitive_roots n R = ⟨(cyclotomic n R).roots, roots_cyclotomic_nodup hn⟩ :=
-begin
-  have hn' : 0 < n := (show n ≠ 0, by { rintro rfl, contradiction }).bot_lt,
-  ext,
-  simp [mem_roots, cyclotomic_ne_zero n R, ←is_root_cyclotomic_iff hn, mem_primitive_roots hn'],
-end
+  (hn : (n : R) ≠ 0) : primitive_roots n R = ⟨(cyclotomic n R).roots, roots_cyclotomic_nodup hn⟩ :=
+let hn' : 0 < n := (show n ≠ 0, by { rintro rfl, contradiction }).bot_lt in
+by { ext, simp [cyclotomic_ne_zero n R, ←is_root_cyclotomic_iff hn, mem_primitive_roots hn'] }
 
 namespace polynomial
 
