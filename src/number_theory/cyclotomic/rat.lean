@@ -6,13 +6,17 @@ open finite_dimensional
 
 variables (L : Type u) [field L] [char_zero L]
 
+namespace is_cyclotomic_extension
+
 namespace rat
 
-section singleton
+namespace singleton
 
 variables (n : ℕ+) [is_cyclotomic_extension {n} ℚ L]
 
-lemma degree : finrank ℚ L = (n : ℕ).totient := sorry
+lemma finrank : finrank ℚ L = (n : ℕ).totient := sorry
+
+#print finrank
 
 end singleton
 
@@ -20,7 +24,7 @@ end rat
 
 namespace int
 
-section singleton
+namespace singleton
 
 variables (n : ℕ+)
 
@@ -29,6 +33,8 @@ instance : is_integral_closure (cyclotomic_ring n ℤ ℚ) ℤ (cyclotomic_field
 end singleton
 
 end int
+
+end is_cyclotomic_extension
 
 section int_facts
 
