@@ -137,9 +137,9 @@ lemma is_root_cyclotomic_iff {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
 begin
   let f := algebra_map R (fraction_ring R),
   have hf : function.injective f := is_localization.injective _ le_rfl,
-  rw [is_root_map hf, is_primitive_root.injective_iff hf, map_cyclotomic, ←is_root_cyclotomic_iff'],
-  -- missing `norm_cast` lemmas?
-  sorry,
+  rw [is_root_map hf, is_primitive_root.injective_iff hf, map_cyclotomic,
+    ← is_root_cyclotomic_iff' (λ h, by simpa [ring_hom.map_nat_cast, hn, h] using
+    ((ring_hom.injective_iff f).1 (is_fraction_ring.injective R _) n))],
 end
 
 namespace polynomial
