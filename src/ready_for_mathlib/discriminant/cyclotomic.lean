@@ -5,14 +5,15 @@ import ready_for_mathlib.discriminant.basic
 import number_theory.cyclotomic.cyclotomic_units
 import ready_for_mathlib.nat
 import ready_for_mathlib.cyclotomic
+import number_theory.cyclotomic.rat
 
 universes u
 
-open algebra finset nat polynomial cyclotomic_ring
+open algebra finset nat polynomial cyclotomic_ring is_cyclotomic_extension
 
 open_locale big_operators
 
-namespace is_cyclotomic_extension
+namespace is_cyclotomic_extension.rat.singleton
 
 variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
 
@@ -23,6 +24,8 @@ begin
     ← one_pow ↑p] at hz,
   exact (strict_mono.injective (odd.strict_mono_pow hodd)) hz,
 end
+
+local attribute [-instance] alg_hom.fintype
 
 lemma norm_zeta'_sub_one [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
   norm ℚ ((zeta' p ℚ K) - 1) = p :=
@@ -37,7 +40,7 @@ begin
   conv_lhs { congr, skip, funext,
     rw [← neg_sub, alg_hom.map_neg, alg_hom.map_sub, alg_hom.map_one, neg_eq_neg_one_mul] },
   replace hodd : (p : ℕ) ≠ 2 := λ hn, by exact hodd.symm (pnat.coe_inj.1 hn.symm),
-  rw [prod_mul_distrib, prod_const, card_univ, alg_hom.card, singleton_finrank p,
+  rw [prod_mul_distrib, prod_const, card_univ, alg_hom.card, finrank p,
     totient_prime hp.out, neg_one_pow_of_even (even_of_prime_neq_two_sub_one hp.out hodd), one_mul],
   have : univ.prod (λ (σ : K →ₐ[ℚ] E), 1 - σ (zeta' p ℚ K)) = eval 1 (cyclotomic' p E),
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
@@ -58,7 +61,7 @@ begin
   have hpos := pos_iff_ne_zero.2 (λ h, (tsub_pos_of_lt (prime.one_lt hp.out)).ne.symm h),
   have heven := even_of_prime_neq_two_sub_one hp.out hodd',
 
-  rw [discriminant.of_power_basis_eq_norm, zeta'.power_basis_gen, singleton_finrank p,
+  rw [discriminant.of_power_basis_eq_norm, zeta'.power_basis_gen, finrank p,
     minpoly.gcd_domain_eq_field_fractions ℚ (is_primitive_root.is_integral hprim p.pos),
     ← cyclotomic_eq_minpoly hprim p.pos, map_cyclotomic, totient_prime hp.out],
   have H := congr_arg derivative (cyclotomic_prime_mul_X_sub_one ℚ p),
@@ -71,7 +74,7 @@ begin
   rw [monoid_hom.map_mul, norm_zeta'_sub_one _ hodd, monoid_hom.map_mul, monoid_hom.map_pow,
     norm_zeta' K (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out) hodd')),
     one_pow, mul_one, ← ring_hom.map_nat_cast (algebra_map ℚ K), norm_algebra_map,
-    singleton_finrank p, totient_prime hp.out, ← succ_pred_eq_of_pos hpos, pow_succ,
+    finrank p, totient_prime hp.out, ← succ_pred_eq_of_pos hpos, pow_succ,
     mul_comm _ (p : ℚ), coe_coe] at H,
   rw [(mul_right_inj' (cast_ne_zero.2 hp.out.ne_zero : (p : ℚ) ≠ 0)).1 H],
   congr' 1,
@@ -82,4 +85,4 @@ begin
 end
 
 
-end is_cyclotomic_extension
+end is_cyclotomic_extension.rat.singleton
