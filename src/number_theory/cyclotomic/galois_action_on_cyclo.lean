@@ -13,8 +13,7 @@ local notation `KK` := cyclotomic_field p ℚ
 
 local notation `RR` := number_field.ring_of_integers (cyclotomic_field p ℚ)
 
---better not an instance (check this, it exists more generally)
-lemma cyclotomic_number_field : number_field KK := sorry
+instance cyclotomic_number_field : number_field KK := sorry
 
 open cyclotomic_ring embeddings
 
@@ -23,8 +22,6 @@ open is_cyclotomic_extension
 open polynomial
 
 local notation `ζ` := zeta' p ℚ KK
-
-local attribute [instance] cyclotomic_number_field
 
 @[simp]
 lemma minpoly_zeta' : minpoly ℚ ζ = cyclotomic p ℚ :=
