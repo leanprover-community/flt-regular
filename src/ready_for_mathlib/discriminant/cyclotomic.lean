@@ -1,6 +1,5 @@
 import ring_theory.adjoin.power_basis
 import algebra.char_p.algebra
-import field_theory.primitive_element
 
 import ready_for_mathlib.discriminant.basic
 import number_theory.cyclotomic.cyclotomic_units
