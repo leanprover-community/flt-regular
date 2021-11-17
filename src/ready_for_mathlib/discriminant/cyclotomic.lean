@@ -15,6 +15,8 @@ open_locale big_operators
 
 namespace is_cyclotomic_extension.rat.singleton
 
+local attribute [instance] is_cyclotomic_extension.finite_dimensional
+
 variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
 
 lemma norm_zeta' (hodd : odd (p : ℕ)) : norm ℚ (zeta' p ℚ K) = 1 :=
