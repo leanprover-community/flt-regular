@@ -38,7 +38,7 @@ noncomputable theory
 
 local notation `KK` := cyclotomic_field n ℚ
 
-local notation `RR` := number_field.ring_of_integers (cyclotomic_field p ℚ)
+local notation `RR` := number_field.ring_of_integers (cyclotomic_field n ℚ)
 
 --A.K.A theorem:FLT_facts 3
 lemma flt_fact_3 [fact (n : ℕ).prime] (a : RR) :
