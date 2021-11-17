@@ -14,8 +14,6 @@ by rw [←mem_nth_roots h, nth_roots, mem_roots $ X_pow_sub_C_ne_zero h _,
 
 open finset
 
-lemma nat.mem_divisors_self (n : ℕ) (h : n ≠ 0) : n ∈ n.divisors := by simpa
-
 -- `is_root_cyclotomic_iff` is strictly stronger, this is a necessary intermediate result
 private lemma is_root_cyclotomic_iff' {n : ℕ} {K : Type*} [field K] {μ : K} (hn : (n : K) ≠ 0) :
   is_primitive_root μ n ↔ is_root (cyclotomic n K) μ :=
