@@ -47,16 +47,15 @@ section field
 
 section fintype
 
-variables [fintype S] [is_cyclotomic_extension S K L]
+variables [h₁ : fintype S] [h₂ : is_cyclotomic_extension S K L]
+include h₁ h₂
 
 namespace is_cyclotomic_extension
 
 @[priority 100] -- see Note [lower instance priority]
-instance finite_dimensional [fintype S] [is_cyclotomic_extension S K L] :
-  finite_dimensional K L := sorry
+instance finite_dimensional : finite_dimensional K L := sorry
 
-lemma number_field [number_field K] [fintype S] [is_cyclotomic_extension S K L] :
-  number_field L := sorry
+lemma number_field [number_field K] : number_field L := sorry
 
 end is_cyclotomic_extension
 
