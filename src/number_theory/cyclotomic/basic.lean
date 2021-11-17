@@ -52,7 +52,7 @@ variables [fintype S] [is_cyclotomic_extension S K L]
 namespace is_cyclotomic_extension
 
 @[priority 100] -- see Note [lower instance priority]
-instance finite_dimensional : finite_dimensional K L := sorry
+instance finite_dimensional [fintype S] : finite_dimensional K L := sorry
 
 lemma number_field [number_field K] : number_field L := sorry
 
