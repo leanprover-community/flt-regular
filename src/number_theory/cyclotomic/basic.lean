@@ -52,8 +52,8 @@ include h₁ h₂
 
 namespace is_cyclotomic_extension
 
-@[priority 100] -- see Note [lower instance priority]
-instance finite_dimensional : finite_dimensional K L := sorry
+--This and the following are lemmas, but they can be made local instances
+lemma finite_dimensional : finite_dimensional K L := sorry
 
 lemma number_field [number_field K] : number_field L := sorry
 
