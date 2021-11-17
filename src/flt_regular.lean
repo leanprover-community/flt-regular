@@ -5,6 +5,7 @@ import data.zmod.extras
 import tactic
 import data.nat.prime_extras
 import ready_for_mathlib.totient
+import ready_for_mathlib.gcd
 
 lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (hab: a.coprime b)
     : b.coprime c ∧ a.coprime c := sorry
@@ -31,8 +32,14 @@ theorem flt_regular_case_two (p a b c : ℕ) [fact p.prime] (hp : is_regular_num
 theorem flt_regular (p a b c : ℕ) [fact p.prime] (hp : is_regular_number p) (hpne_two : p ≠ 2)
   (h : a ^ p + b ^ p = c ^ p) : a * b * c = 0 :=
 begin
-  may_assume hcoprime : set.pairwise {a, b, c} nat.coprime,
-  { let d : ℕ := finset.gcd {a, b, c} id,
+  may_assume hcoprime : ({a, b, c} : finset ℕ).gcd id = 1,
+  { let s : finset ℕ := {a, b, c},
+    let d : ℕ := s.gcd id,
+    cases em (s ⊆ {0}) with hs hs, --budget may_assume ;b needed for `image_div_gcd_coprime`
+    { simp only [false_or, finset.subset_singleton_iff, finset.insert_ne_empty] at hs,
+      have : c ∈ s, by simp,
+      rw [hs, finset.mem_singleton] at this,
+      rw [this, mul_zero] },
     cases d.eq_zero_or_pos with hd hd,
     { rw finset.gcd_eq_zero_iff at hd,
       rw mul_eq_zero,
@@ -56,8 +63,10 @@ begin
         exact (finset.gcd_dvd xh), },
       simpa only [this, key, true_or, eq_self_iff_true, or_true, finset.mem_insert,
                   finset.mem_singleton] using habc },
-    { sorry /- {a / d, b / d, c / d}.pairwise nat.coprime
-               this should be a finset.gcd lemma, although has to be special-cased for ℕ :/ -/ },
+    { convert s.image_div_gcd_coprime hs using 1,
+      conv_rhs { rw finset.nat_gcd_eq_image },
+      congr,
+      simp only [finset.image_insert, id.def, finset.image_singleton, normalize_eq] },
     { have habc := congr_arg (* d^3) h_red,
       simp only [zero_mul] at habc,
       replace habc : (a / d * d) * (b / d * d) * (c / d * d) = 0,
