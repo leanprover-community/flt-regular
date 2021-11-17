@@ -1,5 +1,6 @@
 import ring_theory.adjoin.power_basis
 import algebra.char_p.algebra
+import field_theory.primitive_element
 
 import ready_for_mathlib.discriminant.basic
 import number_theory.cyclotomic.cyclotomic_units
@@ -25,8 +26,6 @@ begin
   exact (strict_mono.injective (odd.strict_mono_pow hodd)) hz,
 end
 
-local attribute [-instance] alg_hom.fintype
-
 lemma norm_zeta'_sub_one [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
   norm ℚ ((zeta' p ℚ K) - 1) = p :=
 begin
@@ -34,6 +33,7 @@ begin
   letI := char_zero_of_injective_algebra_map (algebra_map ℚ E).injective,
   have hpE : ((p : ℕ) : E) ≠ 0 := λ h, p.pos.ne (cast_eq_zero.1 h).symm,
   obtain ⟨z, hz⟩ := is_alg_closed.exists_root _ (degree_cyclotomic_pos p E p.pos).ne.symm,
+  letI : fintype (K →ₐ[ℚ] E) := field.alg_hom.fintype _ _,
 
   apply (algebra_map ℚ E).injective,
   rw [norm_eq_prod_embeddings],
