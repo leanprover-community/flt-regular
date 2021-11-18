@@ -3,7 +3,6 @@ import algebra.char_p.algebra
 
 import ready_for_mathlib.discriminant.basic
 import number_theory.cyclotomic.cyclotomic_units
-import ready_for_mathlib.nat
 import ready_for_mathlib.cyclotomic
 import number_theory.cyclotomic.rat
 
@@ -42,7 +41,7 @@ begin
     rw [← neg_sub, alg_hom.map_neg, alg_hom.map_sub, alg_hom.map_one, neg_eq_neg_one_mul] },
   replace hodd : (p : ℕ) ≠ 2 := λ hn, by exact hodd.symm (pnat.coe_inj.1 hn.symm),
   rw [prod_mul_distrib, prod_const, card_univ, alg_hom.card, finrank p,
-    totient_prime hp.out, neg_one_pow_of_even (even_of_prime_neq_two_sub_one hp.out hodd), one_mul],
+    totient_prime hp.out, neg_one_pow_of_even (even_sub_one_of_prime_ne_two hp.out hodd), one_mul],
   have : univ.prod (λ (σ : K →ₐ[ℚ] E), 1 - σ (zeta' p ℚ K)) = eval 1 (cyclotomic' p E),
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
     exact fintype.prod_equiv (zeta'.embeddings_equiv_primitive_roots p ℚ K E) _ _ (λ σ, by simp) },
@@ -60,7 +59,7 @@ begin
     using is_root.def.1 (is_root_cyclotomic p.pos hprim),
   have hodd' : (p : ℕ) ≠ 2 := λ hn, by exact hodd.symm (pnat.coe_inj.1 hn.symm),
   have hpos := pos_iff_ne_zero.2 (λ h, (tsub_pos_of_lt (prime.one_lt hp.out)).ne.symm h),
-  have heven := even_of_prime_neq_two_sub_one hp.out hodd',
+  have heven := even_sub_one_of_prime_ne_two hp.out hodd',
 
   rw [discriminant.of_power_basis_eq_norm, zeta'.power_basis_gen, finrank p,
     minpoly.gcd_domain_eq_field_fractions ℚ (is_primitive_root.is_integral hprim p.pos),
