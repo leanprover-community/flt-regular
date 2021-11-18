@@ -105,9 +105,10 @@ lemma zeta'_primitive_root : is_primitive_root (zeta' n A B) n :=
   dvd_of_pow_eq_one := sorry }
 
 /-- The `power_basis` given by `zeta' n A B`. -/
+--not true in general.. over a field and?
 def zeta'.power_basis : power_basis A B :=
 { gen := zeta' n A B,
-  dim := (n : ℕ).totient,
+  dim := finite_dimensional.finrank A B,
   basis := sorry,
   basis_eq_pow := sorry }
 
@@ -116,6 +117,7 @@ lemma zeta'.power_basis_gen : (zeta'.power_basis n A B).gen = zeta' n A B := rfl
 /-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
   `primitive_roots n C` given by the choice of `zeta'`. -/
 --this should be proved using `power_basis.lift_equiv` (check if a more general version is ok).
+--false in general. True over ℚ and?
 def zeta'.embeddings_equiv_primitive_roots (K C : Type*) [field K] [algebra A K]
   [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] : (K →ₐ[A] C) ≃ primitive_roots n C :=
 { to_fun := λ σ, ⟨σ (zeta' n A K), (mem_primitive_roots n.pos).2 (is_primitive_root.of_injective
