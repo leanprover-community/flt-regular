@@ -42,9 +42,8 @@ begin
   exact (mul_dvd habc).1
 end
 
-theorem image_div_gcd_coprime (s : finset ℕ) (h : ∃ x ∈ s, x ≠ 0) : s.gcd (/ s.gcd id) = 1 :=
+theorem image_div_gcd_coprime (s : finset ℕ) (h : ¬∀ x ∈ s, x = 0) : s.gcd (/ s.gcd id) = 1 :=
 begin
-  obtain ⟨x, hxs, hx⟩ := h,
   rw nat.eq_one_iff,
   intros p hp hdvd,
   haveI : fact p.prime := ⟨hp⟩,
@@ -55,7 +54,7 @@ begin
     rwa nat.dvd_div_iff at hdvd,
     apply gcd_dvd hb },
 
-  have : s.gcd id ≠ 0 := (not_iff_not.mpr gcd_eq_zero_iff).mpr (λ hg, hx $ hg x hxs),
+  have : s.gcd id ≠ 0 := (not_iff_not.mpr gcd_eq_zero_iff).mpr h,
   let t := padic_val_nat p (s.gcd id),
   have hpgcd' : ¬ p ^ (t + 1) ∣ s.gcd id := pow_succ_padic_val_nat_not_dvd this.bot_lt,
   replace hdvd : p ^ (t + 1) ∣ s.gcd id,

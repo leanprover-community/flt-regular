@@ -35,11 +35,9 @@ begin
   may_assume hcoprime : ({a, b, c} : finset ℕ).gcd id = 1,
   { let s : finset ℕ := {a, b, c},
     let d : ℕ := s.gcd id,
-    cases em (s ⊆ {0}) with hs hs, --budget may_assume ;b needed for `image_div_gcd_coprime`
-    { simp only [false_or, finset.subset_singleton_iff, finset.insert_ne_empty] at hs,
-      have : c ∈ s, by simp,
-      rw [hs, finset.mem_singleton] at this,
-      rw [this, mul_zero] },
+    cases em (∀ x ∈ s, x = 0) with hs hs, --budget may_assume ;b needed for `image_div_gcd_coprime`
+    { have : c ∈ s, by simp,
+      rw [hs c this, mul_zero] },
     cases d.eq_zero_or_pos with hd hd,
     { rw finset.gcd_eq_zero_iff at hd,
       rw mul_eq_zero,
