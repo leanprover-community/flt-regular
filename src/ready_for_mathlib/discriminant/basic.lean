@@ -6,7 +6,6 @@ import linear_algebra.vandermonde
 import ready_for_mathlib.linear_algebra
 import ready_for_mathlib.matrix
 import ready_for_mathlib.fin
-import ready_for_mathlib.nat
 
 universes u v w z
 
