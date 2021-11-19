@@ -179,7 +179,8 @@ lemma zeta_primitive_root :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
 begin
   let f := algebra_map (ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
-  let hf : function.injective f := sorry, --library_search finds the right thing but it times out?
+  let hf : function.injective f := by convert no_zero_smul_divisors.algebra_map_injective
+    ↥(ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
   rw is_primitive_root.injective_iff hf,
   convert zeta'_primitive_root n _ _,
   apply_instance
