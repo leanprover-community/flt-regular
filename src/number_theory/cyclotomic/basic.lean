@@ -114,8 +114,10 @@ section singleton
 
 variables [is_cyclotomic_extension {n} K L]
 
+--Add that `X ^ n - 1` splits if `n ∈ S`.
 instance splitting_field_X_pow_sub_one : is_splitting_field K L (X ^ (n : ℕ) - 1) := sorry
 
+--Add that `cyclotomic n K` splits if `n ∈ S`.
 instance splitting_field_cyclotomic : is_splitting_field K L (cyclotomic n K) := sorry
 
 end singleton
