@@ -1,7 +1,7 @@
 import ring_theory.polynomial.cyclotomic
 import number_theory.number_field
 
-open polynomial algebra finite_dimensional module
+open polynomial algebra finite_dimensional module set
 
 universes u v w z
 
@@ -66,19 +66,16 @@ begin
       refine ⟨c, _⟩,
       rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic] at hc,
       rwa [aeval_def, eval₂_eq_eval_map, map_cyclotomic] } },
-  { refine adjoin_induction (((iff _ _ _).1 hT).2 x) (λ c hc, subset_adjoin _) (λ b, _)
-      (λ x y hx hy, subalgebra.add_mem _ hx hy) (λ x y hx hy, subalgebra.mul_mem _ hx hy),
-    { simp only [set.mem_union_eq, set.mem_set_of_eq] at hc ⊢,
-      obtain ⟨n, hn⟩ := hc,
-      refine ⟨n, or.inr hn.1, hn.2⟩ },
+  { refine adjoin_induction (((iff _ _ _).1 hT).2 x) (λ c ⟨n, hn⟩, subset_adjoin
+      ⟨n, or.inr hn.1, hn.2⟩) (λ b, _) (λ x y hx hy, subalgebra.add_mem _ hx hy)
+      (λ x y hx hy, subalgebra.mul_mem _ hx hy),
     { let f := is_scalar_tower.to_alg_hom A B C,
       have hb : f b ∈ (adjoin A {b : B | ∃ (a : ℕ+), a ∈ S ∧ b ^ (a : ℕ) = 1}).map f :=
         ⟨b, ((iff _ _ _).1 hS).2 b, rfl⟩,
       rw [is_scalar_tower.to_alg_hom_apply, ← adjoin_image] at hb,
       refine adjoin_mono (λ y hy, _) hb,
-      obtain ⟨b₁, ⟨⟨n, hn⟩, hb₁⟩⟩ := hy,
-      refine ⟨n, ⟨set.mem_union_left T hn.1, _⟩⟩,
-      rw [← hb₁, ← alg_hom.map_pow, hn.2, alg_hom.map_one] } }
+      obtain ⟨b₁, ⟨⟨n, hn⟩, h₁⟩⟩ := hy,
+      exact ⟨n, ⟨mem_union_left T hn.1, by rw [← h₁, ← alg_hom.map_pow, hn.2, alg_hom.map_one]⟩⟩ } }
 end
 
 end is_cyclotomic_extension
