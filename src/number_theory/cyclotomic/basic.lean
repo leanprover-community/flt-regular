@@ -78,6 +78,9 @@ begin
       exact ⟨n, ⟨mem_union_left T hn.1, by rw [← h₁, ← alg_hom.map_pow, hn.2, alg_hom.map_one]⟩⟩ } }
 end
 
+lemma union (T : set ℕ+) (h : is_cyclotomic_extension (S ∪ T) A B)
+  : is_cyclotomic_extension T (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) B := sorry
+
 end is_cyclotomic_extension
 
 end basic
