@@ -59,16 +59,13 @@ end basic
 
 namespace is_cyclotomic_extension
 
-section finite
-
-variables [h₁ : S.finite] [h₂ : is_cyclotomic_extension S A B]
-include h₁ h₂
+section fintype
 
 --This is a lemma, but it can be made local instance.
-lemma finite : finite A B :=
+lemma finite [h₁ : fintype S] [h₂ : is_cyclotomic_extension S A B] : finite A B :=
 begin
   unfreezingI {revert h₂},
-  refine set.finite.dinduction_on h₁ (λ h, _) (λ n S hn hS H h, _),
+  refine set.finite.dinduction_on (set.finite.intro h₁) (λ h, _) (λ n S hn hS H h, _),
   { refine module.finite_def.2 ⟨({1} : finset B), _⟩,
     simp [← top_to_submodule, empty _ _ h, to_submodule_bot] },
   { sorry }
@@ -77,7 +74,11 @@ end
 --This is a lemma, but it can be made local instance.
 lemma number_field [number_field K] [is_cyclotomic_extension S K L] : number_field L := sorry
 
-end finite
+--This is a lemma, but it can be made local instance.
+lemma finite_dimensional [fintype S] [is_cyclotomic_extension S K L] : finite_dimensional K L :=
+finite S K L
+
+end fintype
 
 section field
 
