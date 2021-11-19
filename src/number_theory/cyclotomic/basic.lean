@@ -78,8 +78,34 @@ begin
       exact ⟨n, ⟨mem_union_left T hn.1, by rw [← h₁, ← alg_hom.map_pow, hn.2, alg_hom.map_one]⟩⟩ } }
 end
 
+lemma roots_union_eq_union_roots (T : set ℕ+) : {b :B | ∃ (n : ℕ+), n ∈ S ∪ T ∧ b ^ (n : ℕ) = 1} =
+  {b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1} ∪
+  {b : B | ∃ (n : ℕ+), n ∈ T ∧ b ^ (n : ℕ ) = 1} :=
+begin
+  refine le_antisymm (λ x hx, _) (λ x hx, _),
+  { obtain ⟨n, hn⟩ := hx,
+    cases hn.1 with h₁ h₂,
+    { left, exact ⟨n, ⟨h₁, hn.2⟩⟩ },
+    { right, exact ⟨n, ⟨h₂, hn.2⟩⟩ } },
+  { cases hx,
+    { obtain ⟨n, hn⟩ := hx,
+      exact ⟨n, ⟨or.inl hn.1, hn.2⟩⟩ },
+    { obtain ⟨n, hn⟩ := hx,
+      exact ⟨n, ⟨or.inr hn.1, hn.2⟩⟩ } }
+end
+
 lemma union (T : set ℕ+) (h : is_cyclotomic_extension (S ∪ T) A B)
-  : is_cyclotomic_extension T (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) B := sorry
+  : is_cyclotomic_extension T (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) B :=
+begin
+  refine ⟨λ n hn, _, λ b, _⟩,
+  { obtain ⟨b, hb⟩ := ((iff _ _ _).1 h).1 n (mem_union_right S hn),
+    refine ⟨b, _⟩,
+    rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic] at hb,
+    rwa [aeval_def, eval₂_eq_eval_map, map_cyclotomic] },
+  { replace h := ((iff _ _ _).1 h).2 b,
+    rwa [roots_union_eq_union_roots, adjoin_union_eq_adjoin_adjoin,
+      subalgebra.mem_restrict_scalars] at h }
+end
 
 end is_cyclotomic_extension
 
