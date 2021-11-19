@@ -74,8 +74,7 @@ classical.some (ex_root (set.mem_singleton n) : ∃ r : B, aeval r (cyclotomic n
 lemma zeta'_spec : aeval (zeta' n A B) (cyclotomic n A) = 0 :=
 classical.some_spec (ex_root (set.mem_singleton n) : ∃ r : B, aeval r (cyclotomic n A) = 0)
 
-lemma zeta'_spec' :
-  is_root (map (algebra_map A B) (cyclotomic n A)) (zeta' n A B) :=
+lemma zeta'_spec' : is_root (cyclotomic n B) (zeta' n A B) :=
 begin
   simp only [is_root.def, map_cyclotomic],
   convert zeta'_spec n A B,
@@ -101,8 +100,14 @@ begin
 end
 
 lemma zeta'_primitive_root : is_primitive_root (zeta' n A B) n :=
-{ pow_eq_one := zeta'_pow_prime n A B,
-  dvd_of_pow_eq_one := sorry }
+begin
+  rw is_root_cyclotomic_iff,
+  convert zeta'_spec' n A B,
+  sorry,
+  -- NOTE: (hn : (↑n : B) ≠ 0) is definitely necessary here. is this worth passing through TC?
+  -- This sorry is `exact_mod_cast hn`, but I currently don't want to break build until we
+  -- find the right solution to this. ~Eric
+end
 
 /-- The `power_basis` given by `zeta' n A B`. -/
 --not true in general.. over a field and?
@@ -172,9 +177,13 @@ lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic
 
 lemma zeta_primitive_root :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
-{ pow_eq_one := sorry,
-  dvd_of_pow_eq_one := sorry }
--- is_primitive_root.of
+begin
+  let f := algebra_map (ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
+  let hf : function.injective f := sorry, --library_search finds the right thing but it times out?
+  rw is_primitive_root.injective_iff hf,
+  convert zeta'_primitive_root n _ _,
+  apply_instance
+end
 
 lemma zeta_pow_eq_one : (zeta n K) ^ (n : ℕ) = 1 :=
 begin
