@@ -29,7 +29,8 @@ lemma iff : is_cyclotomic_extension S A B ↔
 
 lemma iff_adjoin : is_cyclotomic_extension S A B ↔
  (∀ (a : ℕ+), a ∈ S → ∃ r : B, aeval r (cyclotomic a A) = 0) ∧
- (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 } = ⊤) := sorry
+ (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 } = ⊤) :=
+⟨λ h, ⟨h.ex_root, algebra.eq_top_iff.2 h.adjoint_roots⟩, λ h, ⟨h.1, algebra.eq_top_iff.1 h.2⟩⟩
 
 lemma iff_singleton : is_cyclotomic_extension {n} A B ↔
  (∃ r : B, aeval r (cyclotomic n A) = 0) ∧
