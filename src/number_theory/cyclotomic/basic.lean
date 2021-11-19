@@ -1,7 +1,7 @@
 import ring_theory.polynomial.cyclotomic
 import number_theory.number_field
 
-open polynomial algebra finite_dimensional
+open polynomial algebra finite_dimensional module
 
 universes u v w z
 
@@ -27,6 +27,10 @@ lemma iff : is_cyclotomic_extension S A B ↔
  (∀ x, x ∈ adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) :=
 ⟨λ h, ⟨h.ex_root, h.adjoint_roots⟩, λ h, ⟨h.1, h.2⟩⟩
 
+lemma iff_adjoin : is_cyclotomic_extension S A B ↔
+ (∀ (a : ℕ+), a ∈ S → ∃ r : B, aeval r (cyclotomic a A) = 0) ∧
+ (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 } = ⊤) := sorry
+
 lemma iff_singleton : is_cyclotomic_extension {n} A B ↔
  (∃ r : B, aeval r (cyclotomic n A) = 0) ∧
  (∀ x, x ∈ adjoin A { b : B | b ^ (n : ℕ) = 1 }) :=
@@ -37,43 +41,59 @@ begin
   exact ⟨b, (set.mem_singleton_iff.1 ha).symm ▸ hb⟩
 end
 
-end is_cyclotomic_extension
+--is this the best way of stating the result?
+lemma empty (h : is_cyclotomic_extension ∅ A B) : (⊤ : subalgebra A B) = ⊥ :=
+begin
+  replace h := h.adjoint_roots,
+  simp only [set.mem_empty_eq, set.set_of_false, adjoin_empty, exists_false, false_and] at h,
+  exact (algebra.eq_top_iff.2 h).symm,
+end
 
---TODO: add equivalent definitions
+lemma union (T : set ℕ+) (C : Type w) [comm_ring C] [algebra A C] [algebra B C]
+  [is_scalar_tower A B C] (hS : is_cyclotomic_extension S A B)
+  (hT : is_cyclotomic_extension T B C) : is_cyclotomic_extension (S ∪ T) A C := sorry
+
+end is_cyclotomic_extension
 
 end basic
 
-section field
-
-section fintype
-
-variables [h₁ : fintype S] [h₂ : is_cyclotomic_extension S K L]
-include h₁ h₂
-
 namespace is_cyclotomic_extension
 
---This and the following are lemmas, but they can be made local instances
-lemma finite_dimensional : finite_dimensional K L := sorry
+section finite
 
-lemma number_field [number_field K] : number_field L := sorry
+variables [h₁ : S.finite] [h₂ : is_cyclotomic_extension S A B]
+include h₁ h₂
 
-end is_cyclotomic_extension
+--This is a lemma, but it can be made local instance.
+lemma finite : finite A B :=
+begin
+  unfreezingI {revert h₂},
+  refine set.finite.dinduction_on h₁ (λ h, _) (λ n S hn hS H h, _),
+  { refine module.finite_def.2 ⟨({1} : finset B), _⟩,
+    simp [← top_to_submodule, empty _ _ h, to_submodule_bot] },
+  { sorry }
+end
 
-end fintype
+--This is a lemma, but it can be made local instance.
+lemma number_field [number_field K] [is_cyclotomic_extension S K L] : number_field L := sorry
+
+end finite
+
+section field
 
 section singleton
 
 variables [is_cyclotomic_extension {n} K L]
 
-namespace is_cyclotomic_extension
-
 instance splitting_field_X_pow_sub_one : is_splitting_field K L (X ^ (n : ℕ) - 1) := sorry
 
 instance splitting_field_cyclotomic : is_splitting_field K L (cyclotomic n K) := sorry
 
-end is_cyclotomic_extension
-
 end singleton
+
+end field
+
+end is_cyclotomic_extension
 
 section cyclotomic_field
 
@@ -89,8 +109,6 @@ instance is_cyclotomic_extension : is_cyclotomic_extension {n} K (cyclotomic_fie
 end cyclotomic_field
 
 end cyclotomic_field
-
-end field
 
 section is_domain
 
