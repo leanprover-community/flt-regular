@@ -27,7 +27,7 @@ lemma iff : is_cyclotomic_extension S A B ↔
  (∀ x, x ∈ adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) :=
 ⟨λ h, ⟨h.ex_root, h.adjoint_roots⟩, λ h, ⟨h.1, h.2⟩⟩
 
-lemma iff_adjoin : is_cyclotomic_extension S A B ↔
+lemma iff_adjoin_eq_top : is_cyclotomic_extension S A B ↔
  (∀ (a : ℕ+), a ∈ S → ∃ r : B, aeval r (cyclotomic a A) = 0) ∧
  (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 } = ⊤) :=
 ⟨λ h, ⟨h.ex_root, algebra.eq_top_iff.2 h.adjoint_roots⟩, λ h, ⟨h.1, algebra.eq_top_iff.1 h.2⟩⟩
@@ -50,9 +50,36 @@ begin
   exact (algebra.eq_top_iff.2 h).symm,
 end
 
-lemma union (T : set ℕ+) (C : Type w) [comm_ring C] [algebra A C] [algebra B C]
+lemma trans (T : set ℕ+) (C : Type w) [comm_ring C] [algebra A C] [algebra B C]
   [is_scalar_tower A B C] (hS : is_cyclotomic_extension S A B)
-  (hT : is_cyclotomic_extension T B C) : is_cyclotomic_extension (S ∪ T) A C := sorry
+  (hT : is_cyclotomic_extension T B C) : is_cyclotomic_extension (S ∪ T) A C :=
+begin
+  refine ⟨λ n hn, _, λ x, _⟩,
+  { cases hn,
+    { obtain ⟨b, hb⟩ := ((iff _ _ _).1 hS).1 n hn,
+      refine ⟨algebra_map B C b, _⟩,
+      replace hb := congr_arg (algebra_map B C) hb,
+      rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic, ring_hom.map_zero, ← eval₂_at_apply,
+        eval₂_eq_eval_map, map_cyclotomic] at hb,
+      rwa [aeval_def, eval₂_eq_eval_map, map_cyclotomic] },
+    { obtain ⟨c, hc⟩ := ((iff _ _ _).1 hT).1 n hn,
+      refine ⟨c, _⟩,
+      rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic] at hc,
+      rwa [aeval_def, eval₂_eq_eval_map, map_cyclotomic] } },
+  { refine adjoin_induction (((iff _ _ _).1 hT).2 x) (λ c hc, subset_adjoin _) (λ b, _)
+      (λ x y hx hy, subalgebra.add_mem _ hx hy) (λ x y hx hy, subalgebra.mul_mem _ hx hy),
+    { simp only [set.mem_union_eq, set.mem_set_of_eq] at hc ⊢,
+      obtain ⟨n, hn⟩ := hc,
+      refine ⟨n, or.inr hn.1, hn.2⟩ },
+    { let f := is_scalar_tower.to_alg_hom A B C,
+      have hb : f b ∈ (adjoin A {b : B | ∃ (a : ℕ+), a ∈ S ∧ b ^ (a : ℕ) = 1}).map f :=
+        ⟨b, ((iff _ _ _).1 hS).2 b, rfl⟩,
+      rw [is_scalar_tower.to_alg_hom_apply, ← adjoin_image] at hb,
+      refine adjoin_mono (λ y hy, _) hb,
+      obtain ⟨b₁, ⟨⟨n, hn⟩, hb₁⟩⟩ := hy,
+      refine ⟨n, ⟨set.mem_union_left T hn.1, _⟩⟩,
+      rw [← hb₁, ← alg_hom.map_pow, hn.2, alg_hom.map_one] } }
+end
 
 end is_cyclotomic_extension
 
