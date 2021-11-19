@@ -141,12 +141,13 @@ lemma eq_adjoin_single (μ : (cyclotomic_field n K))
   (h : μ ∈ primitive_roots n ((cyclotomic_field n K))) :
   cyclotomic_ring n A K = adjoin A ({μ} : set ((cyclotomic_field n K))) := sorry
 
-instance : is_domain (cyclotomic_ring n A K) := sorry
+instance : is_domain (cyclotomic_ring n A K) := (adjoin A _).is_domain
 
 instance : algebra (cyclotomic_ring n A K) (cyclotomic_field n K) :=
 (adjoin A _).to_algebra
 
-instance : is_scalar_tower A (cyclotomic_ring n A K) (cyclotomic_field n K) := sorry
+instance : is_scalar_tower A (cyclotomic_ring n A K) (cyclotomic_field n K) :=
+is_scalar_tower.subalgebra' _ _ _ _
 
 lemma is_cyclotomic_extension : is_cyclotomic_extension {n} A (cyclotomic_ring n A K) := sorry
 
