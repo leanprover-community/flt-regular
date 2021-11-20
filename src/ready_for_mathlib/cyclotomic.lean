@@ -1,6 +1,5 @@
 import ring_theory.polynomial.cyclotomic
 import ready_for_mathlib.roots_of_unity
-import ready_for_mathlib.is_root
 
 open polynomial nat
 open_locale big_operators
@@ -57,7 +56,8 @@ lemma is_root_cyclotomic_iff {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
 begin
   let f := algebra_map R (fraction_ring R),
   have hf : function.injective f := is_localization.injective _ le_rfl,
-  rw [is_root_map hf, is_primitive_root.injective_iff hf, map_cyclotomic, ←is_root_cyclotomic_iff'],
+  rw [←is_root_map_iff hf, is_primitive_root.injective_iff hf,
+      map_cyclotomic, ←is_root_cyclotomic_iff'],
   simpa only [f.map_nat_cast, hn] using f.injective_iff.mp hf n
 end
 

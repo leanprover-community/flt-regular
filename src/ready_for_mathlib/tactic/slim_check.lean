@@ -1,4 +1,5 @@
 import data.finsupp.basic
+import testing.slim_check.functions
 import tactic.slim_check
 
 namespace slim_check
