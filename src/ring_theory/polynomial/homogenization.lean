@@ -120,9 +120,10 @@ finsupp.map_domain (λ j, finsupp.update j i (p.total_degree - j.sum (λ _ m, m)
 @[simp] lemma mv_polynomial.support_eq_empty {f : mv_polynomial ι R} : f.support = ∅ ↔ f = 0 :=
 finsupp.support_eq_empty
 
-@[simp] lemma finsupp.support_map_domain {α β M : Type*} [decidable_eq β] [add_comm_monoid M]
+@[simp] lemma finsupp.support_map_domain {α β M : Type*} [add_comm_monoid M]
   (f : α ↪ β) (v : α →₀ M) : (finsupp.map_domain f v).support ⊆ v.support.map f :=
 begin
+  classical,
   rw finsupp.map_domain,
   refine finset.subset.trans finsupp.support_sum _,
   simp,
@@ -204,7 +205,11 @@ end
 
 lemma homogenization_mul (i : ι) (p q : mv_polynomial ι R)
   (hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
-  (p * q).homogenization i = p.homogenization i * q.homogenization i := sorry
+  (p * q).homogenization i = p.homogenization i * q.homogenization i :=
+begin
+  -- have := total_degree_mul,
+  sorry,
+end
 
 -- TODO this probably still isn't true, must assume (p + q) total degree also equal?
 lemma homogenization_add (i : ι) (p q : mv_polynomial ι R) (h : p.total_degree = q.total_degree)
