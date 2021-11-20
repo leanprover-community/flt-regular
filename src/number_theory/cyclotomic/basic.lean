@@ -121,8 +121,7 @@ begin
       rw [← (eq_cyclotomic_iff n.pos _).1 rfl],
       exact root_mul_right_of_is_root _ hb },
       rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
-  {
-   }
+  { sorry }
 end
 
 end is_cyclotomic_extension
