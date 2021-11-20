@@ -45,7 +45,6 @@ namespace mv_polynomial
 
 section finsupp
 
-#check finsupp.support_update
 open_locale classical
 
 -- TODO something like this should be true but unsure what
