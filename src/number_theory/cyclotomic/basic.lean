@@ -42,7 +42,7 @@ begin
   exact ⟨b, (set.mem_singleton_iff.1 ha).symm ▸ hb⟩
 end
 
---is this the best way of stating the result?
+--Is this the best way of stating the result?
 lemma empty [h : is_cyclotomic_extension ∅ A B] : (⊤ : subalgebra A B) = ⊥ :=
 begin
   replace h := h.adjoint_roots,
@@ -50,7 +50,8 @@ begin
   exact (algebra.eq_top_iff.2 h).symm,
 end
 
-instance trans (C : Type w) [comm_ring C] [algebra A C] [algebra B C]
+--This is a lemma, but it can be made local instance.
+lemma trans (C : Type w) [comm_ring C] [algebra A C] [algebra B C]
   [is_scalar_tower A B C] [hS : is_cyclotomic_extension S A B]
   [hT : is_cyclotomic_extension T B C] : is_cyclotomic_extension (S ∪ T) A C :=
 begin
@@ -120,7 +121,8 @@ begin
       rw [← (eq_cyclotomic_iff n.pos _).1 rfl],
       exact root_mul_right_of_is_root _ hb },
       rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
-  { sorry }
+  {
+   }
 end
 
 end is_cyclotomic_extension
