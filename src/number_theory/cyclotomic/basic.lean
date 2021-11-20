@@ -5,7 +5,7 @@ open polynomial algebra finite_dimensional module set
 
 universes u v w z
 
-variables (n : ℕ+) (S : set ℕ+) (A : Type u) (B : Type v) (K : Type w) (L : Type z)
+variables (n : ℕ+) (S T : set ℕ+) (A : Type u) (B : Type v) (K : Type w) (L : Type z)
 variables [comm_ring A] [comm_ring B] [algebra A B]
 variables [field K] [field L] [algebra K L]
 
@@ -43,16 +43,16 @@ begin
 end
 
 --is this the best way of stating the result?
-lemma empty (h : is_cyclotomic_extension ∅ A B) : (⊤ : subalgebra A B) = ⊥ :=
+lemma empty [h : is_cyclotomic_extension ∅ A B] : (⊤ : subalgebra A B) = ⊥ :=
 begin
   replace h := h.adjoint_roots,
   simp only [set.mem_empty_eq, set.set_of_false, adjoin_empty, exists_false, false_and] at h,
   exact (algebra.eq_top_iff.2 h).symm,
 end
 
-lemma trans (T : set ℕ+) (C : Type w) [comm_ring C] [algebra A C] [algebra B C]
-  [is_scalar_tower A B C] (hS : is_cyclotomic_extension S A B)
-  (hT : is_cyclotomic_extension T B C) : is_cyclotomic_extension (S ∪ T) A C :=
+instance trans (C : Type w) [comm_ring C] [algebra A C] [algebra B C]
+  [is_scalar_tower A B C] [hS : is_cyclotomic_extension S A B]
+  [hT : is_cyclotomic_extension T B C] : is_cyclotomic_extension (S ∪ T) A C :=
 begin
   refine ⟨λ n hn, _, λ x, _⟩,
   { cases hn,
@@ -70,7 +70,7 @@ begin
       ⟨n, or.inr hn.1, hn.2⟩) (λ b, _) (λ x y hx hy, subalgebra.add_mem _ hx hy)
       (λ x y hx hy, subalgebra.mul_mem _ hx hy),
     { let f := is_scalar_tower.to_alg_hom A B C,
-      have hb : f b ∈ (adjoin A {b : B | ∃ (a : ℕ+), a ∈ S ∧ b ^ (a : ℕ) = 1}).map f :=
+      have hb : f b ∈ (adjoin A { b : B | ∃ (a : ℕ+), a ∈ S ∧ b ^ (a : ℕ) = 1 }).map f :=
         ⟨b, ((iff _ _ _).1 hS).2 b, rfl⟩,
       rw [is_scalar_tower.to_alg_hom_apply, ← adjoin_image] at hb,
       refine adjoin_mono (λ y hy, _) hb,
@@ -78,9 +78,10 @@ begin
       exact ⟨n, ⟨mem_union_left T hn.1, by rw [← h₁, ← alg_hom.map_pow, hn.2, alg_hom.map_one]⟩⟩ } }
 end
 
-lemma roots_union_eq_union_roots (T : set ℕ+) : {b :B | ∃ (n : ℕ+), n ∈ S ∪ T ∧ b ^ (n : ℕ) = 1} =
-  {b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1} ∪
-  {b : B | ∃ (n : ℕ+), n ∈ T ∧ b ^ (n : ℕ ) = 1} :=
+lemma roots_union_eq_union_roots (T : set ℕ+) :
+  { b :B | ∃ (n : ℕ+), n ∈ S ∪ T ∧ b ^ (n : ℕ) = 1 } =
+  { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 } ∪
+  { b : B | ∃ (n : ℕ+), n ∈ T ∧ b ^ (n : ℕ ) = 1 } :=
 begin
   refine le_antisymm (λ x hx, _) (λ x hx, _),
   { obtain ⟨n, hn⟩ := hx,
@@ -94,7 +95,7 @@ begin
       exact ⟨n, ⟨or.inr hn.1, hn.2⟩⟩ } }
 end
 
-lemma union (T : set ℕ+) (h : is_cyclotomic_extension (S ∪ T) A B)
+lemma union_right [h : is_cyclotomic_extension (S ∪ T) A B]
   : is_cyclotomic_extension T (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) B :=
 begin
   refine ⟨λ n hn, _, λ b, _⟩,
@@ -105,6 +106,21 @@ begin
   { replace h := ((iff _ _ _).1 h).2 b,
     rwa [roots_union_eq_union_roots, adjoin_union_eq_adjoin_adjoin,
       subalgebra.mem_restrict_scalars] at h }
+end
+
+lemma union_left [h : is_cyclotomic_extension T A B] (hS : S ⊆ T) :
+  is_cyclotomic_extension S A (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) :=
+begin
+  refine ⟨λ n hn, _, λ b, _⟩,
+  { obtain ⟨b, hb⟩ := ((iff _ _ _).1 h).1 n (hS hn),
+    refine ⟨⟨b, subset_adjoin ⟨n, hn, _⟩⟩, _⟩,
+    { rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic, ← is_root.def] at hb,
+      suffices : (X ^ (n : ℕ) - 1).is_root b,
+      { simpa [sub_eq_zero] using this },
+      rw [← (eq_cyclotomic_iff n.pos _).1 rfl],
+      exact root_mul_right_of_is_root _ hb },
+      rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
+  { sorry }
 end
 
 end is_cyclotomic_extension
@@ -118,11 +134,22 @@ section fintype
 --This is a lemma, but it can be made local instance.
 lemma finite [h₁ : fintype S] [h₂ : is_cyclotomic_extension S A B] : finite A B :=
 begin
-  unfreezingI {revert h₂},
-  refine set.finite.dinduction_on (set.finite.intro h₁) (λ h, _) (λ n S hn hS H h, _),
-  { refine module.finite_def.2 ⟨({1} : finset B), _⟩,
-    simp [← top_to_submodule, empty _ _ h, to_submodule_bot] },
-  { sorry }
+  unfreezingI {revert h₂ A B},
+  refine set.finite.induction_on (set.finite.intro h₁) (λ A B, _) (λ n S hn hS H A B, _),
+  { introsI _ _ _ _,
+    refine module.finite_def.2 ⟨({1} : finset B), _⟩,
+    simp [← top_to_submodule, empty, to_submodule_bot] },
+  { introsI _ _ _ h,
+    haveI : is_cyclotomic_extension S A (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }),
+    { sorry },
+    haveI := H A (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }),
+    haveI : finite (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }) B,
+    { rw [← union_singleton] at h,
+      have := @union_right S {n} A B _ _ _ h,
+      sorry
+    },
+    exact finite.trans (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }) _,
+   }
 end
 
 --This is a lemma, but it can be made local instance.
