@@ -221,8 +221,13 @@ section leading_terms
 -- TODO is this the best def?
 /-- The sum of the monomials of highest degree of a multivariate polynomial. -/
 def leading_terms (p : mv_polynomial ι R) : mv_polynomial ι R :=
-(p.support.filter (λ s : ι →₀ ℕ, s.sum (λ _ e, e) = p.total_degree)).sum $
-  λ s, monomial s (p.coeff s)
+homogeneous_component p.total_degree p
+
+lemma leading_terms_apply (p : mv_polynomial ι R) : p.leading_terms =
+  ∑ d in p.support.filter (λ d, ∑ i in d.support, d i = p.total_degree), monomial d (coeff d p) :=
+homogeneous_component_apply _ _
+-- (p.support.filter (λ s : ι →₀ ℕ, s.sum (λ _ e, e) = p.total_degree)).sum $
+--   λ s, monomial s (p.coeff s)
 
 @[simp]
 lemma leading_terms_zero : (0 : mv_polynomial ι R).leading_terms = 0 :=
@@ -236,6 +241,7 @@ begin
 end
 
 -- TODO for non-zero polys this is true that p.lead = p iff p.is_homogenous n for a fixed n
+-- TODO generalize to p.homog comp = n
 lemma leading_terms_eq_self_iff_is_homogeneous (p : mv_polynomial ι R) :
   p.leading_terms = p ↔ p.is_homogeneous p.total_degree :=
 begin
@@ -248,16 +254,16 @@ begin
     use h_w,
     classical,
     change ¬ h_w.sum (λ (_x : ι) (e : ℕ), e) = p.total_degree at h_h₂,
-    simp [coeff_sum, h_h₁, h_h₂, ne.symm h_h₁], },
-  { rw leading_terms,
-    rw (_ : p.support.filter (λ (s : ι →₀ ℕ), s.sum (λ (_x : ι) (e : ℕ), e) = p.total_degree)
+    simp [coeff_sum, h_h₁, h_h₂, ne.symm h_h₁, coeff_homogeneous_component],
+    convert h_h₂, },
+  { rw [leading_terms_apply],
+    rw (_ : p.support.filter (λ (s : ι →₀ ℕ), ∑ (i : ι) in s.support, s i = p.total_degree)
             = p.support),
     { rw support_sum_monomial_coeff p, },
     { rw finset.filter_eq_self_iff,
       intros s hs,
       rw [mem_support_iff] at hs,
-      rw ← h hs,
-      exact rfl, }, },
+      rw ← h hs, }, },
 end
 
 @[simp]
@@ -292,14 +298,7 @@ end dangerous_instance
 
 lemma is_homogeneous_leading_terms (p : mv_polynomial ι R) :
   p.leading_terms.is_homogeneous p.total_degree :=
-begin
-  rw leading_terms,
-  rw is_homogeneous,
-  intros d hd,
-  classical,
-  simp [coeff_sum, and_comm] at hd,
-  exact hd.1,
-end
+homogeneous_component_is_homogeneous (total_degree p) p
 
 lemma exists_coeff_ne_zero_total_degree {p : mv_polynomial ι R} (hp : p ≠ 0) :
   ∃ (v : ι →₀ ℕ), v.sum (λ _ e, e) = p.total_degree ∧ p.coeff v ≠ 0 :=
@@ -393,13 +392,20 @@ end
 lemma leading_terms_ne_zero {p : mv_polynomial ι R} (hp : p ≠ 0) : p.leading_terms ≠ 0 :=
 begin
   classical,
-  rw leading_terms,
+  rw leading_terms_apply,
   apply sum_monomial_ne_zero_of_exists_mem_ne_zero,
   simp only [exists_prop, mem_support_iff, finset.mem_filter],
   convert exists_coeff_ne_zero_total_degree hp,
   ext v,
+  change v.sum (λ (_x : ι) (e : ℕ), e) with v.support.sum v,
   simp [and_comm],
 end
+
+@[simp]
+lemma total_degree_homogenous_component_of_ne_zero {n : ℕ} {p : mv_polynomial ι R}
+  (hp : homogeneous_component n p ≠ 0) :
+  (homogeneous_component n p).total_degree = n :=
+is_homogeneous.total_degree (homogeneous_component_is_homogeneous n p) hp
 
 @[simp]
 lemma total_degree_leading_terms (p : mv_polynomial ι R) :
@@ -407,7 +413,7 @@ lemma total_degree_leading_terms (p : mv_polynomial ι R) :
 begin
   by_cases hp : p = 0,
   { simp [hp], },
-  rw is_homogeneous.total_degree (is_homogeneous_leading_terms p) (leading_terms_ne_zero hp),
+  exact total_degree_homogenous_component_of_ne_zero (leading_terms_ne_zero hp),
 end
 
 lemma leading_terms_idempotent (p : mv_polynomial ι R) :
