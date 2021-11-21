@@ -117,7 +117,7 @@ finsupp.map_domain (λ j, finsupp.update j i (p.total_degree - j.sum (λ _ m, m)
 
 
 -- TODO mathlib
-@[simp] lemma mv_polynomial.support_eq_empty {f : mv_polynomial ι R} : f.support = ∅ ↔ f = 0 :=
+@[simp] lemma support_eq_empty {f : mv_polynomial ι R} : f.support = ∅ ↔ f = 0 :=
 finsupp.support_eq_empty
 
 @[simp] lemma finsupp.support_map_domain {α β M : Type*} [add_comm_monoid M]
@@ -132,10 +132,6 @@ begin
   simp [hx],
 end
 
-lemma degree_support_homogenization (i : ι) (p : mv_polynomial ι R)
-  (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (exp : ι →₀ ℕ)
-  (hexp : exp ∈ (p.homogenization i).support) : exp.sum (λ _ m, m) = p.total_degree :=
-  sorry
 -- lemma support_homogenization (i : ι) (p : mv_polynomial ι R)
 --   (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : (p.homogenization i).support = p.support.image sorry :=
 -- begin
@@ -179,7 +175,25 @@ lemma is_homogeneous_homogenization (i : ι) (p : mv_polynomial ι R)
   (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) :
   (p.homogenization i).is_homogeneous p.total_degree :=
 begin
-  sorry
+  rw homogenization,
+  intros d hd,
+  classical,
+  simp at hd,
+  rw finsupp.map_domain at hd,
+  simp [coeff_sum] at hd,
+  sorry,
+end
+
+lemma homogenization_of_is_homogeneous (n : ℕ) (i : ι) (p : mv_polynomial ι R)
+  (hp : p.is_homogeneous n) : p.homogenization i = p :=
+begin
+  by_cases hpn : p = 0,
+  { simp [hpn], },
+  rw homogenization,
+  have := (hp.total_degree hpn).symm,
+  subst this,
+  rw is_homogeneous at hp,
+  sorry,
 end
 
 -- TODO this can follow from previous
@@ -214,14 +228,92 @@ def leading_terms (p : mv_polynomial ι R) : mv_polynomial ι R :=
 lemma leading_terms_zero : (0 : mv_polynomial ι R).leading_terms = 0 :=
 by simp [leading_terms]
 
+lemma finset.filter_eq_self_iff {α : Type*} (S : finset α) (h : α → Prop) [decidable_pred h] :
+  S.filter h = S ↔ ∀ s ∈ S, h s :=
+begin
+  cases S,
+  simp only [finset.filter, finset.mem_mk, multiset.filter_eq_self],
+end
+
+-- TODO for non-zero polys this is true that p.lead = p iff p.is_homogenous n for a fixed n
+lemma leading_terms_eq_self_iff_is_homogeneous (p : mv_polynomial ι R) :
+  p.leading_terms = p ↔ p.is_homogeneous p.total_degree :=
+begin
+  split; intro h,
+  { rw is_homogeneous,
+    contrapose! h,
+    rcases h with ⟨h_w, h_h₁, h_h₂⟩,
+    rw [leading_terms, ne.def, mv_polynomial.ext_iff],
+    push_neg,
+    use h_w,
+    classical,
+    change ¬ h_w.sum (λ (_x : ι) (e : ℕ), e) = p.total_degree at h_h₂,
+    simp [coeff_sum, h_h₁, h_h₂, ne.symm h_h₁], },
+  { rw leading_terms,
+    rw (_ : p.support.filter (λ (s : ι →₀ ℕ), s.sum (λ (_x : ι) (e : ℕ), e) = p.total_degree)
+            = p.support),
+    { rw support_sum_monomial_coeff p, },
+    { rw finset.filter_eq_self_iff,
+      intros s hs,
+      rw [mem_support_iff] at hs,
+      rw ← h hs,
+      exact rfl, }, },
+end
+
+@[simp]
+lemma leading_terms_C (r : R) : (C r : mv_polynomial ι R).leading_terms = C r :=
+begin
+  rw leading_terms_eq_self_iff_is_homogeneous,
+  convert is_homogeneous_C _ _,
+  simp,
+end
+
+@[simp]
+lemma leading_terms_monomial (s : ι →₀ ℕ) (r : R) : (monomial s r).leading_terms = monomial s r :=
+begin
+  by_cases hr : r = 0,
+  { simp [hr], },
+  rw leading_terms_eq_self_iff_is_homogeneous,
+  convert is_homogeneous_monomial _ _ _ _,
+  simpa [total_degree_monomial _ hr]
+end
+
+section dangerous_instance
+local attribute [instance] mv_polynomial.unique
+@[simp]
+lemma leading_terms_X (s : ι) : (X s : mv_polynomial ι R).leading_terms = X s :=
+begin
+  nontriviality R,
+  rw leading_terms_eq_self_iff_is_homogeneous,
+  convert is_homogeneous_X _ _,
+  exact total_degree_X _,
+end
+end dangerous_instance
+
 lemma is_homogeneous_leading_terms (p : mv_polynomial ι R) :
   p.leading_terms.is_homogeneous p.total_degree :=
 begin
   rw leading_terms,
   rw is_homogeneous,
   intros d hd,
-  simp at hd,
-  sorry,
+  classical,
+  simp [coeff_sum, and_comm] at hd,
+  exact hd.1,
+end
+
+lemma exists_coeff_ne_zero_total_degree {p : mv_polynomial ι R} (hp : p ≠ 0) :
+  ∃ (v : ι →₀ ℕ), v.sum (λ _ e, e) = p.total_degree ∧ p.coeff v ≠ 0 :=
+begin
+  obtain ⟨b, hb₁, hb₂⟩ := p.support.exists_mem_eq_sup (finsupp.support_nonempty_iff.mpr hp)
+    (λ (m : ι →₀ ℕ), m.to_multiset.card),
+  use b,
+  split,
+  { rw ← total_degree_eq p at hb₂,
+    rw hb₂,
+    dsimp, -- TODO break this out as a lemma
+    funext m,
+    exact (finsupp.card_to_multiset _).symm, },
+  { exact mem_support_iff.mp hb₁, },
 end
 
 @[simp] lemma support_zero : (0 : mv_polynomial ι R).support = ∅ := finsupp.support_zero
@@ -243,9 +335,10 @@ end
 @[simp] lemma monomial_eq_zero (a : ι →₀ ℕ) (b : R) : monomial a b = 0 ↔ b = 0 :=
 finsupp.single_eq_zero
 
-lemma support_sum_monomial_subset [decidable_eq ι] (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R) :
+lemma support_sum_monomial_subset (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R) :
   support (∑ v in S, monomial v (f v)) ⊆ S :=
 begin
+  classical,
   induction S using finset.induction with s S hs hsi,
   { simp, },
   { rw finset.sum_insert hs,
@@ -297,21 +390,6 @@ begin
       simp, }, },
 end
 
-lemma exists_coeff_ne_zero_total_degree {p : mv_polynomial ι R} (hp : p ≠ 0) :
-  ∃ (v : ι →₀ ℕ), v.sum (λ _ e, e) = p.total_degree ∧ p.coeff v ≠ 0 :=
-begin
-  obtain ⟨b, hb₁, hb₂⟩ := p.support.exists_mem_eq_sup (finsupp.support_nonempty_iff.mpr hp)
-    (λ (m : ι →₀ ℕ), m.to_multiset.card),
-  use b,
-  split,
-  { rw ← total_degree_eq p at hb₂,
-    rw hb₂,
-    dsimp, -- TODO break this out as a lemma
-    funext m,
-    exact (finsupp.card_to_multiset _).symm, },
-  { exact mem_support_iff.mp hb₁, },
-end
-
 lemma leading_terms_ne_zero {p : mv_polynomial ι R} (hp : p ≠ 0) : p.leading_terms ≠ 0 :=
 begin
   classical,
@@ -323,12 +401,21 @@ begin
   simp [and_comm],
 end
 
+@[simp]
 lemma total_degree_leading_terms (p : mv_polynomial ι R) :
   p.leading_terms.total_degree = p.total_degree :=
 begin
   by_cases hp : p = 0,
   { simp [hp], },
   rw is_homogeneous.total_degree (is_homogeneous_leading_terms p) (leading_terms_ne_zero hp),
+end
+
+lemma leading_terms_idempotent (p : mv_polynomial ι R) :
+  p.leading_terms.leading_terms = p.leading_terms :=
+begin
+  rw [leading_terms],
+  rw total_degree_leading_terms,
+  sorry,
 end
 
 end leading_terms
@@ -342,13 +429,9 @@ begin
   sorry,
 end
 
--- TODO this probably still isn't true, must assume (p + q) total degree also equal?
-lemma homogenization_add (i : ι) (p q : mv_polynomial ι R) (h : p.total_degree = q.total_degree)
-  (hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
+lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
+  (h : p.total_degree = q.total_degree) (hpq : p.total_degree = (p + q).total_degree) :
   (p + q).homogenization i = p.homogenization i + q.homogenization i :=
-begin
-  simp [homogenization],
-  sorry,
-end
+by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
 end mv_polynomial
