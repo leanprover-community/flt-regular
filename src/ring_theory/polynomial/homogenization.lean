@@ -527,8 +527,21 @@ begin
   sorry,
 end
 
-lemma homogenization_X_add_C (i j : ι) (r : R) :
-  (X j + C r : mv_polynomial ι R).homogenization i = X j + C r * X i:= sorry
+lemma homogenization_X_add_C {i j : ι} (hij : i ≠ j) (r : R) :
+  (X j + C r : mv_polynomial ι R).homogenization i = X j + C r * X i :=
+begin
+  have : (X j + C r).total_degree = 1,
+  sorry,
+  erw [homogenization, finsupp.map_domain_add, finsupp.map_domain_single,
+    finsupp.map_domain_single],
+  simp only [tsub_zero, finsupp.sum_zero_index, finsupp.sum_single_index, this,
+    finsupp.update_eq_single_add_erase, add_zero, finsupp.single_zero, zero_add, finsupp.erase_zero,
+    single_eq_monomial, finsupp.erase_single_ne hij],
+  rw [X, X],
+  congr,
+  rw [monomial_eq_C_mul_X, pow_one],
+  refl,
+end
 
 lemma homogenization_prod (i : ι) (P : finset (mv_polynomial ι R))
   (hp : ∀ (p : mv_polynomial ι R) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0) :
