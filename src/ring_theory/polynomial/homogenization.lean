@@ -229,7 +229,7 @@ begin
 end
 
 lemma homogenization_of_is_homogeneous (n : ℕ) (i : ι) (p : mv_polynomial ι R)
-(hp : p.is_homogeneous n) : p.homogenization i = p :=
+  (hp : p.is_homogeneous n) : p.homogenization i = p :=
 begin
   by_cases hpn : p = 0,
   { simp [hpn], },
@@ -250,12 +250,20 @@ begin
   -- TODO there should be a simp lemma version of this for λ x, x so simp works
 end
 
+lemma homogenization_idempotent (i : ι) (p : mv_polynomial ι R) :
+  (p.homogenization i).homogenization i = p.homogenization i :=
+begin
+  classical,
+  apply homogenization_of_is_homogeneous p.total_degree,
+  exact is_homogeneous_homogenization _ _,
+end
+
 section finsupp
 open finsupp
 
 -- TODO want something like this but unsure what
-lemma map_domain_apply {α β M : Type*} [add_comm_monoid M] (S : set α) {f : α → β} (x : α →₀ M)
-  (hf : set.inj_on f (x.support)) (a : α) : finsupp.map_domain f x (f a) = x a :=
+lemma map_domain_apply' {α β M : Type*} [add_comm_monoid M] (S : set α) {f : α → β} (x : α →₀ M)
+  (hf : set.inj_on f x.support) (a : α) : finsupp.map_domain f x (f a) = x a :=
 begin
   sorry,
   -- rw [finsupp.map_domain, finsupp.sum_apply, finsupp.sum, finset.sum_eq_single a,
@@ -271,7 +279,7 @@ begin
   assume v₁ hv₁ v₂ hv₂ eq, ext a,
   have : finsupp.map_domain f v₁ (f a) = finsupp.map_domain f v₂ (f a), { rw eq },
   sorry,
-  -- rwa [finsupp.map_domain_apply hf, finsupp.map_domain_apply hf] at this,
+  -- rw [finsupp.map_domain_apply hf, finsupp.map_domain_apply hf] at this,
 end
 end finsupp
 
