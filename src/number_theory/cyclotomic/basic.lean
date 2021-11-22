@@ -110,34 +110,64 @@ begin
       subalgebra.mem_restrict_scalars] at h }
 end
 
-lemma union_left [h : is_cyclotomic_extension T A B] (hS : S ⊆ T) :
-  is_cyclotomic_extension S A (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) :=
+variables (s: set B)
+
+/-
+Do we want to keep this? probably not
+lemma adjoin_idem {x : B} (s: set B) : x ∈ adjoin (adjoin A s) s ↔ x ∈ adjoin A s :=
 begin
-  refine ⟨λ n hn, _, λ b, _⟩,
-  { obtain ⟨b, hb⟩ := ((iff _ _ _).1 h).1 n (hS hn),
-    refine ⟨⟨b, subset_adjoin ⟨n, hn, _⟩⟩, _⟩,
-    { rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic, ← is_root.def] at hb,
-      suffices : (X ^ (n : ℕ) - 1).is_root b,
-      { simpa [sub_eq_zero] using this },
-      rw [← (eq_cyclotomic_iff n.pos _).1 rfl],
-      exact root_mul_right_of_is_root _ hb },
-      rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
-  { cases b with b hb,
-    suffices : ∃ x ∈ adjoin A {b : ↥(adjoin A {b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1}) |
-      ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1}, ↑x = b,
-    { obtain ⟨x, hx, hxb⟩ := this,
-      simp [← hxb, hx] },
-    refine adjoin_induction hb (λ b₁ hb₁, _) (λ a, _) (λ b₁ b₂, _) (λ b₁ b₂, _),
-    { obtain ⟨n, hn, hb₁⟩ := hb₁,
-      refine ⟨⟨b₁, subset_adjoin ⟨n, hn, hb₁⟩⟩, _⟩,
+  split,
+  { intro hx,
+    refine adjoin_induction hx _ _ _ _,
+    { intros y hy,
+      intros t H, cases H, induction H_h, intros t_1 H, cases H, induction H_h, dsimp at *, simp at *, cases H_w_1, solve_by_elim,},
+    { rintro ⟨r, hr⟩,
+      assumption, },
+    { intros x y,
+      exact subalgebra.add_mem _ },
+    { intros x y,
+      exact subalgebra.mul_mem _ } },
+  { intro hx,
+    refine adjoin_induction hx _ _ _ _,
+    { intros y hy,
+    intros t H, cases H, induction H_h, intros t_1 H, cases H, induction H_h, dsimp at *, simp at *, cases H_w_1, solve_by_elim, },
+    { intro r,
+     let r':=algebra_map A (adjoin A s) r,
+      exact subalgebra.algebra_map_mem _ r'},
+    { intros x y,
+      exact subalgebra.add_mem _ },
+    { intros x y,
+      exact subalgebra.mul_mem _ } }
+end
+-/
+
+lemma adjoin_idem' {x : adjoin A s} :
+  x ∈ adjoin A {b : adjoin A s | (b : B) ∈ s} ↔ (x : B) ∈ adjoin A s :=
+begin
+split,
+  { intro hx,
+    refine adjoin_induction hx _ _ _ _,
+    {intros x hxx,
+    apply x.property, },
+    { intro r,
+    simp only [subalgebra.coe_algebra_map],
+      apply subalgebra.algebra_map_mem _ r, },
+    { intros x y,
+      exact subalgebra.add_mem _ },
+    { intros x y,
+      exact subalgebra.mul_mem _ } },
+  { intro hx,
+   cases x with t ht,
+    suffices : ∃ x ∈ adjoin A {b : adjoin A s | (b : B) ∈ s}, ↑x = t,
+  {obtain ⟨x, hx, hxx⟩:= this, simp [← hxx, hx],},
+    refine adjoin_induction ht (λ b₁ hb₁, _) (λ a, _) (λ b₁ b₂, _) (λ b₁ b₂, _),
+    { refine ⟨⟨b₁, subset_adjoin hb₁⟩, _⟩,
       simp only [exists_prop, and_true, eq_self_iff_true, subtype.coe_mk],
-      refine subset_adjoin ⟨n, hn, _⟩,
-      rw [← subalgebra.coe_eq_one, subalgebra.coe_pow],
-      convert hb₁ },
+      refine subset_adjoin hb₁,},
     { refine ⟨⟨algebra_map A B a, subalgebra.algebra_map_mem _ _⟩, _⟩,
       simp only [exists_prop, set_like.coe_mk, and_true, eq_self_iff_true],
-      convert subalgebra.algebra_map_mem _ a },
-    { simp only [and_imp, exists_prop, forall_exists_index],
+      convert subalgebra.algebra_map_mem _ a,},
+        { simp only [and_imp, exists_prop, forall_exists_index],
       intros x hxmem hxb y hymem hyb,
       refine ⟨⟨x + y, subalgebra.add_mem _ (by simp) (by simp)⟩, ⟨_, _⟩⟩,
       { simp_rw [← subalgebra.coe_add],
@@ -151,6 +181,27 @@ begin
         exact subalgebra.mul_mem _ hxmem hymem },
       { simp_rw [hxb, hyb],
         refl } } }
+end
+
+
+
+lemma union_left [h : is_cyclotomic_extension T A B] (hS : S ⊆ T) :
+  is_cyclotomic_extension S A (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) :=
+begin
+  refine ⟨λ n hn, _, λ b, _⟩,
+  { obtain ⟨b, hb⟩ := ((iff _ _ _).1 h).1 n (hS hn),
+    refine ⟨⟨b, subset_adjoin ⟨n, hn, _⟩⟩, _⟩,
+    { rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic, ← is_root.def] at hb,
+      suffices : (X ^ (n : ℕ) - 1).is_root b,
+      { simpa [sub_eq_zero] using this },
+      rw [← (eq_cyclotomic_iff n.pos _).1 rfl],
+      exact root_mul_right_of_is_root _ hb },
+      rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
+  { have:= (adjoin_idem' A B { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }).2 b.property,
+   simp only [mem_set_of_eq] at *,
+   norm_cast at this,
+    exact this,
+    }
 end
 
 end is_cyclotomic_extension
