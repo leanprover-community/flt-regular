@@ -529,6 +529,7 @@ begin
   rw [leading_terms_eq_self_iff_is_homogeneous, total_degree_leading_terms],
   exact is_homogeneous_leading_terms p,
 end
+
 lemma homogeneous_component_add (m  : ℕ) (p q : mv_polynomial ι R) :
   homogeneous_component m (p + q) = homogeneous_component m p + homogeneous_component m q :=
 by rw [homogeneous_component, linear_map.comp_apply, linear_map.comp_apply, linear_map.comp_apply,
@@ -541,8 +542,83 @@ by rw [homogeneous_component, linear_map.comp_apply, linear_map.comp_apply, line
 --   sorry,
 -- end
 
+lemma coeff_leading_terms (p : mv_polynomial ι R) (d : ι →₀ ℕ) :
+  coeff d p.leading_terms = if ∑ i in d.support, d i = p.total_degree then coeff d p else 0 :=
+coeff_homogeneous_component _ _ _
+
+lemma support_homogeneous_component (n : ℕ) (p : mv_polynomial ι R) :
+  (homogeneous_component n p).support = p.support.filter (λ d, d.sum (λ _ m, m) = n) :=
+begin
+  rw homogeneous_component,
+  simp only [finsupp.restrict_dom_apply, submodule.subtype_apply, function.comp_app,
+    linear_map.coe_comp, set.mem_set_of_eq],
+  erw ← finsupp.support_filter,
+  refl,
+end
+
+lemma support_homogeneous_component_subset (n : ℕ) (p : mv_polynomial ι R) :
+  (homogeneous_component n p).support ⊆ p.support :=
+begin
+  rw support_homogeneous_component,
+  exact finset.filter_subset _ _,
+end
+
+lemma support_leading_terms (p : mv_polynomial ι R) :
+  p.leading_terms.support = p.support.filter (λ d, d.sum (λ _ m, m) = p.total_degree) :=
+support_homogeneous_component _ _
+
+lemma support_leading_terms_subset (p : mv_polynomial ι R) : p.leading_terms.support ⊆ p.support :=
+support_homogeneous_component_subset _ _
+
+lemma eq_leading_terms_add (p : mv_polynomial ι R) (hp : p.total_degree ≠ 0) :
+  ∃ p_rest : mv_polynomial ι R,
+    p = p.leading_terms + p_rest ∧ p_rest.total_degree < p.total_degree :=
+begin
+  letI := classical.dec_eq ι,
+  existsi (∑ (v : ι →₀ ℕ) in p.support \ p.leading_terms.support, (monomial v) (coeff v p)),
+  split,
+  { nth_rewrite 0 p.leading_terms.as_sum,
+    have : ∀ (x : ι →₀ ℕ) (hx : x ∈ p.leading_terms.support), x.support.sum x = p.total_degree,
+    { intros x hx,
+      rw support_leading_terms at hx,
+      simp at hx,
+      exact hx.2, },
+    simp_rw coeff_leading_terms,
+    conv in (ite _ _ _)
+    { rw [if_pos (this x H)], },
+    have : p.leading_terms.support ⊆ p.support,
+    from support_leading_terms_subset _,
+    have : p.leading_terms.support ∩ p.support = p.leading_terms.support,
+    { rw finset.inter_eq_left_iff_subset,
+      exact this },
+    nth_rewrite 0 ← this,
+    rw finset.inter_comm,
+    rw finset.sum_inter_add_sum_diff,
+    exact p.as_sum, },
+  { rw total_degree,
+    rw finset.sup_lt_iff,
+    intros b hb,
+    rw support_leading_terms at hb,
+    rw ← finset.filter_not at hb, -- TODO this was also hard to find maybe a negated version is good
+    have := support_sum_monomial_subset _ _ hb,
+    simp only [finset.mem_filter] at this,
+    cases this,
+    rw total_degree,
+    apply lt_of_le_of_ne,
+    exact finset.le_sup this_left,
+    exact this_right,
+    rw [bot_eq_zero],
+    exact pos_iff_ne_zero.mpr hp, },
+end
+
 lemma leading_terms_mul [no_zero_divisors R] (p q : mv_polynomial ι R) :
   (p * q).leading_terms = p.leading_terms * q.leading_terms :=
+begin
+  sorry,
+end
+
+lemma total_degree_mul_eq [no_zero_divisors R] {p q : mv_polynomial ι R} (hp : p ≠ 0) (hq : q ≠ 0):
+  (p * q).total_degree = p.total_degree + q.total_degree :=
 begin
   sorry,
 end
