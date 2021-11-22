@@ -611,13 +611,80 @@ begin
     exact pos_iff_ne_zero.mpr hp, },
 end
 
+lemma is_homogeneous_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
+  is_homogeneous p 0 :=
+begin
+  sorry
+end
+lemma total_degree_add_of_total_degree_lt (p q : mv_polynomial ι R)
+  (h : q.total_degree < p.total_degree) : (p + q).total_degree = p.total_degree :=
+begin
+  apply le_antisymm,
+  { have := total_degree_add p q,
+    rwa max_eq_left_of_lt h at this, },
+  { rw total_degree,
+    rw total_degree,
+    sorry, -- probably best to rethink this
+     },
+end
+
+lemma leading_terms_add_of_total_degree_lt (p q : mv_polynomial ι R)
+  (h : q.total_degree < p.total_degree) : (p + q).leading_terms = p.leading_terms :=
+by rw [leading_terms, leading_terms, total_degree_add_of_total_degree_lt p q h,
+  homogeneous_component_add, homogeneous_component_eq_zero _ q h, add_zero]
+
+-- lemma C_mul_eq_smul {r : R} (p : mv_polynomial ι R) : C r * p = r • p :=
+-- by rw [C_eq_smul_one, algebra.smul_mul_assoc, one_mul]
+
+lemma homogeneous_component_C_mul [no_zero_divisors R] (n : ℕ) (p : mv_polynomial ι R) (r : R) :
+  homogeneous_component n (C r * p) = C r * homogeneous_component n p :=
+begin
+  rw homogeneous_component,
+  simp only [finsupp.restrict_dom_apply, submodule.subtype_apply, function.comp_app,
+    linear_map.coe_comp, set.mem_set_of_eq],
+  rw C_mul', -- TODO this has a weird name
+  rw finsupp.filter_smul,
+  rw C_mul', -- TODO this has a weird name
+end
+--TODO maybe this for leading terms and homog
+-- lemma homogeneous_s_monomial_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) (x : ι →₀ ℕ) :
+  -- (p * monomial x r).leading_terms = p.leading_terms * monomial x r :=
+  --TODO also maybe an smul version
+lemma leading_terms_C_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) :
+  (C r * p).leading_terms = C r * p.leading_terms :=
+begin
+  rw leading_terms,
+  rw leading_terms,
+  rw total_degree,
+  have : (C r * p).support = p.support,
+  sorry,
+  rw this,
+  rw homogeneous_component_C_mul,
+  refl,
+end
+
 lemma leading_terms_mul [no_zero_divisors R] (p q : mv_polynomial ι R) :
   (p * q).leading_terms = p.leading_terms * q.leading_terms :=
 begin
+  by_cases hp : p.total_degree = 0,
+  { have := is_homogeneous_of_total_degree_zero hp,
+    -- have := is_homogeneous_of_total_degree_zero hq,
+    -- rw (leading_terms_eq_self_iff_is_homogeneous _).mpr this,
+    -- rw (sorry : p.leading_terms = p),
+    -- rw (sorry : q.leading_terms = q),
+    sorry, },
+  by_cases hq : q.total_degree = 0,
+  sorry,
+  rcases eq_leading_terms_add p hp with ⟨wp, hp, tp⟩,
+  rw hp,
+  rcases eq_leading_terms_add q hq with ⟨wq, hq, tq⟩,
+  rw hq,
+  simp [add_mul, mul_add],
+  -- rw leading_terms_C_mul,
   sorry,
 end
 
-lemma total_degree_mul_eq [no_zero_divisors R] {p q : mv_polynomial ι R} (hp : p ≠ 0) (hq : q ≠ 0):
+lemma total_degree_mul_eq [no_zero_divisors R] {p q : mv_polynomial ι R} (hp : p ≠ 0) (hq : q ≠ 0) :
   (p * q).total_degree = p.total_degree + q.total_degree :=
 begin
   sorry,
