@@ -45,19 +45,19 @@ namespace mv_polynomial
 
 section finsupp
 
-open_locale classical
-
 -- TODO something like this should be true but unsure what
-lemma finsupp.sum_update_add {α β : Type*} [has_zero α] [add_comm_monoid β] (f : ι →₀ α) (i : ι)
-  (a : α) (g : ι → α → β) (hg : ∀ i, g i 0 = 0) : (f.update i a).sum g + g i (f i) = f.sum g + g i a :=
+lemma finsupp.sum_update_add {α β : Type*} [has_zero α] [add_comm_monoid β]
+  (f : ι →₀ α) (i : ι) (a : α) (g : ι → α → β) (hg : ∀ i, g i 0 = 0) :
+  (f.update i a).sum g + g i (f i) = f.sum g + g i a :=
 begin
+  classical,
   have hf : f.support ⊆ f.support ∪ {i} := f.support.subset_union_left {i},
   have hif : (f.update i a).support ⊆ f.support ∪ {i},
   { rw f.support_update i a, -- urgh why is this classical
     split_ifs,
-    { exact finset.subset.trans (finset.erase_subset i f.support) hf, },
-    { rw finset.union_comm, -- lemma?
-      refl, }, }, -- TODO is there no lemma for this?
+    { convert finset.subset.trans (finset.erase_subset i f.support) hf },
+    { rw [finset.insert_eq, finset.union_comm],
+      convert finset.subset.refl _  }, }, -- TODO is there no lemma for this?
   rw finsupp.sum_of_support_subset f hf,
   rw finsupp.sum_of_support_subset _ hif,
   simp,
@@ -207,10 +207,10 @@ begin
   intros, refl,
 end
 
-@[nolint decidable_classical]
-lemma is_homogeneous_homogenization [decidable_eq ι] (i : ι) (p : mv_polynomial ι R) :
+lemma is_homogeneous_homogenization (i : ι) (p : mv_polynomial ι R) :
   (p.homogenization i).is_homogeneous p.total_degree :=
 begin
+  letI := classical.dec_eq ι,
   rw homogenization,
   intros d hd,
   rw [finsupp.map_domain, finsupp.sum, coeff_sum] at hd,
@@ -454,11 +454,11 @@ begin
 end
 
 -- TODO probably there is a better proof?
-@[nolint decidable_classical]
-lemma sum_monomial_ne_zero_of_exists_mem_ne_zero [decidable_eq ι] [decidable_eq R]
-  (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R) (h : ∃ (s) (hs : s ∈ S), f s ≠ 0) :
-  ∑ (s : ι →₀ ℕ) in S, monomial s (f s) ≠ 0 :=
+lemma sum_monomial_ne_zero_of_exists_mem_ne_zero (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R)
+  (h : ∃ (s) (hs : s ∈ S), f s ≠ 0) : ∑ (s : ι →₀ ℕ) in S, monomial s (f s) ≠ 0 :=
 begin
+  letI := classical.dec_eq ι,
+  letI := classical.dec_eq R,
   induction S using finset.induction with s S hs hsi,
   { simpa using h, },
   rw finset.sum_insert hs,
@@ -607,45 +607,44 @@ theorem one_nonempty [has_one α] : (1 : finset α).nonempty := ⟨1, one_mem_on
 theorem image_one [decidable_eq β] [has_one α] {f : α → β} : image f 1 = {f 1} :=
 image_singleton f 1
 
-
-variable [decidable_eq α]
 -- @[simp, to_additive]
 -- lemma image2_mul [has_mul α] : finset.image2 has_mul.mul s t = s * t := rfl
 
 -- this is just a symmetrized version of the def, is it needed?
 -- TODO why are these names weird
 @[to_additive add_image_prod]
-lemma image_mul_prod [has_mul α] : image (λ x : α × α, x.fst * x.snd) (s.product t) = s * t := rfl
+lemma image_mul_prod [decidable_eq α] [has_mul α] :
+  image (λ x : α × α, x.fst * x.snd) (s.product t) = s * t := rfl
 
 @[simp, to_additive]
-lemma image_mul_left [group α] :
+lemma image_mul_left [decidable_eq α] [group α] :
   image (λ b, a * b) t = preimage t (λ b, a⁻¹ * b) (assume x hx y hy, (mul_right_inj a⁻¹).mp) :=
 sorry
 
 @[simp, to_additive]
-lemma image_mul_right [group α] :
+lemma image_mul_right [decidable_eq α] [group α] :
   image (λ a, a * b) t = preimage t (λ a, a * b⁻¹) (assume x hx y hy, (mul_left_inj b⁻¹).mp) :=
 sorry
 
 @[to_additive]
-lemma image_mul_left' [group α] :
+lemma image_mul_left' [decidable_eq α] [group α] :
   image (λ b, a⁻¹ * b) t = preimage t (λ b, a * b) (assume x hx y hy, (mul_right_inj a).mp) :=
 by simp
 
 @[to_additive]
-lemma image_mul_right' [group α] :
+lemma image_mul_right' [decidable_eq α] [group α] :
   image (λ a, a * b⁻¹) t = preimage t (λ a, a * b) (assume x hx y hy, (mul_left_inj b).mp) :=
 by simp
 
-@[simp, nolint decidable_classical, to_additive]
+@[simp, to_additive]
 lemma preimage_mul_left_singleton [group α] :
   preimage {b} ((*) a) (assume x hx y hy, (mul_right_inj a).mp) = {a⁻¹ * b} :=
-by rw [← image_mul_left', image_singleton]
+by { classical, rw [← image_mul_left', image_singleton] }
 
-@[simp, nolint decidable_classical, to_additive]
+@[simp, to_additive]
 lemma preimage_mul_right_singleton [group α] :
   preimage {b} (* a) (assume x hx y hy, (mul_left_inj a).mp)= {b * a⁻¹} :=
-by rw [← image_mul_right', image_singleton]
+by { classical, rw [← image_mul_right', image_singleton] }
 
 -- TODO fill out these for finset, changing image and preimage to the finset version
 -- @[simp, to_additive]
@@ -663,40 +662,40 @@ by rw [← image_mul_right', image_singleton]
 -- lemma preimage_mul_right_one' [group α] : (λ a, a * b⁻¹) ⁻¹' 1 = {b} := by simp
 
 @[simp, to_additive]
-lemma mul_singleton [has_mul α] : s * {b} = image (λ a, a * b) s := sorry
+lemma mul_singleton [decidable_eq α] [has_mul α] : s * {b} = image (λ a, a * b) s := sorry
 
 @[simp, to_additive]
-lemma singleton_mul [has_mul α] : {a} * t = image (λ b, a * b) t := sorry --image2_singleton_left
+lemma singleton_mul [decidable_eq α] [has_mul α] : {a} * t = image (λ b, a * b) t := sorry --image2_singleton_left
 
 -- @[simp, to_additive]
 -- lemma singleton_mul_singleton [has_mul α] : ({a} : set α) * {b} = {a * b} := image2_singleton
 
 @[to_additive]
-protected lemma mul_comm [comm_semigroup α] : s * t = t * s :=
+protected lemma mul_comm [decidable_eq α] [comm_semigroup α] : s * t = t * s :=
 by simp only [mul_def, mul_comm]; sorry
 
 /-- `finset α` is a `mul_one_class` under pointwise operations if `α` is. -/
 @[to_additive /-"`set α` is an `add_zero_class` under pointwise operations if `α` is."-/]
-protected def mul_one_class [mul_one_class α] : mul_one_class (finset α) :=
+protected def mul_one_class [decidable_eq α] [mul_one_class α] : mul_one_class (finset α) :=
 { mul_one := λ s, by { simp only [← singleton_one, mul_singleton, mul_one, image_id'] },
   one_mul := λ s, by { simp only [← singleton_one, singleton_mul, one_mul, image_id'] },
   ..finset.has_one, ..finset.has_mul }
 
 /-- `set α` is a `semigroup` under pointwise operations if `α` is. -/
 @[to_additive /-"`set α` is an `add_semigroup` under pointwise operations if `α` is. "-/]
-protected def semigroup [semigroup α] : semigroup (finset α) :=
+protected def semigroup [decidable_eq α] [semigroup α] : semigroup (finset α) :=
 { mul_assoc := λ _ _ _, sorry,--image2_assoc mul_assoc,
   ..finset.has_mul }
 
 /-- `set α` is a `monoid` under pointwise operations if `α` is. -/
 @[to_additive /-"`set α` is an `add_monoid` under pointwise operations if `α` is. "-/]
-protected def monoid [monoid α] : monoid (finset α) :=
+protected def monoid [decidable_eq α] [monoid α] : monoid (finset α) :=
 { ..finset.semigroup,
   ..finset.mul_one_class }
 
 /-- `set α` is a `comm_monoid` under pointwise operations if `α` is. -/
 @[to_additive /-"`set α` is an `add_comm_monoid` under pointwise operations if `α` is. "-/]
-protected def comm_monoid [comm_monoid α] : comm_monoid (finset α) :=
+protected def comm_monoid [decidable_eq α] [comm_monoid α] : comm_monoid (finset α) :=
 { mul_comm := λ _ _, finset.mul_comm, ..finset.monoid }
 
 localized "attribute [instance] finset.mul_one_class finset.add_zero_class finset.semigroup
@@ -704,8 +703,8 @@ localized "attribute [instance] finset.mul_one_class finset.add_zero_class finse
   in pointwise
 
 @[to_additive]
-lemma mul_subset_mul [has_mul α] (h₁ : s₁ ⊆ t₁) (h₂ : s₂ ⊆ t₂) : s₁ * s₂ ⊆ t₁ * t₂ :=
-sorry
+lemma mul_subset_mul [decidable_eq α] [has_mul α] (h₁ : s₁ ⊆ t₁) (h₂ : s₂ ⊆ t₂) :
+  s₁ * s₂ ⊆ t₁ * t₂ := sorry
 
 -- TODO there is loads more API in pointwise that could (should) be duplicated?
 
@@ -720,11 +719,10 @@ namespace mv_polynomial
 section
 
 -- generalized version of the unprimed version
-@[nolint decidable_classical]
-lemma support_sum_monomial_subset' [decidable_eq ι] {α : Type*} [decidable_eq α] (S : finset α)
-  (g : α → ι →₀ ℕ) (f : α → R) :
-  support (∑ v in S, monomial (g v) (f v)) ⊆ S.image g :=
+lemma support_sum_monomial_subset' [decidable_eq ι] {α : Type*} (S : finset α) (g : α → ι →₀ ℕ)
+  (f : α → R) : support (∑ v in S, monomial (g v) (f v)) ⊆ S.image g :=
 begin
+  letI := classical.dec_eq α,
   induction S using finset.induction with s S hs hsi,
   { simp, },
   { rw finset.sum_insert hs,
@@ -732,7 +730,7 @@ begin
     apply finset.union_subset,
     { apply finset.subset.trans support_monomial_subset _,
       rw finset.image_insert,
-      exact finset.subset_union_left _ (finset.image g S), },
+      convert finset.subset_union_left _ (finset.image g S), },
     { apply finset.subset.trans hsi _,
       rw finset.image_insert,
       exact finset.subset_insert (g s) (finset.image g S), }, },
@@ -833,5 +831,3 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
 end mv_polynomial
-
-#lint
