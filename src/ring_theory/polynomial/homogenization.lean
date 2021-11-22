@@ -145,6 +145,22 @@ end
 lemma homogenization_zero (i : ι) : (0 : mv_polynomial ι R).homogenization i = 0 :=
 by simp [homogenization]
 
+-- TODO can this be generalized usefully?
+@[simp] lemma map_domain_one {α β M : Type*} [has_zero β] [has_zero α] [has_one M]
+  [add_comm_monoid M] {f : α → β} (hf : f 0 = 0) :
+  finsupp.map_domain f (finsupp.single 0 1 : α →₀ M) = (finsupp.single 0 1 : β →₀ M) :=
+by simp [hf]
+
+-- TODO maybe instead prove this via is_homogeneous_one
+@[simp]
+lemma homogenization_one (i : ι) : (1 : mv_polynomial ι R).homogenization i = 1 :=
+begin
+  simp only [homogenization, total_degree_one, zero_tsub],
+  erw map_domain_one,
+  refl,
+  convert finsupp.update_self _ _,
+end
+
 @[simp]
 lemma homogenization_C (i : ι) (c : R) : (C c : mv_polynomial ι R).homogenization i = C c :=
 begin
@@ -543,11 +559,262 @@ begin
   refl,
 end
 
+end mv_polynomial
+section finset_prod
+namespace finset
+
+-- Like everything else in this file, for mathlib, theory of add / mul on finsets, API duplicated
+-- from the set version
+
+open function
+open finset
+
+variables {α : Type*} [decidable_eq α] {β : Type*} {s s₁ s₂ t t₁ t₂ u : finset α} {a b : α}
+  {x y : β}
+open_locale pointwise
+
+/-- The set `(1 : finset α)` is defined as `{1}` in locale `pointwise`. -/
+@[to_additive
+/-"The set `(0 : finset α)` is defined as `{0}` in locale `pointwise`. "-/]
+protected def has_one [has_one α] : has_one (finset α) := ⟨{1}⟩
+
+localized "attribute [instance] finset.has_one finset.has_zero" in pointwise
+
+@[to_additive]
+lemma singleton_one [has_one α] : ({1} : finset α) = 1 := rfl
+
+@[simp, to_additive]
+lemma mem_one [has_one α] : a ∈ (1 : finset α) ↔ a = 1 :=
+by simp [has_one.one]
+
+@[to_additive]
+lemma one_mem_one [has_one α] : (1 : α) ∈ (1 : finset α) := by simp [has_one.one]
+
+@[simp, to_additive]
+theorem one_subset [has_one α] : 1 ⊆ s ↔ (1 : α) ∈ s := singleton_subset_iff
+
+@[to_additive]
+theorem one_nonempty [has_one α] : (1 : finset α).nonempty := ⟨1, one_mem_one⟩
+
+@[simp, to_additive]
+theorem image_one [decidable_eq β] [has_one α] {f : α → β} : image f 1 = {f 1} :=
+image_singleton f 1
+
+
+-- @[simp, to_additive]
+-- lemma image2_mul [has_mul α] : finset.image2 has_mul.mul s t = s * t := rfl
+
+-- this is just a symmetrized version of the def, is it needed?
+-- TODO why are these names weird
+@[to_additive add_image_prod]
+lemma image_mul_prod [has_mul α] : image (λ x : α × α, x.fst * x.snd) (s.product t) = s * t := rfl
+
+@[simp, to_additive]
+lemma image_mul_left [group α] :
+  image (λ b, a * b) t = preimage t (λ b, a⁻¹ * b) (assume x hx y hy, (mul_right_inj a⁻¹).mp) :=
+sorry
+
+@[simp, to_additive]
+lemma image_mul_right [group α] :
+  image (λ a, a * b) t = preimage t (λ a, a * b⁻¹) (assume x hx y hy, (mul_left_inj b⁻¹).mp) :=
+sorry
+
+@[to_additive]
+lemma image_mul_left' [group α] :
+  image (λ b, a⁻¹ * b) t = preimage t (λ b, a * b) (assume x hx y hy, (mul_right_inj a).mp) :=
+by simp
+
+@[to_additive]
+lemma image_mul_right' [group α] :
+  image (λ a, a * b⁻¹) t = preimage t (λ a, a * b) (assume x hx y hy, (mul_left_inj b).mp) :=
+by simp
+
+@[simp, to_additive]
+lemma preimage_mul_left_singleton [group α] :
+  preimage {b} ((*) a) (assume x hx y hy, (mul_right_inj a).mp) = {a⁻¹ * b} :=
+by rw [← image_mul_left', image_singleton]
+
+@[simp, to_additive]
+lemma preimage_mul_right_singleton [group α] :
+  preimage {b} (* a) (assume x hx y hy, (mul_left_inj a).mp)= {b * a⁻¹} :=
+by rw [← image_mul_right', image_singleton]
+
+-- TODO fill out these for finset, changing image and preimage to the finset version
+-- @[simp, to_additive]
+-- lemma preimage_mul_left_one [group α] : (λ b, a * b) ⁻¹' 1 = {a⁻¹} :=
+-- by rw [← image_mul_left', image_one, mul_one]
+
+-- @[simp, to_additive]
+-- lemma preimage_mul_right_one [group α] : (λ a, a * b) ⁻¹' 1 = {b⁻¹} :=
+-- by rw [← image_mul_right', image_one, one_mul]
+
+-- @[to_additive]
+-- lemma preimage_mul_left_one' [group α] : (λ b, a⁻¹ * b) ⁻¹' 1 = {a} := by simp
+
+-- @[to_additive]
+-- lemma preimage_mul_right_one' [group α] : (λ a, a * b⁻¹) ⁻¹' 1 = {b} := by simp
+
+@[simp, to_additive]
+lemma mul_singleton [has_mul α] : s * {b} = image (λ a, a * b) s := sorry
+
+@[simp, to_additive]
+lemma singleton_mul [has_mul α] : {a} * t = image (λ b, a * b) t := sorry --image2_singleton_left
+
+-- @[simp, to_additive]
+-- lemma singleton_mul_singleton [has_mul α] : ({a} : set α) * {b} = {a * b} := image2_singleton
+
+@[to_additive]
+protected lemma mul_comm [comm_semigroup α] : s * t = t * s :=
+by simp only [mul_def, mul_comm]; sorry
+
+/-- `finset α` is a `mul_one_class` under pointwise operations if `α` is. -/
+@[to_additive /-"`set α` is an `add_zero_class` under pointwise operations if `α` is."-/]
+protected def mul_one_class [mul_one_class α] : mul_one_class (finset α) :=
+{ mul_one := λ s, by { simp only [← singleton_one, mul_singleton, mul_one, image_id'] },
+  one_mul := λ s, by { simp only [← singleton_one, singleton_mul, one_mul, image_id'] },
+  ..finset.has_one, ..finset.has_mul }
+
+/-- `set α` is a `semigroup` under pointwise operations if `α` is. -/
+@[to_additive /-"`set α` is an `add_semigroup` under pointwise operations if `α` is. "-/]
+protected def semigroup [semigroup α] : semigroup (finset α) :=
+{ mul_assoc := λ _ _ _, sorry,--image2_assoc mul_assoc,
+  ..finset.has_mul }
+
+/-- `set α` is a `monoid` under pointwise operations if `α` is. -/
+@[to_additive /-"`set α` is an `add_monoid` under pointwise operations if `α` is. "-/]
+protected def monoid [monoid α] : monoid (finset α) :=
+{ ..finset.semigroup,
+  ..finset.mul_one_class }
+
+/-- `set α` is a `comm_monoid` under pointwise operations if `α` is. -/
+@[to_additive /-"`set α` is an `add_comm_monoid` under pointwise operations if `α` is. "-/]
+protected def comm_monoid [comm_monoid α] : comm_monoid (finset α) :=
+{ mul_comm := λ _ _, finset.mul_comm, ..finset.monoid }
+
+localized "attribute [instance] finset.mul_one_class finset.add_zero_class finset.semigroup
+  finset.add_semigroup finset.monoid finset.add_monoid finset.comm_monoid finset.add_comm_monoid"
+  in pointwise
+
+@[to_additive]
+lemma mul_subset_mul [has_mul α] (h₁ : s₁ ⊆ t₁) (h₂ : s₂ ⊆ t₂) : s₁ * s₂ ⊆ t₁ * t₂ :=
+sorry
+
+-- TODO there is loads more API in pointwise that could (should) be duplicated?
+
+-- TODO a lemma mem_prod for both set and finset, saying that something is in a product of sets
+-- only if it is a product of elements of each
+
+
+end finset
+end finset_prod
+
+namespace mv_polynomial
+section
+
+-- generalized version of the unprimed version
+lemma support_sum_monomial_subset' [decidable_eq ι] {α : Type*} [decidable_eq α] (S : finset α)
+  (g : α → ι →₀ ℕ) (f : α → R) :
+  support (∑ v in S, monomial (g v) (f v)) ⊆ S.image g :=
+begin
+  induction S using finset.induction with s S hs hsi,
+  { simp, },
+  { rw finset.sum_insert hs,
+    apply finset.subset.trans support_add,
+    apply finset.union_subset,
+    { apply finset.subset.trans support_monomial_subset _,
+      rw finset.image_insert,
+      exact finset.subset_union_left _ (finset.image g S), },
+    { apply finset.subset.trans hsi _,
+      rw finset.image_insert,
+      exact finset.subset_insert (g s) (finset.image g S), }, },
+end
+variable [decidable_eq ι]
+open_locale pointwise
+
+lemma support_mul' (p q : mv_polynomial ι R) : (p * q).support ⊆ p.support + q.support :=
+begin
+  -- TODO this was really hard to find, maybe needs a docstring or alias?
+  rw [p.as_sum, q.as_sum, finset.sum_mul_sum],
+  simp_rw [monomial_mul],
+  rw [support_sum_monomial_coeff, support_sum_monomial_coeff],
+  exact finset.subset.trans (support_sum_monomial_subset' _ _ _) (finset.subset.refl _),
+end
+section
+open_locale pointwise
+@[simp] lemma support_one : (1 : mv_polynomial ι R).support ⊆ 0 :=
+finsupp.support_single_subset
+-- @[simp] lemma support_one [nontrivial R] : (1 : mv_polynomial ι R).support = 0 :=
+-- begin
+--   convert (finsupp.support_eq_singleton).mpr _,
+--   split,
+--   simp,
+--   change (1 : R) ≠ 0,
+-- end
+end
+
+lemma support_prod (P : finset (mv_polynomial ι R)) : (P.prod id).support ⊆ P.sum support :=
+begin
+  classical,
+  induction P using finset.induction with p S hS hSi,
+  { simp [support_X], },
+  rw [finset.prod_insert hS, finset.sum_insert hS],
+  simp only [id.def],
+  refine finset.subset.trans (support_mul' _ _) _,
+  convert finset.add_subset_add (finset.subset.refl _) hSi,
+end
+
+end
+
+lemma prod_contains_no (i : ι)
+ (P : finset (mv_polynomial ι R))
+  (hp : ∀ (p : mv_polynomial ι R) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0)
+  (j) (hjp : j ∈ (P.prod id).support) :
+  (j : ι → ℕ) i = 0 :=
+begin
+  classical,
+  induction P using finset.induction with p S hS hSi generalizing j,
+  { simp only [mem_support_iff, finset.prod_empty] at hjp,
+    have : j = 0,
+    sorry,
+    simp [this], },
+  { have := support_prod _ hjp,
+    rw finset.prod_insert hS at hjp,
+    rw finset.sum_insert hS at this,
+    simp at this,
+    rw finset.mem_add at this,
+    rcases this with ⟨y, z, hy, hz, hh⟩,
+    have := hp _ (finset.mem_insert_self p S) _ hy,
+    have := hSi _ z _,
+    sorry,
+    sorry,
+    sorry,
+    -- TODO probably need more lemmas for this still
+    -- apply support_prod,
+  }
+  -- TODO this proof should be simple with `support_prod` we know j is in
+  -- { simp only [finset.prod_insert hS, id.def, ne.def] at hjp,
+  --   apply hSi, },
+end
+
 lemma homogenization_prod (i : ι) (P : finset (mv_polynomial ι R))
   (hp : ∀ (p : mv_polynomial ι R) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0) :
   (P.prod id).homogenization i = P.prod (λ p, p.homogenization i) :=
 begin
-  sorry, -- TODO should follow from previous easily
+  classical,
+  induction P using finset.induction with p S hS hSi,
+  { simp, },
+  simp only [finset.prod_insert hS],
+  rw homogenization_mul,
+  rw hSi,
+  rw [id.def],
+  { intros p_1 hp_1 j hjp,
+    exact hp p_1 (finset.mem_insert_of_mem hp_1) _ hjp, },
+  { intros j hj,
+    exact hp p (finset.mem_insert_self p S) _ hj, },
+  { intros j hj,
+    have := support_prod _ hj,
+    sorry,
+     },
 end
 
 lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
