@@ -160,25 +160,37 @@ namespace is_cyclotomic_extension
 
 section fintype
 
+lemma finite_of_singleton [is_domain B] [h : is_cyclotomic_extension {n} A B] : finite A B :=
+begin
+  classical,
+  rw [module.finite_def, ← top_to_submodule, ← ((iff_adjoin_eq_top _ _ _).1 h).2],
+  refine fg_adjoin_of_finite _ (λ b hb, _),
+  { simp only [mem_singleton_iff, exists_eq_left],
+    have : {b : B | b ^ (n : ℕ) = 1} = (nth_roots n (1 : B)).to_finset :=
+      set.ext (λ x, ⟨λ h, by simpa using h, λ h, by simpa using h⟩),
+    rw [this],
+    exact (nth_roots ↑n 1).to_finset.finite_to_set },
+  { simp only [mem_singleton_iff, exists_eq_left, mem_set_of_eq] at hb,
+    refine ⟨X ^ (n : ℕ) - 1, ⟨monic_X_pow_sub_C _ n.pos.ne.symm, by simp [hb]⟩⟩ }
+end
+
 --This is a lemma, but it can be made local instance.
-lemma finite [h₁ : fintype S] [h₂ : is_cyclotomic_extension S A B] : finite A B :=
+lemma finite [is_domain B] [h₁ : fintype S] [h₂ : is_cyclotomic_extension S A B] : finite A B :=
 begin
   unfreezingI {revert h₂ A B},
   refine set.finite.induction_on (set.finite.intro h₁) (λ A B, _) (λ n S hn hS H A B, _),
-  { introsI _ _ _ _,
+  { introsI _ _ _ _ _,
     refine module.finite_def.2 ⟨({1} : finset B), _⟩,
     simp [← top_to_submodule, empty, to_submodule_bot] },
-  { introsI _ _ _ h,
-    haveI : is_cyclotomic_extension S A (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }),
-    { sorry },
+  { introsI _ _ _ _ h,
+    haveI : is_cyclotomic_extension S A (adjoin A { b : B | ∃ (n : ℕ+),
+      n ∈ S ∧ b ^ (n : ℕ) = 1 }) := union_left _ (insert n S) _ _ (subset_insert n S),
     haveI := H A (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }),
     haveI : finite (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }) B,
     { rw [← union_singleton] at h,
-      have := @union_right S {n} A B _ _ _ h,
-      sorry
-    },
-    exact finite.trans (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }) _,
-   }
+      letI := @union_right S {n} A B _ _ _ h,
+      exact finite_of_singleton n _ _ },
+    exact finite.trans (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }) _ }
 end
 
 --This is a lemma, but it can be made local instance.
