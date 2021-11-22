@@ -207,6 +207,7 @@ begin
   intros, refl,
 end
 
+@[nolint decidable_classical]
 lemma is_homogeneous_homogenization [decidable_eq ι] (i : ι) (p : mv_polynomial ι R) :
   (p.homogenization i).is_homogeneous p.total_degree :=
 begin
@@ -286,8 +287,9 @@ begin
 end
 
 -- TODO this can follow from previous
-lemma total_degree_homogenization (i : ι) (p : mv_polynomial ι R)
-  (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : -- this arg is probably needed?
+lemma total_degree_homogenization (i : ι) (p : mv_polynomial ι R) :
+  --(h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : -- this arg is probably needed? I (RB) deleted it since
+  --it's not needed, I am keeping as comment since I don't why it's here
   (p.homogenization i).total_degree = p.total_degree :=
 begin
   classical,
@@ -452,6 +454,7 @@ begin
 end
 
 -- TODO probably there is a better proof?
+@[nolint decidable_classical]
 lemma sum_monomial_ne_zero_of_exists_mem_ne_zero [decidable_eq ι] [decidable_eq R]
   (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R) (h : ∃ (s) (hs : s ∈ S), f s ≠ 0) :
   ∑ (s : ι →₀ ℕ) in S, monomial s (f s) ≠ 0 :=
@@ -634,12 +637,12 @@ lemma image_mul_right' [group α] :
   image (λ a, a * b⁻¹) t = preimage t (λ a, a * b) (assume x hx y hy, (mul_left_inj b).mp) :=
 by simp
 
-@[simp, to_additive]
+@[simp, nolint decidable_classical, to_additive]
 lemma preimage_mul_left_singleton [group α] :
   preimage {b} ((*) a) (assume x hx y hy, (mul_right_inj a).mp) = {a⁻¹ * b} :=
 by rw [← image_mul_left', image_singleton]
 
-@[simp, to_additive]
+@[simp, nolint decidable_classical, to_additive]
 lemma preimage_mul_right_singleton [group α] :
   preimage {b} (* a) (assume x hx y hy, (mul_left_inj a).mp)= {b * a⁻¹} :=
 by rw [← image_mul_right', image_singleton]
@@ -717,6 +720,7 @@ namespace mv_polynomial
 section
 
 -- generalized version of the unprimed version
+@[nolint decidable_classical]
 lemma support_sum_monomial_subset' [decidable_eq ι] {α : Type*} [decidable_eq α] (S : finset α)
   (g : α → ι →₀ ℕ) (f : α → R) :
   support (∑ v in S, monomial (g v) (f v)) ⊆ S.image g :=
@@ -829,3 +833,5 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
 end mv_polynomial
+
+#lint
