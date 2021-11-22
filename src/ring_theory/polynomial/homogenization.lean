@@ -636,7 +636,7 @@ by rw [leading_terms, leading_terms, total_degree_add_of_total_degree_lt p q h,
 -- lemma C_mul_eq_smul {r : R} (p : mv_polynomial ι R) : C r * p = r • p :=
 -- by rw [C_eq_smul_one, algebra.smul_mul_assoc, one_mul]
 
-lemma homogeneous_component_C_mul [no_zero_divisors R] (n : ℕ) (p : mv_polynomial ι R) (r : R) :
+lemma homogeneous_component_C_mul (n : ℕ) (p : mv_polynomial ι R) (r : R) :
   homogeneous_component n (C r * p) = C r * homogeneous_component n p :=
 begin
   rw homogeneous_component,
