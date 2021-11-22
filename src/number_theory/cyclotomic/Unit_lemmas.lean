@@ -2,7 +2,7 @@ import number_theory.cyclotomic.galois_action_on_cyclo
 
 
 
-variables (p : ℕ+)
+variables (p : ℕ+) (K : Type*) [field K]
 
 open is_cyclotomic_extension
 open cyclotomic_ring
