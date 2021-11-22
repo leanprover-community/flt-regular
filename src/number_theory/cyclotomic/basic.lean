@@ -161,15 +161,12 @@ split,
     suffices : ∃ x ∈ adjoin A {b : adjoin A s | (b : B) ∈ s}, ↑x = t,
   {obtain ⟨x, hx, hxx⟩:= this, simp [← hxx, hx],},
     refine adjoin_induction ht (λ b₁ hb₁, _) (λ a, _) (λ b₁ b₂, _) (λ b₁ b₂, _),
-    {
-      refine ⟨⟨b₁, subset_adjoin hb₁⟩, _⟩,
+    { refine ⟨⟨b₁, subset_adjoin hb₁⟩, _⟩,
       simp only [exists_prop, and_true, eq_self_iff_true, subtype.coe_mk],
-      refine subset_adjoin hb₁,
-    },
+      refine subset_adjoin hb₁,},
     { refine ⟨⟨algebra_map A B a, subalgebra.algebra_map_mem _ _⟩, _⟩,
       simp only [exists_prop, set_like.coe_mk, and_true, eq_self_iff_true],
-      convert subalgebra.algebra_map_mem _ a,
-  },
+      convert subalgebra.algebra_map_mem _ a,},
         { simp only [and_imp, exists_prop, forall_exists_index],
       intros x hxmem hxb y hymem hyb,
       refine ⟨⟨x + y, subalgebra.add_mem _ (by simp) (by simp)⟩, ⟨_, _⟩⟩,
@@ -183,8 +180,7 @@ split,
       { simp_rw [← subalgebra.coe_mul],
         exact subalgebra.mul_mem _ hxmem hymem },
       { simp_rw [hxb, hyb],
-        refl } }
-  }
+        refl } } }
 end
 
 
@@ -205,7 +201,6 @@ begin
    simp only [mem_set_of_eq] at *,
    norm_cast at this,
     exact this,
-
     }
 end
 
