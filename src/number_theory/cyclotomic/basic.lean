@@ -214,6 +214,12 @@ section singleton
 
 variables [is_cyclotomic_extension {n} K L]
 
+lemma splits_X_pow_sub_one [is_cyclotomic_extension S K L] (n ∈ S) :
+  splits (algebra_map K L) (X ^ (n : ℕ) - 1) := sorry
+
+lemma splits_cyclotomic [is_cyclotomic_extension S K L] (n ∈ S) :
+  splits (algebra_map K L) (cyclotomic n K) := sorry
+
 --Add that `X ^ n - 1` splits if `n ∈ S`.
 instance splitting_field_X_pow_sub_one : is_splitting_field K L (X ^ (n : ℕ) - 1) := sorry
 
