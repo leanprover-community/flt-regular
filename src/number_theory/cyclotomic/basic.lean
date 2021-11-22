@@ -121,7 +121,35 @@ begin
       rw [← (eq_cyclotomic_iff n.pos _).1 rfl],
       exact root_mul_right_of_is_root _ hb },
       rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
-  { sorry }
+  { cases b with b hb,
+    suffices : ∃ x ∈ adjoin A {b : ↥(adjoin A {b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1}) |
+      ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1}, ↑x = b,
+    { obtain ⟨x, hx, hxb⟩ := this,
+      simp [← hxb, hx] },
+    refine adjoin_induction hb (λ b₁ hb₁, _) (λ a, _) (λ b₁ b₂, _) (λ b₁ b₂, _),
+    { obtain ⟨n, hn, hb₁⟩ := hb₁,
+      refine ⟨⟨b₁, subset_adjoin ⟨n, hn, hb₁⟩⟩, _⟩,
+      simp only [exists_prop, and_true, eq_self_iff_true, subtype.coe_mk],
+      refine subset_adjoin ⟨n, hn, _⟩,
+      rw [← subalgebra.coe_eq_one, subalgebra.coe_pow],
+      convert hb₁ },
+    { refine ⟨⟨algebra_map A B a, subalgebra.algebra_map_mem _ _⟩, _⟩,
+      simp only [exists_prop, set_like.coe_mk, and_true, eq_self_iff_true],
+      convert subalgebra.algebra_map_mem _ a },
+    { simp only [and_imp, exists_prop, forall_exists_index],
+      intros x hxmem hxb y hymem hyb,
+      refine ⟨⟨x + y, subalgebra.add_mem _ (by simp) (by simp)⟩, ⟨_, _⟩⟩,
+      { simp_rw [← subalgebra.coe_add],
+        exact subalgebra.add_mem _ hxmem hymem },
+      { simp_rw [hxb, hyb],
+        refl } },
+    { simp only [and_imp, exists_prop, forall_exists_index],
+      intros x hxmem hxb y hymem hyb,
+      refine ⟨⟨x * y, subalgebra.mul_mem _ (by simp) (by simp)⟩, ⟨_, _⟩⟩,
+      { simp_rw [← subalgebra.coe_mul],
+        exact subalgebra.mul_mem _ hxmem hymem },
+      { simp_rw [hxb, hyb],
+        refl } } }
 end
 
 end is_cyclotomic_extension
