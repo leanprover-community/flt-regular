@@ -833,5 +833,3 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
 end mv_polynomial
-
-#lint
