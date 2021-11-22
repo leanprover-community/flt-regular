@@ -84,11 +84,14 @@ end finsupp
 
 -- TODO decide if we should make this fix things with X i in already, or have assumptions that X i
 -- does not appear everywhere
+-- TODO make this change and instead of update simply add to the i component the amount needed
+-- this will have better properties (like being idempotent)
+
 /-- The homogenization of a multivariate polynomial at a single variable. -/
 def homogenization (i : ι) (p : mv_polynomial ι R) :
   mv_polynomial ι R :=
 -- ∑ j in p.support, monomial (j + finsupp.single i (p.total_degree - (j i))) (p.coeff j)
-finsupp.map_domain (λ j, finsupp.update j i (p.total_degree - j.sum (λ _ m, m))) p
+finsupp.map_domain (λ j, j + finsupp.single i (p.total_degree - j.sum (λ _ m, m))) p
 -- begin
 --   intros x hx y hy hxy,
 --   simp at *,
@@ -145,20 +148,20 @@ end
 lemma homogenization_zero (i : ι) : (0 : mv_polynomial ι R).homogenization i = 0 :=
 by simp [homogenization]
 
--- TODO can this be generalized usefully?
-@[simp] lemma map_domain_one {α β M : Type*} [has_zero β] [has_zero α] [has_one M]
-  [add_comm_monoid M] {f : α → β} (hf : f 0 = 0) :
-  finsupp.map_domain f (finsupp.single 0 1 : α →₀ M) = (finsupp.single 0 1 : β →₀ M) :=
-by simp [hf]
+-- TODO this is probably useless
+-- lemma map_domain_one {α β M : Type*} [has_zero β] [has_zero α] [has_one M]
+--   [add_comm_monoid M] {f : α → β} (hf : f 0 = 0) :
+--   finsupp.map_domain f (finsupp.single 0 1 : α →₀ M) = (finsupp.single 0 1 : β →₀ M) :=
+-- by simp [hf]
 
 -- TODO maybe instead prove this via is_homogeneous_one
 @[simp]
 lemma homogenization_one (i : ι) : (1 : mv_polynomial ι R).homogenization i = 1 :=
 begin
-  simp only [homogenization, total_degree_one, zero_tsub],
-  erw map_domain_one,
+  simp only [homogenization, total_degree_one, zero_tsub, add_zero, finsupp.single_zero],
+  erw finsupp.map_domain_single,
+  -- erw map_domain_one,
   refl,
-  convert finsupp.update_self _ _,
 end
 
 @[simp]
@@ -169,7 +172,7 @@ begin
   rw single_eq_monomial,
   have : (0 : ι →₀ ℕ) i = 0,
   { simp only [finsupp.coe_zero, pi.zero_apply], },
-  rw [← this, finsupp.update_self],
+  rw [← this],
   simp,
 end
 
@@ -186,22 +189,25 @@ begin
   by_cases hr : r = 0,
   { simp [hr], },
   erw [homogenization, finsupp.map_domain_single, single_eq_monomial, total_degree_monomial _ hr,
-    tsub_self, ← hs, finsupp.update_self],
+    tsub_self, ← hs],
+  rw monomial_add_single,
+  simp only [hs, mul_one, pow_zero],
 end
 
 -- TODO name this
-lemma aux {i : ι} {p : mv_polynomial ι R} {x : ι →₀ ℕ} (hp : x ∈ p.support) (hx : x i = 0) :
-  (x.update i (p.total_degree - x.sum (λ _ m, m))).sum (λ _ m, m) = p.total_degree :=
+lemma aux {i : ι} {p : mv_polynomial ι R} {x : ι →₀ ℕ} (hp : x ∈ p.support) :
+  (x + finsupp.single i (p.total_degree - x.sum (λ _ m, m))).sum (λ _ m, m) = p.total_degree :=
 begin
-  have := finsupp.sum_update_add x i (p.total_degree - x.sum (λ _ m, m)) (λ _ m, m) _,
-  { rw [hx, add_zero] at this,
-    rw [this, add_tsub_cancel_iff_le],
-    exact finset.le_sup hp, },
-  { simp, }
+  rw finsupp.sum_add_index,
+  rw [finsupp.sum_single_index],
+  rw [add_tsub_cancel_iff_le],
+  exact finset.le_sup hp,
+  refl,
+  intro, refl,
+  intros, refl,
 end
 
-lemma is_homogeneous_homogenization [decidable_eq ι] (i : ι) (p : mv_polynomial ι R)
-  (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) :
+lemma is_homogeneous_homogenization [decidable_eq ι] (i : ι) (p : mv_polynomial ι R) :
   (p.homogenization i).is_homogeneous p.total_degree :=
 begin
   rw homogenization,
@@ -210,20 +216,19 @@ begin
   simp_rw [single_eq_monomial, coeff_monomial] at hd,
   contrapose! hd,
   have : ∀ (x : ι →₀ ℕ) (hx : x ∈ p.support),
-    ¬ x.update i (p.total_degree - x.sum (λ (_x : ι) (m : ℕ), m)) = d,
+    ¬ x + finsupp.single i (p.total_degree - x.sum (λ (_x : ι) (m : ℕ), m)) = d,
   { intros x hx hh,
     apply hd,
     rw ← hh,
-    change (x.update i (p.total_degree - x.sum (λ (_x : ι) (m : ℕ), m))).sum (λ _ m, m) = _,
-    rw aux hx (h x hx), },
+    change (x + finsupp.single i (p.total_degree - x.sum (λ _ m, m))).sum (λ _ m, m) = _,
+    rw aux hx, },
   conv in (ite _ _ _)
-  { simp [if_neg (this x H)], },
+  { rw [if_neg (this x H)], },
   simp,
 end
 
 lemma homogenization_of_is_homogeneous (n : ℕ) (i : ι) (p : mv_polynomial ι R)
-  (hp : p.is_homogeneous n) (hxi : ∀ (x : ι →₀ ℕ) (hx : x ∈ p.support), x i = 0) :
-  p.homogenization i = p :=
+(hp : p.is_homogeneous n) : p.homogenization i = p :=
 begin
   by_cases hpn : p = 0,
   { simp [hpn], },
@@ -232,13 +237,12 @@ begin
   subst this,
   rw is_homogeneous at hp,
   have : ∀ x (hx : x ∈ p.support),
-    (λ (j : ι →₀ ℕ), j.update i (p.total_degree - j.sum (λ (_x : ι) (m : ℕ), m))) x = x,
+    (λ (j : ι →₀ ℕ), j + finsupp.single i (p.total_degree - j.sum (λ (_x : ι) (m : ℕ), m))) x = x,
   { intros x hx,
-    simp only,
-    convert finsupp.update_self _ _,
+    simp only [add_right_eq_self, finsupp.single_eq_same, tsub_eq_zero_iff_le, finsupp.single_tsub,
+      finsupp.single_le_iff],
     rw ← hp (mem_support_iff.mp hx),
-    change x.support.sum x - x.support.sum x = _,
-    simp [hxi, hx], },
+    exact le_refl _, },
   rw finsupp.map_domain_congr this,
   -- simp,
   erw finsupp.map_domain_id,
@@ -258,6 +262,7 @@ begin
   -- { assume b _ hba, exact finsupp.single_eq_of_ne (_) }, -- TODO set.inj_on.ne
   -- { assume h, rw [not_mem_support_iff.1 h, single_zero, zero_apply] }
 end
+
 lemma map_domain_injective' {α β M : Type*} [add_comm_monoid M] (S : set α) {f : α → β}
   (hf : set.inj_on f S) :
   set.inj_on (finsupp.map_domain f : (α →₀ M) → (β →₀ M)) {f | (f.support : set α) ⊆ S} :=
@@ -269,7 +274,7 @@ begin
 end
 end finsupp
 
-lemma homogenization_ne_zero_of_ne_zero (i : ι) (p : mv_polynomial ι R) (hp : p ≠ 0) :
+lemma homogenization_ne_zero_of_ne_zero (i : ι) {p : mv_polynomial ι R} (hp : p ≠ 0) :
   p.homogenization i ≠ 0 :=
 begin
   rw homogenization,
@@ -282,16 +287,15 @@ end
 
 -- TODO this can follow from previous
 lemma total_degree_homogenization (i : ι) (p : mv_polynomial ι R)
-  (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) :
+  (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : -- this arg is probably needed?
   (p.homogenization i).total_degree = p.total_degree :=
 begin
   classical,
   by_cases hp : p = 0,
   { simp [hp], },
-  apply is_homogeneous.total_degree, --(homogenization_ne_zero_of_ne_zero hp),
-  apply is_homogeneous_homogenization _ _ h,
-  sorry, -- TODO lemma
-  -- library_search!,
+  apply is_homogeneous.total_degree,
+  refine is_homogeneous_homogenization _ _,
+  exact (homogenization_ne_zero_of_ne_zero _ hp),
   -- rw total_degree,
   -- have : (homogenization i p).support.nonempty,
   -- { simp [homogenization],
@@ -569,7 +573,7 @@ namespace finset
 open function
 open finset
 
-variables {α : Type*} [decidable_eq α] {β : Type*} {s s₁ s₂ t t₁ t₂ u : finset α} {a b : α}
+variables {α : Type*} {β : Type*} {s s₁ s₂ t t₁ t₂ u : finset α} {a b : α}
   {x y : β}
 open_locale pointwise
 
@@ -601,6 +605,7 @@ theorem image_one [decidable_eq β] [has_one α] {f : α → β} : image f 1 = {
 image_singleton f 1
 
 
+variable [decidable_eq α]
 -- @[simp, to_additive]
 -- lemma image2_mul [has_mul α] : finset.image2 has_mul.mul s t = s * t := rfl
 
@@ -728,10 +733,10 @@ begin
       rw finset.image_insert,
       exact finset.subset_insert (g s) (finset.image g S), }, },
 end
-variable [decidable_eq ι]
 open_locale pointwise
 
-lemma support_mul' (p q : mv_polynomial ι R) : (p * q).support ⊆ p.support + q.support :=
+lemma support_mul' [decidable_eq ι] (p q : mv_polynomial ι R) :
+  (p * q).support ⊆ p.support + q.support :=
 begin
   -- TODO this was really hard to find, maybe needs a docstring or alias?
   rw [p.as_sum, q.as_sum, finset.sum_mul_sum],
@@ -752,6 +757,7 @@ finsupp.support_single_subset
 -- end
 end
 
+variable [decidable_eq ι]
 lemma support_prod (P : finset (mv_polynomial ι R)) : (P.prod id).support ⊆ P.sum support :=
 begin
   classical,
