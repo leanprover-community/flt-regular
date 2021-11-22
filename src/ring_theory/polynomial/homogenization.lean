@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alex J. Best
 -/
 
+import data.mv_polynomial.comm_ring
 import data.set.finite
 import ring_theory.polynomial.homogeneous
+import ring_theory.polynomial.basic
 
 /-!
 # Homogenization
@@ -131,7 +133,7 @@ begin
   classical,
   rw finsupp.map_domain,
   refine finset.subset.trans finsupp.support_sum _,
-  simp,
+  simp only [finsupp.mem_support_iff, finset.bUnion_subset_iff_forall_subset, ne.def],
   intros x hx,
   apply finset.subset.trans finsupp.support_single_subset,
   simp [hx],
@@ -359,7 +361,8 @@ begin
     use h_w,
     classical,
     change ¬ h_w.sum (λ (_x : ι) (e : ℕ), e) = p.total_degree at h_h₂,
-    simp [coeff_sum, h_h₁, h_h₂, ne.symm h_h₁, coeff_homogeneous_component],
+    simp only [h_h₁.symm, coeff_homogeneous_component, exists_prop, and_true, ne.def, not_false_iff,
+      not_forall, ite_eq_left_iff],
     convert h_h₂, },
   { rw [leading_terms_apply],
     rw (_ : p.support.filter (λ (s : ι →₀ ℕ), ∑ (i : ι) in s.support, s i = p.total_degree)
@@ -611,11 +614,29 @@ begin
     exact pos_iff_ne_zero.mpr hp, },
 end
 
+lemma finset.sup_eq_bot_iff {α β : Type*} [semilattice_sup_bot β] (f : α → β) (S : finset α) :
+  S.sup f = ⊥ ↔ ∀ s ∈ S, f s = ⊥ :=
+begin
+  classical,
+  induction S using finset.induction with a S haS hi,
+  { simp, },
+  simp [hi],
+end
+
+lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf_top β] (f : α → β) (S : finset α) :
+  S.inf f = ⊤ ↔ ∀ s ∈ S, f s = ⊤ :=
+@finset.sup_eq_bot_iff _ (order_dual β) _ _ _ -- same proof also works
+
 lemma is_homogeneous_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
   is_homogeneous p 0 :=
 begin
-  sorry
+  rw total_degree at hp,
+  erw finset.sup_eq_bot_iff at hp,
+  simp only [mem_support_iff] at hp,
+  intros d hd,
+  exact hp d hd,
 end
+
 lemma total_degree_add_of_total_degree_lt (p q : mv_polynomial ι R)
   (h : q.total_degree < p.total_degree) : (p + q).total_degree = p.total_degree :=
 begin
@@ -657,13 +678,19 @@ begin
   rw leading_terms,
   rw total_degree,
   have : (C r * p).support = p.support,
-  sorry,
+  { rw C_mul',
+
+    sorry,
+    -- rw support_smul,
+     },
   rw this,
   rw homogeneous_component_C_mul,
   refl,
 end
 
-lemma leading_terms_mul [no_zero_divisors R] (p q : mv_polynomial ι R) :
+-- TODO can things be generalized to no_zero_divisors (would require an instance for mv_poly)
+-- sadly this adds some imports and requirements not needed in rest of file
+lemma leading_terms_mul {S : Type*} [comm_ring S] [is_domain S] (p q : mv_polynomial ι S) :
   (p * q).leading_terms = p.leading_terms * q.leading_terms :=
 begin
   by_cases hp : p.total_degree = 0,
@@ -672,16 +699,49 @@ begin
     -- rw (leading_terms_eq_self_iff_is_homogeneous _).mpr this,
     -- rw (sorry : p.leading_terms = p),
     -- rw (sorry : q.leading_terms = q),
+  -- rw leading_terms_C_mul,
     sorry, },
   by_cases hq : q.total_degree = 0,
   sorry,
+  have : (p.leading_terms * q.leading_terms).total_degree = p.total_degree + q.total_degree,
+  { rw is_homogeneous.total_degree,
+    apply is_homogeneous.mul (is_homogeneous_leading_terms p) (is_homogeneous_leading_terms q),
+    apply mul_ne_zero,
+    { apply leading_terms_ne_zero, -- TODO maybe this can be a lemma ne_zero_of_total_degree_ne_zero
+      intro hh,
+      subst hh,
+      simpa, },
+    { apply leading_terms_ne_zero, -- TODO maybe this can be a lemma ne_zero_of_total_degree_ne_zero
+      intro hh,
+      subst hh,
+      simpa, }, },
   rcases eq_leading_terms_add p hp with ⟨wp, hp, tp⟩,
   rw hp,
   rcases eq_leading_terms_add q hq with ⟨wq, hq, tq⟩,
   rw hq,
-  simp [add_mul, mul_add],
-  -- rw leading_terms_C_mul,
-  sorry,
+  simp only [add_mul, mul_add],
+  rw [add_assoc, leading_terms_add_of_total_degree_lt, leading_terms_add_of_total_degree_lt,
+    leading_terms_add_of_total_degree_lt, leading_terms_idempotent, leading_terms_idempotent,
+    leading_terms_eq_self_iff_is_homogeneous],
+  { convert is_homogeneous.mul (is_homogeneous_leading_terms _) (is_homogeneous_leading_terms _), },
+  { rwa total_degree_leading_terms, },
+  { rwa total_degree_leading_terms, },
+  { rw this,
+    calc _ ≤ max (wp * q.leading_terms).total_degree (p.leading_terms * wq + wp * wq).total_degree :
+              total_degree_add _ _
+       ... ≤ max (wp * q.leading_terms).total_degree
+              (max (p.leading_terms * wq).total_degree (wp * wq).total_degree) :
+                max_le_max (le_refl _) (total_degree_add _ _)
+       ... ≤ max (wp.total_degree + q.leading_terms.total_degree)
+              (max (p.leading_terms * wq).total_degree (wp * wq).total_degree) :
+                max_le_max (total_degree_mul _ _) (le_refl _)
+       ... ≤ max (wp.total_degree + q.leading_terms.total_degree)
+              (max (p.leading_terms.total_degree + wq.total_degree)
+                (wp.total_degree + wq.total_degree)) :
+                  max_le_max (le_refl _) (max_le_max (total_degree_mul _ _) (total_degree_mul _ _))
+       ... < p.total_degree + q.total_degree : _,
+    simp only [total_degree_leading_terms, max_lt_iff, add_lt_add_iff_right, add_lt_add_iff_left],
+    exact ⟨tp, tq, add_lt_add tp tq⟩, },
 end
 
 lemma total_degree_mul_eq [no_zero_divisors R] {p q : mv_polynomial ι R} (hp : p ≠ 0) (hq : q ≠ 0) :
