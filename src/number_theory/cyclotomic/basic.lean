@@ -150,7 +150,7 @@ split,
     {intros x hxx,
     apply x.property, },
     { intro r,
-    simp,
+    simp only [subalgebra.coe_algebra_map],
       apply subalgebra.algebra_map_mem _ r, },
     { intros x y,
       exact subalgebra.add_mem _ },
@@ -163,7 +163,7 @@ split,
     refine adjoin_induction ht (λ b₁ hb₁, _) (λ a, _) (λ b₁ b₂, _) (λ b₁ b₂, _),
     {
       refine ⟨⟨b₁, subset_adjoin hb₁⟩, _⟩,
-      simp,
+      simp only [exists_prop, and_true, eq_self_iff_true, subtype.coe_mk],
       refine subset_adjoin hb₁,
     },
     { refine ⟨⟨algebra_map A B a, subalgebra.algebra_map_mem _ _⟩, _⟩,
@@ -202,7 +202,9 @@ begin
       exact root_mul_right_of_is_root _ hb },
       rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
   { have:= (adjoin_idem' A B { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }).2 b.property,
-   simp at *, norm_cast at this, exact this,
+   simp only [mem_set_of_eq] at *,
+   norm_cast at this,
+    exact this,
 
     }
 end
