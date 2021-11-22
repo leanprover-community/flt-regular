@@ -1,5 +1,4 @@
 import ring_theory.polynomial.cyclotomic
-import ready_for_mathlib.roots_of_unity
 
 open polynomial nat
 open_locale big_operators
@@ -32,7 +31,7 @@ begin
   rw is_root_of_unity_iff ho at this,
   obtain ⟨i, hio, hiμ⟩ := this,
   replace hio := nat.dvd_of_mem_divisors hio,
-  rw is_not_primitive_root_iff at hnμ,
+  rw is_primitive_root.not_iff at hnμ,
   rw ←order_of_dvd_iff_pow_eq_one at hμn,
   have key  : i < n := (nat.le_of_dvd ho hio).trans_lt ((nat.le_of_dvd hnpos hμn).lt_of_ne hnμ),
   have key' : i ∣ n := hio.trans hμn,
@@ -56,7 +55,7 @@ lemma is_root_cyclotomic_iff {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
 begin
   let f := algebra_map R (fraction_ring R),
   have hf : function.injective f := is_localization.injective _ le_rfl,
-  rw [←is_root_map_iff hf, is_primitive_root.injective_iff hf,
+  rw [←is_root_map_iff hf, ←is_primitive_root.map_iff_of_injective hf,
       map_cyclotomic, ←is_root_cyclotomic_iff'],
   simpa only [f.map_nat_cast, hn] using f.injective_iff.mp hf n
 end

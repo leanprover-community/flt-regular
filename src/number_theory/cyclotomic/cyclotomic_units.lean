@@ -7,7 +7,6 @@ Authors: Alex J. Best
 import data.polynomial.field_division
 import number_theory.number_field
 import number_theory.cyclotomic.basic
-import ready_for_mathlib.roots_of_unity
 import ready_for_mathlib.cyclotomic
 
 noncomputable theory
@@ -124,9 +123,10 @@ lemma zeta'.power_basis_gen : (zeta'.power_basis n A B).gen = zeta' n A B := rfl
 --this should be proved using `power_basis.lift_equiv` (check if a more general version is ok).
 --false in general. True over ℚ and?
 def zeta'.embeddings_equiv_primitive_roots (K C : Type*) [field K] [algebra A K]
-  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] : (K →ₐ[A] C) ≃ primitive_roots n C :=
-{ to_fun := λ σ, ⟨σ (zeta' n A K), (mem_primitive_roots n.pos).2 (is_primitive_root.of_injective
-    (alg_hom.to_ring_hom σ).injective (zeta'_primitive_root n A K))⟩,
+  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] :
+  (K →ₐ[A] C) ≃ primitive_roots n C :=
+{ to_fun := λ σ, ⟨σ (zeta' n A K), (mem_primitive_roots n.pos).2 $
+                  (zeta'_primitive_root n A K).map_of_injective (alg_hom.to_ring_hom σ).injective⟩,
   inv_fun := sorry,
   left_inv := sorry,
   right_inv := sorry }
@@ -181,17 +181,13 @@ begin
   let f := algebra_map (ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
   let hf : function.injective f := by convert no_zero_smul_divisors.algebra_map_injective
     ↥(ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
-  rw is_primitive_root.injective_iff hf,
+  apply is_primitive_root.of_map_of_injective hf,
   convert zeta'_primitive_root n _ _,
   apply_instance
 end
 
 lemma zeta_pow_eq_one : (zeta n K) ^ (n : ℕ) = 1 :=
-begin
-  ext,
-  rw zeta,
-  simp,
-end
+by { ext, simp [zeta] }
 
 /-- `aux` is a hacky way to define the inverse mod `n`, probably its best to replace it with an
 actual inverse in `zmod n`. -/
