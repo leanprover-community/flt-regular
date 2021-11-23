@@ -3,6 +3,10 @@ import ring_theory.polynomial.cyclotomic
 open polynomial nat
 open_locale big_operators
 
+lemma polynomial.is_root.dvd {R : Type*} [comm_semiring R] {p q : polynomial R} {x : R}
+  (h : p.is_root x) (hpq : p ∣ q) : q.is_root x :=
+by rwa [is_root, eval, eval₂_eq_zero_of_dvd_of_eval₂_eq_zero _ _ hpq]
+
 -- trying out this order to solve some `rw` issues, c.f.
 -- https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/rw.20.2B.20apply_instance
 lemma is_root_of_unity_iff {n : ℕ} (h : 0 < n) (R : Type*) [comm_ring R] [is_domain R] {ζ : R} :
@@ -76,7 +80,7 @@ begin
   exact ⟨k.roots, roots_mul h⟩
 end
 
-lemma cyclotomic.dvd_X_pow_sub_one {n : ℕ} {R} [comm_ring R] :(cyclotomic n R) ∣ X ^ n - 1 :=
+lemma cyclotomic.dvd_X_pow_sub_one {n : ℕ} {R} [comm_ring R] : (cyclotomic n R) ∣ X ^ n - 1 :=
 begin
   rcases n.eq_zero_or_pos with rfl | hn,
   { simp },
