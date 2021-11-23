@@ -690,6 +690,7 @@ end
 
 -- TODO can things be generalized to no_zero_divisors (would require an instance for mv_poly)
 -- sadly this adds some imports and requirements not needed in rest of file
+@[simp]
 lemma leading_terms_mul {S : Type*} [comm_ring S] [is_domain S] (p q : mv_polynomial ι S) :
   (p * q).leading_terms = p.leading_terms * q.leading_terms :=
 begin
@@ -744,28 +745,44 @@ begin
     exact ⟨tp, tq, add_lt_add tp tq⟩, },
 end
 
-lemma total_degree_mul_eq [no_zero_divisors R] {p q : mv_polynomial ι R} (hp : p ≠ 0) (hq : q ≠ 0) :
-  (p * q).total_degree = p.total_degree + q.total_degree :=
+lemma total_degree_mul_eq {S : Type*} [comm_ring S] [is_domain S] {p q : mv_polynomial ι S}
+  (hp : p ≠ 0) (hq : q ≠ 0) : (p * q).total_degree = p.total_degree + q.total_degree :=
 begin
-  sorry,
+  rw [← total_degree_leading_terms, ← total_degree_leading_terms p, ← total_degree_leading_terms q,
+    leading_terms_mul, is_homogeneous.total_degree],
+  apply is_homogeneous.mul;
+  simp [is_homogeneous_leading_terms],
+  apply mul_ne_zero (leading_terms_ne_zero hp) (leading_terms_ne_zero hq),
 end
 
 end leading_terms
 
-lemma homogenization_mul (i : ι) (p q : mv_polynomial ι R)
-  (hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
+lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q : mv_polynomial ι S) :
+  --(hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
   (p * q).homogenization i = p.homogenization i * q.homogenization i :=
 begin
+  by_cases hp : p = 0,
+  { simp [hp], },
+  by_cases hq : q = 0,
+  { simp [hq], },
   simp [homogenization],
+  rw total_degree_mul_eq hp hq,
+  ext m,
+  simp,
   -- rw finsupp.map_domain_mul,
   sorry,
 end
 
+section dangerous_instance
+local attribute [instance] mv_polynomial.unique
 lemma homogenization_X_add_C {i j : ι} (hij : i ≠ j) (r : R) :
   (X j + C r : mv_polynomial ι R).homogenization i = X j + C r * X i :=
 begin
+  nontriviality R,
   have : (X j + C r).total_degree = 1,
-  sorry,
+  { rw total_degree_add_of_total_degree_lt,
+    { exact total_degree_X _, },
+    { simp only [total_degree_C, total_degree_X, nat.lt_one_iff], }, },
   erw [homogenization, finsupp.map_domain_add, finsupp.map_domain_single,
     finsupp.map_domain_single],
   simp only [tsub_zero, finsupp.sum_zero_index, finsupp.sum_single_index, this,
@@ -776,6 +793,7 @@ begin
   rw [monomial_eq_C_mul_X, pow_one],
   refl,
 end
+end dangerous_instance
 
 end mv_polynomial
 section finset_prod
