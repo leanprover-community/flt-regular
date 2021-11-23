@@ -1,6 +1,7 @@
 import ready_for_mathlib.cyclotomic
 import number_theory.number_field
 import algebra.char_p.algebra
+import ready_for_mathlib.adjoin
 
 open polynomial algebra finite_dimensional module set
 
@@ -110,66 +111,6 @@ begin
       subalgebra.mem_restrict_scalars] at h }
 end
 
-/-
-Do we want to keep this? probably not
-lemma adjoin_idem {x : B} (s: set B) : x ∈ adjoin (adjoin A s) s ↔ x ∈ adjoin A s :=
-begin
-  split,
-  { intro hx,
-    refine adjoin_induction hx _ _ _ _,
-    { intros y hy,
-      intros t H, cases H, induction H_h, intros t_1 H, cases H, induction H_h, dsimp at *, simp at *, cases H_w_1, solve_by_elim,},
-    { rintro ⟨r, hr⟩,
-      assumption, },
-    { intros x y,
-      exact subalgebra.add_mem _ },
-    { intros x y,
-      exact subalgebra.mul_mem _ } },
-  { intro hx,
-    refine adjoin_induction hx _ _ _ _,
-    { intros y hy,
-    intros t H, cases H, induction H_h, intros t_1 H, cases H, induction H_h, dsimp at *, simp at *, cases H_w_1, solve_by_elim, },
-    { intro r,
-     let r':=algebra_map A (adjoin A s) r,
-      exact subalgebra.algebra_map_mem _ r'},
-    { intros x y,
-      exact subalgebra.add_mem _ },
-    { intros x y,
-      exact subalgebra.mul_mem _ } }
-end
--/
-
-lemma adjoin_idem' (s: set B) {x : adjoin A s} :
-  x ∈ adjoin A {b : adjoin A s | (b : B) ∈ s} ↔ (x : B) ∈ adjoin A s :=
-begin
-  refine ⟨λ hx, adjoin_induction hx (λ x h, x.2)
-                  (subalgebra.algebra_map_mem _)
-                  (λ x y, subalgebra.add_mem _)
-                  (λ x y, subalgebra.mul_mem _),
-          λ hx, _⟩,
-  cases x with t ht,
-  suffices : ∃ x ∈ adjoin A {b : adjoin A s | (b : B) ∈ s}, ↑x = t,
-  { obtain ⟨x, hx, hxx⟩ := this,
-    simp only [←hxx, hx, set_like.eta] },
-  refine adjoin_induction ht (λ b₁ hb₁, _) (λ a, _) (λ b₁ b₂, _) (λ b₁ b₂, _),
-  { refine ⟨⟨b₁, subset_adjoin hb₁⟩, _⟩,
-    simp only [exists_prop, and_true, eq_self_iff_true, subtype.coe_mk],
-    exact subset_adjoin hb₁ },
-  { refine ⟨⟨algebra_map A B a, subalgebra.algebra_map_mem _ _⟩, _⟩,
-    simp only [exists_prop, set_like.coe_mk, and_true, eq_self_iff_true],
-    convert subalgebra.algebra_map_mem _ a },
-  { simp only [and_imp, exists_prop, forall_exists_index],
-    intros x hxmem hxb y hymem hyb,
-    refine ⟨⟨x + y, subalgebra.add_mem _ (set_like.coe_mem _) (set_like.coe_mem _)⟩, ⟨_, _⟩⟩,
-    { simpa only [← subalgebra.coe_add] using subalgebra.add_mem _ hxmem hymem },
-    { simpa only [hxb, hyb] } },
-  { simp only [and_imp, exists_prop, forall_exists_index],
-    intros x hxmem hxb y hymem hyb,
-    refine ⟨⟨x * y, subalgebra.mul_mem _ (set_like.coe_mem _) (set_like.coe_mem _)⟩, ⟨_, _⟩⟩,
-    { simpa only [← subalgebra.coe_mul] using subalgebra.mul_mem _ hxmem hymem },
-    { simpa only [hxb, hyb] } }
-end
-
 lemma union_left [h : is_cyclotomic_extension T A B] (hS : S ⊆ T) :
   is_cyclotomic_extension S A (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }) :=
 begin
@@ -181,7 +122,7 @@ begin
       { simpa [sub_eq_zero] using this },
       exact hb.dvd cyclotomic.dvd_X_pow_sub_one },
       rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
-  { have := (adjoin_idem' A B { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }).2 b.2,
+  { have := (adjoin_idem { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }).2 b.2,
     simp only [mem_set_of_eq] at this,
     exact_mod_cast this }
 end
