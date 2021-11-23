@@ -81,24 +81,18 @@ begin
   simp [-zeta'_spec]
 end
 
---This shouldn't be needed.
-variable [is_domain B]
-
 @[simp]
 lemma zeta'_pow_prime : (zeta' n A B) ^ (n : ℕ) = 1 :=
 begin
   suffices : is_root (X ^ (n : ℕ) - 1) (zeta' n A B),
-  { simpa [sub_eq_zero], },
-  rw [← prod_cyclotomic_eq_X_pow_sub_one n.pos, is_root.def, eval_prod, finset.prod_eq_zero_iff],
-  use n,
-  simp only [n.pos.ne.symm, true_and, nat.mem_divisors, ne.def, not_false_iff, dvd_refl],
-  have := zeta'_spec n A B,
-  rw [aeval_def, eval₂_eq_eval_map] at this,
-  convert this,
-  rw map_cyclotomic,
+  { simpa [sub_eq_zero] using this },
+  refine is_root.dvd _ cyclotomic.dvd_X_pow_sub_one,
+  apply zeta'_spec'
 end
 
-lemma zeta'_primitive_root : is_primitive_root (zeta' n A B) n :=
+-- note: we do currently still need `is_domain B` here; fairly sure with zero-divisors you
+-- could find a counter-example, too, so our current proof works out well
+lemma zeta'_primitive_root [is_domain B] : is_primitive_root (zeta' n A B) n :=
 begin
   rw is_root_cyclotomic_iff,
   convert zeta'_spec' n A B,
