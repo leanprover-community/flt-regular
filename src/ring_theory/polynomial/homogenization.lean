@@ -47,39 +47,24 @@ namespace mv_polynomial
 
 section finsupp
 
--- TODO something like this should be true but unsure what
-lemma finsupp.sum_update_add {α β : Type*} [has_zero α] [add_comm_monoid β]
-  (f : ι →₀ α) (i : ι) (a : α) (g : ι → α → β) (hg : ∀ i, g i 0 = 0) :
+-- TODO can any assumptions be weakened
+-- TODO version with monoid hom?
+lemma finsupp.sum_update_add {α β : Type*} [add_comm_monoid α] [add_comm_monoid β]
+  (f : ι →₀ α) (i : ι) (a : α) (g : ι → α → β) (hg : ∀ i, g i 0 = 0)
+  (hgg : ∀ (a : ι) (b₁ b₂ : α), g a (b₁ + b₂) = g a b₁ + g a b₂) :
   (f.update i a).sum g + g i (f i) = f.sum g + g i a :=
 begin
-  classical,
-  have hf : f.support ⊆ f.support ∪ {i} := f.support.subset_union_left {i},
-  have hif : (f.update i a).support ⊆ f.support ∪ {i},
-  { rw f.support_update i a, -- urgh why is this classical
-    split_ifs,
-    { convert finset.subset.trans (finset.erase_subset i f.support) hf },
-    { rw [finset.insert_eq, finset.union_comm],
-      convert finset.subset.refl _  }, }, -- TODO is there no lemma for this?
-  rw finsupp.sum_of_support_subset f hf,
-  rw finsupp.sum_of_support_subset _ hif,
-  simp,
-  -- conv in (g _ _)
-  sorry; {-- { simp [function.apply_update _ f i a x], },
-  rw finset.sum_update_of_mem,
-  rw finset.sum_union,
-  rw finset.sum_union,
-  simp,
+  simp_rw finsupp.update_eq_erase_add_single,
+  rw finsupp.sum_add_index hg hgg,
+  conv_rhs {rw ← finsupp.update_self f i},
+  simp_rw finsupp.update_eq_erase_add_single,
+  rw finsupp.sum_add_index hg hgg,
   rw add_assoc,
-  rw add_comm (g i a),
   rw add_assoc,
-  congr,
-
-
-  sorry,},
-  { intros i' hi',
-    exact hg i', },
-  { intros i' hi',
-    exact hg i', },
+  congr' 1,
+  rw add_comm,
+  rw finsupp.sum_single_index (hg _),
+  rw finsupp.sum_single_index (hg _),
 end
 
 end finsupp
@@ -267,7 +252,31 @@ open finsupp
 lemma map_domain_apply' {α β M : Type*} [add_comm_monoid M] (S : set α) {f : α → β} (x : α →₀ M)
   (hf : set.inj_on f x.support) (a : α) : finsupp.map_domain f x (f a) = x a :=
 begin
-  sorry,
+  classical,
+  rw finsupp.map_domain,
+  simp only [finsupp.sum_apply],
+  rw finsupp.sum,
+  simp_rw finsupp.single_apply,
+  by_cases ha : a ∈ x.support,
+  { rw ← finset.add_sum_erase _ _ ha,
+    simp only [if_true, eq_self_iff_true],
+    convert add_zero _,
+    have : ∀ i ∈ x.support.erase a, f i ≠ f a,
+    { intros i hi,
+      have hix : i ∈ x.support,
+      exact finset.mem_of_mem_erase hi,
+      have hia : i ≠ a,
+      exact finset.ne_of_mem_erase hi,
+      exact hia ∘ (hf hix ha), },
+    conv in (ite _ _ _)
+    { rw if_neg (this x H), },
+    simp only [finset.sum_const_zero], },
+  {
+    -- simp [ha],
+    sorry,
+    -- TODO this isn't true need some other assumption that f sends all other elements away from f a
+
+   },
   -- rw [finsupp.map_domain, finsupp.sum_apply, finsupp.sum, finset.sum_eq_single a,
   -- finsupp.single_eq_same],
   -- { assume b _ hba, exact finsupp.single_eq_of_ne (_) }, -- TODO set.inj_on.ne
@@ -292,6 +301,8 @@ begin
   intro h,
   apply hp,
   refine finsupp.map_domain_injective _ h,
+  intros x y hxy,
+  simp at hxy,
   -- TODO something like this but this isnt exactly true
   sorry,
 end
@@ -1062,5 +1073,3 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
 end mv_polynomial
-
-#lint
