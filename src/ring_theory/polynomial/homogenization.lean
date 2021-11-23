@@ -170,15 +170,15 @@ begin
   simp [total_degree, support_monomial, if_neg, hr],
 end
 
-lemma homogenization_monomial (i : ι) (s : ι →₀ ℕ) (r : R) (hs : s i = 0) :
+@[simp]
+lemma homogenization_monomial (i : ι) (s : ι →₀ ℕ) (r : R) :
   (monomial s r : mv_polynomial ι R).homogenization i = monomial s r :=
 begin
   by_cases hr : r = 0,
   { simp [hr], },
   erw [homogenization, finsupp.map_domain_single, single_eq_monomial, total_degree_monomial _ hr,
-    tsub_self, ← hs],
-  rw monomial_add_single,
-  simp only [hs, mul_one, pow_zero],
+    tsub_self],
+  simp,
 end
 
 -- TODO name this
@@ -768,6 +768,11 @@ end
 
 end leading_terms
 
+lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
+  (h : p.total_degree = q.total_degree) (hpq : p.total_degree = (p + q).total_degree) :
+  (p + q).homogenization i = p.homogenization i + q.homogenization i :=
+by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
+
 lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q : mv_polynomial ι S) :
   -- TODO is this cond needed?
   --(hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
@@ -777,12 +782,64 @@ begin
   { simp [hp], },
   by_cases hq : q = 0,
   { simp [hq], },
-  simp [homogenization],
-  rw total_degree_mul_eq hp hq,
-  ext m,
-  simp,
-  -- rw finsupp.map_domain_mul,
-  sorry,
+  induction p using mv_polynomial.induction_on' with x p₁ p₂ ih₁ ih₂ p i ih,
+  -- { simp only [total_degree_C, add_zero, zero_tsub, finsupp.single_zero,
+  --     finsupp.single_tsub, zero_add],
+  --   erw finsupp.map_domain_single,
+  --   rw C_mul',
+  --   rw finsupp.map_domain_smul,
+  --   erw C_mul', },
+  { rw [homogenization_monomial],
+    simp only [homogenization],
+    rw total_degree_mul_eq hp hq,
+    simp only [finsupp.single_add, finsupp.single_tsub],
+    rw total_degree_monomial _ (λ h, hp ((monomial_eq_zero x p₁).mpr h) : p₁ ≠ 0),
+    rw add_monoid_algebra.mul_def,
+    erw finsupp.sum_single_index,
+    { rw finsupp.map_domain_sum,
+      simp only [finsupp.map_domain_single],
+      rw add_monoid_algebra.mul_def,
+      erw finsupp.sum_single_index,
+      rw finsupp.sum_map_domain_index,
+      congr,
+      ext a b,
+      congr' 2,
+      rw add_assoc,
+      congr' 2,
+      rw finsupp.sum_add_index,
+      rw ← finsupp.single_add,
+      rw ← finsupp.single_tsub,
+      rw ← finsupp.single_tsub,
+      congr' 1,
+      sorry, -- ok I'm like 90% sure this is true and some silly tsub lemma
+      -- TODO rethink a cleaner way to prove / just make this look nicer
+      simp,
+      simp,
+      simp,
+      sorry,
+      simp,
+    },
+    { sorry }
+  },
+
+  rw add_mul,
+  rw homogenization_add_of_total_degree_eq,
+  rw homogenization_add_of_total_degree_eq,
+  rw add_mul,
+  rw ih₂,
+  rw p,
+  repeat{sorry,},
+  -- ext m,
+  -- simp,
+  -- rw coeff_mul,
+  -- rw coeff,
+  -- simp_rw coeff,
+  -- simp_rw finsupp.map_domain,
+  -- simp,
+  -- classical,
+  -- simp_rw finsupp.single_apply,
+  -- -- rw finsupp.map_domain_mul,
+  -- sorry,
 end
 
 section dangerous_instance
@@ -1014,8 +1071,7 @@ end
 
 end
 
-lemma prod_contains_no (i : ι)
- (P : finset (mv_polynomial ι R))
+lemma prod_contains_no (i : ι) (P : finset (mv_polynomial ι R))
   (hp : ∀ (p : mv_polynomial ι R) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0)
   (j) (hjp : j ∈ (P.prod id).support) :
   (j : ι → ℕ) i = 0 :=
@@ -1029,17 +1085,20 @@ begin
   { have := support_prod _ hjp,
     rw finset.prod_insert hS at hjp,
     rw finset.sum_insert hS at this,
-    simp at this,
     rw finset.mem_add at this,
     rcases this with ⟨y, z, hy, hz, hh⟩,
+    rw ← hh,
     have := hp _ (finset.mem_insert_self p S) _ hy,
-    have := hSi _ z _,
-    sorry,
-    sorry,
+    simp only [pi.add_apply, add_eq_zero_iff, finsupp.coe_add],
+    rw hSi _ z _,
+    { rw this,
+      simp, },
+    { intros p hpp j hj,
+      exact hp p (finset.mem_insert_of_mem hpp) j hj, },
     sorry,
     -- TODO probably need more lemmas for this still
     -- apply support_prod,
-  }
+  },
   -- TODO this proof should be simple with `support_prod` we know j is in
   -- { simp only [finset.prod_insert hS, id.def, ne.def] at hjp,
   --   apply hSi, },
@@ -1066,10 +1125,5 @@ begin
   --   sorry,
   --    },
 end
-
-lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
-  (h : p.total_degree = q.total_degree) (hpq : p.total_degree = (p + q).total_degree) :
-  (p + q).homogenization i = p.homogenization i + q.homogenization i :=
-by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
 end mv_polynomial
