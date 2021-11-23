@@ -758,6 +758,7 @@ end
 end leading_terms
 
 lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q : mv_polynomial ι S) :
+  -- TODO is this cond needed?
   --(hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
   (p * q).homogenization i = p.homogenization i * q.homogenization i :=
 begin
@@ -775,7 +776,7 @@ end
 
 section dangerous_instance
 local attribute [instance] mv_polynomial.unique
-lemma homogenization_X_add_C {i j : ι} (hij : i ≠ j) (r : R) :
+lemma homogenization_X_add_C {i j : ι} (r : R) :
   (X j + C r : mv_polynomial ι R).homogenization i = X j + C r * X i :=
 begin
   nontriviality R,
@@ -785,9 +786,8 @@ begin
     { simp only [total_degree_C, total_degree_X, nat.lt_one_iff], }, },
   erw [homogenization, finsupp.map_domain_add, finsupp.map_domain_single,
     finsupp.map_domain_single],
-  simp only [tsub_zero, finsupp.sum_zero_index, finsupp.sum_single_index, this,
-    finsupp.update_eq_single_add_erase, add_zero, finsupp.single_zero, zero_add, finsupp.erase_zero,
-    single_eq_monomial, finsupp.erase_single_ne hij],
+  simp only [tsub_zero, finsupp.sum_zero_index, finsupp.sum_single_index, this, add_zero,
+    finsupp.single_zero, zero_add, single_eq_monomial],
   rw [X, X],
   congr,
   rw [monomial_eq_C_mul_X, pow_one],
@@ -975,6 +975,7 @@ begin
   rw [support_sum_monomial_coeff, support_sum_monomial_coeff],
   exact finset.subset.trans (support_sum_monomial_subset' _ _ _) (finset.subset.refl _),
 end
+
 section
 open_locale pointwise
 @[simp] lemma support_one : (1 : mv_polynomial ι R).support ⊆ 0 :=
@@ -1033,8 +1034,9 @@ begin
   --   apply hSi, },
 end
 
-lemma homogenization_prod (i : ι) (P : finset (mv_polynomial ι R))
-  (hp : ∀ (p : mv_polynomial ι R) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0) :
+lemma homogenization_prod {S : Type*} [comm_ring S] [is_domain S] (i : ι)
+  (P : finset (mv_polynomial ι S))
+  (hp : ∀ (p : mv_polynomial ι S) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0) :
   (P.prod id).homogenization i = P.prod (λ p, p.homogenization i) :=
 begin
   classical,
@@ -1046,12 +1048,12 @@ begin
   rw [id.def],
   { intros p_1 hp_1 j hjp,
     exact hp p_1 (finset.mem_insert_of_mem hp_1) _ hjp, },
-  { intros j hj,
-    exact hp p (finset.mem_insert_self p S) _ hj, },
-  { intros j hj,
-    have := support_prod _ hj,
-    sorry,
-     },
+  -- { intros j hj,
+  --   exact hp p (finset.mem_insert_self p S) _ hj, },
+  -- { intros j hj,
+  --   have := support_prod _ hj,
+  --   sorry,
+  --    },
 end
 
 lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
@@ -1060,3 +1062,5 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
 end mv_polynomial
+
+#lint
