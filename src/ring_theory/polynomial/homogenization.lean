@@ -649,16 +649,40 @@ begin
   exact hp d hd,
 end
 
+lemma support_sdiff_support_subset_support_add [decidable_eq ι] (p q : mv_polynomial ι R) :
+  p.support \ q.support ⊆ (p + q).support :=
+begin
+  intros m hm,
+  simp only [not_not, mem_support_iff, finset.mem_sdiff, ne.def] at hm,
+  simp [hm.2, hm.1],
+end
+
 lemma total_degree_add_of_total_degree_lt (p q : mv_polynomial ι R)
   (h : q.total_degree < p.total_degree) : (p + q).total_degree = p.total_degree :=
 begin
+  by_cases hp : p = 0,
+  { simpa [hp] using h, },
+  have := total_degree_add p q,
+  rwa max_eq_left_of_lt h at this,
+  rw total_degree,
   apply le_antisymm,
+  classical,
+  have : p.support \ q.support ⊆ p.support,
+  exact (support p).sdiff_subset (support q),
+  obtain ⟨b, hb₁, hb₂⟩ := p.support.exists_mem_eq_sup (finsupp.support_nonempty_iff.mpr hp)
+    (λ (m : ι →₀ ℕ), m.to_multiset.card),
+  have hb : ¬ b ∈ q.support,
+  sorry,
+  have : b ∈ (p + q).support,
+  { apply support_sdiff_support_subset_support_add,
+    rw finset.mem_sdiff,
+    exact ⟨hb₁, hb⟩, },
   { have := total_degree_add p q,
-    rwa max_eq_left_of_lt h at this, },
-  { rw total_degree,
-    rw total_degree,
+  --   rwa max_eq_left_of_lt h at this, },
+  -- { rw total_degree,
+  --   rw total_degree,
     sorry, -- probably best to rethink this
-     },
+     }, sorry,
 end
 
 lemma leading_terms_add_of_total_degree_lt (p q : mv_polynomial ι R)
