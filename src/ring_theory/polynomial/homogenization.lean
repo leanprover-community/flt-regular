@@ -8,6 +8,7 @@ import data.mv_polynomial.comm_ring
 import data.set.finite
 import ring_theory.polynomial.homogeneous
 import ring_theory.polynomial.basic
+import tactic.omega
 
 /-!
 # Homogenization
@@ -682,6 +683,7 @@ end
 -- lemma homogeneous_s_monomial_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) (x : ι →₀ ℕ) :
   -- (p * monomial x r).leading_terms = p.leading_terms * monomial x r :=
   --TODO also maybe an smul version
+@[simp]
 lemma leading_terms_C_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) :
   (C r * p).leading_terms = C r * p.leading_terms :=
 begin
@@ -699,6 +701,27 @@ begin
   refl,
 end
 
+lemma eq_C_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
+  ∃ r : R, p = C r :=
+begin
+  letI := classical.dec_eq ι,
+  erw finset.sup_eq_bot_iff at hp,
+  simp only [mem_support_iff] at hp,
+  use coeff 0 p,
+  ext,
+  by_cases hm : m = 0,
+  { simp [hm], },
+  rw [coeff_C, if_neg (ne.symm hm)],
+  classical,
+  by_contradiction h,
+  specialize hp m h,
+  apply hm,
+  rw finsupp.sum at hp, -- TODO this and line below could be a lemma, finsupp.sum_eq_zero_iff?
+  simp only [not_imp_self, bot_eq_zero, finsupp.mem_support_iff, finset.sum_eq_zero_iff] at hp,
+  ext,
+  simp [hp],
+end
+
 -- TODO can things be generalized to no_zero_divisors (would require an instance for mv_poly)
 -- sadly this adds some imports and requirements not needed in rest of file
 @[simp]
@@ -706,15 +729,11 @@ lemma leading_terms_mul {S : Type*} [comm_ring S] [is_domain S] (p q : mv_polyno
   (p * q).leading_terms = p.leading_terms * q.leading_terms :=
 begin
   by_cases hp : p.total_degree = 0,
-  { have := is_homogeneous_of_total_degree_zero hp,
-    -- have := is_homogeneous_of_total_degree_zero hq,
-    -- rw (leading_terms_eq_self_iff_is_homogeneous _).mpr this,
-    -- rw (sorry : p.leading_terms = p),
-    -- rw (sorry : q.leading_terms = q),
-  -- rw leading_terms_C_mul,
-    sorry, },
+  { rcases eq_C_of_total_degree_zero hp with ⟨rp, rfl⟩,
+    rw [leading_terms_C_mul, leading_terms_C], },
   by_cases hq : q.total_degree = 0,
-  sorry,
+  { rcases eq_C_of_total_degree_zero hq with ⟨rq, rfl⟩,
+    rw [mul_comm, leading_terms_C_mul, leading_terms_C, mul_comm], },
   have : (p.leading_terms * q.leading_terms).total_degree = p.total_degree + q.total_degree,
   { rw is_homogeneous.total_degree,
     apply is_homogeneous.mul (is_homogeneous_leading_terms p) (is_homogeneous_leading_terms q),
@@ -773,6 +792,7 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
   (p + q).homogenization i = p.homogenization i + q.homogenization i :=
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
+#check mv_polynomial.induction_on'
 lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q : mv_polynomial ι S) :
   -- TODO is this cond needed?
   --(hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
@@ -782,7 +802,7 @@ begin
   { simp [hp], },
   by_cases hq : q = 0,
   { simp [hq], },
-  induction p using mv_polynomial.induction_on' with x p₁ p₂ ih₁ ih₂ p i ih,
+  induction p using mv_polynomial.induction_on' with x s p₁ p₂ ih₁ ih₂ p i ih,
   -- { simp only [total_degree_C, add_zero, zero_tsub, finsupp.single_zero,
   --     finsupp.single_tsub, zero_add],
   --   erw finsupp.map_domain_single,
@@ -793,9 +813,12 @@ begin
     simp only [homogenization],
     rw total_degree_mul_eq hp hq,
     simp only [finsupp.single_add, finsupp.single_tsub],
-    rw total_degree_monomial _ (λ h, hp ((monomial_eq_zero x p₁).mpr h) : p₁ ≠ 0),
+    rw total_degree_monomial _ (λ h, hp _ : s ≠ 0),
+    swap,
+    rwa monomial_eq_zero,
     rw add_monoid_algebra.mul_def,
     erw finsupp.sum_single_index,
+    -- TODO rethink a cleaner way to prove / just make this look nicer
     { rw finsupp.map_domain_sum,
       simp only [finsupp.map_domain_single],
       rw add_monoid_algebra.mul_def,
@@ -810,25 +833,31 @@ begin
       rw ← finsupp.single_add,
       rw ← finsupp.single_tsub,
       rw ← finsupp.single_tsub,
-      congr' 1,
-      sorry, -- ok I'm like 90% sure this is true and some silly tsub lemma
-      -- TODO rethink a cleaner way to prove / just make this look nicer
-      simp,
-      simp,
-      simp,
-      sorry,
-      simp,
-    },
-    { sorry }
-  },
+      rw nat.add_sub_add_left,
+      exact congr_fun rfl,
+      simp only [eq_self_iff_true, forall_3_true_iff],
+      simp only [forall_const, finsupp.single_zero, mul_zero],
+      simp only [mul_add, forall_const, finsupp.single_add, eq_self_iff_true],
+      simp only [zero_mul, finsupp.single_zero, finsupp.sum_zero], },
+    { simp only [zero_mul, finsupp.single_zero, finsupp.sum_zero], } },
+  { rw add_mul, -- TODO unfortunately this goal is false, rethink required, maybe a better
+    -- homogenization add lemma, or an induction principle that says something about degree?
+    -- wlog hple : p₁.total_degree ≤ p₂.total_degree using [p₁ p₂, p₂ p₁],
+    rw homogenization_add_of_total_degree_eq,
+    rw homogenization_add_of_total_degree_eq,
+    rw add_mul,
+    rw ih₂,
+    rw ih₁,
+    sorry,
+    sorry,
+    sorry,
+    sorry,
+    sorry,
+    symmetry,
+    -- apply total_degree_add_of_total_degree_lt,
+    sorry,
 
-  rw add_mul,
-  rw homogenization_add_of_total_degree_eq,
-  rw homogenization_add_of_total_degree_eq,
-  rw add_mul,
-  rw ih₂,
-  rw p,
-  repeat{sorry,},
+  }
   -- ext m,
   -- simp,
   -- rw coeff_mul,
