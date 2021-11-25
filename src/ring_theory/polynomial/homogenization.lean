@@ -1051,10 +1051,6 @@ localized "attribute [instance] finset.mul_one_class finset.add_zero_class finse
   finset.add_semigroup finset.monoid finset.add_monoid finset.comm_monoid finset.add_comm_monoid"
   in pointwise
 
-@[to_additive]
-lemma mul_subset_mul [decidable_eq α] [has_mul α] (h₁ : s₁ ⊆ t₁) (h₂ : s₂ ⊆ t₂) :
-  s₁ * s₂ ⊆ t₁ * t₂ := sorry
-
 -- TODO there is loads more API in pointwise that could (should) be duplicated?
 
 -- TODO a lemma mem_prod for both set and finset, saying that something is in a product of sets
