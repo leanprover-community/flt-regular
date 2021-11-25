@@ -626,7 +626,7 @@ begin
     exact pos_iff_ne_zero.mpr hp, },
 end
 
-lemma finset.sup_eq_bot_iff {α β : Type*} [semilattice_sup_bot β] (f : α → β) (S : finset α) :
+lemma finset.sup_eq_bot_iff {α β : Type*} [semilattice_sup β] [order_bot β] (f : α → β) (S : finset α) :
   S.sup f = ⊥ ↔ ∀ s ∈ S, f s = ⊥ :=
 begin
   classical,
@@ -635,9 +635,9 @@ begin
   simp [hi],
 end
 
-lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf_top β] (f : α → β) (S : finset α) :
+lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf β] [order_top β] (f : α → β) (S : finset α) :
   S.inf f = ⊤ ↔ ∀ s ∈ S, f s = ⊤ :=
-@finset.sup_eq_bot_iff _ (order_dual β) _ _ _ -- same proof also works
+@finset.sup_eq_bot_iff _ (order_dual β) _ _ _ _ -- same proof also works
 
 lemma is_homogeneous_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
   is_homogeneous p 0 :=
