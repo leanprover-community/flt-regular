@@ -626,7 +626,7 @@ begin
     exact pos_iff_ne_zero.mpr hp, },
 end
 
-lemma finset.sup_eq_bot_iff {α β : Type*} [semilattice_sup_bot β] (f : α → β) (S : finset α) :
+lemma finset.sup_eq_bot_iff {α β : Type*} [semilattice_sup β] [order_bot β] (f : α → β) (S : finset α) :
   S.sup f = ⊥ ↔ ∀ s ∈ S, f s = ⊥ :=
 begin
   classical,
@@ -635,9 +635,9 @@ begin
   simp [hi],
 end
 
-lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf_top β] (f : α → β) (S : finset α) :
+lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf β] [order_top β] (f : α → β) (S : finset α) :
   S.inf f = ⊤ ↔ ∀ s ∈ S, f s = ⊤ :=
-@finset.sup_eq_bot_iff _ (order_dual β) _ _ _ -- same proof also works
+@finset.sup_eq_bot_iff _ (order_dual β) _ _ _ _ -- same proof also works
 
 lemma is_homogeneous_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
   is_homogeneous p 0 :=
@@ -816,7 +816,6 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
   (p + q).homogenization i = p.homogenization i + q.homogenization i :=
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
-#check mv_polynomial.induction_on'
 lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q : mv_polynomial ι S) :
   -- TODO is this cond needed?
   --(hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :

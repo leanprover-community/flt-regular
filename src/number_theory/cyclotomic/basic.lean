@@ -1,7 +1,6 @@
 import ready_for_mathlib.cyclotomic
 import number_theory.number_field
 import algebra.char_p.algebra
-import ready_for_mathlib.adjoin
 
 open polynomial algebra finite_dimensional module set
 
@@ -122,9 +121,10 @@ begin
       { simpa [sub_eq_zero] using this },
       exact hb.dvd cyclotomic.dvd_X_pow_sub_one },
       rwa [← subalgebra.coe_eq_zero, aeval_subalgebra_coe, subtype.coe_mk] },
-  { have := (adjoin_idem { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 }).2 b.2,
-    simp only [mem_set_of_eq] at this,
-    exact_mod_cast this }
+  { convert mem_top,
+    rw ← adjoin_adjoin_coe_preimage,
+    simp,
+    norm_cast, }
 end
 
 end is_cyclotomic_extension
