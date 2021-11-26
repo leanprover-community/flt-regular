@@ -1,20 +1,6 @@
 import algebra.gcd_monoid.finset
 import number_theory.padics.padic_norm
 
-lemma nat.ne_one_iff : ∀ {n}, n ≠ 1 ↔ ∃ p : ℕ, p.prime ∧ p ∣ n
-| 0 := by simpa using (Exists.intro 2 nat.prime_two) -- we need nat.prime_37 pronto ;b
-| 1 := by simp [nat.not_prime_one]
-| (n+2) :=
-let a := n+2 in
-let ha : a ≠ 1 := nat.succ_succ_ne_one n in
-begin
-  simp only [true_iff, ne.def, not_false_iff, ha],
-  exact ⟨a.min_fac, nat.min_fac_prime ha, a.min_fac_dvd⟩,
-end
-
-lemma nat.eq_one_iff {n : ℕ} : n = 1 ↔ ∀ p : ℕ, p.prime → ¬p ∣ n :=
-by simpa using not_iff_not.mpr nat.ne_one_iff
-
 namespace finset
 
 instance : is_idempotent ℕ gcd_monoid.gcd := ⟨nat.gcd_self⟩
@@ -44,7 +30,7 @@ end
 
 theorem image_div_gcd_coprime (s : finset ℕ) (h : ¬∀ x ∈ s, x = 0) : s.gcd (/ s.gcd id) = 1 :=
 begin
-  rw nat.eq_one_iff,
+  rw nat.eq_one_iff_not_exists_prime_dvd,
   intros p hp hdvd,
   haveI : fact p.prime := ⟨hp⟩,
   rw dvd_gcd_iff at hdvd,
