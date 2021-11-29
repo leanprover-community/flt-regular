@@ -246,12 +246,13 @@ begin
   exact is_homogeneous_homogenization _ _,
 end
 
-section finsupp
+namespace finsupp
 open finsupp
 
 -- TODO want something like this but unsure what
 lemma map_domain_apply' {α β M : Type*} [add_comm_monoid M] (S : set α) {f : α → β} (x : α →₀ M)
-  (hf : set.inj_on f x.support) (a : α) : finsupp.map_domain f x (f a) = x a :=
+  (hS : (x.support : set α) ⊆ S) (hf : set.inj_on f S) {a : α} (ha : a ∈ S) :
+  finsupp.map_domain f x (f a) = x a :=
 begin
   classical,
   rw finsupp.map_domain,
@@ -259,25 +260,21 @@ begin
   rw finsupp.sum,
   simp_rw finsupp.single_apply,
   by_cases ha : a ∈ x.support,
-  { rw ← finset.add_sum_erase _ _ ha,
-    simp only [if_true, eq_self_iff_true],
-    convert add_zero _,
-    have : ∀ i ∈ x.support.erase a, f i ≠ f a,
-    { intros i hi,
-      have hix : i ∈ x.support,
-      exact finset.mem_of_mem_erase hi,
-      have hia : i ≠ a,
-      exact finset.ne_of_mem_erase hi,
-      exact hia ∘ (hf hix ha), },
-    conv in (ite _ _ _)
-    { rw if_neg (this x H), },
-    simp only [finset.sum_const_zero], },
-  {
-    -- simp [ha],
-    sorry,
-    -- TODO this isn't true need some other assumption that f sends all other elements away from f a
-
-   },
+  -- rw finset.sum_union,
+  rw ← finset.add_sum_erase _ _ ha,
+  simp only [if_true, eq_self_iff_true],
+  convert add_zero _,
+  have : ∀ i ∈ x.support.erase a, f i ≠ f a,
+  { intros i hi,
+    have hix : i ∈ x.support,
+    exact finset.mem_of_mem_erase hi,
+    have hia : i ≠ a,
+    exact finset.ne_of_mem_erase hi,
+    exact hia ∘ (hf (hS hix) (hS ha)), },
+  conv in (ite _ _ _)
+  { rw if_neg (this x H), },
+  simp only [finset.sum_const_zero],
+  sorry,
   -- rw [finsupp.map_domain, finsupp.sum_apply, finsupp.sum, finset.sum_eq_single a,
   -- finsupp.single_eq_same],
   -- { assume b _ hba, exact finsupp.single_eq_of_ne (_) }, -- TODO set.inj_on.ne
@@ -286,31 +283,53 @@ end
 
 lemma map_domain_injective' {α β M : Type*} [add_comm_monoid M] (S : set α) {f : α → β}
   (hf : set.inj_on f S) :
-  set.inj_on (finsupp.map_domain f : (α →₀ M) → (β →₀ M)) {f | (f.support : set α) ⊆ S} :=
+  set.inj_on (finsupp.map_domain f : (α →₀ M) → (β →₀ M)) {w | (w.support : set α) ⊆ S} :=
 begin
   assume v₁ hv₁ v₂ hv₂ eq, ext a,
   have : finsupp.map_domain f v₁ (f a) = finsupp.map_domain f v₂ (f a), { rw eq },
-  sorry,
+  simp at hv₁ hv₂,
+  classical,
+  by_cases h : a ∈ v₁.support ∩ v₂.support,
+  { sorry; rwa [map_domain_apply' S _ hv₁ hf (finset.mem_of_mem_inter_left h),
+         map_domain_apply' S _ hv₂ hf (finset.mem_of_mem_inter_right h)] at this, },
+  { simp at h,
+    sorry; simp [h], },
   -- rw [finsupp.map_domain_apply hf, finsupp.map_domain_apply hf] at this,
 end
 end finsupp
 
-lemma homogenization_ne_zero_of_ne_zero (i : ι) {p : mv_polynomial ι R} (hp : p ≠ 0) :
-  p.homogenization i ≠ 0 :=
+lemma homogenization_ne_zero_of_ne_zero (i : ι) {p : mv_polynomial ι R} (hp : p ≠ 0)
+  (hjp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : p.homogenization i ≠ 0 :=
 begin
-  rw homogenization,
   intro h,
   apply hp,
-  refine finsupp.map_domain_injective _ h,
-  intros x y hxy,
-  simp at hxy,
-  -- TODO something like this but this isnt exactly true
-  sorry,
+  have : set.inj_on (λ j : ι →₀ ℕ, j + finsupp.single i (p.total_degree - j.sum (λ _ m, m)))
+          {w | w i = 0},
+  { intros t ht y hy hh,
+    simp only [set.mem_set_of_eq] at hh hy ht,
+    ext a,
+    have : (t + finsupp.single i (p.total_degree - t.sum (λ _ m, m))) a =
+           (y + finsupp.single i (p.total_degree - y.sum (λ _ m, m))) a,
+    { rw hh, },
+    simp only [finsupp.coe_add, pi.add_apply] at this,
+    classical,
+    rw [finsupp.single_apply, finsupp.single_apply] at this,
+    split_ifs at this with hia,
+    { rw [← hia, ht, hy], },
+    { simpa, }, },
+  refine finsupp.map_domain_injective' _ this _ (by simp) h,
+  intros x hx,
+  rw [set.mem_set_of_eq, hjp x hx],
+  -- refine finsupp.map_domain_injective _ h,
+  -- intros x y hxy,
+  -- simp at hxy,
+  -- -- TODO something like this but this isnt exactly true
+  -- sorry,
 end
 
 -- TODO this can follow from previous
-lemma total_degree_homogenization (i : ι) (p : mv_polynomial ι R) :
-  --(h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : -- this arg is probably needed? I (RB) deleted it since
+lemma total_degree_homogenization (i : ι) (p : mv_polynomial ι R)
+  (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) :
   --it's not needed, I am keeping as comment since I don't why it's here
   (p.homogenization i).total_degree = p.total_degree :=
 begin
@@ -319,7 +338,7 @@ begin
   { simp [hp], },
   apply is_homogeneous.total_degree,
   refine is_homogeneous_homogenization _ _,
-  exact (homogenization_ne_zero_of_ne_zero _ hp),
+  exact (homogenization_ne_zero_of_ne_zero _ hp h),
   -- rw total_degree,
   -- have : (homogenization i p).support.nonempty,
   -- { simp [homogenization],
@@ -626,8 +645,8 @@ begin
     exact pos_iff_ne_zero.mpr hp, },
 end
 
-lemma finset.sup_eq_bot_iff {α β : Type*} [semilattice_sup β] [order_bot β] (f : α → β) (S : finset α) :
-  S.sup f = ⊥ ↔ ∀ s ∈ S, f s = ⊥ :=
+lemma finset.sup_eq_bot_iff {α β : Type*} [semilattice_sup β] [order_bot β] (f : α → β)
+  (S : finset α) : S.sup f = ⊥ ↔ ∀ s ∈ S, f s = ⊥ :=
 begin
   classical,
   induction S using finset.induction with a S haS hi,
@@ -635,8 +654,8 @@ begin
   simp [hi],
 end
 
-lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf β] [order_top β] (f : α → β) (S : finset α) :
-  S.inf f = ⊤ ↔ ∀ s ∈ S, f s = ⊤ :=
+lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf β] [order_top β] (f : α → β)
+  (S : finset α) : S.inf f = ⊤ ↔ ∀ s ∈ S, f s = ⊤ :=
 @finset.sup_eq_bot_iff _ (order_dual β) _ _ _ _ -- same proof also works
 
 lemma is_homogeneous_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
@@ -664,25 +683,21 @@ begin
   { simpa [hp] using h, },
   have := total_degree_add p q,
   rwa max_eq_left_of_lt h at this,
-  rw total_degree,
   apply le_antisymm,
+  { exact this, },
   classical,
-  have : p.support \ q.support ⊆ p.support,
-  exact (support p).sdiff_subset (support q),
   obtain ⟨b, hb₁, hb₂⟩ := p.support.exists_mem_eq_sup (finsupp.support_nonempty_iff.mpr hp)
     (λ (m : ι →₀ ℕ), m.to_multiset.card),
   have hb : ¬ b ∈ q.support,
-  sorry,
-  have : b ∈ (p + q).support,
+  { contrapose! h,
+    rw [total_degree_eq p, hb₂, total_degree_eq],
+    apply finset.le_sup h, },
+  have hbb : b ∈ (p + q).support,
   { apply support_sdiff_support_subset_support_add,
     rw finset.mem_sdiff,
     exact ⟨hb₁, hb⟩, },
-  { have := total_degree_add p q,
-  --   rwa max_eq_left_of_lt h at this, },
-  -- { rw total_degree,
-  --   rw total_degree,
-    sorry, -- probably best to rethink this
-     }, sorry,
+  rw [total_degree_eq, hb₂, total_degree_eq],
+  exact finset.le_sup hbb,
 end
 
 lemma leading_terms_add_of_total_degree_lt (p q : mv_polynomial ι R)
@@ -703,25 +718,51 @@ begin
   rw finsupp.filter_smul,
   rw C_mul', -- TODO this has a weird name
 end
+
+lemma no_zero_smul_divisors.eq_zero_or_eq_zero_iff_smul_eq_zero (R M : Type*) [has_zero R]
+  [has_zero M] [smul_with_zero R M] [no_zero_smul_divisors R M] {c : R} {x : M} :
+  c • x = 0 ↔ c = 0 ∨ x = 0 :=
+begin
+  split; intro h,
+  exact eq_zero_or_eq_zero_of_smul_eq_zero h,
+  cases h;
+  simp [h],
+end
+
+--TODO this generalized lemma when distrib_mul_action_with_zero exists?
+-- lemma support_smul_eq {α M R : Type*} {_ : monoid_with_zero R} [add_monoid M]
+--   [distrib_mul_action_with_zero R M] [no_zero_smul_divisors R M] {b : R} (hb : b ≠ 0) {g : α →₀ M} :
+--   (b • g).support = g.support :=
+-- begin
+--   ext a,
+--   simp [finsupp.smul_apply, mem_support_iff, ne.def],
+--   simp,
+--   rw no_zero_smul_divisors.eq_zero_or_eq_zero_iff_smul_eq_zero,
+-- end
+
+lemma finsupp.support_smul_eq {α M R : Type*} [semiring R] [add_comm_monoid M] [module R M]
+  [no_zero_smul_divisors R M] {b : R} (hb : b ≠ 0) {g : α →₀ M} :
+  (b • g).support = g.support :=
+begin
+  ext a,
+  simp [finsupp.smul_apply, mem_support_iff, ne.def, hb],
+end
+
+-- haveI : no_zero_smul_divisors R (mv_polynomial ι R), --TODO add this instance
 --TODO maybe this for leading terms and homog
 -- lemma homogeneous_s_monomial_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) (x : ι →₀ ℕ) :
   -- (p * monomial x r).leading_terms = p.leading_terms * monomial x r :=
   --TODO also maybe an smul version
 @[simp]
-lemma leading_terms_C_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) :
+lemma leading_terms_C_mul [no_zero_smul_divisors R R] (p : mv_polynomial ι R) (r : R) :
   (C r * p).leading_terms = C r * p.leading_terms :=
 begin
-  rw leading_terms,
-  rw leading_terms,
-  rw total_degree,
+  by_cases hr : r = 0,
+  { simp [hr], },
   have : (C r * p).support = p.support,
   { rw C_mul',
-
-    sorry,
-    -- rw support_smul,
-     },
-  rw this,
-  rw homogeneous_component_C_mul,
+    exact finsupp.support_smul_eq hr, },
+  rw [leading_terms, leading_terms, total_degree, this, homogeneous_component_C_mul],
   refl,
 end
 
@@ -816,6 +857,9 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
   (p + q).homogenization i = p.homogenization i + q.homogenization i :=
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
+lemma auxx (f s p q fs ss : ℕ) (hp : fs ≤ p) (hp : ss ≤ q) :
+  f + s + (p + q - (fs + ss)) = f + (p - fs) + (s + (q - ss)) := by omega
+
 lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q : mv_polynomial ι S) :
   -- TODO is this cond needed?
   --(hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
@@ -825,77 +869,45 @@ begin
   { simp [hp], },
   by_cases hq : q = 0,
   { simp [hq], },
-  induction p using mv_polynomial.induction_on' with x s p₁ p₂ ih₁ ih₂ p i ih,
-  -- { simp only [total_degree_C, add_zero, zero_tsub, finsupp.single_zero,
-  --     finsupp.single_tsub, zero_add],
-  --   erw finsupp.map_domain_single,
-  --   rw C_mul',
-  --   rw finsupp.map_domain_smul,
-  --   erw C_mul', },
-  { rw [homogenization_monomial],
-    simp only [homogenization],
-    rw total_degree_mul_eq hp hq,
-    simp only [finsupp.single_add, finsupp.single_tsub],
-    rw total_degree_monomial _ (λ h, hp _ : s ≠ 0),
-    swap,
-    rwa monomial_eq_zero,
-    rw add_monoid_algebra.mul_def,
-    erw finsupp.sum_single_index,
-    -- TODO rethink a cleaner way to prove / just make this look nicer
-    { rw finsupp.map_domain_sum,
-      simp only [finsupp.map_domain_single],
-      rw add_monoid_algebra.mul_def,
-      erw finsupp.sum_single_index,
-      rw finsupp.sum_map_domain_index,
-      congr,
-      ext a b,
-      congr' 2,
-      rw add_assoc,
-      congr' 2,
-      rw finsupp.sum_add_index,
-      rw ← finsupp.single_add,
-      rw ← finsupp.single_tsub,
-      rw ← finsupp.single_tsub,
-      rw nat.add_sub_add_left,
-      exact congr_fun rfl,
-      simp only [eq_self_iff_true, forall_3_true_iff],
-      simp only [forall_const, finsupp.single_zero, mul_zero],
-      simp only [mul_add, forall_const, finsupp.single_add, eq_self_iff_true],
-      simp only [zero_mul, finsupp.single_zero, finsupp.sum_zero], },
-    { simp only [zero_mul, finsupp.single_zero, finsupp.sum_zero], } },
-  { rw add_mul, -- TODO unfortunately this goal is false, rethink required, maybe a better
-    -- homogenization add lemma, or an induction principle that says something about degree?
-    -- wlog hple : p₁.total_degree ≤ p₂.total_degree using [p₁ p₂, p₂ p₁],
-    rw homogenization_add_of_total_degree_eq,
-    rw homogenization_add_of_total_degree_eq,
-    rw add_mul,
-    rw ih₂,
-    rw ih₁,
-    sorry,
-    sorry,
-    sorry,
-    sorry,
-    sorry,
-    symmetry,
-    -- apply total_degree_add_of_total_degree_lt,
-    sorry,
-
-  }
-  -- ext m,
-  -- simp,
-  -- rw coeff_mul,
-  -- rw coeff,
-  -- simp_rw coeff,
-  -- simp_rw finsupp.map_domain,
-  -- simp,
-  -- classical,
-  -- simp_rw finsupp.single_apply,
-  -- -- rw finsupp.map_domain_mul,
-  -- sorry,
+  rw [homogenization, homogenization, homogenization, total_degree_mul_eq hp hq,
+    ← finsupp.sum_single p, ← finsupp.sum_single q, finsupp.map_domain_sum, finsupp.map_domain_sum],
+  erw [finset.sum_mul_sum, finset.sum_mul_sum],
+  simp only [finsupp.single_add, finsupp.sum_single, monomial_mul],
+  rw finsupp.map_domain_finset_sum,
+  apply finset.sum_congr rfl,
+  intros a ha,
+  simp only [finset.mem_product] at ha,
+  rw [finsupp.map_domain_single, finsupp.map_domain_single],
+  simp_rw [single_eq_monomial],
+  simp only [finsupp.single_add, monomial_mul],
+  erw finsupp.map_domain_single,
+  congr' 1,
+  rw finsupp.sum_add_index,
+  simp only [finsupp.single_add, finsupp.single_tsub],
+  ext j,
+  simp only [pi.add_apply, finsupp.coe_add, finsupp.coe_tsub, pi.sub_apply],
+  classical,
+  refine auxx _ _ _ _ _ _ _ _,
+  { rw finsupp.single_apply,
+    split_ifs,
+    { simp only [h, finsupp.single_eq_same],
+      convert finset.le_sup ha.left,
+      congr, }, -- TODO what is going on here?
+    { simp, }, },
+  { rw finsupp.single_apply,
+    split_ifs,
+    { simp only [h, finsupp.single_eq_same],
+      convert finset.le_sup ha.right,
+      congr, }, -- TODO what is going on here?
+    { simp, }, },
+  { intro i, refl, },
+  { intro i, simp, },
 end
 
 section dangerous_instance
 local attribute [instance] mv_polynomial.unique
+
+@[simp]
 lemma homogenization_X_add_C {i j : ι} (r : R) :
   (X j + C r : mv_polynomial ι R).homogenization i = X j + C r * X i :=
 begin
@@ -913,6 +925,56 @@ begin
   rw [monomial_eq_C_mul_X, pow_one],
   refl,
 end
+
+@[simp]
+lemma homogenization_X_sub_C {R : Type*} [comm_ring R] {i j : ι} (r : R) :
+  (X j - C r : mv_polynomial ι R).homogenization i = X j - C r * X i :=
+by rw [sub_eq_add_neg, sub_eq_add_neg, ← C_neg, homogenization_X_add_C,
+  C_neg, neg_mul_eq_neg_mul_symm]
+
+lemma support_X_pow [nontrivial R] (s : ι) (n : ℕ) :
+  (X s ^ n : mv_polynomial ι R).support = {finsupp.single s n} :=
+begin
+  classical,
+  rw [X, monomial_pow, support_monomial, if_neg, finsupp.smul_single', mul_one],
+  { rw [one_pow],
+    exact one_ne_zero, },
+end
+
+@[simp] lemma total_degree_X_pow {R} [comm_semiring R] [nontrivial R] (s : ι) (n : ℕ) :
+  (X s ^ n : mv_polynomial ι R).total_degree = n :=
+begin
+  rw [total_degree, support_X_pow],
+  simp only [finset.sup, finsupp.sum_single_index, finset.fold_singleton, sup_bot_eq],
+end
+
+@[simp]
+lemma homogenization_X_pow_add_C {i j : ι} {n : ℕ} (hn : 0 < n) (r : R) :
+  (X j ^ n + C r : mv_polynomial ι R).homogenization i = X j ^ n + C r * X i ^ n :=
+begin
+  nontriviality R,
+  have : (X j ^ n + C r).total_degree = n,
+  { rw total_degree_add_of_total_degree_lt,
+    { exact total_degree_X_pow _ _, },
+    { simp only [total_degree_C, total_degree_X_pow, hn], }, },
+  erw [homogenization, finsupp.map_domain_add],
+  erw add_monoid_algebra.single_pow,
+  erw [finsupp.map_domain_single,
+    finsupp.map_domain_single],
+  simp only [tsub_zero, finsupp.sum_zero_index, finsupp.sum_single_index, zero_add,
+    single_eq_monomial, one_pow, mul_one, finsupp.smul_single', finsupp.single_tsub],
+  congr,
+  simp,
+  sorry,
+  sorry,
+end
+
+@[simp]
+lemma homogenization_X_pow_sub_C {R : Type*} [comm_ring R] {i j : ι} {n : ℕ} (hn : 0 < n) (r : R) :
+  (X j ^ n - C r : mv_polynomial ι R).homogenization i = X j ^ n - C r * X i ^ n :=
+by rw [sub_eq_add_neg, sub_eq_add_neg, ← C_neg, homogenization_X_pow_add_C hn,
+  C_neg, neg_mul_eq_neg_mul_symm]
+
 end dangerous_instance
 
 end mv_polynomial
@@ -925,8 +987,7 @@ namespace finset
 open function
 open finset
 
-variables {α : Type*} {β : Type*} {s s₁ s₂ t t₁ t₂ u : finset α} {a b : α}
-  {x y : β}
+variables {α : Type*} {β : Type*} {s s₁ s₂ t t₁ t₂ u : finset α} {a b : α} {x y : β}
 open_locale pointwise
 
 /-- The set `(1 : finset α)` is defined as `{1}` in locale `pointwise`. -/
@@ -968,12 +1029,23 @@ lemma image_mul_prod [decidable_eq α] [has_mul α] :
 @[simp, to_additive]
 lemma image_mul_left [decidable_eq α] [group α] :
   image (λ b, a * b) t = preimage t (λ b, a⁻¹ * b) (assume x hx y hy, (mul_right_inj a⁻¹).mp) :=
-sorry
+begin
+  have := @set.image_mul_left _ (t : set α) a _,
+  rw ← finset.coe_preimage _ (assume x hx y hy, (mul_right_inj a⁻¹).mp) at this,
+  exact_mod_cast this,
+end
 
 @[simp, to_additive]
 lemma image_mul_right [decidable_eq α] [group α] :
   image (λ a, a * b) t = preimage t (λ a, a * b⁻¹) (assume x hx y hy, (mul_left_inj b⁻¹).mp) :=
-sorry
+begin
+  have := @set.image_mul_right _ (t : set α) b _,
+  rw ← finset.coe_preimage at this,
+  swap,
+  intros x hx y hy,
+  simp,
+  exact_mod_cast this,
+end
 
 @[to_additive]
 lemma image_mul_left' [decidable_eq α] [group α] :
@@ -992,36 +1064,57 @@ by { classical, rw [← image_mul_left', image_singleton] }
 
 @[simp, to_additive]
 lemma preimage_mul_right_singleton [group α] :
-  preimage {b} (* a) (assume x hx y hy, (mul_left_inj a).mp)= {b * a⁻¹} :=
+  preimage {b} (* a) (assume x hx y hy, (mul_left_inj a).mp) = {b * a⁻¹} :=
 by { classical, rw [← image_mul_right', image_singleton] }
 
--- TODO fill out these for finset, changing image and preimage to the finset version
--- @[simp, to_additive]
--- lemma preimage_mul_left_one [group α] : (λ b, a * b) ⁻¹' 1 = {a⁻¹} :=
--- by rw [← image_mul_left', image_one, mul_one]
-
--- @[simp, to_additive]
--- lemma preimage_mul_right_one [group α] : (λ a, a * b) ⁻¹' 1 = {b⁻¹} :=
--- by rw [← image_mul_right', image_one, one_mul]
-
--- @[to_additive]
--- lemma preimage_mul_left_one' [group α] : (λ b, a⁻¹ * b) ⁻¹' 1 = {a} := by simp
-
--- @[to_additive]
--- lemma preimage_mul_right_one' [group α] : (λ a, a * b⁻¹) ⁻¹' 1 = {b} := by simp
+@[simp, to_additive]
+lemma preimage_mul_left_one [group α] :
+  preimage 1 (λ b, a * b) (assume x hx y hy, (mul_right_inj a).mp) = {a⁻¹} :=
+by {classical, rw [← image_mul_left', image_one, mul_one] }
 
 @[simp, to_additive]
-lemma mul_singleton [decidable_eq α] [has_mul α] : s * {b} = image (λ a, a * b) s := sorry
+lemma preimage_mul_right_one [group α] :
+  preimage 1 (λ a, a * b) (assume x hx y hy, (mul_left_inj b).mp) = {b⁻¹} :=
+by {classical, rw [← image_mul_right', image_one, one_mul] }
+
+@[to_additive]
+lemma preimage_mul_left_one' [group α] :
+  preimage 1 (λ b, a⁻¹ * b) (assume x hx y hy, (mul_right_inj _).mp) = {a} := by simp
+
+@[to_additive]
+lemma preimage_mul_right_one' [group α] :
+  preimage 1 (λ a, a * b⁻¹) (assume x hx y hy, (mul_left_inj _).mp) = {b} := by simp
 
 @[simp, to_additive]
-lemma singleton_mul [decidable_eq α] [has_mul α] : {a} * t = image (λ b, a * b) t := sorry --image2_singleton_left
+lemma mul_singleton [decidable_eq α] [has_mul α] : s * {b} = image (λ a, a * b) s :=
+begin
+  have := @set.mul_singleton _ (s : set α) b _,
+  norm_cast at this,
+  rw (by simp : ({b} : set α) = ↑({b} : finset α)) at this,
+  exact_mod_cast this,
+end
 
--- @[simp, to_additive]
--- lemma singleton_mul_singleton [has_mul α] : ({a} : set α) * {b} = {a * b} := image2_singleton
+@[simp, to_additive]
+lemma singleton_mul [decidable_eq α] [has_mul α] : {a} * t = image (λ b, a * b) t :=
+begin
+  have := @set.singleton_mul _ (t : set α) a _,
+  norm_cast at this,
+  rw (by simp : ({a} : set α) = ↑({a} : finset α)) at this,
+  exact_mod_cast this,
+end
+
+@[simp, to_additive]
+lemma singleton_mul_singleton [decidable_eq α] [has_mul α] : ({a} : finset α) * {b} = {a * b} :=
+begin
+  have := @set.singleton_mul_singleton _ a b _,
+  rw (by simp : ({a} : set α) = ↑({a} : finset α)) at this,
+  rw (by simp : ({b} : set α) = ↑({b} : finset α)) at this,
+  exact_mod_cast this,
+end
 
 @[to_additive]
 protected lemma mul_comm [decidable_eq α] [comm_semigroup α] : s * t = t * s :=
-by simp only [mul_def, mul_comm]; sorry
+by exact_mod_cast @set.mul_comm _ (s : set α) t _
 
 /-- `finset α` is a `mul_one_class` under pointwise operations if `α` is. -/
 @[to_additive /-"`set α` is an `add_zero_class` under pointwise operations if `α` is."-/]
@@ -1033,7 +1126,8 @@ protected def mul_one_class [decidable_eq α] [mul_one_class α] : mul_one_class
 /-- `set α` is a `semigroup` under pointwise operations if `α` is. -/
 @[to_additive /-"`set α` is an `add_semigroup` under pointwise operations if `α` is. "-/]
 protected def semigroup [decidable_eq α] [semigroup α] : semigroup (finset α) :=
-{ mul_assoc := λ _ _ _, sorry,--image2_assoc mul_assoc,
+{ mul_assoc := λ a b c,
+    by exact_mod_cast (set.semigroup.mul_assoc : ∀ (a b c : set α), a * b * c = a * (b * c)) a b c,
   ..finset.has_mul }
 
 /-- `set α` is a `monoid` under pointwise operations if `α` is. -/
@@ -1152,9 +1246,24 @@ begin
   --   apply hSi, },
 end
 
-lemma homogenization_prod {S : Type*} [comm_ring S] [is_domain S] (i : ι)
-  (P : finset (mv_polynomial ι S))
-  (hp : ∀ (p : mv_polynomial ι S) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0) :
+
+open_locale big_operators
+lemma homogenization_prod {σ S : Type*} [comm_ring S] [is_domain S] (i : ι)
+  (P : σ → mv_polynomial ι S) (L : finset σ) :
+  -- still unsure if this is needed lol
+  -- (hp : ∀ (p : mv_polynomial ι S) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0) :
+  (∏ l in L, P l).homogenization i = ∏ l in L, (P l).homogenization i :=
+begin
+  classical,
+  induction L using finset.induction with p S hS hSi,
+  { simp, },
+  simp only [finset.prod_insert hS],
+  rw homogenization_mul,
+  rw hSi,
+end
+
+lemma homogenization_prod_id {S : Type*} [comm_ring S] [is_domain S] (i : ι)
+  (P : finset (mv_polynomial ι S)) :
   (P.prod id).homogenization i = P.prod (λ p, p.homogenization i) :=
 begin
   classical,
@@ -1164,14 +1273,6 @@ begin
   rw homogenization_mul,
   rw hSi,
   rw [id.def],
-  { intros p_1 hp_1 j hjp,
-    exact hp p_1 (finset.mem_insert_of_mem hp_1) _ hjp, },
-  -- { intros j hj,
-  --   exact hp p (finset.mem_insert_self p S) _ hj, },
-  -- { intros j hj,
-  --   have := support_prod _ hj,
-  --   sorry,
-  --    },
 end
 
 end mv_polynomial

@@ -4,61 +4,53 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alex J. Best
 -/
 import number_theory.cyclotomic.basic
-import number_theory.cyclotomic.cyclotomic_units
-import number_theory.cyclotomic.absolute_value
+import ring_theory.polynomial.homogenization
 
 
-universes u v
-variables (A : Type u) (B : Type v)
-variables [comm_ring A] [comm_ring B] [algebra A B]
-variables (n : ℕ+) [is_cyclotomic_extension {n} A B]
-
+open polynomial finset mv_polynomial
 open_locale big_operators
-open finset is_cyclotomic_extension
-local notation `ζ` := zeta' n A B
+namespace polynomial
 
+lemma aeval_sum {σ ι R : Type*} [comm_semiring R] (s : finset ι) (f : ι → polynomial R)
+  (g : σ → R) : aeval g (∑ i in s, f i) = ∑ i in s, aeval g (f i) :=
+(polynomial.aeval g : polynomial R →ₐ[_] _).map_sum f s
 
-open polynomial
--- lemma X_pow_sub_one_eq_prod {ζ : K} {n : ℕ} (hpos : 0 < n) (h : is_primitive_root ζ n) :
---   X ^ n - 1 = ∏ ζ in nth_roots_finset n K, (X - C ζ) :=
--- begin
---   rw [nth_roots_finset, ← multiset.to_finset_eq (is_primitive_root.nth_roots_nodup h)],
---   simp only [finset.prod_mk, ring_hom.map_one],
---   rw [nth_roots],
---   have hmonic : (X ^ n - C (1 : K)).monic := monic_X_pow_sub_C (1 : K) (ne_of_lt hpos).symm,
---   symmetry,
---   apply prod_multiset_X_sub_C_of_monic_of_roots_card_eq hmonic,
---   rw [@nat_degree_X_pow_sub_C K _ _ n 1, ← nth_roots],
---   exact is_primitive_root.card_nth_roots h
--- end
-/-- If there is a primitive `n`th root of unity in `K`, then `X ^ n + y^n = ∏ (X + μ y)`, where `μ`
-varies over the `n`-th roots of unity. -/
-lemma pow_add_pow_eq_prod_add_zeta_mul [nontrivial B] (x y : B) :
-  x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ i in range n, (x - ζ ^ i * y) :=
+@[to_additive]
+lemma aeval_prod {ι R T : Type*} [comm_semiring R] [comm_semiring T] [algebra R T] (s : finset ι)
+  (f : ι → polynomial R) (g : T) : aeval g (∏ i in s, f i) = ∏ i in s, aeval g (f i) :=
+(polynomial.aeval g : polynomial R →ₐ[_] _).map_prod f s
+
+end polynomial
+
+namespace mv_polynomial
+lemma aeval_sum {σ ι R : Type*} [comm_semiring R] (s : finset ι) (f : ι → mv_polynomial σ R)
+  (g : σ → R) :
+  aeval g (∑ i in s, f i) = ∑ i in s, aeval g (f i) :=
+(mv_polynomial.aeval g).map_sum _ _
+
+@[to_additive]
+lemma aeval_prod {σ ι R : Type*} [comm_semiring R] (s : finset ι) (f : ι → mv_polynomial σ R)
+  (g : σ → R) :
+  aeval g (∏ i in s, f i) = ∏ i in s, aeval g (f i) :=
+(mv_polynomial.aeval g).map_prod _ _
+end mv_polynomial
+
+/-- If there is a primitive `n`th root of unity in `K`, then `X ^ n - Y ^ n = ∏ (X - μ Y)`,
+where `μ` varies over the `n`-th roots of unity. -/
+lemma pow_add_pow_eq_prod_add_zeta_mul {K : Type*} [field K] {ζ : K} {n : ℕ} (hpos : 0 < n)
+  (h : is_primitive_root ζ n) (x y : K) :
+  x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ (ζ : K) in nth_roots_finset n K, (x - ζ * y) :=
 begin
-  suffices : (X : polynomial B) ^ (n : ℕ) - C y ^ (n : ℕ) = ∏ i in range n, (X - C (ζ ^ i * y)),
-  { apply_fun (eval x) at this,
-    simpa [eval_prod] using this, },
-  ext,
-  rw prod_X_sub_C_coeff,
-  simp_rw prod_mul_distrib,
-  simp_rw prod_const,
-  conv in (y ^ (card _))
-  { rw (mem_powerset_len.mp H).2, },
-  rw ← sum_mul,
-  rw ← mul_assoc,
-  rw ← prod_X_sub_C_coeff,
-  sorry,
-  sorry,
-  sorry,
-  -- rw is_primitive_root.card_nth_roots_finset,
-  -- rw ← X_pow_sub_one_eq_prod,
-  -- -- rw [nth_roots_finset, ← multiset.to_finset_eq (is_primitive_root.nth_roots_nodup h)],
-  -- simp only [finset.prod_mk, ring_hom.map_one],
-  -- rw [nth_roots],
-  -- have hmonic : (X ^ n - C (1 : K)).monic := monic_X_pow_sub_C (1 : K) (ne_of_lt hpos).symm,
-  -- symmetry,
-  -- apply prod_multiset_X_sub_C_of_monic_of_roots_card_eq hmonic,
-  -- rw [@nat_degree_X_pow_sub_C K _ _ n 1, ← nth_roots],
-  -- exact is_primitive_root.card_nth_roots h
+  suffices : (X 0 : mv_polynomial (fin 2) K) ^ (n : ℕ) - (X 1) ^ (n : ℕ) =
+    ∏ ζ in nth_roots_finset n K, (X 0 - C ζ * X 1),
+  { apply_fun (mv_polynomial.eval ((λ i : fin 2, if i = 0 then x else y))) at this,
+    simpa [mv_polynomial.eval_prod] using this, },
+  have := X_pow_sub_one_eq_prod hpos h,
+  have := congr_arg (aeval (X 0 : mv_polynomial (fin 2) K)) this,
+  simp only [polynomial.aeval_prod, polynomial.aeval_X_pow, polynomial.aeval_X,
+    polynomial.aeval_one, polynomial.aeval_C, alg_hom.map_sub] at this,
+  have hh := congr_arg (homogenization 1) this,
+  rw [homogenization_prod, algebra_map_eq, ← mv_polynomial.C_1] at hh, -- TODO homog x_pow_sub_one?
+  simp only [hpos, homogenization_X_pow_sub_C, homogenization_X_sub_C] at hh,
+  simpa using hh,
 end
