@@ -259,8 +259,16 @@ begin
   simp only [finsupp.sum_apply],
   rw finsupp.sum,
   simp_rw finsupp.single_apply,
+  have : ∀ (a_1 : α) (ha1 : a_1 ∈ x.support),
+    (if f a_1 = f a then x a_1 else 0) = (if f a_1 = f a then x a else 0),
+  { intros a_1 ha_1,
+    split_ifs with hh,
+    rw hf _ ha hh,
+    exact hS ha_1,
+    refl, },
+  conv in (ite _ _ _)
+  { rw [this _ H], },
   by_cases ha : a ∈ x.support,
-  -- rw finset.sum_union,
   rw ← finset.add_sum_erase _ _ ha,
   simp only [if_true, eq_self_iff_true],
   convert add_zero _,
@@ -274,11 +282,8 @@ begin
   conv in (ite _ _ _)
   { rw if_neg (this x H), },
   simp only [finset.sum_const_zero],
-  sorry,
-  -- rw [finsupp.map_domain, finsupp.sum_apply, finsupp.sum, finset.sum_eq_single a,
-  -- finsupp.single_eq_same],
-  -- { assume b _ hba, exact finsupp.single_eq_of_ne (_) }, -- TODO set.inj_on.ne
-  -- { assume h, rw [not_mem_support_iff.1 h, single_zero, zero_apply] }
+  simp at ha,
+  simp [ha],
 end
 
 lemma map_domain_injective' {α β M : Type*} [add_comm_monoid M] (S : set α) {f : α → β}
@@ -289,11 +294,19 @@ begin
   have : finsupp.map_domain f v₁ (f a) = finsupp.map_domain f v₂ (f a), { rw eq },
   simp at hv₁ hv₂,
   classical,
-  by_cases h : a ∈ v₁.support ∩ v₂.support,
-  { sorry; rwa [map_domain_apply' S _ hv₁ hf (finset.mem_of_mem_inter_left h),
-         map_domain_apply' S _ hv₂ hf (finset.mem_of_mem_inter_right h)] at this, },
+  have hu : (v₁.support ∪ v₂.support : set α) ⊆ S := set.union_subset hv₁ hv₂,
+  by_cases h : a ∈ v₁.support ∪ v₂.support,
+  { rwa [map_domain_apply' S _ hv₁ hf _,
+         map_domain_apply' S _ hv₂ hf _] at this,
+    apply hu,
+    norm_cast,
+    exact h,
+    apply hu,
+    norm_cast,
+    exact h, },
   { simp at h,
-    sorry; simp [h], },
+    push_neg at h,
+    simp [h], },
   -- rw [finsupp.map_domain_apply hf, finsupp.map_domain_apply hf] at this,
 end
 end finsupp
@@ -1250,8 +1263,6 @@ end
 open_locale big_operators
 lemma homogenization_prod {σ S : Type*} [comm_ring S] [is_domain S] (i : ι)
   (P : σ → mv_polynomial ι S) (L : finset σ) :
-  -- still unsure if this is needed lol
-  -- (hp : ∀ (p : mv_polynomial ι S) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0) :
   (∏ l in L, P l).homogenization i = ∏ l in L, (P l).homogenization i :=
 begin
   classical,
