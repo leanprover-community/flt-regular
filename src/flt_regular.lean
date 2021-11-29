@@ -6,15 +6,38 @@ import tactic
 import data.nat.prime_extras
 import ready_for_mathlib.totient
 import ready_for_mathlib.gcd
+import number_theory.cyclotomic.factoring
 
-lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (hab: a.coprime b)
-    : b.coprime c ∧ a.coprime c := sorry
+-- TODO I (alex) commented this out as it seems redundent now?
+-- lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
+--     : b.coprime c ∧ a.coprime c := sorry
 
 lemma flt_three_case_one_aux {A B C : zmod 9} (h : A ^ 3 + B ^ 3 = C ^ 3) : 3 ∣ A * B * C :=
 by dec_trivial!
 
-theorem flt_regular_case_one (p a b c : ℕ) [h_prime : fact p.prime] (hp : is_regular_number p)
-  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hpabc : p.coprime (a * b * c)) : false :=
+open polynomial fractional_ideal
+open_locale non_zero_divisors
+theorem flt_regular_case_one_main {p a b c : ℕ} [h_prime : fact p.prime] (hp : is_regular_number p)
+  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hpabc : p.coprime (a * b * c))
+  (hab : a.coprime b) (hp_five : 5 ≤ p) : false :=
+begin
+  have h_prime : p.prime := fact.out _,
+  let pp : ℕ+ := ⟨p, nat.prime.pos h_prime⟩,
+  have := pow_add_pow_eq_prod_add_zeta_mul (nat.odd_iff.mp (nat.prime.odd h_prime hp_ne_two))
+    (is_cyclotomic_extension.zeta'_primitive_root pp ℚ (cyclotomic_field pp ℚ)) a b,
+  rw_mod_cast h at this,
+  symmetry' at this,
+  push_cast at this,
+  apply_fun span_singleton (cyclotomic_ring pp ℤ ℚ)⁰ at this,
+  simp at this,
+  sorry,
+end
+
+/-- Case I (when a,b,c are coprime to the exponent), of FLT for regular primes, by reduction to
+  the case of 5 ≤ p. -/
+theorem flt_regular_case_one {p a b c : ℕ} [h_prime : fact p.prime] (hp : is_regular_number p)
+  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hpabc : p.coprime (a * b * c))
+  (hab : a.coprime b) : false :=
 begin
   unfreezingI { rcases eq_or_ne p 3 with rfl | hp_three },
   { suffices : 3 ∣ a * b * c,
@@ -23,9 +46,10 @@ begin
     { rw_mod_cast h },
     convert dvd_of_dvd_zmod (by norm_num : 3 ∣ 9) (by exact_mod_cast flt_three_case_one_aux this) },
   { have hp_five : 5 ≤ p, from h_prime.elim.five_le hp_ne_two hp_three,
-    sorry }
+    exact flt_regular_case_one_main hp hp_ne_two h hpabc hab hp_five, }
 end
 
+/-- Case II (when a,b,c are not coprime to the exponent), of FLT for regular primes. -/
 theorem flt_regular_case_two (p a b c : ℕ) [fact p.prime] (hp : is_regular_number p)
   (hpne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hpabc : p ∣ a * b * c) : a * b * c = 0 := sorry
 
@@ -73,6 +97,6 @@ begin
       exact habc,
       all_goals { apply finset.gcd_dvd, simp } } },
   cases nat.coprime_or_dvd_of_prime (fact.out p.prime) (a * b * c) with hpabc hpabc,
-  { exact absurd hpabc (flt_regular_case_one p a b c hp hpne_two h) },
+  { exact absurd hpabc (flt_regular_case_one hp hpne_two h) },
   { exact flt_regular_case_two p a b c hp hpne_two h hpabc }
 end

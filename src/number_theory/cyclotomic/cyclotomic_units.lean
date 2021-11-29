@@ -30,6 +30,18 @@ lemma span_singleton_pow {R : Type*} {P : Type*} [comm_ring R] {S : submonoid R}
 | 0 := by simp
 | (n + 1) := by simp [pow_succ, ← span_singleton_pow n]
 
+-- TODO this really shouldn't be necessary either?
+@[simp]
+lemma span_singleton_prod {R : Type*} {P ι : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
+  [algebra R P] [loc : is_localization S P] (T : finset ι) (I : ι → P) :
+  span_singleton S (∏ t in T, I t) = ∏ t in T, span_singleton S (I t) :=
+begin
+  classical,
+  induction T using finset.induction with i T hiT ih,
+  { simp, },
+  simp [hiT, span_singleton_mul_span_singleton, ih.symm],
+end
+
 -- pretty sure there is an easier proof of this
 lemma submodule.span_singleton_eq_span_singleton {R : Type*} {M : Type*} [ring R] [add_comm_group M]
   [module R M] [no_zero_smul_divisors R M] (x y : M) :
