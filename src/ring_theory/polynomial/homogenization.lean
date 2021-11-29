@@ -42,6 +42,35 @@ import tactic.omega
 variables {R ι : Type*} [comm_semiring R]
 open mv_polynomial
 
+open polynomial finset mv_polynomial
+open_locale big_operators
+namespace polynomial
+
+lemma aeval_sum {σ ι R : Type*} [comm_semiring R] (s : finset ι) (f : ι → polynomial R)
+  (g : σ → R) : aeval g (∑ i in s, f i) = ∑ i in s, aeval g (f i) :=
+(polynomial.aeval g : polynomial R →ₐ[_] _).map_sum f s
+
+@[to_additive]
+lemma aeval_prod {ι R T : Type*} [comm_semiring R] [comm_semiring T] [algebra R T] (s : finset ι)
+  (f : ι → polynomial R) (g : T) : aeval g (∏ i in s, f i) = ∏ i in s, aeval g (f i) :=
+(polynomial.aeval g : polynomial R →ₐ[_] _).map_prod f s
+
+end polynomial
+
+namespace mv_polynomial
+lemma aeval_sum {σ ι R : Type*} [comm_semiring R] (s : finset ι) (f : ι → mv_polynomial σ R)
+  (g : σ → R) :
+  aeval g (∑ i in s, f i) = ∑ i in s, aeval g (f i) :=
+(mv_polynomial.aeval g).map_sum _ _
+
+@[to_additive]
+lemma aeval_prod {σ ι R : Type*} [comm_semiring R] (s : finset ι) (f : ι → mv_polynomial σ R)
+  (g : σ → R) :
+  aeval g (∏ i in s, f i) = ∏ i in s, aeval g (f i) :=
+(mv_polynomial.aeval g).map_prod _ _
+end mv_polynomial
+
+
 open_locale big_operators
 noncomputable theory
 namespace mv_polynomial
@@ -69,11 +98,6 @@ begin
 end
 
 end finsupp
-
--- TODO decide if we should make this fix things with X i in already, or have assumptions that X i
--- does not appear everywhere
--- TODO make this change and instead of update simply add to the i component the amount needed
--- this will have better properties (like being idempotent)
 
 /-- The homogenization of a multivariate polynomial at a single variable. -/
 def homogenization (i : ι) (p : mv_polynomial ι R) :
@@ -125,8 +149,9 @@ begin
   simp [hx],
 end
 
--- lemma support_homogenization (i : ι) (p : mv_polynomial ι R)
---   (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : (p.homogenization i).support = p.support.image sorry :=
+-- lemma support_homogenization [decidable_eq ι] (i : ι) (p : mv_polynomial ι R)
+--   (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : (p.homogenization i).support = p.support.image
+--     (λ (j : ι →₀ ℕ), j + finsupp.single i (p.total_degree - j.sum (λ (_x : ι) (m : ℕ), m))) :=
 -- begin
 --   rw homogenization,
 --   apply finsupp.support_map_domain _ _ _,
@@ -249,7 +274,6 @@ end
 namespace finsupp
 open finsupp
 
--- TODO want something like this but unsure what
 lemma map_domain_apply' {α β M : Type*} [add_comm_monoid M] (S : set α) {f : α → β} (x : α →₀ M)
   (hS : (x.support : set α) ⊆ S) (hf : set.inj_on f S) {a : α} (ha : a ∈ S) :
   finsupp.map_domain f x (f a) = x a :=
@@ -311,6 +335,7 @@ begin
 end
 end finsupp
 
+-- TODO should these hjp assumptions be phrased using `degree_of` or `vars`?
 lemma homogenization_ne_zero_of_ne_zero (i : ι) {p : mv_polynomial ι R} (hp : p ≠ 0)
   (hjp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : p.homogenization i ≠ 0 :=
 begin
@@ -343,7 +368,6 @@ end
 -- TODO this can follow from previous
 lemma total_degree_homogenization (i : ι) (p : mv_polynomial ι R)
   (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) :
-  --it's not needed, I am keeping as comment since I don't why it's here
   (p.homogenization i).total_degree = p.total_degree :=
 begin
   classical,
