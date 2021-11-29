@@ -1012,6 +1012,22 @@ lemma homogenization_X_pow_sub_C {R : Type*} [comm_ring R] {i j : ι} {n : ℕ} 
 by rw [sub_eq_add_neg, sub_eq_add_neg, ← C_neg, homogenization_X_pow_add_C hn,
   C_neg, neg_mul_eq_neg_mul_symm]
 
+@[simp]
+lemma homogenization_X_pow_sub_one {R : Type*} [comm_ring R] {i j : ι} {n : ℕ} (hn : 0 < n) :
+  (X j ^ n - 1 : mv_polynomial ι R).homogenization i = X j ^ n - X i ^ n :=
+begin
+  convert homogenization_X_pow_sub_C hn _,
+  simp,
+end
+
+@[simp]
+lemma homogenization_X_pow_add_one {i j : ι} {n : ℕ} (hn : 0 < n) :
+  (X j ^ n + 1 : mv_polynomial ι R).homogenization i = X j ^ n + X i ^ n :=
+begin
+  convert homogenization_X_pow_add_C hn _,
+  simp,
+end
+
 end dangerous_instance
 
 end mv_polynomial
@@ -1225,15 +1241,13 @@ end
 
 section
 open_locale pointwise
+
 @[simp] lemma support_one : (1 : mv_polynomial ι R).support ⊆ 0 :=
 finsupp.support_single_subset
--- @[simp] lemma support_one [nontrivial R] : (1 : mv_polynomial ι R).support = 0 :=
--- begin
---   convert (finsupp.support_eq_singleton).mpr _,
---   split,
---   simp,
---   change (1 : R) ≠ 0,
--- end
+
+@[simp] lemma support_one_of_nontrivial [nontrivial R] : (1 : mv_polynomial ι R).support = 0 :=
+finsupp.support_single_ne_zero one_ne_zero
+
 end
 
 variable [decidable_eq ι]

@@ -12,6 +12,7 @@ open polynomial finset mv_polynomial
 
 -- TODO might be nice to have an explicit two variable version of this factorization
 -- in an mv_polynomial ring with two chosen variables
+
 /-- If there is a primitive `n`th root of unity in `K`, then `X ^ n - Y ^ n = ∏ (X - μ Y)`,
 where `μ` varies over the `n`-th roots of unity. -/
 lemma pow_sub_pow_eq_prod_sub_zeta_mul {K : Type*} [field K] {ζ : K} {n : ℕ} (hpos : 0 < n)
@@ -30,11 +31,9 @@ begin
   simp only [polynomial.aeval_prod, polynomial.aeval_X_pow, polynomial.aeval_X,
     polynomial.aeval_one, polynomial.aeval_C, alg_hom.map_sub] at this,
   -- the homogenization of the identity is also true
-  have hh := congr_arg (homogenization 1) this,
+  have := congr_arg (homogenization 1) this,
   -- simplify to get the result we want
-  rw [homogenization_prod, algebra_map_eq, ← mv_polynomial.C_1] at hh, -- TODO homog x_pow_sub_one?
-  simp only [hpos, homogenization_X_pow_sub_C, homogenization_X_sub_C] at hh,
-  simpa using hh,
+  simpa [homogenization_prod, algebra_map_eq, hpos],
 end
 
 /-- If there is a primitive `n`th root of unity in `K` and `n` is odd, then
