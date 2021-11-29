@@ -18,8 +18,8 @@ by dec_trivial!
 open polynomial fractional_ideal
 open_locale non_zero_divisors
 theorem flt_regular_case_one_main {p a b c : ℕ} [h_prime : fact p.prime] (hp : is_regular_number p)
-  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hpabc : p.coprime (a * b * c))
-  (hab : a.coprime b) (hp_five : 5 ≤ p) : false :=
+  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
+  (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : false :=
 begin
   have h_prime : p.prime := fact.out _,
   let pp : ℕ+ := ⟨p, nat.prime.pos h_prime⟩,
@@ -36,8 +36,8 @@ end
 /-- Case I (when a,b,c are coprime to the exponent), of FLT for regular primes, by reduction to
   the case of 5 ≤ p. -/
 theorem flt_regular_case_one {p a b c : ℕ} [h_prime : fact p.prime] (hp : is_regular_number p)
-  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hpabc : p.coprime (a * b * c))
-  (hab : a.coprime b) : false :=
+  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
+  (hpabc : p.coprime (a * b * c)) : false :=
 begin
   unfreezingI { rcases eq_or_ne p 3 with rfl | hp_three },
   { suffices : 3 ∣ a * b * c,
@@ -46,7 +46,7 @@ begin
     { rw_mod_cast h },
     convert dvd_of_dvd_zmod (by norm_num : 3 ∣ 9) (by exact_mod_cast flt_three_case_one_aux this) },
   { have hp_five : 5 ≤ p, from h_prime.elim.five_le hp_ne_two hp_three,
-    exact flt_regular_case_one_main hp hp_ne_two h hpabc hab hp_five, }
+    exact flt_regular_case_one_main hp hp_ne_two h hab hpabc hp_five, }
 end
 
 /-- Case II (when a,b,c are not coprime to the exponent), of FLT for regular primes. -/
@@ -97,6 +97,6 @@ begin
       exact habc,
       all_goals { apply finset.gcd_dvd, simp } } },
   cases nat.coprime_or_dvd_of_prime (fact.out p.prime) (a * b * c) with hpabc hpabc,
-  { exact absurd hpabc (flt_regular_case_one hp hpne_two h) },
+  { exact absurd hpabc (flt_regular_case_one hp hpne_two h sorry) },
   { exact flt_regular_case_two p a b c hp hpne_two h hpabc }
 end
