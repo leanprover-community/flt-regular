@@ -189,6 +189,7 @@ begin
   simp,
 end
 
+@[simp]
 lemma total_degree_monomial (s : ι →₀ ℕ) {r : R} (hr : r ≠ 0) :
   total_degree (monomial s r) = s.sum (λ _ e, e) :=
 begin
@@ -1001,9 +1002,12 @@ begin
   simp only [tsub_zero, finsupp.sum_zero_index, finsupp.sum_single_index, zero_add,
     single_eq_monomial, one_pow, mul_one, finsupp.smul_single', finsupp.single_tsub],
   congr,
-  simp,
-  sorry,
-  sorry,
+  { rw total_degree_add_of_total_degree_lt,
+    simp [one_ne_zero],
+    simp [one_ne_zero, hn], },
+  { convert monomial_eq_C_mul_X,
+    rw monomial_eq_C_mul_X,
+    simp [this], },
 end
 
 @[simp]
