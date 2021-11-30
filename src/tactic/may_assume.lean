@@ -174,7 +174,6 @@ begin
     refine nat.coprime_div_gcd_div_gcd _,
     contrapose h_red,
     simp at h_red,
-    rw nat.gcd_eq_zero_iff at h_red,
     simp [h_red],
     split,
     split,
