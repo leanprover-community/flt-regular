@@ -4,6 +4,8 @@ import algebra.char_p.algebra
 
 open polynomial algebra finite_dimensional module set
 
+open_locale big_operators
+
 universes u v w z
 
 variables (n : ℕ+) (S T : set ℕ+) (A : Type u) (B : Type v) (K : Type w) (L : Type z)
@@ -184,13 +186,28 @@ end fintype
 
 section field
 
---missing separability assumption?
-lemma splits_X_pow_sub_one [is_cyclotomic_extension S K L] (n ∈ S) :
-  splits (algebra_map K L) (X ^ (n : ℕ) - 1) := sorry
+lemma splits_X_pow_sub_one [H : is_cyclotomic_extension S K L] (hS : n ∈ S) (hn : (n : K) ≠ 0) :
+  splits (algebra_map K L) (X ^ (n : ℕ) - 1) :=
+begin
+  rw [← splits_id_iff_splits, map_sub, map_one, map_pow, map_X],
+  obtain ⟨z, hz⟩ := ((iff _ _ _).1 H).1 n hS,
+  rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic] at hz,
+  replace hn : ((n : ℕ) : L) ≠ 0,
+  { intro h,
+    rw [← ring_hom.map_nat_cast (algebra_map K L)] at h,
+    have := (ring_hom.injective_iff _).1 (algebra_map K L).injective _ h,
+    norm_cast at this },
+  exact X_pow_sub_one_splits ((is_root_cyclotomic_iff hn).2 (is_root.def.2 hz)),
+end
 
---missing separability assumption?
-lemma splits_cyclotomic [is_cyclotomic_extension S K L] (n ∈ S) :
-  splits (algebra_map K L) (cyclotomic n K) := sorry
+lemma splits_cyclotomic [is_cyclotomic_extension S K L] (hS : n ∈ S) (hn : (n : K) ≠ 0) :
+  splits (algebra_map K L) (cyclotomic n K) :=
+begin
+  refine splits_of_splits_of_dvd _ (X_pow_sub_C_ne_zero n.pos _)
+    (splits_X_pow_sub_one n S K L hS hn) _,
+  use (∏ (i : ℕ) in (n : ℕ).proper_divisors, polynomial.cyclotomic i K),
+  rw [(eq_cyclotomic_iff n.pos _).1 rfl, ring_hom.map_one],
+end
 
 section singleton
 
