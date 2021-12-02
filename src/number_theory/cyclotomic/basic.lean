@@ -230,7 +230,29 @@ instance splitting_field_X_pow_sub_one (hn : (n : K) ≠ 0) :
 instance splitting_field_cyclotomic (hn : (n : K) ≠ 0) :
   is_splitting_field K L (cyclotomic n K) :=
 { splits := splits_cyclotomic n {n} K L (mem_singleton n) hn,
-  adjoin_roots := sorry }
+  adjoin_roots :=
+  begin
+    replace hn : ((n : ℕ) : L) ≠ 0,
+    { intro h,
+      rw [← ring_hom.map_nat_cast (algebra_map K L)] at h,
+      have := (ring_hom.injective_iff _).1 (algebra_map K L).injective _ h,
+      norm_cast at this },
+    rw [← ((iff_adjoin_eq_top {n} K L).1 infer_instance).2],
+    refine le_antisymm (adjoin_mono (λ x hx, _)) (adjoin_le (λ x hx, _)),
+    { simp only [multiset.mem_to_finset, finset.mem_coe, map_cyclotomic] at hx,
+      simp only [mem_singleton_iff, exists_eq_left, mem_set_of_eq],
+      rw [mem_roots (@cyclotomic_ne_zero _ _ _ (field.to_nontrivial L)),
+        ← is_root_cyclotomic_iff hn] at hx,
+      exact hx.pow_eq_one },
+    { simp only [mem_singleton_iff, exists_eq_left, mem_set_of_eq] at hx,
+      obtain ⟨z, hz⟩ := ((iff _ K L).1 infer_instance).1 n (mem_singleton n),
+      rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic] at hz,
+      obtain ⟨i, hin, rfl⟩ := is_primitive_root.eq_pow_of_pow_eq_one ((is_root_cyclotomic_iff hn).2
+        (is_root.def.2 hz)) hx n.pos,
+      refine set_like.mem_coe.2 (subalgebra.pow_mem _ (subset_adjoin _) _),
+      rwa [finset.mem_coe, multiset.mem_to_finset, map_cyclotomic, mem_roots
+        (@cyclotomic_ne_zero _ _ _ (field.to_nontrivial L)), is_root.def] }
+  end }
 
 end singleton
 
