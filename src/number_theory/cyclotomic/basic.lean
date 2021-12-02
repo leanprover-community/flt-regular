@@ -213,7 +213,7 @@ section singleton
 
 variables [is_cyclotomic_extension {n} K L]
 
-instance splitting_field_X_pow_sub_one (hn : (n : K) ≠ 0) :
+lemma splitting_field_X_pow_sub_one (hn : (n : K) ≠ 0) :
   is_splitting_field K L (X ^ (n : ℕ) - 1) :=
 { splits := splits_X_pow_sub_one n {n} K L (mem_singleton n) hn,
   adjoin_roots :=
@@ -227,7 +227,7 @@ instance splitting_field_X_pow_sub_one (hn : (n : K) ≠ 0) :
       n.pos _), is_root.def, eval_sub, eval_pow, eval_C, eval_X, sub_eq_zero]
   end }
 
-instance splitting_field_cyclotomic (hn : (n : K) ≠ 0) :
+lemma splitting_field_cyclotomic (hn : (n : K) ≠ 0) :
   is_splitting_field K L (cyclotomic n K) :=
 { splits := splits_cyclotomic n {n} K L (mem_singleton n) hn,
   adjoin_roots :=
