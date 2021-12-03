@@ -106,7 +106,7 @@ end
 -- could find a counter-example, too, so our current proof works out well
 lemma zeta'_primitive_root [is_domain B] : is_primitive_root (zeta' n A B) n :=
 begin
-  rw is_root_cyclotomic_iff,
+  rw ←is_root_cyclotomic_iff,
   convert zeta'_spec' n A B,
   sorry,
   -- NOTE: (hn : (↑n : B) ≠ 0) is definitely necessary here. is this worth passing through TC?
