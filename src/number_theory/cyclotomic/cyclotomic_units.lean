@@ -32,7 +32,7 @@ lemma span_singleton_pow {R : Type*} {P : Type*} [comm_ring R] {S : submonoid R}
 
 -- TODO this really shouldn't be necessary either?
 @[simp]
-lemma span_singleton_prod {R : Type*} {P ι : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
+lemma fractional_ideal.span_singleton_prod {R : Type*} {P ι : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
   [algebra R P] [loc : is_localization S P] (T : finset ι) (I : ι → P) :
   span_singleton S (∏ t in T, I t) = ∏ t in T, span_singleton S (I t) :=
 begin
@@ -40,6 +40,16 @@ begin
   induction T using finset.induction with i T hiT ih,
   { simp, },
   simp [hiT, span_singleton_mul_span_singleton, ih.symm],
+end
+
+@[simp]
+lemma ideal.span_singleton_prod {R ι : Type*} [comm_ring R] (T : finset ι) (I : ι → R) :
+  ideal.span ({∏ t in T, I t} : set R) = ∏ t in T, ideal.span {I t} :=
+begin
+  classical,
+  induction T using finset.induction with i T hiT ih,
+  { simp, },
+  simp [hiT, ideal.span_singleton_mul_span_singleton, ih.symm],
 end
 
 -- pretty sure there is an easier proof of this
