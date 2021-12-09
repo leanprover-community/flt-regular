@@ -24,11 +24,11 @@ section movethis
 
 -- TODO redefine span_singleton as a monoid hom so we get this for free?
 @[simp]
-lemma span_singleton_pow {R : Type*} {P : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
+lemma fractional_ideal.span_singleton_pow {R : Type*} {P : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
   [algebra R P] [loc : is_localization S P] (x : P) : ∀ (n : ℕ),
   span_singleton S (x ^ n) = span_singleton S x ^ n
 | 0 := by simp
-| (n + 1) := by simp [pow_succ, ← span_singleton_pow n]
+| (n + 1) := by simp [pow_succ, ← fractional_ideal.span_singleton_pow n]
 
 -- TODO this really shouldn't be necessary either?
 @[simp]
@@ -270,7 +270,7 @@ lemma prime_ideal_eq_pow_cyclotomic [hn : fact ((n : ℕ).prime)] :
   (span_singleton _ (1 - (zeta n K)) ^ ((n : ℕ) - 1) : fractional_ideal RR⁰ L) :=
   --(mk0 (p : cyclotomic_field p) (by norm_num [hn.ne_zero]))
 begin
-  rw ← span_singleton_pow,
+  rw ← fractional_ideal.span_singleton_pow,
   apply coe_to_submodule_injective,
   simp only [coe_span_singleton, coe_coe],
   -- rw ideal.span_singleton_eq_span_singleton,
