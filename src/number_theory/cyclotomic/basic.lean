@@ -187,7 +187,7 @@ end fintype
 section cyclotomic_eq_X_pow
 -- some weaker conditions may suffice (maybe normality of L), but this works for us
 -- note that this lemma is written in this weird way because this is how the results are stated
-lemma adjoin_roots_cyclotomic_eq_adjoin_nth_roots {K : Type w} [comm_ring K] [is_domain K]
+lemma adjoin_roots_cyclotomic_eq_adjoin_nth_roots {K : Type w} [comm_ring K]
   {L : Type z} [comm_ring L] [is_domain L] [algebra K L] [decidable_eq L]
   (hζ : ∃ ζ : L, is_primitive_root ζ n) (hn : ((↑n : ℕ) : L) ≠ 0):
   adjoin K ↑((map (algebra_map K L) (cyclotomic n K)).roots.to_finset) =
