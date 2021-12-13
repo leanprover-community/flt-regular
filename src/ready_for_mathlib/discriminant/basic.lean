@@ -22,7 +22,7 @@ variables [comm_ring A] [comm_ring B] [algebra A B] [comm_ring C] [algebra A C]
 section field
 
 variables (K : Type u) {L : Type v} (E : Type z) [field K] [field L] [field E]
-variables [algebra K L] [algebra K E] [algebra L E]
+variables [algebra K L] [algebra K E]
 variables [module.finite K L] [is_separable K L] [is_alg_closed E]
 variables (b : ι → L) (pb : power_basis K L)
 
