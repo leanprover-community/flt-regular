@@ -51,7 +51,7 @@ begin
 end
 
 lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
-  discriminant ℚ (zeta'.power_basis p ℚ K).basis =
+  discr ℚ (zeta'.power_basis p ℚ K).basis =
   (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) :=
 begin
   have hprim := zeta'_primitive_root p ℚ K,
@@ -61,7 +61,7 @@ begin
   have hpos := pos_iff_ne_zero.2 (λ h, (tsub_pos_of_lt (prime.one_lt hp.out)).ne.symm h),
   have heven := even_sub_one_of_prime_ne_two hp.out hodd',
 
-  rw [discriminant.of_power_basis_eq_norm, zeta'.power_basis_gen, finrank p,
+  rw [algebra.of_power_basis_eq_norm, zeta'.power_basis_gen, finrank p,
     minpoly.gcd_domain_eq_field_fractions ℚ (is_primitive_root.is_integral hprim p.pos),
     ← cyclotomic_eq_minpoly hprim p.pos, map_cyclotomic, totient_prime hp.out],
   have H := congr_arg derivative (cyclotomic_prime_mul_X_sub_one ℚ p),

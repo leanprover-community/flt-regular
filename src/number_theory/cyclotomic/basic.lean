@@ -14,6 +14,14 @@ variables [field K] [field L] [algebra K L]
 
 noncomputable theory
 
+section fact
+
+-- this may have to be made a local fact; it may be too slow. hopefully not.
+instance {n : ℕ+} {α} [add_monoid α] [has_one α] [char_zero α] : fact (((n : ℕ) : α) ≠ 0) :=
+⟨by exact_mod_cast n.ne_zero⟩
+
+end fact
+
 section basic
 
 /-- Given an `A`-algebra `B` and `S : set ℕ+`, we define `is_cyclotomic_extension S A B` requiring
@@ -249,7 +257,8 @@ section field
 lemma splits_X_pow_sub_one [H : is_cyclotomic_extension S K L] (hS : n ∈ S) (hn : (n : K) ≠ 0) :
   splits (algebra_map K L) (X ^ (n : ℕ) - 1) :=
 begin
-  rw [← splits_id_iff_splits, map_sub, map_one, map_pow, map_X],
+  rw [← splits_id_iff_splits, polynomial.map_sub, polynomial.map_one,
+      polynomial.map_pow, polynomial.map_X],
   obtain ⟨z, hz⟩ := ((iff _ _ _).1 H).1 n hS,
   rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic] at hz,
   replace hn : ((n : ℕ) : L) ≠ 0,
@@ -281,8 +290,8 @@ lemma splitting_field_X_pow_sub_one (hn : (n : K) ≠ 0) :
     rw [← ((iff_adjoin_eq_top {n} K L).1 infer_instance).2],
     congr,
     refine set.ext (λ x, _),
-    simp only [map_pow, mem_singleton_iff, multiset.mem_to_finset, exists_eq_left, mem_set_of_eq,
-      map_X, map_one, finset.mem_coe, map_sub],
+    simp only [polynomial.map_pow, mem_singleton_iff, multiset.mem_to_finset, exists_eq_left,
+      mem_set_of_eq, polynomial.map_X, polynomial.map_one, finset.mem_coe, polynomial.map_sub],
     rwa [← ring_hom.map_one C, mem_roots (@X_pow_sub_C_ne_zero _ (field.to_nontrivial L) _ _
       n.pos _), is_root.def, eval_sub, eval_pow, eval_C, eval_X, sub_eq_zero]
   end }
