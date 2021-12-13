@@ -160,7 +160,7 @@ end is_cyclotomic_extension
 
 namespace cyclotomic_ring
 
-variables [is_domain A] [algebra A K] [is_fraction_ring A K]
+variables [is_domain A] [algebra A K] [is_fraction_ring A K] [fact (((n : ℕ) : K) ≠ 0)]
 
 open is_cyclotomic_extension
 

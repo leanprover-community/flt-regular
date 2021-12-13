@@ -22,7 +22,7 @@ theorem flt_regular_case_one_main {p a b c : ℕ} [h_prime : fact p.prime] (hp :
   (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : false :=
 begin
   have h_prime : p.prime := fact.out _,
-  let pp : ℕ+ := ⟨p, nat.prime.pos h_prime⟩,
+  let pp : ℕ+ := ⟨p, h_prime.pos⟩,
   have := pow_add_pow_eq_prod_add_zeta_mul (nat.odd_iff.mp (nat.prime.odd h_prime hp_ne_two))
     (is_cyclotomic_extension.zeta'_primitive_root pp ℚ (cyclotomic_field pp ℚ)) a b,
   rw_mod_cast h at this,
