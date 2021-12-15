@@ -1,4 +1,4 @@
-import ring_theory.polynomial.cyclotomic
+import ring_theory.polynomial.cyclotomic.basic
 
 open polynomial nat
 open_locale big_operators

@@ -439,7 +439,6 @@ end
 -- TODO mathlib
 @[simp] lemma support_eq_empty {f : mv_polynomial ι R} : f.support = ∅ ↔ f = 0 :=
 finsupp.support_eq_empty
-@[simp] lemma support_zero : (0 : mv_polynomial ι R).support = ∅ := finsupp.support_zero
 
 lemma support_add_eq [decidable_eq ι] {g₁ g₂ : mv_polynomial ι R}
   (h : disjoint g₁.support g₂.support) : (g₁ + g₂).support = g₁.support ∪ g₂.support :=
@@ -940,25 +939,13 @@ open finset
 variables {α : Type*} {β : Type*} {s s₁ s₂ t t₁ t₂ u : finset α} {a b : α} {x y : β}
 open_locale pointwise
 
-/-- The set `(1 : finset α)` is defined as `{1}` in locale `pointwise`. -/
-@[to_additive
-/-"The set `(0 : finset α)` is defined as `{0}` in locale `pointwise`. "-/]
-protected def has_one [has_one α] : has_one (finset α) := ⟨{1}⟩
-
 localized "attribute [instance] finset.has_one finset.has_zero" in pointwise
 
 @[to_additive]
 lemma singleton_one [has_one α] : ({1} : finset α) = 1 := rfl
 
-@[simp, to_additive]
-lemma mem_one [has_one α] : a ∈ (1 : finset α) ↔ a = 1 :=
-by simp [has_one.one]
-
 @[to_additive]
 lemma one_mem_one [has_one α] : (1 : α) ∈ (1 : finset α) := by simp [has_one.one]
-
-@[simp, to_additive]
-theorem one_subset [has_one α] : 1 ⊆ s ↔ (1 : α) ∈ s := singleton_subset_iff
 
 @[to_additive]
 theorem one_nonempty [has_one α] : (1 : finset α).nonempty := ⟨1, one_mem_one⟩
@@ -1035,33 +1022,6 @@ lemma preimage_mul_left_one' [group α] :
 lemma preimage_mul_right_one' [group α] :
   preimage 1 (λ a, a * b⁻¹) (assume x hx y hy, (mul_left_inj _).mp) = {b} := by simp
 
-@[simp, to_additive]
-lemma mul_singleton [decidable_eq α] [has_mul α] : s * {b} = image (λ a, a * b) s :=
-begin
-  have := @set.mul_singleton _ (s : set α) b _,
-  norm_cast at this,
-  rw (by simp : ({b} : set α) = ↑({b} : finset α)) at this,
-  exact_mod_cast this,
-end
-
-@[simp, to_additive]
-lemma singleton_mul [decidable_eq α] [has_mul α] : {a} * t = image (λ b, a * b) t :=
-begin
-  have := @set.singleton_mul _ (t : set α) a _,
-  norm_cast at this,
-  rw (by simp : ({a} : set α) = ↑({a} : finset α)) at this,
-  exact_mod_cast this,
-end
-
-@[simp, to_additive]
-lemma singleton_mul_singleton [decidable_eq α] [has_mul α] : ({a} : finset α) * {b} = {a * b} :=
-begin
-  have := @set.singleton_mul_singleton _ a b _,
-  rw (by simp : ({a} : set α) = ↑({a} : finset α)) at this,
-  rw (by simp : ({b} : set α) = ↑({b} : finset α)) at this,
-  exact_mod_cast this,
-end
-
 @[to_additive]
 protected lemma mul_comm [decidable_eq α] [comm_semigroup α] : s * t = t * s :=
 by exact_mod_cast @set.mul_comm _ (s : set α) t _
@@ -1070,7 +1030,8 @@ by exact_mod_cast @set.mul_comm _ (s : set α) t _
 @[to_additive /-"`set α` is an `add_zero_class` under pointwise operations if `α` is."-/]
 protected def mul_one_class [decidable_eq α] [mul_one_class α] : mul_one_class (finset α) :=
 { mul_one := λ s, by { simp only [← singleton_one, mul_singleton, mul_one, image_id'] },
-  one_mul := λ s, by { simp only [← singleton_one, singleton_mul, one_mul, image_id'] },
+  one_mul := λ s, by { simp only [← singleton_one, singleton_mul, one_mul, one_mul_eq_id,
+    image_id], },
   ..finset.has_one, ..finset.has_mul }
 
 /-- `set α` is a `semigroup` under pointwise operations if `α` is. -/
