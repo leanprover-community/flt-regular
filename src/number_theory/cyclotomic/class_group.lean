@@ -1,7 +1,7 @@
 import number_theory.class_number.finite
 import number_theory.class_number.admissible_abs
 
-import number_theory.cyclotomic.basic
+import ready_for_mathlib.cyclotomic.basic
 import number_theory.cyclotomic.rat
 
 variable (n : ℕ+)
