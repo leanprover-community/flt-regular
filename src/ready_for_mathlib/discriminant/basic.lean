@@ -4,7 +4,6 @@ import ring_theory.norm
 import linear_algebra.vandermonde
 import ring_theory.discriminant
 
-import ready_for_mathlib.matrix
 import ready_for_mathlib.fin
 
 universes u v w z
