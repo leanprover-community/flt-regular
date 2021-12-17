@@ -44,7 +44,8 @@ begin
     { exact (nat.prime_three.dvd_iff_not_coprime.mp this) hpabc, },
     have : (a : zmod 9) ^ 3 + b ^ 3 = c ^ 3,
     { rw_mod_cast h },
-    convert dvd_of_dvd_zmod (by norm_num : 3 ∣ 9) (by exact_mod_cast flt_three_case_one_aux this) },
+    convert nat.dvd_of_dvd_coe_zmod (by norm_num : 3 ∣ 9)
+      (by exact_mod_cast flt_three_case_one_aux this) },
   { have hp_five : 5 ≤ p, from h_prime.elim.five_le hp_ne_two hp_three,
     exact flt_regular_case_one_main hp hp_ne_two h hab hpabc hp_five, }
 end
