@@ -1,7 +1,7 @@
 import data.zmod.basic
 
 
-lemma dvd_of_dvd_zmod_int {m a : ℤ} {n : ℕ} (hmn : m ∣ n) (h : (m : zmod n) ∣ a) : m ∣ a :=
+lemma int.dvd_of_dvd_coe_zmod {m a : ℤ} {n : ℕ} (hmn : m ∣ n) (h : (m : zmod n) ∣ a) : m ∣ a :=
 begin
   rcases n with r | n,
   { exact_mod_cast h, },
@@ -18,7 +18,7 @@ begin
     simp [nat.mod_eq_of_lt hi], }
 end
 
-lemma dvd_of_dvd_zmod {m n a : ℕ} (hmn : m ∣ n) (h : (m : zmod n) ∣ a) : m ∣ a :=
+lemma nat.dvd_of_dvd_coe_zmod {m n a : ℕ} (hmn : m ∣ n) (h : (m : zmod n) ∣ a) : m ∣ a :=
 begin
   rcases n with r | n,
   { rw [int.nat_cast_eq_coe_nat, int.nat_cast_eq_coe_nat] at h,
