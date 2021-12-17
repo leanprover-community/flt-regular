@@ -6,7 +6,8 @@ Authors: Alex J. Best
 
 import data.polynomial.field_division
 import number_theory.number_field
-import number_theory.cyclotomic.basic
+import ready_for_mathlib.cyclotomic.basic
+import ring_theory.polynomial.cyclotomic.eval
 import ready_for_mathlib.cyclotomic
 
 noncomputable theory
@@ -24,15 +25,15 @@ section movethis
 
 -- TODO redefine span_singleton as a monoid hom so we get this for free?
 @[simp]
-lemma span_singleton_pow {R : Type*} {P : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
+lemma fractional_ideal.span_singleton_pow {R : Type*} {P : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
   [algebra R P] [loc : is_localization S P] (x : P) : ∀ (n : ℕ),
   span_singleton S (x ^ n) = span_singleton S x ^ n
 | 0 := by simp
-| (n + 1) := by simp [pow_succ, ← span_singleton_pow n]
+| (n + 1) := by simp [pow_succ, ← fractional_ideal.span_singleton_pow n]
 
 -- TODO this really shouldn't be necessary either?
 @[simp]
-lemma span_singleton_prod {R : Type*} {P ι : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
+lemma fractional_ideal.span_singleton_prod {R : Type*} {P ι : Type*} [comm_ring R] {S : submonoid R} [comm_ring P]
   [algebra R P] [loc : is_localization S P] (T : finset ι) (I : ι → P) :
   span_singleton S (∏ t in T, I t) = ∏ t in T, span_singleton S (I t) :=
 begin
@@ -40,6 +41,16 @@ begin
   induction T using finset.induction with i T hiT ih,
   { simp, },
   simp [hiT, span_singleton_mul_span_singleton, ih.symm],
+end
+
+@[simp]
+lemma ideal.span_singleton_prod {R ι : Type*} [comm_ring R] (T : finset ι) (I : ι → R) :
+  ideal.span ({∏ t in T, I t} : set R) = ∏ t in T, ideal.span {I t} :=
+begin
+  classical,
+  induction T using finset.induction with i T hiT ih,
+  { simp, },
+  simp [hiT, ideal.span_singleton_mul_span_singleton, ih.symm],
 end
 
 -- pretty sure there is an easier proof of this
@@ -106,7 +117,7 @@ end
 -- could find a counter-example, too, so our current proof works out well
 lemma zeta'_primitive_root [is_domain B] : is_primitive_root (zeta' n A B) n :=
 begin
-  rw is_root_cyclotomic_iff,
+  rw ←is_root_cyclotomic_iff,
   convert zeta'_spec' n A B,
   sorry,
   -- NOTE: (hn : (↑n : B) ≠ 0) is definitely necessary here. is this worth passing through TC?
@@ -150,7 +161,7 @@ end is_cyclotomic_extension
 
 namespace cyclotomic_ring
 
-variables [is_domain A] [algebra A K] [is_fraction_ring A K]
+variables [is_domain A] [algebra A K] [is_fraction_ring A K] [fact (((n : ℕ) : K) ≠ 0)]
 
 open is_cyclotomic_extension
 
@@ -260,7 +271,7 @@ lemma prime_ideal_eq_pow_cyclotomic [hn : fact ((n : ℕ).prime)] :
   (span_singleton _ (1 - (zeta n K)) ^ ((n : ℕ) - 1) : fractional_ideal RR⁰ L) :=
   --(mk0 (p : cyclotomic_field p) (by norm_num [hn.ne_zero]))
 begin
-  rw ← span_singleton_pow,
+  rw ← fractional_ideal.span_singleton_pow,
   apply coe_to_submodule_injective,
   simp only [coe_span_singleton, coe_coe],
   -- rw ideal.span_singleton_eq_span_singleton,

@@ -1,5 +1,6 @@
 import ring_theory.adjoin.power_basis
 import algebra.char_p.algebra
+import ring_theory.polynomial.cyclotomic.eval
 
 import ready_for_mathlib.discriminant.basic
 import number_theory.cyclotomic.cyclotomic_units
@@ -46,12 +47,12 @@ begin
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
     exact fintype.prod_equiv (zeta'.embeddings_equiv_primitive_roots p ℚ K E) _ _ (λ σ, by simp) },
   rw [this, cyclotomic', ← cyclotomic_eq_prod_X_sub_primitive_roots
-    ((is_root_cyclotomic_iff hpE).2 hz), eval_one_cyclotomic_prime],
+    ((is_root_cyclotomic_iff hpE).1 hz), eval_one_cyclotomic_prime],
   simp,
 end
 
 lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
-  discriminant ℚ (zeta'.power_basis p ℚ K).basis =
+  discr ℚ (zeta'.power_basis p ℚ K).basis =
   (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) :=
 begin
   have hprim := zeta'_primitive_root p ℚ K,
@@ -61,7 +62,7 @@ begin
   have hpos := pos_iff_ne_zero.2 (λ h, (tsub_pos_of_lt (prime.one_lt hp.out)).ne.symm h),
   have heven := even_sub_one_of_prime_ne_two hp.out hodd',
 
-  rw [discriminant.of_power_basis_eq_norm, zeta'.power_basis_gen, finrank p,
+  rw [algebra.of_power_basis_eq_norm, zeta'.power_basis_gen, finrank p,
     minpoly.gcd_domain_eq_field_fractions ℚ (is_primitive_root.is_integral hprim p.pos),
     ← cyclotomic_eq_minpoly hprim p.pos, map_cyclotomic, totient_prime hp.out],
   have H := congr_arg derivative (cyclotomic_prime_mul_X_sub_one ℚ p),

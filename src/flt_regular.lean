@@ -5,10 +5,10 @@ import data.zmod.extras
 import tactic
 import data.nat.prime_extras
 import ready_for_mathlib.totient
-import ready_for_mathlib.gcd
+import algebra.gcd_monoid.nat
 import number_theory.cyclotomic.factoring
 
--- TODO I (alex) commented this out as it seems redundent now?
+-- TODO I (alex) commented this out as it seems redundent now? -- agree, seems redundant - Eric
 -- lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
 --     : b.coprime c ∧ a.coprime c := sorry
 
@@ -22,7 +22,7 @@ theorem flt_regular_case_one_main {p a b c : ℕ} [h_prime : fact p.prime] (hp :
   (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : false :=
 begin
   have h_prime : p.prime := fact.out _,
-  let pp : ℕ+ := ⟨p, nat.prime.pos h_prime⟩,
+  let pp : ℕ+ := ⟨p, h_prime.pos⟩,
   have := pow_add_pow_eq_prod_add_zeta_mul (nat.odd_iff.mp (nat.prime.odd h_prime hp_ne_two))
     (is_cyclotomic_extension.zeta'_primitive_root pp ℚ (cyclotomic_field pp ℚ)) a b,
   rw_mod_cast h at this,
@@ -59,9 +59,8 @@ begin
   may_assume hcoprime : ({a, b, c} : finset ℕ).gcd id = 1,
   { let s : finset ℕ := {a, b, c},
     let d : ℕ := s.gcd id,
-    cases em (∀ x ∈ s, x = 0) with hs hs, --budget may_assume ;b needed for `image_div_gcd_coprime`
-    { have : c ∈ s, by simp,
-      rw [hs c this, mul_zero] },
+    rcases eq_or_ne c 0 with rfl | hc, --budget may_assume ;b needed for `image_div_gcd_coprime`
+    { rw mul_zero },
     cases d.eq_zero_or_pos with hd hd,
     { rw finset.gcd_eq_zero_iff at hd,
       rw mul_eq_zero,
@@ -85,10 +84,11 @@ begin
         exact (finset.gcd_dvd xh), },
       simpa only [this, key, true_or, eq_self_iff_true, or_true, finset.mem_insert,
                   finset.mem_singleton] using habc },
-    { convert s.image_div_gcd_coprime hs using 1,
-      conv_rhs { rw finset.nat_gcd_eq_image },
+    { convert s.coprime_of_div_gcd _ hc using 1,
+      conv_rhs { rw finset.gcd_eq_gcd_image },
       congr,
-      simp only [finset.image_insert, id.def, finset.image_singleton, normalize_eq] },
+      simp only [finset.image_insert, id.def, finset.image_singleton, normalize_eq],
+      simp },
     { have habc := congr_arg (* d^3) h_red,
       simp only [zero_mul] at habc,
       replace habc : (a / d * d) * (b / d * d) * (c / d * d) = 0,

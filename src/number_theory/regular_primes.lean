@@ -2,7 +2,7 @@ import number_theory.class_number.finite
 import field_theory.splitting_field
 
 import number_theory.cyclotomic.class_group
-import ring_theory.polynomial.cyclotomic
+import ready_for_mathlib.cyclotomic.basic
 
 /-!
 # Regular primes
