@@ -161,23 +161,20 @@ begin
     exact le_trans (degree_mul_le _ _) (add_le_add_left ht _), }
 end
 
-lemma multiset_prod_X_add_C_degree [nontrivial R] (s : multiset R) :
-  degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1 :=
-begin
-  have : degree (multiset.map (λ (x : R), X + C x) s).prod ≤ s.card,
-  { have := degree_multiset_prod_le (multiset.map (λ (x : R), X + C x) s),
-    simpa, -- TODO this simpa breaks when we only assume comm_semiring due to degree_X_add_C
-          -- so fix that assumption in mathlib so we can generalize this lemma
-    },
-  rwa ← succ_order.lt_succ_iff at this,
-end
-
 lemma multiset_prod_X_add_C_degree' [nontrivial R] (s : multiset R) :
   degree (multiset.map (λ (x : R), X + C x) s).prod ≤ s.card :=
 begin
   have := degree_multiset_prod_le (multiset.map (λ (x : R), X + C x) s),
   simpa, -- TODO this simpa breaks when we only assume comm_semiring due to degree_X_add_C
         -- so fix that assumption in mathlib so we can generalize this lemma
+          -- this should be done in #10741
+end
+
+lemma multiset_prod_X_add_C_degree [nontrivial R] (s : multiset R) :
+  degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1 :=
+begin
+  have := multiset_prod_X_add_C_degree' s,
+  rwa ← succ_order.lt_succ_iff at this,
 end
 
 
