@@ -86,15 +86,16 @@ section polynomial
 variables {R : Type*} [ring R]
 open polynomial
 
+-- this section is essentially already in mathlib and PR #10868 aims to add the exact versions we
+-- want
 @[simp]
-lemma X_pow_mul_coeff_succ (p : polynomial R) (j i : ℕ) : (X ^ j * p).coeff (i + j) = p.coeff i :=
+lemma X_pow_mul_coeff_add (p : polynomial R) (j i : ℕ) : (X ^ j * p).coeff (i + j) = p.coeff i :=
 begin
-  rw coeff_mul,
-  simp only [coeff_X_pow, boole_mul],
+  simp only [coeff_mul, coeff_X_pow, boole_mul],
   have : ∀ x ∈ finset.nat.antidiagonal (i + j), prod.fst x = j ↔ (j, i) = x,
-  simp only [prod.forall, iff_self_and, finset.nat.mem_antidiagonal, prod.mk.inj_iff, eq_comm],
-  intros a b hs hb,
-  linarith,
+  { simp only [prod.forall, iff_self_and, finset.nat.mem_antidiagonal, prod.mk.inj_iff, eq_comm],
+    intros a b hs hb,
+    linarith, },
   conv in (prod.fst _ = _)
   { simp only [this x H], },
   simp [add_comm],
@@ -102,7 +103,7 @@ end
 
 @[simp]
 lemma X_mul_coeff_succ (p : polynomial R) (i : ℕ) : (X * p).coeff (i + 1) = p.coeff i :=
-by simpa using X_pow_mul_coeff_succ p 1 i
+by simpa using X_pow_mul_coeff_add p 1 i
 
 end polynomial
 section
