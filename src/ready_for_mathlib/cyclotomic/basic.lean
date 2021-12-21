@@ -455,7 +455,9 @@ lemma is_cyclotomic_extension [hn : fact (((n : ℕ) : A) ≠ 0)] :
     { exact subalgebra.mul_mem _ hy hz },
   end }
 
-instance : is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) := sorry
+--Make this an instance once proved
+lemma is_fraction_ring_cyclotomic_ring_cyclotomic_field :
+  is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) := sorry
 
 end cyclotomic_ring
 
