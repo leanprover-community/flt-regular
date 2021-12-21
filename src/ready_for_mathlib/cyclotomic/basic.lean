@@ -459,14 +459,41 @@ lemma is_cyclotomic_extension [hn : fact (((n : ℕ) : A) ≠ 0)] :
     { exact subalgebra.mul_mem _ hy hz },
   end }
 
-instance : is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) :=
+instance [hn : fact (((n : ℕ) : K) ≠ 0)] :
+  is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) :=
 { map_units := λ ⟨x, hx⟩, begin
     rw is_unit_iff_ne_zero,
     apply ring_hom.map_ne_zero_of_mem_non_zero_divisors,
     apply adjoin_algebra_injective,
     exact hx
   end,
-  surj := /-begin end-/sorry,
+  surj := λ x,
+  begin
+    refine algebra.adjoin_induction (((is_cyclotomic_extension.iff_singleton n K _).1
+      (cyclotomic_field.is_cyclotomic_extension n K)).2 x) (λ y hy, _) (λ k, _) _ _,
+    { exact ⟨⟨⟨y, subset_adjoin hy⟩, 1⟩, by simpa⟩ },
+    { have : is_localization (non_zero_divisors A) K := infer_instance,
+      replace := this.surj,
+      obtain ⟨⟨z, w⟩, hw⟩ := this k,
+      refine ⟨⟨algebra_map A _ z, algebra_map A _ w, ring_hom.map_mem_non_zero_divisors _
+        (algebra_base_injective n A K) w.2⟩, _⟩,
+      letI : is_scalar_tower A K (cyclotomic_field n K) :=
+        is_scalar_tower.of_algebra_map_eq (congr_fun rfl),
+      rw [set_like.coe_mk, ← is_scalar_tower.algebra_map_apply,
+        ← is_scalar_tower.algebra_map_apply, @is_scalar_tower.algebra_map_apply A K _ _ _ _ _
+        (_root_.cyclotomic_field.algebra n K) _ _ w, ← ring_hom.map_mul, hw,
+        ← is_scalar_tower.algebra_map_apply] },
+    { rintro y z ⟨a, ha⟩ ⟨b, hb⟩,
+      refine ⟨⟨a.1 * b.2 + b.1 * a.2, a.2 * b.2, mul_mem_non_zero_divisors.2 ⟨a.2.2, b.2.2⟩⟩, _⟩,
+      rw [set_like.coe_mk, ring_hom.map_mul, add_mul, ← mul_assoc, ha,
+        mul_comm ((algebra_map _ _) ↑a.2), ← mul_assoc, hb],
+      simp },
+    { rintro y z ⟨a, ha⟩ ⟨b, hb⟩,
+      refine ⟨⟨a.1 * b.1, a.2 * b.2, mul_mem_non_zero_divisors.2 ⟨a.2.2, b.2.2⟩⟩, _⟩,
+      rw [set_like.coe_mk, ring_hom.map_mul, mul_comm ((algebra_map _ _) ↑a.2), mul_assoc,
+        ← mul_assoc z, hb, ← mul_comm ((algebra_map _ _) ↑a.2), ← mul_assoc, ha],
+      simp }
+  end,
   eq_iff_exists := λ x y, ⟨λ h, ⟨1, by rw adjoin_algebra_injective n A K h⟩,
     λ ⟨c, hc⟩, by rw mul_right_cancel₀ (non_zero_divisors.ne_zero c.prop) hc⟩ }
 
