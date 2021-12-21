@@ -406,6 +406,10 @@ instance : is_domain (cyclotomic_ring n A K) := (adjoin A _).is_domain
 instance : algebra (cyclotomic_ring n A K) (cyclotomic_field n K) :=
 (adjoin A _).to_algebra
 
+lemma adjoin_algebra_injective :
+  function.injective $ algebra_map (cyclotomic_ring n A K) (cyclotomic_field n K) :=
+subtype.val_injective
+
 instance : is_scalar_tower A (cyclotomic_ring n A K) (cyclotomic_field n K) :=
 is_scalar_tower.subalgebra' _ _ _ _
 
@@ -438,11 +442,11 @@ lemma is_cyclotomic_extension [hn : fact (((n : ℕ) : A) ≠ 0)] :
       rwa [ring_hom.map_nat_cast, ring_hom.map_zero] },
     have hnf : ((n : ℕ) : cyclotomic_field n K) ≠ 0,
     { contrapose! hnr,
-      apply ham,
+      apply adjoin_algebra_injective,
       rwa [ring_hom.map_nat_cast, ring_hom.map_zero] },
     rw is_root_cyclotomic_iff hnr,
     rw is_root_cyclotomic_iff hnf at hμ,
-    rwa ←is_primitive_root.map_iff_of_injective ham
+    rwa ←is_primitive_root.map_iff_of_injective (adjoin_algebra_injective n A K)
   end,
   adjoint_roots := λ x,
   begin
@@ -456,9 +460,17 @@ lemma is_cyclotomic_extension [hn : fact (((n : ℕ) : A) ≠ 0)] :
   end }
 
 instance : is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) :=
-{ map_units := sorry,
-  surj := sorry,
-  eq_iff_exists := sorry }
+{ map_units := λ ⟨x, hx⟩, begin
+    rw is_unit_iff_ne_zero,
+    apply ring_hom.map_ne_zero_of_mem_non_zero_divisors,
+    apply adjoin_algebra_injective,
+    exact hx
+  end,
+  surj := /-begin end-/sorry,
+  eq_iff_exists := begin
+    refine λ x y, ⟨λ h, ⟨1, by rw adjoin_algebra_injective n A K h⟩, λ h, _⟩,
+    skip, sorry
+  end }
 
 end cyclotomic_ring
 
