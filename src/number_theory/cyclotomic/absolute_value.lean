@@ -103,7 +103,7 @@ end
 
 @[simp]
 lemma X_mul_coeff_succ (p : polynomial R) (i : ℕ) : (X * p).coeff (i + 1) = p.coeff i :=
-by simpa using X_pow_mul_coeff_add p 1 i
+by simp
 
 end polynomial
 section
