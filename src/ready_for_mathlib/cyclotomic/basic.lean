@@ -456,7 +456,15 @@ lemma is_cyclotomic_extension [hn : fact (((n : ℕ) : A) ≠ 0)] :
   end }
 
 instance : is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) :=
-{ map_units := sorry,
+{ map_units :=
+  begin
+    rintro ⟨x, hx⟩,
+    have : function.injective (algebra_map (cyclotomic_ring n A K) (cyclotomic_field n K)),
+    { exact subtype.val_injective },
+    have h := function.injective.ne this (mem_non_zero_divisors_iff_ne_zero.1 hx),
+    obtain ⟨y, hy⟩ := (field.to_is_field (cyclotomic_field n K)).mul_inv_cancel h,
+    exact is_unit_of_mul_eq_one _ y (by simp [hy]),
+  end,
   surj := sorry,
   eq_iff_exists := sorry }
 
