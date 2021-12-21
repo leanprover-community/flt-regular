@@ -369,6 +369,27 @@ def algebra_base : algebra A (cyclotomic_ring n A K) := (adjoin A _).algebra
 
 local attribute [instance] cyclotomic_ring.algebra_base
 
+example (R S : Type*) [comm_semiring R] [comm_semiring S] [algebra R S]
+  (T : subalgebra R S) (x y : R) (h : algebra_map R T x = algebra_map R T y) :
+  algebra_map R S x = algebra_map R S y :=
+begin
+  have miao := congr_arg ⇑(algebra_map ↥T S) h,
+  rwa [←is_scalar_tower.algebra_map_apply, ←is_scalar_tower.algebra_map_apply] at miao,
+end
+
+lemma algebra_base_injective : function.injective $ algebra_map A (cyclotomic_ring n A K) :=
+begin
+  show function.injective (algebra_map A (adjoin A _)),
+  intros a b hab,
+  letI : is_scalar_tower A K (cyclotomic_field n K) :=
+    is_scalar_tower.of_algebra_map_eq (congr_fun rfl),
+  replace hab := congr_arg (algebra_map ↥(adjoin A _) (cyclotomic_field n K)) hab,
+  rw [← is_scalar_tower.algebra_map_apply, ← is_scalar_tower.algebra_map_apply,
+    @is_scalar_tower.algebra_map_apply A K _ _ _ _ _ (cyclotomic_field.algebra n K) _ _ a,
+    @is_scalar_tower.algebra_map_apply A K _ _ _ _ _ (cyclotomic_field.algebra n K) _ _ b] at hab,
+  exact (is_fraction_ring.injective A K) ((algebra_map K (cyclotomic_field n K)).injective hab),
+end
+
 lemma eq_adjoin_single (μ : (cyclotomic_field n K))
   (h : μ ∈ primitive_roots n ((cyclotomic_field n K))) :
   cyclotomic_ring n A K = adjoin A ({μ} : set ((cyclotomic_field n K))) :=
@@ -404,19 +425,16 @@ lemma is_cyclotomic_extension [hn : fact (((n : ℕ) : A) ≠ 0)] :
     { exact subtype.val_injective },
     obtain ⟨μ, hμ⟩ := let h := (cyclotomic_field.is_cyclotomic_extension n K).ex_root
                       in h $ mem_singleton n,
-    refine ⟨⟨μ, algebra.subset_adjoin _⟩, _⟩,
+    refine ⟨⟨μ, subset_adjoin _⟩, _⟩,
     { apply (is_root_of_unity_iff n.pos (cyclotomic_field n K)).mpr,
       refine ⟨n, nat.mem_divisors_self _ n.ne_zero, _⟩,
       rwa [aeval_def, eval₂_eq_eval_map, map_cyclotomic] at hμ },
     -- why does this duplicate hμ? I can't even remove it with `dedup`...
     simp_rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic, ←is_root.def] at hμ ⊢,
     have hnr : ((n : ℕ) : cyclotomic_ring n A K) ≠ 0,
-    { have : function.injective (algebra_map A $ cyclotomic_ring n A K),
-      { -- we must have to go through `bot_equiv_of_injective` here somehow
-        sorry },
-      replace hn := hn.1,
+    { replace hn := hn.1,
       contrapose! hn,
-      apply this,
+      apply algebra_base_injective n A K,
       rwa [ring_hom.map_nat_cast, ring_hom.map_zero] },
     have hnf : ((n : ℕ) : cyclotomic_field n K) ≠ 0,
     { contrapose! hnr,
