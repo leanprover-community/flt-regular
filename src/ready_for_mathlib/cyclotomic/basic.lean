@@ -467,10 +467,8 @@ instance : is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) :=
     exact hx
   end,
   surj := /-begin end-/sorry,
-  eq_iff_exists := begin
-    refine λ x y, ⟨λ h, ⟨1, by rw adjoin_algebra_injective n A K h⟩, λ h, _⟩,
-    skip, sorry
-  end }
+  eq_iff_exists := λ x y, ⟨λ h, ⟨1, by rw adjoin_algebra_injective n A K h⟩,
+    λ ⟨c, hc⟩, by rw mul_right_cancel₀ (non_zero_divisors.ne_zero c.prop) hc⟩ }
 
 end cyclotomic_ring
 
