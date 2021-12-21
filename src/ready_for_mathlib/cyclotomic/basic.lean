@@ -16,6 +16,8 @@ noncomputable theory
 
 section fact
 
+-- TODO: eschew the need for this fact. We have that `ɸ_{np^k}(x) = ɸₙ(x^p^k)/ɸₙ(x^p^(k-1))
+-- (modulo off by one errors) so we can fix all the instances to not require these requirements.
 -- this may have to be made a local fact; it may be too slow. hopefully not.
 instance {n : ℕ+} {α} [add_monoid α] [has_one α] [char_zero α] : fact (((n : ℕ) : α) ≠ 0) :=
 ⟨by exact_mod_cast n.ne_zero⟩
@@ -194,20 +196,6 @@ end fintype
 
 section cyclotomic_eq_X_pow
 
--- PR #10687
-lemma is_root_cyclotomic' {n : ℕ} {K : Type*} [comm_ring K] [is_domain K] (hpos : 0 < n) {μ : K}
-  (h : is_primitive_root μ n) : is_root (cyclotomic n K) μ :=
-begin
-  suffices : is_root (cyclotomic n (fraction_ring K)) (algebra_map K (fraction_ring K) μ),
-  { rw [←map_cyclotomic n (algebra_map K (fraction_ring K))] at this,
-    apply is_root.of_map this,
-    exact is_fraction_ring.injective K (fraction_ring K) },
-  replace h := h.map_of_injective (is_fraction_ring.injective K (fraction_ring K)),
-  rw [← mem_roots (cyclotomic_ne_zero n (fraction_ring K)),
-      cyclotomic_eq_prod_X_sub_primitive_roots h, roots_prod_X_sub_C, ← finset.mem_def],
-  rwa [← mem_primitive_roots hpos] at h
-end
-
 -- some weaker conditions may suffice (maybe normality of L), but this works for us
 -- note that this lemma is written in this weird way so we can use it at point of use easier
 lemma adjoin_roots_cyclotomic_eq_adjoin_nth_roots {K : Type w} [comm_ring K]
@@ -227,9 +215,8 @@ begin
     obtain ⟨ζ, hζ⟩ := hζ,
     obtain ⟨i, hin, rfl⟩ := hζ.eq_pow_of_pow_eq_one hx n.pos,
     refine set_like.mem_coe.2 (subalgebra.pow_mem _ (subset_adjoin _) _),
-    rwa [finset.mem_coe, multiset.mem_to_finset,
-         mem_roots (cyclotomic_ne_zero n L)],
-    exact is_root_cyclotomic' n.pos hζ }
+    rwa [finset.mem_coe, multiset.mem_to_finset, mem_roots $ cyclotomic_ne_zero n L],
+    exact is_root_cyclotomic n.pos hζ }
 end
 
 lemma adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic {K : Type w} [comm_ring K]
@@ -247,7 +234,7 @@ begin
          map_cyclotomic, mem_roots (cyclotomic_ne_zero n L)] at hx },
   { simp only [mem_singleton_iff, exists_eq_left, mem_set_of_eq] at hx,
     simpa only [hx, multiset.mem_to_finset, finset.mem_coe, map_cyclotomic,
-                mem_roots (cyclotomic_ne_zero n L)] using is_root_cyclotomic' n.pos hζ }
+                mem_roots (cyclotomic_ne_zero n L)] using is_root_cyclotomic n.pos hζ }
 end
 
 end cyclotomic_eq_X_pow
@@ -401,7 +388,49 @@ instance : algebra (cyclotomic_ring n A K) (cyclotomic_field n K) :=
 instance : is_scalar_tower A (cyclotomic_ring n A K) (cyclotomic_field n K) :=
 is_scalar_tower.subalgebra' _ _ _ _
 
-lemma is_cyclotomic_extension : is_cyclotomic_extension {n} A (cyclotomic_ring n A K) := sorry
+lemma is_cyclotomic_extension [hn : fact (((n : ℕ) : A) ≠ 0)] :
+  is_cyclotomic_extension {n} A (cyclotomic_ring n A K) :=
+{ ex_root := λ a han,
+  begin
+    rw mem_singleton_iff at han,
+    subst a,
+    haveI : fact (((n : ℕ) : K) ≠ 0),
+    { apply fact.mk,
+      replace hn := hn.1,
+      contrapose! hn,
+      apply is_fraction_ring.injective A K,
+      rwa [ring_hom.map_nat_cast, ring_hom.map_zero] },
+    have ham : function.injective (algebra_map (cyclotomic_ring n A K) (cyclotomic_field n K)),
+    { exact subtype.val_injective },
+    obtain ⟨μ, hμ⟩ := let h := (cyclotomic_field.is_cyclotomic_extension n K).ex_root
+                      in h $ mem_singleton n,
+    refine ⟨⟨μ, algebra.subset_adjoin _⟩, _⟩,
+    { apply (is_root_of_unity_iff n.pos (cyclotomic_field n K)).mpr,
+      refine ⟨n, nat.mem_divisors_self _ n.ne_zero, _⟩,
+      rwa [aeval_def, eval₂_eq_eval_map, map_cyclotomic] at hμ },
+    -- why does this duplicate hμ? I can't even remove it with `dedup`...
+    simp_rw [aeval_def, eval₂_eq_eval_map, map_cyclotomic, ←is_root.def] at hμ ⊢,
+    have hnr : ((n : ℕ) : cyclotomic_ring n A K) ≠ 0,
+    { have : function.injective (algebra_map A $ cyclotomic_ring n A K),
+      { -- we must have to go through `bot_equiv_of_injective` here somehow
+        sorry },
+      replace hn := hn.1,
+      contrapose! hn,
+      apply this,
+      rwa [ring_hom.map_nat_cast, ring_hom.map_zero] },
+    have hnf : ((n : ℕ) : cyclotomic_field n K) ≠ 0,
+    { contrapose! hnr,
+      apply ham,
+      rwa [ring_hom.map_nat_cast, ring_hom.map_zero] },
+    rw is_root_cyclotomic_iff hnr,
+    rw is_root_cyclotomic_iff hnf at hμ,
+    rwa ←is_primitive_root.map_iff_of_injective ham
+  end,
+  adjoint_roots :=
+  begin
+    -- this should be straightforward, but I'm tired
+    sorry
+  end }
 
 instance : is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) := sorry
 
