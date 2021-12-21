@@ -444,10 +444,15 @@ lemma is_cyclotomic_extension [hn : fact (((n : ℕ) : A) ≠ 0)] :
     rw is_root_cyclotomic_iff hnf at hμ,
     rwa ←is_primitive_root.map_iff_of_injective ham
   end,
-  adjoint_roots :=
+  adjoint_roots := λ x,
   begin
-    -- this should be straightforward, but I'm tired
-    sorry
+    refine adjoin_induction' (λ y hy, _) (λ a, _) (λ y z hy hz, _) (λ y z hy hz, _) x,
+    { refine subset_adjoin _,
+      simp only [mem_singleton_iff, exists_eq_left, mem_set_of_eq],
+      rwa [← subalgebra.coe_eq_one, subalgebra.coe_pow, subtype.coe_mk] },
+    { exact subalgebra.algebra_map_mem _ a },
+    { exact subalgebra.add_mem _ hy hz },
+    { exact subalgebra.mul_mem _ hy hz },
   end }
 
 instance : is_fraction_ring (cyclotomic_ring n A K) (cyclotomic_field n K) := sorry
