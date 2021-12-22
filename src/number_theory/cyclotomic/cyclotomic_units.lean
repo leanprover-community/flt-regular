@@ -170,8 +170,6 @@ begin
   sorry,
 end
 
-#exit
-
 --This proof will be `rfl` or not depending on the def of `zeta'.embeddings_equiv_primitive_roots`.
 @[simp] lemma zeta'.embeddings_equiv_primitive_roots_apply {K C : Type*} [field K] [algebra A K]
   [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] (σ : K →ₐ[A] C) :
