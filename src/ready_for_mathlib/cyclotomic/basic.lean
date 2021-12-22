@@ -183,6 +183,10 @@ begin
     exact finite.trans (adjoin A { b : B | ∃ (n : ℕ+), n ∈ S ∧ b ^ (n : ℕ) = 1 }) _ }
 end
 
+lemma integral [is_domain B] [is_noetherian_ring A] [fintype S] [is_cyclotomic_extension S A B] :
+  algebra.is_integral A B :=
+is_integral_of_noetherian $ is_noetherian_of_fg_of_noetherian' $ (finite S A B).out
+
 --This is a lemma, but it can be made local instance.
 lemma number_field [h : number_field K] [fintype S] [is_cyclotomic_extension S K L] :
   number_field L :=
@@ -240,9 +244,8 @@ begin
                 mem_roots (cyclotomic_ne_zero n B)] using is_root_cyclotomic n.pos hζ }
 end
 
-lemma is_cyclotomic_extension.adjoin_primitive_root_eq_top [h : is_cyclotomic_extension {n} A B]
-  [is_domain B] (ζ : B) (hζ : is_primitive_root ζ n) :
-  adjoin A ({ζ} : set B) = ⊤ :=
+lemma adjoin_primitive_root_eq_top [is_domain B] [h : is_cyclotomic_extension {n} A B]
+  (ζ : B) (hζ : is_primitive_root ζ n) : adjoin A ({ζ} : set B) = ⊤ :=
 begin
   classical,
   rw ←adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic n ζ hζ,

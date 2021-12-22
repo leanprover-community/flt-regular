@@ -124,21 +124,20 @@ begin
   apply zeta'_spec'
 end
 
--- note: we do currently still need `is_domain B` here; fairly sure with zero-divisors you
--- could find a counter-example, too, so our current proof works out well
-lemma zeta'_primitive_root [is_domain B] : is_primitive_root (zeta' n A B) n :=
+lemma zeta'_primitive_root [is_domain B] [hn : fact (((n : ℕ) : A) ≠ 0)] :
+  is_primitive_root (zeta' n A B) n :=
 begin
   rw ←is_root_cyclotomic_iff,
   convert zeta'_spec' n A B,
-  sorry,
-  -- NOTE: (hn : (↑n : B) ≠ 0) is definitely necessary here. is this worth passing through TC?
-  -- This sorry is `exact_mod_cast hn`, but I currently don't want to break build until we
-  -- find the right solution to this. ~Eric
+  --urgh this is the wrong assumption still... will sort out some day;
+  -- (what needs to be done is copy Riccardo's proof over to general cyclo exts)
+  --algebra maps being injective can go blast itself...
+  sorry
 end
 
 section field
 
-variable [is_cyclotomic_extension {n} K L]
+variables [is_cyclotomic_extension {n} K L] [fact $ ((n : ℕ) : K) ≠ 0]
 
 omit A
 
@@ -146,7 +145,7 @@ omit A
 -- this indentation is horrific.
 def zeta'.power_basis : power_basis K L :=
 power_basis.map
-  (algebra.adjoin.power_basis ⟨cyclotomic n K, cyclotomic.monic n K, zeta'_spec n K L⟩) $
+  (algebra.adjoin.power_basis $ integral {n} K L $ zeta' n K L) $
   (subalgebra.equiv_of_eq _ _
     (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ zeta'_primitive_root n K L)).trans
       algebra.top_equiv
@@ -162,14 +161,16 @@ end
   `primitive_roots n C` given by the choice of `zeta'`. -/
 --this should be proved using `power_basis.lift_equiv` (check if a more general version is ok).
 --false in general. True over ℚ and?
-def zeta'.embeddings_equiv_primitive_roots (K C : Type*) [field K] [algebra A K]
-  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] :
-  (K →ₐ[A] C) ≃ primitive_roots n C :=
-{ to_fun := λ σ, ⟨σ (zeta' n A K), (mem_primitive_roots n.pos).2 $
-                  (zeta'_primitive_root n A K).map_of_injective (alg_hom.to_ring_hom σ).injective⟩,
-  inv_fun := sorry,
-  left_inv := sorry,
-  right_inv := sorry }
+def zeta'.embeddings_equiv_primitive_roots (A K C : Type*) [field A] [field K] [algebra A K]
+  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C]
+  [fact $ ((n : ℕ) : A) ≠ 0] : (K →ₐ[A] C) ≃ primitive_roots n C :=
+begin
+  apply ((zeta'.power_basis n A K).lift_equiv').trans; try {apply_instance},
+  -- as above: true over ℚ. what other conditions are acceptable?
+  sorry,
+end
+
+#exit
 
 --This proof will be `rfl` or not depending on the def of `zeta'.embeddings_equiv_primitive_roots`.
 @[simp] lemma zeta'.embeddings_equiv_primitive_roots_apply {K C : Type*} [field K] [algebra A K]
