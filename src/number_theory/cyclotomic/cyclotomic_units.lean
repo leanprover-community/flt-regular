@@ -9,13 +9,14 @@ import number_theory.number_field
 import ready_for_mathlib.cyclotomic.basic
 import ring_theory.polynomial.cyclotomic.eval
 import ready_for_mathlib.cyclotomic
+import ring_theory.adjoin.power_basis
 
 noncomputable theory
 
 open_locale big_operators non_zero_divisors
 open number_field polynomial finset module units fractional_ideal submodule
 
-universes u v w z
+universe variables u v w z
 
 variables (n : ℕ+) (K : Type u) (L : Type v) (A : Type w) (B : Type z)
 variables [comm_ring A] [comm_ring B] [algebra A B]
@@ -125,15 +126,32 @@ begin
   -- find the right solution to this. ~Eric
 end
 
-/-- The `power_basis` given by `zeta' n A B`. -/
---not true in general.. over a field and?
-def zeta'.power_basis : power_basis A B :=
-{ gen := zeta' n A B,
-  dim := finite_dimensional.finrank A B,
-  basis := sorry,
-  basis_eq_pow := sorry }
+section field
 
-lemma zeta'.power_basis_gen : (zeta'.power_basis n A B).gen = zeta' n A B := rfl
+variable [is_cyclotomic_extension {n} K L]
+
+omit A
+
+/-- The `power_basis` given by `zeta' n K L`. -/
+def zeta'.power_basis : power_basis K L :=
+power_basis.map begin
+  rw [←is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ (zeta'_primitive_root n K L)],
+  exact algebra.adjoin.power_basis ⟨cyclotomic n K, cyclotomic.monic n K, zeta'_spec _ _ _⟩,
+  apply_instance
+end algebra.top_equiv
+
+lemma zeta'.power_basis_gen : (zeta'.power_basis n K L).gen = zeta' n K L :=
+begin
+  -- this is currently... unfun to prove. also `squeeze_simp` doesn't work below,
+  -- to make matters better. I think the correct approach is making the required `alg_equiv`s.
+  sorry,
+  /-
+  rw zeta'.power_basis,
+  simp [algebra.top_equiv, alg_equiv.of_bijective, ring_equiv.of_bijective, equiv.of_bijective, function.surj_inv],
+  generalize_proofs _ _ h,
+  apply_fun algebra.to_top,
+  rw h.some_spec, -/
+end
 
 /-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
   `primitive_roots n C` given by the choice of `zeta'`. -/
@@ -156,6 +174,8 @@ def zeta'.embeddings_equiv_primitive_roots (K C : Type*) [field K] [algebra A K]
 -- TODO use the fact that a primitive root is a unit.
 -- TODO prove in general that is_primitive root is integral,
 -- this exists as is_primitive_root.is_integral so use
+
+end field
 
 end is_cyclotomic_extension
 

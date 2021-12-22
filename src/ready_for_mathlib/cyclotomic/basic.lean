@@ -45,6 +45,9 @@ lemma iff_adjoin_eq_top : is_cyclotomic_extension S A B ↔
  (adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 } = ⊤) :=
 ⟨λ h, ⟨h.ex_root, algebra.eq_top_iff.2 h.adjoint_roots⟩, λ h, ⟨h.1, algebra.eq_top_iff.1 h.2⟩⟩
 
+lemma adjoin_eq_top [h : is_cyclotomic_extension S A B] :
+  adjoin A { b : B | ∃ a : ℕ+, a ∈ S ∧ b ^ (a : ℕ) = 1 } = ⊤ := ((iff_adjoin_eq_top _ _ _).mp h).2
+
 lemma iff_singleton : is_cyclotomic_extension {n} A B ↔
  (∃ r : B, aeval r (cyclotomic n A) = 0) ∧
  (∀ x, x ∈ adjoin A { b : B | b ^ (n : ℕ) = 1 }) :=
@@ -196,18 +199,19 @@ end fintype
 
 section cyclotomic_eq_X_pow
 
+variables {A B}
+
 -- some weaker conditions may suffice (maybe normality of L), but this works for us
 -- note that this lemma is written in this weird way so we can use it at point of use easier
-lemma adjoin_roots_cyclotomic_eq_adjoin_nth_roots {K : Type w} [comm_ring K]
-  {L : Type z} [comm_ring L] [is_domain L] [algebra K L] [decidable_eq L]
-  (hζ : ∃ ζ : L, is_primitive_root ζ n) :
-  adjoin K ↑((map (algebra_map K L) (cyclotomic n K)).roots.to_finset) =
-  adjoin K {b : L | ∃ (a : ℕ+), a ∈ ({n} : set ℕ+) ∧ b ^ (a : ℕ) = 1} :=
+lemma adjoin_roots_cyclotomic_eq_adjoin_nth_roots [decidable_eq B] [is_domain B]
+  (hζ : ∃ ζ : B, is_primitive_root ζ n) :
+  adjoin A ↑((map (algebra_map A B) (cyclotomic n A)).roots.to_finset) =
+  adjoin A {b : B | ∃ (a : ℕ+), a ∈ ({n} : set ℕ+) ∧ b ^ (a : ℕ) = 1} :=
 begin
   simp only [mem_singleton_iff, exists_eq_left, map_cyclotomic],
   refine le_antisymm (adjoin_mono (λ x hx, _)) (adjoin_le (λ x hx, _)),
   { simp only [multiset.mem_to_finset, finset.mem_coe,
-               map_cyclotomic, mem_roots (cyclotomic_ne_zero n L)] at hx,
+               map_cyclotomic, mem_roots (cyclotomic_ne_zero n B)] at hx,
     simp only [mem_singleton_iff, exists_eq_left, mem_set_of_eq],
     rw is_root_of_unity_iff n.pos,
     exact ⟨n, nat.mem_divisors_self n n.ne_zero, hx⟩ },
@@ -215,14 +219,13 @@ begin
     obtain ⟨ζ, hζ⟩ := hζ,
     obtain ⟨i, hin, rfl⟩ := hζ.eq_pow_of_pow_eq_one hx n.pos,
     refine set_like.mem_coe.2 (subalgebra.pow_mem _ (subset_adjoin _) _),
-    rwa [finset.mem_coe, multiset.mem_to_finset, mem_roots $ cyclotomic_ne_zero n L],
+    rwa [finset.mem_coe, multiset.mem_to_finset, mem_roots $ cyclotomic_ne_zero n B],
     exact is_root_cyclotomic n.pos hζ }
 end
 
-lemma adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic {K : Type w} [comm_ring K]
-  {L : Type z} [comm_ring L] [is_domain L] [algebra K L] [decidable_eq L]
-  (ζ : L) (hζ : is_primitive_root ζ n) :
-  adjoin K (((map (algebra_map K L) (cyclotomic n K)).roots.to_finset) : set L) = adjoin K ({ζ}) :=
+lemma adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic [decidable_eq B] [is_domain B]
+  (ζ : B) (hζ : is_primitive_root ζ n) :
+  adjoin A (((map (algebra_map A B) (cyclotomic n A)).roots.to_finset) : set B) = adjoin A ({ζ}) :=
 begin
   refine le_antisymm (adjoin_le (λ x hx, _)) (adjoin_mono (λ x hx, _)),
   { suffices hx : x ^ ↑n = 1,
@@ -231,10 +234,20 @@ begin
     rw is_root_of_unity_iff n.pos,
     refine ⟨n, nat.mem_divisors_self n n.ne_zero, _⟩,
     rwa [finset.mem_coe, multiset.mem_to_finset,
-         map_cyclotomic, mem_roots (cyclotomic_ne_zero n L)] at hx },
+         map_cyclotomic, mem_roots $ cyclotomic_ne_zero n B] at hx },
   { simp only [mem_singleton_iff, exists_eq_left, mem_set_of_eq] at hx,
     simpa only [hx, multiset.mem_to_finset, finset.mem_coe, map_cyclotomic,
-                mem_roots (cyclotomic_ne_zero n L)] using is_root_cyclotomic n.pos hζ }
+                mem_roots (cyclotomic_ne_zero n B)] using is_root_cyclotomic n.pos hζ }
+end
+
+lemma is_cyclotomic_extension.adjoin_primitive_root_eq_top [h : is_cyclotomic_extension {n} A B]
+  [is_domain B] (ζ : B) (hζ : is_primitive_root ζ n) :
+  adjoin A ({ζ} : set B) = ⊤ :=
+begin
+  classical,
+  rw ←adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic n ζ hζ,
+  rw adjoin_roots_cyclotomic_eq_adjoin_nth_roots n ⟨ζ, hζ⟩,
+  exact ((is_cyclotomic_extension.iff_adjoin_eq_top {n} A B).mp h).2,
 end
 
 end cyclotomic_eq_X_pow
