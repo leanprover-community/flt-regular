@@ -240,14 +240,14 @@ begin
                 mem_roots (cyclotomic_ne_zero n B)] using is_root_cyclotomic n.pos hζ }
 end
 
-lemma is_cyclotomic_extension.adjoin_primitive_root_eq_top [h : is_cyclotomic_extension {n} A B]
+lemma adjoin_primitive_root_eq_top [h : is_cyclotomic_extension {n} A B]
   [is_domain B] (ζ : B) (hζ : is_primitive_root ζ n) :
   adjoin A ({ζ} : set B) = ⊤ :=
 begin
   classical,
   rw ←adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic n ζ hζ,
   rw adjoin_roots_cyclotomic_eq_adjoin_nth_roots n ⟨ζ, hζ⟩,
-  exact ((is_cyclotomic_extension.iff_adjoin_eq_top {n} A B).mp h).2,
+  exact ((iff_adjoin_eq_top {n} A B).mp h).2,
 end
 
 end cyclotomic_eq_X_pow
