@@ -81,6 +81,16 @@ begin
     exact ⟨↑u⁻¹, by simp [units.smul_def, ← smul_assoc]⟩ }
 end
 
+-- #10969 (with improved versions)
+lemma top_equiv_apply {R A} [comm_ring R] [comm_ring A] [algebra R A] (a : (⊤ : subalgebra R A)) :
+  algebra.top_equiv a = a :=
+begin
+  apply_fun (algebra.top_equiv.symm : A ≃ₐ[R] (⊤ : subalgebra R A)),
+  rw [alg_equiv.symm_apply_apply, algebra.top_equiv, alg_equiv.symm_symm],
+  ext,
+  refl
+end
+
 end movethis
 
 namespace is_cyclotomic_extension
@@ -133,24 +143,19 @@ variable [is_cyclotomic_extension {n} K L]
 omit A
 
 /-- The `power_basis` given by `zeta' n K L`. -/
+-- this indentation is horrific.
 def zeta'.power_basis : power_basis K L :=
-power_basis.map begin
-  rw [←is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ (zeta'_primitive_root n K L)],
-  exact algebra.adjoin.power_basis ⟨cyclotomic n K, cyclotomic.monic n K, zeta'_spec _ _ _⟩,
-  apply_instance
-end algebra.top_equiv
+power_basis.map
+  (algebra.adjoin.power_basis ⟨cyclotomic n K, cyclotomic.monic n K, zeta'_spec n K L⟩) $
+  (subalgebra.equiv_of_eq _ _
+    (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ zeta'_primitive_root n K L)).trans
+      algebra.top_equiv
 
 lemma zeta'.power_basis_gen : (zeta'.power_basis n K L).gen = zeta' n K L :=
 begin
-  -- this is currently... unfun to prove. also `squeeze_simp` doesn't work below,
-  -- to make matters better. I think the correct approach is making the required `alg_equiv`s.
-  sorry,
-  /-
-  rw zeta'.power_basis,
-  simp [algebra.top_equiv, alg_equiv.of_bijective, ring_equiv.of_bijective, equiv.of_bijective, function.surj_inv],
-  generalize_proofs _ _ h,
-  apply_fun algebra.to_top,
-  rw h.some_spec, -/
+  rw [zeta'.power_basis, power_basis.map_gen, alg_equiv.trans_apply,
+      top_equiv_apply, subalgebra.equiv_of_eq_apply], --top_equiv_apply will become algebra.""
+  refl
 end
 
 /-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
