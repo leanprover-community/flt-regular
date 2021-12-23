@@ -219,7 +219,7 @@ units.mk_of_mul_eq_one
 
 lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic_field n K)) := rfl
 
-lemma zeta_primitive_root [fact $ ((n : ℕ) : A) ≠ 0] :
+lemma zeta_primitive_root [fact $ ((n : ℕ) : K) ≠ 0] :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
 begin
   let f := algebra_map (ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
@@ -273,7 +273,6 @@ namespace cyclotomic_unit
 lemma mul_denom {r s : ℕ} (hr : r.coprime n) (hs : s.coprime n) :
   (cyclotomic_unit K hr hs : RR) * ((zeta n K) ^ s - 1) = (zeta n K) ^ r - 1 := sorry
 
--- sorry, I cannot figure out how I broke this proof... I'm too tired and I'll look in the morn.
 lemma exists_unit_mul_primitive_root_one_sub_zeta  (z : RR)
   (hz : is_primitive_root z n) :
   ∃ u : units RR, ↑u * (1 - z : RR) = 1 - (zeta n K) :=
