@@ -172,28 +172,26 @@ begin
     rw [nat.mul_sub_right_distrib, mul_comm, pow_succ']  }
 end
 
-lemma is_root_cyclotomic_iff' {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] {μ : R} (hn : 0 < n) :
+lemma is_root_cyclotomic_iff_char_zero {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
+  [char_zero R] {μ : R} (hn : 0 < n) :
   (polynomial.cyclotomic n R).is_root μ ↔ is_primitive_root μ n :=
+⟨λ h, (is_root_cyclotomic_iff (by exact_mod_cast hn.ne')).1 h,
+  λ h, is_root_cyclotomic hn h⟩
+
+lemma is_root_cyclotomic_iff_char_p {m k p : ℕ} {R : Type*} [comm_ring R] [is_domain R]
+  [hp : fact (nat.prime p)] [hchar : char_p R p] {μ : R} (hk : 0 < k) (hm : 0 < m)
+  (hpm : ¬p ∣ m) :
+  (polynomial.cyclotomic (p ^ k * m) R).is_root μ ↔ is_primitive_root μ m :=
 begin
-  refine ⟨λ h, _, λ h, is_root_cyclotomic hn h⟩,
-  let p := ring_char R,
-  by_cases hp : p = 0,
-  { letI : char_zero R := @char_p.char_p_to_char_zero R _ (ring_char.of_eq hp),
-    exact (is_root_cyclotomic_iff (by exact_mod_cast hn.ne')).1 h },
-  { letI : fact (0 < p) := ⟨zero_lt_iff.2 hp⟩,
-    letI hprime := char_p.char_is_prime_of_pos R p,
-    by_cases H : (n : R) = 0,
-    { replace H := ring_char.dvd H,
-      have hfin := (multiplicity.finite_nat_iff.2 ⟨hprime.out.ne_one, zero_lt_iff.2 hn.ne'⟩),
-      have hmp : 0 < (multiplicity p n).get hfin := multiplicity.pos_of_dvd hfin H,
-      obtain ⟨m, hm, hndiv⟩ := multiplicity.eq_pow_mul_not_dvd hfin,
-      have hmzero : (m : R) ≠ 0 := λ hz, hndiv (ring_char.dvd hz),
-      rw [hm, is_root.def, cyclotomic_mul_prime_pow_eq R hmp hndiv, eval_pow ] at h,
-      replace h := pow_eq_zero h,
-      rw [← is_root.def, is_root_cyclotomic_iff hmzero] at h,
-      sorry
-    },
-    { exact (is_root_cyclotomic_iff H).1 h } }
+  have hmzero : (m : R) ≠ 0 := λ hz, hpm ((ring_char.eq_iff.mpr hchar) ▸ (ring_char.dvd hz)),
+  refine ⟨λ h, _, λ h, _⟩,
+  { rw [is_root.def, cyclotomic_mul_prime_pow_eq R hk hpm, eval_pow] at h,
+    replace h := pow_eq_zero h,
+    rwa [← is_root.def, is_root_cyclotomic_iff hmzero] at h },
+  { rw [← is_root_cyclotomic_iff hmzero, is_root.def] at h,
+    rw [cyclotomic_mul_prime_pow_eq R hk hpm, is_root.def, eval_pow, h, zero_pow],
+    simp only [tsub_pos_iff_lt],
+    exact strict_mono_pow hp.out.one_lt (buffer.lt_aux_2 hk) }
 end
 
 end polynomial
