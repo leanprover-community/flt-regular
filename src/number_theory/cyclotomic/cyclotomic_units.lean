@@ -219,7 +219,7 @@ units.mk_of_mul_eq_one
 
 lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic_field n K)) := rfl
 
-lemma zeta_primitive_root [fact $ ((n : ℕ) : K) ≠ 0] :
+lemma zeta_primitive_root :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
 begin
   let f := algebra_map (ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
