@@ -276,7 +276,6 @@ lemma mul_denom {r s : ℕ} (hr : r.coprime n) (hs : s.coprime n) :
 lemma exists_unit_mul_primitive_root_one_sub_zeta (z : RR) (hz : is_primitive_root z n) :
   ∃ u : units RR, ↑u * (1 - z : RR) = 1 - (zeta n K) :=
 begin
-  -- have := zeta_primitive_root n,
   rw is_primitive_root.is_primitive_root_iff (zeta_primitive_root n K) n.pos at hz,
   obtain ⟨i, hip, hin, hi⟩ := hz,
   rw ← hi,
