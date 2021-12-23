@@ -86,9 +86,7 @@ lemma top_equiv_apply {R A} [comm_ring R] [comm_ring A] [algebra R A] (a : (⊤ 
   algebra.top_equiv a = a :=
 begin
   apply_fun (algebra.top_equiv.symm : A ≃ₐ[R] (⊤ : subalgebra R A)),
-  rw [alg_equiv.symm_apply_apply, algebra.top_equiv, alg_equiv.symm_symm],
-  ext,
-  refl
+  simp
 end
 
 end movethis
