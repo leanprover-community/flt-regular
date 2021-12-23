@@ -4,7 +4,9 @@ import ready_for_mathlib.totient
 
 import ring_theory.polynomial.cyclotomic.basic
 
-open polynomial is_primitive_root
+open is_primitive_root
+
+namespace polynomial
 
 lemma cyclotomic.is_primitive (n : ℕ) (R : Type*) [comm_ring R] : (cyclotomic n R).is_primitive :=
 (cyclotomic.monic n R).is_primitive
@@ -169,3 +171,8 @@ begin
     simp only [tsub_zero, nat.succ_sub_succ_eq_sub],
     rw [nat.mul_sub_right_distrib, mul_comm, pow_succ']  }
 end
+
+lemma is_root_cyclotomic_iff' {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] {μ : R} :
+(polynomial.cyclotomic n R).is_root μ ↔ is_primitive_root μ n := sorry
+
+end polynomial
