@@ -45,7 +45,11 @@ begin
     totient_prime hp.out, neg_one_pow_of_even (even_sub_one_of_prime_ne_two hp.out hodd), one_mul],
   have : univ.prod (λ (σ : K →ₐ[ℚ] E), 1 - σ (zeta' p ℚ K)) = eval 1 (cyclotomic' p E),
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
-    exact fintype.prod_equiv (zeta'.embeddings_equiv_primitive_roots p ℚ K E) _ _ (λ σ, by simp) },
+    refine fintype.prod_equiv (zeta'.embeddings_equiv_primitive_roots p ℚ K E _) _ _ (λ σ, _),
+    { rw [← map_cyclotomic_int],
+      refine (is_primitive.irreducible_iff_irreducible_map_fraction_map
+        (cyclotomic.monic p ℤ).is_primitive).1 (cyclotomic.irreducible p.pos) },
+    { simp } },
   rw [this, cyclotomic', ← cyclotomic_eq_prod_X_sub_primitive_roots
     ((is_root_cyclotomic_iff hpE).1 hz), eval_one_cyclotomic_prime],
   simp,
