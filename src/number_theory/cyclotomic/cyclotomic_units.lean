@@ -81,14 +81,6 @@ begin
     exact ⟨↑u⁻¹, by simp [units.smul_def, ← smul_assoc]⟩ }
 end
 
--- #10969 (with improved versions)
-lemma top_equiv_apply {R A} [comm_ring R] [comm_ring A] [algebra R A] (a : (⊤ : subalgebra R A)) :
-  algebra.top_equiv a = a :=
-begin
-  apply_fun (algebra.top_equiv.symm : A ≃ₐ[R] (⊤ : subalgebra R A)),
-  simp
-end
-
 end movethis
 
 namespace is_cyclotomic_extension
@@ -148,12 +140,8 @@ power_basis.map
     (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ zeta'_primitive_root n K L)).trans
       algebra.top_equiv
 
-@[simp] lemma zeta'.power_basis_gen : (zeta'.power_basis n K L).gen = zeta' n K L :=
-begin
-  rw [zeta'.power_basis, power_basis.map_gen, alg_equiv.trans_apply,
-      top_equiv_apply, subalgebra.equiv_of_eq_apply], --top_equiv_apply will become algebra.""
-  refl
-end
+-- after #11018 `simps gen` (maybe also with `simp_rhs:=tt`) will make this.
+@[simp] lemma zeta'.power_basis_gen : (zeta'.power_basis n K L).gen = zeta' n K L := rfl
 
 /-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
   `primitive_roots n C` given by the choice of `zeta'`. -/
