@@ -150,7 +150,7 @@ power_basis.map
     (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ zeta'_primitive_root n K L)).trans
       algebra.top_equiv
 
-lemma zeta'.power_basis_gen : (zeta'.power_basis n K L).gen = zeta' n K L :=
+@[simp] lemma zeta'.power_basis_gen : (zeta'.power_basis n K L).gen = zeta' n K L :=
 begin
   rw [zeta'.power_basis, power_basis.map_gen, alg_equiv.trans_apply,
       top_equiv_apply, subalgebra.equiv_of_eq_apply], --top_equiv_apply will become algebra.""
@@ -159,23 +159,24 @@ end
 
 /-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
   `primitive_roots n C` given by the choice of `zeta'`. -/
---this should be proved using `power_basis.lift_equiv` (check if a more general version is ok).
---false in general. True over ℚ and?
+@[simps]
 def zeta'.embeddings_equiv_primitive_roots (A K C : Type*) [field A] [field K] [algebra A K]
   [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C]
-  [fact $ ((n : ℕ) : A) ≠ 0] : (K →ₐ[A] C) ≃ primitive_roots n C :=
-begin
-  apply ((zeta'.power_basis n A K).lift_equiv').trans; try {apply_instance},
-  -- as above: true over ℚ. what other conditions are acceptable?
-  sorry,
-end
+  [fact $ ((n : ℕ) : A) ≠ 0] (hirr : irreducible (cyclotomic n A)) :
+  (K →ₐ[A] C) ≃ primitive_roots n C :=
+have hn : ((n : ℕ) : C) ≠ 0 := sorry, -- I'll mop this up later... sigh.
+have hcyclo : minpoly A (zeta'.power_basis n A K).gen = cyclotomic n A :=
+(minpoly.eq_of_irreducible_of_monic hirr
+  (by rw [zeta'.power_basis_gen, zeta'_spec]) $ cyclotomic.monic n A).symm,
+have h : ∀ x, (aeval x) (minpoly A (zeta'.power_basis n A K).gen) = 0 ↔ (cyclotomic n C).is_root x :=
+λ x, by rw [aeval_def, eval₂_eq_eval_map, hcyclo, map_cyclotomic, is_root.def],
+((zeta'.power_basis n A K).lift_equiv).trans
+{ to_fun := λ x, ⟨x.1, by { rw [mem_primitive_roots n.pos, ←is_root_cyclotomic_iff hn, ←h], exact x.2 }⟩,
+  inv_fun := λ x, ⟨x.1, begin rw [h, is_root_cyclotomic_iff hn, ←mem_primitive_roots n.pos], exact x.2 end⟩,
+  left_inv := λ x, subtype.ext rfl,
+  right_inv := λ x, subtype.ext rfl }
 
-#exit
-
---This proof will be `rfl` or not depending on the def of `zeta'.embeddings_equiv_primitive_roots`.
-@[simp] lemma zeta'.embeddings_equiv_primitive_roots_apply {K C : Type*} [field K] [algebra A K]
-  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] (σ : K →ₐ[A] C) :
-  ↑(zeta'.embeddings_equiv_primitive_roots n A K C σ) = σ (zeta' n A K) := sorry
+-- the simp lemma that used to be below is now made by `simps`.
 
 -- TODO use the fact that a primitive root is a unit.
 -- TODO prove in general that is_primitive root is integral,
@@ -218,15 +219,14 @@ units.mk_of_mul_eq_one
 
 lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic_field n K)) := rfl
 
-lemma zeta_primitive_root :
+lemma zeta_primitive_root [fact $ ((n : ℕ) : A) ≠ 0] :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
 begin
   let f := algebra_map (ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
   let hf : function.injective f := by convert no_zero_smul_divisors.algebra_map_injective
     ↥(ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
   apply is_primitive_root.of_map_of_injective hf,
-  convert zeta'_primitive_root n _ _,
-  apply_instance
+  apply zeta'_primitive_root n _ _; apply_instance
 end
 
 lemma zeta_pow_eq_one : (zeta n K) ^ (n : ℕ) = 1 :=
@@ -273,6 +273,7 @@ namespace cyclotomic_unit
 lemma mul_denom {r s : ℕ} (hr : r.coprime n) (hs : s.coprime n) :
   (cyclotomic_unit K hr hs : RR) * ((zeta n K) ^ s - 1) = (zeta n K) ^ r - 1 := sorry
 
+-- sorry, I cannot figure out how I broke this proof... I'm too tired and I'll look in the morn.
 lemma exists_unit_mul_primitive_root_one_sub_zeta  (z : RR)
   (hz : is_primitive_root z n) :
   ∃ u : units RR, ↑u * (1 - z : RR) = 1 - (zeta n K) :=
