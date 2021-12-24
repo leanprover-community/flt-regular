@@ -81,6 +81,10 @@ begin
     exact ⟨↑u⁻¹, by simp [units.smul_def, ← smul_assoc]⟩ }
 end
 
+instance ne.fact_coe (K R : Type*) (n : ℕ+) [field K] [ring R] [nontrivial R] [algebra K R]
+  [hK : fact (((n : ℕ) : K) ≠ 0)] : fact (((n : ℕ) : R) ≠ 0) :=
+⟨by simpa using (function.injective.ne (algebra_map K R).injective hK.out)⟩
+
 end movethis
 
 namespace is_cyclotomic_extension
@@ -147,18 +151,18 @@ power_basis.map
   `primitive_roots n C` given by the choice of `zeta'`. -/
 @[simps]
 def zeta'.embeddings_equiv_primitive_roots (A K C : Type*) [field A] [field K] [algebra A K]
-  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C]
+  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] [algebra K C]
   [fact $ ((n : ℕ) : K) ≠ 0] (hirr : irreducible (cyclotomic n A)) :
   (K →ₐ[A] C) ≃ primitive_roots n C :=
-have hn : ((n : ℕ) : C) ≠ 0 := sorry, -- I'll mop this up later... sigh.
+have hn : fact (((n : ℕ) : C) ≠ 0) := infer_instance,
 have hcyclo : minpoly A (zeta'.power_basis n A K).gen = cyclotomic n A :=
 (minpoly.eq_of_irreducible_of_monic hirr
   (by rw [zeta'.power_basis_gen, zeta'_spec]) $ cyclotomic.monic n A).symm,
 have h : ∀ x, (aeval x) (minpoly A (zeta'.power_basis n A K).gen) = 0 ↔ (cyclotomic n C).is_root x :=
 λ x, by rw [aeval_def, eval₂_eq_eval_map, hcyclo, map_cyclotomic, is_root.def],
 ((zeta'.power_basis n A K).lift_equiv).trans
-{ to_fun := λ x, ⟨x.1, by { rw [mem_primitive_roots n.pos, ←is_root_cyclotomic_iff hn, ←h], exact x.2 }⟩,
-  inv_fun := λ x, ⟨x.1, begin rw [h, is_root_cyclotomic_iff hn, ←mem_primitive_roots n.pos], exact x.2 end⟩,
+{ to_fun := λ x, ⟨x.1, by { rw [mem_primitive_roots n.pos, ←is_root_cyclotomic_iff hn.out, ←h], exact x.2 }⟩,
+  inv_fun := λ x, ⟨x.1, begin rw [h, is_root_cyclotomic_iff hn.out, ←mem_primitive_roots n.pos], exact x.2 end⟩,
   left_inv := λ x, subtype.ext rfl,
   right_inv := λ x, subtype.ext rfl }
 
@@ -175,10 +179,6 @@ end is_cyclotomic_extension
 namespace cyclotomic_ring
 
 variables [is_domain A] [algebra A K] [is_fraction_ring A K] [fact (((n : ℕ) : K) ≠ 0)]
-
-instance (K L : Type*) (n : ℕ+) [field K] [field L] [algebra K L] [hK : fact (((n : ℕ) : K) ≠ 0)] :
-  fact (((n : ℕ) : L) ≠ 0) :=
-⟨by simpa using (function.injective.ne (algebra_map K L).injective hK.out)⟩
 
 open is_cyclotomic_extension
 
