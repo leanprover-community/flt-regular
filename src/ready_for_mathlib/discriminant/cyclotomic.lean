@@ -30,7 +30,7 @@ end
 lemma norm_zeta'_sub_one [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
   norm ℚ ((zeta' p ℚ K) - 1) = p :=
 begin
-  let E := algebraic_closure ℚ,
+  let E := algebraic_closure K,
   letI := char_zero_of_injective_algebra_map (algebra_map ℚ E).injective,
   have hpE : ((p : ℕ) : E) ≠ 0 := λ h, p.pos.ne (cast_eq_zero.1 h).symm,
   obtain ⟨z, hz⟩ := is_alg_closed.exists_root _ (degree_cyclotomic_pos p E p.pos).ne.symm,
