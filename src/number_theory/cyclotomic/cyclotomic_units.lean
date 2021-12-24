@@ -81,13 +81,12 @@ begin
     exact ⟨↑u⁻¹, by simp [units.smul_def, ← smul_assoc]⟩ }
 end
 
---All these instances should be replaced once we have an appropriate class
-@[nolint dangerous_instance]
-instance ne.fact_coe (K R : Type*) (n : ℕ+) [field K] [ring R] [nontrivial R] [algebra K R]
+--The following lemmas should be replaced by instances once we have an appropriate class
+lemma ne.fact_coe (K R : Type*) (n : ℕ+) [field K] [ring R] [nontrivial R] [algebra K R]
   [hK : fact (((n : ℕ) : K) ≠ 0)] : fact (((n : ℕ) : R) ≠ 0) :=
 ⟨by simpa using (function.injective.ne (algebra_map K R).injective hK.out)⟩
 
-instance ne.fact_char_zero (K : Type*) (n : ℕ+) [field K] [char_zero K] :
+lemma ne.fact_char_zero (K : Type*) (n : ℕ+) [field K] [char_zero K] :
   fact (((n : ℕ) : K) ≠ 0) := ⟨nat.cast_ne_zero.mpr n.pos.ne'⟩
 
 end movethis
@@ -152,6 +151,8 @@ power_basis.map
 -- after #11018 `simps gen` (maybe also with `simp_rhs:=tt`) will make this.
 @[simp] lemma zeta'.power_basis_gen : (zeta'.power_basis n K L).gen = zeta' n K L := rfl
 
+local attribute [instance] ne.fact_coe
+
 /-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
   `primitive_roots n C` given by the choice of `zeta'`. -/
 @[simps]
@@ -213,6 +214,9 @@ units.mk_of_mul_eq_one
   end
 
 lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic_field n K)) := rfl
+
+local attribute [instance] ne.fact_coe
+local attribute [instance] ne.fact_char_zero
 
 lemma zeta_primitive_root :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
