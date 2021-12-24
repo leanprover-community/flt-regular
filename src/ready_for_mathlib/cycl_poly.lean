@@ -179,8 +179,7 @@ lemma is_root_cyclotomic_iff_char_zero {n : ℕ} {R : Type*} [comm_ring R] [is_d
   λ h, is_root_cyclotomic hn h⟩
 
 lemma is_root_cyclotomic_iff_char_p {m k p : ℕ} {R : Type*} [comm_ring R] [is_domain R]
-  [hp : fact (nat.prime p)] [hchar : char_p R p] {μ : R} (hk : 0 < k) (hm : 0 < m)
-  (hpm : ¬p ∣ m) :
+  [hp : fact (nat.prime p)] [hchar : char_p R p] {μ : R} (hk : 0 < k) (hpm : ¬p ∣ m) :
   (polynomial.cyclotomic (p ^ k * m) R).is_root μ ↔ is_primitive_root μ m :=
 begin
   have hmzero : (m : R) ≠ 0 := λ hz, hpm ((ring_char.eq_iff.mpr hchar) ▸ (ring_char.dvd hz)),
