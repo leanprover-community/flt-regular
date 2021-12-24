@@ -81,7 +81,7 @@ begin
     exact ⟨↑u⁻¹, by simp [units.smul_def, ← smul_assoc]⟩ }
 end
 
---All these instances should be replaced one we have an appropriate class
+--All these instances should be replaced once we have an appropriate class
 @[nolint dangerous_instance]
 instance ne.fact_coe (K R : Type*) (n : ℕ+) [field K] [ring R] [nontrivial R] [algebra K R]
   [hK : fact (((n : ℕ) : K) ≠ 0)] : fact (((n : ℕ) : R) ≠ 0) :=
