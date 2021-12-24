@@ -88,8 +88,7 @@ instance ne.fact_coe (K R : Type*) (n : ℕ+) [field K] [ring R] [nontrivial R] 
 ⟨by simpa using (function.injective.ne (algebra_map K R).injective hK.out)⟩
 
 instance ne.fact_char_zero (K : Type*) (n : ℕ+) [field K] [char_zero K] :
-  fact (((n : ℕ) : K) ≠ 0) :=
-⟨nat.cast_ne_zero.mpr n.pos.ne'⟩
+  fact (((n : ℕ) : K) ≠ 0) := ⟨nat.cast_ne_zero.mpr n.pos.ne'⟩
 
 end movethis
 
