@@ -29,7 +29,7 @@ begin
   symmetry' at this,
   push_cast at this,
   apply_fun span_singleton (cyclotomic_ring pp ℤ ℚ)⁰ at this,
-  --simp at this, --this causes a timeout, I (RB) don't understand why
+  simp at this,
   sorry,
 end
 
