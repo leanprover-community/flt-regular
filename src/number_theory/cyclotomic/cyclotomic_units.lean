@@ -114,20 +114,20 @@ begin
   apply zeta'_spec'
 end
 
-lemma zeta'_primitive_root [is_domain B] [hn : fact (((n : ℕ) : A) ≠ 0)] :
+lemma zeta'_primitive_root [is_domain B] [hn : fact (((n : ℕ) : B) ≠ 0)] :
   is_primitive_root (zeta' n A B) n :=
 begin
   rw ←is_root_cyclotomic_iff,
   convert zeta'_spec' n A B,
+  exact hn.out,
   --urgh this is the wrong assumption still... will sort out some day;
   -- (what needs to be done is copy Riccardo's proof over to general cyclo exts)
   --algebra maps being injective can go blast itself...
-  sorry
 end
 
 section field
 
-variables [is_cyclotomic_extension {n} K L] [fact $ ((n : ℕ) : K) ≠ 0]
+variables [is_cyclotomic_extension {n} K L] [fact $ ((n : ℕ) : L) ≠ 0]
 
 omit A
 
@@ -148,7 +148,7 @@ power_basis.map
 @[simps]
 def zeta'.embeddings_equiv_primitive_roots (A K C : Type*) [field A] [field K] [algebra A K]
   [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C]
-  [fact $ ((n : ℕ) : A) ≠ 0] (hirr : irreducible (cyclotomic n A)) :
+  [fact $ ((n : ℕ) : K) ≠ 0] (hirr : irreducible (cyclotomic n A)) :
   (K →ₐ[A] C) ≃ primitive_roots n C :=
 have hn : ((n : ℕ) : C) ≠ 0 := sorry, -- I'll mop this up later... sigh.
 have hcyclo : minpoly A (zeta'.power_basis n A K).gen = cyclotomic n A :=
@@ -175,6 +175,10 @@ end is_cyclotomic_extension
 namespace cyclotomic_ring
 
 variables [is_domain A] [algebra A K] [is_fraction_ring A K] [fact (((n : ℕ) : K) ≠ 0)]
+
+instance (K L : Type*) (n : ℕ+) [field K] [field L] [algebra K L] [hK : fact (((n : ℕ) : K) ≠ 0)] :
+  fact (((n : ℕ) : L) ≠ 0) :=
+⟨by simpa using (function.injective.ne (algebra_map K L).injective hK.out)⟩
 
 open is_cyclotomic_extension
 
