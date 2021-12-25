@@ -4,7 +4,6 @@ import tactic.may_assume
 import data.zmod.extras
 import tactic
 import data.nat.prime_extras
-import ready_for_mathlib.totient
 import algebra.gcd_monoid.nat
 import number_theory.cyclotomic.factoring
 
