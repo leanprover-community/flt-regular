@@ -21,17 +21,6 @@ end
 
 end pr_10849
 
-section pr_11023
-
-lemma multiset.empty_or_exists_mem {α} (s : multiset α) : s = 0 ∨ ∃ a, a ∈ s :=
-begin
-  rcases eq_or_ne s 0 with rfl | h,
-  { exact or.inl rfl },
-  exact or.inr (multiset.exists_mem_of_ne_zero h)
-end
-
-end pr_11023
-
 section pr_11025
 
 lemma roots.le_of_dvd {R} [comm_ring R] [is_domain R] {p q : polynomial R} (h : q ≠ 0) :
