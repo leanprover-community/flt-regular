@@ -21,19 +21,6 @@ end
 
 end pr_10849
 
-section pr_11025
-
-lemma roots.le_of_dvd {R} [comm_ring R] [is_domain R] {p q : polynomial R} (h : q ≠ 0) :
-   p ∣ q → roots p ≤ roots q :=
-begin
-  classical,
-  rintro ⟨k, rfl⟩,
-  rw multiset.le_iff_exists_add,
-  exact ⟨k.roots, roots_mul h⟩
-end
-
-end pr_11025
-
 section no_pr_yet
 
 -- this requires two of the above; i will wait for one of them to merge to master before;
