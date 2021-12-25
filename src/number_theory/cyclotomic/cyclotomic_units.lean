@@ -128,9 +128,6 @@ begin
   rw ←is_root_cyclotomic_iff,
   convert zeta'_spec' n A B,
   exact hn.out,
-  --urgh this is the wrong assumption still... will sort out some day;
-  -- (what needs to be done is copy Riccardo's proof over to general cyclo exts)
-  --algebra maps being injective can go blast itself...
 end
 
 section field
