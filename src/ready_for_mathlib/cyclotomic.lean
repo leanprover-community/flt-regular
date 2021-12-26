@@ -21,6 +21,19 @@ end
 
 end pr_10849
 
+section pr_11063
+namespace polynomial
+
+lemma cyclotomic_prime_mul_X_sub_one (R : Type*) [comm_ring R] (p : ℕ) [hn : fact (nat.prime p)] :
+  (cyclotomic p R) * (X - 1) = X ^ p - 1 :=
+begin
+  rw cyclotomic_eq_geom_sum hn.out,
+  exact geom_sum_mul X p,
+end
+
+end polynomial
+end pr_11063
+
 section no_pr_yet
 
 -- this requires two of the above; i will wait for one of them to merge to master before;
@@ -41,16 +54,5 @@ lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [i
   (hn : (n : R) ≠ 0) : primitive_roots n R = ⟨(cyclotomic n R).roots, roots_cyclotomic_nodup hn⟩ :=
 let hn' : 0 < n := (show n ≠ 0, by { rintro rfl, contradiction }).bot_lt in
 by { ext, simp [cyclotomic_ne_zero n R, is_root_cyclotomic_iff hn, mem_primitive_roots hn'] }
-
-namespace polynomial
-
-lemma cyclotomic_prime_mul_X_sub_one (R : Type*) [comm_ring R] (p : ℕ) [hn : fact (nat.prime p)] :
-  (cyclotomic p R) * (X - 1) = X ^ p - 1 :=
-begin
-  rw cyclotomic_eq_geom_sum hn.out,
-  exact geom_sum_mul X p,
-end
-
-end polynomial
 
 end no_pr_yet
