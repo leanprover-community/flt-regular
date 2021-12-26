@@ -12,8 +12,9 @@ namespace prime
 lemma five_le (h_two : p ≠ 2) (h_three : p ≠ 3) : 5 ≤ p :=
 begin
   by_contra' h,
-  tactic.unfreeze_local_instances, --I (RB) don't know why this is needed
-  revert h_two h_three hp,
+  --I (RB) don't know why this is needed
+  --(Eric): `nat.prime` is now defined to be `irreducible`, which is a class
+  unfreezingI { revert h_two h_three hp },
   dec_trivial!,
 end
 
