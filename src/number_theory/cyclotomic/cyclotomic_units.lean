@@ -194,9 +194,23 @@ begin
   simp [aeval_def, eval₂_eq_eval_map],
 end
 
+local attribute [instance] cyclotomic_field.algebra_base
+
 --zeta' should be in `(cyclotomic_ring n A K)` by definition.
 lemma zeta'_mem_base : ∃ (x : (cyclotomic_ring n A K)), algebra_map
-  (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta' n K (cyclotomic_field n K) := sorry
+  (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta' n K (cyclotomic_field n K) :=
+begin
+  letI := classical.prop_decidable,
+  let μ := zeta' n K (cyclotomic_field n K),
+  haveI : fact (((n : ℕ) : cyclotomic_field n K) ≠ 0) := sorry, -- waiting for `ne_zero`
+  have hμ := zeta'_primitive_root n K (cyclotomic_field n K),
+  refine ⟨⟨μ, _⟩, rfl⟩,
+  have := is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots n ⟨μ, hμ⟩,
+  simp only [set.mem_singleton_iff, exists_eq_left] at this,
+  rw [← this, is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic n μ hμ],
+  apply algebra.subset_adjoin,
+  exact set.mem_singleton _
+end
 
 --zeta should be in `units (cyclotomic_ring n A K)` by definition.
 /-- `zeta n K L` is a root of `cyclotomic n K` in
