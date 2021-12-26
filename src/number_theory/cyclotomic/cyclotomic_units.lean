@@ -214,16 +214,28 @@ lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic
 
 local attribute [instance] ne.fact_coe
 local attribute [instance] ne.fact_char_zero
--- this is timing out weirdly (not on `leanproject build`, only in vscode; happening to anyone else?
+
+/- set_option profiler true
+set_option trace.class_instances true -/
+
+-- there is some TC hell going on here. I think there's two algebras from `ring_of_integers blah`
+-- to `blah`, and to boot they're also not defeq. Also, if I don't put the `no_zero_smul_divisors`
+-- explicitly, this just flat-out refuses to compile in my VSCode (although it DOES! in the same
+-- computer, when running through `leanproject build`). I'm really not sure what it is, but
+-- I'm trying some band-aids for now and will ask people who know better on the Zulip. ~Eric
 lemma zeta_primitive_root :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
 begin
-  let f := algebra_map (ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
-  let hf : function.injective f := by convert no_zero_smul_divisors.algebra_map_injective
-    ↥(ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K),
+  let hf : function.injective (algebra_map (ring_of_integers (cyclotomic_field n K)) (cyclotomic_field n K)) :=
+    by convert @no_zero_smul_divisors.algebra_map_injective (ring_of_integers $ cyclotomic_field n K)
+      (cyclotomic_field n K) _ _ _ _
+      (subalgebra.no_zero_smul_divisors_top (ring_of_integers $ cyclotomic_field n K)),
   apply is_primitive_root.of_map_of_injective hf,
   apply zeta'_primitive_root n _ _; apply_instance
 end
+
+set_option trace.class_instances false
+set_option profiler false
 
 lemma zeta_pow_eq_one : (zeta n K) ^ (n : ℕ) = 1 :=
 by { ext, simp [zeta] }
