@@ -403,7 +403,8 @@ end
 
 lemma algebra_base_injective : function.injective $ algebra_map A (cyclotomic_ring n A K) :=
 no_zero_smul_divisors.algebra_map_injective _ _ -- ta da!
--- todo: can we carry this instance to more general cases?
+-- todo: can we carry this instance to more general cases? or do we have to work harder
+-- for injective algebra maps in cyclotomic extensions?
 
 lemma eq_adjoin_single (μ : (cyclotomic_field n K))
   (h : μ ∈ primitive_roots n ((cyclotomic_field n K))) :

@@ -214,7 +214,7 @@ lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic
 
 local attribute [instance] ne.fact_coe
 local attribute [instance] ne.fact_char_zero
-
+-- this is timing out weirdly (not on `leanproject build`, only in vscode; happening to anyone else?
 lemma zeta_primitive_root :
   is_primitive_root (zeta n K : ring_of_integers (cyclotomic_field n K)) n :=
 begin
