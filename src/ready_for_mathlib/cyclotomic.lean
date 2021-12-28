@@ -18,8 +18,7 @@ end pr_11063
 
 section no_pr_yet
 
--- this requires two of the above; i will wait for one of them to merge to master before;
--- I don't want to have a complicated PR structure for two lemmas
+-- I'll wait for `ne_zero` before merging these
 lemma roots_cyclotomic_nodup {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] (hn : (n : R) ≠ 0) :
   (cyclotomic n R).roots.nodup :=
 begin
@@ -27,9 +26,8 @@ begin
   obtain h | ⟨ζ, hζ⟩ := (cyclotomic n R).roots.empty_or_exists_mem,
   { exact h.symm ▸ multiset.nodup_zero },
   rw [mem_roots $ cyclotomic_ne_zero n R, is_root_cyclotomic_iff hn] at hζ,
-  refine multiset.nodup_of_le (roots.le_of_dvd (X_pow_sub_C_ne_zero hn' 1) $
-                               cyclotomic.dvd_X_pow_sub_one n R) _,
-  exact hζ.nth_roots_nodup
+  exact multiset.nodup_of_le (roots.le_of_dvd (X_pow_sub_C_ne_zero hn' 1) $
+                               cyclotomic.dvd_X_pow_sub_one n R) hζ.nth_roots_nodup
 end
 
 lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
