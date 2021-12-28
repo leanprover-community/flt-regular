@@ -99,11 +99,11 @@ include A n
 /-- If `B` is a `n`-th cyclotomic extension of `A`, then `zeta' n A B` is any root of
 `cyclotomic n A` in L. -/
 def zeta' : B :=
-classical.some (ex_root (set.mem_singleton n) : ∃ r : B, aeval r (cyclotomic n A) = 0)
+classical.some (exists_root (set.mem_singleton n) : ∃ r : B, aeval r (cyclotomic n A) = 0)
 
 @[simp]
 lemma zeta'_spec : aeval (zeta' n A B) (cyclotomic n A) = 0 :=
-classical.some_spec (ex_root (set.mem_singleton n) : ∃ r : B, aeval r (cyclotomic n A) = 0)
+classical.some_spec (exists_root (set.mem_singleton n) : ∃ r : B, aeval r (cyclotomic n A) = 0)
 
 lemma zeta'_spec' : is_root (cyclotomic n B) (zeta' n A B) :=
 begin
@@ -118,7 +118,7 @@ lemma zeta'_pow_prime : (zeta' n A B) ^ (n : ℕ) = 1 :=
 begin
   suffices : is_root (X ^ (n : ℕ) - 1) (zeta' n A B),
   { simpa [sub_eq_zero] using this },
-  refine is_root.dvd _ cyclotomic.dvd_X_pow_sub_one,
+  refine is_root.dvd _ (cyclotomic.dvd_X_pow_sub_one _ _),
   apply zeta'_spec'
 end
 
@@ -138,15 +138,12 @@ omit A
 
 /-- The `power_basis` given by `zeta' n K L`. -/
 -- this indentation is horrific.
-def zeta'.power_basis : power_basis K L :=
+@[simps] def zeta'.power_basis : power_basis K L :=
 power_basis.map
   (algebra.adjoin.power_basis $ integral {n} K L $ zeta' n K L) $
   (subalgebra.equiv_of_eq _ _
     (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ zeta'_primitive_root n K L)).trans
       algebra.top_equiv
-
--- after #11018 `simps gen` (maybe also with `simp_rhs:=tt`) will make this.
-@[simp] lemma zeta'.power_basis_gen : (zeta'.power_basis n K L).gen = zeta' n K L := rfl
 
 local attribute [instance] ne.fact_coe
 
@@ -164,12 +161,10 @@ have hcyclo : minpoly A (zeta'.power_basis n A K).gen = cyclotomic n A :=
 have h : ∀ x, (aeval x) (minpoly A (zeta'.power_basis n A K).gen) = 0 ↔ (cyclotomic n C).is_root x :=
 λ x, by rw [aeval_def, eval₂_eq_eval_map, hcyclo, map_cyclotomic, is_root.def],
 ((zeta'.power_basis n A K).lift_equiv).trans
-{ to_fun := λ x, ⟨x.1, by { rw [mem_primitive_roots n.pos, ←is_root_cyclotomic_iff hn.out, ←h], exact x.2 }⟩,
-  inv_fun := λ x, ⟨x.1, begin rw [h, is_root_cyclotomic_iff hn.out, ←mem_primitive_roots n.pos], exact x.2 end⟩,
+{ to_fun := λ x, ⟨x.1, by { cases x, rwa [mem_primitive_roots n.pos, ←is_root_cyclotomic_iff hn.out, ←h] }⟩,
+  inv_fun := λ x, ⟨x.1, by { cases x, rwa [h, is_root_cyclotomic_iff hn.out, ←mem_primitive_roots n.pos] }⟩,
   left_inv := λ x, subtype.ext rfl,
   right_inv := λ x, subtype.ext rfl }
-
--- the simp lemma that used to be below is now made by `simps`.
 
 -- TODO use the fact that a primitive root is a unit.
 -- TODO prove in general that is_primitive root is integral,

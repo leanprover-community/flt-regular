@@ -81,7 +81,7 @@ add_pow_prime_eq_pow_add_pow_add_prime_mul_of_commute _ _ _ (commute.all _ _)
 lemma exists_int_sub_pow_prime_dvd {A : Type*} [comm_ring A] [is_cyclotomic_extension {n} ℤ A]
   [fact (n : ℕ).prime] (a : A) : ∃ (m : ℤ), (a ^ (n : ℕ) - m) ∈ span ({n} : set A) :=
 begin
-  have : a ∈ algebra.adjoin ℤ _ := @adjoint_roots {n} ℤ A _ _ _ _ a,
+  have : a ∈ algebra.adjoin ℤ _ := @adjoin_roots {n} ℤ A _ _ _ _ a,
   apply algebra.adjoin_induction this,
   { intros x hx,
     rcases hx with ⟨hx_w, hx_m, hx_p⟩,
