@@ -14,7 +14,12 @@ namespace singleton
 
 variables [is_cyclotomic_extension {n} ℚ L]
 
-lemma finrank : finrank ℚ L = (n : ℕ).totient := sorry
+lemma finrank : finrank ℚ L = (n : ℕ).totient :=
+begin
+  rw [power_basis.finrank (zeta'.power_basis n ℚ L), zeta'.power_basis_dim],
+  sorry
+  --using zeta'_primitive_root this is easy, let's wait for the new class ne_zero
+end
 
 end singleton
 
