@@ -3,19 +3,6 @@ import ring_theory.polynomial.cyclotomic.basic
 open polynomial nat
 open_locale big_operators
 
-section pr_11063
-namespace polynomial
-
-lemma cyclotomic_prime_mul_X_sub_one (R : Type*) [comm_ring R] (p : ℕ) [hn : fact (nat.prime p)] :
-  (cyclotomic p R) * (X - 1) = X ^ p - 1 :=
-begin
-  rw cyclotomic_eq_geom_sum hn.out,
-  exact geom_sum_mul X p,
-end
-
-end polynomial
-end pr_11063
-
 section no_pr_yet
 
 -- I'll wait for `ne_zero` before merging these
