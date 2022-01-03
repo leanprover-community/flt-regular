@@ -82,63 +82,8 @@ by rw [mem_roots (map_ne_zero_of_injective hf hp), is_root, polynomial.eval_map]
 end polynomial
 end polynomial_map_lemmas
 
-section polynomial
-variables {R : Type*} [ring R]
-open polynomial
-
--- this section is essentially already in mathlib and PR #10868 aims to add the exact versions we
--- want
-@[simp]
-lemma X_pow_mul_coeff_add (p : polynomial R) (j i : ℕ) : (X ^ j * p).coeff (i + j) = p.coeff i :=
-begin
-  simp only [coeff_mul, coeff_X_pow, boole_mul],
-  have : ∀ x ∈ finset.nat.antidiagonal (i + j), prod.fst x = j ↔ (j, i) = x,
-  { simp only [prod.forall, iff_self_and, finset.nat.mem_antidiagonal, prod.mk.inj_iff, eq_comm],
-    intros a b hs hb,
-    linarith, },
-  conv in (prod.fst _ = _)
-  { simp only [this x H], },
-  simp [add_comm],
-end
-
-@[simp]
-lemma X_mul_coeff_succ (p : polynomial R) (i : ℕ) : (X * p).coeff (i + 1) = p.coeff i :=
-by simp
-
-end polynomial
 section
 open multiset
-@[simp] theorem multiset.powerset_len_empty {α : Type*} (n : ℕ) {s : multiset α} (h : s.card < n) :
-  powerset_len n s = 0 :=
-multiset.card_eq_zero.mp (by rw [card_powerset_len, nat.choose_eq_zero_of_lt h])
-
-@[simp]
-lemma multiset.powerset_len_card_add {α : Type*} (s : multiset α) {i : ℕ} (hi : 0 < i) :
-  s.powerset_len (s.card + i) = 0 :=
-begin
-  apply multiset.powerset_len_empty,
-  exact lt_add_of_pos_right (card s) hi,
-end
--- not needed for the project but a nice complement to the above
-@[simp]
-lemma finset.powerset_len_card_add {α : Type*} (s : finset α) {i : ℕ} (hi : 0 < i) :
-  s.powerset_len (s.card + i) = ∅ :=
-begin
-  apply finset.powerset_len_empty,
-  exact lt_add_of_pos_right (finset.card s) hi,
-end
-
-@[simp] theorem multiset.powerset_len_map {α β : Type*} (f : α → β) (n : ℕ) (s : multiset α) :
-  powerset_len n (s.map f) = (powerset_len n s).map (map f) :=
-begin
-  induction s using multiset.induction with t s ih generalizing n,
-  { cases n,
-    { simp [powerset_len_zero_left], },
-    { simp [powerset_len_zero_right], }, },
-  { cases n,
-    { simp, },
-    { simp [ih], }, },
-end
 
 @[simp] theorem powerset_len_val {α : Type*} (s : finset α) (i : ℕ) :
   (s.powerset_len i).val.map finset.val = s.1.powerset_len i :=
@@ -199,15 +144,14 @@ begin
   simp only [multiset.card_cons] at his,
   by_cases his' : i = s.card + 1,
   { simp only [his', multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
-      tsub_self, multiset.powerset_len_zero_left, X_mul_coeff_succ],
+      tsub_self, multiset.powerset_len_zero_left, coeff_X_pow_mul],
 
     have : (multiset.map (λ (x : R), X + C x) s).prod.coeff (s.card + 1) = 0,
     from coeff_eq_zero_of_degree_lt (multiset_prod_X_add_C_degree _),
-    simp [this, sub_zero, mul_zero, X_mul_coeff_succ,
-      h (le_refl _), mul_one, multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
-      tsub_self, multiset.powerset_len_zero_left, pow_zero, h (le_refl _), multiset.map_singleton,
-      multiset.sum_singleton,
-      multiset.prod_zero, tsub_self, multiset.powerset_len_zero_left, add_right_eq_self], },
+    simp [this, sub_zero, mul_zero, h (le_refl _), mul_one, multiset.map_singleton,
+      multiset.sum_singleton, multiset.prod_zero, tsub_self, multiset.powerset_len_zero_left,
+      pow_zero, h (le_refl _), multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
+      tsub_self, multiset.powerset_len_zero_left, add_right_eq_self], },
   have : i ≤ s.card := nat.lt_succ_iff.mp (lt_of_le_of_ne his his'),
   rw [nat.succ_sub this, multiset.powerset_len_cons],
   simp only [h this, multiset.prod_cons, function.comp_app, multiset.map_map, multiset.map_add,
@@ -223,7 +167,7 @@ begin
     have := (add_monoid_hom.mul_left a).map_multiset_sum,
     simp only [add_monoid_hom.coe_mul_left] at this,
     simp [this], },
-  rw [X_mul_coeff_succ],
+  rw [coeff_X_mul],
   congr,
   { have hii : i ≤ multiset.card s := nat.le_of_succ_le this,
     have : multiset.card s - i = multiset.card s - i.succ + 1, -- I miss omega :'(
