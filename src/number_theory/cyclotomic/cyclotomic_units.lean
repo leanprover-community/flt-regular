@@ -81,14 +81,6 @@ begin
     exact ⟨↑u⁻¹, by simp [units.smul_def, ← smul_assoc]⟩ }
 end
 
---The following lemmas should be replaced by instances once we have an appropriate class
-lemma ne.fact_coe (K R : Type*) (n : ℕ+) [field K] [ring R] [nontrivial R] [algebra K R]
-  [hK : fact (((n : ℕ) : K) ≠ 0)] : fact (((n : ℕ) : R) ≠ 0) :=
-⟨by simpa using (function.injective.ne (algebra_map K R).injective hK.out)⟩
-
-lemma ne.fact_char_zero (K : Type*) (n : ℕ+) [field K] [char_zero K] :
-  fact (((n : ℕ) : K) ≠ 0) := ⟨nat.cast_ne_zero.mpr n.pos.ne'⟩
-
 end movethis
 
 namespace is_cyclotomic_extension
@@ -122,53 +114,47 @@ begin
   apply zeta'_spec'
 end
 
-lemma zeta'_primitive_root [is_domain B] [hn : fact (((n : ℕ) : B) ≠ 0)] :
+lemma zeta'_primitive_root [is_domain B] [hn : ne_zero ((n : ℕ) : B)] :
   is_primitive_root (zeta' n A B) n :=
-begin
-  rw ←is_root_cyclotomic_iff,
-  convert zeta'_spec' n A B,
-  exact hn.out,
-end
+by { rw ←is_root_cyclotomic_iff, exact zeta'_spec' n A B }
 
 section field
 
-variables [is_cyclotomic_extension {n} K L] [fact $ ((n : ℕ) : L) ≠ 0]
+variables [is_cyclotomic_extension {n} K L] [ne_zero ((n : ℕ) : K)]
 
 omit A
 
 /-- The `power_basis` given by `zeta' n K L`. -/
--- this indentation is horrific.
+-- this indentation is horrific, and I do not know why term mode doesn't want to work...
 @[simps] def zeta'.power_basis : power_basis K L :=
-power_basis.map
-  (algebra.adjoin.power_basis $ integral {n} K L $ zeta' n K L) $
+begin
+haveI : ne_zero ((n : ℕ) : L) := ne_zero.of_no_zero_smul_divisors K L,
+refine power_basis.map
+  (algebra.adjoin.power_basis $ integral {n} K L $ zeta' n K L) _,
+exact
   (subalgebra.equiv_of_eq _ _
-    (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ zeta'_primitive_root n K L)).trans
-      algebra.top_equiv
-
-local attribute [instance] ne.fact_coe
+  (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ zeta'_primitive_root n K L)).trans
+    algebra.top_equiv
+end
 
 /-- `zeta'.embeddings_equiv_primitive_roots` is the equiv between `B →ₐ[A] C` and
   `primitive_roots n C` given by the choice of `zeta'`. -/
 @[simps]
 def zeta'.embeddings_equiv_primitive_roots (A K C : Type*) [field A] [field K] [algebra A K]
-  [is_cyclotomic_extension {n} A K] [comm_ring C] [algebra A C] [is_domain C] [algebra K C]
-  [fact $ ((n : ℕ) : K) ≠ 0] (hirr : irreducible (cyclotomic n A)) :
+  [is_cyclotomic_extension {n} A K] [comm_ring C] [is_domain C] [algebra A C]
+  [ne_zero ((n : ℕ) : A)] (hirr : irreducible (cyclotomic n A)) :
   (K →ₐ[A] C) ≃ primitive_roots n C :=
-have hn : fact (((n : ℕ) : C) ≠ 0) := infer_instance,
+have hn : ne_zero ((n : ℕ) : C) := ne_zero.of_no_zero_smul_divisors A C,
 have hcyclo : minpoly A (zeta'.power_basis n A K).gen = cyclotomic n A :=
 (minpoly.eq_of_irreducible_of_monic hirr
   (by rw [zeta'.power_basis_gen, zeta'_spec]) $ cyclotomic.monic n A).symm,
 have h : ∀ x, (aeval x) (minpoly A (zeta'.power_basis n A K).gen) = 0 ↔ (cyclotomic n C).is_root x :=
 λ x, by rw [aeval_def, eval₂_eq_eval_map, hcyclo, map_cyclotomic, is_root.def],
 ((zeta'.power_basis n A K).lift_equiv).trans
-{ to_fun := λ x, ⟨x.1, by { cases x, rwa [mem_primitive_roots n.pos, ←is_root_cyclotomic_iff hn.out, ←h] }⟩,
-  inv_fun := λ x, ⟨x.1, by { cases x, rwa [h, is_root_cyclotomic_iff hn.out, ←mem_primitive_roots n.pos] }⟩,
-  left_inv := λ x, subtype.ext rfl,
+{ to_fun    := λ x, ⟨x.1, by { casesI x, rwa [mem_primitive_roots n.pos, ←is_root_cyclotomic_iff, ←h] }⟩,
+  inv_fun   := λ x, ⟨x.1, by { casesI x, rwa [h, is_root_cyclotomic_iff, ←mem_primitive_roots n.pos] }⟩,
+  left_inv  := λ x, subtype.ext rfl,
   right_inv := λ x, subtype.ext rfl }
-
--- TODO use the fact that a primitive root is a unit.
--- TODO prove in general that is_primitive root is integral,
--- this exists as is_primitive_root.is_integral so use
 
 end field
 
@@ -176,7 +162,7 @@ end is_cyclotomic_extension
 
 namespace cyclotomic_ring
 
-variables [is_domain A] [algebra A K] [is_fraction_ring A K] [fact (((n : ℕ) : K) ≠ 0)]
+variables [is_domain A] [algebra A K] [is_fraction_ring A K] [ne_zero ((n : ℕ) : K)]
 
 open is_cyclotomic_extension
 
@@ -195,16 +181,15 @@ local attribute [instance] cyclotomic_field.algebra_base
 lemma zeta'_mem_base : ∃ (x : (cyclotomic_ring n A K)), algebra_map
   (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta' n K (cyclotomic_field n K) :=
 begin
+  have : ne_zero ((n : ℕ) : cyclotomic_field n K) := ne_zero.of_no_zero_smul_divisors K _,
   letI := classical.prop_decidable,
   let μ := zeta' n K (cyclotomic_field n K),
-  haveI : fact (((n : ℕ) : cyclotomic_field n K) ≠ 0) := sorry, -- waiting for `ne_zero`
   have hμ := zeta'_primitive_root n K (cyclotomic_field n K),
   refine ⟨⟨μ, _⟩, rfl⟩,
   have := is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots n ⟨μ, hμ⟩,
   simp only [set.mem_singleton_iff, exists_eq_left] at this,
   rw [← this, is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic n μ hμ],
-  apply algebra.subset_adjoin,
-  exact set.mem_singleton _
+  exact algebra.subset_adjoin (set.mem_singleton _),
 end
 
 --zeta should be in `units (cyclotomic_ring n A K)` by definition.
@@ -220,9 +205,6 @@ units.mk_of_mul_eq_one
   end
 
 lemma zeta_coe : ((zeta n K) : (cyclotomic_field n K) ) = (zeta' n K (cyclotomic_field n K)) := rfl
-
-local attribute [instance] ne.fact_coe
-local attribute [instance] ne.fact_char_zero
 
 /- set_option profiler true
 set_option trace.class_instances true -/
@@ -240,7 +222,9 @@ begin
       (cyclotomic_field n K) _ _ _ _
       (subalgebra.no_zero_smul_divisors_top (ring_of_integers $ cyclotomic_field n K)),
   apply is_primitive_root.of_map_of_injective hf,
-  apply zeta'_primitive_root n _ _; apply_instance
+  apply zeta'_primitive_root n _ _,
+  { apply_instance },
+  exact ne_zero.of_no_zero_smul_divisors K (cyclotomic_field n K)
 end
 
 set_option trace.class_instances false

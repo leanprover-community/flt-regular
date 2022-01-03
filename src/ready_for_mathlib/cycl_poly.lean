@@ -1,6 +1,6 @@
 import ready_for_mathlib.roots_of_unity
-
 import ring_theory.polynomial.cyclotomic.basic
+import ready_for_mathlib.ne_zero
 
 open is_primitive_root
 
@@ -50,24 +50,27 @@ begin
 end
 
 lemma is_root_cyclotomic_iff_char_zero {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
-  [char_zero R] {μ : R} (hn : 0 < n) :
+  [char_zero R] {μ : R} [hn : ne_zero n] :
   (polynomial.cyclotomic n R).is_root μ ↔ is_primitive_root μ n :=
-⟨λ h, (is_root_cyclotomic_iff (by exact_mod_cast hn.ne')).1 h,
-  λ h, is_root_cyclotomic hn h⟩
+by exactI ⟨λ h, is_root_cyclotomic_iff.1 h, λ h, is_root_cyclotomic hn.out.bot_lt h⟩
 
 lemma is_root_cyclotomic_iff_char_p {m k p : ℕ} {R : Type*} [comm_ring R] [is_domain R]
-  [hp : fact (nat.prime p)] [hchar : char_p R p] {μ : R} (hk : 0 < k) (hpm : ¬p ∣ m) :
+  [hp : fact (nat.prime p)] [hchar : char_p R p] {μ : R} [ne_zero (m : R)] :
   (polynomial.cyclotomic (p ^ k * m) R).is_root μ ↔ is_primitive_root μ m :=
 begin
-  have hmzero : (m : R) ≠ 0 := λ hz, hpm ((ring_char.eq_iff.mpr hchar) ▸ (ring_char.dvd hz)),
+  rcases k.eq_zero_or_pos with rfl | hk,
+  { rw [pow_zero, one_mul, is_root_cyclotomic_iff] },
   refine ⟨λ h, _, λ h, _⟩,
-  { rw [is_root.def, cyclotomic_mul_prime_pow_eq R hk hpm, eval_pow] at h,
+  { rw [is_root.def, cyclotomic_mul_prime_pow_eq R hk (ne_zero.not_dvd_char R m), eval_pow] at h,
     replace h := pow_eq_zero h,
-    rwa [← is_root.def, is_root_cyclotomic_iff hmzero] at h },
-  { rw [← is_root_cyclotomic_iff hmzero, is_root.def] at h,
-    rw [cyclotomic_mul_prime_pow_eq R hk hpm, is_root.def, eval_pow, h, zero_pow],
+    rwa [← is_root.def, is_root_cyclotomic_iff] at h,
+    all_goals {apply_instance} },
+  { rw [← is_root_cyclotomic_iff, is_root.def] at h,
+    rw [cyclotomic_mul_prime_pow_eq R hk (ne_zero.not_dvd_char R m),
+        is_root.def, eval_pow, h, zero_pow],
     simp only [tsub_pos_iff_lt],
-    exact strict_mono_pow hp.out.one_lt (buffer.lt_aux_2 hk) }
+    exact strict_mono_pow hp.out.one_lt (buffer.lt_aux_2 hk),
+    all_goals {apply_instance} }
 end
 
 end polynomial
