@@ -1,7 +1,5 @@
 import ring_theory.polynomial.cyclotomic.basic
 
-import ready_for_mathlib.ne_zero
-
 open polynomial nat
 open_locale big_operators
 
@@ -14,8 +12,8 @@ begin
   obtain h | ⟨ζ, hζ⟩ := (cyclotomic n R).roots.empty_or_exists_mem,
   { exact h.symm ▸ multiset.nodup_zero },
   rw [mem_roots $ cyclotomic_ne_zero n R, is_root_cyclotomic_iff] at hζ,
-  refine multiset.nodup_of_le (roots.le_of_dvd (X_pow_sub_C_ne_zero (ne_zero.pos_nat R) 1) $
-                               cyclotomic.dvd_X_pow_sub_one n R) hζ.nth_roots_nodup
+  refine multiset.nodup_of_le (roots.le_of_dvd (X_pow_sub_C_ne_zero (pos_iff_ne_zero.2 $
+    (ne_zero.of_ne_zero_coe R).out) 1) $ cyclotomic.dvd_X_pow_sub_one n R) hζ.nth_roots_nodup
 end
 
 lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
@@ -23,7 +21,7 @@ lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [i
 begin
   ext,
   simp [cyclotomic_ne_zero n R, is_root_cyclotomic_iff],
-  exact mem_primitive_roots (ne_zero.pos_nat R),
+  exact mem_primitive_roots (pos_iff_ne_zero.2 $ (ne_zero.of_ne_zero_coe R).out),
 end
 
 end no_pr_yet
