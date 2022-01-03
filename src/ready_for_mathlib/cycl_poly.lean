@@ -52,19 +52,22 @@ end
 lemma is_root_cyclotomic_iff_char_zero {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
   [char_zero R] {μ : R} (hn : 0 < n) :
   (polynomial.cyclotomic n R).is_root μ ↔ is_primitive_root μ n :=
-⟨λ h, (is_root_cyclotomic_iff (by exact_mod_cast hn.ne')).1 h,
-  λ h, is_root_cyclotomic hn h⟩
+begin
+  letI : ne_zero n := ne_zero.of_pos hn,
+  letI : ne_zero (n : R) := ne_zero.char_zero,
+  exact is_root_cyclotomic_iff,
+end
 
 lemma is_root_cyclotomic_iff_char_p {m k p : ℕ} {R : Type*} [comm_ring R] [is_domain R]
   [hp : fact (nat.prime p)] [hchar : char_p R p] {μ : R} (hk : 0 < k) (hpm : ¬p ∣ m) :
   (polynomial.cyclotomic (p ^ k * m) R).is_root μ ↔ is_primitive_root μ m :=
 begin
-  have hmzero : (m : R) ≠ 0 := λ hz, hpm ((ring_char.eq_iff.mpr hchar) ▸ (ring_char.dvd hz)),
+  letI : ne_zero (m : R) := ⟨λ hz, hpm $ (ring_char.eq_iff.mpr hchar) ▸ (ring_char.dvd hz)⟩,
   refine ⟨λ h, _, λ h, _⟩,
   { rw [is_root.def, cyclotomic_mul_prime_pow_eq R hk hpm, eval_pow] at h,
     replace h := pow_eq_zero h,
-    rwa [← is_root.def, is_root_cyclotomic_iff hmzero] at h },
-  { rw [← is_root_cyclotomic_iff hmzero, is_root.def] at h,
+    rwa [← is_root.def, is_root_cyclotomic_iff] at h },
+  { rw [← is_root_cyclotomic_iff, is_root.def] at h,
     rw [cyclotomic_mul_prime_pow_eq R hk hpm, is_root.def, eval_pow, h, zero_pow],
     simp only [tsub_pos_iff_lt],
     exact strict_mono_pow hp.out.one_lt (buffer.lt_aux_2 hk) }
