@@ -1,13 +1,15 @@
 import ring_theory.polynomial.cyclotomic.basic
 import ready_for_mathlib.ne_zero
 
+import ready_for_mathlib.ne_zero
+
 open polynomial nat
 open_locale big_operators
 
 section no_pr_yet
 
 -- I'll wait for `ne_zero` before merging these
-lemma roots_cyclotomic_nodup {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] [h : ne_zero (n : R)] :
+lemma roots_cyclotomic_nodup {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] [ne_zero (n : R)] :
   (cyclotomic n R).roots.nodup :=
 begin
   obtain h | ⟨ζ, hζ⟩ := (cyclotomic n R).roots.empty_or_exists_mem,
