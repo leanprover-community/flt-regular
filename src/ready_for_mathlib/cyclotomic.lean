@@ -1,25 +1,29 @@
 import ring_theory.polynomial.cyclotomic.basic
 
+import ready_for_mathlib.ne_zero
+
 open polynomial nat
 open_locale big_operators
 
 section no_pr_yet
 
 -- I'll wait for `ne_zero` before merging these
-lemma roots_cyclotomic_nodup {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] (hn : (n : R) ≠ 0) :
+lemma roots_cyclotomic_nodup {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] [ne_zero (n : R)] :
   (cyclotomic n R).roots.nodup :=
 begin
-  have hn' : 0 < n := (show n ≠ 0, by { rintro rfl, contradiction }).bot_lt,
   obtain h | ⟨ζ, hζ⟩ := (cyclotomic n R).roots.empty_or_exists_mem,
   { exact h.symm ▸ multiset.nodup_zero },
-  rw [mem_roots $ cyclotomic_ne_zero n R, is_root_cyclotomic_iff hn] at hζ,
-  exact multiset.nodup_of_le (roots.le_of_dvd (X_pow_sub_C_ne_zero hn' 1) $
+  rw [mem_roots $ cyclotomic_ne_zero n R, is_root_cyclotomic_iff] at hζ,
+  refine multiset.nodup_of_le (roots.le_of_dvd (X_pow_sub_C_ne_zero (ne_zero.pos_nat R) 1) $
                                cyclotomic.dvd_X_pow_sub_one n R) hζ.nth_roots_nodup
 end
 
 lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [is_domain R]
-  (hn : (n : R) ≠ 0) : primitive_roots n R = ⟨(cyclotomic n R).roots, roots_cyclotomic_nodup hn⟩ :=
-let hn' : 0 < n := (show n ≠ 0, by { rintro rfl, contradiction }).bot_lt in
-by { ext, simp [cyclotomic_ne_zero n R, is_root_cyclotomic_iff hn, mem_primitive_roots hn'] }
+  [ne_zero (n : R)] : primitive_roots n R = ⟨(cyclotomic n R).roots, roots_cyclotomic_nodup⟩ :=
+begin
+  ext,
+  simp [cyclotomic_ne_zero n R, is_root_cyclotomic_iff],
+  exact mem_primitive_roots (ne_zero.pos_nat R),
+end
 
 end no_pr_yet
