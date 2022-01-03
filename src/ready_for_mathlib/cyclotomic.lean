@@ -1,8 +1,6 @@
 import ring_theory.polynomial.cyclotomic.basic
 import ready_for_mathlib.ne_zero
 
-import ready_for_mathlib.ne_zero
-
 open polynomial nat
 open_locale big_operators
 
