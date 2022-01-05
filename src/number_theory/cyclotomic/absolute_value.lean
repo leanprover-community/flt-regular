@@ -56,7 +56,7 @@ section polynomial_map_lemmas
 
 @[simp] lemma apply_eq_zero_iff_of_injective {R S : Type*} [add_zero_class R] [add_zero_class S]
   {f : R →+ S} (hf : function.injective f) (x : R) : f x = 0 ↔ x = 0 :=
- ⟨λ h, hf $ by rw [h, f.map_zero], λ h, by rw [h, f.map_zero]⟩
+⟨λ h, hf $ by rw [h, f.map_zero], λ h, by rw [h, f.map_zero]⟩
 
 variables {R S : Type*} [semiring R]
 
@@ -82,17 +82,9 @@ by rw [mem_roots (map_ne_zero_of_injective hf hp), is_root, polynomial.eval_map]
 end polynomial
 end polynomial_map_lemmas
 
-section
-open multiset
-
-@[simp] theorem powerset_len_val {α : Type*} (s : finset α) (i : ℕ) :
-  (s.powerset_len i).val.map finset.val = s.1.powerset_len i :=
-by simp only [finset.powerset_len, map_pmap, pmap_eq_map, map_id']
-
-end
 
 section polynomial
-variables {R : Type*} [comm_ring R] -- todo: this can be generalized, as noted below
+variables {R : Type*} [comm_semiring R]
 open polynomial
 /--
 The degree of a product of polynomials is at most the sum of the degrees,
@@ -107,16 +99,23 @@ begin
     exact le_trans (degree_mul_le _ _) (add_le_add_left ht _), }
 end
 
-lemma multiset_prod_X_add_C_degree' [nontrivial R] (s : multiset R) :
+@[simp]
+lemma degree_eq_bot [subsingleton R] (p : polynomial R) : p.degree = ⊥ :=
+by simp [subsingleton.elim p 0] -- should subsingleton.elim r 0 be a simp lemma in rings?
+
+@[simp]
+lemma nat_degree_eq_bot [subsingleton R] (p : polynomial R) : p.nat_degree = 0 :=
+by simp [subsingleton.elim p 0] -- should subsingleton.elim r 0 be a simp lemma in rings?
+
+lemma multiset_prod_X_add_C_degree' (s : multiset R) :
   degree (multiset.map (λ (x : R), X + C x) s).prod ≤ s.card :=
 begin
+  nontriviality R,
   have := degree_multiset_prod_le (multiset.map (λ (x : R), X + C x) s),
-  simpa, -- TODO this simpa breaks when we only assume comm_semiring due to degree_X_add_C
-        -- so fix that assumption in mathlib so we can generalize this lemma
-          -- this should be done in #10741
+  simpa,
 end
 
-lemma multiset_prod_X_add_C_degree [nontrivial R] (s : multiset R) :
+lemma multiset_prod_X_add_C_degree (s : multiset R) :
   degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1 :=
 begin
   have := multiset_prod_X_add_C_degree' s,
@@ -127,7 +126,7 @@ end
 -- TODO turns out this is already in ring_theory.polynomial.vieta in one form
 -- TODO lol I hope this monstrosity is golfable
 -- unfortunately this lemma isn't true without the hi hypothesis, due to nat subtraction weirdness
-lemma multiset_prod_X_add_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
+lemma multiset_prod_X_add_C_coeff (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
   (t.map (λ x, (X + C x))).prod.coeff i =
   ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
 begin
@@ -144,7 +143,7 @@ begin
   simp only [multiset.card_cons] at his,
   by_cases his' : i = s.card + 1,
   { simp only [his', multiset.map_singleton, multiset.sum_singleton, multiset.prod_zero,
-      tsub_self, multiset.powerset_len_zero_left, coeff_X_pow_mul],
+      tsub_self, multiset.powerset_len_zero_left, polynomial.coeff_X_pow_mul],
 
     have : (multiset.map (λ (x : R), X + C x) s).prod.coeff (s.card + 1) = 0,
     from coeff_eq_zero_of_degree_lt (multiset_prod_X_add_C_degree _),
@@ -180,6 +179,10 @@ begin
     simp only [add_monoid_hom.coe_mul_left] at this,
     simp [this], },
 end
+end polynomial
+section polynomial
+open polynomial
+variables {R : Type*} [comm_ring R]
 
 lemma multiset.prod_map_neg (s : multiset R) : (s.map (λ x, -x)).prod = (-1) ^ s.card * s.prod :=
 begin
@@ -191,8 +194,7 @@ begin
 end
 
 -- TODO lol I hope this monstrosity is golfable
--- TODO remove the hi hypothesis, lemma is true without
-lemma multiset_prod_X_sub_C_coeff [nontrivial R] (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
+lemma multiset_prod_X_sub_C_coeff (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
   (t.map (λ x, (X - C x))).prod.coeff i =
   (-1) ^ (t.card - i) * ((t.powerset_len (t.card - i)).map multiset.prod).sum :=
 begin
@@ -216,7 +218,8 @@ end
 
 open_locale big_operators
 
-lemma prod_X_add_C_coeff {ι : Type*} [nontrivial R] (s : finset ι)
+-- TODO remove the hs hypothesis, lemma is true without
+lemma prod_X_add_C_coeff {ι : Type*} (s : finset ι)
   (f : ι → R) {i : ℕ} (hs : i ≤ s.card) :
   (∏ i in s, (X + C (f i))).coeff i =
   ∑ i in s.powerset_len (s.card - i), i.prod f :=
@@ -227,12 +230,12 @@ begin
   convert this,
   rw finset.sum_eq_multiset_sum,
   refine congr_arg multiset.sum _,
-  rw ← powerset_len_val,
+  rw ← finset.map_val_val_powerset_len,
   rw multiset.map_map,
   congr,
 end
 
-lemma prod_X_sub_C_coeff {ι : Type*} [nontrivial R] (s : finset ι)
+lemma prod_X_sub_C_coeff {ι : Type*} (s : finset ι)
   (f : ι → R) {i : ℕ} (hs : i ≤ s.card) :
   (∏ i in s, (X - C (f i))).coeff i =
   (-1) ^ (s.card - i) * ∑ i in s.powerset_len (s.card - i), i.prod f :=
@@ -243,7 +246,7 @@ begin
   convert this,
   rw finset.sum_eq_multiset_sum,
   refine congr_arg multiset.sum _,
-  rw ← powerset_len_val,
+  rw ← finset.map_val_val_powerset_len,
   rw multiset.map_map,
   congr,
 end
