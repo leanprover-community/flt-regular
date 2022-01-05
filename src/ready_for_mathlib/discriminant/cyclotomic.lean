@@ -1,8 +1,8 @@
 import ring_theory.adjoin.power_basis
 import algebra.char_p.algebra
 import ring_theory.polynomial.cyclotomic.eval
+import ring_theory.discriminant
 
-import ready_for_mathlib.discriminant.basic
 import number_theory.cyclotomic.cyclotomic_units
 import ready_for_mathlib.cyclotomic
 import number_theory.cyclotomic.rat
