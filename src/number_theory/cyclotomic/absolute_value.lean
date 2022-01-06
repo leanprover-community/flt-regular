@@ -111,7 +111,7 @@ lemma multiset_prod_X_add_C_degree' (s : multiset R) :
   degree (multiset.map (λ (x : R), X + C x) s).prod ≤ s.card :=
 begin
   nontriviality R,
-  have := degree_multiset_prod_le (multiset.map (λ (x : R), X + C x) s),
+  have := polynomial.degree_multiset_prod_le (multiset.map (λ (x : R), X + C x) s),
   simpa,
 end
 
