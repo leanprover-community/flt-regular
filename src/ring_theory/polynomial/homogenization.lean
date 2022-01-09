@@ -454,6 +454,7 @@ begin
   exact this.left,
 end
 
+--pred
 @[simp] lemma monomial_eq_zero (a : ι →₀ ℕ) (b : R) : monomial a b = 0 ↔ b = 0 :=
 finsupp.single_eq_zero
 
@@ -529,6 +530,7 @@ begin
   exact is_homogeneous_leading_terms p,
 end
 
+--pred
 lemma homogeneous_component_add (m  : ℕ) (p q : mv_polynomial ι R) :
   homogeneous_component m (p + q) = homogeneous_component m p + homogeneous_component m q :=
 by rw [homogeneous_component, linear_map.comp_apply, linear_map.comp_apply, linear_map.comp_apply,
@@ -619,6 +621,7 @@ lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf β] [order_top β] 
   (S : finset α) : S.inf f = ⊤ ↔ ∀ s ∈ S, f s = ⊤ :=
 @finset.sup_eq_bot_iff _ (order_dual β) _ _ _ _ -- same proof also works
 
+--pred
 lemma is_homogeneous_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
   is_homogeneous p 0 :=
 begin
@@ -638,16 +641,12 @@ by rw [leading_terms, leading_terms, total_degree_add_eq_left_of_total_degree_lt
 -- lemma C_mul_eq_smul {r : R} (p : mv_polynomial ι R) : C r * p = r • p :=
 -- by rw [C_eq_smul_one, algebra.smul_mul_assoc, one_mul]
 
+--pred
 lemma homogeneous_component_C_mul (n : ℕ) (p : mv_polynomial ι R) (r : R) :
   homogeneous_component n (C r * p) = C r * homogeneous_component n p :=
-begin
-  rw homogeneous_component,
-  simp only [finsupp.restrict_dom_apply, submodule.subtype_apply, function.comp_app,
-    linear_map.coe_comp, set.mem_set_of_eq],
-  rw C_mul', -- TODO this has a weird name
-  rw finsupp.filter_smul,
-  rw C_mul', -- TODO this has a weird name
-end
+by simp only [homogeneous_component, finsupp.restrict_dom_apply,
+  submodule.subtype_apply, function.comp_app, linear_map.coe_comp,
+  set.mem_set_of_eq, C_mul', finsupp.filter_smul]
 
 lemma no_zero_smul_divisors.eq_zero_or_eq_zero_iff_smul_eq_zero (R M : Type*) [has_zero R]
   [has_zero M] [smul_with_zero R M] [no_zero_smul_divisors R M] {c : R} {x : M} :
@@ -675,7 +674,7 @@ lemma finsupp.support_smul_eq {α M R : Type*} [semiring R] [add_comm_monoid M] 
   (b • g).support = g.support :=
 begin
   ext a,
-  simp [finsupp.smul_apply, mem_support_iff, ne.def, hb],
+  simp [finsupp.smul_apply, finsupp.mem_support_iff, ne.def, hb],
 end
 
 -- haveI : no_zero_smul_divisors R (mv_polynomial ι R), --TODO add this instance
