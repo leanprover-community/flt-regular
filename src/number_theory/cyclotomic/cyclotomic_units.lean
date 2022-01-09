@@ -186,7 +186,7 @@ begin
   let μ := zeta' n K (cyclotomic_field n K),
   have hμ := zeta'_primitive_root n K (cyclotomic_field n K),
   refine ⟨⟨μ, _⟩, rfl⟩,
-  have := is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots n ⟨μ, hμ⟩,
+  have := is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots n hμ,
   simp only [set.mem_singleton_iff, exists_eq_left] at this,
   rw [← this, is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic n μ hμ],
   exact algebra.subset_adjoin (set.mem_singleton _),
