@@ -49,7 +49,7 @@ variable {K}
 
 lemma discr_mul_is_integral_mem_adjoin [is_domain R] [is_integrally_closed R] [is_separable K L]
   {α : L} (hx : _root_.is_integral R α) {z : K⟮α⟯}
-  (hy : z ∈ integral_closure R K⟮α⟯) :
+  (hz : _root_.is_integral R z) :
   ((discr K (adjoin.power_basis
   (is_integral_of_is_scalar_tower α hx : _root_.is_integral K α)).basis) • z : L) ∈
   adjoin R ({α} : set L) :=
