@@ -3,7 +3,7 @@ import linear_algebra.matrix.determinant
 
 namespace matrix
 
-variables (R A n : Type*) [comm_ring R] [comm_ring A] [algebra R A] [fintype n] [decidable_eq n]
+variables {R A n : Type*} [comm_ring R] [comm_ring A] [algebra R A] [fintype n] [decidable_eq n]
 
 lemma det_is_integral {M : matrix n n A} (h : ∀ i j, is_integral R (M i j)) :
   is_integral R M.det :=
