@@ -73,8 +73,7 @@ begin
     rw [coe_smul, ← smul_assoc, ← hr, algebra_map_smul],
     refine subalgebra.smul_mem _ _ _,
     rw [pb.basis_eq_pow i, intermediate_field.adjoin.power_basis_gen, coe_pow],
-    refine subalgebra.pow_mem _ (subset_adjoin _) _,
-    simpa },
+    refine subalgebra.pow_mem _ (subset_adjoin (by simpa)) _ },
 
   have hinv : is_unit A.det,
   { refine is_unit.mk0 _ _,
@@ -85,8 +84,7 @@ begin
     exact (power_basis.finrank pb).symm },
 
   have H : A.det • (trace_matrix K pb.basis).mul_vec x = A.det • b,
-  { congr,
-    ext i,
+  { congr, ext i,
     rw [← col_apply ((trace_matrix K pb.basis).mul_vec x) i unit.star, col_mul_vec, mul_apply,
       power_basis.coe_basis, trace_matrix_def, hb],
     simp only [col_apply, trace_form_apply],
@@ -111,9 +109,7 @@ begin
 
   intro i,
   rw [← congr_fun cramer i, cramer_apply, det_apply],
-  refine subalgebra.sum_mem _ (λ σ hσ, _),
-  refine subalgebra.zsmul_mem _ _ _,
-  refine subalgebra.prod_mem _ (λ j hj, _),
+  refine subalgebra.sum_mem _ (λ σ hσ, subalgebra.zsmul_mem _ (subalgebra.prod_mem _ (λ j hj, _)) _),
   rw [update_column_apply],
   by_cases hji : j = i,
   { simp only [hji, hb, if_true, eq_self_iff_true],
