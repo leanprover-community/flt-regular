@@ -31,19 +31,24 @@ end
 
 variable (K)
 
-lemma discr_not_zero_of_linear_independent' [module.finite K L] [is_separable K L] (b : ι → L)
-  (hcard : fintype.card ι = finrank K L) (hli : linear_independent K b) : discr K b ≠ 0 :=
+lemma discr_not_zero_of_basis [finite_dimensional K L] [is_separable K L] (b : basis ι K L) :
+  discr K b ≠ 0 :=
 begin
   by_cases h : nonempty ι,
   { classical,
-    have := span_eq_top_of_linear_independent_of_card_eq_finrank hli hcard,
+    have := span_eq_top_of_linear_independent_of_card_eq_finrank b.linear_independent
+      (finrank_eq_card_basis b).symm,
     rw [discr_def, trace_matrix_def],
-    simp_rw [← basis.mk_apply hli this],
+    simp_rw [← basis.mk_apply b.linear_independent this],
     rw [← trace_matrix_def, trace_matrix_of_basis, ← bilin_form.nondegenerate_iff_det_ne_zero],
     exact trace_form_nondegenerate _ _  },
   letI := not_nonempty_iff.1 h,
   simp [discr],
 end
+
+lemma discr_is_unit_of_basis [finite_dimensional K L] [is_separable K L]
+  (b : basis ι K L) : is_unit (discr K b) :=
+is_unit.mk0 _ (discr_not_zero_of_basis _ _)
 
 variable {K}
 
@@ -74,12 +79,9 @@ begin
     refine subalgebra.pow_mem _ (subset_adjoin (by simpa)) _ },
 
   have hinv : is_unit (trace_matrix K pb.basis).det,
-  { refine is_unit.mk0 _ _,
-    rw [← discr_def],
+  { rw [← discr_def],
     letI : is_separable K ↥K⟮α⟯ := is_separable_tower_bot_of_is_separable _ _ L,
-    refine discr_not_zero_of_linear_independent' _ _ _ (pb.basis.linear_independent),
-    rw [fintype.card_fin],
-    exact (power_basis.finrank pb).symm },
+    exact discr_is_unit_of_basis _ pb.basis },
 
   have H : (trace_matrix K pb.basis).det • (trace_matrix K pb.basis).mul_vec x =
     (trace_matrix K pb.basis).det • b,
