@@ -118,14 +118,6 @@ local attribute [instance] cyclotomic_ring.algebra_base
 
 instance : no_zero_smul_divisors A (cyclotomic_ring n A K) := (adjoin A _).no_zero_smul_divisors_bot
 
-example (R S : Type*) [comm_semiring R] [comm_semiring S] [algebra R S]
-  (T : subalgebra R S) (x y : R) (h : algebra_map R T x = algebra_map R T y) :
-  algebra_map R S x = algebra_map R S y :=
-begin
-  have miao := congr_arg ⇑(algebra_map ↥T S) h,
-  rwa [←is_scalar_tower.algebra_map_apply, ←is_scalar_tower.algebra_map_apply] at miao,
-end
-
 lemma algebra_base_injective : function.injective $ algebra_map A (cyclotomic_ring n A K) :=
 no_zero_smul_divisors.algebra_map_injective _ _ -- ta da!
 -- todo: can we carry this instance to more general cases? or do we have to work harder
