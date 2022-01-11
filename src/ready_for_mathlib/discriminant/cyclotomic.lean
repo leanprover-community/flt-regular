@@ -50,7 +50,7 @@ begin
         (cyclotomic.monic p ℤ).is_primitive).1 (cyclotomic.irreducible p.pos) },
     { simp } },
   rw [this, cyclotomic', ← cyclotomic_eq_prod_X_sub_primitive_roots
-    (is_root_cyclotomic_iff.1 hz), eval_one_cyclotomic_prime, coe_coe, ring_hom.map_nat_cast]
+    (is_root_cyclotomic_iff.1 hz), eval_one_cyclotomic_prime, coe_coe, map_nat_cast]
 end
 
 lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
@@ -76,7 +76,7 @@ begin
   replace H := congr_arg (algebra.norm ℚ) H,
   rw [monoid_hom.map_mul, norm_zeta'_sub_one _ hodd, monoid_hom.map_mul, monoid_hom.map_pow,
     norm_zeta' K (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out) hodd')),
-    one_pow, mul_one, ← ring_hom.map_nat_cast (algebra_map ℚ K), norm_algebra_map,
+    one_pow, mul_one, ← map_nat_cast (algebra_map ℚ K), norm_algebra_map,
     finrank p, totient_prime hp.out, ← succ_pred_eq_of_pos hpos, pow_succ,
     mul_comm _ (p : ℚ), coe_coe] at H,
   rw [(mul_right_inj' (cast_ne_zero.2 hp.out.ne_zero : (p : ℚ) ≠ 0)).1 H],

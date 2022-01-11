@@ -74,7 +74,7 @@ instance is_cyclotomic_extension [ne_zero ((n : ℕ) : K)] :
     obtain ⟨ζ, hζ⟩ := exists_root_of_splits _ (splitting_field.splits (cyclotomic n K))
       (degree_cyclotomic_pos n _ n.pos).ne',
     haveI : ne_zero ((n : ℕ) : (cyclotomic_field n K)) :=
-      ne_zero.of_injective (algebra_map K _).injective,
+      ne_zero.nat_of_injective (algebra_map K _).injective,
     rw [eval₂_eq_eval_map, map_cyclotomic, ← is_root.def, is_root_cyclotomic_iff] at hζ,
     exact is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots n hζ,
   end }
@@ -196,7 +196,7 @@ instance [ne_zero ((n : ℕ) : A)] :
   end,
   surj := λ x,
   begin
-    letI : ne_zero ((n : ℕ) : K) := ne_zero.of_injective (is_fraction_ring.injective A K),
+    letI : ne_zero ((n : ℕ) : K) := ne_zero.nat_of_injective (is_fraction_ring.injective A K),
     refine algebra.adjoin_induction (((is_cyclotomic_extension.iff_singleton n K _).1
       (cyclotomic_field.is_cyclotomic_extension n K)).2 x) (λ y hy, _) (λ k, _) _ _,
     { exact ⟨⟨⟨y, subset_adjoin hy⟩, 1⟩, by simpa⟩ },
