@@ -3,6 +3,8 @@ import ring_theory.polynomial.cyclotomic.basic
 lemma pnat.succ_nat_pred' (n : ℕ+) : 1 + n.nat_pred = n :=
 by rw [pnat.nat_pred, add_tsub_cancel_iff_le.mpr $ show 1 ≤ (n : ℕ), from n.pos]
 
+/-- Make an element of `roots_of_unity` from a member of the base ring, and a proof that it has
+a positive power equal to one. -/
 def roots_of_unity.mk_of_pow_eq {M} [comm_monoid M] (ζ : M) {n : ℕ+} (h : ζ ^ (n : ℕ) = 1) :
   roots_of_unity n M :=
 ⟨units.mk_of_mul_eq_one ζ (ζ ^ n.nat_pred) $

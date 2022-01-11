@@ -46,11 +46,13 @@ lemma zeta_primitive_root [is_domain B] [ne_zero ((n : ℕ) : B)] :
   is_primitive_root (zeta n A B) n :=
 by { rw ←is_root_cyclotomic_iff, exact zeta_spec' n A B }
 
--- how do I get `simps` to make the `coe_inv_coe` lemma? `coe_inv_coe` doesn't work
+-- how do I get `simps` to make the `coe_inv_coe` lemma? `coe_inv_coe` doesn't work#
+/-- `zeta n A B` as a member of the `roots_of_unity` subgroup. -/
 @[simps coe_coe] def zeta_runity : roots_of_unity n B :=
 roots_of_unity.mk_of_pow_eq (zeta n A B) $
 is_root_of_unity_of ((n : ℕ).mem_divisors_self n.ne_zero) $ zeta_spec' n A B
 
+/-- `zeta n A B` as a member of `Bˣ`. -/
 @[simps] def zeta_unit : Bˣ := zeta_runity n A B
 
 lemma coe_zeta_runity_unit : ↑(zeta_runity n A B) = zeta_unit n A B := rfl
