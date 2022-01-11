@@ -195,15 +195,6 @@ begin
   simp,
 end
 
--- TODO PR
-@[simp]
-lemma total_degree_monomial (s : ι →₀ ℕ) {r : R} (hr : r ≠ 0) :
-  total_degree (monomial s r) = s.sum (λ _ e, e) :=
-begin
-  classical,
-  simp [total_degree, support_monomial, if_neg, hr],
-end
-
 @[simp]
 lemma homogenization_monomial (i : ι) (s : ι →₀ ℕ) (r : R) :
   (monomial s r : mv_polynomial ι R).homogenization i = monomial s r :=
@@ -454,9 +445,6 @@ begin
   exact this.left,
 end
 
-@[simp] lemma monomial_eq_zero (a : ι →₀ ℕ) (b : R) : monomial a b = 0 ↔ b = 0 :=
-finsupp.single_eq_zero
-
 lemma support_sum_monomial_subset (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R) :
   support (∑ v in S, monomial v (f v)) ⊆ S :=
 begin
@@ -619,17 +607,6 @@ lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf β] [order_top β] 
   (S : finset α) : S.inf f = ⊤ ↔ ∀ s ∈ S, f s = ⊤ :=
 @finset.sup_eq_bot_iff _ (order_dual β) _ _ _ _ -- same proof also works
 
-lemma is_homogeneous_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
-  is_homogeneous p 0 :=
-begin
-  rw total_degree at hp,
-  erw finset.sup_eq_bot_iff at hp,
-  simp only [mem_support_iff] at hp,
-  intros d hd,
-  exact hp d hd,
-end
-
-
 lemma leading_terms_add_of_total_degree_lt (p q : mv_polynomial ι R)
   (h : q.total_degree < p.total_degree) : (p + q).leading_terms = p.leading_terms :=
 by rw [leading_terms, leading_terms, total_degree_add_eq_left_of_total_degree_lt h,
@@ -637,17 +614,6 @@ by rw [leading_terms, leading_terms, total_degree_add_eq_left_of_total_degree_lt
 
 -- lemma C_mul_eq_smul {r : R} (p : mv_polynomial ι R) : C r * p = r • p :=
 -- by rw [C_eq_smul_one, algebra.smul_mul_assoc, one_mul]
-
-lemma homogeneous_component_C_mul (n : ℕ) (p : mv_polynomial ι R) (r : R) :
-  homogeneous_component n (C r * p) = C r * homogeneous_component n p :=
-begin
-  rw homogeneous_component,
-  simp only [finsupp.restrict_dom_apply, submodule.subtype_apply, function.comp_app,
-    linear_map.coe_comp, set.mem_set_of_eq],
-  rw C_mul', -- TODO this has a weird name
-  rw finsupp.filter_smul,
-  rw C_mul', -- TODO this has a weird name
-end
 
 lemma no_zero_smul_divisors.eq_zero_or_eq_zero_iff_smul_eq_zero (R M : Type*) [has_zero R]
   [has_zero M] [smul_with_zero R M] [no_zero_smul_divisors R M] {c : R} {x : M} :
@@ -869,13 +835,6 @@ begin
   rw [X, monomial_pow, support_monomial, if_neg, finsupp.smul_single', mul_one],
   { rw [one_pow],
     exact one_ne_zero, },
-end
-
-@[simp] lemma total_degree_X_pow {R} [comm_semiring R] [nontrivial R] (s : ι) (n : ℕ) :
-  (X s ^ n : mv_polynomial ι R).total_degree = n :=
-begin
-  rw [total_degree, support_X_pow],
-  simp only [finset.sup, finsupp.sum_single_index, finset.fold_singleton, sup_bot_eq],
 end
 
 @[simp]
