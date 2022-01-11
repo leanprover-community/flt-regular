@@ -15,7 +15,7 @@ open polynomial finset mv_polynomial
 
 /-- If there is a primitive `n`th root of unity in `K`, then `X ^ n - Y ^ n = ∏ (X - μ Y)`,
 where `μ` varies over the `n`-th roots of unity. -/
-lemma pow_sub_pow_eq_prod_sub_zeta_mul {K : Type*} [field K] {ζ : K} {n : ℕ} (hpos : 0 < n)
+lemma pow_sub_pow_eq_prod_sub_zeta_runity_mul {K : Type*} [field K] {ζ : K} {n : ℕ} (hpos : 0 < n)
   (h : is_primitive_root ζ n) (x y : K) :
   x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ (ζ : K) in nth_roots_finset n K, (x - ζ * y) :=
 begin
@@ -38,12 +38,12 @@ end
 
 /-- If there is a primitive `n`th root of unity in `K` and `n` is odd, then
 `X ^ n + Y ^ n = ∏ (X + μ Y)`, where `μ` varies over the `n`-th roots of unity. -/
-lemma pow_add_pow_eq_prod_add_zeta_mul {K : Type*} [field K] {ζ : K} {n : ℕ} (hodd : n % 2 = 1)
+lemma pow_add_pow_eq_prod_add_zeta_runity_mul {K : Type*} [field K] {ζ : K} {n : ℕ} (hodd : n % 2 = 1)
   (h : is_primitive_root ζ n) (x y : K) :
   x ^ (n : ℕ) + y ^ (n : ℕ) = ∏ (ζ : K) in nth_roots_finset n K, (x + ζ * y) :=
 begin
   -- TODO rename nat.odd_gt_zero
-  have := pow_sub_pow_eq_prod_sub_zeta_mul (nat.odd_gt_zero (nat.odd_iff.mpr hodd)) h x (-y),
+  have := pow_sub_pow_eq_prod_sub_zeta_runity_mul (nat.odd_gt_zero (nat.odd_iff.mpr hodd)) h x (-y),
   simp only [mul_neg_eq_neg_mul_symm, sub_neg_eq_add] at this,
   rw [neg_pow, neg_one_pow_eq_pow_mod_two] at this,
   simpa [hodd] using this,

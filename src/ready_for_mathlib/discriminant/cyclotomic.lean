@@ -19,16 +19,16 @@ local attribute [instance] is_cyclotomic_extension.finite_dimensional
 
 variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
 
-lemma norm_zeta' (hodd : odd (p : ℕ)) : norm ℚ (zeta' p ℚ K) = 1 :=
+lemma norm_zeta (hodd : odd (p : ℕ)) : norm ℚ (zeta p ℚ K) = 1 :=
 begin
-  have hz := congr_arg (norm ℚ) ((is_primitive_root.iff_def _ p).1 (zeta'_primitive_root p ℚ K)).1,
+  have hz := congr_arg (norm ℚ) ((is_primitive_root.iff_def _ p).1 (zeta_primitive_root p ℚ K)).1,
   rw [← ring_hom.map_one (algebra_map ℚ K), norm_algebra_map, one_pow, monoid_hom.map_pow,
     ← one_pow ↑p] at hz,
   exact (strict_mono.injective (odd.strict_mono_pow hodd)) hz,
 end
 
-lemma norm_zeta'_sub_one [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
-  norm ℚ ((zeta' p ℚ K) - 1) = p :=
+lemma norm_zeta_sub_one [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
+  norm ℚ ((zeta p ℚ K) - 1) = p :=
 begin
   let E := algebraic_closure K,
   letI := char_zero_of_injective_algebra_map (algebra_map ℚ E).injective,
@@ -42,9 +42,9 @@ begin
   replace hodd : (p : ℕ) ≠ 2 := λ hn, by exact hodd.symm (pnat.coe_inj.1 hn.symm),
   rw [prod_mul_distrib, prod_const, card_univ, alg_hom.card, finrank p,
     totient_prime hp.out, neg_one_pow_of_even (even_sub_one_of_prime_ne_two hp.out hodd), one_mul],
-  have : univ.prod (λ (σ : K →ₐ[ℚ] E), 1 - σ (zeta' p ℚ K)) = eval 1 (cyclotomic' p E),
+  have : univ.prod (λ (σ : K →ₐ[ℚ] E), 1 - σ (zeta p ℚ K)) = eval 1 (cyclotomic' p E),
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
-    refine fintype.prod_equiv (zeta'.embeddings_equiv_primitive_roots p ℚ K E _) _ _ (λ σ, _),
+    refine fintype.prod_equiv (zeta.embeddings_equiv_primitive_roots p ℚ K E _) _ _ (λ σ, _),
     { rw [← map_cyclotomic_int],
       refine (is_primitive.irreducible_iff_irreducible_map_fraction_map
         (cyclotomic.monic p ℤ).is_primitive).1 (cyclotomic.irreducible p.pos) },
@@ -54,28 +54,28 @@ begin
 end
 
 lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
-  discr ℚ (zeta'.power_basis p ℚ K).basis =
+  discr ℚ (zeta.power_basis p ℚ K).basis =
   (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) :=
 begin
-  have hprim := zeta'_primitive_root p ℚ K,
-  have hzero : zeta' p ℚ K - 1 ≠ 0 := λ h, by simpa [eval_one_cyclotomic_prime, sub_eq_zero.1 h]
+  have hprim := zeta_primitive_root p ℚ K,
+  have hzero : zeta p ℚ K - 1 ≠ 0 := λ h, by simpa [eval_one_cyclotomic_prime, sub_eq_zero.1 h]
     using is_root.def.1 (is_root_cyclotomic p.pos hprim),
   have hodd' : (p : ℕ) ≠ 2 := λ hn, by exact hodd.symm (pnat.coe_inj.1 hn.symm),
   have hpos := pos_iff_ne_zero.2 (λ h, (tsub_pos_of_lt (prime.one_lt hp.out)).ne.symm h),
   have heven := even_sub_one_of_prime_ne_two hp.out hodd',
 
-  rw [algebra.of_power_basis_eq_norm, zeta'.power_basis_gen, finrank p,
+  rw [algebra.of_power_basis_eq_norm, zeta.power_basis_gen, finrank p,
     minpoly.gcd_domain_eq_field_fractions ℚ (is_primitive_root.is_integral hprim p.pos),
     ← cyclotomic_eq_minpoly hprim p.pos, map_cyclotomic, totient_prime hp.out],
   have H := congr_arg derivative (cyclotomic_prime_mul_X_sub_one ℚ p),
   rw [derivative_mul, derivative_sub, derivative_one, derivative_X, sub_zero, mul_one,
     derivative_sub, derivative_one, sub_zero, derivative_X_pow] at H,
-  replace H := congr_arg (λ P, aeval (zeta' p ℚ K) P) H,
-  simp only [aeval_X_pow, add_zero, aeval_nat_cast, aeval_X, zeta'_spec, aeval_one,
+  replace H := congr_arg (λ P, aeval (zeta p ℚ K) P) H,
+  simp only [aeval_X_pow, add_zero, aeval_nat_cast, aeval_X, zeta_spec, aeval_one,
     alg_hom.map_sub, aeval_add, alg_hom.map_mul] at H,
   replace H := congr_arg (algebra.norm ℚ) H,
-  rw [monoid_hom.map_mul, norm_zeta'_sub_one _ hodd, monoid_hom.map_mul, monoid_hom.map_pow,
-    norm_zeta' K (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out) hodd')),
+  rw [monoid_hom.map_mul, norm_zeta_sub_one _ hodd, monoid_hom.map_mul, monoid_hom.map_pow,
+    norm_zeta K (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out) hodd')),
     one_pow, mul_one, ← map_nat_cast (algebra_map ℚ K), norm_algebra_map,
     finrank p, totient_prime hp.out, ← succ_pred_eq_of_pos hpos, pow_succ,
     mul_comm _ (p : ℚ), coe_coe] at H,

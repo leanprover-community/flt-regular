@@ -1,20 +1,32 @@
-import ring_theory.roots_of_unity
+import ring_theory.polynomial.cyclotomic.basic
 
-namespace is_primitive_root
+lemma pnat.succ_nat_pred' (n : ℕ+) : 1 + n.nat_pred = n :=
+by rw [pnat.nat_pred, add_tsub_cancel_iff_le.mpr $ show 1 ≤ (n : ℕ), from n.pos]
 
-variables {M : Type*}
-variables [comm_monoid M]
+def roots_of_unity.mk_of_pow_eq {M} [comm_monoid M] (ζ : M) {n : ℕ+} (h : ζ ^ (n : ℕ) = 1) :
+  roots_of_unity n M :=
+⟨units.mk_of_mul_eq_one ζ (ζ ^ n.nat_pred) $
+  by rwa [←pow_one ζ, ←pow_mul, ←pow_add, one_mul, pnat.succ_nat_pred'],
+units.ext $ by simpa⟩
 
-variables {k l : ℕ}
+@[simp] lemma roots_of_unity.coe_mk_of_pow_eq {M} [comm_monoid M] {ζ : M} {n : ℕ+}
+  {h : ζ ^ (n : ℕ) = 1} : (roots_of_unity.mk_of_pow_eq _ h : M) = ζ := rfl
 
-variables {ζ : M} (h : is_primitive_root ζ k)
+-- I'm not too sure if this is strictly necessary
+@[simp] lemma roots_of_unity.coe_mk_of_pow_eq' {M} [comm_monoid M] {ζ : M} {n : ℕ+}
+  {h : ζ ^ (n : ℕ) = 1} : (↑(roots_of_unity.mk_of_pow_eq _ h : units M) : M) = ζ := rfl
 
-lemma pow_of_div (h : is_primitive_root ζ k) {p : ℕ} (hp : p ≠ 0) (hdiv : p ∣ k) :
-  is_primitive_root (ζ ^ p) (k / p) :=
+open polynomial
+
+lemma is_root_of_unity_of {n : ℕ} {R} [comm_ring R] {ζ : R} {i : ℕ}
+  (hi : i ∈ n.divisors) (h : (cyclotomic i R).is_root ζ) : ζ ^ n = 1 :=
 begin
-  suffices : order_of (ζ ^ p) = k / p,
-  { exact this ▸ is_primitive_root.order_of (ζ ^ p) },
-  rw [order_of_pow' _ hp, ← eq_order_of h, nat.gcd_eq_right hdiv]
+  rcases n.eq_zero_or_pos with rfl | hn,
+  { exact pow_zero _ },
+  have := congr_arg (eval ζ) (prod_cyclotomic_eq_X_pow_sub_one hn R).symm,
+  rw [eval_sub, eval_pow, eval_X, eval_one] at this,
+  convert eq_add_of_sub_eq' this,
+  convert (add_zero _).symm,
+  apply eval_eq_zero_of_dvd_of_eval_eq_zero _ h,
+  exact finset.dvd_prod_of_mem _ hi
 end
-
-end is_primitive_root

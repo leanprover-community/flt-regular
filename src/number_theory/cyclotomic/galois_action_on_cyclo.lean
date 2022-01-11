@@ -23,14 +23,14 @@ noncomputable theory
 open is_cyclotomic_extension
 open polynomial
 
-local notation `ζ` := zeta' p ℚ KK
+local notation `ζ` := zeta p ℚ KK
 
 @[simp]
-lemma minpoly_zeta' : minpoly ℚ ζ = cyclotomic p ℚ :=
+lemma minpoly_zeta : minpoly ℚ ζ = cyclotomic p ℚ :=
 begin
   rw ← map_cyclotomic_int,
   have : is_primitive_root ζ p,
-  from zeta'_primitive_root p ℚ (cyclotomic_field p ℚ),
+  from zeta_primitive_root p ℚ (cyclotomic_field p ℚ),
   rw cyclotomic_eq_minpoly this p.pos,
   have : is_integral ℤ ζ,
   from is_primitive_root.is_integral this p.pos,
@@ -54,22 +54,22 @@ begin
 end
 
 /-- The power basis of the p-th cyclotomic field given by the chosen pth root of unity. -/
-def power_basis_zeta : power_basis ℚ KK :=
-{ gen := zeta' p ℚ KK,
-  dim := (minpoly ℚ (zeta' p ℚ (cyclotomic_field p ℚ))).nat_degree,
+def power_basis_zeta_runity : power_basis ℚ KK :=
+{ gen := zeta p ℚ KK,
+  dim := (minpoly ℚ (zeta p ℚ (cyclotomic_field p ℚ))).nat_degree,
   basis := basis.mk (is_integral.linear_independent_pow
-      (is_separable.is_integral ℚ (zeta' p ℚ (cyclotomic_field p ℚ)))) sorry,
+      (is_separable.is_integral ℚ (zeta p ℚ (cyclotomic_field p ℚ)))) sorry,
   basis_eq_pow := by simp }
 
 @[simp]
-lemma power_basis_zeta_gen : (power_basis_zeta p).gen = ζ := rfl
+lemma power_basis_zeta_runity_gen : (power_basis_zeta_runity p).gen = ζ := rfl
 
 /-- complex conjugation as a Galois automorphism -/
-def gal_conj : KK →ₐ[ℚ] KK := power_basis.lift (power_basis_zeta p) ζ⁻¹
+def gal_conj : KK →ₐ[ℚ] KK := power_basis.lift (power_basis_zeta_runity p) ζ⁻¹
 begin
-  simp only [power_basis_zeta_gen, minpoly_zeta'],
+  simp only [power_basis_zeta_runity_gen, minpoly_zeta],
   have : is_primitive_root ζ p,
-  from zeta'_primitive_root p ℚ (cyclotomic_field p ℚ),
+  from zeta_primitive_root p ℚ (cyclotomic_field p ℚ),
   have : is_primitive_root ζ⁻¹ p,
   exact is_primitive_root.inv' this,
   rw ← minpoly_primitive_root _ this,
@@ -77,16 +77,16 @@ begin
 end
 
 @[simp]
-lemma gal_conj_zeta : gal_conj p ζ = ζ⁻¹ := power_basis.lift_gen _ _ _
+lemma gal_conj_zeta_runity : gal_conj p ζ = ζ⁻¹ := power_basis.lift_gen _ _ _
 
-lemma gal_conj_zeta_pow (n : ℕ) :  gal_conj p (ζ^n) = (ζ⁻¹)^n :=
+lemma gal_conj_zeta_runity_pow (n : ℕ) :  gal_conj p (ζ^n) = (ζ⁻¹)^n :=
 begin
 induction n,
 simp only [alg_hom.map_one, pow_zero],
-simp only [alg_hom.map_pow, gal_conj_zeta],
+simp only [alg_hom.map_pow, gal_conj_zeta_runity],
 end
 
-lemma gal_conj_zeta_coe :  gal_conj p (ζ) =  gal_conj p (ζ : KK) :=
+lemma gal_conj_zeta_runity_coe :  gal_conj p (ζ) =  gal_conj p (ζ : KK) :=
 begin
 refl,
 end
