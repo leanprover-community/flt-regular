@@ -517,12 +517,6 @@ begin
   exact is_homogeneous_leading_terms p,
 end
 
---pred
-lemma homogeneous_component_add (m  : ℕ) (p q : mv_polynomial ι R) :
-  homogeneous_component m (p + q) = homogeneous_component m p + homogeneous_component m q :=
-by rw [homogeneous_component, linear_map.comp_apply, linear_map.comp_apply, linear_map.comp_apply,
-    linear_map.map_add, linear_map.map_add]
-
 -- TODO lol this isn't true
 -- lemma homogeneous_component_mul (m n : ℕ) (p q : mv_polynomial ι R) :
 --   homogeneous_component (m + n) (p * q) = homogeneous_component m p * homogeneous_component n q :=
@@ -611,7 +605,7 @@ lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf β] [order_top β] 
 lemma leading_terms_add_of_total_degree_lt (p q : mv_polynomial ι R)
   (h : q.total_degree < p.total_degree) : (p + q).leading_terms = p.leading_terms :=
 by rw [leading_terms, leading_terms, total_degree_add_eq_left_of_total_degree_lt h,
-  homogeneous_component_add, homogeneous_component_eq_zero _ q h, add_zero]
+  linear_map.map_add, homogeneous_component_eq_zero _ q h, add_zero]
 
 -- lemma C_mul_eq_smul {r : R} (p : mv_polynomial ι R) : C r * p = r • p :=
 -- by rw [C_eq_smul_one, algebra.smul_mul_assoc, one_mul]
