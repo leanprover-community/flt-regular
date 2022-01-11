@@ -47,18 +47,21 @@ end
 
 variable {K}
 
-lemma discr_mul_is_integral_mem_adjoin [is_domain R] [is_integrally_closed R] [is_separable K L]
-  {α : L} (hx : _root_.is_integral R α) {z : K⟮α⟯}
+lemma discr_mul_is_integral_mem_adjoin [is_domain R] [is_integrally_closed R]
+  [is_fraction_ring R K] [is_separable K L]
+  {α : L} (hα : _root_.is_integral R α) {z : K⟮α⟯}
   (hz : _root_.is_integral R z) :
   ((discr K (adjoin.power_basis
-  (is_integral_of_is_scalar_tower α hx : _root_.is_integral K α)).basis) • z : L) ∈
+  (is_integral_of_is_scalar_tower α hα : _root_.is_integral K α)).basis) • z : L) ∈
   adjoin R ({α} : set L) :=
 begin
-  let pb := adjoin.power_basis (is_integral_of_is_scalar_tower α hx : _root_.is_integral K α),
+  let pb := adjoin.power_basis (is_integral_of_is_scalar_tower α hα : _root_.is_integral K α),
   set x := (pb.basis).equiv_fun z with hx,
   let ι := fin pb.dim,
   set A := trace_matrix K pb.basis with hA,
   set b : ι → K := λ i, trace K K⟮α⟯ (z * (pb.basis i)) with hb,
+
+  letI := power_basis.finite_dimensional pb,
 
   suffices : ∀ i, (A.det • x) i ∈ (⊥ : subalgebra R K),
   { rw [← basis.sum_repr pb.basis z, coe_sum, finset.smul_sum],
@@ -76,7 +79,6 @@ begin
   have hinv : is_unit A.det,
   { refine is_unit.mk0 _ _,
     rw [hA, ← discr_def],
-    letI := power_basis.finite_dimensional pb,
     letI : is_separable K ↥K⟮α⟯ := is_separable_tower_bot_of_is_separable _ _ L,
     refine discr_not_zero_of_linear_independent' _ _ _ (pb.basis.linear_independent),
     rw [fintype.card_fin],
@@ -114,11 +116,15 @@ begin
   refine subalgebra.prod_mem _ (λ j hj, _),
   rw [update_column_apply],
   by_cases hji : j = i,
-  { simp [hji, hb],
-
-    sorry
-  },
-  { simp [hji],
+  { simp only [hji, hb, if_true, eq_self_iff_true],
+    have : _root_.is_integral R (z * (pb.basis) (σ i)),
+    { refine is_integral_mul hz _,
+      rw [pb.basis_eq_pow],
+      refine is_integral.pow _ _,
+      rw [adjoin.power_basis_gen],
+      refine coe_is_integral hα },
+    exact mem_bot.2 (is_integrally_closed.is_integral_iff.1 (is_integral_trace this)) },
+  { simp only [hji, if_false],
     sorry
   }
 end
