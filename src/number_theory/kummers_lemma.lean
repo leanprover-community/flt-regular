@@ -10,6 +10,6 @@ import number_theory.cyclotomic.rat
 Kummer's lemma, a converse to `flt_fact_3`
 -/
 lemma eq_pow_prime_of_unit_of_congruent (p : ℕ) [fact (0 < p)] (hpp : prime p) (hptwo : p ≠ 2)
-  (hpr : is_regular_number p) (u : units (cyclotomic_ring ⟨p, fact.out _⟩ ℤ ℚ))
+  (hpr : is_regular_number p) (u : (cyclotomic_ring ⟨p, fact.out _⟩ ℤ ℚ)ˣ)
   (hcong : ∃ n : ℤ, (↑u : cyclotomic_ring _ _ _) - n ∈ ideal.span ({p} : set (cyclotomic_ring ⟨p, fact.out _⟩ ℤ ℚ))) :
   ∃ v, u = v ^ p := sorry

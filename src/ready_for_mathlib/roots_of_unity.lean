@@ -16,7 +16,7 @@ units.ext $ by simpa⟩
 
 -- I'm not too sure if this is strictly necessary
 @[simp] lemma roots_of_unity.coe_mk_of_pow_eq' {M} [comm_monoid M] {ζ : M} {n : ℕ+}
-  {h : ζ ^ (n : ℕ) = 1} : (↑(roots_of_unity.mk_of_pow_eq _ h : units M) : M) = ζ := rfl
+  {h : ζ ^ (n : ℕ) = 1} : (↑(roots_of_unity.mk_of_pow_eq _ h : Mˣ) : M) = ζ := rfl
 
 open polynomial
 

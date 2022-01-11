@@ -117,7 +117,7 @@ end
 -- TODO we should generlize this and have a way to automatically transfer galois automorphisms
 -- to automorphisms of the unit group
 /-- The conjugate as a map from units to itself -/
-def unit_gal_conj : units RR → units RR :=
+def unit_gal_conj : RRˣ → RRˣ :=
 λ ⟨u_val, u_inv, u_val_inv, u_inv_val⟩,
   ⟨⟨gal_conj p u_val, sorry⟩, ⟨gal_conj p u_inv, sorry⟩,
   begin
@@ -135,26 +135,26 @@ def unit_gal_conj : units RR → units RR :=
   end⟩
 
 /-- `unit_gal_conj` as boundled hom. -/
-def unit_gal_conj_m : units RR →* units RR :={
+def unit_gal_conj_m : RRˣ →* RRˣ :={
   to_fun := unit_gal_conj  p,
   map_one' := by {simp_rw (unit_gal_conj ),  sorry, },
   map_mul' := by {sorry,},
  }
 
-lemma unit_gal_conj_spec (u : units RR) : gal_conj p u = unit_gal_conj p u :=
+lemma unit_gal_conj_spec (u : RRˣ) : gal_conj p u = unit_gal_conj p u :=
 begin
   cases u,
   simp [unit_gal_conj],
 end
 
-lemma uni_gal_conj_inv (u : units RR) : (unit_gal_conj p u)⁻¹ = (unit_gal_conj p u⁻¹) :=
+lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj p u)⁻¹ = (unit_gal_conj p u⁻¹) :=
 begin
 rw unit_gal_conj,
 simp,
 sorry,
 end
 
-lemma unit_lemma_val_one (u : units RR) (φ : KK →+* ℂ) :
+lemma unit_lemma_val_one (u : RRˣ) (φ : KK →+* ℂ) :
   complex.abs (φ (u * (unit_gal_conj p u)⁻¹)) = 1 :=
 begin
   rw ring_hom.map_mul,
@@ -166,7 +166,7 @@ begin
   simp [-embedding_conj],
 end
 
-lemma unit_gal_conj_idempotent (u : units RR) : (unit_gal_conj p (unit_gal_conj p u)) = u :=
+lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj p (unit_gal_conj p u)) = u :=
 begin
    have:=  (unit_gal_conj_spec p u),
    simp at this,

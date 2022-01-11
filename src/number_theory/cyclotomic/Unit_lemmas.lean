@@ -19,22 +19,22 @@ def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
 
 
 --bunch of lemmas that should be stated more generally if we decide to go this way
-lemma unit_coe (u : units RR) : (u : RR) * ((u⁻¹ : units RR) : RR) = 1 :=
+lemma unit_coe (u : RRˣ) : (u : RR) * ((u⁻¹ : RRˣ) : RR) = 1 :=
 begin
   norm_cast,
   simp only [mul_right_inv, units.coe_one],
 end
 
-lemma unit_coe_non_zero (u  : units RR) : (u : KK) ≠ 0 :=
+lemma unit_coe_non_zero (u  : RRˣ) : (u : KK) ≠ 0 :=
 begin
   by_contra h,
-  have : (u : KK) * ((u⁻¹ : units RR ) : KK) = 1, by {simp,norm_cast, apply unit_coe,},
+  have : (u : KK) * ((u⁻¹ : RRˣ ) : KK) = 1, by {simp,norm_cast, apply unit_coe,},
   rw h at this,
   simp at this,
   exact this,
 end
 
-lemma coe_life (u : units RR) : ((u : RR) : KK)⁻¹ = ((u⁻¹ : units RR) : RR) :=
+lemma coe_life (u : RRˣ) : ((u : RR) : KK)⁻¹ = ((u⁻¹ : RRˣ) : RR) :=
 begin
   rw ← coe_coe,
   rw ← coe_coe,
@@ -47,7 +47,7 @@ begin
   simp only [mul_right_inv, units.coe_one],
 end
 
-lemma auxil (a b c d : units RR) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
+lemma auxil (a b c d : RRˣ) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
 begin
   rw mul_inv_eq_iff_eq_mul at *,
   rw h,
@@ -68,7 +68,7 @@ begin
   sorry, --2 is invertible if `p≠ 2`.
 end
 
-lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p)  (u : units RR) (n  : ℕ) :
+lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p)  (u : RRˣ) (n  : ℕ) :
   u * (unit_gal_conj p u)⁻¹ ≠  -(zeta_runity p FZ RR) ^ n :=
 begin
   by_contra H,
@@ -76,7 +76,7 @@ begin
 end
 
 -- this proof has mild coe annoyances rn
-lemma unit_inv_conj_is_root_of_unity (h : 2 < p)  (u : units RR) :
+lemma unit_inv_conj_is_root_of_unity (h : 2 < p)  (u : RRˣ) :
   ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta_runity p FZ RR) ^ (m))^2 :=
 begin
   have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
@@ -115,8 +115,8 @@ begin
 end
 
 
-lemma unit_lemma_gal_conj (h : 2 < p)  (u : units RR) :
-  ∃ (x : units RR) (n : ℤ), (is_gal_conj_real p (x : KK)) ∧ (u : KK) = x * (zeta_runity p ℚ KK) ^ n :=
+lemma unit_lemma_gal_conj (h : 2 < p)  (u : RRˣ) :
+  ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p (x : KK)) ∧ (u : KK) = x * (zeta_runity p ℚ KK) ^ n :=
 
 begin
   have := unit_inv_conj_is_root_of_unity p h u,
@@ -159,8 +159,8 @@ begin
 end
 
 /-
-lemma unit_lemma (u : units RR) :
-  ∃ (x : units RR) (n : ℤ), element_is_real (x : KK) ∧ (u : KK) = x * (zeta_runity p ℚ) ^ n :=
+lemma unit_lemma (u : RRˣ) :
+  ∃ (x : RRˣ) (n : ℤ), element_is_real (x : KK) ∧ (u : KK) = x * (zeta_runity p ℚ) ^ n :=
 begin
   have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
   { have : ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = (zeta_runity p ℚ) ^ (2 * m),

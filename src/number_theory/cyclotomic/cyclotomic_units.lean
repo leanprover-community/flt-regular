@@ -149,7 +149,7 @@ namespace cyclotomic_unit
 -- maybe this should use `smul` or something to avoid the horrific typleclass issues that have
 -- been going on here
 lemma exists_unit_mul_primitive_root_one_sub_zeta_runity (z : RR) (hz : is_primitive_root z n) :
-  ∃ u : units RR, ↑u * (1 - z : RR) = 1 - (zeta_runity n (𝓞 K) (𝓞 L)) :=
+  ∃ u : RRˣ, ↑u * (1 - z : RR) = 1 - (zeta_runity n (𝓞 K) (𝓞 L)) :=
 begin
   sorry
   -- haveI asda : fact (((n : ℕ) : 𝓞 L) ≠ 0) := sorry, resetI,

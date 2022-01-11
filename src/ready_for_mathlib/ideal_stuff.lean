@@ -43,7 +43,7 @@ end
 -- pretty sure there is an easier proof of this
 lemma submodule.span_singleton_eq_span_singleton {R : Type*} {M : Type*} [ring R] [add_comm_group M]
   [module R M] [no_zero_smul_divisors R M] (x y : M) :
-  span R ({x} : set M) = span R ({y} : set M) ↔ ∃ u : units R, u • x = y :=
+  span R ({x} : set M) = span R ({y} : set M) ↔ ∃ u : Rˣ, u • x = y :=
 begin
   by_cases hyzero : y = 0,
   { simp only [hyzero, span_singleton_eq_bot, span_zero_singleton],
