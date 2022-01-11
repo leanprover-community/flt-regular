@@ -118,15 +118,15 @@ begin
   by_cases hji : j = i,
   { simp only [hji, hb, if_true, eq_self_iff_true],
     have : _root_.is_integral R (z * (pb.basis) (σ i)),
-    { refine is_integral_mul hz _,
-      rw [pb.basis_eq_pow],
-      refine is_integral.pow _ _,
-      rw [adjoin.power_basis_gen],
-      refine coe_is_integral hα },
+    { rw [pb.basis_eq_pow],
+      exact is_integral_mul hz (is_integral.pow (coe_is_integral hα) _) },
     exact mem_bot.2 (is_integrally_closed.is_integral_iff.1 (is_integral_trace this)) },
-  { simp only [hji, if_false],
-    sorry
-  }
+  { simp only [hji, if_false, hA, trace_form_apply, trace_matrix],
+    have : _root_.is_integral R ((pb.basis) (σ j) * (pb.basis) j),
+    { rw [pb.basis_eq_pow, pb.basis_eq_pow],
+      exact is_integral_mul (is_integral.pow (coe_is_integral hα) _)
+        ((is_integral.pow (coe_is_integral hα) _)) },
+    exact mem_bot.2 (is_integrally_closed.is_integral_iff.1 (is_integral_trace this)) }
 end
 
 end algebra
