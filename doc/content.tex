@@ -36,7 +36,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lemma:disc_of_prim_elt_basis}
-	\lean{algebra.discr_of_power_basis_eq_prod}
+	\lean{algebra.discr_power_basis_eq_prod}
 	\leanok
     \uses{defn_of_disc,lemma:disc_via_embs}
 	Let $K$ be a number field and $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$ for some $\a \in K$. Then \[\Delta(B)=\prod_{i < j} (\sigma_i(\a)-\sigma_j(\a))^2\] where $\sigma_i$ are the embeddings of $K $ into $\CC$. Here $\Delta(B)$ denotes the discriminant.
@@ -55,7 +55,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lemma:num_field_disc_in_terms_of_norm}
-	\lean{discriminant.of_power_basis_eq_norm}
+	\lean{algebra.of_power_basis_eq_norm}
 	\uses{lemma:disc_of_prim_elt_basis,lemma:alt_definition_of_norm_and_trace}
 	\leanok
 	Let $K=\QQ(\a)$ be a number field with $n=[K:\QQ]$ and let $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$. Then \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}N_{K/\QQ}(m_\a'(\a))\] where $m_\a'$ is the derivative of $m_\a(x)$ (which we recall denotes the minimal polynomial of $\a$).
@@ -67,7 +67,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lemma:disc_change_of_basis}
-	\lean{discriminant.of_matrix_mul_vec}
+	\lean{algebra.discr_of_matrix_mul_vec}
 	\leanok
 	Let $K$ be a number field and $B,B'$ bases for $K/\QQ$. If $P$ denotes the change of basis matrix, then \[\Delta(B)=\det(P)^2 \Delta(B').\]
 \end{lemma}

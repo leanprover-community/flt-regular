@@ -1,7 +1,5 @@
 import number_theory.cyclotomic.galois_action_on_cyclo
 
-
-
 variables (p : ℕ+) (K : Type*) [field K]
 
 open is_cyclotomic_extension
@@ -9,29 +7,34 @@ open cyclotomic_ring
 
 local notation `KK` := cyclotomic_field p ℚ
 local notation `RR` := number_field.ring_of_integers (cyclotomic_field p ℚ)
-local notation `ζ` := zeta' p ℚ KK
+local notation `FZ` := number_field.ring_of_integers ℚ -- FZ for fake ℤ :)
+local notation `ζ` := zeta p ℚ KK
+
+--I (RB) am not sure why we use FZ, but this instance seems to be needed
+instance FZ_cycl_ext : is_cyclotomic_extension {p} FZ (number_field.ring_of_integers
+  (cyclotomic_field p ℚ)) := sorry
 
 /-- `is_gal_conj_real x` means that `x` is real. -/
 def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
 
 
 --bunch of lemmas that should be stated more generally if we decide to go this way
-lemma unit_coe (u : units RR) : (u : RR) * ((u⁻¹ : units RR) : RR) = 1 :=
+lemma unit_coe (u : RRˣ) : (u : RR) * ((u⁻¹ : RRˣ) : RR) = 1 :=
 begin
   norm_cast,
   simp only [mul_right_inv, units.coe_one],
 end
 
-lemma unit_coe_non_zero (u  : units RR) : (u : KK) ≠ 0 :=
+lemma unit_coe_non_zero (u  : RRˣ) : (u : KK) ≠ 0 :=
 begin
   by_contra h,
-  have : (u : KK) * ((u⁻¹ : units RR ) : KK) = 1, by {simp,norm_cast, apply unit_coe,},
+  have : (u : KK) * ((u⁻¹ : RRˣ ) : KK) = 1, by {simp,norm_cast, apply unit_coe,},
   rw h at this,
   simp at this,
   exact this,
 end
 
-lemma coe_life (u : units RR) : ((u : RR) : KK)⁻¹ = ((u⁻¹ : units RR) : RR) :=
+lemma coe_life (u : RRˣ) : ((u : RR) : KK)⁻¹ = ((u⁻¹ : RRˣ) : RR) :=
 begin
   rw ← coe_coe,
   rw ← coe_coe,
@@ -44,7 +47,7 @@ begin
   simp only [mul_right_inv, units.coe_one],
 end
 
-lemma auxil (a b c d : units RR) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
+lemma auxil (a b c d : RRˣ) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
 begin
   rw mul_inv_eq_iff_eq_mul at *,
   rw h,
@@ -60,43 +63,43 @@ begin
   sorry,
 end
 
-lemma zeta_pow_even (h : 2 < p)  (n : ℕ) : ∃ (m : ℕ), (zeta p ℚ)^n = (zeta p ℚ)^(2*m) :=
+lemma zeta_runity_pow_even (h : 2 < p)  (n : ℕ) : ∃ (m : ℕ), (zeta_runity p ℚ KK)^n = (zeta_runity p ℚ KK)^(2*m) :=
 begin
   sorry, --2 is invertible if `p≠ 2`.
 end
 
-lemma unit_inv_conj_not_neg_zeta (h : 2 < p)  (u : units RR) (n  : ℕ) :
-  u * (unit_gal_conj p u)⁻¹ ≠  -(zeta p ℚ) ^ n :=
+lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p)  (u : RRˣ) (n  : ℕ) :
+  u * (unit_gal_conj p u)⁻¹ ≠  -(zeta_runity p FZ RR) ^ n :=
 begin
   by_contra H,
   sorry,
 end
 
-
-lemma unit_inv_conj_is_root_of_unity (h : 2 < p)  (u : units RR) :
-  ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta p ℚ) ^ (m))^2 :=
+-- this proof has mild coe annoyances rn
+lemma unit_inv_conj_is_root_of_unity (h : 2 < p)  (u : RRˣ) :
+  ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta_runity p FZ RR) ^ (m))^2 :=
 begin
   have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
   have H:= roots_of_unity_in_cyclo p ((u * (unit_gal_conj p u)⁻¹ : KK)) this,
-  rw ← zeta_coe at H,
   obtain ⟨n, k, hz⟩ := H,
   simp_rw ← pow_mul,
   have hk := nat.even_or_odd k,
   cases hk,
-  { simp [nat.neg_one_pow_of_even hk] at hz,
+  sorry; { simp [nat.neg_one_pow_of_even hk] at hz,
     simp_rw  coe_life at hz,
     norm_cast at hz,
+    norm_cast,
     rw hz,
-    have := zeta_pow_even p h n,
+    have := zeta_runity_pow_even p h n,
     obtain ⟨m , Hm⟩ := this,
     use m,
     rw mul_comm,
     exact Hm},
-  { by_contra hc,
+  sorry; { by_contra hc,
     simp [nat.neg_one_pow_of_odd hk] at hz,
     simp_rw  coe_life at hz,
     norm_cast at hz,
-    have := unit_inv_conj_not_neg_zeta p h u n,
+    have := unit_inv_conj_not_neg_zeta_runity p h u n,
     rw hz at this,
     simp at this,
     exact this, },
@@ -112,28 +115,28 @@ begin
 end
 
 
-lemma unit_lemma_gal_conj (h : 2 < p)  (u : units RR) :
-  ∃ (x : units RR) (n : ℤ), (is_gal_conj_real p (x : KK)) ∧ (u : KK) = x * (zeta p ℚ) ^ n :=
+lemma unit_lemma_gal_conj (h : 2 < p)  (u : RRˣ) :
+  ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p (x : KK)) ∧ (u : KK) = x * (zeta_runity p ℚ KK) ^ n :=
 
 begin
   have := unit_inv_conj_is_root_of_unity p h u,
   obtain ⟨m, hm⟩ := this,
-  use [u * (zeta p ℚ)⁻¹ ^ (m), m],
+  use [u * (zeta_runity p ℚ KK)⁻¹ ^ (m), m],
   split,
-  { rw is_gal_conj_real,
-  have hy : u * ((zeta p ℚ) ^ ( m))⁻¹ = (unit_gal_conj p u) *  (zeta p ℚ) ^ ( m), by {
+  sorry; { rw is_gal_conj_real,
+  have hy : u * ((zeta_runity p ℚ) ^ ( m))⁻¹ = (unit_gal_conj p u) *  (zeta_runity p ℚ) ^ ( m), by {
   rw pow_two at hm,
-  have := auxil p u (unit_gal_conj p u)  ((zeta p ℚ) ^ (m)) ((zeta p ℚ) ^ (m)),
+  have := auxil p u (unit_gal_conj p u)  ((zeta_runity p ℚ) ^ (m)) ((zeta_runity p ℚ) ^ (m)),
   apply this hm,},
   dsimp,
   simp only [inv_pow, alg_hom.map_mul],
-  have hz: gal_conj p ((zeta p ℚ)  ^ ( m))⁻¹ =(zeta p ℚ)  ^ ( m) , by {simp, rw ← coe_coe,
-  rw zeta_coe,
-  rw gal_conj_zeta_coe,
-  simp only [inv_pow₀, gal_conj_zeta, inv_inv₀],},
+  have hz: gal_conj p ((zeta_runity p ℚ)  ^ ( m))⁻¹ =(zeta_runity p ℚ)  ^ ( m) , by {simp, rw ← coe_coe,
+  rw zeta_runity_coe,
+  rw gal_conj_zeta_runity_coe,
+  simp only [inv_pow₀, gal_conj_zeta_runity, inv_inv₀],},
   rw ← coe_coe,
   rw ← coe_coe,
-  rw (_ : (↑(zeta p ℚ ^ m)⁻¹ : KK) = (zeta p ℚ ^ m : KK)⁻¹),
+  rw (_ : (↑(zeta_runity p ℚ ^ m)⁻¹ : KK) = (zeta_runity p ℚ ^ m : KK)⁻¹),
   rw hz,
   have hzz := unit_gal_conj_spec p u,
   rw hzz,
@@ -150,21 +153,21 @@ begin
   simp only [subalgebra.coe_pow, units.coe_pow],
   },
   dsimp at *,
-  simp only [exists_prop, inv_pow, zpow_coe_nat] at *,
+  all_goals{sorry} /- { simp only [exists_prop, inv_pow, zpow_coe_nat] at *,
   norm_cast,
-  simp only [inv_mul_cancel_right] at *,
+  simp only [inv_mul_cancel_right] at * }, -/
 end
 
 /-
-lemma unit_lemma (u : units RR) :
-  ∃ (x : units RR) (n : ℤ), element_is_real (x : KK) ∧ (u : KK) = x * (zeta p ℚ) ^ n :=
+lemma unit_lemma (u : RRˣ) :
+  ∃ (x : RRˣ) (n : ℤ), element_is_real (x : KK) ∧ (u : KK) = x * (zeta_runity p ℚ) ^ n :=
 begin
   have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
-  { have : ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = (zeta p ℚ) ^ (2 * m),
+  { have : ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = (zeta_runity p ℚ) ^ (2 * m),
     sorry, --follows from above with some work
-          -- what we have shows its +- a power of zeta
+          -- what we have shows its +- a power of zeta_runity
     obtain ⟨m, hm⟩ := this,
-    use [u * (zeta p ℚ)⁻¹ ^ m, m],
+    use [u * (zeta_runity p ℚ)⁻¹ ^ m, m],
     split,
     { rw element_is_real,
       intro φ,
@@ -173,7 +176,7 @@ begin
       simp [alg_hom.map_inv],
       rw ← coe_coe,
       rw ← coe_coe, -- TODO this is annoying
-      rw (_ : (↑(zeta p ℚ ^ m)⁻¹ : KK) = (zeta p ℚ ^ m : KK)⁻¹),
+      rw (_ : (↑(zeta_runity p ℚ ^ m)⁻¹ : KK) = (zeta_runity p ℚ ^ m : KK)⁻¹),
       rw alg_hom.map_inv,
       rw ring_hom.map_inv,
       rw mul_inv_eq_iff_eq_mul₀,
