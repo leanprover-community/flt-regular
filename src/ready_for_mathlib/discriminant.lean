@@ -62,7 +62,6 @@ lemma discr_mul_is_integral_mem_adjoin [is_domain R] [is_integrally_closed R]
 begin
   let pb := adjoin.power_basis (is_integral_of_is_scalar_tower α hα : _root_.is_integral K α),
   set x := (pb.basis).equiv_fun z with hx,
-  set b : fin pb.dim → K := λ i, trace K K⟮α⟯ (z * (pb.basis i)) with hb,
 
   letI := power_basis.finite_dimensional pb,
 
@@ -84,10 +83,10 @@ begin
     exact discr_is_unit_of_basis _ pb.basis },
 
   have H : (trace_matrix K pb.basis).det • (trace_matrix K pb.basis).mul_vec x =
-    (trace_matrix K pb.basis).det • b,
+    (trace_matrix K pb.basis).det • (λ i, trace K K⟮α⟯ (z * (pb.basis i))),
   { congr, ext i,
     rw [← col_apply ((trace_matrix K pb.basis).mul_vec x) i unit.star, col_mul_vec, mul_apply,
-      power_basis.coe_basis, trace_matrix_def, hb],
+      power_basis.coe_basis, trace_matrix_def],
     simp only [col_apply, trace_form_apply],
     conv_lhs
     { congr, skip, funext,
@@ -97,12 +96,12 @@ begin
     conv_lhs
     { congr, skip, funext,
       rw [← mul_smul_comm] },
-    rw [← finset.mul_sum, mul_comm z, power_basis.coe_basis],
+    rw [← finset.mul_sum, mul_comm z],
     congr,
     rw [← basis.sum_repr pb.basis z],
     congr, ext j, congr,
     exact (pb.basis_eq_pow j).symm },
-  have cramer := mul_vec_cramer (trace_matrix K pb.basis) b,
+  have cramer := mul_vec_cramer (trace_matrix K pb.basis) (λ i, trace K K⟮α⟯ (z * (pb.basis i))),
   rw [← H, ← mul_vec_smul] at cramer,
   replace cramer := congr_arg (mul_vec (trace_matrix K pb.basis)⁻¹) cramer,
   rw [mul_vec_mul_vec, nonsing_inv_mul _ hinv, mul_vec_mul_vec, nonsing_inv_mul _ hinv,
@@ -113,7 +112,7 @@ begin
   refine subalgebra.sum_mem _ (λ σ hσ, subalgebra.zsmul_mem _ (subalgebra.prod_mem _ (λ j hj, _)) _),
   rw [update_column_apply],
   by_cases hji : j = i,
-  { simp only [hji, hb, if_true, eq_self_iff_true],
+  { simp only [hji, if_true, eq_self_iff_true],
     have : _root_.is_integral R (z * (pb.basis) (σ i)),
     { rw [pb.basis_eq_pow],
       exact is_integral_mul hz (is_integral.pow (coe_is_integral hα) _) },
