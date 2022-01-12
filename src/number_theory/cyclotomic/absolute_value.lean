@@ -207,12 +207,13 @@ begin
   simp only [add_monoid_hom.coe_mul_left] at this,
   simp [this],
   congr' 1, -- TODO its weird that congr doesn't do what we want here without hand-holding
-  apply multiset.map_congr,
-  intros s hs,
-  simp at hs,
-  rw ← hs.2,
-  rw multiset.prod_map_neg,
-  simp [hi],
+  { apply multiset.map_congr,
+    { refl },
+    { intros s hs,
+      simp at hs,
+      rw ← hs.2,
+      rw multiset.prod_map_neg } },
+  { simp [hi] }
 end
 
 

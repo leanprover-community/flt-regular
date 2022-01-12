@@ -85,6 +85,7 @@ begin
   convert  fintype.card_subtype_compl,
   simp only,
   simp_rw ← not_real_eq_complex,
+  sorry --here something nasty happened, the proof should be changed, we don't like ==
 end
 
 lemma elem_is_real_is_real (x : K) (h : element_is_real x) :

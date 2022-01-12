@@ -33,21 +33,6 @@ end
 
 variable (K)
 
-lemma discr_not_zero_of_basis [finite_dimensional K L] [is_separable K L] (b : basis ι K L) :
-  discr K b ≠ 0 :=
-begin
-  by_cases h : nonempty ι,
-  { classical,
-    have := span_eq_top_of_linear_independent_of_card_eq_finrank b.linear_independent
-      (finrank_eq_card_basis b).symm,
-    rw [discr_def, trace_matrix_def],
-    simp_rw [← basis.mk_apply b.linear_independent this],
-    rw [← trace_matrix_def, trace_matrix_of_basis, ← bilin_form.nondegenerate_iff_det_ne_zero],
-    exact trace_form_nondegenerate _ _  },
-  letI := not_nonempty_iff.1 h,
-  simp [discr],
-end
-
 lemma discr_is_unit_of_basis [finite_dimensional K L] [is_separable K L] (b : basis ι K L) :
   is_unit (discr K b) :=
 is_unit.mk0 _ (discr_not_zero_of_basis _ _)
@@ -63,7 +48,7 @@ begin
   simp only [col_apply, trace_form_apply],
   conv_lhs
   { congr, skip, funext,
-    rw [mul_comm _ (b.equiv_fun z j), ← smul_eq_mul, ← linear_map.map_smul] },
+    rw [mul_comm _ (b.equiv_fun z _), ← smul_eq_mul, ← linear_map.map_smul] },
     rw [← linear_map.map_sum],
     congr,
     conv_lhs

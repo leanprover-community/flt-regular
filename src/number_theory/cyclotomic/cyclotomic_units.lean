@@ -10,9 +10,9 @@ import ready_for_mathlib.cyclotomic.basic
 import ring_theory.polynomial.cyclotomic.eval
 import ready_for_mathlib.cyclotomic
 import ring_theory.adjoin.power_basis
-import ready_for_mathlib.cycl_poly
 import ready_for_mathlib.ring_of_integers
 import ready_for_mathlib.ideal_stuff
+import ready_for_mathlib.roots_of_unity
 
 noncomputable theory
 
