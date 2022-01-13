@@ -23,7 +23,7 @@ end
 
 -/
 
-lemma ex (a b c : ℕ) (hab : a^2 + b^2 < c) : a + b < c :=
+/- lemma ex (a b c : ℕ) (hab : a^2 + b^2 < c) : a + b < c :=
 begin
   have : ∀ (a b c : ℕ) (hab : a^2 + b^2 < c) (this : ∀ (a' b' c' : ℕ) (hab : a'^2 + b'^2 < c') (h : a' ≤ b'), a' + b' < c'),
    a + b < c,
@@ -46,9 +46,9 @@ begin
   -- state here is
   -- (a b c : ℕ) (hab : a^2 + b^2 < c) (h : a ≤ b)
   -- ⊢ a + b < c
-  sorry,
+  admit,
 
-end
+end -/
 
 namespace tactic.interactive
 open tactic expr
@@ -94,7 +94,7 @@ focus1 $ do
 
 end tactic.interactive
 
-lemma ex' (a b c : ℕ) (hab : a^2 + b^2 < c) : a + b < c :=
+/- lemma ex' (a b c : ℕ) (hab : a^2 + b^2 < c) : a + b < c :=
 begin
   may_assume h : a ≤ b,
   { cases le_total a b; specialize h_red _ _ c _ h,
@@ -104,8 +104,9 @@ begin
     assumption,
     rw add_comm,
     assumption, },
-sorry
-end
+admit
+end -/
+
 namespace tactic
 
 meta def take_pi_args : nat → expr → list name
@@ -155,7 +156,7 @@ begin
   rcases h with ⟨h_w, rfl⟩,
   rw [mul_comm, mul_pow, nat.mul_div_cancel h_w hb, nat.mul_div_cancel (h_w ^ n) (pow_pos hb n)],
 end
-
+/-
 lemma fermat (a b c n : ℕ) (hab : a^n + b^n = c^n) : a * b * c = 0 :=
 begin
   may_assume h : a.coprime b with h_red else,
@@ -166,8 +167,8 @@ begin
     rw div_pow''',
     rw div_pow''',
     rw div_pow''',
-    sorry,
-    sorry,
+    admit,
+    admit,
     exact nat.gcd_dvd_right a b,
     exact nat.gcd_dvd_left a b,
     split,
@@ -181,25 +182,25 @@ begin
     rw [nat.div_eq_zero_iff],
     simp,
     refine nat.le_of_dvd _ _,
-    sorry,
+    admit,
     exact nat.gcd_dvd_left a b,
-    sorry,
-    sorry,
-    sorry, },
-  { sorry },
-end
+    admit,
+    admit,
+    admit, },
+  { admit },
+end -/
 
-lemma test (a b : ℕ) : (a - b) * (b - a) = 0 :=
+/- lemma test (a b : ℕ) : (a - b) * (b - a) = 0 :=
 begin
   may_assume h : a ≤ b with h_red else,
   { simp,
-    sorry, },
-  { sorry },
+    admit, },
+  { admit },
 end
 
 lemma fermat' (a b c d n : ℕ) (hab : a^n + b^n = c^n) (hd : d^2 = 4) : a * b * c = 0 :=
 begin
   wlog' h : a.coprime b,
-  { sorry, },
-  { sorry },
-end
+  { admit, },
+  { admit },
+end -/
