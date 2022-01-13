@@ -14,6 +14,8 @@ import ready_for_mathlib.ring_of_integers
 import ready_for_mathlib.ideal_stuff
 import ready_for_mathlib.roots_of_unity
 
+import tactic.may_assume
+
 noncomputable theory
 
 open_locale big_operators non_zero_divisors
@@ -86,27 +88,34 @@ local notation `L` := cyclotomic_field n K
 
 namespace cyclotomic_unit
 
--- I wonder if we can do these results after we have 𝓞 K is a cyclotomic extension;
--- or do they hold for anything with a primitive root?
+-- I don't want to bother Leo, but I wonder if this can be automated in Lean4
+-- (if they were 0 < n → 1 < n, it would work already!)
+lemma _root_.nat.one_lt_of_ne : ∀ n : ℕ, n ≠ 0 → n ≠ 1 → 1 < n
+| 0 h _ := absurd rfl h
+| 1 _ h := absurd rfl h
+| (n+2) _ _ := n.one_lt_succ_succ
 
-lemma exists_unit_mul_primitive_root_one_sub_zeta_runity (z : 𝓞 L) (hz : is_primitive_root z n) :
-  ∃ u : (𝓞 L)ˣ, ↑u * (1 - z : 𝓞 L) = 1 - ⟨zeta n K L, zeta_integral n K⟩ :=
+-- this result holds for all primitive roots; dah.
+lemma exists_unit_mul_primitive_root_one_sub_zeta_runity {n j k : ℕ} {ζ : A}
+  (hζ : is_primitive_root ζ n) (hk : k.coprime n) (hj : j.coprime n) :
+  associated (1 - ζ ^ j) (1 - ζ ^ k) :=
 begin
-  haveI : ne_zero ((n : ℕ) : L) := sorry,
-  rw is_primitive_root.is_primitive_root_iff
-    (show is_primitive_root (⟨zeta n K L, zeta_integral n K⟩ : 𝓞 L) n, from _) n.pos at hz,
-  swap,
-  { have : is_primitive_root ((algebra_map (𝓞 L) L) ⟨zeta n K L, zeta_integral n K⟩) n :=
-           zeta_primitive_root n K L,
-    -- todo: i should change the argument order in mathlib
-    refine is_primitive_root.of_map_of_injective _ this,
-    exact subtype.val_injective },
-  obtain ⟨i, hip, hin, hi⟩ := hz,
-  rw ← hi,
-  sorry; { refine ⟨(cyclotomic_unit K (nat.gcd_one_left _) hin), _⟩,
-  rw ← neg_sub,
-  rw mul_neg_eq_neg_mul_symm,
-  simp [mul_denom K (nat.gcd_one_left _) hin] },
+  suffices : ∀ {j : ℕ}, j.coprime n → associated (1 - ζ) (1 - ζ ^ j),
+  { exact (this hj).symm.trans (this hk) },
+  clear' k j hk hj,
+  refine λ j hj, associated_of_dvd_dvd ⟨geom_sum ζ j, by rw [← geom_sum_mul_neg, mul_comm]⟩ _,
+  -- is there an easier way to do this?
+  rcases eq_or_ne n 0 with rfl | hn',
+  { simp [j.coprime_zero_right.mp hj] },
+  rcases eq_or_ne n 1 with rfl | hn,
+  { simp [is_primitive_root.one_right_iff.mp hζ] },
+  replace hn := n.one_lt_of_ne hn' hn,
+  obtain ⟨m, hm⟩ := nat.exists_mul_mod_eq_one_of_coprime hj hn,
+  use (geom_sum (ζ ^ j) m),
+  have : ζ = (ζ ^ j) ^ m,
+  { rw [←pow_mul, pow_eq_mod_order_of, ←hζ.eq_order_of, hm, pow_one] },
+  nth_rewrite 0 this,
+  rw [← geom_sum_mul_neg, mul_comm]
 end
 
 /-
