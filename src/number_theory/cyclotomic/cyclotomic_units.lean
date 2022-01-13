@@ -84,27 +84,32 @@ variable {n}
 local notation `RR` := ring_of_integers (cyclotomic_field n K)
 local notation `L` := cyclotomic_field n K
 
-
 namespace cyclotomic_unit
 
-/-
+-- I wonder if we can do these results after we have 𝓞 K is a cyclotomic extension;
+-- or do they hold for anything with a primitive root?
 
--- maybe this should use `smul` or something to avoid the horrific typleclass issues that have
--- been going on here
-lemma exists_unit_mul_primitive_root_one_sub_zeta_runity (z : RR) (hz : is_primitive_root z n) :
-  ∃ u : RRˣ, ↑u * (1 - z : RR) = 1 - (zeta_runity n (𝓞 K) (𝓞 L)) :=
+lemma exists_unit_mul_primitive_root_one_sub_zeta_runity (z : 𝓞 L) (hz : is_primitive_root z n) :
+  ∃ u : (𝓞 L)ˣ, ↑u * (1 - z : 𝓞 L) = 1 - ⟨zeta n K L, zeta_integral n K⟩ :=
 begin
-  sorry
-  -- haveI asda : fact (((n : ℕ) : 𝓞 L) ≠ 0) := sorry, resetI,
-  -- rw is_primitive_root.is_primitive_root_iff ((@zeta_primitive_root n (𝓞 K) (𝓞 L) _ _ _ _ _ asda))
-  --   n.pos at hz,
-  -- obtain ⟨i, hip, hin, hi⟩ := hz,
-  -- rw ← hi,
-  -- refine ⟨(cyclotomic_unit K (nat.gcd_one_left _) hin), _⟩,
-  -- rw ← neg_sub,
-  -- rw mul_neg_eq_neg_mul_symm,
-  -- simp [mul_denom K (nat.gcd_one_left _) hin],
+  haveI : ne_zero ((n : ℕ) : L) := sorry,
+  rw is_primitive_root.is_primitive_root_iff
+    (show is_primitive_root (⟨zeta n K L, zeta_integral n K⟩ : 𝓞 L) n, from _) n.pos at hz,
+  swap,
+  { have : is_primitive_root ((algebra_map (𝓞 L) L) ⟨zeta n K L, zeta_integral n K⟩) n :=
+           zeta_primitive_root n K L,
+    -- todo: i should change the argument order in mathlib
+    refine is_primitive_root.of_map_of_injective _ this,
+    exact subtype.val_injective },
+  obtain ⟨i, hip, hin, hi⟩ := hz,
+  rw ← hi,
+  sorry; { refine ⟨(cyclotomic_unit K (nat.gcd_one_left _) hin), _⟩,
+  rw ← neg_sub,
+  rw mul_neg_eq_neg_mul_symm,
+  simp [mul_denom K (nat.gcd_one_left _) hin] },
 end
+
+/-
 
 variable (n)
 
