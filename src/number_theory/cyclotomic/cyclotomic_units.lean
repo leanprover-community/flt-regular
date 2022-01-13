@@ -117,6 +117,18 @@ begin
   nth_rewrite 0 this,
   rw [← geom_sum_mul_neg, mul_comm]
 end
+
+lemma _root_.is_primitive_root.one_add_is_unit {n : ℕ} {ζ : A} (hζ : is_primitive_root ζ n)
+  (hn : n ≠ 1) (hn': ¬ 2 ∣ n) : is_unit (1 + ζ) :=
+begin
+  have := (associated_one_sub_pow_primitive_root_of_coprime A hζ
+            n.coprime_one_left (nat.prime_two.coprime_iff_not_dvd.mpr hn')),
+  rw [pow_one, ← one_pow 2, sq_sub_sq, one_pow, mul_comm] at this,
+  refine is_unit_of_associated_mul this (sub_ne_zero.mpr _),
+  rintro rfl,
+  exact hn (hζ.eq_order_of.trans order_of_one)
+end
+
 /-
 
 variable (n)
