@@ -96,7 +96,7 @@ lemma _root_.nat.one_lt_of_ne : ∀ n : ℕ, n ≠ 0 → n ≠ 1 → 1 < n
 | (n+2) _ _ := n.one_lt_succ_succ
 
 -- this result holds for all primitive roots; dah.
-lemma exists_unit_mul_primitive_root_one_sub_zeta_runity {n j k : ℕ} {ζ : A}
+lemma associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
   (hζ : is_primitive_root ζ n) (hk : k.coprime n) (hj : j.coprime n) :
   associated (1 - ζ ^ j) (1 - ζ ^ k) :=
 begin
@@ -117,7 +117,6 @@ begin
   nth_rewrite 0 this,
   rw [← geom_sum_mul_neg, mul_comm]
 end
-
 /-
 
 variable (n)
