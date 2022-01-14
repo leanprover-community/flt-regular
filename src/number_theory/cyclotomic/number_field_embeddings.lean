@@ -28,18 +28,10 @@ def equiv_alg : (K →ₐ[ℚ] ℂ) ≃ (K →+* ℂ) :=
 { to_fun := coe,
   inv_fun := λ f : K →+* ℂ, alg_hom.mk' f (λ (c : ℚ) x,
     add_monoid_hom.map_rat_module_smul f.to_add_monoid_hom _ _),
-  left_inv := begin
-    intro f,
-    ext x : 1,
-    simp,
-  end,
-  right_inv :=
-  begin
-    intro f,
-    ext x : 1,
-    erw alg_hom.coe_mk' f
-      (λ (c : ℚ) x, add_monoid_hom.map_rat_module_smul f.to_add_monoid_hom _ _),
-  end}
+  left_inv  := λ x, alg_hom.ext  $ by simp only [forall_const, alg_hom.coe_to_ring_hom,
+                                                 eq_self_iff_true, alg_hom.coe_mk'],
+  right_inv := λ x, ring_hom.ext $ by simp only [forall_const, alg_hom.coe_to_ring_hom,
+                                                 eq_self_iff_true, alg_hom.coe_mk'] }
 
 -- There are finitely many complex embeddings of a number field
 instance : fintype (K →+* ℂ) := fintype.of_equiv (K →ₐ[ℚ] ℂ) equiv_alg
@@ -58,19 +50,12 @@ def is_complex (φ : K →+* ℂ) : Prop := conj ∘ φ ≠ φ
 /-- Two embeddings are conjuate if `conj` takes one to the other-/
 def are_conj (φ θ : K →+* ℂ) : Prop := conj ∘ φ = θ
 
-
 /--An element of a number field is real if its image under any embedding is fixed by conj-/
 def element_is_real (x : K) : Prop := ∀ φ : K →+* ℂ, conj (φ x) = φ x
 
-instance real_embeddings {K : Type*} [field K] [number_field K] :
-  fintype { φ  : K →+* ℂ // is_real φ} := infer_instance
+local notation `r1` := fintype.card { φ  : K →+* ℂ // is_real φ }
 
-instance complex_embeddings {K : Type*} [field K] [number_field K]:
-  fintype { φ : K →+* ℂ // is_complex φ} :=  infer_instance
-
-local notation `r1` := fintype.card { φ  : K →+* ℂ // is_real φ}
-
-local notation `c2` := fintype.card { φ  : K →+* ℂ // is_complex  φ}
+local notation `c2` := fintype.card { φ  : K →+* ℂ // is_complex φ }
 
 lemma not_real_eq_complex (φ : K →+* ℂ) : is_real φ ↔ ¬ is_complex φ :=
 begin
@@ -82,10 +67,8 @@ lemma real_Eq_rank_sub_complex [number_field K] :
   r1 = finrank ℚ K  - c2 :=
 begin
   rw ← card_embeddings,
-  convert  fintype.card_subtype_compl,
-  simp only,
-  simp_rw ← not_real_eq_complex,
-  sorry --here something nasty happened, the proof should be changed, we don't like ==
+  simp_rw not_real_eq_complex,
+  exact fintype.card_subtype_compl
 end
 
 lemma elem_is_real_is_real (x : K) (h : element_is_real x) :
