@@ -22,7 +22,8 @@ open_locale nnreal
 -- probably this isn't needed but is another annoying example of 0 < n vs n ≠ 0 causing library
 -- search to fail on "obvious" lemmas
 lemma eq_one_of_pow_eq_one {n : ℕ} (hn : 0 < n) {t : ℝ≥0} (h_pow : t ^ n = 1) : t = 1 :=
-(pow_eq_one_iff hn.ne').mp h_pow
+(@pow_eq_one_iff _ _ _ nnreal.covariant_mul _ _ hn.ne').mp h_pow
+
 
 section forward
 
@@ -47,8 +48,7 @@ begin
   clear_value t,
   lift t to ℝ≥0 using this,
   norm_cast at *,
-  rwa pow_eq_one_iff at h_pow,
-  exact hn.ne',
+  rwa (@pow_eq_one_iff _ _ _ nnreal.covariant_mul _ _ hn.ne') at h_pow,
 end
 
 end forward
