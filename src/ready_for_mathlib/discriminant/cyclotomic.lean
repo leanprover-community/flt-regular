@@ -5,6 +5,7 @@ import ring_theory.discriminant
 
 import number_theory.cyclotomic.cyclotomic_units
 import ready_for_mathlib.cyclotomic
+import ready_for_mathlib.totient
 import number_theory.cyclotomic.rat
 
 universes u
@@ -17,18 +18,25 @@ namespace is_cyclotomic_extension.rat.singleton
 
 local attribute [instance] is_cyclotomic_extension.finite_dimensional
 
-variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
+section generalize
 
-lemma norm_zeta (hodd : odd (p : ℕ)) : norm ℚ (zeta p ℚ K) = 1 :=
+variables (K L : Type*) [linear_ordered_field K] [field L] {p : ℕ+} [ne_zero ((p : ℕ) : L)]
+          [algebra K L] [is_cyclotomic_extension {p} K L]
+
+lemma norm_zeta (hodd : odd (p : ℕ)) : norm K (zeta p K L) = 1 :=
 begin
-  have hz := congr_arg (norm ℚ) ((is_primitive_root.iff_def _ p).1 (zeta_primitive_root p ℚ K)).1,
-  rw [← ring_hom.map_one (algebra_map ℚ K), norm_algebra_map, one_pow, monoid_hom.map_pow,
+  have hz := congr_arg (norm K) ((is_primitive_root.iff_def _ p).1 (zeta_primitive_root p K L)).1,
+  rw [← ring_hom.map_one (algebra_map K L), norm_algebra_map, one_pow, monoid_hom.map_pow,
     ← one_pow ↑p] at hz,
-  exact (strict_mono.injective (odd.strict_mono_pow hodd)) hz,
+  exact strict_mono.injective hodd.strict_mono_pow hz
 end
 
-lemma norm_zeta_sub_one [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
-  norm ℚ ((zeta p ℚ K) - 1) = p :=
+end generalize
+
+variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
+
+lemma norm_zeta_sub_one' (h : 2 < (p : ℕ)) :
+  norm ℚ ((zeta p ℚ K) - 1) = ↑(eval 1 (cyclotomic p ℤ)) :=
 begin
   let E := algebraic_closure K,
   letI := char_zero_of_injective_algebra_map (algebra_map ℚ E).injective,
@@ -39,9 +47,8 @@ begin
   rw [norm_eq_prod_embeddings],
   conv_lhs { congr, skip, funext,
     rw [← neg_sub, alg_hom.map_neg, alg_hom.map_sub, alg_hom.map_one, neg_eq_neg_one_mul] },
-  replace hodd : (p : ℕ) ≠ 2 := λ hn, by exact hodd.symm (pnat.coe_inj.1 hn.symm),
   rw [prod_mul_distrib, prod_const, card_univ, alg_hom.card, finrank p,
-    totient_prime hp.out, neg_one_pow_of_even (even_sub_one_of_prime_ne_two hp.out hodd), one_mul],
+    neg_one_pow_of_even (nat.totient_even h), one_mul],
   have : univ.prod (λ (σ : K →ₐ[ℚ] E), 1 - σ (zeta p ℚ K)) = eval 1 (cyclotomic' p E),
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
     refine fintype.prod_equiv (zeta.embeddings_equiv_primitive_roots p ℚ K E _) _ _ (λ σ, _),
@@ -49,9 +56,15 @@ begin
       refine (is_primitive.irreducible_iff_irreducible_map_fraction_map
         (cyclotomic.monic p ℤ).is_primitive).1 (cyclotomic.irreducible p.pos) },
     { simp } },
-  rw [this, cyclotomic', ← cyclotomic_eq_prod_X_sub_primitive_roots
-    (is_root_cyclotomic_iff.1 hz), eval_one_cyclotomic_prime, coe_coe, map_nat_cast]
+  rw [this, cyclotomic', ← cyclotomic_eq_prod_X_sub_primitive_roots (is_root_cyclotomic_iff.1 hz),
+      ← map_cyclotomic_int, (algebra_map ℚ E).map_int_cast, ←int.cast_one, eval_int_cast_map],
+  refl
 end
+
+lemma norm_zeta_sub_one [hp : fact (p : ℕ).prime] (h : p ≠ 2) :
+  norm ℚ ((zeta p ℚ K) - 1) = p :=
+have hp : 2 < (p : ℕ) := lt_of_le_of_ne hp.1.two_le $ by contrapose! h; exact pnat.coe_injective h.symm,
+(norm_zeta_sub_one' K hp).trans begin rw eval_one_cyclotomic_prime, simp end
 
 lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
   discr ℚ (zeta.power_basis p ℚ K).basis =
@@ -75,7 +88,7 @@ begin
     alg_hom.map_sub, aeval_add, alg_hom.map_mul] at H,
   replace H := congr_arg (algebra.norm ℚ) H,
   rw [monoid_hom.map_mul, norm_zeta_sub_one _ hodd, monoid_hom.map_mul, monoid_hom.map_pow,
-    norm_zeta K (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out) hodd')),
+    norm_zeta ℚ K (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out) hodd')),
     one_pow, mul_one, ← map_nat_cast (algebra_map ℚ K), norm_algebra_map,
     finrank p, totient_prime hp.out, ← succ_pred_eq_of_pos hpos, pow_succ,
     mul_comm _ (p : ℚ), coe_coe] at H,
