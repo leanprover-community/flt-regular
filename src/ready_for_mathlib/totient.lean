@@ -4,6 +4,7 @@ import algebra.char_p.two
 namespace nat
 
 -- combinatorial arguments would be more annoying than this
+-- pr #11436
 lemma totient_even {n : ℕ} (hn : 2 < n) : even n.totient :=
 begin
   haveI : fact (0 < n) := ⟨pos_of_gt hn⟩,
