@@ -5,7 +5,6 @@ import ring_theory.discriminant
 
 import number_theory.cyclotomic.cyclotomic_units
 import ready_for_mathlib.cyclotomic
-import ready_for_mathlib.totient
 import number_theory.cyclotomic.rat
 
 universes u
