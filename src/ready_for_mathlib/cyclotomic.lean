@@ -3,9 +3,8 @@ import ring_theory.polynomial.cyclotomic.basic
 open polynomial nat
 open_locale big_operators
 
-section no_pr_yet
+section pr_11473
 
--- I'll wait for `ne_zero` before merging these
 lemma roots_cyclotomic_nodup {n : ℕ} {R : Type*} [comm_ring R] [is_domain R] [ne_zero (n : R)] :
   (cyclotomic n R).roots.nodup :=
 begin
@@ -21,4 +20,4 @@ lemma primitive_roots_eq_roots_cyclotomic {n : ℕ} {R : Type*} [comm_ring R] [i
 by { ext, simp [cyclotomic_ne_zero n R, is_root_cyclotomic_iff,
                 mem_primitive_roots, ne_zero.pos_of_ne_zero_coe R] }
 
-end no_pr_yet
+end pr_11473

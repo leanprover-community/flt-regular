@@ -21,6 +21,7 @@ units.ext $ by simpa⟩
 
 open polynomial
 
+-- pr 11473
 lemma is_root_of_unity_of {n : ℕ} {R} [comm_ring R] {ζ : R} {i : ℕ}
   (hi : i ∈ n.divisors) (h : (cyclotomic i R).is_root ζ) : ζ ^ n = 1 :=
 begin
