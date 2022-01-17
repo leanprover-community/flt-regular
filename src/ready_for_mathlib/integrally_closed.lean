@@ -2,17 +2,17 @@ import ring_theory.integral_closure
 import ring_theory.power_basis
 import ring_theory.norm
 
-universes u v z
+universes u v z w
 
 open_locale big_operators
 
 open polynomial algebra finset
 
-variables {R : Type u} (K : Type v) (L : Type z)
-variables [comm_ring R] [field K] [field L]
+variables {R : Type u} {S : Type w} (K : Type v) (L : Type z)
+variables [comm_ring R] [ring S] [algebra R S] [field K] [field L]
 variables [algebra K L] [algebra R L] [algebra R K] [is_scalar_tower R K L]
 
-lemma eisenstein {R : Type*} [ring R] {x : R} {P : polynomial R} (hP : eval x P = 0) {p : R}
+lemma eisenstein {x : S} {P : polynomial S} (hP : eval x P = 0) {p : S}
   (hmo : P.monic) (hdiv : ∀ n < P.nat_degree, p ∣ P.coeff n ) :
   ∀ i, P.nat_degree ≤ i → p ∣ x ^ i :=
 begin
@@ -31,7 +31,7 @@ begin
   exact dvd_mul_right _ _
 end
 
-lemma eisenstein_aeval {S : Type v} [ring S] [algebra R S] {x : S} {p : R} {P : polynomial R}
+lemma eisenstein_aeval {x : S} {p : R} {P : polynomial R}
   (hx : aeval x P = 0) (hmo : P.monic) (hdiv : ∀ n < P.nat_degree, p ∣ P.coeff n ) :
   ∀ i, P.nat_degree ≤ i → (algebra_map R S) p ∣ x ^ i :=
 begin
@@ -59,16 +59,12 @@ begin
     Q.coeff i • B.gen ^ i * B.gen ^ (P.nat_degree - 1) =
     Q.coeff i • (algebra_map R L) p * f (i + (P.nat_degree - 1)),
   { intros i hi,
-    rw [smul_mul_assoc, ← pow_add, smul_mul_assoc],
-    congr,
+    rw [smul_mul_assoc, ← pow_add, smul_mul_assoc, hf (i + (P.nat_degree - 1))],
     simp only [mem_range, mem_erase] at hi,
-    have : P.nat_degree ≤ i + (P.nat_degree - 1),
-    { cases P.nat_degree with n,
-      { exact zero_le _ },
-      { simp only [tsub_zero, nat.succ_sub_succ_eq_sub],
-        rw [nat.succ_eq_add_one, add_comm, add_le_add_iff_right],
+    cases P.nat_degree with n,
+    { exact zero_le _ },
+    { rw [nat.succ_sub_one, nat.succ_eq_add_one, add_comm, add_le_add_iff_right],
         exact nat.one_le_iff_ne_zero.2 hi.1 } },
-    rw [hf (i + (P.nat_degree - 1)) this], },
   rw [alg_hom.to_ring_hom_eq_coe, alg_hom.coe_to_ring_hom, aeval_eq_sum_range, ← insert_erase
     (show 0 ∈ range (Q.nat_degree + 1), by simp), sum_insert (not_mem_erase 0 _), pow_zero] at hQ,
   replace hQ := congr_arg (λ x, x * B.gen ^ (P.nat_degree - 1)) hQ,
