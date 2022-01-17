@@ -1,5 +1,6 @@
 import ring_theory.polynomial.cyclotomic.basic
 
+-- pr 11504
 /-- Make an element of `roots_of_unity` from a member of the base ring, and a proof that it has
 a positive power equal to one. -/
 def roots_of_unity.mk_of_pow_eq {M} [comm_monoid M] (ζ : M) {n : ℕ+} (h : ζ ^ (n : ℕ) = 1) :
