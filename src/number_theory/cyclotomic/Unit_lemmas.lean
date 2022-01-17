@@ -11,6 +11,7 @@ local notation `FZ` := number_field.ring_of_integers ℚ -- FZ for fake ℤ :)
 local notation `ζ` := zeta p ℚ KK
 
 --I (RB) am not sure why we use FZ, but this instance seems to be needed
+-- Eric: this was a remnant from when I had `is_cyclotomic_extension (𝓞 K) (𝓞 L); I will fix this soon
 instance FZ_cycl_ext : is_cyclotomic_extension {p} FZ (number_field.ring_of_integers
   (cyclotomic_field p ℚ)) := sorry
 
