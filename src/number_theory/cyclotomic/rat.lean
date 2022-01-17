@@ -39,11 +39,11 @@ section int_facts
 
 noncomputable theory
 
-local notation `𝓞` := number_field.ring_of_integers
+open_locale number_field
 
 local notation `KK` := cyclotomic_field n ℚ
 
-local notation `RR` := number_field.ring_of_integers (cyclotomic_field n ℚ)
+local notation `RR` := 𝓞 (cyclotomic_field n ℚ)
 
 --A.K.A theorem:FLT_facts 3
 lemma flt_fact_3 [fact (n : ℕ).prime] (a : RR) :

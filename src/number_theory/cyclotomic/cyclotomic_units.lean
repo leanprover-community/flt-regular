@@ -18,7 +18,7 @@ import tactic.may_assume
 
 noncomputable theory
 
-open_locale big_operators non_zero_divisors
+open_locale big_operators non_zero_divisors number_field
 open number_field polynomial finset module units fractional_ideal submodule
 
 universe variables u v w z
@@ -26,8 +26,6 @@ universe variables u v w z
 variables (n : ℕ+) (K : Type u) (L : Type v) (A : Type w) (B : Type z)
 variables [comm_ring A] [comm_ring B] [algebra A B]
 variables [field K] [field L] [algebra K L]
-
-local notation `𝓞` := number_field.ring_of_integers
 
 namespace is_cyclotomic_extension
 
