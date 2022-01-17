@@ -50,6 +50,8 @@ lemma norm_eq_prod_roots [algebra K L] [algebra K F] [is_separable K L] [finite_
 by rw [norm_eq_norm_adjoin K x, ring_hom.map_pow,
   intermediate_field.adjoin_simple.norm_gen_eq_prod_roots _ hF]
 
+variable (K)
+
 lemma is_integral_norm [algebra R L] [algebra R K] [algebra K L] [is_scalar_tower R K L]
   [is_separable K L] [finite_dimensional K L] {x : L} (hx : _root_.is_integral R x) :
   _root_.is_integral R (norm K x) :=
