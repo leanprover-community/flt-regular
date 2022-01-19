@@ -2,7 +2,6 @@ import ring_theory.integrally_closed
 import ring_theory.power_basis
 import ring_theory.norm
 
-import ready_for_mathlib.norm_integral
 import ready_for_mathlib.integral_closure
 import ready_for_mathlib.norm
 
