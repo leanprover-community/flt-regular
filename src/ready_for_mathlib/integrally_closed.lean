@@ -17,7 +17,7 @@ variables {R : Type u} {S : Type w} (K : Type v) (L : Type z)
 variables [comm_ring R] [comm_ring S] [algebra R S] [field K] [field L]
 variables [algebra K L] [algebra R L] [algebra R K] [is_scalar_tower R K L]
 
-lemma eisenstein {x : S} {P : polynomial S} (hP : eval x P = 0) {p : S}
+lemma eisenstein {S : Type*} [comm_ring S] {x : S} {P : polynomial S} (hP : eval x P = 0) {p : S}
   (hmo : P.monic) (hdiv : ∀ n < P.nat_degree, p ∣ P.coeff n ) :
   ∀ i, P.nat_degree ≤ i → p ∣ x ^ i :=
 begin
