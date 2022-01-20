@@ -3,7 +3,6 @@ import ring_theory.power_basis
 import ring_theory.norm
 
 import ready_for_mathlib.integral_closure
-import ready_for_mathlib.norm
 
 universes u v z w
 
@@ -107,7 +106,7 @@ begin
   rw [← smul_sum, ← smul_sub, smul_def, is_scalar_tower.algebra_map_apply R K L,
     _root_.map_mul, map_pow, norm_algebra_map, smul_def, _root_.map_mul,
     is_scalar_tower.algebra_map_apply R K L, norm_algebra_map, ← hr₂,
-    power_basis.norm_gen_eq_coeff_zero_minpoly', minpoly.gcd_domain_eq_field_fractions K hBint,
+    power_basis.norm_gen_eq_coeff_zero_minpoly, minpoly.gcd_domain_eq_field_fractions K hBint,
     coeff_map, mul_pow, ← map_pow _ _ (P.nat_degree - 1), ← pow_mul,
     show (-1 : K) = algebra_map R K (-1), by simp, ← map_pow _ _ (B.dim * (P.nat_degree - 1)),
     ← _root_.map_mul, ← map_pow, ← _root_.map_mul, ← map_pow, ← _root_.map_mul] at H,
