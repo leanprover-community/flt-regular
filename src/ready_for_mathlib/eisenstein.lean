@@ -26,6 +26,9 @@ variables {R : Type u}
 
 namespace polynomial
 
+/-- Given an ideal `𝓟` of a commutative semiring `R`, we say that a polynomial `f : polynomial R`
+is *Eisenstein at `𝓟`* if `f.leading_coeff ∉ 𝓟`, `∀ n, n < f.nat_degree → f.coeff n ∈ 𝓟` and
+`f.coeff 0 ∉ 𝓟 ^ 2`. -/
 @[mk_iff] structure is_eisenstein_at [comm_semiring R] (f : polynomial R) (𝓟 : ideal R) : Prop :=
 (leading : f.leading_coeff ∉ 𝓟)
 (mem : ∀ {n}, n < f.nat_degree → f.coeff n ∈ 𝓟)
