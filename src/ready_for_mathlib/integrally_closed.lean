@@ -4,6 +4,7 @@ import ring_theory.norm
 
 import ready_for_mathlib.integral_closure
 import ready_for_mathlib.degree
+import ready_for_mathlib.nat
 
 
 universes u v z w
@@ -84,10 +85,7 @@ begin
   { intros i hi,
     rw [nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R L)],
     simp only [mem_range, mem_erase] at hi,
-    cases P.nat_degree with n,
-    { exact zero_le _ },
-    { rw [nat.succ_sub_one, nat.succ_eq_add_one, add_comm, add_le_add_iff_right],
-        exact nat.one_le_iff_ne_zero.2 hi.1 } },
+    exact nat.le_of_pos_add_prec _ hi.1 },
   have : ∀ i ∈ (range (Q.nat_degree + 1)).erase 0,
     Q.coeff i • B.gen ^ i * B.gen ^ (P.nat_degree - 1) =
     Q.coeff i • (algebra_map R L) p * f (i + (P.nat_degree - 1)),
@@ -120,7 +118,7 @@ begin
 
   set d := finite_dimensional.finrank K L with hd,
   obtain ⟨x, hx⟩ := hdiv 0 (minpoly.nat_degree_pos hBint),
-  have hppdiv : p ^ d ∣ p ^ finite_dimensional.finrank K L * r₂ := dvd_mul_of_dvd_left dvd_rfl _,
+  have hppdiv : p ^ d ∣ p ^ d * r₂ := dvd_mul_of_dvd_left dvd_rfl _,
   rw [← H, mul_comm, mul_assoc, ← units.coe_neg_one, ← units.coe_pow,
     is_unit.dvd_mul_left _ _ _ ⟨_, rfl⟩, hx] at hppdiv,
   obtain ⟨y, hy⟩ := hppdiv,
@@ -132,8 +130,7 @@ begin
     nat.succ_pred_eq_of_pos (dim_pos _), mul_assoc, nat.pred_eq_sub_one, mul_assoc,
     mul_right_inj' (λ h, prime.ne_zero hp (pow_eq_zero h))] at hy,
   cases prime.dvd_or_dvd hp (dvd.intro y (eq.symm hy)) with h,
-  { clear H hintsum this aux hf hr₂ hQ hr₁ r₁ r₂ hBint hzint f hdiv P₁,
-    obtain ⟨z, hz⟩ := prime.dvd_of_dvd_pow hp h,
+  { obtain ⟨z, hz⟩ := prime.dvd_of_dvd_pow hp h,
     rw [hz, ← mul_assoc, ← pow_two] at hx,
     exfalso,
     apply hndiv,
@@ -156,44 +153,6 @@ begin
   choose! f hf using eisenstein_aeval (minpoly.aeval R B.gen) (minpoly.monic hBint) hdiv,
   rw [adjoin_singleton_eq_range_aeval] at hz,
   obtain ⟨Q, hQ⟩ := hz,
-
-  have aux : ∀ i ∈ (range (Q.nat_degree + 1)).erase 0, P₁.nat_degree ≤ i + (P₁.nat_degree - 1),
-  { intros i hi,
-    rw [nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R L)],
-    simp only [mem_range, mem_erase] at hi,
-    cases P.nat_degree with n,
-    { exact zero_le _ },
-    { rw [nat.succ_sub_one, nat.succ_eq_add_one, add_comm, add_le_add_iff_right],
-        exact nat.one_le_iff_ne_zero.2 hi.1 } },
-  have : ∀ i ∈ (range (Q.nat_degree + 1)).erase 0,
-    Q.coeff i • B.gen ^ i * B.gen ^ (P.nat_degree - 1) =
-    Q.coeff i • (algebra_map R L) p * f (i + (P.nat_degree - 1)),
-  { intros i hi,
-    rw [← nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R L), smul_mul_assoc,
-      ← pow_add, smul_mul_assoc, (hf _ (aux i hi)).1] },
-  have hintsum : is_integral R (z * B.gen ^ (P.nat_degree - 1) -
-    ∑ (x : ℕ) in (range (Q.nat_degree + 1)).erase 0, Q.coeff x • f (x + (P.nat_degree - 1))),
-  { refine is_integral_sub (is_integral_mul hzint (is_integral.pow hBint _))
-      (is_integral.sum _ (λ i hi, (is_integral_smul _ _))),
-    rw [← nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R L)],
-    exact adjoin_le_integral_closure hBint (hf _ (aux i hi)).2 },
-  obtain ⟨r₁, hr₁⟩ := is_integral_iff.1 (is_integral_norm K hBint),
-  obtain ⟨r₂, hr₂⟩ := is_integral_iff.1 (is_integral_norm K hintsum),
-
-  rw [alg_hom.to_ring_hom_eq_coe, alg_hom.coe_to_ring_hom, aeval_eq_sum_range, ← insert_erase
-    (show 0 ∈ range (Q.nat_degree + 1), by simp), sum_insert (not_mem_erase 0 _), pow_zero] at hQ,
-  have H := congr_arg (λ x, x * B.gen ^ (P.nat_degree - 1)) hQ,
-  simp_rw [smul_mul_assoc, add_mul, smul_mul_assoc, one_mul, sum_mul, sum_congr rfl this,
-    smul_mul_assoc, ← smul_def, smul_smul, mul_comm _ p, ← smul_smul] at H,
-  replace H := congr_arg (norm K) (eq_sub_of_add_eq H),
-  rw [← smul_sum, ← smul_sub, smul_def, is_scalar_tower.algebra_map_apply R K L,
-    _root_.map_mul, map_pow, norm_algebra_map, smul_def, _root_.map_mul,
-    is_scalar_tower.algebra_map_apply R K L, norm_algebra_map, ← hr₂,
-    power_basis.norm_gen_eq_coeff_zero_minpoly, minpoly.gcd_domain_eq_field_fractions K hBint,
-    coeff_map, mul_pow, ← map_pow _ _ (P.nat_degree - 1), ← pow_mul,
-    show (-1 : K) = algebra_map R K (-1), by simp, ← map_pow _ _ (B.dim * (P.nat_degree - 1)),
-    ← _root_.map_mul, ← map_pow, ← _root_.map_mul, ← map_pow, ← _root_.map_mul] at H,
-  replace H := is_fraction_ring.injective R K H,
 
   sorry
 end
