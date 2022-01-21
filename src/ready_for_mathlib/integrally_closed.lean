@@ -153,6 +153,21 @@ begin
   choose! f hf using eisenstein_aeval (minpoly.aeval R B.gen) (minpoly.monic hBint) hdiv,
   rw [adjoin_singleton_eq_range_aeval] at hz,
   obtain ⟨Q, hQ⟩ := hz,
+  rw [alg_hom.to_ring_hom_eq_coe, alg_hom.coe_to_ring_hom] at hQ,
 
-  sorry
+  suffices : ∀ i ∈ range (Q.nat_degree + 1), p ∣ Q.coeff i,
+  { sorry },
+
+  intro i,
+  refine nat.case_strong_induction_on i _ (λ j hind, _),
+  { intro H,
+    exact eiseinstein_integral_first K L hp hdiv hndiv hBint hQ hzint },
+  { intro hj,
+    rw [mem_range] at hj,
+    replace hj := nat.lt_of_succ_lt_succ hj,
+    rw [aeval_eq_sum_range, ← insert_erase (mem_range.2 (lt_trans hj (nat.lt.base _))),
+      sum_insert (not_mem_erase _ _)] at hQ,
+
+    sorry
+  }
 end
