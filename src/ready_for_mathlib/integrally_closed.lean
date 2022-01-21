@@ -163,11 +163,8 @@ begin
   { intro H,
     exact eiseinstein_integral_first K L hp hdiv hndiv hBint hQ hzint },
   { intro hj,
-    rw [mem_range] at hj,
-    replace hj := nat.lt_of_succ_lt_succ hj,
-    rw [aeval_eq_sum_range, ← insert_erase (mem_range.2 (lt_trans hj (nat.lt.base _))),
-      sum_insert (not_mem_erase _ _)] at hQ,
-
+    rw [aeval_eq_sum_range, ← insert_erase hj, sum_insert (not_mem_erase _ _)] at hQ,
+    replace hQ := eq_sub_of_add_eq hQ,
     sorry
   }
 end
