@@ -5,7 +5,7 @@ import ring_theory.norm
 import ready_for_mathlib.integral_closure
 import ready_for_mathlib.degree
 import ready_for_mathlib.nat
-
+import ready_for_mathlib.prime
 
 universes u v z w
 
@@ -109,35 +109,21 @@ begin
   replace H := congr_arg (norm K) (eq_sub_of_add_eq H),
   rw [← smul_sum, ← smul_sub, smul_def, is_scalar_tower.algebra_map_apply R K L,
     _root_.map_mul, map_pow, norm_algebra_map, smul_def, _root_.map_mul,
-    is_scalar_tower.algebra_map_apply R K L, norm_algebra_map, ← hr₂,
+    is_scalar_tower.algebra_map_apply R K L, norm_algebra_map, ← hr₂, finrank B,
     power_basis.norm_gen_eq_coeff_zero_minpoly, minpoly.gcd_domain_eq_field_fractions K hBint,
     coeff_map, mul_pow, ← map_pow _ _ (P.nat_degree - 1), ← pow_mul,
     show (-1 : K) = algebra_map R K (-1), by simp, ← map_pow _ _ (B.dim * (P.nat_degree - 1)),
     ← _root_.map_mul, ← map_pow, ← _root_.map_mul, ← map_pow, ← _root_.map_mul] at H,
   replace H := is_fraction_ring.injective R K H,
 
-  set d := finite_dimensional.finrank K L with hd,
+  refine dvd_of_pow_dvd_pow_mul_pow_of_square_not_dvd B.dim_pos hp _ hndiv,
   obtain ⟨x, hx⟩ := hdiv 0 (minpoly.nat_degree_pos hBint),
-  have hppdiv : p ^ d ∣ p ^ d * r₂ := dvd_mul_of_dvd_left dvd_rfl _,
+  have hppdiv : p ^ B.dim ∣ p ^ B.dim * r₂ := dvd_mul_of_dvd_left dvd_rfl _,
   rw [← H, mul_comm, mul_assoc, ← units.coe_neg_one, ← units.coe_pow,
-    is_unit.dvd_mul_left _ _ _ ⟨_, rfl⟩, hx] at hppdiv,
-  obtain ⟨y, hy⟩ := hppdiv,
-
-
-  rw [mul_pow, ← nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R K),
-    ← minpoly.gcd_domain_eq_field_fractions K hBint, nat_degree_minpoly, hd, finrank B,
-    ← nat.succ_pred_eq_of_pos (dim_pos _), pow_succ p, mul_comm p,
-    nat.succ_pred_eq_of_pos (dim_pos _), mul_assoc, nat.pred_eq_sub_one, mul_assoc,
-    mul_right_inj' (λ h, prime.ne_zero hp (pow_eq_zero h))] at hy,
-  cases prime.dvd_or_dvd hp (dvd.intro y (eq.symm hy)) with h,
-  { obtain ⟨z, hz⟩ := prime.dvd_of_dvd_pow hp h,
-    rw [hz, ← mul_assoc, ← pow_two] at hx,
-    exfalso,
-    apply hndiv,
-    rw [hx],
-    exact dvd_mul_right _ _ },
-  { exact prime.dvd_of_dvd_pow hp h },
-  all_goals { apply_instance }
+    is_unit.dvd_mul_left _ _ _ ⟨_, rfl⟩, mul_comm] at hppdiv,
+  convert hppdiv,
+  rw [← nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R K),
+    ← minpoly.gcd_domain_eq_field_fractions K hBint, nat_degree_minpoly],
 end
 
 lemma eiseinstein_integral [is_domain R] [normalized_gcd_monoid R] [is_fraction_ring R K]
