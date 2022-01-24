@@ -2,7 +2,6 @@ import number_theory.cyclotomic.basic
 import ring_theory.adjoin.power_basis
 
 import ready_for_mathlib.roots_of_unity
-import ready_for_mathlib.cyclotomic.basic
 
 noncomputable theory
 

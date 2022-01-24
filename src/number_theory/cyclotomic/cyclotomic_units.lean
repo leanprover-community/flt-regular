@@ -6,7 +6,7 @@ Authors: Alex J. Best
 
 import data.polynomial.field_division
 import number_theory.number_field
-import ready_for_mathlib.cyclotomic.basic
+
 import ring_theory.polynomial.cyclotomic.eval
 
 import ready_for_mathlib.zeta
