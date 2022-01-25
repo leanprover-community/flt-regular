@@ -11,7 +11,7 @@ universes u v z w
 
 open_locale big_operators
 
-open polynomial algebra finset is_integrally_closed power_basis
+open polynomial algebra finset is_integrally_closed power_basis is_scalar_tower
 
 variables {R : Type u} {S : Type w} (K : Type v) (L : Type z)
 variables [comm_ring R] [comm_ring S] [algebra R S] [field K] [field L]
@@ -106,13 +106,13 @@ begin
   simp_rw [smul_mul_assoc, add_mul, smul_mul_assoc, one_mul, sum_mul, sum_congr rfl this,
     smul_mul_assoc, ← smul_def, smul_smul, mul_comm _ p, ← smul_smul] at hQ,
   replace hQ := congr_arg (norm K) (eq_sub_of_add_eq hQ),
-  rw [← smul_sum, ← smul_sub, smul_def, is_scalar_tower.algebra_map_apply R K L,
-    _root_.map_mul, map_pow, norm_algebra_map, smul_def, _root_.map_mul,
-    is_scalar_tower.algebra_map_apply R K L, norm_algebra_map, ← hr, finrank B,
-    power_basis.norm_gen_eq_coeff_zero_minpoly, minpoly.gcd_domain_eq_field_fractions K hBint,
-    coeff_map, mul_pow, ← map_pow _ _ (P.nat_degree - 1), ← pow_mul,
-    show (-1 : K) = algebra_map R K (-1), by simp, ← map_pow _ _ (B.dim * (P.nat_degree - 1)),
-    ← _root_.map_mul, ← map_pow, ← _root_.map_mul, ← map_pow, ← _root_.map_mul] at hQ,
+  rw [← smul_sum, ← smul_sub, smul_def, algebra_map_apply R K L, _root_.map_mul, map_pow,
+    norm_algebra_map, smul_def, _root_.map_mul, algebra_map_apply R K L, norm_algebra_map,
+    ← hr, finrank B, power_basis.norm_gen_eq_coeff_zero_minpoly,
+    minpoly.gcd_domain_eq_field_fractions K hBint, coeff_map, mul_pow,
+    ← map_pow _ _ (P.nat_degree - 1), ← pow_mul, show (-1 : K) = algebra_map R K (-1), by simp,
+    ← map_pow _ _ (B.dim * (P.nat_degree - 1)), ← _root_.map_mul, ← map_pow, ← _root_.map_mul,
+    ← map_pow, ← _root_.map_mul] at hQ,
   replace hQ := is_fraction_ring.injective R K hQ,
 
   refine dvd_of_pow_dvd_pow_mul_pow_of_square_not_dvd B.dim_pos hp _ hndiv,
@@ -133,12 +133,12 @@ lemma eiseinstein_integral [is_domain R] [normalized_gcd_monoid R] [is_fraction_
   z ∈ adjoin R ({B.gen} : set L) :=
 begin
   letI := finite_dimensional B,
-  let P := minpoly R B.gen,
+  set P := minpoly R B.gen with hP,
   let P₁ := P.map (algebra_map R L),
+
   choose! f hf using eisenstein_aeval (minpoly.aeval R B.gen) (minpoly.monic hBint) hdiv,
   rw [adjoin_singleton_eq_range_aeval] at hz,
   obtain ⟨Q, hQ⟩ := hz,
-  rw [alg_hom.to_ring_hom_eq_coe, alg_hom.coe_to_ring_hom] at hQ,
 
   suffices : ∀ i ∈ range (Q.nat_degree + 1), p ∣ Q.coeff i,
   { sorry },
@@ -149,8 +149,52 @@ begin
     exact eiseinstein_integral_first K L hp hdiv hndiv hBint hQ hzint },
   { intro hj,
     refine dvd_of_pow_dvd_pow_mul_pow_of_square_not_dvd B.dim_pos hp _ hndiv,
-    rw [aeval_eq_sum_range, ← insert_erase hj, sum_insert (not_mem_erase _ _)] at hQ,
-    replace hQ := eq_sub_of_add_eq hQ,
+
+    choose! g hg using hind,
+    replace hg : ∀ k ∈ range (j + 1), Q.coeff k • B.gen ^ k =
+      (algebra_map R L p) * (g k • B.gen ^ k),
+    { intros k hk,
+      rw [hg k (mem_range_succ_iff.1 hk) (mem_range_succ_iff.2 (le_trans (mem_range_succ_iff.1 hk)
+        (nat.succ_le_iff.1 (mem_range_succ_iff.1 hj)).le)), smul_def, smul_def,  ring_hom.map_mul,
+        mul_assoc] },
+    have HjP : j + 1 ≤ P.nat_degree := sorry,
+    have Hj : Q.nat_degree + 1 = j + 1 + (Q.nat_degree - j) := sorry,
+    have hzeroj : 0 ∈ range (Q.nat_degree - j) := sorry,
+    have hdisj : disjoint (range (j + 1))
+      (finset.map (add_left_embedding (j + 1)) (range (Q.nat_degree - j))) := sorry,
+    have : ∀ k ∈ (range (Q.nat_degree - j)).erase 0,
+      Q.coeff (j + 1 + k) • B.gen ^ (j + 1 + k) * B.gen ^ (P.nat_degree - (j + 1)) =
+      (algebra_map R L) p * Q.coeff (j + 1 + k) • f (k + P.nat_degree) := sorry,
+    have hintsum : is_integral R (z * B.gen ^ (P.nat_degree - (j + 1)) -
+      (∑ (x : ℕ) in (range (Q.nat_degree - j)).erase 0, Q.coeff (j + 1 + x) • f (x + P.nat_degree)
+      + ∑ (x : ℕ) in range (j + 1), g x • B.gen ^ x * B.gen ^ (P.nat_degree - (j + 1)))),
+    { refine is_integral_sub (is_integral_mul hzint (is_integral.pow hBint _))
+        (is_integral_add (is_integral.sum _ (λ k hk, is_integral_smul _ _))
+        (is_integral.sum _ (λ k hk, is_integral_mul (is_integral_smul _ (is_integral.pow hBint _))
+        ((is_integral.pow hBint _))))),
+      refine adjoin_le_integral_closure hBint (hf _ _).2,
+      rw [nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R L)],
+      exact le_add_self },
+    obtain ⟨r, hr⟩ := is_integral_iff.1 (is_integral_norm K hintsum),
+
+    rw [alg_hom.to_ring_hom_eq_coe, alg_hom.coe_to_ring_hom,aeval_eq_sum_range, Hj,
+      range_add, sum_union hdisj, sum_congr rfl hg, add_comm] at hQ,
+    replace hQ := congr_arg (λ x, x * B.gen ^ (P.nat_degree - (j + 1))) hQ,
+    simp_rw [sum_map, add_left_embedding_apply, add_mul, sum_mul, mul_assoc] at hQ,
+    rw [← insert_erase hzeroj, sum_insert (not_mem_erase 0 _), add_zero, sum_congr rfl this,
+      ← mul_sum, ← mul_sum, add_assoc, ← mul_add, smul_mul_assoc, ← pow_add,
+      ← nat.add_sub_assoc HjP, add_comm (j + 1), nat.add_sub_cancel,
+      smul_def, smul_def] at hQ,
+    replace hQ := congr_arg (norm K) (eq_sub_of_add_eq hQ),
+    rw [mul_assoc, ← mul_sub, _root_.map_mul, algebra_map_apply R K L, map_pow, norm_algebra_map,
+      _root_.map_mul, algebra_map_apply R K L, norm_algebra_map, finrank B, ← hr, ← map_pow,
+      power_basis.norm_gen_eq_coeff_zero_minpoly, minpoly.gcd_domain_eq_field_fractions K hBint,
+      coeff_map, show (-1 : K) = algebra_map R K (-1), by simp, mul_pow, ← map_pow, ← map_pow,
+      ← map_pow, ← map_pow, ← _root_.map_mul, ← _root_.map_mul, ← _root_.map_mul] at hQ,
+    replace hQ := is_fraction_ring.injective R K hQ,
+    have hppdiv : p ^ B.dim ∣ p ^ B.dim * r := dvd_mul_of_dvd_left dvd_rfl _,
+    rw [← hQ, mul_comm, ← units.coe_neg_one, ← units.coe_pow, ← units.coe_pow, mul_assoc,
+      is_unit.dvd_mul_left _ _ _ ⟨_, rfl⟩, mul_comm, ← hP, ← nat.succ_eq_add_one] at hppdiv,
     sorry
   }
 end
