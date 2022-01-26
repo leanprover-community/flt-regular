@@ -163,38 +163,38 @@ begin
     have hdisj : disjoint (range (j + 1))
       (finset.map (add_left_embedding (j + 1)) (range (Q.nat_degree - j))) := sorry,
     have : ∀ k ∈ (range (Q.nat_degree - j)).erase 0,
-      Q.coeff (j + 1 + k) • B.gen ^ (j + 1 + k) * B.gen ^ (P.nat_degree - (j + 1)) =
-      (algebra_map R L) p * Q.coeff (j + 1 + k) • f (k + P.nat_degree) := sorry,
-    have hintsum : is_integral R (z * B.gen ^ (P.nat_degree - (j + 1)) -
-      (∑ (x : ℕ) in (range (Q.nat_degree - j)).erase 0, Q.coeff (j + 1 + x) • f (x + P.nat_degree)
-      + ∑ (x : ℕ) in range (j + 1), g x • B.gen ^ x * B.gen ^ (P.nat_degree - (j + 1)))),
+      Q.coeff (j + 1 + k) • B.gen ^ (j + 1 + k) * B.gen ^ (P.nat_degree - (j + 2)) =
+      (algebra_map R L) p * Q.coeff (j + 1 + k) • f (k + P.nat_degree - 1) := sorry,
+    have hintsum : is_integral R (z * B.gen ^ (P.nat_degree - (j + 2)) -
+      (∑ (x : ℕ) in (range (Q.nat_degree - j)).erase 0, Q.coeff (j + 1 + x) •
+        f (x + P.nat_degree - 1) +
+      ∑ (x : ℕ) in range (j + 1), g x • B.gen ^ x * B.gen ^ (P.nat_degree - (j + 2)))),
     { refine is_integral_sub (is_integral_mul hzint (is_integral.pow hBint _))
         (is_integral_add (is_integral.sum _ (λ k hk, is_integral_smul _ _))
         (is_integral.sum _ (λ k hk, is_integral_mul (is_integral_smul _ (is_integral.pow hBint _))
         ((is_integral.pow hBint _))))),
       refine adjoin_le_integral_closure hBint (hf _ _).2,
       rw [nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R L)],
-      exact le_add_self },
+      sorry },
     obtain ⟨r, hr⟩ := is_integral_iff.1 (is_integral_norm K hintsum),
 
     rw [alg_hom.to_ring_hom_eq_coe, alg_hom.coe_to_ring_hom,aeval_eq_sum_range, Hj,
       range_add, sum_union hdisj, sum_congr rfl hg, add_comm] at hQ,
-    replace hQ := congr_arg (λ x, x * B.gen ^ (P.nat_degree - (j + 1))) hQ,
+    replace hQ := congr_arg (λ x, x * B.gen ^ (P.nat_degree - (j + 2))) hQ,
     simp_rw [sum_map, add_left_embedding_apply, add_mul, sum_mul, mul_assoc] at hQ,
     rw [← insert_erase hzeroj, sum_insert (not_mem_erase 0 _), add_zero, sum_congr rfl this,
-      ← mul_sum, ← mul_sum, add_assoc, ← mul_add, smul_mul_assoc, ← pow_add,
-      ← nat.add_sub_assoc HjP, add_comm (j + 1), nat.add_sub_cancel,
-      smul_def, smul_def] at hQ,
+      ← mul_sum, ← mul_sum, add_assoc, ← mul_add, smul_mul_assoc, ← pow_add, smul_def] at hQ,
     replace hQ := congr_arg (norm K) (eq_sub_of_add_eq hQ),
-    rw [mul_assoc, ← mul_sub, _root_.map_mul, algebra_map_apply R K L, map_pow, norm_algebra_map,
-      _root_.map_mul, algebra_map_apply R K L, norm_algebra_map, finrank B, ← hr, ← map_pow,
+    rw [smul_def, mul_assoc, ← mul_sub, _root_.map_mul, algebra_map_apply R K L, map_pow,
+      norm_algebra_map, _root_.map_mul, algebra_map_apply R K L, norm_algebra_map, finrank B, ← hr,
       power_basis.norm_gen_eq_coeff_zero_minpoly, minpoly.gcd_domain_eq_field_fractions K hBint,
-      coeff_map, show (-1 : K) = algebra_map R K (-1), by simp, mul_pow, ← map_pow, ← map_pow,
-      ← map_pow, ← map_pow, ← _root_.map_mul, ← _root_.map_mul, ← _root_.map_mul] at hQ,
+      coeff_map, show (-1 : K) = algebra_map R K (-1), by simp, ← map_pow, ← map_pow,
+      ← _root_.map_mul, ← map_pow, ← _root_.map_mul, ← map_pow, ← _root_.map_mul] at hQ,
     replace hQ := is_fraction_ring.injective R K hQ,
     have hppdiv : p ^ B.dim ∣ p ^ B.dim * r := dvd_mul_of_dvd_left dvd_rfl _,
-    rw [← hQ, mul_comm, ← units.coe_neg_one, ← units.coe_pow, ← units.coe_pow, mul_assoc,
+    rw [← hQ, mul_comm, ← units.coe_neg_one, mul_pow, ← units.coe_pow, ← units.coe_pow, mul_assoc,
       is_unit.dvd_mul_left _ _ _ ⟨_, rfl⟩, mul_comm, ← hP, ← nat.succ_eq_add_one] at hppdiv,
+    convert hppdiv,
     sorry
   }
 end
