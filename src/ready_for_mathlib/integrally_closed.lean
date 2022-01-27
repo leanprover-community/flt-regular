@@ -6,12 +6,13 @@ import ready_for_mathlib.integral_closure
 import ready_for_mathlib.degree
 import ready_for_mathlib.nat
 import ready_for_mathlib.prime
+import ready_for_mathlib.disjoint
 
 universes u v z w
 
 open_locale big_operators
 
-open polynomial algebra finset is_integrally_closed power_basis is_scalar_tower
+open polynomial algebra finset is_integrally_closed power_basis is_scalar_tower nat
 
 variables {R : Type u} {S : Type w} (K : Type v) (L : Type z)
 variables [comm_ring R] [comm_ring S] [algebra R S] [field K] [field L]
@@ -85,7 +86,7 @@ begin
   { intros i hi,
     rw [nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R L)],
     simp only [mem_range, mem_erase] at hi,
-    exact nat.le_of_pos_add_prec _ hi.1 },
+    exact le_of_pos_add_prec _ hi.1 },
   have : ∀ i ∈ (range (Q.nat_degree + 1)).erase 0,
     Q.coeff i • B.gen ^ i * B.gen ^ (P.nat_degree - 1) =
     Q.coeff i • (algebra_map R L) p * f (i + (P.nat_degree - 1)),
@@ -155,13 +156,12 @@ begin
       (algebra_map R L p) * (g k • B.gen ^ k),
     { intros k hk,
       rw [hg k (mem_range_succ_iff.1 hk) (mem_range_succ_iff.2 (le_trans (mem_range_succ_iff.1 hk)
-        (nat.succ_le_iff.1 (mem_range_succ_iff.1 hj)).le)), smul_def, smul_def,  ring_hom.map_mul,
+        (succ_le_iff.1 (mem_range_succ_iff.1 hj)).le)), smul_def, smul_def,  ring_hom.map_mul,
         mul_assoc] },
-    have HjP : j + 1 ≤ P.nat_degree := sorry,
-    have Hj : Q.nat_degree + 1 = j + 1 + (Q.nat_degree - j) := sorry,
-    have hzeroj : 0 ∈ range (Q.nat_degree - j) := sorry,
-    have hdisj : disjoint (range (j + 1))
-      (finset.map (add_left_embedding (j + 1)) (range (Q.nat_degree - j))) := sorry,
+        have Hj : Q.nat_degree + 1 = j + 1 + (Q.nat_degree - j),
+    { rw [← add_comm 1, ← add_comm 1, add_assoc, add_right_inj, ← nat.add_sub_assoc
+        (lt_of_succ_lt_succ (mem_range.1 hj)).le, add_comm, nat.add_sub_cancel] },
+    replace hj := mem_range.2 (tsub_pos_iff_lt.2 $ lt_of_succ_lt_succ $ mem_range.1 hj),
     have : ∀ k ∈ (range (Q.nat_degree - j)).erase 0,
       Q.coeff (j + 1 + k) • B.gen ^ (j + 1 + k) * B.gen ^ (P.nat_degree - (j + 2)) =
       (algebra_map R L) p * Q.coeff (j + 1 + k) • f (k + P.nat_degree - 1) := sorry,
@@ -179,10 +179,11 @@ begin
     obtain ⟨r, hr⟩ := is_integral_iff.1 (is_integral_norm K hintsum),
 
     rw [alg_hom.to_ring_hom_eq_coe, alg_hom.coe_to_ring_hom,aeval_eq_sum_range, Hj,
-      range_add, sum_union hdisj, sum_congr rfl hg, add_comm] at hQ,
+      range_add, sum_union (range_disjoint_add_left_embedding _ _), sum_congr rfl hg,
+      add_comm] at hQ,
     replace hQ := congr_arg (λ x, x * B.gen ^ (P.nat_degree - (j + 2))) hQ,
     simp_rw [sum_map, add_left_embedding_apply, add_mul, sum_mul, mul_assoc] at hQ,
-    rw [← insert_erase hzeroj, sum_insert (not_mem_erase 0 _), add_zero, sum_congr rfl this,
+    rw [← insert_erase hj, sum_insert (not_mem_erase 0 _), add_zero, sum_congr rfl this,
       ← mul_sum, ← mul_sum, add_assoc, ← mul_add, smul_mul_assoc, ← pow_add, smul_def] at hQ,
     replace hQ := congr_arg (norm K) (eq_sub_of_add_eq hQ),
     rw [smul_def, mul_assoc, ← mul_sub, _root_.map_mul, algebra_map_apply R K L, map_pow,
