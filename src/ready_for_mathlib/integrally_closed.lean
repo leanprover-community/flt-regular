@@ -139,7 +139,20 @@ begin
 
   choose! f hf using eisenstein_aeval (minpoly.aeval R B.gen) (minpoly.monic hBint) hdiv,
   rw [adjoin_singleton_eq_range_aeval] at hz,
-  obtain ⟨Q, hQ⟩ := hz,
+  obtain ⟨Q₁, hQ⟩ := hz,
+  set Q := Q₁ %ₘ P with hQ₁,
+  replace hQ : aeval B.gen Q = p • z,
+  { rw [← mod_by_monic_add_div Q₁ (minpoly.monic hBint)] at hQ,
+    simpa using hQ },
+  by_cases hQzero : Q = 0,
+  { simp only [hQzero, smul_def, zero_eq_mul, aeval_zero] at hQ,
+    cases hQ with H H₁,
+    { have : function.injective (algebra_map R L),
+      { rw [algebra_map_eq R K L],
+        exact (algebra_map K L).injective.comp (is_fraction_ring.injective R K) },      exfalso,
+      exact hp.ne_zero ((ring_hom.injective_iff _).1 this _ H) },
+    { rw [H₁],
+      exact subalgebra.zero_mem _ } },
 
   suffices : ∀ i ∈ range (Q.nat_degree + 1), p ∣ Q.coeff i,
   { sorry },
@@ -158,10 +171,9 @@ begin
       rw [hg k (mem_range_succ_iff.1 hk) (mem_range_succ_iff.2 (le_trans (mem_range_succ_iff.1 hk)
         (succ_le_iff.1 (mem_range_succ_iff.1 hj)).le)), smul_def, smul_def,  ring_hom.map_mul,
         mul_assoc] },
-        have Hj : Q.nat_degree + 1 = j + 1 + (Q.nat_degree - j),
+    have Hj : Q.nat_degree + 1 = j + 1 + (Q.nat_degree - j),
     { rw [← add_comm 1, ← add_comm 1, add_assoc, add_right_inj, ← nat.add_sub_assoc
         (lt_of_succ_lt_succ (mem_range.1 hj)).le, add_comm, nat.add_sub_cancel] },
-    replace hj := mem_range.2 (tsub_pos_iff_lt.2 $ lt_of_succ_lt_succ $ mem_range.1 hj),
     have : ∀ k ∈ (range (Q.nat_degree - j)).erase 0,
       Q.coeff (j + 1 + k) • B.gen ^ (j + 1 + k) * B.gen ^ (P.nat_degree - (j + 2)) =
       (algebra_map R L) p * Q.coeff (j + 1 + k) • f (k + P.nat_degree - 1) := sorry,
@@ -175,16 +187,20 @@ begin
         ((is_integral.pow hBint _))))),
       refine adjoin_le_integral_closure hBint (hf _ _).2,
       rw [nat_degree_map_of_monic (minpoly.monic hBint) (algebra_map R L)],
-      sorry },
+      rw [add_comm, nat.add_sub_assoc, le_add_iff_nonneg_right],
+      { exact zero_le _ },
+      { refine one_le_iff_ne_zero.2 (λ h, _),
+        rw [h] at hk,
+        simpa using hk } },
     obtain ⟨r, hr⟩ := is_integral_iff.1 (is_integral_norm K hintsum),
 
-    rw [alg_hom.to_ring_hom_eq_coe, alg_hom.coe_to_ring_hom,aeval_eq_sum_range, Hj,
-      range_add, sum_union (range_disjoint_add_left_embedding _ _), sum_congr rfl hg,
-      add_comm] at hQ,
+    rw [aeval_eq_sum_range, Hj, range_add, sum_union (range_disjoint_add_left_embedding _ _),
+      sum_congr rfl hg, add_comm] at hQ,
     replace hQ := congr_arg (λ x, x * B.gen ^ (P.nat_degree - (j + 2))) hQ,
     simp_rw [sum_map, add_left_embedding_apply, add_mul, sum_mul, mul_assoc] at hQ,
-    rw [← insert_erase hj, sum_insert (not_mem_erase 0 _), add_zero, sum_congr rfl this,
-      ← mul_sum, ← mul_sum, add_assoc, ← mul_add, smul_mul_assoc, ← pow_add, smul_def] at hQ,
+    rw [← insert_erase (mem_range.2 (tsub_pos_iff_lt.2 $ lt_of_succ_lt_succ $ mem_range.1 hj)),
+      sum_insert (not_mem_erase 0 _), add_zero, sum_congr rfl this, ← mul_sum, ← mul_sum,
+      add_assoc, ← mul_add, smul_mul_assoc, ← pow_add, smul_def] at hQ,
     replace hQ := congr_arg (norm K) (eq_sub_of_add_eq hQ),
     rw [smul_def, mul_assoc, ← mul_sub, _root_.map_mul, algebra_map_apply R K L, map_pow,
       norm_algebra_map, _root_.map_mul, algebra_map_apply R K L, norm_algebra_map, finrank B, ← hr,
@@ -194,8 +210,18 @@ begin
     replace hQ := is_fraction_ring.injective R K hQ,
     have hppdiv : p ^ B.dim ∣ p ^ B.dim * r := dvd_mul_of_dvd_left dvd_rfl _,
     rw [← hQ, mul_comm, ← units.coe_neg_one, mul_pow, ← units.coe_pow, ← units.coe_pow, mul_assoc,
-      is_unit.dvd_mul_left _ _ _ ⟨_, rfl⟩, mul_comm, ← hP, ← nat.succ_eq_add_one] at hppdiv,
+      is_unit.dvd_mul_left _ _ _ ⟨_, rfl⟩, mul_comm, ← nat.succ_eq_add_one] at hppdiv,
     convert hppdiv,
-    sorry
-  }
+    rw [← nat_degree_minpoly, minpoly.gcd_domain_eq_field_fractions K hBint,
+      nat_degree_map_of_monic (minpoly.monic hBint), ← hP],
+    { have H := degree_mod_by_monic_lt Q₁ (minpoly.monic hBint),
+      rw [← hQ₁, ← hP] at H,
+      replace H:= nat.lt_iff_add_one_le.1 (lt_of_lt_of_le (lt_of_le_of_lt
+        (nat.lt_iff_add_one_le.1 (lt_of_succ_lt_succ (mem_range.1 hj))) (lt_succ_self _))
+        (nat.lt_iff_add_one_le.1 (((nat_degree_lt_nat_degree_iff hQzero).2 H)))),
+      rw [add_assoc] at H,
+      rw [nat.succ_eq_add_one, add_assoc, ← nat.add_sub_assoc H, ← add_assoc, add_comm (j + 1),
+        nat.add_sub_add_left, ← nat.add_sub_assoc, nat.add_sub_add_left],
+      exact nat.le_of_succ_le H },
+    apply_instance }
 end
