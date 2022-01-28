@@ -49,7 +49,7 @@ begin
     neg_one_pow_of_even (nat.totient_even h), one_mul],
   have : univ.prod (λ (σ : K →ₐ[ℚ] E), 1 - σ (zeta p ℚ K)) = eval 1 (cyclotomic' p E),
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
-    refine fintype.prod_equiv (zeta.embeddings_equiv_primitive_roots p ℚ K E _) _ _ (λ σ, _),
+    refine fintype.prod_equiv (zeta.embeddings_equiv_primitive_roots p E ℚ K _) _ _ (λ σ, _),
     { rw [← map_cyclotomic_int],
       refine (is_primitive.irreducible_iff_irreducible_map_fraction_map
         (cyclotomic.monic p ℤ).is_primitive).1 (cyclotomic.irreducible p.pos) },
