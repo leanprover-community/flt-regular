@@ -50,6 +50,7 @@ begin
   have : univ.prod (λ (σ : K →ₐ[ℚ] E), 1 - σ (zeta p ℚ K)) = eval 1 (cyclotomic' p E),
   { rw [cyclotomic', eval_prod, ← @finset.prod_attach E E, ← univ_eq_attach],
     refine fintype.prod_equiv (zeta.embeddings_equiv_primitive_roots p E ℚ K _) _ _ (λ σ, _),
+    --fix the variables of zeta.embeddings_equiv_primitive_roots p E ℚ K _: K implicit and weird order
     { rw [← map_cyclotomic_int],
       refine (is_primitive.irreducible_iff_irreducible_map_fraction_map
         (cyclotomic.monic p ℤ).is_primitive).1 (cyclotomic.irreducible p.pos) },
