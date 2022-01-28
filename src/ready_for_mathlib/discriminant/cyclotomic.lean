@@ -4,7 +4,6 @@ import ring_theory.polynomial.cyclotomic.eval
 import ring_theory.discriminant
 
 import number_theory.cyclotomic.cyclotomic_units
-import ready_for_mathlib.cyclotomic
 import number_theory.cyclotomic.rat
 
 universes u
