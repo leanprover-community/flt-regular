@@ -141,10 +141,13 @@ begin
       rw [smul_mul_assoc, ← pow_add, ← nat.add_sub_assoc H, ← add_assoc j 1 1,
         add_comm (j + 1) 1, add_assoc (j + 1), add_comm _ (k + P.nat_degree),
         nat.add_sub_add_right, ← (hf (k + P.nat_degree -1) _).2, mul_smul_comm],
-      rw [nat_degree_map_of_monic (minpoly.monic hBint)],
-
-      sorry,
-      apply_instance },
+      rw [nat_degree_map_of_monic (minpoly.monic hBint), add_comm, nat.add_sub_assoc,
+        le_add_iff_nonneg_right],
+      { exact nat.zero_le _ },
+      { refine one_le_iff_ne_zero.2 (λ h, _),
+        rw [h] at hk,
+        simpa using hk },
+      { apply_instance } },
     have hintsum : is_integral R (z * B.gen ^ (P.nat_degree - (j + 2)) -
       (∑ (x : ℕ) in (range (Q.nat_degree - j)).erase 0, Q.coeff (j + 1 + x) •
         f (x + P.nat_degree - 1) +
