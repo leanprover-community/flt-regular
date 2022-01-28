@@ -128,9 +128,23 @@ begin
     have Hj : Q.nat_degree + 1 = j + 1 + (Q.nat_degree - j),
     { rw [← add_comm 1, ← add_comm 1, add_assoc, add_right_inj, ← nat.add_sub_assoc
         (lt_of_succ_lt_succ (mem_range.1 hj)).le, add_comm, nat.add_sub_cancel] },
+    have H := degree_mod_by_monic_lt Q₁ (minpoly.monic hBint),
+    rw [← hQ₁, ← hP] at H,
+    replace H:= nat.lt_iff_add_one_le.1 (lt_of_lt_of_le (lt_of_le_of_lt
+      (nat.lt_iff_add_one_le.1 (lt_of_succ_lt_succ (mem_range.1 hj))) (lt_succ_self _))
+      (nat.lt_iff_add_one_le.1 (((nat_degree_lt_nat_degree_iff hQzero).2 H)))),
+    rw [add_assoc] at H,
     have : ∀ k ∈ (range (Q.nat_degree - j)).erase 0,
       Q.coeff (j + 1 + k) • B.gen ^ (j + 1 + k) * B.gen ^ (P.nat_degree - (j + 2)) =
-      (algebra_map R L) p * Q.coeff (j + 1 + k) • f (k + P.nat_degree - 1) := sorry,
+      (algebra_map R L) p * Q.coeff (j + 1 + k) • f (k + P.nat_degree - 1),
+    { intros k hk,
+      rw [smul_mul_assoc, ← pow_add, ← nat.add_sub_assoc H, ← add_assoc j 1 1,
+        add_comm (j + 1) 1, add_assoc (j + 1), add_comm _ (k + P.nat_degree),
+        nat.add_sub_add_right, ← (hf (k + P.nat_degree -1) _).2, mul_smul_comm],
+      rw [nat_degree_map_of_monic (minpoly.monic hBint)],
+
+      sorry,
+      apply_instance },
     have hintsum : is_integral R (z * B.gen ^ (P.nat_degree - (j + 2)) -
       (∑ (x : ℕ) in (range (Q.nat_degree - j)).erase 0, Q.coeff (j + 1 + x) •
         f (x + P.nat_degree - 1) +
@@ -168,13 +182,7 @@ begin
     convert hppdiv,
     rw [← nat_degree_minpoly, minpoly.gcd_domain_eq_field_fractions K hBint,
       nat_degree_map_of_monic (minpoly.monic hBint), ← hP],
-    { have H := degree_mod_by_monic_lt Q₁ (minpoly.monic hBint),
-      rw [← hQ₁, ← hP] at H,
-      replace H:= nat.lt_iff_add_one_le.1 (lt_of_lt_of_le (lt_of_le_of_lt
-        (nat.lt_iff_add_one_le.1 (lt_of_succ_lt_succ (mem_range.1 hj))) (lt_succ_self _))
-        (nat.lt_iff_add_one_le.1 (((nat_degree_lt_nat_degree_iff hQzero).2 H)))),
-      rw [add_assoc] at H,
-      rw [nat.succ_eq_add_one, add_assoc, ← nat.add_sub_assoc H, ← add_assoc, add_comm (j + 1),
+    { rw [nat.succ_eq_add_one, add_assoc, ← nat.add_sub_assoc H, ← add_assoc, add_comm (j + 1),
         nat.add_sub_add_left, ← nat.add_sub_assoc, nat.add_sub_add_left],
       exact nat.le_of_succ_le H },
     apply_instance }
