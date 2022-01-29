@@ -7,12 +7,10 @@ open cyclotomic_ring
 
 local notation `KK` := cyclotomic_field p ℚ
 local notation `RR` := number_field.ring_of_integers (cyclotomic_field p ℚ)
-local notation `FZ` := number_field.ring_of_integers ℚ -- FZ for fake ℤ :)
 local notation `ζ` := zeta p ℚ KK
 
---I (RB) am not sure why we use FZ, but this instance seems to be needed
--- Eric: this was a remnant from when I had `is_cyclotomic_extension (𝓞 K) (𝓞 L); I will fix this soon
-instance FZ_cycl_ext : is_cyclotomic_extension {p} FZ (number_field.ring_of_integers
+-- we're nearly here!
+instance ℤ_cycl_ext : is_cyclotomic_extension {p} ℤ (number_field.ring_of_integers
   (cyclotomic_field p ℚ)) := sorry
 
 /-- `is_gal_conj_real x` means that `x` is real. -/
@@ -70,7 +68,7 @@ begin
 end
 
 lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p)  (u : RRˣ) (n  : ℕ) :
-  u * (unit_gal_conj p u)⁻¹ ≠  -(zeta_runity p FZ RR) ^ n :=
+  u * (unit_gal_conj p u)⁻¹ ≠  -(zeta_runity p ℤ RR) ^ n :=
 begin
   by_contra H,
   sorry,
@@ -78,7 +76,7 @@ end
 
 -- this proof has mild coe annoyances rn
 lemma unit_inv_conj_is_root_of_unity (h : 2 < p)  (u : RRˣ) :
-  ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta_runity p FZ RR) ^ (m))^2 :=
+  ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = ((zeta_runity p ℤ RR) ^ (m))^2 :=
 begin
   have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
   have H:= roots_of_unity_in_cyclo p ((u * (unit_gal_conj p u)⁻¹ : KK)) this,
