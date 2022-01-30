@@ -34,11 +34,9 @@ end
 
 end to_move
 
-noncomputable theory
-
 open is_cyclotomic_extension
 
-lemma cyclotomic_field.aut_to_pow [ne_zero (n : K)] :
+noncomputable def cyclotomic_field.aut_to_pow [ne_zero (n : K)] :
   (L ≃ₐ[K] L) →* units (zmod n) := monoid_hom.to_hom_units
 { to_fun := λ σ, (ring_hom.map_root_of_unity_eq_pow_self σ.to_ring_equiv.to_ring_hom ζ').some,
   map_one' :=
