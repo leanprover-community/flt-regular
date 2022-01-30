@@ -1,4 +1,12 @@
 import number_theory.cyclotomic.cyclotomic_units
+/-!
+# Galois group of cyclotomic extensions
+
+# References
+
+* [https://kconrad.math.uconn.edu/blurbs/galoistheory/cyclotomic.pdf]: this file's main guide.
+
+-/
 
 
 section to_move
@@ -84,7 +92,7 @@ monoid_hom.to_hom_units
     rw [←nat.cast_mul, zmod.nat_coe_eq_nat_coe_iff, ←ho, ←pow_eq_pow_iff_modeq μ', hxy]
   end }
 
-variables [is_cyclotomic_extension {n} K L]
+variables (n) [is_cyclotomic_extension {n} K L]
 
 open is_cyclotomic_extension
 
@@ -119,3 +127,8 @@ begin
   rw [←hζ.coe_to_roots_of_unity_coe] {occs := occurrences.pos [2]},
   rw [order_of_units, order_of_subgroup]
 end
+
+-- this can't be an instance, right? but this is cool!
+noncomputable example [ne_zero (n : K)] : comm_group (L ≃ₐ[K] L) :=
+function.injective.comm_group _ (is_cyclotomic_extension.aut_to_pow_injective n K) (map_one _)
+  (map_mul _) (map_inv _) (map_div _)
