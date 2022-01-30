@@ -49,6 +49,7 @@ local attribute [instance] pnat.fact_pos
 -- should this be `simp` globally?
 local attribute [simp] ring_equiv.to_ring_hom_eq_coe
 
+/-- The `monoid_hom` that takes an automorphism to the power of μ that μ gets mapped to under it. -/
 @[simps {attrs := []}] noncomputable def is_primitive_root.aut_to_pow  :
   (L ≃ₐ[K] L) →* units (zmod n) :=
 let μ' := hμ.to_roots_of_unity in
