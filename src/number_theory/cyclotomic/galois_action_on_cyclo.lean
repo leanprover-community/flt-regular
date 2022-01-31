@@ -2,6 +2,8 @@ import number_theory.cyclotomic.cyclotomic_units
 import number_theory.cyclotomic.number_field_embeddings
 import number_theory.cyclotomic.absolute_value
 
+import number_theory.cyclotomic.basic
+
 universes u
 
 open finite_dimensional
@@ -23,6 +25,9 @@ open is_cyclotomic_extension
 open polynomial
 
 local notation `ζ` := zeta p ℚ KK
+
+--this has something to do with `(p : ℕ)`
+instance this_should_be_automatic : is_cyclotomic_extension {p} ℚ (cyclotomic_field p ℚ) := sorry
 
 @[simp]
 lemma minpoly_zeta : minpoly ℚ ζ = cyclotomic p ℚ :=

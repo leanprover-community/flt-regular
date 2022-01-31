@@ -31,14 +31,6 @@ begin
     rw [pow_add, pow_mul, pow_order_of_eq_one, one_pow, mul_one] }
 end
 
--- #11739
-@[simps] def is_primitive_root.to_roots_of_unity {M} {μ : M} [comm_monoid M] {n : ℕ+}
-  (h : is_primitive_root μ n) : roots_of_unity n M := roots_of_unity.mk_of_pow_eq μ h.pow_eq_one
-
--- #11738
-@[simp] lemma alg_equiv.one_apply {R A} [comm_semiring R] [semiring A] [algebra R A] (r : A) :
-  (1 : A ≃ₐ[R] A) r = r := rfl
-
 lemma roots_of_unity.coe_injective {M} [comm_monoid M] {n : ℕ+} :
   function.injective (coe : (roots_of_unity n M) → M) :=
 units.ext.comp (λ x y, subtype.ext)
@@ -94,14 +86,10 @@ monoid_hom.to_hom_units
 
 variables (n) [is_cyclotomic_extension {n} K L]
 
-open is_cyclotomic_extension
-
-example : true := trivial
-
-example : true := trivial
+open is_cyclotomic_extension ne_zero
 
 lemma is_cyclotomic_extension.aut_to_pow_injective [ne_zero (n : K)] : function.injective $
-    (@zeta_primitive_root n K L _ _ _ _ _ (ne_zero.of_no_zero_smul_divisors K L)).aut_to_pow K :=
+    (@zeta_primitive_root n K L _ _ _ _ _ (of_no_zero_smul_divisors K L (n : ℕ))).aut_to_pow K :=
 begin
   intros f g hfg,
   apply_fun units.val at hfg,

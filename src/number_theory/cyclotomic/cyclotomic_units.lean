@@ -45,7 +45,7 @@ end is_cyclotomic_extension
 
 namespace cyclotomic_ring
 
-variables [is_domain A] [algebra A K] [is_fraction_ring A K] [ne_zero ((n : ℕ) : K)]
+variables [is_domain A] [algebra A K] [is_fraction_ring A K] [ne_zero (n : K)]
 
 open is_cyclotomic_extension
 
@@ -63,7 +63,8 @@ local attribute [instance] cyclotomic_field.algebra_base
 lemma zeta_mem_base : ∃ (x : (cyclotomic_ring n A K)), algebra_map
   (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta n K (cyclotomic_field n K) :=
 begin
-  have : ne_zero ((n : ℕ) : cyclotomic_field n K) := ne_zero.of_no_zero_smul_divisors K _,
+  --fix this avoiding `(n : ℕ)` in def of zeta
+  have : ne_zero ((n : ℕ) : cyclotomic_field n K) := (ne_zero.of_no_zero_smul_divisors K _ (n : ℕ)),
   letI := classical.prop_decidable,
   let μ := zeta n K (cyclotomic_field n K),
   have hμ := zeta_primitive_root n K (cyclotomic_field n K),
