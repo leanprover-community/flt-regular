@@ -1,8 +1,6 @@
 import number_theory.cyclotomic.zeta
 import ring_theory.adjoin.power_basis
 
-import ready_for_mathlib.roots_of_unity
-
 noncomputable theory
 
 open polynomial
@@ -15,6 +13,6 @@ variables [comm_ring A] [comm_ring B] [algebra A B] [is_cyclotomic_extension {n}
 namespace is_cyclotomic_extension
 
 lemma zeta_pow : (zeta n A B) ^ (n : ℕ) = 1 :=
-is_root_of_unity_of (nat.mem_divisors_self _ n.pos.ne') (zeta_spec' _ _ _)
+is_root_of_unity_of_root_cyclotomic (nat.mem_divisors_self _ n.pos.ne') (zeta_spec' _ _ _)
 
 end is_cyclotomic_extension

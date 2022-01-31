@@ -11,7 +11,6 @@ import ring_theory.polynomial.cyclotomic.eval
 
 import ready_for_mathlib.zeta
 import ready_for_mathlib.ideal_stuff
-import ready_for_mathlib.roots_of_unity
 
 import tactic.may_assume
 
@@ -34,7 +33,7 @@ variables [is_cyclotomic_extension {n} A B]
 /-- `zeta n A B` as a member of the `roots_of_unity` subgroup. -/
 @[simps coe_coe] def zeta_runity : roots_of_unity n B :=
 roots_of_unity.mk_of_pow_eq (zeta n A B) $
-is_root_of_unity_of ((n : ℕ).mem_divisors_self n.ne_zero) $ zeta_spec' n A B
+is_root_of_unity_of_root_cyclotomic ((n : ℕ).mem_divisors_self n.ne_zero) $ zeta_spec' n A B
 
 /-- `zeta n A B` as a member of `Bˣ`. -/
 @[simps] def zeta_unit : Bˣ := zeta_runity n A B
