@@ -14,9 +14,13 @@ local notation `KK` := cyclotomic_field p ℚ
 
 local notation `RR` := number_field.ring_of_integers (cyclotomic_field p ℚ)
 
-local attribute [instance] is_cyclotomic_extension.finite_dimensional
+local attribute [instance] is_cyclotomic_extension.number_field is_cyclotomic_extension.finite_dimensional
 
-instance cyclotomic_number_field : number_field KK := sorry
+-- this used to be here but is now solved by `apply_instance`
+--instance cyclotomic_number_field : number_field KK := by apply_instance
+
+-- @Chris: you mentioned "checking automorphisms agree only on a generator" -
+-- what you want is `power_basis.alg_hom_ext`
 
 open cyclotomic_ring embeddings
 
@@ -26,14 +30,10 @@ open polynomial
 
 local notation `ζ` := zeta p ℚ KK
 
---this has something to do with `(p : ℕ)`
-instance this_should_be_automatic : is_cyclotomic_extension {p} ℚ (cyclotomic_field p ℚ) := sorry
-
 @[simp]
 lemma minpoly_zeta : minpoly ℚ ζ = cyclotomic p ℚ :=
 begin
   rw ← map_cyclotomic_int,
-  letI : ne_zero (↑p : (cyclotomic_field p ℚ)) := sorry,
   have : is_primitive_root ζ p := zeta_primitive_root p ℚ (cyclotomic_field p ℚ),
   rw cyclotomic_eq_minpoly this p.pos,
   have : is_integral ℤ ζ,
@@ -72,7 +72,6 @@ lemma power_basis_zeta_runity_gen : (power_basis_zeta_runity p).gen = ζ := rfl
 def gal_conj : KK →ₐ[ℚ] KK := power_basis.lift (power_basis_zeta_runity p) ζ⁻¹
 begin
   simp only [power_basis_zeta_runity_gen, minpoly_zeta],
-  letI : ne_zero (↑p : (cyclotomic_field p ℚ)) := sorry,
   have : is_primitive_root ζ p,
   from zeta_primitive_root p ℚ (cyclotomic_field p ℚ),
   have : is_primitive_root ζ⁻¹ p,
