@@ -11,26 +11,6 @@ import number_theory.cyclotomic.cyclotomic_units
 
 section to_move
 
---#11737
-lemma pow_eq_pow_iff_modeq {M} [left_cancel_monoid M] (m : M) {x y : ℕ} :
-  m ^ x = m ^ y ↔ x ≡ y [MOD (order_of m)] :=
-begin
-  wlog hxy : x ≤ y,
-  obtain ⟨k, rfl⟩ := nat.exists_eq_add_of_le hxy,
-  refine ⟨λ h, _, λ h, _⟩,
-  { rw [←mul_one $ m ^ x, pow_add] at h,
-    replace h := mul_left_cancel h,
-    change x + 0 ≡ x + k [MOD order_of m], --ew
-    apply nat.modeq.add_left,
-    rw [nat.modeq.comm, nat.modeq_zero_iff_dvd],
-    exact order_of_dvd_of_pow_eq_one h.symm },
-  { rw [←add_zero x] at h {occs := occurrences.pos [1]},
-    replace h := nat.modeq.add_left_cancel' x h,
-    rw [nat.modeq.comm, nat.modeq_zero_iff_dvd] at h,
-    obtain ⟨k, rfl⟩ := h,
-    rw [pow_add, pow_mul, pow_order_of_eq_one, one_pow, mul_one] }
-end
-
 lemma roots_of_unity.coe_injective {M} [comm_monoid M] {n : ℕ+} :
   function.injective (coe : (roots_of_unity n M) → M) :=
 units.ext.comp (λ x y, subtype.ext)
@@ -59,7 +39,7 @@ let μ' := hμ.to_roots_of_unity in
 have ho : order_of μ' = n :=
   by rw [hμ.eq_order_of, ←hμ.coe_to_roots_of_unity_coe, order_of_units, order_of_subgroup],
 monoid_hom.to_hom_units
-{ to_fun := λ σ, (ring_hom.map_root_of_unity_eq_pow_self σ.to_ring_equiv.to_ring_hom μ').some,
+{ to_fun := λ σ, (map_root_of_unity_eq_pow_self σ.to_alg_hom μ').some,
   map_one' := begin
     generalize_proofs h1,
     have h := h1.some_spec,
