@@ -15,7 +15,12 @@ lemma flt_three_case_one_aux {A B C : zmod 9} (h : A ^ 3 + B ^ 3 = C ^ 3) : 3 �
 by dec_trivial!
 
 open polynomial fractional_ideal
+
 open_locale non_zero_divisors
+
+-- why isn't this an instance globally?
+local attribute [instance] is_cyclotomic_extension.number_field
+
 theorem flt_regular_case_one_main {p a b c : ℕ} [fact p.prime] (hp : is_regular_number p)
   (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
   (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : false :=

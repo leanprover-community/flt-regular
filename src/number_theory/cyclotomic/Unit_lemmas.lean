@@ -9,6 +9,8 @@ local notation `KK` := cyclotomic_field p ℚ
 local notation `RR` := number_field.ring_of_integers (cyclotomic_field p ℚ)
 local notation `ζ` := zeta p ℚ KK
 
+local attribute [instance] is_cyclotomic_extension.number_field
+
 -- we're nearly here!
 instance ℤ_cycl_ext : is_cyclotomic_extension {p} ℤ (number_field.ring_of_integers
   (cyclotomic_field p ℚ)) := sorry
