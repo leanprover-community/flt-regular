@@ -109,6 +109,7 @@ variables (L)
 
 -- whilst I can't figure how to make a `power_basis.map_conjugate`, this works
 -- for this specific problem
+/-- The power basis given by `t : (zmod n)ˣ`. -/
 @[simps] noncomputable def zeta_pow_power_basis [ne_zero (n : K)] (t : (zmod n)ˣ) : power_basis K L :=
 begin
   haveI := (ne_zero.of_no_zero_smul_divisors K L n).trans,
