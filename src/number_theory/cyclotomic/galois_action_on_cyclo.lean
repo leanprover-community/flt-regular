@@ -33,8 +33,8 @@ instance this_should_be_automatic : is_cyclotomic_extension {p} ℚ (cyclotomic_
 lemma minpoly_zeta : minpoly ℚ ζ = cyclotomic p ℚ :=
 begin
   rw ← map_cyclotomic_int,
-  have : is_primitive_root ζ p,
-  from zeta_primitive_root p ℚ (cyclotomic_field p ℚ),
+  letI : ne_zero (↑p : (cyclotomic_field p ℚ)) := sorry,
+  have : is_primitive_root ζ p := zeta_primitive_root p ℚ (cyclotomic_field p ℚ),
   rw cyclotomic_eq_minpoly this p.pos,
   have : is_integral ℤ ζ,
   from is_primitive_root.is_integral this p.pos,
@@ -72,6 +72,7 @@ lemma power_basis_zeta_runity_gen : (power_basis_zeta_runity p).gen = ζ := rfl
 def gal_conj : KK →ₐ[ℚ] KK := power_basis.lift (power_basis_zeta_runity p) ζ⁻¹
 begin
   simp only [power_basis_zeta_runity_gen, minpoly_zeta],
+  letI : ne_zero (↑p : (cyclotomic_field p ℚ)) := sorry,
   have : is_primitive_root ζ p,
   from zeta_primitive_root p ℚ (cyclotomic_field p ℚ),
   have : is_primitive_root ζ⁻¹ p,
@@ -90,7 +91,7 @@ simp only [alg_hom.map_one, pow_zero],
 simp only [alg_hom.map_pow, gal_conj_zeta_runity],
 end
 
-lemma gal_conj_zeta_runity_coe :  gal_conj p (ζ) =  gal_conj p (ζ : KK) :=
+lemma gal_conj_zeta_runity_coe : gal_conj p (ζ) =  gal_conj p (ζ : KK) :=
 begin
 refl,
 end

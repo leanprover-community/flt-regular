@@ -4,12 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alex J. Best
 -/
 
-import data.polynomial.field_division
-import number_theory.number_field
-
+import number_theory.cyclotomic.zeta
 import ring_theory.polynomial.cyclotomic.eval
 
-import ready_for_mathlib.zeta
 import ready_for_mathlib.ideal_stuff
 
 import tactic.may_assume
@@ -63,7 +60,7 @@ lemma zeta_mem_base : ∃ (x : (cyclotomic_ring n A K)), algebra_map
   (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta n K (cyclotomic_field n K) :=
 begin
   --fix this avoiding `(n : ℕ)` in def of zeta
-  have : ne_zero ((n : ℕ) : cyclotomic_field n K) := (ne_zero.of_no_zero_smul_divisors K _ (n : ℕ)),
+  have : ne_zero (n : cyclotomic_field n K) := sorry,
   letI := classical.prop_decidable,
   let μ := zeta n K (cyclotomic_field n K),
   have hμ := zeta_primitive_root n K (cyclotomic_field n K),

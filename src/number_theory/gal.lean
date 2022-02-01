@@ -72,7 +72,7 @@ variables (n) [is_cyclotomic_extension {n} K L]
 open is_cyclotomic_extension ne_zero
 
 lemma is_cyclotomic_extension.aut_to_pow_injective [ne_zero (n : K)] : function.injective $
-    (@zeta_primitive_root n K L _ _ _ _ _ (of_no_zero_smul_divisors K L (n : ℕ))).aut_to_pow K :=
+    (@zeta_primitive_root n K L _ _ _ _ _ sorry).aut_to_pow K :=
 begin
   intros f g hfg,
   apply_fun units.val at hfg,
@@ -155,6 +155,6 @@ lemma diamond : cyclotomic_field.algebra n ℚ = algebra_rat :=
   end),
   left_inv := sorry,
   right_inv := sorry,
-  .. (zeta_primitive_root n ℚ ℚ[ζₙ]).aut_to_pow ℚ }
+  .. (@zeta_primitive_root n ℚ ℚ[ζₙ] _ _ _ _ _ sorry).aut_to_pow ℚ }
 
 end rat

@@ -14,10 +14,6 @@ namespace singleton
 
 variables [is_cyclotomic_extension {n} ℚ L]
 
-lemma finrank : finrank ℚ L = (n : ℕ).totient :=
-by rw [power_basis.finrank (zeta.power_basis n ℚ L), zeta.power_basis_dim,
-       ←cyclotomic_eq_minpoly_rat (zeta_primitive_root n ℚ L) n.pos, nat_degree_cyclotomic]
-
 
 end singleton
 

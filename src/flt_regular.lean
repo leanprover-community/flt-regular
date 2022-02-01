@@ -23,6 +23,7 @@ begin
   have h_prime : p.prime := fact.out _,
   let pp : ℕ+ := ⟨p, h_prime.pos⟩,
   letI : is_cyclotomic_extension {pp} ℚ (cyclotomic_field pp ℚ) := sorry, --why this is not automatic?
+  letI : ne_zero (pp : (cyclotomic_field pp ℚ)) := sorry,
   have := pow_add_pow_eq_prod_add_zeta_runity_mul (nat.odd_iff.mp (h_prime.odd hp_ne_two))
     (is_cyclotomic_extension.zeta_primitive_root pp ℚ (cyclotomic_field pp ℚ)) a b,
   rw_mod_cast h at this,
