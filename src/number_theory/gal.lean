@@ -143,7 +143,7 @@ lemma diamond : cyclotomic_field.algebra n ℚ = algebra_rat :=
 @@subsingleton.elim algebra_rat_subsingleton _ _
 
 /-- The `monoid_hom` that takes an automorphism to the power of μ that μ gets mapped to under it. -/
-@[simps {attrs := []}] noncomputable lemma cyclotomic_field.rat_aut_equiv_zmod :
+@[simps {attrs := []}] noncomputable def cyclotomic_field.rat_aut_equiv_zmod :
   (ℚ[ζₙ] ≃ₐ[ℚ] ℚ[ζₙ]) ≃* (zmod n)ˣ :=
 { inv_fun := λ x, (zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly (zeta_pow_power_basis ℚ[ζₙ] n ℚ x)
   (by sorry; begin
