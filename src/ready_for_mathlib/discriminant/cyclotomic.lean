@@ -24,10 +24,9 @@ instance ugly : ne_zero (p : ℚ) := sorry
 lemma norm_zeta_sub_one [hp : fact (p : ℕ).prime] (h : p ≠ 2) :
   norm ℚ ((zeta p ℚ K) - 1) = p :=
 begin
-  have H := lt_of_le_of_ne hp.1.two_le (by contrapose! h; exact pnat.coe_injective h.symm),
-  rw [norm_zeta_sub_one_eq_eval_cyclotomic p ℚ K (cyclotomic.irreducible_rat hp.out.pos) H,
+  have := lt_of_le_of_ne hp.1.two_le (by contrapose! h; exact pnat.coe_injective h.symm),
+  simp [norm_zeta_sub_one_eq_eval_cyclotomic p ℚ K (cyclotomic.irreducible_rat hp.out.pos) this,
     eval_one_cyclotomic_prime],
-  simp
 end
 
 lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
