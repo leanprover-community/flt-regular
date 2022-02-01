@@ -19,7 +19,7 @@ local attribute [instance] is_cyclotomic_extension.finite_dimensional
 
 variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
 
-instance ugly : ne_zero (p : ℚ) := sorry
+instance ugly : ne_zero (p : ℚ) := (ne_zero.of_no_zero_smul_divisors ℚ ℚ p).trans
 
 lemma norm_zeta_sub_one [hp : fact (p : ℕ).prime] (h : p ≠ 2) :
   norm ℚ ((zeta p ℚ K) - 1) = p :=
