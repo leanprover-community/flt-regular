@@ -38,20 +38,23 @@ units.ext.comp (λ x y, subtype.ext)
 end to_move
 
 -- argument order is for dot-notation
-variables {L : Type*} [field L] {μ : L} {n : ℕ+} (hμ : is_primitive_root μ n)
-          (K : Type*) [field K]  [algebra K L]
-
-local notation `ζ` := is_cyclotomic_extension.zeta n K L
-local notation `ζ'` := is_cyclotomic_extension.zeta_runity n K L
 
 local attribute [instance] pnat.fact_pos
 
 -- should this be `simp` globally?
 local attribute [simp] ring_equiv.to_ring_hom_eq_coe
 
+section general
+
+variables {L : Type*} [field L] {μ : L} {n : ℕ+} (hμ : is_primitive_root μ n)
+          (K : Type*) [field K] [algebra K L]
+
+local notation `ζ` := is_cyclotomic_extension.zeta n K L
+local notation `ζ'` := is_cyclotomic_extension.zeta_runity n K L
+
 /-- The `monoid_hom` that takes an automorphism to the power of μ that μ gets mapped to under it. -/
 @[simps {attrs := []}] noncomputable def is_primitive_root.aut_to_pow  :
-  (L ≃ₐ[K] L) →* units (zmod n) :=
+  (L ≃ₐ[K] L) →* (zmod n)ˣ :=
 let μ' := hμ.to_roots_of_unity in
 have ho : order_of μ' = n :=
   by rw [hμ.eq_order_of, ←hμ.coe_to_roots_of_unity_coe, order_of_units, order_of_subgroup],
@@ -120,3 +123,58 @@ end
 noncomputable example [ne_zero (n : K)] : comm_group (L ≃ₐ[K] L) :=
 function.injective.comm_group _ (is_cyclotomic_extension.aut_to_pow_injective n K) (map_one _)
   (map_mul _) (map_inv _) (map_div _)
+
+
+variables (L)
+
+-- whilst I can't figure how to make a `power_basis.map_conjugate`, this works
+-- for this specific problem
+@[simps] noncomputable def zeta_pow_power_basis [ne_zero (n : K)] (t : (zmod n)ˣ) : power_basis K L :=
+begin
+  haveI := (ne_zero.of_no_zero_smul_divisors K L n).trans,
+  refine power_basis.map (algebra.adjoin.power_basis $ integral {n} K L $ ζ ^ (t : zmod n).val) _,
+  refine (subalgebra.equiv_of_eq _ _
+      (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ _)).trans
+      algebra.top_equiv,
+  exact (zeta_primitive_root n K L).pow_of_coprime _ (zmod.val_coe_unit_coprime t),
+end
+
+end general
+
+section rat
+
+variables (n : ℕ+)
+
+local notation `ℚ[ζₙ]` := cyclotomic_field n ℚ
+local notation `ζ` := is_cyclotomic_extension.zeta n ℚ ℚ[ζₙ]
+local notation `ζ'` := is_cyclotomic_extension.zeta_runity n ℚ ℚ[ζₙ]
+
+open is_cyclotomic_extension ne_zero
+
+-- yeah I need to fix this mess ASAP
+instance im_an_idiot : ne_zero ((n : ℕ) : cyclotomic_field n ℚ) := sorry
+instance im_an_idiot2 : ne_zero (n : ℚ) := sorry
+instance im_an_idiot3 : ne_zero ((n : ℕ) : ℚ) := sorry
+instance : char_zero (cyclotomic_field n ℚ) := sorry
+
+-- oh yay the diamond comes back to hurt us
+lemma diamond : cyclotomic_field.algebra n ℚ = algebra_rat :=
+@@subsingleton.elim algebra_rat_subsingleton _ _
+
+/-- The `monoid_hom` that takes an automorphism to the power of μ that μ gets mapped to under it. -/
+@[simps {attrs := []}] noncomputable lemma cyclotomic_field.rat_aut_equiv_zmod :
+  (ℚ[ζₙ] ≃ₐ[ℚ] ℚ[ζₙ]) ≃* (zmod n)ˣ :=
+{ inv_fun := λ x, (zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly (zeta_pow_power_basis ℚ[ζₙ] n ℚ x)
+  (by sorry; begin
+    simp only [zeta.power_basis_gen, zeta_pow_power_basis_gen],
+    haveI : char_zero (cyclotomic_field n ℚ) := sorry,
+    have hl := polynomial.cyclotomic_eq_minpoly_rat (zeta_primitive_root n ℚ ℚ[ζₙ]) n.pos,
+    have hr := polynomial.cyclotomic_eq_minpoly_rat
+            ((zeta_primitive_root n ℚ ℚ[ζₙ]).pow_of_coprime _ (zmod.val_coe_unit_coprime x)) n.pos,
+    convert hl.symm.trans hr; exact diamond n
+  end),
+  left_inv := sorry,
+  right_inv := sorry,
+  .. (zeta_primitive_root n ℚ ℚ[ζₙ]).aut_to_pow ℚ }
+
+end rat
