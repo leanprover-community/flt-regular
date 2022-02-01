@@ -71,8 +71,10 @@ variables (n) [is_cyclotomic_extension {n} K L]
 
 open is_cyclotomic_extension ne_zero
 
-lemma is_cyclotomic_extension.aut_to_pow_injective [ne_zero (n : K)] : function.injective $
-    (@zeta_primitive_root n K L _ _ _ _ _ sorry).aut_to_pow K :=
+open_locale pnat
+
+lemma is_cyclotomic_extension.aut_to_pow_injective [ne_zero (⥉n : K)] : function.injective $
+    (@zeta_primitive_root n K L _ _ _ _ _ $ of_no_zero_smul_divisors K L n).aut_to_pow K :=
 begin
   intros f g hfg,
   apply_fun units.val at hfg,
@@ -100,7 +102,7 @@ begin
 end
 
 -- this can't be an instance, right? but this is cool!
-noncomputable example [ne_zero (n : K)] : comm_group (L ≃ₐ[K] L) :=
+noncomputable example [ne_zero (⥉n : K)] : comm_group (L ≃ₐ[K] L) :=
 function.injective.comm_group _ (is_cyclotomic_extension.aut_to_pow_injective n K) (map_one _)
   (map_mul _) (map_inv _) (map_div _)
 
@@ -110,9 +112,9 @@ variables (L)
 -- whilst I can't figure how to make a `power_basis.map_conjugate`, this works
 -- for this specific problem
 /-- The power basis given by `t : (zmod n)ˣ`. -/
-@[simps] noncomputable def zeta_pow_power_basis [ne_zero (n : K)] (t : (zmod n)ˣ) : power_basis K L :=
+@[simps] noncomputable def zeta_pow_power_basis [ne_zero (⥉n : K)] (t : (zmod n)ˣ) : power_basis K L :=
 begin
-  haveI := (ne_zero.of_no_zero_smul_divisors K L n).trans,
+  haveI := ne_zero.of_no_zero_smul_divisors K L n,
   refine power_basis.map (algebra.adjoin.power_basis $ integral {n} K L $ ζ ^ (t : zmod n).val) _,
   refine (subalgebra.equiv_of_eq _ _
       (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ _)).trans
@@ -132,11 +134,7 @@ local notation `ζ'` := is_cyclotomic_extension.zeta_runity n ℚ ℚ[ζₙ]
 
 open is_cyclotomic_extension ne_zero
 
--- yeah I need to fix this mess ASAP
-instance im_an_idiot : ne_zero ((n : ℕ) : cyclotomic_field n ℚ) := sorry
-instance im_an_idiot2 : ne_zero (n : ℚ) := sorry
-instance im_an_idiot3 : ne_zero ((n : ℕ) : ℚ) := sorry
-instance : char_zero (cyclotomic_field n ℚ) := sorry
+local attribute [instance] is_cyclotomic_extension.number_field
 
 -- oh yay the diamond comes back to hurt us
 lemma diamond : cyclotomic_field.algebra n ℚ = algebra_rat :=
@@ -148,8 +146,7 @@ lemma diamond : cyclotomic_field.algebra n ℚ = algebra_rat :=
 { inv_fun := λ x, (zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly (zeta_pow_power_basis ℚ[ζₙ] n ℚ x)
   (by sorry; begin
     simp only [zeta.power_basis_gen, zeta_pow_power_basis_gen],
-    haveI : char_zero (cyclotomic_field n ℚ) := sorry,
-    have hl := polynomial.cyclotomic_eq_minpoly_rat (zeta_primitive_root n ℚ ℚ[ζₙ]) n.pos,
+     have hl := polynomial.cyclotomic_eq_minpoly_rat (zeta_primitive_root n ℚ ℚ[ζₙ]) n.pos,
     have hr := polynomial.cyclotomic_eq_minpoly_rat
             ((zeta_primitive_root n ℚ ℚ[ζₙ]).pow_of_coprime _ (zmod.val_coe_unit_coprime x)) n.pos,
     convert hl.symm.trans hr; exact diamond n

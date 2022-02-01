@@ -19,8 +19,6 @@ local attribute [instance] is_cyclotomic_extension.finite_dimensional
 
 variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
 
-instance ugly : ne_zero (p : ℚ) := (ne_zero.of_no_zero_smul_divisors ℚ ℚ p).trans
-
 lemma norm_zeta_sub_one [hp : fact (p : ℕ).prime] (h : p ≠ 2) :
   norm ℚ ((zeta p ℚ K) - 1) = p :=
 begin
@@ -33,7 +31,6 @@ lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
   discr ℚ (zeta.power_basis p ℚ K).basis =
   (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) :=
 begin
-  haveI := (ne_zero.of_no_zero_smul_divisors ℚ K p).trans,
   have hprim := zeta_primitive_root p ℚ K,
   have hzero : zeta p ℚ K - 1 ≠ 0 := λ h, by simpa [eval_one_cyclotomic_prime, sub_eq_zero.1 h]
     using is_root.def.1 (is_root_cyclotomic p.pos hprim),
