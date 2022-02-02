@@ -15,21 +15,23 @@ lemma flt_three_case_one_aux {A B C : zmod 9} (h : A ^ 3 + B ^ 3 = C ^ 3) : 3 �
 by dec_trivial!
 
 open polynomial fractional_ideal
+
 open_locale non_zero_divisors
+
+-- why isn't this an instance globally?
+local attribute [instance] is_cyclotomic_extension.number_field
+
 theorem flt_regular_case_one_main {p a b c : ℕ} [fact p.prime] (hp : is_regular_number p)
   (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
   (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : false :=
 begin
   have h_prime : p.prime := fact.out _,
   let pp : ℕ+ := ⟨p, h_prime.pos⟩,
-  letI : is_cyclotomic_extension {pp} ℚ (cyclotomic_field pp ℚ) := sorry, --why this is not automatic?
-  letI : ne_zero (pp : (cyclotomic_field pp ℚ)) := sorry,
   have := pow_add_pow_eq_prod_add_zeta_runity_mul (nat.odd_iff.mp (h_prime.odd hp_ne_two))
     (is_cyclotomic_extension.zeta_primitive_root pp ℚ (cyclotomic_field pp ℚ)) a b,
   rw_mod_cast h at this,
   symmetry' at this,
   push_cast at this,
-  letI : is_localization (cyclotomic_ring pp ℤ ℚ)⁰ (cyclotomic_field pp ℚ) := sorry, --why this is not automatic?
   apply_fun span_singleton (cyclotomic_ring pp ℤ ℚ)⁰ at this,
   simp only [span_singleton_prod, span_singleton_pow] at this,
   sorry,

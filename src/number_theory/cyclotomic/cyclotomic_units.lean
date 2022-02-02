@@ -10,10 +10,11 @@ import ring_theory.polynomial.cyclotomic.eval
 import ready_for_mathlib.ideal_stuff
 
 import tactic.may_assume
+import ready_for_mathlib.pnat
 
 noncomputable theory
 
-open_locale big_operators non_zero_divisors number_field
+open_locale big_operators non_zero_divisors number_field pnat
 open number_field polynomial finset module units fractional_ideal submodule
 
 universe variables u v w z
@@ -41,7 +42,7 @@ end is_cyclotomic_extension
 
 namespace cyclotomic_ring
 
-variables [is_domain A] [algebra A K] [is_fraction_ring A K] [ne_zero (n : K)]
+variables [is_domain A] [algebra A K] [is_fraction_ring A K] [ne_zero (⥉n : K)]
 
 open is_cyclotomic_extension
 
@@ -59,8 +60,7 @@ local attribute [instance] cyclotomic_field.algebra_base
 lemma zeta_mem_base : ∃ (x : (cyclotomic_ring n A K)), algebra_map
   (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta n K (cyclotomic_field n K) :=
 begin
-  --fix this avoiding `(n : ℕ)` in def of zeta
-  have : ne_zero (n : cyclotomic_field n K) := sorry,
+  have := ne_zero.of_no_zero_smul_divisors K (cyclotomic_field n K) n,
   letI := classical.prop_decidable,
   let μ := zeta n K (cyclotomic_field n K),
   have hμ := zeta_primitive_root n K (cyclotomic_field n K),

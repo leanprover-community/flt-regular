@@ -1,13 +1,16 @@
 import number_theory.cyclotomic.cyclotomic_units
+import field_theory.polynomial_galois_group
 /-!
 # Galois group of cyclotomic extensions
+
+In this file, we compute the Galois group of ℚ(ζₙ), and show that for K(ζₙ), it is at least
+a subgroup of `(zmod n)ˣ`.
 
 # References
 
 * [https://kconrad.math.uconn.edu/blurbs/galoistheory/cyclotomic.pdf]: this file's main guide.
 
 -/
-
 
 section to_move
 
@@ -67,12 +70,28 @@ monoid_hom.to_hom_units
     rw [←nat.cast_mul, zmod.nat_coe_eq_nat_coe_iff, ←ho, ←pow_eq_pow_iff_modeq μ', hxy]
   end }
 
+@[simp] lemma is_primitive_root.aut_to_pow_spec (f : L ≃ₐ[K] L) : μ ^ (hμ.aut_to_pow K f : zmod n).val = f μ :=
+begin
+  rw is_primitive_root.coe_aut_to_pow_apply,
+  generalize_proofs h,
+  have := h.some_spec,
+  dsimp only [alg_equiv.to_alg_hom_eq_coe, alg_equiv.coe_alg_hom] at this,
+  refine eq.trans (_ : ↑hμ.to_roots_of_unity ^ _ = _) this.symm,
+  rw [←roots_of_unity.coe_pow, ←roots_of_unity.coe_pow],
+  congr' 1,
+  rw [pow_eq_pow_iff_modeq, ←order_of_subgroup, ←order_of_units, hμ.coe_to_roots_of_unity_coe,
+      ←hμ.eq_order_of, zmod.val_nat_cast],
+  exact nat.mod_modeq _ _
+end
+
 variables (n) [is_cyclotomic_extension {n} K L]
 
 open is_cyclotomic_extension ne_zero
 
-lemma is_cyclotomic_extension.aut_to_pow_injective [ne_zero (n : K)] : function.injective $
-    (@zeta_primitive_root n K L _ _ _ _ _ sorry).aut_to_pow K :=
+open_locale pnat
+
+lemma is_cyclotomic_extension.aut_to_pow_injective [ne_zero (⥉n : K)] : function.injective $
+    (@zeta_primitive_root n K L _ _ _ _ _ $ of_no_zero_smul_divisors K L n).aut_to_pow K :=
 begin
   intros f g hfg,
   apply_fun units.val at hfg,
@@ -100,7 +119,7 @@ begin
 end
 
 -- this can't be an instance, right? but this is cool!
-noncomputable example [ne_zero (n : K)] : comm_group (L ≃ₐ[K] L) :=
+noncomputable example [ne_zero (⥉n : K)] : comm_group (L ≃ₐ[K] L) :=
 function.injective.comm_group _ (is_cyclotomic_extension.aut_to_pow_injective n K) (map_one _)
   (map_mul _) (map_inv _) (map_div _)
 
@@ -110,9 +129,9 @@ variables (L)
 -- whilst I can't figure how to make a `power_basis.map_conjugate`, this works
 -- for this specific problem
 /-- The power basis given by `t : (zmod n)ˣ`. -/
-@[simps] noncomputable def zeta_pow_power_basis [ne_zero (n : K)] (t : (zmod n)ˣ) : power_basis K L :=
+@[simps] noncomputable def zeta_pow_power_basis [ne_zero (⥉n : K)] (t : (zmod n)ˣ) : power_basis K L :=
 begin
-  haveI := (ne_zero.of_no_zero_smul_divisors K L n).trans,
+  haveI := ne_zero.of_no_zero_smul_divisors K L n,
   refine power_basis.map (algebra.adjoin.power_basis $ integral {n} K L $ ζ ^ (t : zmod n).val) _,
   refine (subalgebra.equiv_of_eq _ _
       (is_cyclotomic_extension.adjoin_primitive_root_eq_top n _ $ _)).trans
@@ -132,30 +151,63 @@ local notation `ζ'` := is_cyclotomic_extension.zeta_runity n ℚ ℚ[ζₙ]
 
 open is_cyclotomic_extension ne_zero
 
--- yeah I need to fix this mess ASAP
-instance im_an_idiot : ne_zero ((n : ℕ) : cyclotomic_field n ℚ) := sorry
-instance im_an_idiot2 : ne_zero (n : ℚ) := sorry
-instance im_an_idiot3 : ne_zero ((n : ℕ) : ℚ) := sorry
-instance : char_zero (cyclotomic_field n ℚ) := sorry
+local attribute [instance] is_cyclotomic_extension.number_field algebra_rat_subsingleton
 
--- oh yay the diamond comes back to hurt us
-lemma diamond : cyclotomic_field.algebra n ℚ = algebra_rat :=
-@@subsingleton.elim algebra_rat_subsingleton _ _
-
-/-- The `monoid_hom` that takes an automorphism to the power of μ that μ gets mapped to under it. -/
+/-- The `mul_equiv` that takes an automorphism to the power of μ that μ gets mapped to under it.
+    A stronger version of `is_primitive_root.aut_to_pow`. -/
 @[simps {attrs := []}] noncomputable def cyclotomic_field.rat_aut_equiv_zmod :
   (ℚ[ζₙ] ≃ₐ[ℚ] ℚ[ζₙ]) ≃* (zmod n)ˣ :=
 { inv_fun := λ x, (zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly (zeta_pow_power_basis ℚ[ζₙ] n ℚ x)
-  (by sorry; begin
+  begin
     simp only [zeta.power_basis_gen, zeta_pow_power_basis_gen],
-    haveI : char_zero (cyclotomic_field n ℚ) := sorry,
     have hl := polynomial.cyclotomic_eq_minpoly_rat (zeta_primitive_root n ℚ ℚ[ζₙ]) n.pos,
     have hr := polynomial.cyclotomic_eq_minpoly_rat
             ((zeta_primitive_root n ℚ ℚ[ζₙ]).pow_of_coprime _ (zmod.val_coe_unit_coprime x)) n.pos,
-    convert hl.symm.trans hr; exact diamond n
-  end),
-  left_inv := sorry,
-  right_inv := sorry,
-  .. (@zeta_primitive_root n ℚ ℚ[ζₙ] _ _ _ _ _ sorry).aut_to_pow ℚ }
+    convert hl.symm.trans hr
+  end,
+  left_inv := λ f, begin
+    simp only [monoid_hom.to_fun_eq_coe],
+    generalize_proofs _ _ _ hζ h,
+    apply alg_equiv.coe_alg_hom_injective,
+    apply (zeta.power_basis n ℚ ℚ[ζₙ]).alg_hom_ext,
+    simp only [alg_equiv.coe_alg_hom, alg_equiv.map_pow],
+    rw power_basis.equiv_of_minpoly_gen,
+    simp only [zeta_pow_power_basis_gen, zeta.power_basis_gen, is_primitive_root.aut_to_pow_spec],
+  end,
+  right_inv := λ x, begin
+    simp only [monoid_hom.to_fun_eq_coe],
+    generalize_proofs _ hζ _ _ h,
+    have key := hζ.aut_to_pow_spec ℚ ((zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly
+                                      (zeta_pow_power_basis ℚ[ζₙ] n ℚ x) h),
+    have := (zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly_gen,
+    rw zeta.power_basis_gen at this {occs := occurrences.pos [2]},
+    rw [this, zeta_pow_power_basis_gen] at key,
+    change ↑ζ' ^ _ = ↑ζ' ^ _ at key,
+    simp only [←roots_of_unity.coe_pow] at key,
+    replace key := roots_of_unity.coe_injective key,
+    rw [pow_eq_pow_iff_modeq, ←order_of_subgroup, ←order_of_units, coe_zeta_runity_coe,
+        ←(zeta_primitive_root n ℚ ℚ[ζₙ]).eq_order_of, ←zmod.eq_iff_modeq_nat] at key,
+    simp only [zmod.nat_cast_val, zmod.cast_id', id.def] at key,
+    exact units.ext key,
+  end,
+  .. (@zeta_primitive_root n ℚ ℚ[ζₙ] _ _ _ _ _ _).aut_to_pow ℚ }
+
+open_locale pnat
+
+open polynomial
+
+noncomputable def gal_cyclotomic_equiv_units_zmod :
+  (cyclotomic n ℚ).gal ≃* (zmod n)ˣ := cyclotomic_field.rat_aut_equiv_zmod n
+
+local attribute [instance] splitting_field_X_pow_sub_one
+
+noncomputable def gal_X_pow_equiv_units_zmod :
+  (X^ ⥉n - 1 : polynomial ℚ).gal ≃* (zmod n)ˣ :=
+show ((X ^ ⥉n - 1 : polynomial ℚ).splitting_field ≃ₐ[ℚ] (X ^ ⥉n - 1).splitting_field) ≃* (zmod n)ˣ, from
+begin
+  refine mul_equiv.trans _ (cyclotomic_field.rat_aut_equiv_zmod n),
+  refine alg_equiv.aut_congr (alg_equiv.symm _),
+  apply is_splitting_field.alg_equiv
+end
 
 end rat
