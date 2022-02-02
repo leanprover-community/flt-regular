@@ -1,4 +1,5 @@
 import number_theory.cyclotomic.cyclotomic_units
+import field_theory.polynomial_galois_group
 /-!
 # Galois group of cyclotomic extensions
 
@@ -190,5 +191,23 @@ local attribute [instance] is_cyclotomic_extension.number_field algebra_rat_subs
     exact units.ext key,
   end,
   .. (@zeta_primitive_root n ℚ ℚ[ζₙ] _ _ _ _ _ _).aut_to_pow ℚ }
+
+open_locale pnat
+
+open polynomial
+
+noncomputable def gal_cyclotomic_equiv_units_zmod :
+  (cyclotomic n ℚ).gal ≃* (zmod n)ˣ := cyclotomic_field.rat_aut_equiv_zmod n
+
+local attribute [instance] splitting_field_X_pow_sub_one
+
+noncomputable def gal_X_pow_equiv_units_zmod :
+  (X^ ⥉n - 1 : polynomial ℚ).gal ≃* (zmod n)ˣ :=
+show ((X ^ ⥉n - 1 : polynomial ℚ).splitting_field ≃ₐ[ℚ] (X ^ ⥉n - 1).splitting_field) ≃* (zmod n)ˣ, from
+begin
+  refine mul_equiv.trans _ (cyclotomic_field.rat_aut_equiv_zmod n),
+  refine alg_equiv.aut_congr (alg_equiv.symm _),
+  apply is_splitting_field.alg_equiv
+end
 
 end rat
