@@ -18,6 +18,18 @@ lemma roots_of_unity.coe_injective {M} [comm_monoid M] {n : ℕ+} :
   function.injective (coe : (roots_of_unity n M) → M) :=
 units.ext.comp (λ x y, subtype.ext)
 
+open polynomial
+
+variables {K : Type*} [field K] {R : Type*} [comm_ring R] [is_domain R] {μ : R} {n : ℕ} [algebra K R]
+
+lemma is_primitive_root.minpoly_of_cyclotomic_irreducible (hμ : is_primitive_root μ n)
+  (h : irreducible $ cyclotomic n K) [ne_zero (n : K)] : minpoly K μ = cyclotomic n K :=
+begin
+  haveI := ne_zero.of_no_zero_smul_divisors K R n,
+  refine (minpoly.eq_of_irreducible_of_monic h _ $ cyclotomic.monic _ _).symm,
+  rwa [aeval_def, eval₂_eq_eval_map, map_cyclotomic, ←is_root.def, is_root_cyclotomic_iff]
+end
+
 end to_move
 
 -- argument order is for dot-notation
@@ -139,75 +151,74 @@ begin
   exact (zeta_primitive_root n K L).pow_of_coprime _ (zmod.val_coe_unit_coprime t),
 end
 
-end general
+.
 
-section rat
-
-variables (n : ℕ+)
-
-local notation `ℚ[ζₙ]` := cyclotomic_field n ℚ
-local notation `ζ` := is_cyclotomic_extension.zeta n ℚ ℚ[ζₙ]
-local notation `ζ'` := is_cyclotomic_extension.zeta_runity n ℚ ℚ[ζₙ]
-
-open is_cyclotomic_extension ne_zero
-
-local attribute [instance] is_cyclotomic_extension.number_field algebra_rat_subsingleton
+open polynomial
 
 /-- The `mul_equiv` that takes an automorphism to the power of μ that μ gets mapped to under it.
     A stronger version of `is_primitive_root.aut_to_pow`. -/
-@[simps {attrs := []}] noncomputable def cyclotomic_field.rat_aut_equiv_zmod :
-  (ℚ[ζₙ] ≃ₐ[ℚ] ℚ[ζₙ]) ≃* (zmod n)ˣ :=
-{ inv_fun := λ x, (zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly (zeta_pow_power_basis ℚ[ζₙ] n ℚ x)
+@[simps {attrs := []}] noncomputable def is_cyclotomic_extension.aut_equiv_pow [ne_zero (⥉n : K)]
+  (h : irreducible (cyclotomic n K)) : (L ≃ₐ[K] L) ≃* (zmod n)ˣ :=
+let hn := ne_zero.of_no_zero_smul_divisors K L n in by exactI
+{ inv_fun := λ x, (zeta.power_basis n K L).equiv_of_minpoly (zeta_pow_power_basis L n K x)
   begin
     simp only [zeta.power_basis_gen, zeta_pow_power_basis_gen],
-    have hl := polynomial.cyclotomic_eq_minpoly_rat (zeta_primitive_root n ℚ ℚ[ζₙ]) n.pos,
-    have hr := polynomial.cyclotomic_eq_minpoly_rat
-            ((zeta_primitive_root n ℚ ℚ[ζₙ]).pow_of_coprime _ (zmod.val_coe_unit_coprime x)) n.pos,
-    convert hl.symm.trans hr
+    have hl := (zeta_primitive_root n K L).minpoly_of_cyclotomic_irreducible h,
+     -- sad that we can't split dot notation over lines
+    have hr := ((zeta_primitive_root n K L).pow_of_coprime _ (zmod.val_coe_unit_coprime x)).minpoly_of_cyclotomic_irreducible h,
+    exact hl.trans hr.symm
   end,
   left_inv := λ f, begin
     simp only [monoid_hom.to_fun_eq_coe],
-    generalize_proofs _ _ _ hζ h,
     apply alg_equiv.coe_alg_hom_injective,
-    apply (zeta.power_basis n ℚ ℚ[ζₙ]).alg_hom_ext,
+    apply (zeta.power_basis n K L).alg_hom_ext,
     simp only [alg_equiv.coe_alg_hom, alg_equiv.map_pow],
     rw power_basis.equiv_of_minpoly_gen,
     simp only [zeta_pow_power_basis_gen, zeta.power_basis_gen, is_primitive_root.aut_to_pow_spec],
   end,
   right_inv := λ x, begin
     simp only [monoid_hom.to_fun_eq_coe],
-    generalize_proofs _ hζ _ _ h,
-    have key := hζ.aut_to_pow_spec ℚ ((zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly
-                                      (zeta_pow_power_basis ℚ[ζₙ] n ℚ x) h),
-    have := (zeta.power_basis n ℚ ℚ[ζₙ]).equiv_of_minpoly_gen,
+    generalize_proofs hζ _ h,
+    have key := hζ.aut_to_pow_spec K ((zeta.power_basis n K L).equiv_of_minpoly
+                                      (zeta_pow_power_basis L n K x) h),
+    have := (zeta.power_basis n K L).equiv_of_minpoly_gen,
     rw zeta.power_basis_gen at this {occs := occurrences.pos [2]},
     rw [this, zeta_pow_power_basis_gen] at key,
     change ↑ζ' ^ _ = ↑ζ' ^ _ at key,
     simp only [←roots_of_unity.coe_pow] at key,
     replace key := roots_of_unity.coe_injective key,
     rw [pow_eq_pow_iff_modeq, ←order_of_subgroup, ←order_of_units, coe_zeta_runity_coe,
-        ←(zeta_primitive_root n ℚ ℚ[ζₙ]).eq_order_of, ←zmod.eq_iff_modeq_nat] at key,
+        ←(zeta_primitive_root n K L).eq_order_of, ←zmod.eq_iff_modeq_nat] at key,
     simp only [zmod.nat_cast_val, zmod.cast_id', id.def] at key,
     exact units.ext key,
   end,
-  .. (@zeta_primitive_root n ℚ ℚ[ζₙ] _ _ _ _ _ _).aut_to_pow ℚ }
+  .. (zeta_primitive_root n K L).aut_to_pow K }
 
-open_locale pnat
+local attribute [instance] splitting_field_X_pow_sub_one splitting_field_cyclotomic
 
-open polynomial
+include L
 
-noncomputable def gal_cyclotomic_equiv_units_zmod :
-  (cyclotomic n ℚ).gal ≃* (zmod n)ˣ := cyclotomic_field.rat_aut_equiv_zmod n
-
-local attribute [instance] splitting_field_X_pow_sub_one
-
-noncomputable def gal_X_pow_equiv_units_zmod :
-  (X^ ⥉n - 1 : polynomial ℚ).gal ≃* (zmod n)ˣ :=
-show ((X ^ ⥉n - 1 : polynomial ℚ).splitting_field ≃ₐ[ℚ] (X ^ ⥉n - 1).splitting_field) ≃* (zmod n)ˣ, from
+/-- `is_cyclotomic_extension.aut_equiv_pow` repackaged in terms of `gal`. Asserts that the
+Galois group of `X ^ n - 1` is equivalent to `(zmod n)ˣ` if `n` does not divide the characteristic
+of `K`, and `cyclotomic n K` is irreducible in the base field. -/
+noncomputable lemma gal_cyclotomic_equiv_units_zmod [ne_zero (⥉n : K)] (h : irreducible (cyclotomic n K)) :
+  (cyclotomic n K).gal ≃* (zmod n)ˣ :=
 begin
-  refine mul_equiv.trans _ (cyclotomic_field.rat_aut_equiv_zmod n),
+  refine mul_equiv.trans _ (is_cyclotomic_extension.aut_equiv_pow L n K h),
   refine alg_equiv.aut_congr (alg_equiv.symm _),
   apply is_splitting_field.alg_equiv
 end
 
-end rat
+/-- `is_cyclotomic_extension.aut_equiv_pow` repackaged in terms of `gal`. Asserts that the
+Galois group of `X ^ n - 1` is equivalent to `(zmod n)ˣ` if `n` does not divide the characteristic
+of `K`, and `cyclotomic n K` is irreducible in the base field. -/
+noncomputable def gal_X_pow_equiv_units_zmod [ne_zero (⥉n : K)] (h : irreducible (cyclotomic n K)) :
+  (X ^ ⥉n - 1 : polynomial K).gal ≃* (zmod n)ˣ :=
+show ((X ^ ⥉n - 1 : polynomial K).splitting_field ≃ₐ[K] (X ^ ⥉n - 1).splitting_field) ≃* (zmod n)ˣ, from
+begin
+  refine mul_equiv.trans _ (is_cyclotomic_extension.aut_equiv_pow L n K h),
+  refine alg_equiv.aut_congr (alg_equiv.symm _),
+  apply is_splitting_field.alg_equiv
+end
+
+end general
