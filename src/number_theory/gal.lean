@@ -199,7 +199,7 @@ include L
 /-- `is_cyclotomic_extension.aut_equiv_pow` repackaged in terms of `gal`. Asserts that the
 Galois group of `X ^ n - 1` is equivalent to `(zmod n)ˣ` if `n` does not divide the characteristic
 of `K`, and `cyclotomic n K` is irreducible in the base field. -/
-noncomputable lemma gal_cyclotomic_equiv_units_zmod [ne_zero (⥉n : K)] (h : irreducible (cyclotomic n K)) :
+noncomputable def gal_cyclotomic_equiv_units_zmod [ne_zero (⥉n : K)] (h : irreducible (cyclotomic n K)) :
   (cyclotomic n K).gal ≃* (zmod n)ˣ :=
 begin
   refine mul_equiv.trans _ (is_cyclotomic_extension.aut_equiv_pow L n K h),
