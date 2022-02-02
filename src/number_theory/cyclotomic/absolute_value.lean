@@ -416,7 +416,7 @@ begin
     have hxne : x ≠ 0,
     { contrapose! hx,
       simp only [hx, complex.abs_zero, ring_hom.map_zero, ne.def, not_false_iff, zero_ne_one],
-      use is_alg_closed.lift ℚ K ℂ (number_field.is_algebraic K) },
+      use (is_alg_closed.lift (number_field.is_algebraic K)).to_ring_hom },
     rw [pow_sub₀ _ hxne habne.le, h, mul_inv_cancel (pow_ne_zero b hxne)] },
   { rw [set.maps_univ_to],
     exact λ a, ⟨hxi.pow a, λ φ, by simp [hx φ, is_absolute_value.abv_pow complex.abs]⟩ },
