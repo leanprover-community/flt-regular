@@ -3,8 +3,8 @@ import field_theory.polynomial_galois_group
 /-!
 # Galois group of cyclotomic extensions
 
-In this file, we compute the Galois group of ℚ(ζₙ), and show that for K(ζₙ), it is at least
-a subgroup of `(zmod n)ˣ`.
+In this file, we show the relationship between the Galois group of`K(ζₙ)` and `(zmod n)ˣ`;
+it is always a subgroup, and if the `n`th cyclotomic polynomial is irreducible, they are isomorphic.
 
 # References
 
@@ -150,8 +150,6 @@ begin
       algebra.top_equiv,
   exact (zeta_primitive_root n K L).pow_of_coprime _ (zmod.val_coe_unit_coprime t),
 end
-
-.
 
 open polynomial
 
