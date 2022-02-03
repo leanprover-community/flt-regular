@@ -16,11 +16,13 @@ local notation `RR` := number_field.ring_of_integers (cyclotomic_field p ℚ)
 
 local attribute [instance] is_cyclotomic_extension.number_field is_cyclotomic_extension.finite_dimensional
 
--- this used to be here but is now solved by `apply_instance`
---instance cyclotomic_number_field : number_field KK := by apply_instance
-
 -- @Chris: you mentioned "checking automorphisms agree only on a generator" -
 -- what you want is `power_basis.alg_hom_ext`
+
+open_locale number_field
+
+-- we're nearly here!
+instance ℤ_cycl_ext : is_cyclotomic_extension {p} ℤ (𝓞 (cyclotomic_field p ℚ)) := sorry
 
 open cyclotomic_ring embeddings
 

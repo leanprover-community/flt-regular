@@ -4,11 +4,6 @@ universe u
 
 variables {M : Type u} [cancel_comm_monoid_with_zero M]
 
-example (a b : Prop) (h : a ∨ b) (ha : ¬ a) : b :=
-begin
-  exact (or_iff_right ha).1 h
-end
-
 lemma dvd_of_pow_dvd_pow_mul_pow_of_square_not_dvd {p a b : M} {n : ℕ} (hn : 0 < n) (hp : prime p)
   (hpow : p ^ n ∣ a ^ n * b ^ (n - 1)) (hb : ¬ p ^ 2 ∣ b) : p ∣ a :=
 begin

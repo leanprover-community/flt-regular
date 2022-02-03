@@ -11,10 +11,6 @@ local notation `ζ` := zeta p ℚ KK
 
 local attribute [instance] is_cyclotomic_extension.number_field
 
--- we're nearly here!
-instance ℤ_cycl_ext : is_cyclotomic_extension {p} ℤ (number_field.ring_of_integers
-  (cyclotomic_field p ℚ)) := sorry
-
 /-- `is_gal_conj_real x` means that `x` is real. -/
 def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
 
