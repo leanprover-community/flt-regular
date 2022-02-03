@@ -24,8 +24,8 @@ def sylvester_matrix [semiring R] (p q : polynomial R) :
 --   intros a h hh, fin_cases h,
 --   norm_num [hh],
 --   rw hh,
---   sorry,
---   sorry,
+--   admit,
+--   admit,
 -- end
 
 example : (sylvester_matrix (X : polynomial ℕ) X) ⟨1, by simp⟩ ⟨1, by simp⟩ = 1:=

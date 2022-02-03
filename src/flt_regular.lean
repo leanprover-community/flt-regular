@@ -9,7 +9,7 @@ import number_theory.cyclotomic.factoring
 
 -- TODO I (alex) commented this out as it seems redundent now? -- agree, seems redundant - Eric
 -- lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
---     : b.coprime c ∧ a.coprime c := sorry
+--     : b.coprime c ∧ a.coprime c := admit
 
 lemma flt_three_case_one_aux {A B C : zmod 9} (h : A ^ 3 + B ^ 3 = C ^ 3) : 3 ∣ A * B * C :=
 by dec_trivial!

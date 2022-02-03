@@ -256,7 +256,7 @@ end polynomial
 
 -- section ajoin
 -- variables {E : Type*} [field E] [number_field E] (x : E)
--- instance : char_zero ℚ⟮x⟯ := sorry
+-- instance : char_zero ℚ⟮x⟯ := admit
 -- instance : number_field ℚ⟮x⟯ :=
 -- begin
 --   haveI : finite_dimensional ℚ ℚ⟮x⟯ := intermediate_field.adjoin.finite_dimensional (is_separable.is_integral ℚ x),

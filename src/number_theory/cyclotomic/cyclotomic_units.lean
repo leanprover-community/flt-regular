@@ -128,7 +128,7 @@ end
 variable (n)
 
 instance : is_localization ((ring_of_integers (cyclotomic_field n K)))⁰ (cyclotomic_field n K) :=
-sorry
+admit
 
 lemma prime_ideal_eq_pow_cyclotomic [hn : fact ((n : ℕ).prime)] :
   (span_singleton _ n : fractional_ideal RR⁰ L) =
@@ -148,7 +148,7 @@ begin
   --                                  polynomial.eval_prod, polynomial.eval_X],
 
   -- apply span_singleton_eq_span_singleton_,
-  sorry,
+  admit,
 end -/
 
 end cyclotomic_unit

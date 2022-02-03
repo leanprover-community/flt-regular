@@ -298,7 +298,7 @@ begin
   -- intros x y hxy,
   -- simp at hxy,
   -- -- TODO something like this but this isnt exactly true
-  -- sorry,
+  -- admit,
 end
 
 -- TODO this can follow from previous
@@ -315,7 +315,7 @@ begin
   -- rw total_degree,
   -- have : (homogenization i p).support.nonempty,
   -- { simp [homogenization],
-  --   sorry,
+  --   admit,
   --    },
   -- rw ← finset.sup'_eq_sup this,
   -- rw finset.nonempty.sup'_eq_cSup_image,
@@ -324,8 +324,8 @@ begin
   -- { simp [this], },
   -- refine set.eq_singleton_iff_unique_mem.mpr _,
   -- split,
-  -- { simp, sorry, },
-  -- { simp, sorry, },
+  -- { simp, admit, },
+  -- { simp, admit, },
 end
 
 section leading_terms
@@ -521,7 +521,7 @@ end
 -- lemma homogeneous_component_mul (m n : ℕ) (p q : mv_polynomial ι R) :
 --   homogeneous_component (m + n) (p * q) = homogeneous_component m p * homogeneous_component n q :=
 -- begin
---   sorry,
+--   admit,
 -- end
 
 lemma coeff_leading_terms (p : mv_polynomial ι R) (d : ι →₀ ℕ) :

@@ -165,7 +165,7 @@ lemma unit_lemma (u : RRˣ) :
 begin
   have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
   { have : ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = (zeta_runity p ℚ) ^ (2 * m),
-    sorry, --follows from above with some work
+    admit, --follows from above with some work
           -- what we have shows its +- a power of zeta_runity
     obtain ⟨m, hm⟩ := this,
     use [u * (zeta_runity p ℚ)⁻¹ ^ m, m],
@@ -182,9 +182,9 @@ begin
       rw ring_hom.map_inv,
       rw mul_inv_eq_iff_eq_mul₀,
       simp,
-      sorry, -- wow we should really have some more structure and simp lemmas to tame this beast
-      sorry, -- similar silly goal to below
-      sorry,
+      admit, -- wow we should really have some more structure and simp lemmas to tame this beast
+      admit, -- similar silly goal to below
+      admit,
        },
     { simp only [mul_assoc, inv_pow, subalgebra.coe_mul, coe_coe, units.coe_mul, zpow_coe_nat],
       norm_cast,
@@ -195,7 +195,7 @@ begin
     rw (_ : ((unit_gal_conj p u)⁻¹ : KK) = (↑(unit_gal_conj p u⁻¹))),
     exact number_field.ring_of_integers.is_integral_coe (coe_b _),
     simp,
-    sorry, -- tis a silly goal
+    admit, -- tis a silly goal
      },
 end
 -/
