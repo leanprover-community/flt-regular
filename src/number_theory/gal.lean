@@ -27,11 +27,6 @@ it is always a subgroup, and if the `n`th cyclotomic polynomial is irreducible, 
 
 section to_move
 
---#11793
-lemma roots_of_unity.coe_injective {M} [comm_monoid M] {n : ℕ+} :
-  function.injective (coe : (roots_of_unity n M) → M) :=
-units.ext.comp (λ x y, subtype.ext)
-
 open polynomial
 
 variables {K : Type*} [field K] {R : Type*} [comm_ring R] [is_domain R] {μ : R} {n : ℕ} [algebra K R]
