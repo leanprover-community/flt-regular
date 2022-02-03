@@ -1,5 +1,7 @@
-import number_theory.cyclotomic.cyclotomic_units
+import number_theory.cyclotomic.zeta
+import ring_theory.polynomial.cyclotomic.eval
 import field_theory.polynomial_galois_group
+import ready_for_mathlib.pnat
 /-!
 # Galois group of cyclotomic extensions
 
@@ -114,7 +116,6 @@ variables {L : Type*} [field L] {μ : L} {n : ℕ+} (hμ : is_primitive_root μ 
           (K : Type*) [field K] [algebra K L]
 
 local notation `ζ` := is_cyclotomic_extension.zeta n K L
-local notation `ζ'` := is_cyclotomic_extension.zeta_runity n K L
 
 variables (n) [is_cyclotomic_extension {n} K L]
 
@@ -171,6 +172,8 @@ end
 
 open polynomial
 
+--local notation `ζ'` := is_cyclotomic_extension.zeta_runity n K L
+
 /-- The `mul_equiv` that takes an automorphism to the power of μ that μ gets mapped to under it.
     A stronger version of `is_primitive_root.aut_to_pow`. -/
 @[simps {attrs := []}] noncomputable def is_cyclotomic_extension.aut_equiv_pow [ne_zero (⥉n : K)]
@@ -200,13 +203,14 @@ let hn := ne_zero.of_no_zero_smul_divisors K L n in by exactI
     have := (zeta.power_basis n K L).equiv_of_minpoly_gen,
     rw zeta.power_basis_gen at this {occs := occurrences.pos [2]},
     rw [this, zeta_pow_power_basis_gen] at key,
+    let ζ' := hζ.to_roots_of_unity,
     change ↑ζ' ^ _ = ↑ζ' ^ _ at key,
     simp only [←roots_of_unity.coe_pow] at key,
     replace key := roots_of_unity.coe_injective key,
-    rw [pow_eq_pow_iff_modeq, ←order_of_subgroup, ←order_of_units, coe_zeta_runity_coe,
+    rw [pow_eq_pow_iff_modeq, ←order_of_subgroup, ←order_of_units, hζ.coe_to_roots_of_unity_coe,
         ←(zeta_primitive_root n K L).eq_order_of, ←zmod.eq_iff_modeq_nat] at key,
     simp only [zmod.nat_cast_val, zmod.cast_id', id.def] at key,
-    exact units.ext key,
+    exact units.ext key
   end,
   .. (zeta_primitive_root n K L).aut_to_pow K }
 
