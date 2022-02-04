@@ -292,7 +292,7 @@ begin
   convert submodule.finrank_le (ℚ⟮x⟯.to_subalgebra.to_submodule : submodule _ _),
   have : minpoly ℚ x = (minpoly ℤ x).map (algebra_map ℤ ℚ),
   from minpoly.gcd_domain_eq_field_fractions ℚ hx,
-  rw [this, nat_degree_map' _],
+  rw [this, nat_degree_map_eq_of_injective _],
   exact is_fraction_ring.injective ℤ ℚ,
 end
 
