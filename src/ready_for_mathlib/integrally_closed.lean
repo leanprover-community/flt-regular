@@ -8,6 +8,7 @@ import ready_for_mathlib.degree
 import ready_for_mathlib.nat
 import ready_for_mathlib.prime
 import ready_for_mathlib.disjoint
+import ready_for_mathlib.no_zero_smul_divisors
 
 universes u v z w
 
@@ -80,8 +81,8 @@ begin
 end
 
 lemma mem_adjoin_of_dvd_aeval_of_dvd_coeff [no_zero_smul_divisors R L] {Q : polynomial R} {x : L}
-  {z : L} (hp : p ≠ 0) (hQ : ∀ i ∈ range (Q.nat_degree + 1), p ∣ Q.coeff i) (hz : aeval x Q = p • z) :
-  z ∈ adjoin R ({x} : set L) :=
+  {z : L} (hp : p ≠ 0) (hQ : ∀ i ∈ range (Q.nat_degree + 1), p ∣ Q.coeff i)
+  (hz : aeval x Q = p • z) : z ∈ adjoin R ({x} : set L) :=
 begin
   choose! f hf using hQ,
   rw [aeval_eq_sum_range, sum_range] at hz,
@@ -103,7 +104,7 @@ lemma eiseinstein_integral [is_domain R] [normalized_gcd_monoid R] [is_fraction_
 begin
   letI := finite_dimensional B,
   set P := minpoly R B.gen with hP,
-  haveI : no_zero_smul_divisors R L := sorry,
+  haveI : no_zero_smul_divisors R L := no_zero_smul_divisors.trans R K L,
   let P₁ := P.map (algebra_map R L),
 
   choose! f hf using (is_weakly_eisenstein_at.exists_mem_adjoin_mul_eq_pow_nat_degree_le
