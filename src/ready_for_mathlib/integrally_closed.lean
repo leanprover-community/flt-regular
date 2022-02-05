@@ -24,17 +24,18 @@ local notation `𝓟` := submodule.span R {p}
 
 lemma eiseinstein_integral_first [is_domain R] [normalized_gcd_monoid R] [is_fraction_ring R K]
   [is_integrally_closed R] [is_separable K L] {B : power_basis K L} (hp : prime p)
-  (hei : (minpoly R B.gen).is_weakly_eisenstein_at 𝓟)
-  (hndiv : ¬ p ^ 2 ∣ ((minpoly R B.gen)).coeff 0) (hBint : is_integral R B.gen)
+  (hei : (minpoly R B.gen).is_eisenstein_at 𝓟) (hBint : is_integral R B.gen)
   {z : L} {Q : polynomial R} (hQ : (aeval B.gen) Q = p • z) (hzint : is_integral R z) :
   p ∣ Q.coeff 0 :=
 begin
+  have hndiv : ¬ p ^ 2 ∣ ((minpoly R B.gen)).coeff 0 := λ h,
+    hei.not_mem ((span_singleton_pow p 2).symm ▸ (ideal.mem_span_singleton.2 h)),
   letI := finite_dimensional B,
   let P := minpoly R B.gen,
   let P₁ := P.map (algebra_map R L),
 
   choose! f hf using (is_weakly_eisenstein_at.exists_mem_adjoin_mul_eq_pow_nat_degree_le
-    (minpoly.aeval R B.gen) (minpoly.monic hBint) hei),
+    (minpoly.aeval R B.gen) (minpoly.monic hBint) hei.is_weakly_eisenstein_at),
 
   have aux : ∀ i ∈ (range (Q.nat_degree + 1)).erase 0, P₁.nat_degree ≤ i + (P₁.nat_degree - 1),
   { intros i hi,
@@ -97,18 +98,19 @@ end
 
 lemma eiseinstein_integral [is_domain R] [normalized_gcd_monoid R] [is_fraction_ring R K]
   [is_integrally_closed R] [is_separable K L] {B : power_basis K L} (hp : prime p)
-  (hei : (minpoly R B.gen).is_weakly_eisenstein_at 𝓟)
-  (hndiv : ¬ p ^ 2 ∣ ((minpoly R B.gen)).coeff 0) (hBint : is_integral R B.gen)
+  (hei : (minpoly R B.gen).is_eisenstein_at 𝓟) (hBint : is_integral R B.gen)
   {z : L} (hzint : is_integral R z) (hz : p • z ∈ adjoin R ({B.gen} : set L)) :
   z ∈ adjoin R ({B.gen} : set L) :=
 begin
+  have hndiv : ¬ p ^ 2 ∣ ((minpoly R B.gen)).coeff 0 := λ h,
+    hei.not_mem ((span_singleton_pow p 2).symm ▸ (ideal.mem_span_singleton.2 h)),
   letI := finite_dimensional B,
   set P := minpoly R B.gen with hP,
   haveI : no_zero_smul_divisors R L := no_zero_smul_divisors.trans R K L,
   let P₁ := P.map (algebra_map R L),
 
   choose! f hf using (is_weakly_eisenstein_at.exists_mem_adjoin_mul_eq_pow_nat_degree_le
-    (minpoly.aeval R B.gen) (minpoly.monic hBint) hei),
+    (minpoly.aeval R B.gen) (minpoly.monic hBint) hei.is_weakly_eisenstein_at),
   rw [adjoin_singleton_eq_range_aeval] at hz,
   obtain ⟨Q₁, hQ⟩ := hz,
   set Q := Q₁ %ₘ P with hQ₁,
@@ -128,7 +130,7 @@ begin
   refine mem_adjoin_of_dvd_aeval_of_dvd_coeff hp.ne_zero (λ i, _) hQ,
   refine nat.case_strong_induction_on i _ (λ j hind, _),
   { intro H,
-    exact eiseinstein_integral_first hp hei hndiv hBint hQ hzint },
+    exact eiseinstein_integral_first hp hei hBint hQ hzint },
   { intro hj,
     refine dvd_of_pow_dvd_pow_mul_pow_of_square_not_dvd B.dim_pos hp _ hndiv,
 
