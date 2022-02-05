@@ -79,11 +79,19 @@ begin
     ← minpoly.gcd_domain_eq_field_fractions K hBint, nat_degree_minpoly],
 end
 
-lemma mem_adjoin_of_dvd_aeval_of_dvd_coeff {f : polynomial R} {x : L} {z : L}
-  (hf : ∀ i ∈ range (f.nat_degree + 1), p ∣ f.coeff i) (hz : aeval x f = p • z) :
+lemma mem_adjoin_of_dvd_aeval_of_dvd_coeff [no_zero_smul_divisors R L] {Q : polynomial R} {x : L}
+  {z : L} (hp : p ≠ 0) (hQ : ∀ i ∈ range (Q.nat_degree + 1), p ∣ Q.coeff i) (hz : aeval x Q = p • z) :
   z ∈ adjoin R ({x} : set L) :=
 begin
-  sorry
+  choose! f hf using hQ,
+  rw [aeval_eq_sum_range, sum_range] at hz,
+  conv_lhs at hz { congr, skip, funext,
+    rw [hf i (mem_range.2 (fin.is_lt i)), ← smul_smul] },
+  rw [← smul_sum] at hz,
+  replace hz := smul_right_injective _ hp hz,
+  rw [← hz],
+  refine subalgebra.sum_mem _ (λ i hi, subalgebra.smul_mem _ (subalgebra.pow_mem _
+    (subset_adjoin (set.mem_singleton x)) _) _)
 end
 
 lemma eiseinstein_integral [is_domain R] [normalized_gcd_monoid R] [is_fraction_ring R K]
@@ -95,6 +103,7 @@ lemma eiseinstein_integral [is_domain R] [normalized_gcd_monoid R] [is_fraction_
 begin
   letI := finite_dimensional B,
   set P := minpoly R B.gen with hP,
+  haveI : no_zero_smul_divisors R L := sorry,
   let P₁ := P.map (algebra_map R L),
 
   choose! f hf using (is_weakly_eisenstein_at.exists_mem_adjoin_mul_eq_pow_nat_degree_le
@@ -115,7 +124,7 @@ begin
     { rw [H₁],
       exact subalgebra.zero_mem _ } },
 
-  refine mem_adjoin_of_dvd_aeval_of_dvd_coeff (λ i, _) hQ,
+  refine mem_adjoin_of_dvd_aeval_of_dvd_coeff hp.ne_zero (λ i, _) hQ,
   refine nat.case_strong_induction_on i _ (λ j hind, _),
   { intro H,
     exact eiseinstein_integral_first hp hei hndiv hBint hQ hzint },
