@@ -1,6 +1,6 @@
 import algebra.algebra.basic
 
-lemma no_zero_smul_divisors.trans {R S M : Type*} [comm_ring R] [ring S] [is_domain S] [algebra R S]
+lemma no_zero_smul_divisors.trans (R S M : Type*) [comm_ring R] [ring S] [is_domain S] [algebra R S]
   [add_comm_group M] [module R M] [module S M] [is_scalar_tower R S M] [no_zero_smul_divisors R S]
   [no_zero_smul_divisors S M] : no_zero_smul_divisors R M :=
 begin
