@@ -15,7 +15,7 @@ open_locale big_operators
 
 open polynomial algebra finset is_integrally_closed power_basis is_scalar_tower nat ideal
 
-variables {R : Type u} {S : Type w} (K : Type v) (L : Type z) {p : R}
+variables {R : Type u} {S : Type w} {K : Type v} {L : Type z} {p : R}
 variables [comm_ring R] [comm_ring S] [algebra R S] [field K] [field L]
 variables [algebra K L] [algebra R L] [algebra R K] [is_scalar_tower R K L]
 
@@ -79,6 +79,13 @@ begin
     ← minpoly.gcd_domain_eq_field_fractions K hBint, nat_degree_minpoly],
 end
 
+lemma mem_adjoin_of_dvd_aeval_of_dvd_coeff {f : polynomial R} {x : L} {z : L}
+  (hf : ∀ i ∈ range (f.nat_degree + 1), p ∣ f.coeff i) (hz : aeval x f = p • z) :
+  z ∈ adjoin R ({x} : set L) :=
+begin
+  sorry
+end
+
 lemma eiseinstein_integral [is_domain R] [normalized_gcd_monoid R] [is_fraction_ring R K]
   [is_integrally_closed R] [is_separable K L] {B : power_basis K L} (hp : prime p)
   (hei : (minpoly R B.gen).is_weakly_eisenstein_at 𝓟)
@@ -108,13 +115,10 @@ begin
     { rw [H₁],
       exact subalgebra.zero_mem _ } },
 
-  suffices : ∀ i ∈ range (Q.nat_degree + 1), p ∣ Q.coeff i,
-  { sorry },
-
-  intro i,
+  refine mem_adjoin_of_dvd_aeval_of_dvd_coeff (λ i, _) hQ,
   refine nat.case_strong_induction_on i _ (λ j hind, _),
   { intro H,
-    exact eiseinstein_integral_first K L hp hei hndiv hBint hQ hzint, },
+    exact eiseinstein_integral_first hp hei hndiv hBint hQ hzint },
   { intro hj,
     refine dvd_of_pow_dvd_pow_mul_pow_of_square_not_dvd B.dim_pos hp _ hndiv,
 
