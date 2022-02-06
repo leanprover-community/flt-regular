@@ -49,10 +49,6 @@ def discriminant' [comm_ring R] (p : polynomial R) : R := resultant p p.derivati
 -- degree preserving ring maps
 -- disc prod is prod discs times resultant square
 
-
-lemma degree_C_mul_X [comm_ring R] {a : R} (ha : a ≠ 0) : degree (C a * X) = 1 :=
-by { convert degree_C_mul_X_pow 1 ha, rw pow_one }
-
 lemma discriminant'_C_mul_X_add_C [comm_ring R] {b c : R} (h : b ≠ 0) :
   discriminant' (C b * X + C c) = b := --big note: this used to be `discriminat' = 1`!!
 begin
