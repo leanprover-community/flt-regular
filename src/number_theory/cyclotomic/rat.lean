@@ -30,7 +30,16 @@ open_locale number_field
 -- (follows for the needed case from `is_splitting_field`, but may hold more generally)
 -- carry is_integral_closure over an equiv (probably `alg_equiv`); this should follow easily
 -- then we can use `ℤ_cycl_ext` and `number_field.ring_of_integers.is_integral_closure`.
-instance : is_integral_closure (cyclotomic_ring n ℤ ℚ) ℤ (cyclotomic_field n ℚ) := sorry
+instance : is_integral_closure (cyclotomic_ring n ℤ ℚ) ℤ (cyclotomic_field n ℚ) :=
+begin
+  refine ⟨is_fraction_ring.injective _ _, λ x, ⟨λ h, _, _⟩⟩,
+  {
+    sorry
+  },
+  { rintro ⟨y, rfl⟩,
+    sorry --easy
+  }
+end
 
 end singleton
 
