@@ -1,4 +1,6 @@
-import number_theory.gal
+import number_theory.cyclotomic.gal
+
+import ready_for_mathlib.pnat
 
 open_locale pnat_dangerous
 
