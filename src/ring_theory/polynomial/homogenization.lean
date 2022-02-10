@@ -821,7 +821,7 @@ end
 lemma homogenization_X_sub_C {R : Type*} [comm_ring R] {i j : ι} (r : R) :
   (X j - C r : mv_polynomial ι R).homogenization i = X j - C r * X i :=
 by rw [sub_eq_add_neg, sub_eq_add_neg, ← C_neg, homogenization_X_add_C,
-  C_neg, neg_mul_eq_neg_mul_symm]
+  C_neg, neg_mul]
 
 lemma support_X_pow [nontrivial R] (s : ι) (n : ℕ) :
   (X s ^ n : mv_polynomial ι R).support = {finsupp.single s n} :=
@@ -860,7 +860,7 @@ end
 lemma homogenization_X_pow_sub_C {R : Type*} [comm_ring R] {i j : ι} {n : ℕ} (hn : 0 < n) (r : R) :
   (X j ^ n - C r : mv_polynomial ι R).homogenization i = X j ^ n - C r * X i ^ n :=
 by rw [sub_eq_add_neg, sub_eq_add_neg, ← C_neg, homogenization_X_pow_add_C hn,
-  C_neg, neg_mul_eq_neg_mul_symm]
+  C_neg, neg_mul]
 
 @[simp]
 lemma homogenization_X_pow_sub_one {R : Type*} [comm_ring R] {i j : ι} {n : ℕ} (hn : 0 < n) :

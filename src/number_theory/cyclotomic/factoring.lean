@@ -44,7 +44,7 @@ lemma pow_add_pow_eq_prod_add_zeta_runity_mul {K : Type*} [comm_ring K] [is_doma
 begin
   -- TODO rename nat.odd_gt_zero
   have := pow_sub_pow_eq_prod_sub_zeta_runity_mul (nat.odd_gt_zero (nat.odd_iff.mpr hodd)) h x (-y),
-  simp only [mul_neg_eq_neg_mul_symm, sub_neg_eq_add] at this,
+  simp only [mul_neg, sub_neg_eq_add] at this,
   rw [neg_pow, neg_one_pow_eq_pow_mod_two] at this,
   simpa [hodd] using this,
 end

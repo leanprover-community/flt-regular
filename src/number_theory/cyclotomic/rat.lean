@@ -168,7 +168,7 @@ begin
   have : ∃ v : RRˣ, (v : RR) * y * (1 - (zeta_runity n ℤ RR)) ∈ I,
   { have := I.add_mem (ideal.add_left_subset $ mem_flt_ideals n)
                       (ideal.mul_mem_left _ (-1) $ ideal.add_right_subset $ mem_flt_ideals n),
-    simp only [neg_mul_eq_neg_mul_symm, one_mul, neg_add_rev] at this,
+    simp only [neg_mul, one_mul, neg_add_rev] at this,
     rw [neg_mul_eq_mul_neg, add_comm] at this,
     simp only [← add_assoc] at this,
     rw [add_assoc _ (-_) _, neg_add_self, add_zero, ←mul_add, add_comm, add_eq_mul_one_add_div,
