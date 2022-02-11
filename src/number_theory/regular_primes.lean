@@ -1,7 +1,8 @@
+
 import number_theory.class_number.finite
 import field_theory.splitting_field
-
 import number_theory.cyclotomic.class_group
+import number_theory.bernoulli
 
 /-!
 # Regular primes
@@ -19,7 +20,7 @@ open nat polynomial
 
 open number_field
 
-variables (n : ℕ) [fact (0 < n)]
+variables (n p : ℕ) [fact (0 < n)] [fact p.prime]
 -- local attribute [priority 5, instance] rat.normed_field -- hack to avoid diamond?
 
 open_locale classical
@@ -31,6 +32,12 @@ open_locale classical
 def is_regular_number : Prop :=
 n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
                                      (cyclotomic_field ⟨n, fact.out _⟩ ℚ)))
+
+def is_Bernoulli_regular : Prop :=
+∀ i ∈ finset.range((p-3)/2), ((bernoulli 2*i).num : zmod p) ≠ 0
+
+def is_super_regular : Prop :=
+ is_regular_number p ∧ is_Bernoulli_regular p
 
 -- some nice results about class number of isom rings needed I guess
 -- example : is_regular_prime 2 := -- LOOL good luck

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alex J. Best
 -/
 
-import number_theory.cyclotomic.primitive_roots
+import number_theory.cyclotomic.zeta
 import ring_theory.polynomial.cyclotomic.eval
 
 import ready_for_mathlib.ideal_stuff
@@ -53,6 +53,14 @@ begin
   rw [← zeta_spec n K (cyclotomic_field n K)],
   simp [aeval_def, eval₂_eq_eval_map],
 end
+
+lemma zeta_integral' (i : ℕ):
+  (zeta n K (cyclotomic_field n K))^i ∈ 𝓞 (cyclotomic_field n K) :=
+begin
+ apply subalgebra.pow_mem,
+ apply zeta_integral,
+end
+
 
 local attribute [instance] cyclotomic_field.algebra_base
 
