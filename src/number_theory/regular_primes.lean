@@ -32,10 +32,12 @@ open_locale classical
 def is_regular_number : Prop :=
 n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
                                      (cyclotomic_field ⟨n, fact.out _⟩ ℚ)))
-
+/-- A prime number is Bernoulli regular if it does not divide the numerator of any of
+the first `p-3` (non-zero) Bernoulli numbers-/
 def is_Bernoulli_regular : Prop :=
 ∀ i ∈ finset.range((p-3)/2), ((bernoulli 2*i).num : zmod p) ≠ 0
 
+/--A prime is super regular if its regular and Bernoulli regular.-/
 def is_super_regular : Prop :=
  is_regular_number p ∧ is_Bernoulli_regular p
 
