@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alex J. Best
 -/
 
-import number_theory.cyclotomic.zeta
+import number_theory.cyclotomic.primitive_roots
 import ring_theory.polynomial.cyclotomic.eval
 
 import ready_for_mathlib.ideal_stuff

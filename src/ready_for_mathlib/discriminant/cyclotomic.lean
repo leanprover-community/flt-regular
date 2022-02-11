@@ -2,7 +2,7 @@ import ring_theory.adjoin.power_basis
 import algebra.char_p.algebra
 import ring_theory.polynomial.cyclotomic.eval
 import ring_theory.discriminant
-import number_theory.cyclotomic.zeta
+import number_theory.cyclotomic.primitive_roots
 
 import number_theory.cyclotomic.cyclotomic_units
 import number_theory.cyclotomic.rat
@@ -19,16 +19,18 @@ local attribute [instance] is_cyclotomic_extension.finite_dimensional
 
 variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
 
+-- this file will be tidied up once #11786 merges
+
 lemma norm_zeta_sub_one [hp : fact (p : ℕ).prime] (h : p ≠ 2) :
   norm ℚ ((zeta p ℚ K) - 1) = p :=
 begin
   have := lt_of_le_of_ne hp.1.two_le (by contrapose! h; exact pnat.coe_injective h.symm),
-  simp [norm_zeta_sub_one_eq_eval_cyclotomic p ℚ K (cyclotomic.irreducible_rat hp.out.pos) this,
-    eval_one_cyclotomic_prime],
+  simp [(zeta_primitive_root p ℚ K).sub_one_norm_eq_eval_cyclotomic this
+        (cyclotomic.irreducible_rat hp.out.pos), eval_one_cyclotomic_prime],
 end
 
 lemma discriminant_prime [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
-  discr ℚ (zeta.power_basis p ℚ K).basis =
+  discr ℚ (((zeta_primitive_root p ℚ K).power_basis ℚ).basis) =
   (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) :=
 begin
   have hprim := zeta_primitive_root p ℚ K,
@@ -38,7 +40,7 @@ begin
   have hpos := pos_iff_ne_zero.2 (λ h, (tsub_pos_of_lt (prime.one_lt hp.out)).ne.symm h),
   have heven := even_sub_one_of_prime_ne_two hp.out hodd',
 
-  rw [algebra.of_power_basis_eq_norm, zeta.power_basis_gen, finrank _
+  rw [algebra.of_power_basis_eq_norm, is_primitive_root.power_basis_gen, finrank _
     (cyclotomic.irreducible_rat hp.out.pos), minpoly.gcd_domain_eq_field_fractions ℚ
     (is_primitive_root.is_integral hprim p.pos), ← cyclotomic_eq_minpoly hprim p.pos,
     map_cyclotomic, totient_prime hp.out],
@@ -50,7 +52,7 @@ begin
     alg_hom.map_sub, aeval_add, alg_hom.map_mul] at H,
   replace H := congr_arg (algebra.norm ℚ) H,
   rw [monoid_hom.map_mul, norm_zeta_sub_one _ hodd, monoid_hom.map_mul, monoid_hom.map_pow,
-    norm_zeta_eq_one _ ℚ K (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out)
+    (zeta_primitive_root p ℚ K).norm_eq_one ℚ (odd_iff.2 (or_iff_not_imp_left.1 (nat.prime.eq_two_or_odd hp.out)
     hodd')), one_pow, mul_one, ← map_nat_cast (algebra_map ℚ K), norm_algebra_map,
     finrank _ (cyclotomic.irreducible_rat hp.out.pos), totient_prime hp.out, ← succ_pred_eq_of_pos
     hpos, pow_succ, mul_comm _ (p : ℚ), coe_coe] at H,

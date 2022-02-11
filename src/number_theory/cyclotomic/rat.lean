@@ -14,7 +14,6 @@ namespace singleton
 
 variables [is_cyclotomic_extension {n} ℚ L]
 
-
 end singleton
 
 end rat
@@ -24,12 +23,6 @@ namespace int
 namespace singleton
 
 open_locale number_field
-
--- this needs two things:
--- uniqueness of cyclotomic extensions up to equiv
--- (follows for the needed case from `is_splitting_field`, but may hold more generally)
--- carry is_integral_closure over an equiv (probably `alg_equiv`); this should follow easily
--- then we can use `ℤ_cycl_ext` and `number_field.ring_of_integers.is_integral_closure`.
 
 instance : is_integral_closure (cyclotomic_ring n ℤ ℚ) ℤ (cyclotomic_field n ℚ) :=
 begin
