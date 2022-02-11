@@ -257,8 +257,13 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 	First thing is to note that if $x^p+y^p=z^p$ then \[z^p=(x+y)(x+\zeta_py)\cdots(x+y\zeta_p^{p-1})\] as ideals. Then since by \ref{lem:flt_fact_2} we know the ideals are coprime, then by lemma \ref{lemma:ideals_mult_to_power} we have that each $(x+y\zeta_p^i)=\gotha^p$, for $\gotha$ some ideal. Note that, $[\gotha^p]=1$ in the class group. Now, since $p$ does not divide the size of the class group we have that $[\gotha]=1$ in the class group, so its principal. So we have $x+y\zeta_p^i=u_i\a_i^p$ with $u_i$ a unit. So by \ref{lem:flt_fact_5} we have some $k$ such that $x+y\zeta_p-\zeta_p^{2k}x-\zeta_p^{2k-1} \equiv 0 \pmod p$. If $1,\zeta_p,\zeta_p^{2k},\zeta_p^{2k-1}$ are distinct, then \ref{lem:flt_fact_4} (which uses that $p>3$) says that $p$  divides $x,y$, contrary to our assumption. So they cannot be distinct, but checking each case leads to a contradiction, therefore there cannot be any such solutions.
 \end{proof}
 
+\begin{theorem}\label{thm:Kummers_lemma}
+	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u^p \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
+\end{theorem}	
+
 \begin{theorem}\label{theorem:FLT_case_two}\lean{flt_regular_case_two}
-	\uses{lemma:may_assume, defn:is_regular_number}
+	\lean{eq_pow_prime_of_unit_of_congruent}
+	\uses{lemma:may_assume, defn:is_regular_number, thm:Kummers_lemma}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
 \end{theorem}
 
