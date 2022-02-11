@@ -20,6 +20,7 @@ local attribute [instance] is_cyclotomic_extension.finite_dimensional
 variables (K : Type u) [field K] [char_zero K] {p : ℕ+} [is_cyclotomic_extension {p} ℚ K]
 
 -- this file will be tidied up once #11786 merges
+-- #11804 is the generalization we want. no need to to do anyting here
 
 lemma norm_zeta_sub_one [hp : fact (p : ℕ).prime] (h : p ≠ 2) :
   norm ℚ ((zeta p ℚ K) - 1) = p :=
