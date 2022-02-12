@@ -9,6 +9,7 @@ open algebra polynomial
 
 namespace power_basis
 
+/-- The power basis given by `s` if `B.gen ∈ adjoin R {s}`. -/
 def of_mem_adjon {s : S} (hs : B.gen ∈ adjoin R ({s} : set S)) :
   power_basis R S := sorry
 
