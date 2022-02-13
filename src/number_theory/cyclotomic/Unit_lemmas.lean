@@ -1,5 +1,4 @@
 import number_theory.cyclotomic.galois_action_on_cyclo
-import number_theory.regular_primes
 import number_theory.cyclotomic.cyclotomic_units
 
 variables (p : ℕ+) (K : Type*) [field K]
@@ -24,6 +23,7 @@ instance ℚ_cycl_ext : is_cyclotomic_extension {p} ℚ (cyclotomic_field p ℚ)
 
 instance : has_pow KK ℕ:=infer_instance
 
+/-- zeta now as a unit in the ring of integers. This way there are no coe issues-/
 def zeta_unit' : RRˣ :={
 val:= (⟨zeta p ℚ KK, zeta_integral p ℚ⟩ : RR),
 inv:= (⟨(zeta p ℚ KK)^((p-1): ℕ), zeta_integral' p ℚ (p-1)⟩ : RR),
