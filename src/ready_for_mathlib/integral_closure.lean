@@ -12,7 +12,7 @@ begin
   refine is_integral_mul is_integral_algebra_map hx,
 end
 
-lemma is_integral_of_aeval {a  : A} {P : polynomial R} (ha : is_integral R a) :
+lemma is_integral_of_aeval {a  : A} (P : polynomial R) (ha : is_integral R a) :
   is_integral R (aeval a P) :=
 begin
   rw [aeval_eq_sum_range],
