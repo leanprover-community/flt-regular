@@ -19,9 +19,6 @@ variables [algebra K L] [ne_zero ((p : ℕ) : K)] [is_cyclotomic_extension {n} K
 
 include hζ
 
-lemma sub_one_is_integral : _root_.is_integral K (ζ - 1) :=
-is_integral_sub (is_separable.is_integral K ζ) is_integral_one
-
 lemma power_basis_gen_mem_adjoin : (power_basis K hζ).gen ∈ adjoin K ({ζ - 1} : set L) :=
 begin
   rw [power_basis_gen, adjoin_singleton_eq_range_aeval, alg_hom.mem_range],
@@ -30,7 +27,8 @@ end
 
 /-- The `power_basis` given by `ζ - 1`. -/
 @[simps] noncomputable def sub_one_power_basis : _root_.power_basis K L :=
-(hζ.power_basis K).of_mem_adjon (hζ.sub_one_is_integral K) (hζ.power_basis_gen_mem_adjoin K)
+(hζ.power_basis K).of_mem_adjon (is_integral_sub (is_separable.is_integral K ζ) is_integral_one)
+  (hζ.power_basis_gen_mem_adjoin K)
 
 end is_primitive_root
 
