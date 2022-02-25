@@ -3,7 +3,7 @@ import field_theory.minpoly
 
 universes u v
 
-variables {K : Type u} [field K] {R : Type v} [comm_ring R] [is_domain R] [algebra K R]
+variables {K : Type u} [field K] {R : Type v} [comm_ring R] [algebra K R]
 
 open polynomial
 
