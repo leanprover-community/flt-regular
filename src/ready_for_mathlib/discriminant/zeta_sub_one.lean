@@ -1,4 +1,5 @@
 import ready_for_mathlib.discriminant.power_basis
+import ready_for_mathlib.minpoly
 
 import number_theory.cyclotomic.discriminant
 
@@ -29,6 +30,14 @@ end
 @[simps] noncomputable def sub_one_power_basis : _root_.power_basis K L :=
 (hζ.power_basis K).of_mem_adjon (is_integral_sub (is_separable.is_integral K ζ) is_integral_one)
   (hζ.power_basis_gen_mem_adjoin K)
+
+lemma sub_one_minpoly_eq_cyclotomic_comp (h : irreducible (polynomial.cyclotomic n K)) :
+  minpoly K (ζ - 1) = (cyclotomic n K).comp (X + 1) :=
+begin
+  rw [show ζ - 1 = ζ + (algebra_map K L (-1)), by simp [sub_eq_add_neg], minpoly_add_algebra_map
+    (is_separable.is_integral K ζ), hζ.minpoly_eq_cyclotomic_of_irreducible h],
+  simp
+end
 
 end is_primitive_root
 
