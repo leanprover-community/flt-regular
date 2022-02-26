@@ -73,7 +73,7 @@ lemma discr_odd_prime' (hζ : is_primitive_root ζ p) (hodd : p ≠ 2) :
   (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) :=
 begin
   rw [← discr_odd_prime hζ (cyclotomic.irreducible_rat hp.out.pos) hodd],
-  exact discr_eq_discr _ _,
+  exact discr_eq_discr _,
 end
 
 end power_basis
