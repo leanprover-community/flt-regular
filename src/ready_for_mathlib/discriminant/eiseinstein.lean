@@ -15,7 +15,7 @@ local notation `𝓟` := submodule.span ℤ {p}
 
 include hp
 
-lemma cyclotomic.comp_X_add_one_is_eisenstein_at :
+lemma cyclotomic_comp_X_add_one_is_eisenstein_at :
   ((cyclotomic p ℤ).comp (X + 1)).is_eisenstein_at 𝓟 :=
 { leading :=
   begin
