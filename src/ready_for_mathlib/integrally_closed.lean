@@ -206,3 +206,15 @@ begin
       exact nat.le_of_succ_le H },
     apply_instance }
 end
+
+lemma eiseinstein_integral_gen [is_domain R] [normalized_gcd_monoid R] [is_fraction_ring R K]
+  [is_integrally_closed R] [is_separable K L] {B : power_basis K L} (hp : prime p)
+  (hei : (minpoly R B.gen).is_eisenstein_at 𝓟) (hBint : is_integral R B.gen) {n : ℕ}
+  {z : L} (hzint : is_integral R z) (hz : p ^ n • z ∈ adjoin R ({B.gen} : set L)) :
+  z ∈ adjoin R ({B.gen} : set L) :=
+begin
+  induction n with n hn,
+  { simpa using hz },
+  { rw [pow_succ, mul_smul] at hz,
+    exact hn (eiseinstein_integral hp hei hBint (is_integral_smul _ hzint) hz) }
+end
