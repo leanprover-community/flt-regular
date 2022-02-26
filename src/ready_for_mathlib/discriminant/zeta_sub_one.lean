@@ -45,7 +45,7 @@ namespace is_cyclotomic_extension
 
 section power_basis
 
-variables {p : ℕ+} [hp : fact (p : ℕ).prime] (K : Type u) [field K] [char_zero K] {ζ : K}
+variables {p : ℕ+} [hp : fact (p : ℕ).prime] {K : Type u} [field K] [char_zero K] {ζ : K}
 variables [is_cyclotomic_extension {p} ℚ K]
 
 include hp
