@@ -10,7 +10,7 @@ import ring_theory.polynomial.cyclotomic.eval
 import ready_for_mathlib.ideal_stuff
 
 import tactic.may_assume
-import ready_for_mathlib.pnat
+import number_theory.cyclotomic.pnat
 
 noncomputable theory
 
