@@ -10,12 +10,6 @@ open polynomial
 
 open_locale polynomial
 
-lemma is_integral_smul {x : A} (r : R) (hx : is_integral S x) : is_integral S (r • x) :=
-begin
-  rw [algebra.smul_def, is_scalar_tower.algebra_map_apply R S A],
-  exact is_integral_mul is_integral_algebra_map hx,
-end
-
 lemma is_integral_of_aeval {a  : A} (P : R[X]) (ha : is_integral S a) :
   is_integral S (aeval a P) :=
 begin

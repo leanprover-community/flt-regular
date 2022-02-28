@@ -4,7 +4,6 @@ import ring_theory.algebraic
 import ring_theory.adjoin.power_basis
 
 import ready_for_mathlib.integral_closure
-import ready_for_mathlib.degree
 
 universes u v z w
 
