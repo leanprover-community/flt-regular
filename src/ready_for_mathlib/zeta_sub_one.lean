@@ -1,4 +1,4 @@
-import ready_for_mathlib.discriminant.power_basis
+import ready_for_mathlib.power_basis
 import ready_for_mathlib.minpoly
 
 import number_theory.cyclotomic.discriminant
