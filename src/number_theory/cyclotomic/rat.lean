@@ -1,8 +1,8 @@
 import number_theory.cyclotomic.galois_action_on_cyclo
 
-import ready_for_mathlib.discriminant.zeta_sub_one
+import ready_for_mathlib.zeta_sub_one
 import ready_for_mathlib.integrally_closed
-import ready_for_mathlib.discriminant.eiseinstein
+import ready_for_mathlib.eiseinstein
 
 universes u
 
