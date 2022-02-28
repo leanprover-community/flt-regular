@@ -31,7 +31,6 @@ begin
     exact (succ_pred_eq_of_pos (zero_lt_iff.2 hi.1)).symm },
   simp_rw [finset.sum_congr rfl aux, mul_assoc, ← mul_sum, mul_comm _ X] at this,
   rw [mul_X_injective this],
-  have miao := mul_X_injective this,
   refine finset.sum_bij (λ a _, a.pred) (λ a ha, _) (λ a ha, _) (λ a b ha hb hab, _) (λ a ha, _),
   { simp only [mem_erase, ne.def, mem_range] at ha,
     have := ha.2,
