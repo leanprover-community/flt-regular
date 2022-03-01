@@ -31,7 +31,7 @@ open_locale number_field
 local attribute [instance] is_cyclotomic_extension.number_field
 local attribute [-instance] cyclotomic_field.algebra
 
-lemma cyclotomic_ring.is_integral_closure {p : ℕ+} [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
+lemma cyclotomic_ring.is_integral_closure_prime {p : ℕ+} [hp : fact (p : ℕ).prime] (hodd : p ≠ 2) :
   is_integral_closure (cyclotomic_ring p ℤ ℚ) ℤ (cyclotomic_field p ℚ) :=
 begin
   refine ⟨is_fraction_ring.injective _ _, λ x, ⟨λ h, ⟨⟨x, _⟩, rfl⟩, _⟩⟩,
