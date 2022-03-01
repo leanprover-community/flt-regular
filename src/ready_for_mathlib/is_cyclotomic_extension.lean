@@ -2,7 +2,7 @@ import number_theory.cyclotomic.basic
 
 universes u v
 
-variables {A : Type u} [comm_ring A] [B : Type v] [comm_ring B] [algebra A B]
+variables {A : Type u} [comm_ring A] {B : Type v} [comm_ring B] [algebra A B]
 
 namespace is_cyclotomic_extension
 
