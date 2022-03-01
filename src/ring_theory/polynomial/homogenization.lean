@@ -59,10 +59,10 @@ lemma finsupp.sum_update_add {α β : Type*} [add_comm_monoid α] [add_comm_mono
   (f.update i a).sum g + g i (f i) = f.sum g + g i a :=
 begin
   simp_rw finsupp.update_eq_erase_add_single,
-  rw finsupp.sum_add_index hg hgg,
+  rw finsupp.sum_add_index (λ i _, hg i) (λ i _, hgg i),
   conv_rhs {rw ← finsupp.update_self f i},
   rw finsupp.update_eq_erase_add_single,
-  rw finsupp.sum_add_index hg hgg,
+  rw finsupp.sum_add_index (λ i _, hg i) (λ i _, hgg i),
   rw add_assoc,
   rw add_assoc,
   congr' 1,
@@ -215,7 +215,7 @@ begin
   rw [add_tsub_cancel_iff_le],
   exact finset.le_sup hp,
   refl,
-  intro, refl,
+  intros, refl,
   intros, refl,
 end
 
@@ -791,7 +791,7 @@ begin
       convert finset.le_sup ha.right,
       congr, }, -- TODO what is going on here?
     { simp, }, },
-  { intro i, refl, },
+  { intros i _, refl, },
   { intro i, simp, },
 end
 
