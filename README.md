@@ -58,8 +58,8 @@ There are two pieces of functionality that help a lot when browsing through Lean
   - Results specific to `ℚ` are in `number_theory/cyclotomic/rat.lean`.
 
 Note that we are trying to move all our results to mathlib as fast as possible, so the
-folded `ready_for_mathlib` changes rapidly. You should also check `number_theory.cyclotomic`
-and `ring_theory.discriminant` in mathlib.
+folder `ready_for_mathlib` changes rapidly. You should also check `number_theory.cyclotomic.*`
+in mathlib.
 
 ## Brief note on type theory
 
