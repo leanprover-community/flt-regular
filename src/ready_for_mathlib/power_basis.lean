@@ -89,30 +89,6 @@ begin
     refine is_integral_coord_prod hB hx (λ _, hn _ le_rfl (λ _, hx _) _) hmin _ }
 end
 
-lemma adjoin_gen_eq_top (B : power_basis R S) : adjoin R ({B.gen} : set S) = ⊤ :=
-begin
-  rw [← to_submodule_eq_top, _root_.eq_top_iff, ← B.basis.span_eq, submodule.span_le],
-  rintros x ⟨i, rfl⟩,
-  rw [B.basis_eq_pow i],
-  exact subalgebra.pow_mem _ (subset_adjoin (set.mem_singleton _)) _,
-end
-
-lemma adjoin_eq_top_of_gen_mem {B : power_basis R S} {x : S} (hx : B.gen ∈ adjoin R ({x} : set S)) :
-  adjoin R ({x} : set S) = ⊤ :=
-begin
-  rw [_root_.eq_top_iff, ← B.adjoin_gen_eq_top],
-  refine adjoin_le _,
-  simp [hx],
-end
-
-/-- The power basis given by `x` if `B.gen ∈ adjoin K {x}`. -/
-noncomputable def of_mem_adjon {x : S} (hint : is_integral K x)
-  (hx : B.gen ∈ adjoin K ({x} : set S)) : power_basis K S :=
-(power_basis hint).map ((equiv_of_eq _ _ $ adjoin_eq_top_of_gen_mem hx).trans top_equiv)
-
-lemma of_mem_adjon_gen {x : S} (hint : is_integral K x)
-  (hs : B.gen ∈ adjoin K ({x} : set S)) : (B.of_mem_adjon hint hs).gen = x := rfl
-
 variables [algebra R K] [is_scalar_tower R K S] {B}
 
 lemma to_matrix_is_integral_coeff {B' : power_basis K S} {P : R[X]} (h : aeval B.gen P = B'.gen)

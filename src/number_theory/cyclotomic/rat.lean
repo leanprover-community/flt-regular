@@ -1,7 +1,7 @@
-import number_theory.cyclotomic.galois_action_on_cyclo
+import ring_theory.polynomial.eisenstein
 
+import number_theory.cyclotomic.galois_action_on_cyclo
 import ready_for_mathlib.zeta_sub_one
-import ready_for_mathlib.integrally_closed
 import ready_for_mathlib.eiseinstein
 
 universes u
@@ -68,7 +68,8 @@ begin
       rw [is_primitive_root.sub_one_power_basis_gen, map_injective (algebra_map ℤ ℚ)
         ((algebra_map ℤ ℚ).injective_int) h₂],
       exact cyclotomic_comp_X_add_one_is_eisenstein_at },
-    replace H := eiseinstein_integral_gen (nat.prime_iff_prime_int.1 hp.out) hmin hint h H,
+    replace H := mem_adjoin_of_smul_prime_pow_smul_of_minpoly_is_eiseinstein_at
+      (nat.prime_iff_prime_int.1 hp.out) hint h H hmin,
     convert adjoin_le _ H,
     { exact subsingleton.elim _ _ },
     { exact subsingleton.elim _ _ },

@@ -24,7 +24,7 @@ lemma cyclotomic_comp_X_add_one_is_eisenstein_at :
     suffices : ((cyclotomic p ℤ).comp (X + C 1)).monic,
     { rw [monic.def.1 this, ideal.submodule_span_eq, ideal.mem_span_singleton] at h,
       exact nat.prime.not_dvd_one hp.out (by exact_mod_cast h) },
-    refine monic_comp (cyclotomic.monic p ℤ) (monic_X_add_C 1) (λ h₁, _),
+    refine monic.comp (cyclotomic.monic p ℤ) (monic_X_add_C 1) (λ h₁, _),
     rw [nat_degree_X_add_C] at h₁,
     exact zero_ne_one h₁.symm,
   end,
