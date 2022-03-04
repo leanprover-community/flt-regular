@@ -35,7 +35,6 @@ begin
   { rw [sub_add_cancel],
     refine is_primitive_root.pow (p ^ (k + 1)).pos hζ _,
     rw [pnat.pow_coe, ← pow_add, add_comm s, nat.sub_add_cancel (le_trans hs (nat.le_succ k))] },
-  have hη' : is_primitive_root (η + 1) ↑(p ^ (k + 1 - s)) := by simpa using hη,
   haveI : is_cyclotomic_extension {p ^ (k - s + 1)} K K⟮η⟯,
   { suffices : is_cyclotomic_extension {p ^ (k - s + 1)} K K⟮η + 1⟯.to_subalgebra,
     { have H : K⟮η + 1⟯.to_subalgebra = K⟮η⟯.to_subalgebra,
@@ -48,9 +47,10 @@ begin
           nth_rewrite 0 [← add_sub_cancel η 1],
           refine subalgebra.sub_mem _ (subset_adjoin (mem_singleton _)) (subalgebra.one_mem _) } },
       rw [H] at this,
-      exact this, },
+      exact this },
     rw [intermediate_field.adjoin_simple_to_subalgebra_of_integral _ _
       (is_cyclotomic_extension.integral {p ^ (k + 1)} K L _)],
+    have hη' : is_primitive_root (η + 1) ↑(p ^ (k + 1 - s)) := by simpa using hη,
     convert adjoin_primitive_root K hη',
     rw [nat.sub_add_comm hs] },
   replace hη : is_primitive_root (η₁ + 1) ↑(p ^ (k - s + 1)),
@@ -80,6 +80,5 @@ begin
     exact nat.eq_of_mul_eq_mul_left (pow_pos hpri.out.pos _) this },
   all_goals { apply_instance }
 end
-
 
 end is_primitive_root
