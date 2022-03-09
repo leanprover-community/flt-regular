@@ -1,8 +1,7 @@
 import ring_theory.polynomial.eisenstein
-
 import number_theory.cyclotomic.galois_action_on_cyclo
+
 import ready_for_mathlib.zeta_sub_one
-import ready_for_mathlib.eiseinstein
 
 universes u
 
@@ -61,7 +60,7 @@ begin
         simp } },
     have hmin : (minpoly ℤ B.gen).is_eisenstein_at (submodule.span ℤ {((p : ℕ) : ℤ)}),
     { have h₁ := minpoly.gcd_domain_eq_field_fractions ℚ hint,
-      have h₂ := hζ.sub_one_minpoly_eq_cyclotomic_comp ℚ (cyclotomic.irreducible_rat hp.out.pos),
+      have h₂ := hζ.minpoly_sub_one_eq_cyclotomic_comp (cyclotomic.irreducible_rat hp.out.pos),
       rw [is_primitive_root.sub_one_power_basis_gen] at h₁,
       rw [h₁, ← map_cyclotomic_int, show int.cast_ring_hom ℚ = algebra_map ℤ ℚ, by refl,
         show ((X + 1)) = map (algebra_map ℤ ℚ) (X + 1), by simp, ← map_comp] at h₂,

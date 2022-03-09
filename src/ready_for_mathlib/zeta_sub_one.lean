@@ -12,25 +12,6 @@ open_locale polynomial
 local attribute [instance] is_cyclotomic_extension.finite_dimensional
 local attribute [instance] is_cyclotomic_extension.number_field
 
-namespace is_primitive_root
-
-variables {L : Type v} [field L] {ζ : L} {n : ℕ+} (hζ : is_primitive_root ζ n)
-variables (K : Type u) {p : ℕ+} [linear_ordered_field K]
-variables [algebra K L] [ne_zero ((p : ℕ) : K)] [is_cyclotomic_extension {n} K L]
-
-include hζ
-
-lemma sub_one_minpoly_eq_cyclotomic_comp (h : irreducible (polynomial.cyclotomic n K)) :
-  minpoly K (ζ - 1) = (cyclotomic n K).comp (X + 1) :=
-begin
-  rw [show ζ - 1 = ζ + (algebra_map K L (-1)), by simp [sub_eq_add_neg],
-    minpoly.minpoly_add_algebra_map
-    (is_separable.is_integral K ζ), hζ.minpoly_eq_cyclotomic_of_irreducible h],
-  simp
-end
-
-end is_primitive_root
-
 namespace is_cyclotomic_extension
 
 section power_basis
