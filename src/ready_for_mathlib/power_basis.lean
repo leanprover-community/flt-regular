@@ -29,7 +29,7 @@ begin
   by_cases hQ : Q = 0,
   { simp [this, hQ, is_integral_zero] },
   have hlt : Q.nat_degree < B.dim,
-  { rw [← B.nat_degree_minpoly, hmin, nat_degree_map_of_monic (minpoly.monic hB),
+  { rw [← B.nat_degree_minpoly, hmin, (minpoly.monic hB).nat_degree_map,
       nat_degree_lt_nat_degree_iff hQ],
     letI : nontrivial R := nontrivial.of_polynomial_ne hQ,
     exact degree_mod_by_monic_lt _ (minpoly.monic hB),
