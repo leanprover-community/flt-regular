@@ -7,7 +7,7 @@ variables (p : ℕ+) (K : Type*) [field K]
 open_locale big_operators non_zero_divisors number_field pnat
 open is_cyclotomic_extension
 open cyclotomic_ring
-open number_field
+open number_field polynomial
 
 local notation `KK` := cyclotomic_field p ℚ
 local notation `RR` := 𝓞 (cyclotomic_field p ℚ)
@@ -37,6 +37,15 @@ inv_val:= by{have:= zeta_pow p ℚ KK ,
 local notation `ζ'`:= zeta_unit' p
 
 lemma zeta_unit_coe: (ζ' : KK) = ζ :=by refl
+
+lemma zeta_unit_pow : (ζ')^(p : ℤ) = 1 :=
+begin
+simp_rw zeta_unit',
+ext1,
+ext1,
+simp,
+apply zeta_pow,
+end
 
 /-- `is_gal_conj_real x` means that `x` is real. -/
 def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
@@ -83,6 +92,22 @@ end
 lemma roots_of_unity_in_cyclo (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) =1 ) :
   ∃ (m k: ℕ+), x = (-1)^(k : ℕ) * (ζ')^(m : ℕ) :=
 begin
+  obtain ⟨n, hn0, hn⟩ := h,
+  have hx : x ∈ RR, by {sorry,},
+  have hy: ∃ (y : RRˣ), x = y, by {sorry},
+  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp, apply hn,} ,
+  obtain ⟨y, hyy⟩:= hy,
+  rw hyy,
+  have H: ∃ (m k: ℕ+), y = (-1)^(k : ℕ) * (ζ')^(m : ℕ), by {
+  rw (_root_.is_root_of_unity_iff hn0) at hxu,
+  obtain ⟨l, hl, hhl⟩:=hxu,
+  simp at hhl,
+  simp at hl,
+  by_cases hlp: l ∣ p,
+  cases hlp,
+    sorry,
+    sorry,},
+
   sorry,
 end
 
@@ -94,8 +119,19 @@ begin
   rw h,
   simp,
   have r:= ((2 : zmod p)⁻¹).val,
-  have hr: ∃ (k : ℤ), (2*r : ℤ)=1+p*k ,by { sorry,},
-  sorry, --2 is invertible if `p≠ 2`.
+  have hr: ∃ (k : ℕ), 2*r =1+p*k ,by { sorry,},
+  use r*n,
+  obtain ⟨k,hk⟩:= hr,
+  rw ← mul_assoc,
+  simp_rw hk,
+  ring_exp,
+  rw pow_add,
+  have h1 : (zeta_unit' p)^ ((p : ℤ) * k * n) = 1,
+  by {have:= zeta_unit_pow p, rw mul_assoc, simp_rw zpow_mul, simp_rw this, simp,},
+  norm_cast at h1,
+  rw ← mul_assoc,
+  simp_rw h1,
+  simp,
 end
 
 
