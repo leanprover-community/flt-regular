@@ -625,14 +625,6 @@ end
 --   rw no_zero_smul_divisors.eq_zero_or_eq_zero_iff_smul_eq_zero,
 -- end
 
-lemma finsupp.support_smul_eq {α M R : Type*} [semiring R] [add_comm_monoid M] [module R M]
-  [no_zero_smul_divisors R M] {b : R} (hb : b ≠ 0) {g : α →₀ M} :
-  (b • g).support = g.support :=
-begin
-  ext a,
-  simp [finsupp.smul_apply, finsupp.mem_support_iff, ne.def, hb],
-end
-
 -- haveI : no_zero_smul_divisors R (mv_polynomial ι R), --TODO add this instance
 --TODO maybe this for leading terms and homog
 -- lemma homogeneous_s_monomial_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) (x : ι →₀ ℕ) :
