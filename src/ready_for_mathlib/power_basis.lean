@@ -3,8 +3,6 @@ import linear_algebra.matrix.basis
 import ring_theory.algebraic
 import ring_theory.adjoin.power_basis
 
-import ready_for_mathlib.integral_closure
-
 universes u v z w
 
 variables {R : Type z} {S : Type v} [comm_ring R] [comm_ring S] [algebra R S]
