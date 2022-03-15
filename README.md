@@ -8,7 +8,7 @@ The following readme has been shamelessly copied from the [Liquid Tensor Experim
 
 ### Blueprint
 
-Here are a draft [blueprint](https://leanprover-community.github.io/flt-regular/) and  [dependency graph](https://leanprover-community.github.io/flt-regular/dep_graph.html).
+Here are a draft [blueprint](https://leanprover-community.github.io/flt-regular/) and  [dependency graph](https://leanprover-community.github.io/flt-regular/dep_graph_document.html).
 
 ### Getting the project
 
