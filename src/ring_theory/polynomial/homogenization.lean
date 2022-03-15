@@ -583,19 +583,6 @@ begin
     exact pos_iff_ne_zero.mpr hp, },
 end
 
-lemma finset.sup_eq_bot_iff {α β : Type*} [semilattice_sup β] [order_bot β] (f : α → β)
-  (S : finset α) : S.sup f = ⊥ ↔ ∀ s ∈ S, f s = ⊥ :=
-begin
-  classical,
-  induction S using finset.induction with a S haS hi,
-  { simp, },
-  simp [hi],
-end
-
-lemma finset.inf_eq_top_iff {α β : Type*} [semilattice_inf β] [order_top β] (f : α → β)
-  (S : finset α) : S.inf f = ⊤ ↔ ∀ s ∈ S, f s = ⊤ :=
-@finset.sup_eq_bot_iff _ (order_dual β) _ _ _ _ -- same proof also works
-
 lemma leading_terms_add_of_total_degree_lt (p q : mv_polynomial ι R)
   (h : q.total_degree < p.total_degree) : (p + q).leading_terms = p.leading_terms :=
 by rw [leading_terms, leading_terms, total_degree_add_eq_left_of_total_degree_lt h,
