@@ -445,19 +445,6 @@ begin
   exact this.left,
 end
 
-lemma support_sum_monomial_subset (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R) :
-  support (∑ v in S, monomial v (f v)) ⊆ S :=
-begin
-  classical,
-  induction S using finset.induction with s S hs hsi,
-  { simp, },
-  { rw finset.sum_insert hs,
-    apply finset.subset.trans support_add,
-    apply finset.union_subset,
-    { apply finset.subset.trans support_monomial_subset (finset.subset_union_left _ S), },
-    { apply finset.subset.trans hsi (finset.subset_insert _ _), }, },
-end
-
 lemma support_sum_monomial_eq [decidable_eq R] (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R) :
   support (∑ v in S, monomial v (f v)) = S.filter (λ v, f v ≠ 0) :=
 begin
@@ -469,8 +456,15 @@ begin
     split_ifs with h;
     { simp [h, insert_eq], }, },
   { apply disjoint_of_subset_left support_monomial_subset,
-    apply disjoint_of_subset_right (support_sum_monomial_subset _ _),
-    simp [support_sum_monomial_subset, hs], },
+    simp [hsi, hs], },
+end
+
+lemma support_sum_monomial_subset (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R) :
+  support (∑ v in S, monomial v (f v)) ⊆ S :=
+begin
+  classical,
+  rw support_sum_monomial_eq,
+  apply filter_subset,
 end
 
 lemma sum_monomial_ne_zero_of_exists_mem_ne_zero (S : finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R)
