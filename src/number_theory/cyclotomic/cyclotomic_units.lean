@@ -143,7 +143,7 @@ lemma prime_ideal_eq_pow_cyclotomic [hn : fact ((n : ℕ).prime)] :
   (span_singleton _ (1 - (zeta_runity n K L)) ^ ((n : ℕ) - 1) : fractional_ideal RR⁰ L) :=
   --(mk0 (p : cyclotomic_field p) (by norm_num [hn.ne_zero]))
 begin
-  rw ← fractional_ideal.span_singleton_pow,
+  rw fractional_ideal.span_singleton_pow,
   apply coe_to_submodule_injective,
   simp only [coe_span_singleton, coe_coe],
   -- rw ideal.span_singleton_eq_span_singleton,
