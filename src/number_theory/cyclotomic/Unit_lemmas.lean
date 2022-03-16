@@ -1,7 +1,9 @@
 import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.cyclotomic_units
+import ring_theory.roots_of_unity
+import number_theory.number_field
 
-variables (p : ℕ+) (K : Type*) [field K]
+variables (p : ℕ+) (K : Type*) [field K] [algebra ℚ K]
 
 
 open_locale big_operators non_zero_divisors number_field pnat
@@ -88,25 +90,77 @@ begin
   rw mul_comm,
 end
 
+
+
+lemma contains_two_coprime_roots  (p q : ℕ)
+(x y : K) (hx : is_primitive_root x p) (hy : is_primitive_root y q): (lcm  p q ).totient ≤
+(finite_dimensional.finrank ℚ K) :=
+begin
+
+sorry,
+end
+
+lemma totient_super_multiplicative (a b : ℕ) : a.totient * b.totient ≤ (a*b).totient :=
+begin
+sorry,
+end
+
+lemma totient_le_one {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 :=
+begin
+sorry,
+end
+
+
+
 --do more generally
-lemma roots_of_unity_in_cyclo (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) =1 ) :
-  ∃ (m k: ℕ+), x = (-1)^(k : ℕ) * (ζ')^(m : ℕ) :=
+lemma roots_of_unity_in_cyclo  (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) =1 ) :
+  ∃ (m : ℕ) (k: ℕ+), x = (-1)^(k : ℕ) * (ζ')^(m : ℕ) :=
 begin
   obtain ⟨n, hn0, hn⟩ := h,
   have hx : x ∈ RR, by {sorry,},
   have hy: ∃ (y : RRˣ), x = y, by {sorry},
-  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp, apply hn,} ,
   obtain ⟨y, hyy⟩:= hy,
+  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {sorry,} ,
   rw hyy,
-  have H: ∃ (m k: ℕ+), y = (-1)^(k : ℕ) * (ζ')^(m : ℕ), by {
+  have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * (ζ')^(m : ℕ), by {
   rw (_root_.is_root_of_unity_iff hn0) at hxu,
-  obtain ⟨l, hl, hhl⟩:=hxu,
-  simp at hhl,
-  simp at hl,
-  by_cases hlp: l ∣ p,
-  cases hlp,
-    sorry,
+  obtain ⟨l, hl, hhl⟩:= hxu,
+  have hlp: l ∣ 2*p, by {
+    by_contra,
+    have hpl: is_primitive_root x l, by {sorry,},
+    have hpp: is_primitive_root (ζ' : KK) p, by {sorry,},
+    have KEY := contains_two_coprime_roots KK l p x ζ' hpl hpp,
+    have hirr : irreducible (cyclotomic p ℚ), by {exact cyclotomic.irreducible_rat p.prop},
+    have hrank:= is_cyclotomic_extension.finrank KK hirr,
+    rw hrank at KEY,
+    have pdivlcm : (p : ℕ) ∣ lcm l p, by {exact dvd_lcm_right l ↑p},
+    cases pdivlcm,
+    have ineq1 := totient_super_multiplicative (p: ℕ) pdivlcm_w,
+    rw ←pdivlcm_h at ineq1,
+    have KEY2:= le_trans ineq1 KEY,
+    have ptot_pos : 0 < (p : ℕ).totient, by {sorry,},
+    have KEY3 := (mul_le_iff_le_one_right ptot_pos).mp KEY2,
+    have pdiv_ne_zero : 0 < pdivlcm_w, by {sorry},
+    have KEY4:= totient_le_one pdiv_ne_zero KEY3,
+
     sorry,},
+  simp at hhl,
+  cases hlp,
+  have c1: l = 2 ∨ l = p, by {sorry,},
+  cases c1,
+  simp_rw c1 at hhl,
+  simp at hhl,
+  refine ⟨0,1,_⟩,
+  simp,
+  exact eq_neg_of_add_eq_zero hhl,
+  have isPrimRoot : is_primitive_root  (ζ' : RR) l, by { sorry,},
+  have hxl : (⟨x, hx⟩: RR)^l =1 , by {sorry,},
+  have hl0 : 0 < l, by {sorry},
+  have Key:= is_primitive_root.eq_pow_of_pow_eq_one isPrimRoot hxl hl0,
+  obtain ⟨i, hi,Hi⟩:= Key,
+  refine ⟨i, 2, _⟩,
+  simp,
+  apply Hi.symm,},
 
   sorry,
 end
