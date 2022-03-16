@@ -33,7 +33,7 @@ begin
   symmetry' at this,
   push_cast at this,
   apply_fun span_singleton (cyclotomic_ring pp ℤ ℚ)⁰ at this,
-  simp only [span_singleton_prod, span_singleton_pow] at this,
+  simp only [span_singleton_prod, ← span_singleton_pow] at this,
   sorry,
 end
 
