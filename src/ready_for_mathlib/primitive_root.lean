@@ -1,7 +1,5 @@
 import number_theory.cyclotomic.primitive_roots
 
-import ready_for_mathlib.is_cyclotomic_extension
-
 universes u v
 
 namespace is_primitive_root
@@ -51,7 +49,7 @@ begin
     rw [intermediate_field.adjoin_simple_to_subalgebra_of_integral _ _
       (is_cyclotomic_extension.integral {p ^ (k + 1)} K L _)],
     have hη' : is_primitive_root (η + 1) ↑(p ^ (k + 1 - s)) := by simpa using hη,
-    convert adjoin_primitive_root K hη',
+    convert hη'.adjoin_is_cyclotomic_extension K,
     rw [nat.sub_add_comm hs] },
   replace hη : is_primitive_root (η₁ + 1) ↑(p ^ (k - s + 1)),
   { refine ⟨_, λ l hl, _⟩,
