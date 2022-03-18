@@ -110,8 +110,6 @@ begin
 sorry,
 end
 
-
-
 --do more generally
 lemma roots_of_unity_in_cyclo  (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) =1 ) :
   ∃ (m : ℕ) (k: ℕ+), x = (-1)^(k : ℕ) * (ζ')^(m : ℕ) :=
@@ -120,14 +118,15 @@ begin
   have hx : x ∈ RR, by {sorry,},
   have hy: ∃ (y : RRˣ), x = y, by {sorry},
   obtain ⟨y, hyy⟩:= hy,
-  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {sorry,} ,
-  rw hyy,
+  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp, apply hn} ,
   have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * (ζ')^(m : ℕ), by {
   rw (_root_.is_root_of_unity_iff hn0) at hxu,
   obtain ⟨l, hl, hhl⟩:= hxu,
   have hlp: l ∣ 2*p, by {
     by_contra,
-    have hpl: is_primitive_root x l, by {sorry,},
+    have hpl': is_primitive_root (⟨x, hx⟩ : RR) l, by {rw is_root_cyclotomic_iff.symm, apply hhl,
+    sorry, sorry, },
+    have hpl: is_primitive_root x l, by { sorry, },
     have hpp: is_primitive_root (ζ' : KK) p, by {sorry,},
     have KEY := contains_two_coprime_roots KK l p x ζ' hpl hpp,
     have hirr : irreducible (cyclotomic p ℚ), by {exact cyclotomic.irreducible_rat p.prop},
@@ -142,8 +141,20 @@ begin
     have KEY3 := (mul_le_iff_le_one_right ptot_pos).mp KEY2,
     have pdiv_ne_zero : 0 < pdivlcm_w, by {sorry},
     have KEY4:= totient_le_one pdiv_ne_zero KEY3,
-
-    sorry,},
+    have K5:=(nat.dvd_prime nat.prime_two).1 KEY4,
+    cases K5,
+    rw K5 at pdivlcm_h,
+    simp at pdivlcm_h,
+    rw lcm_eq_right_iff at pdivlcm_h,
+    have K6: (p : ℕ) ∣ 2*(p : ℕ), by {sorry,},
+    have:= dvd_trans pdivlcm_h K6,
+    apply absurd this h,
+    simp only [eq_self_iff_true, normalize_eq, pnat.coe_inj],
+    rw K5 at pdivlcm_h,
+    rw mul_comm at pdivlcm_h,
+    have := dvd_lcm_left l (p : ℕ),
+    simp_rw pdivlcm_h at this,
+    apply absurd this h,},
   simp at hhl,
   cases hlp,
   have c1: l = 2 ∨ l = p, by {sorry,},
@@ -161,8 +172,15 @@ begin
   refine ⟨i, 2, _⟩,
   simp,
   apply Hi.symm,},
-
-  sorry,
+  obtain ⟨m, k, hmk⟩:= H,
+  refine ⟨m, k, _⟩,
+  have eq : ((⟨x, hx⟩ : RR) : KK) = x, by { refl},
+  simp,
+  rw ←eq,
+  norm_cast,
+  convert hmk,
+  simp,
+  simp,
 end
 
 lemma zeta_runity_pow_even (h : 2 < p) (n : ℕ) : ∃ (m : ℕ),
