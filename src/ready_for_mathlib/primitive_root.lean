@@ -6,7 +6,7 @@ namespace is_primitive_root
 
 variables {K : Type u} [field K] {L : Type v} [field L] [algebra K L] {ζ : L}
 
-open polynomial algebra is_cyclotomic_extension set
+open polynomial algebra is_cyclotomic_extension set nat
 
 local attribute [instance] is_cyclotomic_extension.finite_dimensional
 local attribute [instance] is_cyclotomic_extension.is_galois
@@ -61,7 +61,13 @@ begin
       convert hη.2 _ hl,
       rw [nat.sub_add_comm hs] } },
   rw [norm_eq_norm_adjoin K],
-  { have : p ^ (k - s + 1) ≠ 2, sorry,
+  { have : p ^ (k - s + 1) ≠ 2,
+    { intro H,
+      rw [← pnat.coe_inj, pnat.coe_bit0, pnat.one_coe, pnat.pow_coe, ← pow_one 2] at H,
+      replace H := eq_of_prime_pow_eq (prime_iff.1 hpri.out) (prime_iff.1 nat.prime_two)
+        ((k - s).succ_pos) H,
+      rw [← pnat.one_coe, ← pnat.coe_bit0, pnat.coe_inj] at H,
+      exact h H },
     have H := hη.sub_one_norm_is_prime_pow _ hirr₁ this,
     swap, { rw [pnat.pow_coe], exact hpri.1.is_prime_pow.pow (nat.succ_ne_zero _) },
     rw [add_sub_cancel] at H,
