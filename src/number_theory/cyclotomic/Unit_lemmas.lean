@@ -105,10 +105,17 @@ begin
 sorry,
 end
 
-lemma totient_le_one {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 :=
+lemma totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 :=
 begin
 sorry,
 end
+
+example (n : ℕ) (h: 0 < n) : n ≠ 0 :=
+begin
+exact ne_of_gt h,
+end
+
+instance dom : is_domain RR := infer_instance
 
 --do more generally
 lemma roots_of_unity_in_cyclo  (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) =1 ) :
@@ -123,38 +130,39 @@ begin
   rw (_root_.is_root_of_unity_iff hn0) at hxu,
   obtain ⟨l, hl, hhl⟩:= hxu,
   have hlp: l ∣ 2*p, by {
-    by_contra,
-    have hpl': is_primitive_root (⟨x, hx⟩ : RR) l, by {rw is_root_cyclotomic_iff.symm, apply hhl,
-    sorry, sorry, },
-    have hpl: is_primitive_root x l, by { sorry, },
-    have hpp: is_primitive_root (ζ' : KK) p, by {sorry,},
-    have KEY := contains_two_coprime_roots KK l p x ζ' hpl hpp,
-    have hirr : irreducible (cyclotomic p ℚ), by {exact cyclotomic.irreducible_rat p.prop},
-    have hrank:= is_cyclotomic_extension.finrank KK hirr,
-    rw hrank at KEY,
-    have pdivlcm : (p : ℕ) ∣ lcm l p, by {exact dvd_lcm_right l ↑p},
-    cases pdivlcm,
-    have ineq1 := totient_super_multiplicative (p: ℕ) pdivlcm_w,
-    rw ←pdivlcm_h at ineq1,
-    have KEY2:= le_trans ineq1 KEY,
-    have ptot_pos : 0 < (p : ℕ).totient, by {sorry,},
-    have KEY3 := (mul_le_iff_le_one_right ptot_pos).mp KEY2,
-    have pdiv_ne_zero : 0 < pdivlcm_w, by {sorry},
-    have KEY4:= totient_le_one pdiv_ne_zero KEY3,
-    have K5:=(nat.dvd_prime nat.prime_two).1 KEY4,
-    cases K5,
-    rw K5 at pdivlcm_h,
-    simp at pdivlcm_h,
-    rw lcm_eq_right_iff at pdivlcm_h,
-    have K6: (p : ℕ) ∣ 2*(p : ℕ), by {sorry,},
-    have:= dvd_trans pdivlcm_h K6,
-    apply absurd this h,
-    simp only [eq_self_iff_true, normalize_eq, pnat.coe_inj],
-    rw K5 at pdivlcm_h,
-    rw mul_comm at pdivlcm_h,
-    have := dvd_lcm_left l (p : ℕ),
-    simp_rw pdivlcm_h at this,
-    apply absurd this h,},
+  by_contra,
+  have hpl': is_primitive_root (⟨x, hx⟩ : RR) l, by {rw is_root_cyclotomic_iff.symm, apply hhl,
+  haveI:= dom p, apply infer_instance, have:=(nat.pos_of_mem_divisors hl),
+  have h2:= ne_of_gt this, fsplit, rw nat.cast_ne_zero, apply h2,},
+  have hpl: is_primitive_root x l, by { sorry, },
+  have hpp: is_primitive_root (ζ' : KK) p, by {sorry,},
+  have KEY := contains_two_coprime_roots KK l p x ζ' hpl hpp,
+  have hirr : irreducible (cyclotomic p ℚ), by {exact cyclotomic.irreducible_rat p.prop},
+  have hrank:= is_cyclotomic_extension.finrank KK hirr,
+  rw hrank at KEY,
+  have pdivlcm : (p : ℕ) ∣ lcm l p, by {exact dvd_lcm_right l ↑p},
+  cases pdivlcm,
+  have ineq1 := totient_super_multiplicative (p: ℕ) pdivlcm_w,
+  rw ←pdivlcm_h at ineq1,
+  have KEY2:= le_trans ineq1 KEY,
+  have ptot_pos : 0 < (p : ℕ).totient, by {sorry,},
+  have KEY3 := (mul_le_iff_le_one_right ptot_pos).mp KEY2,
+  have pdiv_ne_zero : 0 < pdivlcm_w, by {sorry},
+  have KEY4:= totient_le_one_dvd_two pdiv_ne_zero KEY3,
+  have K5:=(nat.dvd_prime nat.prime_two).1 KEY4,
+  cases K5,
+  rw K5 at pdivlcm_h,
+  simp at pdivlcm_h,
+  rw lcm_eq_right_iff at pdivlcm_h,
+  have K6: (p : ℕ) ∣ 2*(p : ℕ), by {sorry,},
+  have:= dvd_trans pdivlcm_h K6,
+  apply absurd this h,
+  simp only [eq_self_iff_true, normalize_eq, pnat.coe_inj],
+  rw K5 at pdivlcm_h,
+  rw mul_comm at pdivlcm_h,
+  have := dvd_lcm_left l (p : ℕ),
+  simp_rw pdivlcm_h at this,
+  apply absurd this h,},
   simp at hhl,
   cases hlp,
   have c1: l = 2 ∨ l = p, by {sorry,},
