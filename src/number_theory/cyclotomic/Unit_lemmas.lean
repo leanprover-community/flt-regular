@@ -49,6 +49,16 @@ simp,
 apply zeta_pow,
 end
 
+lemma zeta_unit_coe_2 : is_primitive_root (ζ' : RR) p :=
+begin
+ have z1 := zeta_primitive_root p ℚ KK,
+ have:  (algebra_map RR KK) ((ζ' : RR)) = ζ, by{refl, },
+ rw ← this at z1,
+ apply is_primitive_root.of_map_of_injective z1,
+ apply is_fraction_ring.injective,
+end
+
+
 /-- `is_gal_conj_real x` means that `x` is real. -/
 def is_gal_conj_real (x : KK) : Prop := gal_conj p x = x
 
@@ -110,11 +120,6 @@ begin
 sorry,
 end
 
-example (n : ℕ) (h: 0 < n) : n ≠ 0 :=
-begin
-exact ne_of_gt h,
-end
-
 instance dom : is_domain RR := infer_instance
 
 --do more generally
@@ -130,8 +135,8 @@ begin
       sub_self] },},
   have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp, apply hn} ,
   have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * (ζ')^(m : ℕ), by {
-  rw (_root_.is_root_of_unity_iff hn0) at hxu,
-  obtain ⟨l, hl, hhl⟩:= hxu,
+  have hxu2 := (_root_.is_root_of_unity_iff hn0 _).1 hxu,
+  obtain ⟨l, hl, hhl⟩:= hxu2,
   have hlp: l ∣ 2*p, by {
   by_contra,
   have hpl': is_primitive_root (⟨x, hx⟩ : RR) l, by {rw is_root_cyclotomic_iff.symm, apply hhl,
@@ -180,14 +185,22 @@ begin
   refine ⟨0,1,_⟩,
   simp only [pnat.one_coe, pow_one, pow_zero, mul_one],
   exact eq_neg_of_add_eq_zero hhl,
-  have isPrimRoot : is_primitive_root  (ζ' : RR) l, by { sorry,},
-  have hxl : (⟨x, hx⟩: RR)^l =1 , by {sorry,},
-  have hl0 : 0 < l, by {sorry},
+  cases c1,
+  have isPrimRoot : is_primitive_root  (ζ' : RR) l, by {simp_rw c1, apply zeta_unit_coe_2},
+  have hl0 : 0 < l, by {rw c1, apply p.prop,},
+  have hxl : (⟨x, hx⟩: RR)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl, simp [hl0],
+   apply (pos_iff_ne_zero.1 hl0)},
   have Key:= is_primitive_root.eq_pow_of_pow_eq_one isPrimRoot hxl hl0,
   obtain ⟨i, hi,Hi⟩:= Key,
   refine ⟨i, 2, _⟩,
   simp only [pnat.coe_bit0, pnat.one_coe, nat.neg_one_sq, one_mul],
-  apply Hi.symm,},
+  apply Hi.symm,
+  simp_rw c1 at hhl,
+  simp at hhl,
+  have eqn:  (⟨x, hx⟩: RR) = 1, by {apply sub_eq_zero.mp hhl},
+  refine ⟨0, 2, _⟩,
+  simp,
+  apply eqn,},
   obtain ⟨m, k, hmk⟩:= H,
   refine ⟨m, k, _⟩,
   have eq : ((⟨x, hx⟩ : RR) : KK) = x, by { refl},
