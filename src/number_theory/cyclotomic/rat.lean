@@ -66,7 +66,7 @@ begin
         show ((X + 1)) = map (algebra_map ℤ ℚ) (X + 1), by simp, ← map_comp] at h₂,
       rw [is_primitive_root.sub_one_power_basis_gen, map_injective (algebra_map ℤ ℚ)
         ((algebra_map ℤ ℚ).injective_int) h₂],
-      exact cyclotomic_comp_X_add_one_is_eisenstein_at },
+      exact cyclotomic_comp_X_add_one_is_eisenstein_at p },
     replace H := mem_adjoin_of_smul_prime_pow_smul_of_minpoly_is_eiseinstein_at
       (nat.prime_iff_prime_int.1 hp.out) hint h H hmin,
     convert adjoin_le _ H,
