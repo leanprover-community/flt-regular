@@ -1,5 +1,3 @@
-import ready_for_mathlib.power_basis
-
 import number_theory.cyclotomic.discriminant
 import field_theory.minpoly
 
