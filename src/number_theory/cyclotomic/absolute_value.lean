@@ -119,7 +119,7 @@ lemma multiset_prod_X_add_C_degree (s : multiset R) :
   degree (multiset.map (λ (x : R), X + C x) s).prod < s.card + 1 :=
 begin
   have := multiset_prod_X_add_C_degree' s,
-  rwa ← succ_order.lt_succ_iff at this,
+  rwa ← order.lt_succ_iff at this
 end
 
 
