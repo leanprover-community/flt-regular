@@ -1,5 +1,5 @@
-import ready_for_mathlib.primitive_root
 import ring_theory.discriminant
+import number_theory.cyclotomic.primitive_roots
 
 universes u v
 variables {p : ℕ+} (k : ℕ) {K : Type u} {L : Type v} {ζ : L} [field K] [field L]
@@ -50,8 +50,8 @@ begin
         simp only [aeval_add, aeval_mul, minpoly.aeval, zero_mul, add_zero, aeval_nat_cast,
           _root_.map_sub, aeval_one, aeval_X_pow] at H,
         replace H := congr_arg (algebra.norm K) H,
-        rw [monoid_hom.map_mul, hζ.pow_prime_ne_two_pow_sub_one_norm hirr
-          (by simpa [tsub_self, pow_one] using hirr₁) hodd rfl.le, monoid_hom.map_mul,
+        rw [monoid_hom.map_mul, hζ.pow_sub_one_norm_prime_ne_two hirr
+          (by simpa [tsub_self, pow_one] using hirr₁) rfl.le hodd, monoid_hom.map_mul,
           ← map_nat_cast (algebra_map K L), norm_algebra_map, finrank _ hirr, pnat.pow_coe,
           totient_prime_pow hp.out (succ_pos k), nat.sub_one, nat.pred_succ,
           ← hζ.minpoly_eq_cyclotomic_of_irreducible hirr, map_pow, hζ.norm_eq_one _ hirr, one_pow,

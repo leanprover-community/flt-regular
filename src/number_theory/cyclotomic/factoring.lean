@@ -28,8 +28,8 @@ begin
   have := X_pow_sub_one_eq_prod hpos h,
   -- transfer this to a polynomial ring with two variables
   have := congr_arg (aeval (X 0 : mv_polynomial (fin 2) K)) this,
-  simp only [polynomial.aeval_prod, polynomial.aeval_X_pow, polynomial.aeval_X,
-    polynomial.aeval_one, polynomial.aeval_C, alg_hom.map_sub] at this,
+  simp only [map_prod, aeval_X_pow, polynomial.aeval_X, aeval_one, polynomial.aeval_C,
+    alg_hom.map_sub] at this,
   -- the homogenization of the identity is also true
   have := congr_arg (homogenization 1) this,
   -- simplify to get the result we want

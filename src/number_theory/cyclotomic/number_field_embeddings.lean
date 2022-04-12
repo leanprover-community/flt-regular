@@ -26,8 +26,7 @@ ring morphisms between them. -/
 
 def equiv_alg : (K →ₐ[ℚ] ℂ) ≃ (K →+* ℂ) :=
 { to_fun := coe,
-  inv_fun := λ f : K →+* ℂ, alg_hom.mk' f (λ (c : ℚ) x,
-    add_monoid_hom.map_rat_module_smul f.to_add_monoid_hom _ _),
+  inv_fun := λ f : K →+* ℂ, alg_hom.mk' f (λ (c : ℚ) x, map_rat_smul f _ _),
   left_inv  := λ x, alg_hom.ext  $ by simp only [forall_const, alg_hom.coe_to_ring_hom,
                                                  eq_self_iff_true, alg_hom.coe_mk'],
   right_inv := λ x, ring_hom.ext $ by simp only [forall_const, alg_hom.coe_to_ring_hom,
