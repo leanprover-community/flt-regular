@@ -35,8 +35,8 @@ begin
     cases neg_one_pow_eq_or K (((p : ℕ) - 1) / 2) with hpos hneg,
     { rw [hpos, one_pow] },
     { rw [hneg],
-      refine nat.neg_one_pow_of_odd (nat.odd_mul.2 ⟨odd.pow (decidable.or_iff_not_imp_left.1
-        (hp.out.eq_two_or_odd') hodd'), nat.even.sub_odd _ (even_mul.2 _) odd_one⟩),
+      refine (nat.odd_mul.2 ⟨(decidable.or_iff_not_imp_left.1 (hp.out.eq_two_or_odd') hodd').pow,
+        nat.even.sub_odd _ (even_mul.2 _) odd_one⟩).neg_one_pow,
       { refine one_le_iff_ne_zero.2 (nat.mul_ne_zero (λ h, _) _),
         { exact (not_lt_of_le (tsub_eq_zero_iff_le.1 h)) (prime.one_lt hp.out) },
         { refine pow_ne_zero _ (hp.out.ne_zero) } },
