@@ -796,7 +796,7 @@ lemma homogenization_X_sub_C {R : Type*} [comm_ring R] {i j : ι} (r : R) :
 by rw [sub_eq_add_neg, sub_eq_add_neg, ← C_neg, homogenization_X_add_C,
   C_neg, neg_mul]
 
-lemma support_X_pow [nontrivial R] (s : ι) (n : ℕ) :
+lemma support_X_pow [nontrivial R] (s : ι) (n : ℕ) : -- PR 13435
   (X s ^ n : mv_polynomial ι R).support = {finsupp.single s n} :=
 begin
   classical,
