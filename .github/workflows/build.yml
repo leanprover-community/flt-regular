@@ -166,10 +166,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      # https://github.com/actions/checkout/issues/759#issuecomment-1097932196
-      - name: adding github workspace as safe directory
-        run: git config --global --add safe.directory $GITHUB_WORKSPACE
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -198,6 +194,8 @@ jobs:
           run: |
             apk update
             apk add --update make py3-pip git
+            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git config --global --add safe.directory `pwd`
             python3 -m pip install --upgrade pip requests wheel
             apk add pkgconfig graphviz graphviz-dev gcc musl-dev && \
             python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
