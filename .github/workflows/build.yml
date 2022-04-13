@@ -166,6 +166,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      # https://github.com/actions/checkout/issues/759#issuecomment-1097932196
+      - name: adding github workspace as safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
