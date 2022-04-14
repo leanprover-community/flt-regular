@@ -340,17 +340,6 @@ homogeneous_component_apply _ _
 -- (p.support.filter (λ s : ι →₀ ℕ, s.sum (λ _ e, e) = p.total_degree)).sum $
 --   λ s, monomial s (p.coeff s)
 
-@[simp]
-lemma leading_terms_zero : (0 : mv_polynomial ι R).leading_terms = 0 :=
-by simp [leading_terms]
-
-lemma finset.filter_eq_self_iff {α : Type*} (S : finset α) (h : α → Prop) [decidable_pred h] :
-  S.filter h = S ↔ ∀ s ∈ S, h s :=
-begin
-  cases S,
-  simp only [finset.filter, finset.mem_mk, multiset.filter_eq_self],
-end
-
 -- TODO for non-zero polys this is true that p.lead = p iff p.is_homogenous n for a fixed n
 -- TODO generalize to p.homog comp = n
 lemma leading_terms_eq_self_iff_is_homogeneous (p : mv_polynomial ι R) :
@@ -372,7 +361,7 @@ begin
     rw (_ : p.support.filter (λ (s : ι →₀ ℕ), ∑ (i : ι) in s.support, s i = p.total_degree)
             = p.support),
     { rw support_sum_monomial_coeff p, },
-    { rw finset.filter_eq_self_iff,
+    { rw finset.filter_eq_self,
       intros s hs,
       rw [mem_support_iff] at hs,
       rw ← h hs, }, },
@@ -385,6 +374,14 @@ begin
   convert is_homogeneous_C _ _,
   simp,
 end
+
+@[simp]
+lemma leading_terms_zero : (0 : mv_polynomial ι R).leading_terms = 0 :=
+by simp [leading_terms]
+
+@[simp]
+lemma leading_terms_one : (1 : mv_polynomial ι R).leading_terms = 1 :=
+by simp [leading_terms]
 
 @[simp]
 lemma leading_terms_monomial (s : ι →₀ ℕ) (r : R) : (monomial s r).leading_terms = monomial s r :=
@@ -591,7 +588,7 @@ by rw [leading_terms, leading_terms, total_degree_add_eq_left_of_total_degree_lt
 -- lemma C_mul_eq_smul {r : R} (p : mv_polynomial ι R) : C r * p = r • p :=
 -- by rw [C_eq_smul_one, algebra.smul_mul_assoc, one_mul]
 
-lemma no_zero_smul_divisors.eq_zero_or_eq_zero_iff_smul_eq_zero (R M : Type*) [has_zero R]
+lemma no_zero_smul_divisors.smul_eq_zero_iff_eq_zero_or_eq_zero (R M : Type*) [has_zero R]
   [has_zero M] [smul_with_zero R M] [no_zero_smul_divisors R M] {c : R} {x : M} :
   c • x = 0 ↔ c = 0 ∨ x = 0 :=
 begin
@@ -609,7 +606,7 @@ end
 --   ext a,
 --   simp [finsupp.smul_apply, mem_support_iff, ne.def],
 --   simp,
---   rw no_zero_smul_divisors.eq_zero_or_eq_zero_iff_smul_eq_zero,
+--   rw no_zero_smul_divisors.smul_eq_zero_iff_eq_zero_or_eq_zero,
 -- end
 
 -- haveI : no_zero_smul_divisors R (mv_polynomial ι R), --TODO add this instance
@@ -631,12 +628,11 @@ begin
 end
 
 lemma eq_C_of_total_degree_zero {p : mv_polynomial ι R} (hp : p.total_degree = 0) :
-  ∃ r : R, p = C r :=
+  p = C (coeff 0 p) :=
 begin
   letI := classical.dec_eq ι,
   erw finset.sup_eq_bot_iff at hp,
   simp only [mem_support_iff] at hp,
-  use coeff 0 p,
   ext,
   by_cases hm : m = 0,
   { simp [hm], },
@@ -658,27 +654,19 @@ lemma leading_terms_mul {S : Type*} [comm_ring S] [is_domain S] (p q : mv_polyno
   (p * q).leading_terms = p.leading_terms * q.leading_terms :=
 begin
   by_cases hp : p.total_degree = 0,
-  { rcases eq_C_of_total_degree_zero hp with ⟨rp, rfl⟩,
-    rw [leading_terms_C_mul, leading_terms_C], },
+  { rw [eq_C_of_total_degree_zero hp, leading_terms_C_mul, leading_terms_C], },
   by_cases hq : q.total_degree = 0,
-  { rcases eq_C_of_total_degree_zero hq with ⟨rq, rfl⟩,
-    rw [mul_comm, leading_terms_C_mul, leading_terms_C, mul_comm], },
+  { rw [eq_C_of_total_degree_zero hq, mul_comm, leading_terms_C_mul, leading_terms_C, mul_comm], },
   have : (p.leading_terms * q.leading_terms).total_degree = p.total_degree + q.total_degree,
   { rw is_homogeneous.total_degree,
     apply is_homogeneous.mul (is_homogeneous_leading_terms p) (is_homogeneous_leading_terms q),
-    apply mul_ne_zero,
-    { apply leading_terms_ne_zero, -- TODO maybe this can be a lemma ne_zero_of_total_degree_ne_zero
-      intro hh,
-      subst hh,
-      simpa, },
-    { apply leading_terms_ne_zero, -- TODO maybe this can be a lemma ne_zero_of_total_degree_ne_zero
-      intro hh,
-      subst hh,
+    apply mul_ne_zero;
+    { apply leading_terms_ne_zero,
+      rintro rfl,
       simpa, }, },
   rcases eq_leading_terms_add p hp with ⟨wp, hp, tp⟩,
-  rw hp,
   rcases eq_leading_terms_add q hq with ⟨wq, hq, tq⟩,
-  rw hq,
+  rw [hp, hq],
   simp only [add_mul, mul_add],
   rw [add_assoc, leading_terms_add_of_total_degree_lt, leading_terms_add_of_total_degree_lt,
     leading_terms_add_of_total_degree_lt, leading_terms_idempotent, leading_terms_idempotent,
@@ -703,6 +691,7 @@ begin
     simp only [total_degree_leading_terms, max_lt_iff, add_lt_add_iff_right, add_lt_add_iff_left],
     exact ⟨tp, tq, add_lt_add tp tq⟩, },
 end
+--TODO reinterpret this as a hom in this case
 
 lemma total_degree_mul_eq {S : Type*} [comm_ring S] [is_domain S] {p q : mv_polynomial ι S}
   (hp : p ≠ 0) (hq : q ≠ 0) : (p * q).total_degree = p.total_degree + q.total_degree :=
@@ -721,8 +710,12 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
   (p + q).homogenization i = p.homogenization i + q.homogenization i :=
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
-lemma auxx (f s p q fs ss : ℕ) (hp : fs ≤ p) (hp : ss ≤ q) :
-  f + s + (p + q - (fs + ss)) = f + (p - fs) + (s + (q - ss)) := by omega
+lemma auxx (f s p q fs ss : ℕ) (hp : fs ≤ p) (hq : ss ≤ q) :
+  f + s + (p + q - (fs + ss)) = f + (p - fs) + (s + (q - ss)) :=
+begin
+  zify [add_le_add hp hq],
+  ring,
+end
 
 lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q : mv_polynomial ι S) :
   -- TODO is this cond needed?
@@ -751,19 +744,22 @@ begin
   ext j,
   simp only [pi.add_apply, finsupp.coe_add, finsupp.coe_tsub, pi.sub_apply],
   classical,
-  refine auxx _ _ _ _ _ _ _ _,
-  { rw finsupp.single_apply,
-    split_ifs,
-    { simp only [h, finsupp.single_eq_same],
-      convert finset.le_sup ha.left,
-      congr, }, -- TODO what is going on here?
-    { simp, }, },
-  { rw finsupp.single_apply,
-    split_ifs,
-    { simp only [h, finsupp.single_eq_same],
+  have : ∀ {f s p q fs ss : ℕ} (hP : fs ≤ p) (hQ : ss ≤ q),
+    f + s + (p + q - (fs + ss)) = f + (p - fs) + (s + (q - ss)),
+  { intros,
+    zify [add_le_add hP hQ],
+    ring, },
+  refine this _ _;
+  rw finsupp.single_apply;
+  split_ifs,
+  { simp only [h, finsupp.single_eq_same],
+    convert finset.le_sup ha.left,
+    refl, },
+  { simp, },
+  { simp only [h, finsupp.single_eq_same],
       convert finset.le_sup ha.right,
-      congr, }, -- TODO what is going on here?
-    { simp, }, },
+      refl, },
+  { simp, },
   { intros i _, refl, },
   { intro i, simp, },
 end
