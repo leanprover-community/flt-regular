@@ -710,13 +710,6 @@ lemma homogenization_add_of_total_degree_eq (i : ι) (p q : mv_polynomial ι R)
   (p + q).homogenization i = p.homogenization i + q.homogenization i :=
 by simp only [homogenization, finsupp.map_domain_add, ←h, ←hpq]
 
-lemma auxx (f s p q fs ss : ℕ) (hp : fs ≤ p) (hq : ss ≤ q) :
-  f + s + (p + q - (fs + ss)) = f + (p - fs) + (s + (q - ss)) :=
-begin
-  zify [add_le_add hp hq],
-  ring,
-end
-
 lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q : mv_polynomial ι S) :
   -- TODO is this cond needed?
   --(hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
