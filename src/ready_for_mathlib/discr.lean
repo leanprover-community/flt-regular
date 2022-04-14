@@ -12,6 +12,7 @@ namespace is_cyclotomic_extension
 local attribute [instance] is_cyclotomic_extension.finite_dimensional
 local attribute [instance] is_cyclotomic_extension.is_galois
 
+
 lemma discr_odd_prime_pow [is_cyclotomic_extension {p ^ (k + 1)} K L] [hp : fact (p : ℕ).prime]
   (hζ : is_primitive_root ζ ↑(p ^ (k + 1))) (hirr : irreducible (cyclotomic (↑(p ^ (k + 1)) : ℕ) K))
   (hirr₁ : irreducible (cyclotomic (p : ℕ) K))
