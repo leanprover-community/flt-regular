@@ -785,15 +785,6 @@ lemma homogenization_X_sub_C {R : Type*} [comm_ring R] {i j : ι} (r : R) :
 by rw [sub_eq_add_neg, sub_eq_add_neg, ← C_neg, homogenization_X_add_C,
   C_neg, neg_mul]
 
-lemma support_X_pow [nontrivial R] (s : ι) (n : ℕ) : -- PR 13435
-  (X s ^ n : mv_polynomial ι R).support = {finsupp.single s n} :=
-begin
-  classical,
-  rw [X, monomial_pow, support_monomial, if_neg, finsupp.smul_single', mul_one],
-  { rw [one_pow],
-    exact one_ne_zero, },
-end
-
 @[simp]
 lemma homogenization_X_pow_add_C {i j : ι} {n : ℕ} (hn : 0 < n) (r : R) :
   (X j ^ n + C r : mv_polynomial ι R).homogenization i = X j ^ n + C r * X i ^ n :=
@@ -879,7 +870,7 @@ end
 section
 open_locale pointwise
 
-@[simp] lemma support_one : (1 : mv_polynomial ι R).support ⊆ 0 :=
+lemma support_one : (1 : mv_polynomial ι R).support ⊆ 0 :=
 finsupp.support_single_subset
 
 @[simp] lemma support_one_of_nontrivial [nontrivial R] : (1 : mv_polynomial ι R).support = 0 :=
@@ -892,7 +883,7 @@ lemma support_prod (P : finset (mv_polynomial ι R)) : (P.prod id).support ⊆ P
 begin
   classical,
   induction P using finset.induction with p S hS hSi,
-  { simp [support_X], },
+  { simp only [prod_empty, sum_empty], exact support_one, },
   rw [finset.prod_insert hS, finset.sum_insert hS],
   simp only [id.def],
   refine finset.subset.trans (support_mul' _ _) _,
