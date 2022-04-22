@@ -892,39 +892,44 @@ end
 
 end
 
+lemma degree_of_eq_zero_iff (i : ι) (p : mv_polynomial ι R) : degree_of i p = 0 ↔
+  ∀ (j: ι→₀ ℕ), j ∈ p.support → j i = 0:=
+begin
+  rw degree_of_eq_sup,
+  apply iff.intro,
+  { intros h j hj,
+    apply nat.eq_zero_of_le_zero,
+    have t:= (finset.le_sup hj),
+    rwa h at t },
+  { intro h,
+    apply nat.eq_zero_of_le_zero,
+    apply finset.sup_le,
+    intros m hm,
+    rw h m hm }
+end
+
 lemma prod_contains_no (i : ι) (P : finset (mv_polynomial ι R))
   (hp : ∀ (p : mv_polynomial ι R) (hp : p ∈ P) (j) (hjp : j ∈ p.support), (j : ι → ℕ) i = 0)
   (j) (hjp : j ∈ (P.prod id).support) :
   (j : ι → ℕ) i = 0 :=
 begin
-  classical,
-  induction P using finset.induction with p S hS hSi generalizing j,
-  { simp only [mem_support_iff, finset.prod_empty] at hjp,
-    have : j = 0,
-    sorry,
-    simp [this], },
-  { have := support_prod _ hjp,
-    rw finset.prod_insert hS at hjp,
-    rw finset.sum_insert hS at this,
-    rw finset.mem_add at this,
-    rcases this with ⟨y, z, hy, hz, hh⟩,
-    rw ← hh,
-    have := hp _ (finset.mem_insert_self p S) _ hy,
-    simp only [pi.add_apply, add_eq_zero_iff, finsupp.coe_add],
-    rw hSi _ z _,
-    { rw this,
-      simp, },
-    { intros p hpp j hj,
-      exact hp p (finset.mem_insert_of_mem hpp) j hj, },
-    sorry,
-    -- TODO probably need more lemmas for this still
-    -- apply support_prod,
-  },
-  -- TODO this proof should be simple with `support_prod` we know j is in
-  -- { simp only [finset.prod_insert hS, id.def, ne.def] at hjp,
-  --   apply hSi, },
+  apply (degree_of_eq_zero_iff i (P.prod id)).1 _ j hjp,
+  revert hp,
+  apply finset.cons_induction_on P,
+  { intro hp,
+    simp only [prod_empty, ← C_1, degree_of_C] },
+  { intros a s has hs,
+    intro hp,
+    rw prod_cons,
+    apply nat.eq_zero_of_le_zero,
+    apply le_trans (degree_of_mul_le _ _ _),
+    rw hs,
+    { simp only [id.def, add_zero, le_zero_iff],
+      exact (degree_of_eq_zero_iff _ _).2 (hp a (mem_cons_self _ _)) },
+    { intros p hps m  hmp,
+      apply hp p _ m hmp,
+      simp only [hps, mem_cons, or_true] } }
 end
-
 
 open_locale big_operators
 lemma homogenization_prod {σ S : Type*} [comm_ring S] [is_domain S] (i : ι)
