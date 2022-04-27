@@ -19,12 +19,6 @@ local attribute [instance] is_cyclotomic_extension.number_field
 
 noncomputable theory
 
--- we're nearly here!
-
-instance ℚ_cycl_ext : is_cyclotomic_extension {p} ℚ (cyclotomic_field p ℚ) := sorry
-
-instance : has_pow KK ℕ:=infer_instance
-
 /-- zeta now as a unit in the ring of integers. This way there are no coe issues-/
 def zeta_unit' : RRˣ :={
 val:= (⟨zeta p ℚ KK, zeta_integral p ℚ⟩ : RR),
@@ -72,7 +66,8 @@ end
 lemma unit_coe_non_zero (u  : RRˣ) : (u : KK) ≠ 0 :=
 begin
   by_contra h,
-  have : (u : KK) * ((u⁻¹ : RRˣ ) : KK) = 1, by {simp,norm_cast, apply unit_coe,},
+  have : (u : KK) * ((u⁻¹ : RRˣ ) : KK) = 1,
+  { rw [coe_coe, coe_coe, ←subalgebra.coe_mul, ←units.coe_mul, mul_right_inv], refl },
   rw h at this,
   simp at this,
   exact this,
@@ -80,15 +75,9 @@ end
 
 lemma coe_life (u : RRˣ) : ((u : RR) : KK)⁻¹ = ((u⁻¹ : RRˣ) : RR) :=
 begin
-  rw ← coe_coe,
-  rw ← coe_coe,
-  rw inv_eq_one_div,
   have hu:= unit_coe_non_zero p u,
-  rw div_eq_iff hu,
-  rw mul_comm,
-  simp only [coe_coe],
-  norm_cast,
-  simp only [mul_right_inv, units.coe_one],
+  rw [←coe_coe, ←coe_coe, inv_eq_one_div, div_eq_iff hu, coe_coe, coe_coe,
+      ←subalgebra.coe_mul, ←units.coe_mul, mul_left_inv], refl
 end
 
 lemma auxil (a b c d : RRˣ) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
@@ -99,8 +88,6 @@ begin
   rw mul_assoc,
   rw mul_comm,
 end
-
-
 
 lemma contains_two_primitive_roots  (p q : ℕ)
 (x y : K) (hx : is_primitive_root x p) (hy : is_primitive_root y q): (lcm  p q ).totient ≤
@@ -122,35 +109,38 @@ end
 
 instance dom : is_domain RR := infer_instance
 
+-- please speed this up
 --do more generally
 lemma roots_of_unity_in_cyclo  (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) =1 ) :
   ∃ (m : ℕ) (k: ℕ+), x = (-1)^(k : ℕ) * (ζ')^(m : ℕ) :=
 begin
   obtain ⟨n, hn0, hn⟩ := h,
-  have hx : x ∈ RR, by {rw mem_ring_of_integers,
+  have hx : x ∈ RR, by sorry{rw mem_ring_of_integers,
   use (X ^ n - 1),
   split,
   { exact (monic_X_pow_sub_C 1 (ne_of_lt hn0).symm) },
   { simp only [hn, eval₂_one, eval₂_X_pow, eval₂_sub,
       sub_self] },},
-  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp, apply hn} ,
-  have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * (ζ')^(m : ℕ), by {
+  have hxu : (⟨x, hx⟩ : RR)^n = 1, by sorry{ext, simp, apply hn} ,
+  have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * (ζ')^(m : ℕ), by sorry{
   have hxu2 := (_root_.is_root_of_unity_iff hn0 _).1 hxu,
   obtain ⟨l, hl, hhl⟩:= hxu2,
-  have hlp: l ∣ 2*p, by {
+  have hlp: l ∣ 2*p, by sorry{
   by_contra,
-  have hpl': is_primitive_root (⟨x, hx⟩ : RR) l, by {rw is_root_cyclotomic_iff.symm, apply hhl,
-  haveI:= dom p, apply infer_instance, have:=(nat.pos_of_mem_divisors hl),
+  have hpl': is_primitive_root (⟨x, hx⟩ : RR) l, by sorry{rw is_root_cyclotomic_iff.symm, apply hhl,
+  haveI:= dom p,
+  apply_instance,
+  have:=(nat.pos_of_mem_divisors hl),
   have h2:= ne_of_gt this, fsplit, rw nat.cast_ne_zero, apply h2,},
   have hpl: is_primitive_root x l, by {have:  (algebra_map RR KK) (⟨x, hx⟩) = x, by{refl, },
   have h4:= is_primitive_root.map_of_injective hpl' , rw ← this, apply h4,
   apply is_fraction_ring.injective, },
-  have hpp: is_primitive_root (ζ' : KK) p, by { rw zeta_unit_coe, apply zeta_primitive_root,},
+  have hpp: is_primitive_root (ζ' : KK) p, by sorry{ rw zeta_unit_coe, apply zeta_primitive_root,},
   have KEY := contains_two_primitive_roots KK l p x ζ' hpl hpp,
-  have hirr : irreducible (cyclotomic p ℚ), by {exact cyclotomic.irreducible_rat p.prop},
+  have hirr : irreducible (cyclotomic p ℚ), by sorry{exact cyclotomic.irreducible_rat p.prop},
   have hrank:= is_cyclotomic_extension.finrank KK hirr,
   rw hrank at KEY,
-  have pdivlcm : (p : ℕ) ∣ lcm l p, by {exact dvd_lcm_right l ↑p},
+  have pdivlcm : (p : ℕ) ∣ lcm l p := dvd_lcm_right l ↑p,
   cases pdivlcm,
   have ineq1 := totient_super_multiplicative (p: ℕ) pdivlcm_w,
   rw ←pdivlcm_h at ineq1,
@@ -168,7 +158,7 @@ begin
   rw K5 at pdivlcm_h,
   simp only [mul_one] at pdivlcm_h,
   rw lcm_eq_right_iff at pdivlcm_h,
-  have K6: (p : ℕ) ∣ 2*(p : ℕ), by {exact dvd_mul_left ↑p 2,},
+  have K6: (p : ℕ) ∣ 2*(p : ℕ) := dvd_mul_left ↑p 2,
   have:= dvd_trans pdivlcm_h K6,
   apply absurd this h,
   simp only [eq_self_iff_true, normalize_eq, pnat.coe_inj],
@@ -181,14 +171,14 @@ begin
   have c1: l = 2 ∨ l = p ∨ l = 1, by {sorry,},
   cases c1,
   simp_rw c1 at hhl,
-  simp at hhl,
+  simp only [cyclotomic_two, eval_add, eval_X, eval_one] at hhl,
   refine ⟨0,1,_⟩,
   simp only [pnat.one_coe, pow_one, pow_zero, mul_one],
   exact eq_neg_of_add_eq_zero hhl,
   cases c1,
-  have isPrimRoot : is_primitive_root  (ζ' : RR) l, by {simp_rw c1, apply zeta_unit_coe_2},
-  have hl0 : 0 < l, by {rw c1, apply p.prop,},
-  have hxl : (⟨x, hx⟩: RR)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl, simp [hl0],
+  have isPrimRoot : is_primitive_root  (ζ' : RR) l, by sorry{simp_rw c1, apply zeta_unit_coe_2},
+  have hl0 : 0 < l, by sorry{rw c1, apply p.prop,},
+  have hxl : (⟨x, hx⟩: RR)^l =1 , by sorry{apply is_root_of_unity_of_root_cyclotomic _ hhl, simp [hl0],
    apply (pos_iff_ne_zero.1 hl0)},
   have Key:= is_primitive_root.eq_pow_of_pow_eq_one isPrimRoot hxl hl0,
   obtain ⟨i, hi,Hi⟩:= Key,
@@ -203,13 +193,13 @@ begin
   apply eqn,},
   obtain ⟨m, k, hmk⟩:= H,
   refine ⟨m, k, _⟩,
-  have eq : ((⟨x, hx⟩ : RR) : KK) = x, by { refl},
-  simp only [coe_coe],
-  rw ←eq,
+  have eq : ((⟨x, hx⟩ : RR) : KK) = x := rfl,
+  rw [←eq, hmk],
   norm_cast,
-  convert hmk,
-  simp only [int.cast_pow, int.cast_neg_of_nat, nat.cast_one],
-  simp only [units.coe_pow],
+  rw [subalgebra.coe_mul],
+  congr' 1,
+  { push_cast },
+  { simp }
 end
 
 lemma zeta_runity_pow_even (h : 2 < p) (n : ℕ) : ∃ (m : ℕ),
@@ -253,23 +243,19 @@ begin
   simp_rw ← pow_mul,
   have hk := nat.even_or_odd k,
   cases hk,
-  simp [hk.neg_one_pow] at hz,
+  {simp only [hk.neg_one_pow, coe_coe, one_mul] at hz,
   simp_rw  coe_life at hz,
+  rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
   norm_cast at hz,
   rw hz,
-  have := zeta_runity_pow_even p h n,
-  obtain ⟨m , Hm⟩ := this,
-  use m,
-  rw mul_comm,
-  exact Hm,
-  by_contra hc,
+  refine (exists_congr $ λ a, _).mp (zeta_runity_pow_even p h n),
+  { rw mul_comm } },
+  { by_contra hc,
     simp [hk.neg_one_pow] at hz,
     simp_rw  coe_life at hz,
+    rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
     norm_cast at hz,
-    have := unit_inv_conj_not_neg_zeta_runity p h u n,
-    rw hz at this,
-    simp at this,
-    exact this,
+    simpa [hz] using unit_inv_conj_not_neg_zeta_runity p h u n },
   { exact unit_lemma_val_one p u,},
   { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
@@ -307,7 +293,7 @@ begin
   have hzz := unit_gal_conj_spec p u,
   rw hzz,
   simp only [coe_coe],
-  norm_cast,
+  rw [←subalgebra.coe_pow, ←units.coe_pow, ←subalgebra.coe_mul, ←units.coe_mul],
   rw ← hy,
   simp only [subalgebra.coe_pow, subalgebra.coe_eq_zero, mul_eq_mul_left_iff,
   units.ne_zero, or_false, subalgebra.coe_mul, units.coe_pow, units.coe_mul],
@@ -319,6 +305,7 @@ begin
   simp only [subalgebra.coe_pow, units.coe_pow],
   simp,
   norm_cast,
+  rw [mul_assoc, ←subalgebra.coe_mul, units.inv_mul],
   simp,
 end
 

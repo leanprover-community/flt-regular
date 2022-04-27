@@ -21,8 +21,6 @@ local attribute [instance] is_cyclotomic_extension.number_field is_cyclotomic_ex
 
 open_locale number_field
 
--- we're nearly here!
-instance ℤ_cycl_ext : is_cyclotomic_extension {p} ℤ (𝓞 (cyclotomic_field p ℚ)) := sorry
 
 open cyclotomic_ring embeddings
 
@@ -129,18 +127,16 @@ def unit_gal_conj : RRˣ → RRˣ :=
   begin
     ext,
     simp only [subalgebra.coe_one, set_like.coe_mk, subalgebra.coe_mul],
-    rw ← alg_hom.map_mul,
-    rw_mod_cast u_val_inv,
+    rw [← alg_hom.map_mul, ←subalgebra.coe_mul, u_val_inv],
     simp,
   end, begin
     ext,
     simp only [subalgebra.coe_one, set_like.coe_mk, subalgebra.coe_mul],
-    rw ← alg_hom.map_mul,
-    rw_mod_cast u_inv_val,
+    rw [← alg_hom.map_mul, ←subalgebra.coe_mul, u_inv_val],
     simp,
   end⟩
 
-/-- `unit_gal_conj` as boundled hom. -/
+/-- `unit_gal_conj` as a bundled hom. -/
 def unit_gal_conj_m : RRˣ →* RRˣ :={
   to_fun := unit_gal_conj  p,
   map_one' := by {simp_rw (unit_gal_conj ),  sorry, },
