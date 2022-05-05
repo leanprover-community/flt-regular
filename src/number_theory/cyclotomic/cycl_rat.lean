@@ -1,8 +1,6 @@
 import ring_theory.polynomial.eisenstein
 import number_theory.cyclotomic.galois_action_on_cyclo
 
-import ready_for_mathlib.zeta_sub_one
-
 universes u
 
 open finite_dimensional polynomial algebra
