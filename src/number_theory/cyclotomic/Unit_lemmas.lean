@@ -103,7 +103,7 @@ lemma totient_super_multiplicative (a b : ℕ) : a.totient * b.totient ≤ (a*b)
 begin
 sorry,
 end
-#exit
+
 lemma totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 :=
 begin
 --totient_eq_one_iff
