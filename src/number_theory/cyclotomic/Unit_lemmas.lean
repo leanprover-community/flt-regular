@@ -112,8 +112,8 @@ end
 
 -- please speed this up
 -- is it faster now?
-lemma roots_of_unity_in_cyclo_aux  (x  : KK) (n l : ℕ) (hn0 : 0 < n) (hl : l ∈ n.divisors)
-(hx : x  ∈ RR) (hxu :  (⟨x, hx⟩ : RR)^n = 1 )
+lemma roots_of_unity_in_cyclo_aux  (x  : KK) (n l : ℕ) (hl : l ∈ n.divisors)
+(hx : x  ∈ RR)
 (hhl :  (cyclotomic l {x // x ∈ 𝓞 (cyclotomic_field p ℚ)}).is_root ⟨x, hx⟩) : l ∣ 2 * p  :=
 begin
 by_contra,
@@ -171,7 +171,7 @@ begin
     submonoid_class.coe_one], apply hn} ,
   have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * (ζ')^(m : ℕ),
   by {obtain ⟨l, hl, hhl⟩ := ((_root_.is_root_of_unity_iff hn0 _).1 hxu),
-  have hlp := roots_of_unity_in_cyclo_aux p x n l hn0 hl hx hxu hhl,
+  have hlp := roots_of_unity_in_cyclo_aux p x n l hl hx hhl,
   simp only [is_root.def] at hhl,
   have isPrimRoot : is_primitive_root  (ζ' : RR) p, by {apply zeta_unit_coe_2},
   have hxl : (⟨x, hx⟩: RR)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl,
@@ -207,7 +207,7 @@ begin
   { simp only [units.coe_pow, subsemiring_class.coe_pow, coe_coe]}
 end
 
-lemma zeta_runity_pow_even (h : 2 < p) (hpo : odd (p : ℕ)) (n : ℕ) : ∃ (m : ℕ),
+lemma zeta_runity_pow_even (hpo : odd (p : ℕ)) (n : ℕ) : ∃ (m : ℕ),
   (ζ')^n = (ζ')^(2*m) :=
 begin
   by_cases  n = 0,
@@ -251,7 +251,7 @@ begin
   rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
   norm_cast at hz,
   rw hz,
-  refine (exists_congr $ λ a, _).mp (zeta_runity_pow_even p h hpo n),
+  refine (exists_congr $ λ a, _).mp (zeta_runity_pow_even p hpo n),
   { rw mul_comm } },
   { by_contra hc,
     simp [hk.neg_one_pow] at hz,
