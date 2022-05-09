@@ -35,11 +35,11 @@ def is_regular_number : Prop :=
 /-- A prime number is Bernoulli regular if it does not divide the numerator of any of
 the first `p-3` (non-zero) Bernoulli numbers-/
 def is_Bernoulli_regular : Prop :=
-∀ i ∈ finset.range((p-3)/2), ((bernoulli 2*i).num : zmod p) ≠ 0
+∀ i ∈ finset.range((n-3)/2), ((bernoulli 2*i).num : zmod n) ≠ 0
 
 /--A prime is super regular if its regular and Bernoulli regular.-/
 def is_super_regular : Prop :=
- is_regular_number p ∧ is_Bernoulli_regular p
+ is_regular_number n ∧ is_Bernoulli_regular n
 
 -- some nice results about class number of isom rings needed I guess
 -- example : is_regular_prime 2 := -- LOOL good luck
