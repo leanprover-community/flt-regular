@@ -20,7 +20,7 @@ open nat polynomial
 
 open number_field
 
-variables (n p : ℕ) [fact (0 < n)] [fact p.prime]
+variables (n p : ℕ+) [fact p.prime]
 -- local attribute [priority 5, instance] rat.normed_field -- hack to avoid diamond?
 
 open_locale classical
@@ -30,8 +30,8 @@ open_locale classical
 
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
 def is_regular_number : Prop :=
-n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
-                                     (cyclotomic_field ⟨n, fact.out _⟩ ℚ)))
+(n : ℕ).coprime (fintype.card (class_group (cyclotomic_ring n ℤ ℚ)
+                                     (cyclotomic_field n ℚ)))
 /-- A prime number is Bernoulli regular if it does not divide the numerator of any of
 the first `p-3` (non-zero) Bernoulli numbers-/
 def is_Bernoulli_regular : Prop :=
