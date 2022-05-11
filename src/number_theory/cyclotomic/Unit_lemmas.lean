@@ -113,8 +113,8 @@ end
 
 -- please speed this up
 -- is it faster now?
-lemma roots_of_unity_in_cyclo_aux (x : KK) (n l : ℕ) (hn0 : 0 < n) (hl : l ∈ n.divisors)
-(hx : x ∈ RR) (hxu : (⟨x, hx⟩ : RR)^n = 1 )
+lemma roots_of_unity_in_cyclo_aux (x : KK) (n l : ℕ) (hl : l ∈ n.divisors)
+(hx : x ∈ RR)
 (hhl : (cyclotomic l {x // x ∈ 𝓞 (cyclotomic_field p ℚ)}).is_root ⟨x, hx⟩) : l ∣ 2 * p :=
 begin
 by_contra,
@@ -173,7 +173,7 @@ begin
     submonoid_class.coe_one], apply hn} ,
   have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * (ζ')^(m : ℕ),
   by {obtain ⟨l, hl, hhl⟩ := ((_root_.is_root_of_unity_iff hn0 _).1 hxu),
-  have hlp := roots_of_unity_in_cyclo_aux p x n l hn0 hl hx hxu hhl,
+  have hlp := roots_of_unity_in_cyclo_aux p x n l hl hx hhl,
   simp only [is_root.def] at hhl,
   have isPrimRoot : is_primitive_root (ζ' : RR) p, by {apply zeta_unit_coe_2},
   have hxl : (⟨x, hx⟩: RR)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl,
@@ -313,7 +313,7 @@ begin
   rw [mul_assoc, ←subalgebra.coe_mul, units.inv_mul],
   simp,
 end
-
+#lint
 /-
 lemma unit_lemma (u : RRˣ) :
   ∃ (x : RRˣ) (n : ℤ), element_is_real (x : KK) ∧ (u : KK) = x * (zeta_runity p ℚ) ^ n :=
