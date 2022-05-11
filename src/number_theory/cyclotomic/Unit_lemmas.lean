@@ -209,7 +209,7 @@ begin
   { simp only [units.coe_pow, subsemiring_class.coe_pow, coe_coe]}
 end
 
-lemma zeta_runity_pow_even (h : 2 < p) (hpo : odd (p : ℕ)) (n : ℕ) : ∃ (m : ℕ),
+lemma zeta_runity_pow_even (hpo : odd (p : ℕ)) (n : ℕ) : ∃ (m : ℕ),
   (ζ')^n = (ζ')^(2*m) :=
 begin
   by_cases n = 0,
@@ -253,7 +253,7 @@ begin
   rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
   norm_cast at hz,
   rw hz,
-  refine (exists_congr $ λ a, _).mp (zeta_runity_pow_even p h hpo n),
+  refine (exists_congr $ λ a, _).mp (zeta_runity_pow_even p hpo n),
   { rw mul_comm } },
   { by_contra hc,
     simp [hk.neg_one_pow] at hz,
