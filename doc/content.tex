@@ -10,6 +10,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 
 \begin{definition}\label{defn_of_disc}
 	\lean{algebra.discr}
+	\leanok
 	Let $A,K$ be commutative rings with $K$ and $A$-algebra. let $B=\{b_1,\dots,b_n\}$ be a set of elements in $K$. The discriminant of $B$ is defined as \[\Delta(B)=  \det \left (\begin{matrix} \Tr_{K/A}(b_1b_1) &\cdots& \Tr_{K/A}(b_1b_n)\\ \vdots & & \vdots \\  \Tr_{K/A}(b_nb_1) &\cdots& \Tr_{K/A}(b_nb_n)
 	\end{matrix} \right ).\]
 \end{definition}
@@ -123,7 +124,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \section{Cyclotomic fields}
 
 
-\begin{lemma}\label{lemma:cyclo_poly}\lean{polynomial.degree_cyclotomic}
+\begin{lemma}\label{lemma:cyclo_poly}\lean{polynomial.degree_cyclotomic} \leanok
 	For $n$ any integer, $\Phi_n$ (the $n$-th cyclotomic polynomial) is an irreducible polynomial of degree $\varphi(n)$ (where $\varphi$ is Euler's Totient function).
 \end{lemma}
 
@@ -132,6 +133,8 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 
 \begin{theorem}\label{theorem:ring_of_ints_of_cyclo}
 	\uses{lemma:num_field_disc_in_terms_of_norm,lemma:disc_int_basis,lemma:eis_crit_and_alg_ints}
+	\lean{is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime_pow}
+	\leanok 
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$ moreover \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
 \end{theorem}
 
