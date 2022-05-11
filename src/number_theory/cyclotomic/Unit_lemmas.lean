@@ -25,11 +25,11 @@ val:= (⟨zeta p ℚ KK, zeta_integral p ℚ⟩ : RR),
 inv:= (⟨(zeta p ℚ KK)^((p-1): ℕ), zeta_integral' p ℚ (p-1)⟩ : RR),
 val_inv := by { have:= zeta_pow p ℚ KK ,
   have h1:= zeta_primitive_root p ℚ KK, have h2:= h1.is_unit p.2, have h3:=h2.ne_zero,
- cases h2, cases p, dsimp at *, ext1, dsimp at *, rw  pow_sub₀, rw this, simp,
+ cases h2, cases p, dsimp at *, ext1, dsimp at *, rw pow_sub₀, rw this, simp,
  apply mul_inv_cancel, apply h3, apply h3, linarith,},
 inv_val:= by{have:= zeta_pow p ℚ KK ,
   have h1:= zeta_primitive_root p ℚ KK, have h2:= h1.is_unit p.2, have h3:=h2.ne_zero,
- cases h2, cases p, dsimp at *, ext1, dsimp at *, rw  pow_sub₀, rw this, simp,
+ cases h2, cases p, dsimp at *, ext1, dsimp at *, rw pow_sub₀, rw this, simp,
  apply inv_mul_cancel, apply h3, apply h3, linarith,} ,}
 
 local notation `ζ'`:= zeta_unit' p
@@ -48,7 +48,7 @@ end
 lemma zeta_unit_coe_2 : is_primitive_root (ζ' : RR) p :=
 begin
  have z1 := zeta_primitive_root p ℚ KK,
- have:  (algebra_map RR KK) ((ζ' : RR)) = ζ, by{refl, },
+ have : (algebra_map RR KK) ((ζ' : RR)) = ζ, by{refl, },
  rw ← this at z1,
  apply is_primitive_root.of_map_of_injective z1,
  apply is_fraction_ring.injective,
@@ -65,7 +65,7 @@ begin
   simp only [mul_right_inv, units.coe_one],
 end
 
-lemma unit_coe_non_zero (u  : RRˣ) : (u : KK) ≠ 0 :=
+lemma unit_coe_non_zero (u : RRˣ) : (u : KK) ≠ 0 :=
 begin
   by_contra h,
   have : (u : KK) * ((u⁻¹ : RRˣ ) : KK) = 1,
@@ -91,16 +91,17 @@ begin
   rw mul_comm,
 end
 
-lemma contains_two_primitive_roots  (p q : ℕ)
-(x y : K) (hx : is_primitive_root x p) (hy : is_primitive_root y q): (lcm  p q ).totient ≤
+lemma contains_two_primitive_roots (p q : ℕ)
+(x y : K) (hx : is_primitive_root x p) (hy : is_primitive_root y q): (lcm p q ).totient ≤
 (finite_dimensional.finrank ℚ K) :=
 begin
 
 sorry,
 end
 
-lemma totient_super_multiplicative (a b : ℕ) : a.totient * b.totient ≤ (a*b).totient :=
+lemma totient_super_multiplicative (a b : ℕ) : a.totient * b.totient ≤ (a * b).totient :=
 begin
+
 sorry,
 end
 
@@ -112,9 +113,9 @@ end
 
 -- please speed this up
 -- is it faster now?
-lemma roots_of_unity_in_cyclo_aux  (x  : KK) (n l : ℕ) (hn0 : 0 < n) (hl : l ∈ n.divisors)
-(hx : x  ∈ RR) (hxu :  (⟨x, hx⟩ : RR)^n = 1 )
-(hhl :  (cyclotomic l {x // x ∈ 𝓞 (cyclotomic_field p ℚ)}).is_root ⟨x, hx⟩) : l ∣ 2 * p  :=
+lemma roots_of_unity_in_cyclo_aux (x : KK) (n l : ℕ) (hn0 : 0 < n) (hl : l ∈ n.divisors)
+(hx : x ∈ RR) (hxu : (⟨x, hx⟩ : RR)^n = 1 )
+(hhl : (cyclotomic l {x // x ∈ 𝓞 (cyclotomic_field p ℚ)}).is_root ⟨x, hx⟩) : l ∣ 2 * p :=
 begin
 by_contra,
   have hpl': is_primitive_root (⟨x, hx⟩ : RR) l, by {rw is_root_cyclotomic_iff.symm, apply hhl,
@@ -122,7 +123,7 @@ by_contra,
   fsplit,
   rw nat.cast_ne_zero,
   apply (ne_of_gt (nat.pos_of_mem_divisors hl)),},
-  have hpl: is_primitive_root x l, by {have :  (algebra_map RR KK) (⟨x, hx⟩) = x, by{refl},
+  have hpl: is_primitive_root x l, by {have : (algebra_map RR KK) (⟨x, hx⟩) = x, by{refl},
   have h4 := is_primitive_root.map_of_injective hpl', rw ← this,
   apply h4,
   apply is_fraction_ring.injective, },
@@ -157,7 +158,7 @@ by_contra,
 end
 
 --do more generally
-lemma roots_of_unity_in_cyclo (hpo : odd (p : ℕ)) (x  : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) = 1) :
+lemma roots_of_unity_in_cyclo (hpo : odd (p : ℕ)) (x : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) = 1) :
   ∃ (m : ℕ) (k : ℕ+), x = (-1)^(k : ℕ) * (ζ')^(m : ℕ) :=
 begin
   obtain ⟨n, hn0, hn⟩ := h,
@@ -173,13 +174,13 @@ begin
   by {obtain ⟨l, hl, hhl⟩ := ((_root_.is_root_of_unity_iff hn0 _).1 hxu),
   have hlp := roots_of_unity_in_cyclo_aux p x n l hn0 hl hx hxu hhl,
   simp only [is_root.def] at hhl,
-  have isPrimRoot : is_primitive_root  (ζ' : RR) p, by {apply zeta_unit_coe_2},
+  have isPrimRoot : is_primitive_root (ζ' : RR) p, by {apply zeta_unit_coe_2},
   have hxl : (⟨x, hx⟩: RR)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl,
     simp only [nat.mem_divisors, dvd_refl, ne.def, true_and],
    apply (pos_iff_ne_zero.1 (nat.pos_of_mem_divisors hl))},
-  have hxp' :  (⟨x, hx⟩: RR)^(2* p : ℕ) = 1 , by {cases hlp,
+  have hxp' : (⟨x, hx⟩: RR)^(2* p : ℕ) = 1 , by {cases hlp,
   rw [hlp_h, pow_mul, hxl], simp only [one_pow],},
-  have hxp'': (⟨x, hx⟩: RR)^(p : ℕ) = 1 ∨  (⟨x, hx⟩: RR)^(p : ℕ) = -1,
+  have hxp'': (⟨x, hx⟩: RR)^(p : ℕ) = 1 ∨ (⟨x, hx⟩: RR)^(p : ℕ) = -1,
   by {rw mul_comm at hxp', rw pow_mul at hxp',
   apply eq_or_eq_neg_of_sq_eq_sq (⟨x, hx⟩^(p : ℕ) : RR) 1 _,
   simp only [submonoid_class.mk_pow, one_pow],
@@ -210,7 +211,7 @@ end
 lemma zeta_runity_pow_even (h : 2 < p) (hpo : odd (p : ℕ)) (n : ℕ) : ∃ (m : ℕ),
   (ζ')^n = (ζ')^(2*m) :=
 begin
-  by_cases  n = 0,
+  by_cases n = 0,
   use 0,
   rw h,
   simp only [mul_zero],
@@ -229,25 +230,25 @@ begin
 end
 
 
-lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p)  (u : RRˣ) (n  : ℕ) :
-  u * (unit_gal_conj p u)⁻¹ ≠  -(ζ') ^ n :=
+lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p) (u : RRˣ) (n : ℕ) :
+  u * (unit_gal_conj p u)⁻¹ ≠ -(ζ') ^ n :=
 begin
   by_contra H,
   sorry,
 end
 
 -- this proof has mild coe annoyances rn
-lemma unit_inv_conj_is_root_of_unity (h : 2 < p) (hpo : odd (p : ℕ))  (u : RRˣ) :
+lemma unit_inv_conj_is_root_of_unity (h : 2 < p) (hpo : odd (p : ℕ)) (u : RRˣ) :
   ∃ m : ℕ, u * (unit_gal_conj p u)⁻¹ = (ζ' ^ (m))^2 :=
 begin
   have := mem_roots_of_unity_of_abs_eq_one (u * (unit_gal_conj p u)⁻¹ : KK) _ _,
-  have H:= roots_of_unity_in_cyclo  p hpo ((u * (unit_gal_conj p u)⁻¹ : KK)) this,
+  have H:= roots_of_unity_in_cyclo p hpo ((u * (unit_gal_conj p u)⁻¹ : KK)) this,
   obtain ⟨n, k, hz⟩ := H,
   simp_rw ← pow_mul,
   have hk := nat.even_or_odd k,
   cases hk,
   {simp only [hk.neg_one_pow, coe_coe, one_mul] at hz,
-  simp_rw  coe_life at hz,
+  simp_rw coe_life at hz,
   rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
   norm_cast at hz,
   rw hz,
@@ -255,7 +256,7 @@ begin
   { rw mul_comm } },
   { by_contra hc,
     simp [hk.neg_one_pow] at hz,
-    simp_rw  coe_life at hz,
+    simp_rw coe_life at hz,
     rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
     norm_cast at hz,
     simpa [hz] using unit_inv_conj_not_neg_zeta_runity p h u n },
@@ -280,13 +281,13 @@ begin
   let xuu:=u * ((ζ')⁻¹ ^ (m)),
   use [xuu, m],
    rw is_gal_conj_real,
-  have hy : u * (ζ'  ^ ( m))⁻¹ = (unit_gal_conj p u) *  ζ'  ^ ( m),
+  have hy : u * (ζ' ^ ( m))⁻¹ = (unit_gal_conj p u) * ζ' ^ ( m),
   by {rw pow_two at hm,
-  have := auxil p u (unit_gal_conj p u)  (ζ'  ^ (m)) (ζ'  ^ (m)),
+  have := auxil p u (unit_gal_conj p u) (ζ' ^ (m)) (ζ' ^ (m)),
   apply this hm},
   dsimp,
   simp only [inv_pow, alg_hom.map_mul],
-  have hz: gal_conj p (ζ'^ ( m))⁻¹ =(ζ'  ^ ( m)) ,
+  have hz: gal_conj p (ζ'^ ( m))⁻¹ =(ζ' ^ ( m)) ,
   by {simp_rw zeta_unit', simp},
   rw ← coe_coe,
   rw ← coe_coe,
