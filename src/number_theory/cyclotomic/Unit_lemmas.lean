@@ -313,7 +313,7 @@ begin
   rw [mul_assoc, ←subalgebra.coe_mul, units.inv_mul],
   simp,
 end
-#lint
+
 /-
 lemma unit_lemma (u : RRˣ) :
   ∃ (x : RRˣ) (n : ℤ), element_is_real (x : KK) ∧ (u : KK) = x * (zeta_runity p ℚ) ^ n :=
