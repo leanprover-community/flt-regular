@@ -158,7 +158,8 @@ by_contra,
 end
 
 --do more generally
-lemma roots_of_unity_in_cyclo (hpo : odd (p : ℕ)) (x : KK) (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) = 1) :
+lemma roots_of_unity_in_cyclo (hpo : odd (p : ℕ)) (x : KK)
+  (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) = 1) :
   ∃ (m : ℕ) (k : ℕ+), x = (-1)^(k : ℕ) * (ζ')^(m : ℕ) :=
 begin
   obtain ⟨n, hn0, hn⟩ := h,
