@@ -105,7 +105,8 @@ begin
   suffices : ∀ {j : ℕ}, j.coprime n → associated (1 - ζ) (1 - ζ ^ j),
   { exact (this hj).symm.trans (this hk) },
   clear' k j hk hj,
-  refine λ j hj, associated_of_dvd_dvd ⟨geom_sum ζ j, by rw [← geom_sum_mul_neg, mul_comm]⟩ _,
+  refine λ j hj, associated_of_dvd_dvd ⟨∑ i in range j, ζ ^ i,
+    by rw [← geom_sum_mul_neg, mul_comm]⟩ _,
   -- is there an easier way to do this?
   rcases eq_or_ne n 0 with rfl | hn',
   { simp [j.coprime_zero_right.mp hj] },
@@ -113,7 +114,7 @@ begin
   { simp [is_primitive_root.one_right_iff.mp hζ] },
   replace hn := n.one_lt_of_ne hn' hn,
   obtain ⟨m, hm⟩ := nat.exists_mul_mod_eq_one_of_coprime hj hn,
-  use (geom_sum (ζ ^ j) m),
+  use (∑ i in range m, (ζ ^ j) ^ i),
   have : ζ = (ζ ^ j) ^ m,
   { rw [←pow_mul, pow_eq_mod_order_of, ←hζ.eq_order_of, hm, pow_one] },
   nth_rewrite 0 this,
