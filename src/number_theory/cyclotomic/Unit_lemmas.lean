@@ -16,7 +16,7 @@ local notation `RR` := 𝓞 (cyclotomic_field p ℚ)
 local notation `ζ` := zeta p ℚ KK
 
 local attribute [instance] is_cyclotomic_extension.number_field
-
+universe u
 noncomputable theory
 
 /-- zeta now as a unit in the ring of integers. This way there are no coe issues-/
@@ -90,6 +90,157 @@ begin
   rw mul_assoc,
   rw mul_comm,
 end
+section totient
+
+open nat
+
+localized "notation `φ` := nat.totient" in nat
+
+def is_gcd_mult (f : ℕ → ℕ) : Prop :=
+  ∀ a b: ℕ, f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)
+
+lemma gcd_self_pow (p n m : ℕ) : (p ^ n).gcd (p ^ m) = p ^ (min n m) :=
+begin
+  wlog h : n ≤ m,
+  rw [min_eq_left h],
+  apply gcd_eq_left,
+  exact pow_dvd_pow p h,
+end
+
+lemma totient_pow_mul_self {p : ℕ} (n m : ℕ) (h : nat.prime p)  :
+   φ ((p ^ n).gcd (p ^ m)) * φ (p ^ n * p ^ m) = φ (p ^ n) * φ (p ^ m) * (p ^ n).gcd (p ^ m) :=
+begin
+  --wlog hnm : n ≤ m using [n m], -- chris: this is a nice tactic you'll be interested in!
+  have hnm : n ≤ m, sorry,
+  rcases n.eq_zero_or_pos with rfl | hn,
+  { simp only [nat.gcd_one_left, mul_one, one_mul, pow_zero]},
+  rcases m.eq_zero_or_pos with rfl | hm,
+  { simp only [mul_one, one_mul, nat.gcd_one_right, totient_one, pow_zero]},
+  have h20 : 0 < n + m, by linarith,
+  rw [totient_prime_pow h hn, totient_prime_pow h hm, ←pow_add, totient_prime_pow h h20,
+      gcd_self_pow, min_eq_left hnm, totient_prime_pow h hn, ← mul_assoc],
+  /- temporarily sorrying the change and the wlog, as they're super slow!
+  ac_change p ^ (n - 1) * ((p - 1) * ((p - 1) * p ^ (n + m - 1))) =
+            p ^ (n - 1) * ((p - 1) * ((p - 1) * (p ^ (m - 1) * p ^ n))), -/
+  suffices : p ^ (n - 1) * ((p - 1) * ((p - 1) * p ^ (n + m - 1))) =
+              p ^ (n - 1) * ((p - 1) * ((p - 1) * (p ^ (m - 1) * p ^ n))), sorry,
+  rw ←pow_add,
+  congr,
+  linarith
+end
+/-
+def finsupp_min  (f g  : ℕ →₀ ℕ) : ℕ →₀ ℕ :=
+  {support := f.support ∩ g.support,
+  to_fun := (λ x, min (f.to_fun x) (g.to_fun x)),
+  mem_support_to_fun := by {intros a, split, intro ha, simp at *, apply not_or ha.1 ha.2,
+  intro ha, simp at *, rw decidable.not_or_iff_and_not at ha, convert ha,},}
+
+lemma gcd_min_supp (a b  : ℕ) (ha : a ≠ 0) (hb: b ≠ 0) :
+  (finsupp_min a.factorization b.factorization).prod pow = a.gcd b :=
+begin
+  have hgab : a.gcd b ≠ 0, by { sorry},
+  rw  ←factorization_prod_pow_eq_self hgab,
+  apply congr,
+  apply congr,
+  refl,
+  rw (factorization_gcd ha hb),
+  rw finsupp_min,
+  work_on_goal 1 { dsimp at *, simp at *, dsimp at *, ext1, refl }, refl,
+end
+-/
+
+lemma prime_ext2 (a b : ℕ) (ha : 0 < a) (hb : 0 <b ) (hab : ¬ a.coprime b) :
+ ∃ (p: ℕ) (r s: ℕ+), nat.prime p ∧ p^(r : ℕ) ∣ a ∧ p^(s : ℕ) ∣ b ∧
+  nat.coprime (p^(r+s : ℕ)) ((a*b)/p^(r+s : ℕ))
+  ∧ nat.coprime (p) (a/p^(r : ℕ))
+  ∧ nat.coprime (p) (b/p^(s : ℕ)) :=
+begin
+  rw prime.not_coprime_iff_dvd at hab,
+  obtain ⟨p, hp, h2⟩ := hab,
+  haveI : fact p.prime,
+  exact {out := hp},
+  refine ⟨p, ⟨(padic_val_nat p a), by {have := (one_le_padic_val_nat_of_dvd ha h2.1), linarith, }⟩,
+    ⟨(padic_val_nat p b), by {have := (one_le_padic_val_nat_of_dvd hb h2.2), linarith, }⟩, hp,
+    by {have:= padic_val_int_dvd p a, norm_cast at this, convert this, },
+    by {have:= padic_val_int_dvd p b, norm_cast at this, convert this, }, _⟩,
+  simp,
+  sorry,
+end
+
+lemma sub_induction2  {P : ℕ → ℕ → Sort u}
+  (H : ∀n m, ((∀ x y, x < n → y < m → P x y) → P n m)) : Π (n m : ℕ), P n m :=
+begin
+  intros n m,
+  apply H _ _,
+  induction n,
+  work_on_goal 1 { intros x y ᾰ ᾰ_1, dsimp at *, simp at *, cases ᾰ }, intros x y H1 H2,
+  apply or.by_cases (decidable.lt_or_eq_of_le (le_of_lt_succ H1)),
+  intro hn,
+  apply n_ih,
+  apply hn,
+  apply H2,
+  intro hn,
+  rw hn,
+  apply H _ _,
+  intros a b hab hab2,
+  apply n_ih,
+  apply hab,
+  linarith,
+end
+
+lemma totient_mul_gen : is_gcd_mult φ :=
+begin
+  apply sub_induction2,
+
+  intros n m hxy,
+
+  by_cases hco : coprime n m,
+  sorry,
+  by_cases g1 : 0  < n,
+  by_cases g2 : 0 < m,
+  obtain ⟨p, r ,s, hprs⟩ := (prime_ext2 n m g1 g2 hco),
+  have h1: n = p^(r : ℕ) * (n / p^(r : ℕ)), by {sorry,},
+  have h2: m = p^(s : ℕ) * (m / p^(s : ℕ)), by {sorry,},
+  rw [h1,h2],
+  have : p ^ ↑r * (n / p ^ ↑r) * (p ^ ↑s * (m / p ^ ↑s)) = p^(r+s : ℕ) * (n*m / p^(r+s : ℕ)),
+  by {ring_exp, field_simp, simp_rw [←mul_assoc],  sorry},
+  rw this,
+  rw totient_mul hprs.2.2.2.1,
+  simp_rw totient_mul  (coprime.pow_left r hprs.2.2.2.2.1),
+  simp_rw totient_mul (coprime.pow_left s hprs.2.2.2.2.2),
+  have e2 : (n*m / p^(r+s : ℕ)) = (n/ p^(r : ℕ)) * (m / p^(s: ℕ)) , by {sorry,},
+  rw e2,
+  rw coprime.gcd_mul _ (coprime.pow_left s hprs.2.2.2.2.2),
+  simp_rw nat.gcd_comm,
+  simp_rw coprime.gcd_mul _ (coprime.pow_left r hprs.2.2.2.2.1),
+  have h33:= (coprime.pow_left r hprs.2.2.2.2.2),
+  rw coprime at h33,
+  rw nat.gcd_comm at h33,
+  rw h33,
+  have h44:= (coprime.pow_left s hprs.2.2.2.2.1),
+  rw coprime at h44,
+  rw h44,
+  simp,
+  rw (gcd_self_pow p s r),
+  have h55:= (coprime.pow_left (min (s : ℕ) (r : ℕ)) hprs.2.2.2.2.1),
+  have h66:= coprime.gcd_right (m/p^(s : ℕ)) h55,
+  simp_rw totient_mul h66,
+  have i1 : n/p^(r : ℕ) < n, by {sorry},
+  have i2 : m/p^(s : ℕ) < m, by {sorry},
+  have hi1i2 := hxy (n/p^(r : ℕ)) (m/p^(s : ℕ)) i1 i2,
+  rw ←(gcd_self_pow p s r),
+  have e2 := totient_pow_mul_self (r : ℕ) (s : ℕ) hprs.1,
+  have V := congr (congr_arg has_mul.mul hi1i2) e2,
+  rw pow_add,
+  rw ←mul_assoc,
+
+  sorry,
+  sorry,
+  sorry,
+
+end
+
+end totient
 
 lemma contains_two_primitive_roots (p q : ℕ)
 (x y : K) (hx : is_primitive_root x p) (hy : is_primitive_root y q): (lcm p q ).totient ≤
