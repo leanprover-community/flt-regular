@@ -3,8 +3,11 @@ import algebra.big_operators.finsupp
 
 variables {α : Type*} [comm_ring α] [is_domain α] [is_dedekind_domain α]
 
-lemma ideal.is_unit_iff' (I : ideal α) : is_unit I ↔ I = ⊤ :=
-by rw [is_unit_iff_dvd_one, ideal.dvd_iff_le, ideal.one_eq_top, top_le_iff]
+lemma ideal.is_unit_iff' {R} [comm_semiring R] (I : ideal R) : is_unit I ↔ I = ⊤ :=
+begin
+  rw [is_unit_iff_dvd_one, ideal.one_eq_top],
+  exact ⟨λ h, top_le_iff.mp $ ideal.le_of_dvd h, λ h, h ▸ dvd_rfl⟩,
+end
 
 example (p : nat) (a b c : ideal α) (cp : is_coprime a b) (h : a*b = c^p) :
   ∃ d : ideal α, a = d ^ p :=
