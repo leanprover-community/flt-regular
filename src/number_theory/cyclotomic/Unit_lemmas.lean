@@ -96,6 +96,7 @@ open nat
 
 localized "notation `φ` := nat.totient" in nat
 
+/-- The fact that `f` is `gcd_mult`. -/
 def is_gcd_mult (f : ℕ → ℕ) : Prop :=
   ∀ a b: ℕ, f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)
 
@@ -167,7 +168,8 @@ begin
   sorry,
 end
 
-lemma sub_induction2  {P : ℕ → ℕ → Sort u}
+/-- An induction principle. -/
+def sub_induction2  {P : ℕ → ℕ → Sort u}
   (H : ∀n m, ((∀ x y, x < n → y < m → P x y) → P n m)) : Π (n m : ℕ), P n m :=
 begin
   intros n m,
