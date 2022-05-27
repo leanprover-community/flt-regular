@@ -3,13 +3,19 @@ import algebra.big_operators.finsupp
 
 variables {α : Type*} [comm_ring α] [is_domain α] [is_dedekind_domain α]
 
-example (p : nat) (a b c : ideal α) (cp : is_coprime a b) (h : a*b = c^p) (hb : b ≠ 0) :
+lemma ideal.is_unit_iff' (I : ideal α) : is_unit I ↔ I = ⊤ :=
+by rw [is_unit_iff_dvd_one, ideal.dvd_iff_le, ideal.one_eq_top, top_le_iff]
+
+example (p : nat) (a b c : ideal α) (cp : is_coprime a b) (h : a*b = c^p) :
   ∃ d : ideal α, a = d ^ p :=
 begin
   classical,
   obtain rfl|ha := eq_or_ne a 0,
   { use 0, apply (zero_pow _).symm, contrapose! h,
     rw le_zero_iff at h, rw [h, pow_zero, zero_mul], exact zero_ne_one },
+  obtain rfl|hb := eq_or_ne b 0,
+  { rw [is_coprime_zero_right, ideal.is_unit_iff'] at cp,
+    exact ⟨⊤, by rw [cp, ideal.top_pow]⟩ },
   let fa := unique_factorization_monoid.normalized_factors a,
   let fb := unique_factorization_monoid.normalized_factors b,
   let fc := unique_factorization_monoid.normalized_factors c,
