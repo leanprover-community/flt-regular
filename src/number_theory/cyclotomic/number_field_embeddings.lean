@@ -15,10 +15,10 @@ namespace embeddings
 
 noncomputable theory
 
-variables {K : Type*} [field K]
+variables {K L : Type*} [field K] [field L]
 section number_field
-variables [number_field K] {n : ℕ} (x : K)
-variables (φ : K →* ℂ)
+variables [number_field K] [number_field L]  {n : ℕ} (x : K)
+
 
 -- TODO generalize to other targets
 /-- The equivalence between algebra maps from a number field to the complexes and plain
@@ -32,6 +32,32 @@ def equiv_alg : (K →ₐ[ℚ] ℂ) ≃ (K →+* ℂ) :=
   right_inv := λ x, ring_hom.ext $ by simp only [forall_const, alg_hom.coe_to_ring_hom,
                                                  eq_self_iff_true, alg_hom.coe_mk'] }
 
+
+lemma lift {L : Type*} [field L] [number_field L] [algebra K L] (φ : K →+* ℂ) :
+  ∃ ψ : L →+* ℂ, φ = ψ.comp (algebra_map K L) :=
+begin
+  letI : algebra K ℂ, from ring_hom.to_algebra φ,
+  letI : is_alg_closed ℂ, from complex.is_alg_closed,
+  have hS : algebra.is_algebraic K L,
+  { show ∀ (a : L), is_algebraic K a,
+    intro a,
+    obtain ⟨p, hp⟩ := (number_field.is_algebraic L) a,
+    haveI : algebra ℚ K, { exact algebra_rat },
+    use (polynomial.map (algebra_map ℚ K) p),
+    split,
+    simp only [ne.def, polynomial.map_eq_zero, not_false_iff, hp.left],
+    simp only [polynomial.aeval_map, map_zero, hp.right]
+  },
+  let ψ₀ : L →ₐ[K] ℂ := is_alg_closed.lift hS,
+  let ψ := ψ₀.to_ring_hom,
+  use ψ,
+  refine fun_like.ext φ (ψ.comp (algebra_map K L)) _,
+  intro x,
+  show φ x = ψ₀ ((algebra_map K L) x),
+  rw alg_hom.commutes ψ₀ x,
+  exact rfl,
+end
+
 -- There are finitely many complex embeddings of a number field
 instance : fintype (K →+* ℂ) := fintype.of_equiv (K →ₐ[ℚ] ℂ) equiv_alg
 
@@ -39,6 +65,8 @@ lemma card_embeddings : fintype.card (K →+* ℂ) = finrank ℚ K :=
 by rw [fintype.of_equiv_card equiv_alg, alg_hom.card]
 
 end number_field
+
+variables (φ : K →* ℂ)
 
 /-- An embedding is real if its fixed by complex conjugation-/
 def is_real (φ : K →+* ℂ) : Prop := conj ∘ φ = φ
