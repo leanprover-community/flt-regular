@@ -4,21 +4,20 @@
 We prove Fermat's Last Theorem for regular primes and give some of the necessary background. It uses \cite{Samuel,marcus,washington}.
 
 \section{Discriminants of number fields}
-\begin{lemma}\label{lemma:alt_definition_of_norm}
-    \lean{algebra.norm_eq_prod_embeddings}
+\begin{lemma}\label{lemma:alt_definition_of_trace}
+    \lean{trace_eq_sum_embeddings}
     \leanok
-	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[N_{K/\QQ}(\a)=\prod_i \sigma_i(\a)  \].
+	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a) \].
 \end{lemma}
 \begin{proof}
   \leanok
   The proof is standard.
 \end{proof}
 
-
-\begin{lemma}\label{lemma:alt_definition_of_trace}
-    \lean{trace_eq_sum_embeddings}
+\begin{lemma}\label{lemma:alt_definition_of_norm}
+    \lean{algebra.norm_eq_prod_embeddings}
     \leanok
-	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a) \].
+	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[N_{K/\QQ}(\a)=\prod_i \sigma_i(\a)  \].
 \end{lemma}
 \begin{proof}
   \leanok
