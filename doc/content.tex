@@ -91,8 +91,8 @@ We recall basic facts about the discriminant.
 
 \begin{lemma}\label{lemma:num_field_disc_in_terms_of_norm}
 	\lean{algebra.of_power_basis_eq_norm}
-	\uses{lemma:disc_of_prim_elt_basis,lemma:alt_definition_of_norm}
 	\leanok
+	\uses{lemma:disc_of_prim_elt_basis,lemma:alt_definition_of_norm}
 	Let $K=\QQ(\a)$ be a number field with $n=[K:\QQ]$ and let $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$. Then \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}N_{K/\QQ}(m_\a'(\a))\] where $m_\a'$ is the derivative of $m_\a(x)$ (which we recall denotes the minimal polynomial of $\a$).
 \end{lemma}
 \begin{proof}
@@ -124,8 +124,8 @@ We recall basic facts about the discriminant.
 
 \begin{lemma}\label{lemma:int_basis_int_disc}
     \lean{algebra.discr_is_integral}
+    \leanok
     \uses{defn_of_disc,lemma:trace_of_alg_int_is_int}
-	\leanok
 	Let $K$ be a number field and $B=\{b_1,\dots,b_n\}$ be elements in $\OO_K$, then $\Delta(B) \in \ZZ$.
 \end{lemma}
 \begin{proof}
@@ -136,8 +136,8 @@ We recall basic facts about the discriminant.
 
 \begin{lemma}\label{lemma:disc_int_basis}
 	\lean{algebra.discr_mul_is_integral_mem_adjoin}
-	\uses{lem:disc_change_of_basis,lemma:int_basis_int_disc}
 	\leanok
+	\uses{lem:disc_change_of_basis,lemma:int_basis_int_disc}
 	Let $K = \QQ(\alpha)$ be a number field, where $\alpha$ is an algebraic integer. Let $B = \{1, \alpha, \ldots, \alpha^{[K : \QQ] - 1} \}$ be the basis given by $\alpha$ and let $x \in \mathcal{O}_K$. Then $\Delta(B)x \in \ZZ[\alpha]$.
 \end{lemma}
 
@@ -148,8 +148,8 @@ We recall basic facts about the discriminant.
 
 \begin{lemma}\label{lemma:eis_crit_and_alg_ints}
 	\lean{mem_adjoin_of_smul_prime_pow_smul_of_minpoly_is_eiseinstein_at}
-	\uses{lemma:norm_of_alg_int_is_int, lemma:trace_of_alg_int_is_int}
 	\leanok
+	\uses{lemma:norm_of_alg_int_is_int,lemma:trace_of_alg_int_is_int}
 	Let $K = \QQ(\alpha)$ be a number field, where $\alpha$ is an algebraic integer with minimal polynomial that is Eisenstein at $p$. Let $x \in \mathcal{O}_K$ such that $p^n x \in \ZZ[\alpha]$ for some $n$. Then $x \in \ZZ[\alpha]$.
 \end{lemma}
 \begin{proof}
@@ -181,9 +181,9 @@ The proof is classical.
 \end{proof}
 
 \begin{prop}\label{prop:discr_of_cyclo}
-	\uses{lemma:num_field_disc_in_terms_of_norm, lemma:cyclo_poly_irr, lemma:cyclo_poly_deg}
-	\lean{is_cyclotomic_extension.rat.discr_prime_pow'}
+	\uses{lemma:num_field_disc_in_terms_of_norm,lemma:cyclo_poly_irr,lemma:cyclo_poly_deg}
 	\leanok 
+	\lean{is_cyclotomic_extension.rat.discr_prime_pow'}
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
 \end{prop}
 \begin{proof}
@@ -199,9 +199,9 @@ The proof is classical.
 \end{proof}
 
 \begin{theorem}\label{theorem:ring_of_ints_of_cyclo}
-	\uses{prop:discr_of_cyclo, lemma:eis_crit_and_alg_ints, lemma:disc_int_basis}
-	\lean{is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime}
+	\uses{prop:discr_of_cyclo,lemma:eis_crit_and_alg_ints,lemma:disc_int_basis}
 	\leanok 
+	\lean{is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime}
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$.
 \end{theorem}
 \begin{proof}
@@ -317,7 +317,7 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 
 \begin{theorem}\label{theorem:FLT_case_one}
     \lean{flt_regular_case_one}
-	\uses{defn:is_regular_number, lem:flt_fact_5, lem:flt_fact_4, lemma:may_assume, lem:flt_fact_2}
+	\uses{defn:is_regular_number,lem:flt_fact_5,lem:flt_fact_4,lemma:may_assume,lem:flt_fact_2}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $\gcd(xyz,p)=1$.
 \end{theorem}
 \begin{proof}
@@ -330,7 +330,7 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 
 \begin{theorem}\label{theorem:FLT_case_two}\lean{flt_regular_case_two}
 	\lean{eq_pow_prime_of_unit_of_congruent}
-	\uses{lemma:may_assume, defn:is_regular_number, thm:Kummers_lemma}
+	\uses{lemma:may_assume,defn:is_regular_number,thm:Kummers_lemma}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
 \end{theorem}
 
