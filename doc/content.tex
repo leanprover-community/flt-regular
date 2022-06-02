@@ -33,7 +33,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{definition}
 
 \begin{lemma}\label{lem:lin_indep_iff_disc_ne_zero}
-    \uses{defn_of_disc}
+    \uses{defn_of_disc, lemma:alt_definition_of_norm}
     \leanok
     \lean{algebra.discr_not_zero_of_basis}
 	Let $L/K$ be an extension of fields and let $B=\{b_1,\dots,b_n\}$ be a $K$-basis of $L$. Then $\Delta(B) \neq 0$.
@@ -134,43 +134,26 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 
 
 \begin{lemma}\label{lemma:disc_int_basis}
+	\lean{algebra.discr_mul_is_integral_mem_adjoin}
 	\uses{lem:disc_change_of_basis,lemma:int_basis_int_disc}
-	Let $K$ be a number field and $B=\{b_1,\dots,b_n\}$ be a basis for $K/\QQ$ consisting of algebraic integers. If $B$ is not an integral basis then there exists an algebraic integer of the form \[\a=\frac{x_1b_1+\cdots+x_nb_n}{p}\] where $p$ is a prime and $x_i \in \{0,\dots,p-1\}$ with not all $x_i$ zero. Moreover, if $x_i \neq 0$ and we let $B'$ be the basis obtained by replacing $b_i$ with $\a$, then \[\Delta(B')= \frac{x_i^2}{p^2} \Delta(B).\] In particular $p^2 \mid \Delta(B)$.
+	\leanok
+	Let $K = \QQ(\alpha)$ be a number field, where $\alpha$ is an algebraic integer. Let $B = \{1, \alpha, \ldots, \alpha^{[K : \QQ] - 1} \}$ be the basis given by $\alpha$ and let $x \in \mathcal{O}_K$. Then $\Delta(B)x \in \ZZ[\alpha]$.
 \end{lemma}
 
 \begin{proof}
-	If $B$ is not an integral basis then we can find some element $\phi \in \OO_K$ such that \[\phi=y_1b_1+\dots y_nb_n\] with not all the $y_i$ in $\ZZ$. So, let $N$ be the least common multiple of the denominators of the $y_i$ (meaning $Ny_i \in \ZZ$ for all $i$). Now, let $p$ be a prime factor of $N$. If we now consider $(N/p)\phi$ then all of the coefficients of $b_i$ are in $\frac{1}{p} \ZZ$ (so they have denominator $1$ or $p$.) and at least one of them has denominator $p$ (since not all the $y_i$ where in $\ZZ$). So by relabelling, wlog we can assume \[\phi=y_1b_1+\dots y_nb_n\] with $y_i \in  \frac{1}{p} \ZZ$
-
-	Now look at \[\psi:=\lfloor y_1 \rfloor b_1+\cdots+\lfloor y_n \rfloor b_n\] (here $\lfloor x \rfloor$ denotes the integer part of $x$). The both $\psi$ and $\phi$ are algebraic integers (as the $b_i$ are algebraic integers). Therefore, so is $\theta=\phi-\psi$. By construction, $\theta$ has coefficients of the for $\frac{x_i}{p}:=y_i-\lfloor y_i \rfloor$ where $x_i \in \{0,\dots,p-1\}$ and not all the $x_i$ are zero (since, again, not all the $y_i$ were in $\ZZ$). This gives the first part of the lemma.
-
-	Now, assume $x_i \neq 0$, then let us replace $b_i \in B$ with $\theta$ to get a new basis $B'$ which again consists of algebraic integers. Next, we note that the change of basis matrix from $B$ to $B'$ is
-
-	\[ \left( \begin{matrix}
-		1&0&\cdots& \frac{x_1}{p}& \cdots &0 \\
-		0&1&\cdots& \frac{x_2}{p}& \cdots &0 \\
-		\vdots& \vdots&&\vdots&&\vdots \\
-		0&0&\cdots& \frac{x_n}{p}& \cdots &1 \\
-	\end{matrix}                          \right) \](here the column of $x_j/p$'s is in the $i$-th column).
-
-	This matrix has determinant $\frac{x_i}{p}.$ Therefore, by 	Proposition \ref{lem:disc_change_of_basis} we see that $\Delta(B')=\frac{x_i^2}{p^2}\Delta(B)$. But both $\Delta(B),\Delta(B')$ are  in $\ZZ$ by Proposition \ref{lemma:int_basis_int_disc}, therefore $p^2 \mid \Delta(B)$ giving the result.
+    \leanok
+    See the Lean proof.
 \end{proof}
 
 \begin{lemma}\label{lemma:eis_crit_and_alg_ints}
 	\uses{lemma:norm_of_alg_int_is_int, lemma:trace_of_alg_int_is_int}
-	Let $K=\QQ(\a)$ and $\a$ be an algebraic integer such that $m_\a$ satisfies Eisensteins Criterion for a prime $p$. Then none of the elements \[\phi=\frac{1}{p}(x_0+x_1\a+\cdots+x_{n-1}\a^{n-1})\] is an algebraic integer, where $n=\deg(m_\a)$ and $x_i \in \{0,\dots,p-1\}.$
+	Let $K = \QQ(\alpha)$ be a number field, where $\alpha$ is an algebraic integer with minimal polynomial that is Eisenstein at $p$. Let $x \in \mathcal{O}_K$ such that $p^n x \in \ZZ[\alpha]$ for some $n$. Then $x \in \ZZ[\alpha]$.
 \end{lemma}
 
 
 \begin{proof}
-	Suppose for contradiction that $\phi \in \OO_K$ and let $x_d$ be the first non-zero coefficient, so \[\phi=\frac{1}{p}(x_d\a^d+x_{d+1}\a^{d+1}+\cdots+x_{n-1}\a^{n-1}) \in \OO_K.\]
-
-	Now, rewrite this as $\phi=\frac{1}{p}(x_d\a^d +\a^{d+1}\beta)$ for some $\beta \in \OO_K$. Next, multiply through by $\a^{n-1-d}$, then we have \[\frac{x_d\a^{n-1}}{p}+\frac{\a^n\beta}{p} \in \OO_K.\]
-
-	Now, since  $m_\a$ satisfies Eisenstein at $p$, we see that $\a^n=pf(\a)$ for some $f \in \ZZ[x]$ and therefore the above gives us that \[\frac{x_d\a^{n-1}}{p}+\beta f(\a) \in \OO_K.\] and thus \[\frac{x_d\a^{n-1}}{p} \in \OO_K.\]
-
-	Lets now calculate the norm of this: \[N_{K/\QQ} \left(\frac{x_d\a^{n-1}}{p} \right)=\frac{x_d^n N_{K/\QQ}(\a)^{n-1}}{p^n}.\] By Eisenstein the constant coefficient of $m_\a$ is divisible by $p$ but not $p^2$, so since the constant coefficient of $m_\a$ is $N_{K/\QQ}(\a)$ we see that $N_{K/\QQ}(\a)=p a$ where $p \nmid a$. Therefore we have \[N_{K/\QQ} \left(\frac{x_d\a^{n-1}}{p} \right)=\frac{x_d^n p^{n-1}a^{n-1}}{p^n}= \frac{x_d^n a^{n-1}}{p}.\] But this cant be in $\ZZ$ since $p$ doesn't divide $x_d$ or $a$, and this gives us a contradiction since  Proposition \ref{lemma:norm_of_alg_int_is_int} says that the norm of an algebraic integer must be an integer. So $\phi$ couldn't have been an algebraic integer.
-
-
+    \leanok
+    See the Lean proof.
 \end{proof}
 
 \section{Cyclotomic fields}
