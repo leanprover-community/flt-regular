@@ -159,22 +159,35 @@ We recall basic facts about the discriminant.
 
 \section{Cyclotomic fields}
 
-
-\begin{lemma}\label{lemma:cyclo_poly}\lean{polynomial.degree_cyclotomic} \leanok
-	For $n$ any integer, $\Phi_n$ (the $n$-th cyclotomic polynomial) is an irreducible polynomial of degree $\varphi(n)$ (where $\varphi$ is Euler's Totient function).
+\begin{lemma}\label{lemma:cyclo_poly_deg}
+    \lean{polynomial.degree_cyclotomic}
+    \leanok
+	For $n$ any integer, $\Phi_n$ (the $n$-th cyclotomic polynomial) is a polynomial of degree $\varphi(n)$ (where $\varphi$ is Euler's Totient function).
 \end{lemma}
+\begin{proof}
+    \leanok
+The proof is classical.
+\end{proof}
 
 
-
+\begin{lemma}\label{lemma:cyclo_poly_irr}
+    \lean{polynomial.cyclotomic.irreducible}
+    \leanok
+	For $n$ any integer, $\Phi_n$ (the $n$-th cyclotomic polynomial) is an irreducible polynomial .
+\end{lemma}
+\begin{proof}
+    \leanok
+The proof is classical.
+\end{proof}
 
 \begin{theorem}\label{theorem:ring_of_ints_of_cyclo}
-	\uses{lemma:num_field_disc_in_terms_of_norm,lemma:disc_int_basis,lemma:eis_crit_and_alg_ints}
-	\lean{is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime_pow}
+	\uses{lemma:num_field_disc_in_terms_of_norm,lemma:disc_int_basis,lemma:eis_crit_and_alg_ints, lemma:cyclo_poly_irr, lemma:cyclo_poly_deg}
+	\lean{is_cyclotomic_extension.rat.discr_prime_pow'}
 	\leanok 
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$ moreover \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
 \end{theorem}
-
 \begin{proof}
+    \leanok
 	First note $[K:\QQ]=p-1$.
 
 	Since $\zeta_p=1-\lam_p$ we at once get $\ZZ[\zeta_p]=\ZZ[\lam_p]$ (just do double inclusion). Next, let $\a_i=\sigma_i(\zeta_p)$ denote the conjugates of $\zeta_p$, which is the same as the image of $\zeta_p$ under one of the embeddings $\sigma_i: \QQ(\zeta_p) \to \CC$. Now  by Proposition \ref{lemma:disc_of_prim_elt_basis} we have \begin{align*}\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\prod_{i < j}  (\a_i-\a_j)^2 &=\prod_{i < j}  ((1-\a_i)-(1-\a_j))^2\\&=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})\end{align*}
