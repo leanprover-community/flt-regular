@@ -180,12 +180,12 @@ The proof is classical.
 The proof is classical.
 \end{proof}
 
-\begin{theorem}\label{theorem:ring_of_ints_of_cyclo}
-	\uses{lemma:num_field_disc_in_terms_of_norm,lemma:disc_int_basis,lemma:eis_crit_and_alg_ints, lemma:cyclo_poly_irr, lemma:cyclo_poly_deg}
+\begin{prop}\label{prop:discr_of_cyclo}
+	\uses{lemma:num_field_disc_in_terms_of_norm,lemma:disc_int_basis, lemma:cyclo_poly_irr, lemma:cyclo_poly_deg}
 	\lean{is_cyclotomic_extension.rat.discr_prime_pow'}
 	\leanok 
-	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$ moreover \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
-\end{theorem}
+	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
+\end{prop}
 \begin{proof}
     \leanok
 	First note $[K:\QQ]=p-1$.
@@ -196,8 +196,17 @@ The proof is classical.
 	Since $p$ is odd $(-1)^{\frac{(p-1)(p-2)}{2}}=(-1)^{\frac{(p-1)}{2}}$. Next, we see that \[\Phi_p'(x)=\frac{px^{p-1}(x-1)-(x^p-1)}{(x-1)^2}\] therefore \[\Phi_p'(\zeta_p)=-\frac{p\zeta_p^{p-1}}{\lam_p}.\]
 
 	Lastly, note that $N_{K/\QQ}(\zeta_p)=1$, since this is the constant term in its minimal polynomial. Similarly, we see $N_{K/\QQ}(\lam_p)=p$. Putting this all together, we get \[N_{K/\QQ}(\Phi_p'(\zeta_p)  )=\frac{N_{K/\QQ}(p)N_{K\QQ}(\zeta_p)^{p-1}}{N_{K/\QQ}(-\lam_p)}=(-1)^{p-1}p^{p-2}=p^{p-2}\]
+\end{proof}
 
-	So the last thing we need to prove is that $\OO_K=\ZZ[\zeta_p]$. From the calculation we just did, the only prime dividing the discriminant is $p$, therefore Lemma \ref{lemma:disc_int_basis} tells us the only prime we need to check is $p$. But from Lemma \ref{lemma:eis_crit_and_alg_ints} we know that dividing by $p$ wont give us any new integral elements, so this must be an integral basis which give the result.
+\begin{theorem}\label{theorem:ring_of_ints_of_cyclo}
+	\uses{prop:discr_of_cyclo, lemma:eis_crit_and_alg_ints, lemma:disc_int_basis}
+	\lean{is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime}
+	\leanok 
+	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$.
+\end{theorem}
+\begin{proof}
+    \leanok
+    We need to prove is that $\OO_K=\ZZ[\zeta_p]$. The inclusion $\ZZ[\zeta_p] \subseteq \OO_K$ is obvious. Let now $x \in \OO_K$. By Lemma \ref{lemma:disc_int_basis} and Proposition \ref{prop:discr_of_cyclo}, there is $k \in \NN$ such that $p^k x \in \ZZ[\zeta_p]$. We conclude by Lemma \ref{lemma:eis_crit_and_alg_ints}.
 \end{proof}
 
 \begin{lemma}\label{lemma:alg_int_abs_val_one}\lean{mem_roots_of_unity_of_abs_eq_one}
