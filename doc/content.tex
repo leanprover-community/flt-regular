@@ -55,7 +55,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lemma:disc_via_embs}
-    \uses{defn_of_disc, trace_eq_sum_embeddings}
+    \uses{defn_of_disc, trace_eq_sum_embeddings, alt_definition_of_trace}
     \leanok
     \lean{algebra.discr_eq_det_embeddings_matrix_reindex_pow_two}
 	Let $K$ be a number field with basis $B=\{b_1,\dots,b_n\}$ and let $\sigma_1,\dots,\sigma_n$ be the embeddings of $K$ into $\CC$. Now let $M$ be the matrix  \[\left (\begin{matrix} \sigma_1(b_1) &\cdots& \sigma_1(b_n)\\ \vdots & & \vdots \\  \sigma_n(b_1) &\cdots& \sigma_n(b_n)
@@ -146,11 +146,11 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lemma:eis_crit_and_alg_ints}
+	\lean{mem_adjoin_of_smul_prime_pow_smul_of_minpoly_is_eiseinstein_at}
 	\uses{lemma:norm_of_alg_int_is_int, lemma:trace_of_alg_int_is_int}
+	\leanok
 	Let $K = \QQ(\alpha)$ be a number field, where $\alpha$ is an algebraic integer with minimal polynomial that is Eisenstein at $p$. Let $x \in \mathcal{O}_K$ such that $p^n x \in \ZZ[\alpha]$ for some $n$. Then $x \in \ZZ[\alpha]$.
 \end{lemma}
-
-
 \begin{proof}
     \leanok
     See the Lean proof.
