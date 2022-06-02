@@ -34,22 +34,35 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 
 \begin{lemma}\label{lem:lin_indep_iff_disc_ne_zero}
     \uses{defn_of_disc}
-	Let $K$ be a number field and let $B=\{b_1,\dots,b_n\}$ be a set of elements in $K$. Then $\Delta(B) \neq 0$ if and only if the elements in $B$ are linearly independent.
+    \leanok
+    \lean{algebra.discr_not_zero_of_basis}
+	Let $L/K$ be an extension of fields and let $B=\{b_1,\dots,b_n\}$ be a $K$-basis of $L$. Then $\Delta(B) \neq 0$.
 \end{lemma}
+\begin{proof}
+  \leanok
+  The proof is standard.
+\end{proof}
 
 \begin{lemma}\label{lem:disc_change_of_basis}
     \uses{defn_of_disc}
+    \leanok
+    \lean{algebra.discr_of_matrix_mul_vec}
 	Let $K$ be a number field and $B,B'$ bases for $K/\QQ$. If $P$ denotes the change of basis matrix, then \[\Delta(B)=\det(P)^2 \Delta(B').\]
 \end{lemma}
+\begin{proof}
+  \leanok
+  The proof is standard.
+\end{proof}
 
 \begin{lemma}\label{lemma:disc_via_embs}
-    \uses{defn_of_disc}
+    \uses{defn_of_disc, trace_eq_sum_embeddings}
+    \leanok
+    \lean{algebra.discr_eq_det_embeddings_matrix_reindex_pow_two}
 	Let $K$ be a number field with basis $B=\{b_1,\dots,b_n\}$ and let $\sigma_1,\dots,\sigma_n$ be the embeddings of $K$ into $\CC$. Now let $M$ be the matrix  \[\left (\begin{matrix} \sigma_1(b_1) &\cdots& \sigma_1(b_n)\\ \vdots & & \vdots \\  \sigma_n(b_1) &\cdots& \sigma_n(b_n)
 	\end{matrix} \right ).\] Then \[\Delta(B)=\det(M)^2.\]
 \end{lemma}
-
-
 \begin{proof}
+    \leanok
 	By Proposition \ref{lemma:alt_definition_of_trace} we know that  $\Tr_{K/\QQ}(b_i b_j)= \sum_k \sigma_k(b_i)\sigma_k(b_j)$ which is the same as the $(i,j)$ entry of $M^t M$. Therefore \[\det(T_B)=\det(M^t M)=\det(M)^2.\]
 \end{proof}
 
@@ -60,6 +73,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 	Let $K$ be a number field and $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$ for some $\a \in K$. Then \[\Delta(B)=\prod_{i < j} (\sigma_i(\a)-\sigma_j(\a))^2\] where $\sigma_i$ are the embeddings of $K $ into $\CC$. Here $\Delta(B)$ denotes the discriminant.
 \end{lemma}
 \begin{proof}
+    \leanok
 	First we recall a classical linear algebra result relating to the Vandermonde matrix, which states that  \[\det \left (\begin{matrix} 1 & x_1& x_1^2&\cdots&x_1^{n-1} \\ \vdots & & & \vdots \\   1 & x_n& x_n^2&\cdots&x_n^{n-1}
 	\end{matrix} \right ) =\prod_{i<j} (x_i-x_j).\] Combining this with Proposition \ref{lemma:disc_via_embs} gives the result.
 \end{proof}
