@@ -4,7 +4,8 @@
 We prove Fermat's Last Theorem for regular primes and give some of the necessary background. It uses \cite{Samuel,marcus,washington}.
 
 \section{Discriminants of number fields}
-\begin{lemma}\label{lemma:alt_definition_of_trace}
+\begin{lemma}
+    \label{lemma:alt_definition_of_trace}
     \lean{trace_eq_sum_embeddings}
     \leanok
 	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a) \].
@@ -62,7 +63,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{lemma}
 \begin{proof}
     \leanok
-	By Proposition \ref{lemma:alt_definition_of_trace} we know that  $\Tr_{K/\QQ}(b_i b_j)= \sum_k \sigma_k(b_i)\sigma_k(b_j)$ which is the same as the $(i,j)$ entry of $M^t M$. Therefore \[\det(T_B)=\det(M^t M)=\det(M)^2.\]
+	By Lemma \ref{lemma:alt_definition_of_trace} we know that  $\Tr_{K/\QQ}(b_i b_j)= \sum_k \sigma_k(b_i)\sigma_k(b_j)$ which is the same as the $(i,j)$ entry of $M^t M$. Therefore \[\det(T_B)=\det(M^t M)=\det(M)^2.\]
 \end{proof}
 
 \begin{lemma}\label{lemma:disc_of_prim_elt_basis}
@@ -97,7 +98,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
     \leanok
 	By Proposition \ref{lemma:disc_of_prim_elt_basis} we have $\Delta(B)=\prod_{i < j}(\a_i-\a_j)^2$ where $\a_k:=\sigma_k(\a)$. Next, we note that the number of terms in this product is $1+2+\cdots+(n-1)=\frac{n(n-1)}{2}$. So if we write each term as $(\a_i-\a_j)^2=-(\a_i-\a_j)(\a_j-\a_i)$ we get \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j). \]
 
-	Now, by lemma \ref{lemma:diff_of_irr_pol} and Proposition \ref{lemma:alt_definition_of_norm} we see that \[N_{K/\QQ}(m_\a'(\a))=\prod_{i=1}^n m_\a'(\a_i)=\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j),\] which gives the result.
+	Now, by lemmas \ref{lemma:diff_of_irr_pol} and \ref{lemma:alt_definition_of_norm} we see that \[N_{K/\QQ}(m_\a'(\a))=\prod_{i=1}^n m_\a'(\a_i)=\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j),\] which gives the result.
 \end{proof}
 
 \begin{lemma}\label{lemma:norm_of_alg_int_is_int}
