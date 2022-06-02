@@ -10,3 +10,11 @@ web/
 decls.yaml
 src/list_decls.lean
 src/.noisy_files
+doc/blueprint.aux
+doc/blueprint.bbl
+doc/blueprint.blg
+doc/blueprint.log
+doc/blueprint.out
+doc/blueprint.pdf
+doc/blueprint.synctex.gz
+doc/blueprint.toc

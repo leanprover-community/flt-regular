@@ -79,10 +79,12 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{proof}
 
 \begin{lemma}\label{lemma:diff_of_irr_pol}
+    \lean{polynomial.aeval_root_derivative_of_splits}
+    \leanok
 	Let $f$ be a monic irreducible polynomial over a number field $K$ and let $\a$ be one of its roots in $\CC$. Then \[f'(\a)=\prod_{\beta \neq \a} (\a-\beta),  \] where the product is over the roots of $f$ different from $\a$.
 \end{lemma}
-
 \begin{proof}
+    \leanok
 	We first write $f(x)=(x-\a)g(x)$ which we can do (over $\CC$) as $\a$ is a root of $f$, where now $g(x)=\prod_{\beta \neq \a} (x-\beta)$. Differentiating we get \[f'(x)=g(x)+(x-\a)g'(x).\] If we now evaluate at $\a$ we get the result.
 \end{proof}
 
@@ -93,16 +95,11 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 	Let $K=\QQ(\a)$ be a number field with $n=[K:\QQ]$ and let $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$. Then \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}N_{K/\QQ}(m_\a'(\a))\] where $m_\a'$ is the derivative of $m_\a(x)$ (which we recall denotes the minimal polynomial of $\a$).
 \end{lemma}
 \begin{proof}
+    \leanok
 	By Proposition \ref{lemma:disc_of_prim_elt_basis} we have $\Delta(B)=\prod_{i < j}(\a_i-\a_j)^2$ where $\a_k:=\sigma_k(\a)$. Next, we note that the number of terms in this product is $1+2+\cdots+(n-1)=\frac{n(n-1)}{2}$. So if we write each term as $(\a_i-\a_j)^2=-(\a_i-\a_j)(\a_j-\a_i)$ we get \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j). \]
 
 	Now, by lemma \ref{lemma:diff_of_irr_pol} and Proposition \ref{lemma:alt_definition_of_norm} we see that \[N_{K/\QQ}(m_\a'(\a))=\prod_{i=1}^n m_\a'(\a_i)=\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j),\] which gives the result.
 \end{proof}
-
-\begin{lemma}\label{lemma:disc_change_of_basis}
-	\lean{algebra.discr_of_matrix_mul_vec}
-	\leanok
-	Let $K$ be a number field and $B,B'$ bases for $K/\QQ$. If $P$ denotes the change of basis matrix, then \[\Delta(B)=\det(P)^2 \Delta(B').\]
-\end{lemma}
 
 \begin{lemma}\label{lemma:norm_trace_of_alg_int_is_int}
 	If $K$ is a number field and $\a \in \OO_K$ then $\Tr_{K/\QQ}(\a)$ and $N_{K/\QQ}(\a)$ are both in $\ZZ$.
@@ -113,7 +110,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 \end{lemma}
 
 \begin{lemma}\label{lemma:disc_int_basis}
-	\uses{lemma:disc_change_of_basis,lemma:int_basis_int_disc}
+	\uses{lem:disc_change_of_basis,lemma:int_basis_int_disc}
 	Let $K$ be a number field and $B=\{b_1,\dots,b_n\}$ be a basis for $K/\QQ$ consisting of algebraic integers. If $B$ is not an integral basis then there exists an algebraic integer of the form \[\a=\frac{x_1b_1+\cdots+x_nb_n}{p}\] where $p$ is a prime and $x_i \in \{0,\dots,p-1\}$ with not all $x_i$ zero. Moreover, if $x_i \neq 0$ and we let $B'$ be the basis obtained by replacing $b_i$ with $\a$, then \[\Delta(B')= \frac{x_i^2}{p^2} \Delta(B).\] In particular $p^2 \mid \Delta(B)$.
 \end{lemma}
 
@@ -131,7 +128,7 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 		0&0&\cdots& \frac{x_n}{p}& \cdots &1 \\
 	\end{matrix}                          \right) \](here the column of $x_j/p$'s is in the $i$-th column).
 
-	This matrix has determinant $\frac{x_i}{p}.$ Therefore, by 	Proposition \ref{lemma:disc_change_of_basis} we see that $\Delta(B')=\frac{x_i^2}{p^2}\Delta(B)$. But both $\Delta(B),\Delta(B')$ are  in $\ZZ$ by Proposition \ref{lemma:int_basis_int_disc}, therefore $p^2 \mid \Delta(B)$ giving the result.
+	This matrix has determinant $\frac{x_i}{p}.$ Therefore, by 	Proposition \ref{lem:disc_change_of_basis} we see that $\Delta(B')=\frac{x_i^2}{p^2}\Delta(B)$. But both $\Delta(B),\Delta(B')$ are  in $\ZZ$ by Proposition \ref{lemma:int_basis_int_disc}, therefore $p^2 \mid \Delta(B)$ giving the result.
 \end{proof}
 
 \begin{lemma}\label{lemma:eis_crit_and_alg_ints}
