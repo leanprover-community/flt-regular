@@ -9,8 +9,8 @@ begin
   exact ⟨λ h, top_le_iff.mp $ ideal.le_of_dvd h, λ h, h ▸ dvd_rfl⟩,
 end
 
-example (p : nat) (a b c : ideal α) (cp : is_coprime a b) (h : a*b = c^p) :
-  ∃ d : ideal α, a = d ^ p :=
+lemma ideal.exists_eq_pow_of_mul_eq_pow (p : nat) (a b c : ideal α) (cp : is_coprime a b)
+  (h : a*b = c^p) : ∃ d : ideal α, a = d ^ p :=
 begin
   classical,
   obtain rfl|ha := eq_or_ne a 0,

@@ -234,8 +234,14 @@ The proof is classical.
 \end{lemma}
 
 \begin{lemma}\label{lemma:ideals_mult_to_power}
+    \lean{ideal.exists_eq_pow_of_mul_eq_pow}
+    \leanok
 	Let $R$ be a Dedekind domain, $p$ a prime and $\gotha,\gothb,\gothc$ ideals such that \[\gotha\gothb=\gothc^p\] and suppose $\gotha,\gothb$ are coprime. Then there exist ideals $\mathfrak{e},\mathfrak{d}$ such that \[\gotha=\mathfrak{e}^p \qquad \gothb=\mathfrak{d}^p \qquad \mathfrak{e}\mathfrak{d}=\gothc\]
 \end{lemma}
+\begin{proof}
+ \leanok
+ It follows from the unique decomposition of ideals in a Dedekind domain.
+\end{proof}
 
 
 
