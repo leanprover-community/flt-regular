@@ -335,7 +335,39 @@ lemma contains_two_primitive_roots {p q : ℕ} {x y : K} (hx : is_primitive_root
   (hy : is_primitive_root y q) :
   (lcm p q ).totient ≤ (finite_dimensional.finrank ℚ K) :=
 begin
-  sorry
+  let k := lcm p q,
+  rcases nat.eq_zero_or_pos p with rfl | hppos,
+  { simp },
+  rcases nat.eq_zero_or_pos q with rfl | hqpos,
+  { simp },
+  let k := lcm p q,
+  have hkpos : 0 < k := nat.pos_of_ne_zero (nat.lcm_ne_zero  hppos.ne' hqpos.ne'),
+  set xu := is_unit.unit (hx.is_unit hppos) with hxu,
+  let yu := is_unit.unit (hy.is_unit hqpos),
+  have hxmem : xu ∈ roots_of_unity ⟨k, hkpos⟩ K,
+  { rw [mem_roots_of_unity, pnat.mk_coe, ← units.coe_eq_one, units.coe_pow, is_unit.unit_spec],
+    exact (hx.pow_eq_one_iff_dvd _).2 (dvd_lcm_left _ _) },
+  have hymem : yu ∈ roots_of_unity ⟨k, hkpos⟩ K,
+  { rw [mem_roots_of_unity, pnat.mk_coe, ← units.coe_eq_one, units.coe_pow, is_unit.unit_spec],
+    exact (hy.pow_eq_one_iff_dvd _).2 (dvd_lcm_right _ _) },
+  have hxuord : order_of (⟨xu, hxmem⟩ : roots_of_unity ⟨k, hkpos⟩ K) = p := sorry,
+  have hyuord : order_of (⟨yu, hymem⟩ : roots_of_unity ⟨k, hkpos⟩ K) = q := sorry,
+  obtain ⟨g : roots_of_unity ⟨k, hkpos⟩ K, hg⟩ := is_cyclic.exists_monoid_generator,
+  obtain ⟨nx, hnx⟩ := hg ⟨xu, hxmem⟩,
+  obtain ⟨ny, hny⟩ := hg ⟨yu, hymem⟩,
+  obtain ⟨p₁, hp₁⟩ := dvd_lcm_left p q,
+  obtain ⟨q₁, hq₁⟩ := dvd_lcm_left p q,
+  have H : order_of g = k,
+  { refine nat.dvd_antisymm (order_of_dvd_of_pow_eq_one _) (nat.lcm_dvd _ _),
+    { have := (mem_roots_of_unity _ _).1 g.2,
+      simp only [subtype.val_eq_coe, pnat.mk_coe] at this,
+      exact_mod_cast this },
+    { rw [← hxuord, ← hnx, order_of_pow],
+      exact nat.div_dvd_of_dvd ((order_of g).gcd_dvd_left nx), },
+    { rw [← hyuord, ← hny, order_of_pow],
+      exact nat.div_dvd_of_dvd ((order_of g).gcd_dvd_left ny) } },
+  sorry,
+  all_goals { apply_instance }
 end
 
 variable (K)
