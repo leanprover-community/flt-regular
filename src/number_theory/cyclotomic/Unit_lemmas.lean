@@ -96,6 +96,7 @@ open nat
 
 localized "notation `φ` := nat.totient" in nat
 
+/--Defining a gcd multiplicative function..is this a real name?-/
 def is_gcd_mult (f : ℕ → ℕ) : Prop :=
   ∀ a b: ℕ, f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)
 
@@ -149,6 +150,30 @@ begin
 end
 -/
 
+lemma p_val_nat_div_coprime (a p : ℕ) (ha :  0 < a ) (hp : p.prime) : coprime p (a/ p^(padic_val_nat p a)) :=
+begin
+refine coprime_of_dvd _,
+intros q hq hpq,
+rw dvd_prime at hpq,
+cases hpq,
+rw hpq at hq,
+intro H,
+exact not_prime_one hq,
+rw hpq,
+intro H,
+haveI : fact p.prime, by {simp [hp], exact {out := trivial},},
+have h1 :  p^(padic_val_nat p a) ∣ a, by  {have:= padic_val_int_dvd p a, norm_cast at this,
+  convert this,},
+have:= dvd_div_iff  (h1),
+rw this at H,
+have c1:= pow_succ_padic_val_nat_not_dvd ha,
+have r1 : (p^(padic_val_nat p a))*p = p^((padic_val_nat p a) + 1), by {rw pow_add, simp, },
+rw r1 at H,
+exact c1 H,
+exact _inst,
+exact hp,
+end
+
 lemma prime_ext2 (a b : ℕ) (ha : 0 < a) (hb : 0 <b ) (hab : ¬ a.coprime b) :
  ∃ (p: ℕ) (r s: ℕ+), nat.prime p ∧ p^(r : ℕ) ∣ a ∧ p^(s : ℕ) ∣ b ∧
   nat.coprime (p^(r+s : ℕ)) ((a*b)/p^(r+s : ℕ))
@@ -164,10 +189,17 @@ begin
     by {have:= padic_val_int_dvd p a, norm_cast at this, convert this, },
     by {have:= padic_val_int_dvd p b, norm_cast at this, convert this, }, _⟩,
   simp,
-  sorry,
+  split,
+  rw ←padic_val_nat.mul p (ne_of_gt ha) (ne_of_gt hb),
+  apply coprime.pow_left,
+  apply p_val_nat_div_coprime (a*b) p (mul_pos ha hb) hp,
+  split,
+  apply p_val_nat_div_coprime a p ha hp,
+  apply p_val_nat_div_coprime b p hb hp,
 end
 
-lemma sub_induction2  {P : ℕ → ℕ → Sort u}
+/--Double strong induction-/
+def sub_induction2  {P : ℕ → ℕ → Sort u}
   (H : ∀n m, ((∀ x y, x < n → y < m → P x y) → P n m)) : Π (n m : ℕ), P n m :=
 begin
   intros n m,
@@ -191,24 +223,28 @@ end
 lemma totient_mul_gen : is_gcd_mult φ :=
 begin
   apply sub_induction2,
-
   intros n m hxy,
-
   by_cases hco : coprime n m,
-  sorry,
+  rw coprime at hco,
+  rw hco,
+  simp only [totient_one, one_mul, mul_one],
+  apply totient_mul hco,
   by_cases g1 : 0  < n,
   by_cases g2 : 0 < m,
   obtain ⟨p, r ,s, hprs⟩ := (prime_ext2 n m g1 g2 hco),
-  have h1: n = p^(r : ℕ) * (n / p^(r : ℕ)), by {sorry,},
-  have h2: m = p^(s : ℕ) * (m / p^(s : ℕ)), by {sorry,},
+  have h1: n = p^(r : ℕ) * (n / p^(r : ℕ)), by {apply (nat.mul_div_cancel' hprs.2.1).symm, },
+  have h2: m = p^(s : ℕ) * (m / p^(s : ℕ)), by {apply (nat.mul_div_cancel' hprs.2.2.1).symm,},
   rw [h1,h2],
   have : p ^ ↑r * (n / p ^ ↑r) * (p ^ ↑s * (m / p ^ ↑s)) = p^(r+s : ℕ) * (n*m / p^(r+s : ℕ)),
-  by {ring_exp, field_simp, simp_rw [←mul_assoc],  sorry},
+  by { simp_rw [←mul_assoc], rw [(nat.mul_div_cancel' hprs.2.1)], rw mul_assoc,
+    rw [(nat.mul_div_cancel' hprs.2.2.1)], apply symm, apply nat.mul_div_cancel',
+    convert mul_dvd_mul hprs.2.1 hprs.2.2.1, apply pow_add,},
   rw this,
   rw totient_mul hprs.2.2.2.1,
   simp_rw totient_mul  (coprime.pow_left r hprs.2.2.2.2.1),
   simp_rw totient_mul (coprime.pow_left s hprs.2.2.2.2.2),
-  have e2 : (n*m / p^(r+s : ℕ)) = (n/ p^(r : ℕ)) * (m / p^(s: ℕ)) , by {sorry,},
+  have e2 : (n*m / p^(r+s : ℕ)) = (n/ p^(r : ℕ)) * (m / p^(s: ℕ)) , by { rw pow_add,
+    apply (nat.div_mul_div_comm hprs.2.1 hprs.2.2.1).symm,},
   rw e2,
   rw coprime.gcd_mul _ (coprime.pow_left s hprs.2.2.2.2.2),
   simp_rw nat.gcd_comm,
@@ -225,7 +261,7 @@ begin
   have h55:= (coprime.pow_left (min (s : ℕ) (r : ℕ)) hprs.2.2.2.2.1),
   have h66:= coprime.gcd_right (m/p^(s : ℕ)) h55,
   simp_rw totient_mul h66,
-  have i1 : n/p^(r : ℕ) < n, by {sorry},
+  have i1 : n/p^(r : ℕ) < n, by { sorry},
   have i2 : m/p^(s : ℕ) < m, by {sorry},
   have hi1i2 := hxy (n/p^(r : ℕ)) (m/p^(s : ℕ)) i1 i2,
   rw ←(gcd_self_pow p s r),
@@ -233,15 +269,27 @@ begin
   have V := congr (congr_arg has_mul.mul hi1i2) e2,
   rw pow_add,
   rw ←mul_assoc,
-
-  sorry,
-  sorry,
-  sorry,
-
+  have st1 : ∀ (a b c d  : ℕ), a * b * c * d = b * d * a * c, by {intros a b c d, ring},
+  have st2 : ∀ (a b c d e f : ℕ), a * b * c * d * e * f = b * d * f * a * c * e,
+    by {intros a b c d e f, ring},
+  rw st1,
+  simp_rw ← mul_assoc at *,
+   simp_rw ← mul_assoc at *,
+  rw st2,
+  rw nat.gcd_comm,
+  have st3 : (p^(r : ℕ)).gcd (p^(s : ℕ)) = (p^(s : ℕ)).gcd (p^(r : ℕ)), by {apply nat.gcd_comm},
+  rw ←st3,
+  exact V,
+  simp at g2,
+  rw g2,
+  simp,
+  simp at g1,
+  rw g1,
+  simp,
 end
 
 end totient
-
+#exit
 lemma contains_two_primitive_roots (p q : ℕ)
 (x y : K) (hx : is_primitive_root x p) (hy : is_primitive_root y q): (lcm p q ).totient ≤
 (finite_dimensional.finrank ℚ K) :=
