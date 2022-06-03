@@ -96,7 +96,7 @@ open nat
 
 localized "notation `φ` := nat.totient" in nat
 
-/--Defining a gcd multiplicative function..is this a real name?-/
+/-- The fact that `f` is `gcd_mult`. -/
 def is_gcd_mult (f : ℕ → ℕ) : Prop :=
   ∀ a b: ℕ, f (a.gcd b) * f (a * b) = f a * f b * (a.gcd b)
 
@@ -198,7 +198,7 @@ begin
   apply p_val_nat_div_coprime b p hb hp,
 end
 
-/--Double strong induction-/
+/-- An induction principle. -/
 def sub_induction2  {P : ℕ → ℕ → Sort u}
   (H : ∀n m, ((∀ x y, x < n → y < m → P x y) → P n m)) : Π (n m : ℕ), P n m :=
 begin

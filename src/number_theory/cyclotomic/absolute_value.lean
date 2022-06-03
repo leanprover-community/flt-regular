@@ -346,12 +346,12 @@ begin
        ... < _           : by exact_mod_cast hi, },
 end
 
-lemma finite_all_abs_eq_one : finite {x : K | is_integral ℤ x ∧ ∀ φ : K →+* ℂ, abs (φ x) = 1} :=
+lemma finite_all_abs_eq_one : {x : K | is_integral ℤ x ∧ ∀ φ : K →+* ℂ, abs (φ x) = 1}.finite :=
 begin
   suffices :
-    finite (⋃ (f : polynomial ℤ)
+    (⋃ (f : polynomial ℤ)
       (hf : f.nat_degree ≤ finrank ℚ K ∧ ∀ i, |f.coeff i| ≤ (finrank ℚ K).choose i),
-      ((f.map (algebra_map ℤ K)).roots.to_finset : set K)),
+      ((f.map (algebra_map ℤ K)).roots.to_finset : set K)).finite,
   { refine this.subset _,
     intros x hx,
     rw mem_Union,
@@ -377,12 +377,9 @@ begin
         linarith, },
       { rcases hx with ⟨hx_left, hx_right⟩,
         linarith, }, },
-    { refine finite_of_finite_image this _,
+    { refine finite.of_finite_image _ this,
       have : (set.pi univ (λ d : fin (finrank ℚ K + 1), Icc (-(finrank ℚ K).choose d : ℤ)
-              ((finrank ℚ K).choose d))).finite,
-      { refine finite.pi _,
-        intro d,
-        exact finite_Icc _ _, },
+              ((finrank ℚ K).choose d))).finite := finite.pi (λ d, finite_Icc _ _),
       refine finite.subset this _,
       simp only [pi_univ_Icc, image_subset_iff],
       intros f hf,

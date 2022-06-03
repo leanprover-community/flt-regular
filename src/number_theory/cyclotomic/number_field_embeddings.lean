@@ -67,7 +67,7 @@ lemma real_Eq_rank_sub_complex [number_field K] :
 begin
   rw ← card_embeddings,
   simp_rw not_real_eq_complex,
-  exact fintype.card_subtype_compl
+  exact fintype.card_subtype_compl _,
 end
 
 lemma elem_is_real_is_real (x : K) (h : element_is_real x) :
