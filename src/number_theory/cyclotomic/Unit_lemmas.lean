@@ -289,7 +289,7 @@ begin
 end
 
 end totient
-#exit
+
 lemma contains_two_primitive_roots (p q : ℕ)
 (x y : K) (hx : is_primitive_root x p) (hy : is_primitive_root y q): (lcm p q ).totient ≤
 (finite_dimensional.finrank ℚ K) :=
