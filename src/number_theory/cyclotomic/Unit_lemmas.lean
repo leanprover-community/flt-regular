@@ -306,8 +306,8 @@ end
 
 lemma totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 :=
 begin
---totient_eq_one_iff
-sorry,
+  cases nat.totient_eq_one_iff.1 (show a.totient = 1, by linarith [nat.totient_pos han]) with h h;
+  simp [h]
 end
 
 -- please speed this up
