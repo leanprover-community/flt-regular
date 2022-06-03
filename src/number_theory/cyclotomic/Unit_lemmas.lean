@@ -329,15 +329,16 @@ end
 
 end totient
 
-lemma contains_two_primitive_roots (p q : ℕ)
-(x y : K) (hx : is_primitive_root x p) (hy : is_primitive_root y q): (lcm p q ).totient ≤
-(finite_dimensional.finrank ℚ K) :=
-begin
+variable {K}
 
-sorry,
+lemma contains_two_primitive_roots {p q : ℕ} {x y : K} (hx : is_primitive_root x p)
+  (hy : is_primitive_root y q) :
+  (lcm p q ).totient ≤ (finite_dimensional.finrank ℚ K) :=
+begin
+  sorry
 end
 
-
+variable (K)
 
 lemma totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 :=
 begin
@@ -362,7 +363,7 @@ by_contra,
   apply h4,
   apply is_fraction_ring.injective, },
   have hpp: is_primitive_root (ζ' : KK) p, by { rw zeta_unit_coe, apply zeta_primitive_root,},
-  have KEY := contains_two_primitive_roots KK l p x ζ' hpl hpp,
+  have KEY := contains_two_primitive_roots hpl hpp,
   have hirr : irreducible (cyclotomic p ℚ), by {exact cyclotomic.irreducible_rat p.prop},
   have hrank:= is_cyclotomic_extension.finrank KK hirr,
   rw hrank at KEY,
