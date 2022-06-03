@@ -111,23 +111,19 @@ end
 lemma totient_pow_mul_self {p : ℕ} (n m : ℕ) (h : nat.prime p)  :
    φ ((p ^ n).gcd (p ^ m)) * φ (p ^ n * p ^ m) = φ (p ^ n) * φ (p ^ m) * (p ^ n).gcd (p ^ m) :=
 begin
-  --wlog hnm : n ≤ m using [n m], -- chris: this is a nice tactic you'll be interested in!
-  have hnm : n ≤ m, sorry,
+  wlog hnm : n ≤ m using [n m], -- chris: this is a nice tactic you'll be interested in!
+  --have hnm : n ≤ m, sorry,
   rcases n.eq_zero_or_pos with rfl | hn,
   { simp only [nat.gcd_one_left, mul_one, one_mul, pow_zero]},
   rcases m.eq_zero_or_pos with rfl | hm,
   { simp only [mul_one, one_mul, nat.gcd_one_right, totient_one, pow_zero]},
   have h20 : 0 < n + m, by linarith,
   rw [totient_prime_pow h hn, totient_prime_pow h hm, ←pow_add, totient_prime_pow h h20,
-      gcd_self_pow, min_eq_left hnm, totient_prime_pow h hn, ← mul_assoc],
-  /- temporarily sorrying the change and the wlog, as they're super slow!
-  ac_change p ^ (n - 1) * ((p - 1) * ((p - 1) * p ^ (n + m - 1))) =
-            p ^ (n - 1) * ((p - 1) * ((p - 1) * (p ^ (m - 1) * p ^ n))), -/
-  suffices : p ^ (n - 1) * ((p - 1) * ((p - 1) * p ^ (n + m - 1))) =
-              p ^ (n - 1) * ((p - 1) * ((p - 1) * (p ^ (m - 1) * p ^ n))), sorry,
-  rw ←pow_add,
-  congr,
-  linarith
+      gcd_self_pow, min_eq_left hnm, totient_prime_pow h hn],
+  have : p ^ (n + m - 1) * (p - 1) = (p ^ (m - 1) * (p - 1))*p^n ,
+  by {have : p^(n+m-1)=p^n * p^(m-1), by  {rw nat.add_sub_assoc, apply pow_add, linarith,},
+  rw [this, mul_rotate],},
+  rw [this, ←mul_assoc],
 end
 /-
 def finsupp_min  (f g  : ℕ →₀ ℕ) : ℕ →₀ ℕ :=
@@ -261,8 +257,16 @@ begin
   have h55:= (coprime.pow_left (min (s : ℕ) (r : ℕ)) hprs.2.2.2.2.1),
   have h66:= coprime.gcd_right (m/p^(s : ℕ)) h55,
   simp_rw totient_mul h66,
-  have i1 : n/p^(r : ℕ) < n, by { sorry},
-  have i2 : m/p^(s : ℕ) < m, by {sorry},
+  have i1 : n/p^(r : ℕ) < n, by {apply (nat.div_lt_self g1), have : 1 < p ,
+      by { apply prime.one_lt hprs.1 },
+    have h0 : 1 = 1^(0 : ℕ), by {simp only [one_pow],},
+    rw h0,
+    apply pow_lt_pow_of_lt_right this r.prop,},
+  have i2 : m/p^(s : ℕ) < m, by {apply (nat.div_lt_self g2), have : 1 < p ,
+      by { apply prime.one_lt hprs.1 },
+    have h0 : 1 = 1^(0 : ℕ), by {simp only [one_pow],},
+    rw h0,
+    apply pow_lt_pow_of_lt_right this s.prop,},
   have hi1i2 := hxy (n/p^(r : ℕ)) (m/p^(s : ℕ)) i1 i2,
   rw ←(gcd_self_pow p s r),
   have e2 := totient_pow_mul_self (r : ℕ) (s : ℕ) hprs.1,
@@ -288,6 +292,41 @@ begin
   simp,
 end
 
+lemma totient_super_multiplicative (a b : ℕ) : a.totient * b.totient ≤ (a * b).totient :=
+begin
+ let d := a.gcd b,
+  by_cases d ≠ 0,
+  {have := totient_mul_gen a b,
+  simp only [ne.def, nat.gcd_eq_zero_iff, not_and] at *,
+  have hd: 0 < d.totient,  by {apply nat.totient_pos, simp_rw d, by_cases ha:  a = 0,
+    apply gcd_pos_of_pos_right _ (nat.pos_of_ne_zero (h ha)),
+    apply gcd_pos_of_pos_left _(nat.pos_of_ne_zero ( ha)),},
+  by_cases HA : a ≠ 0,
+  by_cases HB : b ≠ 0,
+  have ha: 0 < a.totient,
+    by {apply nat.totient_pos, by_contra H,  simp only [ne.def, not_lt, _root_.le_zero_iff] at *,
+    rw H at HA,  simp only [eq_self_iff_true, not_true] at HA, exact HA,},
+  have hb: 0 < b.totient,
+    by {apply nat.totient_pos, by_contra H,  simp only [ne.def, not_lt, _root_.le_zero_iff] at *,
+    rw H at HB,  simp only [eq_self_iff_true, not_true] at HB, exact HB},
+  have hdd: d.totient ≤ d, by {apply nat.totient_le,},
+  have hr :  φ (d) * (φ (a) * φ (b)) ≤ φ (d) * φ (a * b) ↔ (φ (a) * φ (b)) ≤ φ (a * b) ,
+  by {apply mul_le_mul_left hd,},
+  simp_rw ← hr,
+  rw this,
+  rw mul_comm,
+  exact mul_le_mul_left' hdd (φ a * φ b),
+  simp at HB,
+  rw HB,
+   simp only [totient_zero, mul_zero],
+   simp only [not_not] at HA,
+  rw HA,
+   simp only [totient_zero, zero_mul],
+  },
+   simp only [nat.gcd_eq_zero_iff, not_not] at h,
+   simp only [ h.1, totient_zero, zero_mul],
+end
+
 end totient
 
 lemma contains_two_primitive_roots (p q : ℕ)
@@ -298,15 +337,11 @@ begin
 sorry,
 end
 
-lemma totient_super_multiplicative (a b : ℕ) : a.totient * b.totient ≤ (a * b).totient :=
-begin
 
-sorry,
-end
 
 lemma totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 :=
 begin
-  cases nat.totient_eq_one_iff.1 (show a.totient = 1, by linarith [nat.totient_pos han]) with h h;
+ cases nat.totient_eq_one_iff.1 (show a.totient = 1, by linarith [nat.totient_pos han]) with h h;
   simp [h]
 end
 
