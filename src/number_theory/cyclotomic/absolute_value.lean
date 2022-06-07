@@ -439,9 +439,9 @@ end
 lemma finite_all_abs_eq_one : {x : K | is_integral ℤ x ∧ ∀ φ : K →+* ℂ, abs (φ x) = 1}.finite :=
 begin
   suffices :
-    finite (⋃ (f : polynomial ℤ)
-      (hf : f.nat_degree ≤ finrank ℚ K ∧ ∀ i, |f.coeff i| ≤ f.nat_degree.choose i),
-      ((f.map (algebra_map ℤ K)).roots.to_finset : set K)),
+    (⋃ (f : polynomial ℤ)
+       (hf : f.nat_degree ≤ finrank ℚ K ∧ ∀ i, |f.coeff i| ≤ f.nat_degree.choose i),
+       ((f.map (algebra_map ℤ K)).roots.to_finset : set K)).finite,
   { refine this.subset _,
     intros x hx,
     rw mem_Union,
