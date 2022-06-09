@@ -90,9 +90,9 @@ The proof is standard.
 \end{proof}
 
 \begin{lemma}\label{lemma:num_field_disc_in_terms_of_norm}
-	\lean{algebra.of_power_basis_eq_norm}
+	\lean{algebra.discr_power_basis_eq_norm}
 	\leanok
-	\uses{lemma:disc_of_prim_elt_basis,lemma:alt_definition_of_norm}
+	\uses{lemma:disc_of_prim_elt_basis,lemma:alt_definition_of_norm, lemma:diff_of_irr_pol}
 	Let $K=\QQ(\a)$ be a number field with $n=[K:\QQ]$ and let $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$. Then \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}N_{K/\QQ}(m_\a'(\a))\] where $m_\a'$ is the derivative of $m_\a(x)$ (which we recall denotes the minimal polynomial of $\a$).
 \end{lemma}
 \begin{proof}
