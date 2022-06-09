@@ -181,7 +181,7 @@ The proof is classical.
 
 \begin{lemma}\label{lem:discr_of_cyclo}
 	\uses{lemma:num_field_disc_in_terms_of_norm,lemma:cyclo_poly_irr,lemma:cyclo_poly_deg}
-	\leanok 
+	\leanok
 	\lean{is_cyclotomic_extension.rat.discr_prime_pow'}
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
 \end{lemma}
@@ -199,7 +199,7 @@ The proof is classical.
 
 \begin{theorem}\label{theorem:ring_of_ints_of_cyclo}
 	\uses{lem:discr_of_cyclo,lemma:eis_crit_and_alg_ints,lemma:disc_int_basis}
-	\leanok 
+	\leanok
 	\lean{is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime}
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$.
 \end{theorem}
@@ -213,6 +213,11 @@ The proof is classical.
     \leanok
 	Let $\a$ be an algebraic integer all of whose conjugates have absolute value one. Then $\a$ is a root of unity.
 \end{lemma}
+\begin{proof}
+	\leanok
+	Lemma 1.6 of \cite{washington}.
+\end{proof}
+
 
 \begin{lemma}\label{lem:roots_of_unity_in_cyclo}
 	\lean{roots_of_unity_in_cyclo}
@@ -322,7 +327,7 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 
 \begin{theorem}\label{thm:Kummers_lemma}
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u^p \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
-\end{theorem}	
+\end{theorem}
 
 \begin{theorem}\label{theorem:FLT_case_two}\lean{flt_regular_case_two}
 	\lean{eq_pow_prime_of_unit_of_congruent}
