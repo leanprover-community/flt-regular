@@ -310,8 +310,7 @@ begin
     exact number_field.ring_of_integers.is_integral_coe (coe_b _),
     simp,
     rw coe_life,
-    norm_cast,
-    apply uni_gal_conj_inv, },
+    norm_cast },
 end
 
 
