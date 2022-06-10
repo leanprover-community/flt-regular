@@ -81,23 +81,16 @@ is_integral_alg_hom (σ.restrict_scalars ℤ) hx
 lemma gal_map_mem_subtype (x : RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
 by simp [gal_map_mem]
 
-def int_gal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
+@[simps] def int_gal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
 ((σ.restrict_scalars ℤ).restrict_domain RR).cod_restrict RR (λ x, gal_map_mem_subtype K x _)
 
-def units_gal (σ : K →ₐ[ℚ] K) : RRˣ →* RRˣ :=
+@[simps] def units_gal (σ : K →ₐ[ℚ] K) : RRˣ →* RRˣ :=
 units.map $ int_gal σ
 
 include hζ
 
--- TODO we should generlize this and have a way to automatically transfer galois automorphisms
--- to automorphisms of the unit group
-/-- The conjugate as a map from units to itself -/
---Do we have that an alg automorphism presevers algebraic integers?
-def unit_gal_conj : RRˣ → RRˣ :=
-units_gal (gal_conj K p)
-
 /-- `unit_gal_conj` as a bundled hom. -/
-def unit_gal_conj_m : RRˣ →* RRˣ :=
+@[simps] def unit_gal_conj : RRˣ →* RRˣ :=
 units_gal (gal_conj K p)
 
 lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p u = unit_gal_conj hζ u :=
