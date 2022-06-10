@@ -271,7 +271,7 @@ end
 
 
 lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p) (u : RRˣ) (n : ℕ) :
-  u * (unit_gal_conj (zeta_primitive_root p ℚ _) u)⁻¹ ≠ -(ζ') ^ n :=
+  u * (unit_gal_conj KK p u)⁻¹ ≠ -(ζ') ^ n :=
 begin
   by_contra H,
   sorry,
@@ -279,12 +279,12 @@ end
 
 -- this proof has mild coe annoyances rn
 lemma unit_inv_conj_is_root_of_unity (h : 2 < p) (hpo : odd (p : ℕ)) (u : RRˣ) :
-  ∃ m : ℕ, u * (unit_gal_conj (zeta_primitive_root p ℚ _) u)⁻¹ = (ζ' ^ (m))^2 :=
+  ∃ m : ℕ, u * (unit_gal_conj KK p u)⁻¹ = (ζ' ^ (m))^2 :=
 begin
   have := mem_roots_of_unity_of_abs_eq_one
-    (u * (unit_gal_conj (zeta_primitive_root p ℚ _) u)⁻¹ : KK) _ _,
+    (u * (unit_gal_conj KK p u)⁻¹ : KK) _ _,
   have H:= roots_of_unity_in_cyclo p hpo
-    ((u * (unit_gal_conj (zeta_primitive_root p ℚ _) u)⁻¹ : KK)) this,
+    ((u * (unit_gal_conj KK p u)⁻¹ : KK)) this,
   obtain ⟨n, k, hz⟩ := H,
   simp_rw ← pow_mul,
   have hk := nat.even_or_odd k,
@@ -304,11 +304,10 @@ begin
   --   norm_cast at hz,
   --   simpa [hz] using unit_inv_conj_not_neg_zeta_runity p h u n
   },
-  { exact unit_lemma_val_one (zeta_primitive_root p ℚ _) u,},
+  { exact unit_lemma_val_one KK p u,},
   { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
-    rw (_ : ((unit_gal_conj (zeta_primitive_root p ℚ _) u)⁻¹ : KK) =
-      (↑(unit_gal_conj (zeta_primitive_root p ℚ _) u⁻¹))),
+    rw (_ : ((unit_gal_conj KK p u)⁻¹ : KK) = (↑(unit_gal_conj KK p u⁻¹))),
     exact number_field.ring_of_integers.is_integral_coe (coe_b _),
     simp,
     sorry },
@@ -324,9 +323,9 @@ begin
   let xuu:=u * ((ζ')⁻¹ ^ (m)),
   use [xuu, m],
    rw is_gal_conj_real,
-  have hy : u * (ζ' ^ ( m))⁻¹ = (unit_gal_conj (zeta_primitive_root p ℚ _) u) * ζ' ^ ( m),
+  have hy : u * (ζ' ^ ( m))⁻¹ = (unit_gal_conj KK p u) * ζ' ^ ( m),
   by {rw pow_two at hm,
-  have := auxil p u (unit_gal_conj (zeta_primitive_root p ℚ _) u) (ζ' ^ (m)) (ζ' ^ (m)),
+  have := auxil p u (unit_gal_conj KK p u) (ζ' ^ (m)) (ζ' ^ (m)),
   apply this hm},
   dsimp,
   simp only [inv_pow, alg_hom.map_mul],
@@ -337,7 +336,7 @@ begin
   split,
   rw (_ : (↑(ζ' ^ m)⁻¹ : KK) = (ζ' ^ m : KK)⁻¹),
   rw hz,
-  have hzz := unit_gal_conj_spec (zeta_primitive_root p ℚ _) u,
+  have hzz := unit_gal_conj_spec KK p u,
   rw hzz,
   simp only [coe_coe],
   rw [←subalgebra.coe_pow, ←units.coe_pow, ←subalgebra.coe_mul, ←units.coe_mul],
