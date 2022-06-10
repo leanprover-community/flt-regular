@@ -42,11 +42,6 @@ begin
 sorry
 end
 
-lemma gal_conj_zeta_runity_coe : gal_conj K p (ζ) =  gal_conj K p (ζ : K) :=
-begin
-refl,
-end
-
 open_locale complex_conjugate
 
 lemma conj_norm_one (x : ℂ) (h : complex.abs x = 1) : conj x = x⁻¹ := sorry
@@ -128,3 +123,5 @@ begin
    simp at this,
    sorry,
 end
+
+#lint
