@@ -72,43 +72,45 @@ begin
   simp,
 end
 
+omit hζ
+
+--generalize this
+lemma gal_map_mem {x : K} (hx : x ∈ RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
+is_integral_alg_hom (σ.restrict_scalars ℤ) hx
+
+lemma gal_map_mem_subtype (x : RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
+by simp [gal_map_mem]
+
+def int_gal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
+((σ.restrict_scalars ℤ).restrict_domain RR).cod_restrict RR (λ x, gal_map_mem_subtype K x _)
+
+def units_gal (σ : K →ₐ[ℚ] K) : RRˣ →* RRˣ :=
+units.map $ int_gal σ
+
+include hζ
+
 -- TODO we should generlize this and have a way to automatically transfer galois automorphisms
 -- to automorphisms of the unit group
 /-- The conjugate as a map from units to itself -/
 --Do we have that an alg automorphism presevers algebraic integers?
 def unit_gal_conj : RRˣ → RRˣ :=
-λ ⟨u_val, u_inv, u_val_inv, u_inv_val⟩,
-  ⟨⟨gal_conj K p u_val, sorry⟩, ⟨gal_conj K p u_inv, sorry⟩,
-  begin
-    ext,
-    simp only [subalgebra.coe_one, set_like.coe_mk, subalgebra.coe_mul],
-    rw [← alg_hom.map_mul, ←subalgebra.coe_mul, u_val_inv],
-    simp,
-  end, begin
-    ext,
-    simp only [subalgebra.coe_one, set_like.coe_mk, subalgebra.coe_mul],
-    rw [← alg_hom.map_mul, ←subalgebra.coe_mul, u_inv_val],
-    simp,
-  end⟩
+units_gal (gal_conj K p)
 
 /-- `unit_gal_conj` as a bundled hom. -/
-def unit_gal_conj_m : RRˣ →* RRˣ :={
-  to_fun := unit_gal_conj hζ,
-  map_one' := by {simp_rw (unit_gal_conj ),  sorry, },
-  map_mul' := by {sorry,},
- }
+def unit_gal_conj_m : RRˣ →* RRˣ :=
+units_gal (gal_conj K p)
 
 lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p u = unit_gal_conj hζ u :=
 begin
   cases u,
   simp [unit_gal_conj],
+  sorry
 end
 
 lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj hζ u)⁻¹ = (unit_gal_conj hζ u⁻¹) :=
 begin
 rw unit_gal_conj,
 simp,
-sorry,
 end
 
 lemma unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
