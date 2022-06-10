@@ -74,6 +74,8 @@ end
 
 omit hζ
 
+variable (p)
+
 --generalize this
 lemma gal_map_mem {x : K} (hx : x ∈ RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
 is_integral_alg_hom (σ.restrict_scalars ℤ) hx
@@ -81,33 +83,33 @@ is_integral_alg_hom (σ.restrict_scalars ℤ) hx
 lemma gal_map_mem_subtype (x : RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
 by simp [gal_map_mem]
 
+/-- Restriction of `σ : K →ₐ[ℚ] K` to the ring of integers.  -/
 @[simps] def int_gal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
 ((σ.restrict_scalars ℤ).restrict_domain RR).cod_restrict RR (λ x, gal_map_mem_subtype K x _)
 
+/-- Restriction of `σ : K →ₐ[ℚ] K` to the units of the ring of integers.  -/
 @[simps] def units_gal (σ : K →ₐ[ℚ] K) : RRˣ →* RRˣ :=
 units.map $ int_gal σ
-
-include hζ
 
 /-- `unit_gal_conj` as a bundled hom. -/
 @[simps] def unit_gal_conj : RRˣ →* RRˣ :=
 units_gal (gal_conj K p)
 
-lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p u = unit_gal_conj hζ u :=
+lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p u = unit_gal_conj K p u :=
 begin
   cases u,
   simp [unit_gal_conj],
   sorry
 end
 
-lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj hζ u)⁻¹ = (unit_gal_conj hζ u⁻¹) :=
+lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj K p u)⁻¹ = (unit_gal_conj K p u⁻¹) :=
 begin
 rw unit_gal_conj,
 simp,
 end
 
 lemma unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
-  complex.abs (φ (u * (unit_gal_conj hζ u)⁻¹)) = 1 :=
+  complex.abs (φ (u * (unit_gal_conj K p u)⁻¹)) = 1 :=
 begin
   rw ring_hom.map_mul,
   rw complex.abs.is_absolute_value.abv_mul,
@@ -120,9 +122,9 @@ begin
   sorry,
 end
 
-lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj hζ (unit_gal_conj hζ u)) = u :=
+lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj K p (unit_gal_conj K p u)) = u :=
 begin
-   have:=  (unit_gal_conj_spec hζ u),
+   have:=  (unit_gal_conj_spec K p u),
    simp at this,
    sorry,
 end
