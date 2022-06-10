@@ -874,7 +874,7 @@ lemma support_one : (1 : mv_polynomial ι R).support ⊆ 0 :=
 finsupp.support_single_subset
 
 @[simp] lemma support_one_of_nontrivial [nontrivial R] : (1 : mv_polynomial ι R).support = 0 :=
-finsupp.support_single_ne_zero one_ne_zero
+finsupp.support_single_ne_zero _ one_ne_zero
 
 end
 

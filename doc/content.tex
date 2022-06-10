@@ -5,15 +5,6 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 
 \section{Discriminants of number fields}
 We recall basic facts about the discriminant.
-\begin{lemma}\label{lemma:alt_definition_of_trace}
-    \lean{trace_eq_sum_embeddings}
-    \leanok
-	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a). \]
-\end{lemma}
-\begin{proof}
-  \leanok
-  The proof is standard.
-\end{proof}
 
 \begin{lemma}\label{lemma:alt_definition_of_norm}
     \lean{algebra.norm_eq_prod_embeddings}
@@ -23,6 +14,16 @@ We recall basic facts about the discriminant.
 \begin{proof}
   \leanok
   The proof is standard.
+\end{proof}
+
+\begin{lemma}\label{lemma:alt_definition_of_trace}
+	\lean{trace_eq_sum_embeddings}
+	\leanok
+Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a). \]
+\end{lemma}
+\begin{proof}
+\leanok
+The proof is standard.
 \end{proof}
 
 \begin{definition}\label{defn_of_disc}
@@ -89,9 +90,9 @@ We recall basic facts about the discriminant.
 \end{proof}
 
 \begin{lemma}\label{lemma:num_field_disc_in_terms_of_norm}
-	\lean{algebra.of_power_basis_eq_norm}
+	\lean{algebra.discr_power_basis_eq_norm}
 	\leanok
-	\uses{lemma:disc_of_prim_elt_basis,lemma:alt_definition_of_norm}
+	\uses{lemma:disc_of_prim_elt_basis,lemma:alt_definition_of_norm, lemma:diff_of_irr_pol}
 	Let $K=\QQ(\a)$ be a number field with $n=[K:\QQ]$ and let $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$. Then \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}N_{K/\QQ}(m_\a'(\a))\] where $m_\a'$ is the derivative of $m_\a(x)$ (which we recall denotes the minimal polynomial of $\a$).
 \end{lemma}
 \begin{proof}
@@ -181,7 +182,7 @@ The proof is classical.
 
 \begin{lemma}\label{lem:discr_of_cyclo}
 	\uses{lemma:num_field_disc_in_terms_of_norm,lemma:cyclo_poly_irr,lemma:cyclo_poly_deg}
-	\leanok 
+	\leanok
 	\lean{is_cyclotomic_extension.rat.discr_prime_pow'}
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
 \end{lemma}
@@ -199,7 +200,7 @@ The proof is classical.
 
 \begin{theorem}\label{theorem:ring_of_ints_of_cyclo}
 	\uses{lem:discr_of_cyclo,lemma:eis_crit_and_alg_ints,lemma:disc_int_basis}
-	\leanok 
+	\leanok
 	\lean{is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime}
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$.
 \end{theorem}
@@ -213,20 +214,24 @@ The proof is classical.
     \leanok
 	Let $\a$ be an algebraic integer all of whose conjugates have absolute value one. Then $\a$ is a root of unity.
 \end{lemma}
+\begin{proof}
+	\leanok
+	Lemma 1.6 of \cite{washington}.
+\end{proof}
+
 
 \begin{lemma}\label{lem:roots_of_unity_in_cyclo}
 	\lean{roots_of_unity_in_cyclo}
 	\leanok
 	Let $p$ be a prime, $K=\QQ(\zeta_p)$ $\a \in K$ such that there exists $n \in \NN$ such that $\a^n=1$, then $\a =\pm \zeta_p^k$ for some $k$.
 \end{lemma}
-
 \begin{proof}
 	If $n$ is different to $p$ then $K$ contains a $2pn$-th root of unity. Therefore $\QQ(\zeta_{2pn}) \subset K$, but this cannot happen as $[K : \QQ]=p-1$ and $[\QQ(\zeta_{2pn}): \QQ ] = \varphi(2np)$.
-
 \end{proof}
 
 \begin{lemma}\label{lemma:unit_lemma}
 	\lean{unit_lemma}
+	\leanok
 	\uses{lemma:alg_int_abs_val_one,lem:roots_of_unity_in_cyclo}
 	Any unit $u$ in $\ZZ[\zeta_p]$ can be written in the form $\beta \zeta_p^k  $ with $k$ an integer and $\beta \in \RR$.
 \end{lemma}
@@ -246,8 +251,6 @@ The proof is classical.
 \end{proof}
 
 
-
-
 \section{Fermats Last Theorem for regular primes}
 
 \begin{lemma}\label{lem:flt_fact_2}
@@ -257,7 +260,6 @@ The proof is classical.
 
 	 For $i \neq j$ we can write \[(\zeta_p^i-\zeta_p^j)=u(1-\zeta_p)\] with $u$ a unit in $\ZZ[\zeta_p]$. From this it follows that the ideals \[(x+y),(x+\zeta_py),(x+\zeta_p^2y),\dots,(x+\zeta_p^{p-1}y)\] are pairwise coprime.
 \end{lemma}
-
 \begin{proof}
 	 Lemma \ref{lemma:fac_of_p_in_p_th_root} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. We know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_+p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
 \end{proof}
@@ -267,7 +269,6 @@ The proof is classical.
     \leanok
 	 	Let $p$ be an prime number, $\zeta_p$ a $p$-th root of unity and $\a \in \ZZ[\zeta_p]$. Then $\a^p$ is congruent to an integer modulo $p$.
 \end{lemma}
-
 \begin{proof}
 	  Just use $(x+y)^p \equiv x^p + y^p \pmod p$ and that $\zeta_p$ is a $p$-th root of unity.
 \end{proof}
@@ -277,23 +278,19 @@ The proof is classical.
 	\leanok
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$. If there is an integer $n$ such that $\a/n \in \ZZ[\zeta_p]$, then $n$ divides each $a_i$.
 \end{lemma}
-
 \begin{proof}
 	 Looking at $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$, if one of the $a_i$'s is zero and $\a/n \in \ZZ[\zeta_p]$, then $\a/n=\sum_i a_i/n \zeta_p^i$. Now, as $\a/n \in \ZZ[\zeta_p]$, pick the basis of $\ZZ[\zeta_p]$ which does not contain $\zeta_p$ (which is possible as any subset of $\{1,\zeta_p,\dots,\zeta_p^{p-1}\}$ with $p-1$ elements forms a basis of $\ZZ[\zeta_p]$.]). Then $\a=\sum_i b_i \zeta_p^i$ where $b_i \in \ZZ$. Therefore comparing coefficients, we get the result.
 \end{proof}
 
 \begin{lemma}\label{lem:flt_fact_5}
 	\lean{lem:flt_fact_5}
+	\leanok
 	\uses{lem:flt_fact_4,lem:flt_fact_3}
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$.  Suppose that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. Then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
 \end{lemma}
-
 \begin{proof}
  Using lemma \ref{lemma:unit_lemma} we have $(x+y\zeta_p^i) =\beta \zeta_p^k \a^p$ which is equivalent to $\beta \zeta_p^k a \pmod p$ with $a$ and integer \ref{lem:flt_fact_3}). Now, if we consider the complex conjugate we have $\ov{(x+y\zeta_p^i)  }\equiv \beta \zeta_p^{-k}a \pmod p$. Looking at $(x+y\zeta_p^i)-\zeta_p^{2k}\ov{(x+y\zeta_p^i)  }$ then gives the result.
-
-
 \end{proof}
-
 
 \begin{lemma}\label{lemma:may_assume}
 	\uses{lemma:unit_lemma,_lemma:fac_of_p_in_p_th_root,lemma:ideals_mult_to_power,theorem:ring_of_ints_of_cyclo}
@@ -321,6 +318,7 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 
 \begin{theorem}\label{theorem:FLT_case_one}
     \lean{flt_regular_case_one}
+    \leanok
 	\uses{defn:is_regular_number,lem:flt_fact_5,lem:flt_fact_4,lemma:may_assume,lem:flt_fact_2}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $\gcd(xyz,p)=1$.
 \end{theorem}
@@ -330,10 +328,11 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 
 \begin{theorem}\label{thm:Kummers_lemma}
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u^p \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
-\end{theorem}	
+\end{theorem}
 
 \begin{theorem}\label{theorem:FLT_case_two}\lean{flt_regular_case_two}
 	\lean{eq_pow_prime_of_unit_of_congruent}
+	\leanok
 	\uses{lemma:may_assume,defn:is_regular_number,thm:Kummers_lemma}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
 \end{theorem}
@@ -341,6 +340,7 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 
 \begin{theorem}\label{FLT_regular}
 	\lean{flt_regular}
+	\leanok
 	\uses{theorem:FLT_case_one,theorem:FLT_case_two}
 	Let $p$ be an odd regular prime.  Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $xyz \ne 0$.
 \end{theorem}
