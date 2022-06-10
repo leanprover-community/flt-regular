@@ -298,10 +298,12 @@ begin
   { rw mul_comm } },
   { by_contra hc,
     simp [hk.neg_one_pow] at hz,
-    simp_rw coe_life at hz,
-    rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
-    norm_cast at hz,
-    simpa [hz] using unit_inv_conj_not_neg_zeta_runity p h u n },
+    sorry,
+  --   simp_rw coe_life at hz,
+  --   rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
+  --   norm_cast at hz,
+  --   simpa [hz] using unit_inv_conj_not_neg_zeta_runity p h u n
+  },
   { exact unit_lemma_val_one (zeta_primitive_root p ℚ _) u,},
   { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
@@ -309,8 +311,7 @@ begin
       (↑(unit_gal_conj (zeta_primitive_root p ℚ _) u⁻¹))),
     exact number_field.ring_of_integers.is_integral_coe (coe_b _),
     simp,
-    rw coe_life,
-    norm_cast },
+    sorry },
 end
 
 
