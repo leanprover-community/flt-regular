@@ -123,5 +123,3 @@ begin
    simp at this,
    sorry,
 end
-
-#lint
