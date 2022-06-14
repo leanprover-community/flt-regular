@@ -55,40 +55,12 @@ begin
 end
 
 end forward
-section polynomial_map_lemmas
-
-@[simp] lemma apply_eq_zero_iff_of_injective {R S : Type*} [add_zero_class R] [add_zero_class S]
-  {f : R →+ S} (hf : function.injective f) (x : R) : f x = 0 ↔ x = 0 :=
-⟨λ h, hf $ by rw [h, f.map_zero], λ h, by rw [h, f.map_zero]⟩
-
-variables {R S : Type*} [semiring R]
-
-@[simp] lemma ring_hom.apply_eq_zero_iff_of_injective {R S : Type*} [non_assoc_semiring R]
-  [non_assoc_semiring S] {f : R →+* S} (hf : function.injective f) (x : R) : f x = 0 ↔ x = 0 :=
-⟨λ h, hf $ by rw [h, f.map_zero], λ h, by rw [h, f.map_zero]⟩
-
-namespace polynomial
-
-variables {p : polynomial R}
-
-@[simp] lemma map_eq_zero_of_injective [semiring S] {f : R →+* S}
-  (hf : function.injective f) : p.map f = 0 ↔ p = 0 :=
-by simp [polynomial.ext_iff, coeff_map, ring_hom.apply_eq_zero_iff_of_injective hf, coeff_zero]
-
-lemma map_ne_zero_of_injective [semiring S] {f : R →+* S}
-  (hf : function.injective f) (hp : p ≠ 0) : p.map f ≠ 0 := mt (map_eq_zero_of_injective hf).1 hp
-
-lemma mem_roots_map_of_injective [comm_ring S] [is_domain S] {f : R →+* S} {x : S}
-  (hf : function.injective f) (hp : p ≠ 0) : x ∈ (p.map f).roots ↔ p.eval₂ f x = 0 :=
-by rw [mem_roots (map_ne_zero_of_injective hf hp), is_root, polynomial.eval_map]
-
-end polynomial
-end polynomial_map_lemmas
-
 
 section polynomial
+
 variables {R : Type*} [comm_semiring R]
 open polynomial
+
 /--
 The degree of a product of polynomials is at most the sum of the degrees,
 where the degree of the zero polynomial is ⊥.
@@ -254,35 +226,6 @@ end
 
 end polynomial
 
-section adjoin_root
-
-open_locale polynomial
-
-local attribute [-instance] algebra_rat
-
-instance {f : ℚ[X]} [hf : irreducible f] : number_field (adjoin_root f) :=
-{ to_char_zero := char_zero_of_injective_algebra_map (algebra_map ℚ _).injective,
-  to_finite_dimensional := begin
-   let := (adjoin_root.power_basis (irreducible.ne_zero hf : f ≠ 0)),
-   convert power_basis.finite_dimensional this,
-   haveI : subsingleton (algebra ℚ (adjoin_root f)) := algebra_rat_subsingleton,
-   exact subsingleton.elim _ _,
-  end }
-
-end adjoin_root
-
--- section ajoin
--- variables {E : Type*} [field E] [number_field E] (x : E)
--- instance : char_zero ℚ⟮x⟯ := admit
--- instance : number_field ℚ⟮x⟯ :=
--- begin
---   haveI : finite_dimensional ℚ ℚ⟮x⟯ := intermediate_field.adjoin.finite_dimensional (is_separable.is_integral ℚ x),
---   convert number_field.mk,
---   exact char_p.char_p_to_char_zero ℚ⟮x⟯,
---   convert _inst,
--- end
--- end ajoin
-
 section backwards
 
 open set finite_dimensional complex
@@ -293,46 +236,6 @@ variables {K : Type*} [field K] [number_field K] {n : ℕ} (x : K)
 open polynomial
 
 noncomputable theory
-
-lemma roots_equal_embeddings : (range (λ φ : K →+* ℂ, φ x)).to_finset =
-  ((map (algebra_map ℚ ℂ) (minpoly ℚ x)).roots.to_finset : finset ℂ) :=
-begin
-  have hx : is_integral ℚ x, { exact is_separable.is_integral ℚ x },
-  ext a,
-  simp only [to_finset_range, finset.mem_image, finset.mem_univ, exists_true_left,
-      multiset.mem_to_finset],
-  split,
-  rintro ⟨φ, hφ⟩,
-  rw polynomial.mem_roots_map_of_injective,
-  rw [← hφ, polynomial.eval₂_eq_eval_map, ← coe_aeval_eq_eval, aeval_map],
-  let ψ := ring_hom.to_rat_alg_hom φ,
-  show (aeval (ψ x)) (minpoly ℚ x) = 0,
-  { rw polynomial.aeval_alg_hom_apply ψ x (minpoly ℚ x),
-    simp only [minpoly.aeval, map_zero] },
-  exact (algebra_map ℚ ℂ).injective,
-  exact minpoly.ne_zero hx,
-  intro ha,
-  let Qx := adjoin_root (minpoly ℚ x),
-  haveI : irreducible (minpoly ℚ x), { exact minpoly.irreducible hx },
-  haveI : number_field Qx := by apply_instance,
-  have hK : (aeval x) (minpoly ℚ x) = 0, { exact minpoly.aeval _ _, },
-  have hC : (aeval a) (minpoly ℚ x) = 0,
-  { rw polynomial.mem_roots_map_of_injective at ha,
-    exact ha,
-    exact (algebra_map ℚ ℂ).injective,
-    exact minpoly.ne_zero hx, },
-  let ψ : Qx →+* ℂ := adjoin_root.lift (algebra_map ℚ ℂ) a hC,
-  letI : algebra Qx K, { exact ring_hom.to_algebra (adjoin_root.lift (algebra_map ℚ K) x hK), },
-  obtain ⟨φ, hφ⟩ := embeddings.lift ψ,
-  use φ,
-  rw (_ : x = (algebra_map Qx K) (adjoin_root.root (minpoly ℚ x))),
-  rw (_ : a = ψ (adjoin_root.root (minpoly ℚ x))),
-  rw ←function.comp_app φ _ _,
-  simp only [congr_fun, hφ, ring_hom.coe_comp],
-  exact (adjoin_root.lift_root hC).symm,
-  exact (adjoin_root.lift_root hK).symm,
-  apply_instance
-end
 
 lemma nat_degree_le_finrank {K : Type*} [field K] [number_field K] {x : K} (hx : is_integral ℤ x) :
   (minpoly ℤ x).nat_degree ≤ finrank ℚ K :=
@@ -358,8 +261,7 @@ begin
     { rw ( _ : (minpoly ℤ x).nat_degree = (map (algebra_map ℤ ℚ) (minpoly ℤ x)).nat_degree),
       rwa h_mins,
       have : function.injective (algebra_map ℤ ℚ), { exact (algebra_map ℤ ℚ).injective_int, },
-      rw polynomial.nat_degree_map_eq_of_injective this,
-    },
+      rw polynomial.nat_degree_map_eq_of_injective this, },
     suffices : abs ((minpoly ℚ x).coeff i : ℂ) ≤ (minpoly ℤ x).nat_degree.choose i,
     { suffices : (|(minpoly ℤ x).coeff i| : ℝ) ≤ ↑((minpoly ℤ x).nat_degree.choose i),
       { exact_mod_cast this, },
@@ -393,8 +295,7 @@ begin
           { rw h_roots, exact h_degree.symm, },
           { rw h_roots, exact h_degree.symm, },
           exact hi, },
-        simp only [this, multiset.map_const, multiset.sum_repeat, nat.smul_one_eq_coe],
-      },
+        simp only [this, multiset.map_const, multiset.sum_repeat, nat.smul_one_eq_coe], },
       { intros s hs,
         rw ( _ : (multiset.map complex.abs s) = multiset.repeat 1
           (multiset.card (map (algebra_map ℚ ℂ) (minpoly ℚ x)).roots - i)),
@@ -405,18 +306,14 @@ begin
             simp only [hs.right, multiset.map_const], },
           exact multiset.map_congr (eq.refl s) hz },
         { intros z hz,
-          suffices : z ∈ ((map (algebra_map ℚ ℂ) (minpoly ℚ x)).roots.to_finset : finset ℂ),
-          { rw ←roots_equal_embeddings (x : K) at this,
-            rcases set.mem_range.mp (set.mem_to_finset.mp this) with ⟨φ, hφ⟩,
+          suffices : z ∈ (minpoly ℚ x).root_set ℂ,
+          { rw ←embeddings.eq_roots (x : K) at this,
+            rcases set.mem_range.mp this with ⟨φ, hφ⟩,
             rw ←hφ,
-            exact (set.mem_set_of.mp hx) φ,
-          },
+            exact (set.mem_set_of.mp hx) φ, },
           apply multiset.mem_to_finset.mpr,
           refine multiset.mem_of_le _ hz,
-          exact (multiset.mem_powerset_len.mp hs).left,
-        },
-      },
-    },
+          exact (multiset.mem_powerset_len.mp hs).left, }}},
     suffices : complex.abs (multiset.map multiset.prod T).sum ≤
         (multiset.map complex.abs (multiset.map multiset.prod T)).sum,
     { apply le_trans this,
@@ -427,8 +324,7 @@ begin
       exact (multiset.prod_hom t complex.abs_hom).symm, },
       refine multiset.le_sum_of_subadditive complex.abs _ _ (multiset.map multiset.prod T),
       exact complex.abs_zero,
-      exact (λ a b, complex.abs_add a b),
-  },
+      exact (λ a b, complex.abs_add a b), },
   { push_neg at hi,
     rw nat.choose_eq_zero_of_lt hi,
     rw coeff_eq_zero_of_nat_degree_lt,
@@ -450,10 +346,18 @@ begin
     refine ⟨⟨_, _⟩, _⟩,
     { exact nat_degree_le_finrank hx.1, },
     { exact minpoly_coeff_le_of_all_abs_eq_one x hx.2 hx.1, },
-    rw [polynomial.mem_roots_map_of_injective, polynomial.eval₂_eq_eval_map, ← coe_aeval_eq_eval,
-        aeval_map, minpoly.aeval],
-    exact int.cast_injective,
-    refine minpoly.ne_zero hx.1, },
+    rw mem_roots,
+    rw is_root.def,
+    rw ←polynomial.eval₂_eq_eval_map,
+    rw ←aeval_def,
+    exact minpoly.aeval ℤ x,
+    suffices : (minpoly ℤ x) ≠ 0,
+    { contrapose! this,
+      simp only [polynomial.ext_iff, coeff_map, coeff_zero] at this ⊢,
+      suffices inj : function.injective (algebra_map ℤ K),
+      { exact λ n : ℕ, inj (by rw [(this n), (algebra_map ℤ K).map_zero]),},
+      exact int.cast_injective, },
+      refine minpoly.ne_zero hx.1, },
   refine finite.bUnion _ _,
   { have : inj_on (λ g : polynomial ℤ, λ d : fin (finrank ℚ K + 1), g.coeff d)
       { f | f.nat_degree ≤ finrank ℚ K
