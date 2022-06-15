@@ -43,7 +43,7 @@ lemma p_val_nat_div_coprime (a p : ℕ) (ha : a ≠ 0 ) (hp : nat.prime p) :
 begin
   haveI : fact p.prime, exact {out := hp},
   rw padic_val_nat_eq_factorization p a,
-  apply coprime_of_div_pow_factorization hp (ha),
+  apply nat.coprime_of_div_pow_factorization hp (ha),
 end
 
 /-- An induction principle. -/
