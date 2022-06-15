@@ -57,7 +57,12 @@ end
 
 --to fix this we have to replace KK by a general cyclotomic extension
 local attribute [-instance] cyclotomic_field.algebra
-instance zzzz : is_cyclotomic_extension {p} ℚ KK := sorry
+instance zzzz : is_cyclotomic_extension {p} ℚ KK :=
+begin
+  convert cyclotomic_field.is_cyclotomic_extension p ℚ,
+  apply subsingleton.elim _ _,
+  exact algebra_rat_subsingleton
+end
 
 /-- `is_gal_conj_real x` means that `x` is real. -/
 def is_gal_conj_real (x : KK) : Prop := gal_conj KK p x = x
