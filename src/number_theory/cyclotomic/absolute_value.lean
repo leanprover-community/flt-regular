@@ -12,7 +12,7 @@ import field_theory.splitting_field
 import field_theory.is_alg_closed.basic
 import field_theory.polynomial_galois_group
 import field_theory.adjoin
-import number_theory.cyclotomic.number_field_embeddings
+import ready_for_mathlib.number_field_embeddings
 import order.succ_pred.basic
 import data.nat.succ_pred
 import data.nat.choose

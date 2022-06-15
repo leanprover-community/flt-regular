@@ -1,5 +1,4 @@
 import number_theory.cyclotomic.cyclotomic_units
-import number_theory.cyclotomic.number_field_embeddings
 import number_theory.cyclotomic.absolute_value
 
 import number_theory.cyclotomic.gal
