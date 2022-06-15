@@ -97,10 +97,11 @@ end
 
 variable {K}
 
-lemma contains_two_primitive_roots {p q : ℕ} {x y : K} (hx : is_primitive_root x p)
-  (hy : is_primitive_root y q) :
+lemma contains_two_primitive_roots {p q : ℕ} {x y : K} [finite_dimensional ℚ K]
+  (hx : is_primitive_root x p) (hy : is_primitive_root y q) :
   (lcm p q ).totient ≤ (finite_dimensional.finrank ℚ K) :=
 begin
+  classical,
   let k := lcm p q,
   rcases nat.eq_zero_or_pos p with rfl | hppos,
   { simp },
@@ -138,7 +139,15 @@ begin
       exact nat.div_dvd_of_dvd ((order_of g).gcd_dvd_left nx), },
     { rw [← hyuord, ← hny, order_of_pow],
       exact nat.div_dvd_of_dvd ((order_of g).gcd_dvd_left ny) } },
-  sorry,
+  have hroot := is_primitive_root.order_of g,
+  rw [H, ← is_primitive_root.coe_submonoid_class_iff, ← is_primitive_root.coe_units_iff,
+    ← coe_coe] at hroot,
+  conv at hroot { congr, skip,
+    rw [show k = (⟨k, hkpos⟩ : ℕ+), by simp] },
+  haveI := is_primitive_root.adjoin_is_cyclotomic_extension ℚ hroot,
+  convert submodule.finrank_le (algebra.adjoin ℚ ({g} : set K)).to_submodule,
+  simpa using (is_cyclotomic_extension.finrank (algebra.adjoin ℚ ({g} : set K))
+    (cyclotomic.irreducible_rat (pnat.pos ⟨k, hkpos⟩))).symm,
   all_goals { apply_instance }
 end
 
