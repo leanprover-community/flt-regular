@@ -4,9 +4,8 @@ import ring_theory.roots_of_unity
 import number_theory.number_field
 import ready_for_mathlib.totient_stuff
 
-variables (p : ℕ+) (K : Type*) [field K] [number_field K]
-variables {ζ : K} (hζ : is_primitive_root ζ p) [hcycl : is_cyclotomic_extension {p} ℚ K]
-
+variables (p : ℕ+) (K : Type*) [field K]
+variables {ζ : K} (hζ : is_primitive_root ζ p)
 
 open_locale big_operators non_zero_divisors number_field pnat cyclotomic
 open is_cyclotomic_extension
@@ -15,9 +14,48 @@ open number_field polynomial
 
 local notation `RR` := 𝓞 K
 
+--bunch of lemmas that should be stated more generally if we decide to go this way
+lemma unit_coe (u : RRˣ) : (u : RR) * ((u⁻¹ : RRˣ) : RR) = 1 :=
+begin
+  norm_cast,
+  simp only [mul_right_inv, units.coe_one],
+end
+
+lemma unit_coe_non_zero (u : RRˣ) : (u : K) ≠ 0 :=
+begin
+  by_contra h,
+  have : (u : K) * ((u⁻¹ : RRˣ ) : K) = 1,
+  { rw [coe_coe, coe_coe, ←subalgebra.coe_mul, ←units.coe_mul, mul_right_inv], refl },
+  rw h at this,
+  simp at this,
+  exact this,
+end
+
+lemma coe_life (u : RRˣ) : ((u : RR) : K)⁻¹ = ((u⁻¹ : RRˣ) : RR) :=
+begin
+  rw [←coe_coe, ←coe_coe, inv_eq_one_div],
+  symmetry,
+  rw [eq_div_iff],
+  { cases u with u₁ u₂ hmul hinv,
+    simp only [units.inv_mk, coe_coe, units.coe_mk],
+    rw [← mul_mem_class.coe_mul _ u₂, hinv, submonoid_class.coe_one] },
+  { simp }
+end
+
+lemma auxil (a b c d : RRˣ) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
+begin
+  rw mul_inv_eq_iff_eq_mul at *,
+  rw h,
+  apply symm,
+  rw mul_assoc,
+  rw mul_comm,
+end
+
 local attribute [instance] is_cyclotomic_extension.number_field
 universe u
 noncomputable theory
+
+variables [number_field K] [hcycl : is_cyclotomic_extension {p} ℚ K]
 
 include hcycl
 
@@ -70,43 +108,6 @@ end
 def is_gal_conj_real (x : K) : Prop := gal_conj K p x = x
 
 omit hcycl
-
---bunch of lemmas that should be stated more generally if we decide to go this way
-lemma unit_coe (u : RRˣ) : (u : RR) * ((u⁻¹ : RRˣ) : RR) = 1 :=
-begin
-  norm_cast,
-  simp only [mul_right_inv, units.coe_one],
-end
-
-lemma unit_coe_non_zero (u : RRˣ) : (u : K) ≠ 0 :=
-begin
-  by_contra h,
-  have : (u : K) * ((u⁻¹ : RRˣ ) : K) = 1,
-  { rw [coe_coe, coe_coe, ←subalgebra.coe_mul, ←units.coe_mul, mul_right_inv], refl },
-  rw h at this,
-  simp at this,
-  exact this,
-end
-
-lemma coe_life (u : RRˣ) : ((u : RR) : K)⁻¹ = ((u⁻¹ : RRˣ) : RR) :=
-begin
-  rw [←coe_coe, ←coe_coe, inv_eq_one_div],
-  symmetry,
-  rw [eq_div_iff],
-  { cases u with u₁ u₂ hmul hinv,
-    simp only [units.inv_mk, coe_coe, units.coe_mk],
-    rw [← mul_mem_class.coe_mul _ u₂, hinv, submonoid_class.coe_one] },
-  { simp }
-end
-
-lemma auxil (a b c d : RRˣ) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
-begin
-  rw mul_inv_eq_iff_eq_mul at *,
-  rw h,
-  apply symm,
-  rw mul_assoc,
-  rw mul_comm,
-end
 
 variable {K}
 
