@@ -46,16 +46,16 @@ variables [is_domain A] [algebra A K] [is_fraction_ring A K] [ne_zero (⥉n : K)
 
 open is_cyclotomic_extension
 
-lemma zeta_integral :
-  zeta n K (cyclotomic_field n K) ∈ 𝓞 (cyclotomic_field n K) :=
+lemma zeta_integral [is_cyclotomic_extension {n} K L] :
+  zeta n K L ∈ 𝓞 L :=
 begin
   use [cyclotomic n ℤ, cyclotomic.monic n ℤ],
-  rw [← zeta_spec n K (cyclotomic_field n K)],
+  rw [← zeta_spec n K L],
   simp [aeval_def, eval₂_eq_eval_map],
 end
 
-lemma zeta_integral' (i : ℕ):
-  (zeta n K (cyclotomic_field n K))^i ∈ 𝓞 (cyclotomic_field n K) :=
+lemma zeta_integral' [is_cyclotomic_extension {n} K L] (i : ℕ):
+  (zeta n K L)^i ∈ 𝓞 L :=
 begin
  apply subalgebra.pow_mem,
  apply zeta_integral,
