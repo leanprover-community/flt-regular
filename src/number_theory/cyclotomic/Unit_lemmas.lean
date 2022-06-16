@@ -4,7 +4,7 @@ import ring_theory.roots_of_unity
 import number_theory.number_field
 import ready_for_mathlib.totient_stuff
 
-variables (p : ℕ+) (K : Type*) [field K]
+variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
 
 open_locale big_operators non_zero_divisors number_field pnat cyclotomic
@@ -13,6 +13,8 @@ open cyclotomic_ring
 open number_field polynomial
 
 local notation `RR` := 𝓞 K
+
+--The whole file is now for a generic primitive root ζ, quite a lot of names should be changed.
 
 --bunch of lemmas that should be stated more generally if we decide to go this way
 lemma unit_coe (u : RRˣ) : (u : RR) * ((u⁻¹ : RRˣ) : RR) = 1 :=
@@ -55,61 +57,79 @@ local attribute [instance] is_cyclotomic_extension.number_field
 universe u
 noncomputable theory
 
-variables [number_field K] [hcycl : is_cyclotomic_extension {p} ℚ K]
-
-include hcycl
-
 /-- zeta now as a unit in the ring of integers. This way there are no coe issues-/
-def zeta_unit' : RRˣ :=
-{ val := (⟨zeta p ℚ K, zeta_integral p ℚ K⟩ : RR),
-  inv:= (⟨(zeta p ℚ K)^((p-1): ℕ), zeta_integral' p ℚ K (p-1)⟩ : RR),
+@[simps] def is_primitive_root.unit' {p : ℕ+} {K : Type*} [field K] {ζ : K}
+  (hζ : is_primitive_root ζ p) : (𝓞 K)ˣ :=
+{ val := (⟨ζ, hζ.is_integral' ℤ p.pos⟩ : 𝓞 K),
+  inv:= (⟨ζ ^ ((p - 1): ℕ), subalgebra.pow_mem _ (hζ.is_integral' ℤ p.pos) _⟩ : 𝓞 K),
   val_inv :=
   begin
     ext1,
     dsimp at *,
-    rw [pow_sub₀, zeta_pow p ℚ K, pow_one, one_mul],
+    rw [pow_sub₀, hζ.pow_eq_one, pow_one, one_mul],
     apply mul_inv_cancel,
-    any_goals { apply ((zeta_primitive_root p ℚ K).is_unit p.2).ne_zero },
+    any_goals { apply hζ.ne_zero p.ne_zero },
     exact pnat.one_le p
   end,
   inv_val:=
   begin
     ext1,
     dsimp at *,
-    rw [pow_sub₀, zeta_pow p ℚ K, pow_one, one_mul],
+    rw [pow_sub₀, hζ.pow_eq_one, pow_one, one_mul],
     apply inv_mul_cancel,
-    any_goals { apply ((zeta_primitive_root p ℚ K).is_unit p.2).ne_zero },
+    any_goals { apply hζ.ne_zero p.ne_zero },
     exact pnat.one_le p
  end }
 
-local notation `ζ'`:= zeta_unit' p K
+lemma is_primitive_root.unit'_coe : (hζ.unit' : K) = ζ := rfl
 
-lemma zeta_unit_coe : (ζ' : K) = zeta p ℚ K := rfl
-
-lemma zeta_unit_pow : (ζ') ^ (p : ℤ) = 1 :=
+lemma is_primitive_root.unit_pow : hζ.unit' ^ (p : ℤ) = 1 :=
 begin
-simp_rw zeta_unit',
+simp_rw is_primitive_root.unit',
 ext1,
 ext1,
 simp,
-apply zeta_pow,
+apply hζ.pow_eq_one,
 end
 
-lemma zeta_unit_coe_2 : is_primitive_root (ζ' : RR) p :=
+lemma zeta_runity_pow_even (hpo : odd (p : ℕ)) (n : ℕ) : ∃ (m : ℕ),
+  hζ.unit' ^ n = hζ.unit' ^ (2 * m) :=
 begin
- have z1 := zeta_primitive_root p ℚ K,
- have : (algebra_map RR K) ((ζ' : RR)) = zeta p ℚ K, by{refl, },
+  by_cases n = 0,
+  use 0,
+  rw h,
+  simp only [mul_zero],
+  rw odd at hpo,
+  obtain ⟨r, hr⟩ := hpo,
+  have he : 2*(r+1)*n=p*n+n, by {rw hr, linarith,},
+  use (r+1)*n,
+  rw ←mul_assoc,
+  simp_rw he,
+  rw pow_add,
+  have h1 : hζ.unit' ^ ((p : ℤ) * n) = 1,
+  { rw [zpow_mul, hζ.unit_pow, one_zpow] },
+  norm_cast at h1,
+  simp_rw h1,
+  simp only [one_mul],
+end
+
+variables [number_field K]
+
+lemma is_primitive_root.unit'_coe_2 : is_primitive_root (hζ.unit' : RR) p :=
+begin
+ have z1 := hζ,
+ have : (algebra_map RR K) (hζ.unit' : RR) = ζ := rfl,
  rw ← this at z1,
  apply is_primitive_root.of_map_of_injective z1,
  apply is_fraction_ring.injective,
 end
 
+variable (p)
+
 /-- `is_gal_conj_real x` means that `x` is real. -/
-def is_gal_conj_real (x : K) : Prop := gal_conj K p x = x
+def is_gal_conj_real (x : K) [is_cyclotomic_extension {p} ℚ K] : Prop := gal_conj K p x = x
 
-omit hcycl
-
-variable {K}
+variable {p}
 
 lemma contains_two_primitive_roots {p q : ℕ} {x y : K} [finite_dimensional ℚ K]
   (hx : is_primitive_root x p) (hy : is_primitive_root y q) :
@@ -165,21 +185,19 @@ begin
   all_goals { apply_instance }
 end
 
-variable (K)
-
 lemma totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 :=
 begin
  cases nat.totient_eq_one_iff.1 (show a.totient = 1, by linarith [nat.totient_pos han]) with h h;
   simp [h]
 end
 
-include hcycl
+variable [is_cyclotomic_extension {p} ℚ K]
 
 -- please speed this up
 -- is it faster now?
-lemma roots_of_unity_in_cyclo_aux (x : K) (n l : ℕ) (hl : l ∈ n.divisors)
-(hx : x ∈ RR)
-(hhl : (cyclotomic l RR).is_root ⟨x, hx⟩) : l ∣ 2 * p :=
+lemma roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ}
+  (hl : l ∈ n.divisors) (hx : x ∈ RR) (hhl : (cyclotomic l RR).is_root ⟨x, hx⟩)
+  {ζ : K} (hζ : is_primitive_root ζ p) : l ∣ 2 * p :=
 begin
 by_contra,
   have hpl': is_primitive_root (⟨x, hx⟩ : RR) l,
@@ -194,8 +212,7 @@ by_contra,
   have h4 := is_primitive_root.map_of_injective hpl', rw ← this,
   apply h4,
   apply is_fraction_ring.injective, },
-  have hpp: is_primitive_root (ζ' : K) p, by { rw zeta_unit_coe, apply zeta_primitive_root,},
-  have KEY := contains_two_primitive_roots hpl hpp,
+  have KEY := contains_two_primitive_roots hpl hζ,
   have hirr : irreducible (cyclotomic p ℚ), by {exact cyclotomic.irreducible_rat p.prop},
   have hrank:= is_cyclotomic_extension.finrank K hirr,
   rw hrank at KEY,
@@ -227,7 +244,7 @@ end
 --do more generally
 lemma roots_of_unity_in_cyclo (hpo : odd (p : ℕ)) (x : K)
   (h : ∃ (n : ℕ) (h : 0 < n), x^(n: ℕ) = 1) :
-  ∃ (m : ℕ) (k : ℕ+), x = (-1)^(k : ℕ) * (ζ')^(m : ℕ) :=
+  ∃ (m : ℕ) (k : ℕ+), x = (-1) ^ (k : ℕ) * hζ.unit' ^ (m : ℕ) :=
 begin
   obtain ⟨n, hn0, hn⟩ := h,
   have hx : x ∈ RR, by {rw mem_ring_of_integers,
@@ -238,16 +255,17 @@ begin
       sub_self] },},
   have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp only [submonoid_class.mk_pow, set_like.coe_mk,
     submonoid_class.coe_one], apply hn} ,
-  have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * (ζ')^(m : ℕ),
+  have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * hζ.unit' ^ (m : ℕ),
   by {obtain ⟨l, hl, hhl⟩ := ((_root_.is_root_of_unity_iff hn0 _).1 hxu),
-  have hlp := roots_of_unity_in_cyclo_aux p K x n l hl hx hhl,
+  have hlp := roots_of_unity_in_cyclo_aux hl hx hhl hζ,
   simp only [is_root.def] at hhl,
-  have isPrimRoot : is_primitive_root (ζ' : RR) p, by {apply zeta_unit_coe_2},
+  have isPrimRoot : is_primitive_root (hζ.unit' : RR) p := hζ.unit'_coe_2,
   have hxl : (⟨x, hx⟩: RR)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl,
     simp only [nat.mem_divisors, dvd_refl, ne.def, true_and],
    apply (pos_iff_ne_zero.1 (nat.pos_of_mem_divisors hl))},
-  have hxp' : (⟨x, hx⟩: RR)^(2* p : ℕ) = 1 , by {cases hlp,
-  rw [hlp_h, pow_mul, hxl], simp only [one_pow],},
+  have hxp' : (⟨x, hx⟩: RR) ^ (2* p : ℕ) = 1,
+  { cases hlp,
+    rw [hlp_h, pow_mul, hxl], simp only [one_pow] },
   have hxp'': (⟨x, hx⟩: RR)^(p : ℕ) = 1 ∨ (⟨x, hx⟩: RR)^(p : ℕ) = -1,
   by {rw mul_comm at hxp', rw pow_mul at hxp',
   apply eq_or_eq_neg_of_sq_eq_sq (⟨x, hx⟩^(p : ℕ) : RR) 1 _,
@@ -264,7 +282,7 @@ begin
   obtain ⟨i, hi,Hi⟩ := (is_primitive_root.eq_pow_of_pow_eq_one isPrimRoot hxp3 p.prop),
   refine ⟨i, 1, _⟩,
   simp_rw Hi,
-  simp only [pnat.one_coe, pow_one, neg_mul, one_mul, neg_neg],},
+  simp only [pnat.one_coe, pow_one, neg_mul, one_mul, neg_neg] },
   obtain ⟨m, k, hmk⟩ := H,
   refine ⟨m, k, _⟩,
   have eq : ((⟨x, hx⟩ : RR) : K) = x := rfl,
@@ -276,30 +294,9 @@ begin
   { simp only [units.coe_pow, subsemiring_class.coe_pow, coe_coe]}
 end
 
-lemma zeta_runity_pow_even (hpo : odd (p : ℕ)) (n : ℕ) : ∃ (m : ℕ),
-  (ζ')^n = (ζ')^(2*m) :=
-begin
-  by_cases n = 0,
-  use 0,
-  rw h,
-  simp only [mul_zero],
-  rw odd at hpo,
-  obtain ⟨r, hr⟩ := hpo,
-  have he : 2*(r+1)*n=p*n+n, by {rw hr, linarith,},
-  use (r+1)*n,
-  rw ←mul_assoc,
-  simp_rw he,
-  rw pow_add,
-  have h1 : (zeta_unit' p K) ^ ((p : ℤ) * n) = 1,
-  by {have:= zeta_unit_pow p K, simp_rw zpow_mul, simp_rw this, simp only [one_zpow],},
-  norm_cast at h1,
-  simp_rw h1,
-  simp only [one_mul],
-end
-
 
 lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p) (u : RRˣ) (n : ℕ) :
-  u * (unit_gal_conj K p u)⁻¹ ≠ -(ζ') ^ n :=
+  u * (unit_gal_conj K p u)⁻¹ ≠ -hζ.unit' ^ n :=
 begin
   by_contra H,
   sorry,
@@ -307,12 +304,11 @@ end
 
 -- this proof has mild coe annoyances rn
 lemma unit_inv_conj_is_root_of_unity (h : 2 < p) (hpo : odd (p : ℕ)) (u : RRˣ) :
-  ∃ m : ℕ, u * (unit_gal_conj K p u)⁻¹ = (ζ' ^ (m))^2 :=
+  ∃ m : ℕ, u * (unit_gal_conj K p u)⁻¹ = (hζ.unit' ^ m)^2 :=
 begin
   have := mem_roots_of_unity_of_abs_eq_one
     (u * (unit_gal_conj K p u)⁻¹ : K) _ _,
-  have H:= roots_of_unity_in_cyclo p K hpo
-    ((u * (unit_gal_conj K p u)⁻¹ : K)) this,
+  have H := roots_of_unity_in_cyclo hζ hpo ((u * (unit_gal_conj K p u)⁻¹ : K)) this,
   obtain ⟨n, k, hz⟩ := H,
   simp_rw ← pow_mul,
   have hk := nat.even_or_odd k,
@@ -322,7 +318,7 @@ begin
   rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
   norm_cast at hz,
   rw hz,
-  refine (exists_congr $ λ a, _).mp (zeta_runity_pow_even p K hpo n),
+  refine (exists_congr $ λ a, _).mp (zeta_runity_pow_even hζ hpo n),
   { rw mul_comm } },
   { by_contra hc,
     simp [hk.neg_one_pow] at hz,
@@ -343,26 +339,24 @@ end
 
 
 lemma unit_lemma_gal_conj (h : 2 < p) (hpo : odd (p : ℕ)) (u : RRˣ) :
-  ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p K (x : K)) ∧ (u : K) = x * (ζ' ^ n) :=
-
+  ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p (x : K)) ∧ (u : K) = x * (hζ.unit' ^ n) :=
 begin
-  have := unit_inv_conj_is_root_of_unity p K h hpo u,
+  have := unit_inv_conj_is_root_of_unity hζ h hpo u,
   obtain ⟨m, hm⟩ := this,
-  let xuu:=u * ((ζ')⁻¹ ^ (m)),
+  let xuu:=u * (hζ.unit'⁻¹ ^ (m)),
   use [xuu, m],
    rw is_gal_conj_real,
-  have hy : u * (ζ' ^ ( m))⁻¹ = (unit_gal_conj K p u) * ζ' ^ ( m),
+  have hy : u * (hζ.unit' ^ m)⁻¹ = (unit_gal_conj K p u) * hζ.unit' ^ ( m),
   by {rw pow_two at hm,
-  have := auxil K u (unit_gal_conj K p u) (ζ' ^ (m)) (ζ' ^ (m)),
+  have := auxil u (unit_gal_conj K p u) (hζ.unit' ^ m) (hζ.unit' ^ m),
   apply this hm},
   dsimp,
   simp only [inv_pow, alg_hom.map_mul],
-  have hz: gal_conj K p (ζ'^ ( m))⁻¹ =(ζ' ^ ( m)) ,
-  by {simp_rw zeta_unit', simp},
+  have hz: gal_conj K p (hζ.unit' ^ m)⁻¹ =(hζ.unit' ^ m) := by simp,
   rw ← coe_coe,
   rw ← coe_coe,
   split,
-  rw (_ : (↑(ζ' ^ m)⁻¹ : K) = (ζ' ^ m : K)⁻¹),
+  rw (_ : (↑(hζ.unit' ^ m)⁻¹ : K) = (hζ.unit' ^ m : K)⁻¹),
   rw hz,
   have hzz := unit_gal_conj_spec K p u,
   rw hzz,
@@ -378,9 +372,10 @@ begin
   rw ← coe_life,
   simp only [subalgebra.coe_pow, units.coe_pow],
   simp,
-  norm_cast,
-  rw [mul_assoc, ←subalgebra.coe_mul, units.inv_mul],
-  simp,
+  rw [← coe_life, units.coe_pow],
+  simp only [subalgebra.coe_pow, units.coe_pow, ← inv_pow],
+  rw [mul_assoc, ← mul_pow, ← coe_coe hζ.unit', hζ.unit'_coe, inv_mul_cancel (hζ.ne_zero p.ne_zero),
+    one_pow, mul_one],
 end
 
 /-

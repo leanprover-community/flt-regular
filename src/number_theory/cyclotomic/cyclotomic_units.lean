@@ -23,6 +23,24 @@ variables (n : ℕ+) (K : Type u) (L : Type v) (A : Type w) (B : Type z)
 variables [comm_ring A] [comm_ring B] [algebra A B]
 variables [field K] [field L] [algebra K L]
 
+namespace is_primitive_root
+
+variable {B}
+
+lemma is_integral' {n : ℕ} {μ : B} (hμ : is_primitive_root μ n) (hn : 0 < n) :
+  _root_.is_integral A μ :=
+begin
+  use (X ^ n - 1),
+  split,
+  { exact (monic_X_pow_sub_C 1 (ne_of_lt hn).symm) },
+  { simp only [((is_primitive_root.iff_def μ n).mp hμ).left, eval₂_one, eval₂_X_pow, eval₂_sub,
+      sub_self] }
+end
+
+variable (B)
+
+end is_primitive_root
+
 namespace is_cyclotomic_extension
 
 variables [is_cyclotomic_extension {n} A B]
