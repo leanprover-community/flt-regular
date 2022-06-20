@@ -15,7 +15,7 @@ noncomputable theory
 
 variables {K L : Type*} [field K] [field L]
 
-variables [number_field K] [number_field L]  {n : ℕ} (x : K)
+variables  {n : ℕ} (x : K)
 
 open set finite_dimensional complex polynomial embeddings
 
@@ -43,7 +43,7 @@ begin
   simp only [not_not],
 end
 
-lemma real_eq_rank_sub_complex :
+lemma real_eq_rank_sub_complex [number_field K] :
   r1 = finrank ℚ K  - c2 :=
 begin
   rw ← @card K _ _ ℂ _ _ _,
@@ -62,11 +62,11 @@ begin
 end
 
 /-- A number field all of whose embeddings are real -/
-def is_totally_real (K : Type*) [field K] [number_field K] : Prop :=
+def is_totally_real (K : Type*) [field K] : Prop :=
 ∀ φ : K →+* ℂ, is_real φ
 
 /-- A number field all of whose embeddings are complex -/
-def is_totally_complex (K : Type*) [field K] [number_field K] : Prop :=
+def is_totally_complex (K : Type*) [field K] : Prop :=
 ∀ φ : K →+* ℂ, is_complex φ
 
 end number_field
