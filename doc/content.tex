@@ -256,6 +256,7 @@ The proof is classical.
 
 \begin{lemma}\label{lem:flt_fact_2}
 	\lean{flt_fact_2}
+	\uses{lemma:fac_of_p_in_p_th_root}
 	\leanok
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $x, y \in \ZZ$ coprime.
 
@@ -294,7 +295,7 @@ The proof is classical.
 \end{proof}
 
 \begin{lemma}\label{lemma:may_assume}
-	\uses{lemma:unit_lemma,_lemma:fac_of_p_in_p_th_root,lemma:ideals_mult_to_power,theorem:ring_of_ints_of_cyclo}
+	\uses{lemma:unit_lemma,lemma:fac_of_p_in_p_th_root,lemma:ideals_mult_to_power,theorem:ring_of_ints_of_cyclo}
 
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$.  Assume that we have $x,y,z \in \ZZ$ with $\gcd(xyz,p)=1$ and such that \[x^p+y^p=z^p.\]
 
