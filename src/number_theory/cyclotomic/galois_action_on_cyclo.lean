@@ -19,7 +19,7 @@ local notation `RR` := number_field.ring_of_integers K
 
 open_locale number_field cyclotomic
 
-open cyclotomic_ring embeddings
+open cyclotomic_ring number_field.embeddings
 
 noncomputable theory
 open is_cyclotomic_extension

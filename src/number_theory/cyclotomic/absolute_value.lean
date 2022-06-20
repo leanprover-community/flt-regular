@@ -250,6 +250,9 @@ begin
   exact is_fraction_ring.injective ℤ ℚ,
 end
 
+--again the algebra_rat diamond
+local attribute [-instance] complex.algebra
+
 lemma minpoly_coeff_le_of_all_abs_eq_one (hx : x ∈ {x : K | ∀ (φ : K →+* ℂ), abs (φ x) = 1})
   (hxi : is_integral ℤ x) (i : ℕ) :
   |(minpoly ℤ x).coeff i| ≤ ((minpoly ℤ x).nat_degree.choose i) :=
@@ -307,10 +310,11 @@ begin
           exact multiset.map_congr (eq.refl s) hz },
         { intros z hz,
           suffices : z ∈ (minpoly ℚ x).root_set ℂ,
-          { rw ←embeddings.eq_roots (x : K) at this,
+          { rw [← number_field.embeddings.eq_roots x] at this,
             rcases set.mem_range.mp this with ⟨φ, hφ⟩,
             rw ←hφ,
-            exact (set.mem_set_of.mp hx) φ, },
+            exact (set.mem_set_of.mp hx) φ,
+            apply_instance },
           apply multiset.mem_to_finset.mpr,
           refine multiset.mem_of_le _ hz,
           exact (multiset.mem_powerset_len.mp hs).left, }}},
