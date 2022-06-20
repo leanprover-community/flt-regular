@@ -321,20 +321,17 @@ begin
   refine (exists_congr $ λ a, _).mp (zeta_runity_pow_even hζ hpo n),
   { rw mul_comm } },
   { by_contra hc,
-    simp [hk.neg_one_pow] at hz,
-    sorry,
-  --   simp_rw coe_life at hz,
-  --   rw [←subalgebra.coe_mul, ←units.coe_mul, ←subalgebra.coe_pow, ←units.coe_pow] at hz,
-  --   norm_cast at hz,
-  --   simpa [hz] using unit_inv_conj_not_neg_zeta_runity p h u n
-  },
+    simp only [hk.neg_one_pow, coe_coe, neg_mul, one_mul] at hz,
+    rw [coe_life, ← subalgebra.coe_mul, ← units.coe_mul, ← subalgebra.coe_pow,
+      ← units.coe_pow] at hz,
+    norm_cast at hz,
+    simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ h u n },
   { exact unit_lemma_val_one K p u,},
   { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
     rw (_ : ((unit_gal_conj K p u)⁻¹ : K) = (↑(unit_gal_conj K p u⁻¹))),
     exact number_field.ring_of_integers.is_integral_coe (coe_b _),
-    simp,
-    sorry },
+    simpa only [coe_coe, coe_life] },
 end
 
 
