@@ -18,9 +18,6 @@ open polynomial fractional_ideal
 
 open_locale non_zero_divisors
 
--- why isn't this an instance globally?
-local attribute [instance] is_cyclotomic_extension.number_field
-
 theorem flt_regular_case_one_main {p a b c : ℕ} [fact p.prime] (hp : is_regular_number p)
   (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
   (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : false :=
@@ -28,7 +25,7 @@ begin
   have h_prime : p.prime := fact.out _,
   let pp : ℕ+ := ⟨p, h_prime.pos⟩,
   have := pow_add_pow_eq_prod_add_zeta_runity_mul (nat.odd_iff.mp (h_prime.odd hp_ne_two))
-    (is_cyclotomic_extension.zeta_primitive_root pp ℚ (cyclotomic_field pp ℚ)) a b,
+    (is_cyclotomic_extension.zeta_spec pp ℚ (cyclotomic_field pp ℚ)) a b,
   rw_mod_cast h at this,
   symmetry' at this,
   push_cast at this,

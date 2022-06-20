@@ -48,8 +48,7 @@ variables [is_cyclotomic_extension {n} A B]
 -- how do I get `simps` to make the `coe_inv_coe` lemma? `coe_inv_coe` doesn't work#
 /-- `zeta n A B` as a member of the `roots_of_unity` subgroup. -/
 @[simps coe_coe] def zeta_runity : roots_of_unity n B :=
-roots_of_unity.mk_of_pow_eq (zeta n A B) $
-is_root_of_unity_of_root_cyclotomic ((n : ℕ).mem_divisors_self n.ne_zero) $ zeta_spec' n A B
+roots_of_unity.mk_of_pow_eq (zeta n A B) $ (zeta_spec n A B).pow_eq_one
 
 /-- `zeta n A B` as a member of `Bˣ`. -/
 @[simps] def zeta_unit : Bˣ := zeta_runity n A B
@@ -67,9 +66,9 @@ open is_cyclotomic_extension
 lemma zeta_integral [is_cyclotomic_extension {n} K L] :
   zeta n K L ∈ 𝓞 L :=
 begin
-  use [cyclotomic n ℤ, cyclotomic.monic n ℤ],
-  rw [← zeta_spec n K L],
-  simp [aeval_def, eval₂_eq_eval_map],
+  refine ⟨X ^ (n : ℕ) - 1, monic_X_pow_sub_C _ n.ne_zero, _⟩,
+  simp only [eval₂_sub, eval₂_X_pow, eval₂_one, sub_eq_zero],
+  exact (zeta_spec n _ _).pow_eq_one,
 end
 
 lemma zeta_integral' [is_cyclotomic_extension {n} K L] (i : ℕ):
@@ -89,11 +88,11 @@ begin
   have := ne_zero.of_no_zero_smul_divisors K (cyclotomic_field n K) n,
   letI := classical.prop_decidable,
   let μ := zeta n K (cyclotomic_field n K),
-  have hμ := zeta_primitive_root n K (cyclotomic_field n K),
+  have hμ := zeta_spec n K (cyclotomic_field n K),
   refine ⟨⟨μ, _⟩, rfl⟩,
-  have := is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots n hμ,
+  have := is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots hμ,
   simp only [set.mem_singleton_iff, exists_eq_left] at this,
-  rw [← this, is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic n μ hμ],
+  rw [← this, is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic hμ],
   exact algebra.subset_adjoin (set.mem_singleton _),
 end
 
