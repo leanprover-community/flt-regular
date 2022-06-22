@@ -87,8 +87,6 @@ begin
   refl,
 end
 
-#exit
-
 omit hζ
 
 variable (p)
