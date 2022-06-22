@@ -1,10 +1,12 @@
 import ring_theory.adjoin_root
 
+variables {R A B K : Type*}
+
 namespace alg_hom
 
 open subalgebra
 
-variables {R A B : Type*} [comm_semiring R] [semiring A] [semiring B] [algebra R A] [algebra R B]
+variables [comm_semiring R] [semiring A] [semiring B] [algebra R A] [algebra R B]
 
 lemma range_top_iff_surjective (f : A →ₐ[R] B) :
 f.range = (⊤ : subalgebra R B) ↔ function.surjective f :=
@@ -12,7 +14,8 @@ algebra.eq_top_iff --I think this formulation can be useful `eq_top_iff` doesn't
 
 end alg_hom
 
-variables (R : Type*) [comm_ring R] {A : Type*} [comm_ring A] [algebra R A] (x : A)
+variables (R) [comm_ring R] [comm_ring A] [algebra R A] (x : A)
+variables [field K] [algebra R K] [is_fraction_ring R K] [algebra K A] [is_scalar_tower R K A]
 
 noncomputable theory
 
@@ -46,8 +49,7 @@ begin
   refine ⟨mk (minpoly R x) X, by simpa using h.symm⟩
 end
 
-variables (K : Type*) [field K] [algebra R K] [is_fraction_ring R K] [algebra K A] {R}
-variables {x} [is_domain R] [normalized_gcd_monoid R] [is_domain A] [is_scalar_tower R K A]
+variables (K) {R} {x} [is_domain R] [normalized_gcd_monoid R] [is_domain A]
 
 include K
 
@@ -76,3 +78,22 @@ alg_equiv.of_bijective (minpoly.to_adjoin R x)
   ⟨minpoly.to_adjoin.injective K hx, minpoly.to_adjoin.surjective R x⟩
 
 end adjoin_root
+
+namespace algebra
+
+open adjoin_root
+
+variables (K) {R} {x} [is_domain R] [normalized_gcd_monoid R] [is_domain A]
+
+include K
+
+/-- The `power_basis` of `adjoin R {x}` given by `x`. -/
+@[simps] def adjoin.power_basis' (hx : _root_.is_integral R x) :
+  power_basis R (adjoin R ({x} : set A)) :=
+power_basis.map (adjoin_root.power_basis' (minpoly.monic hx)) (minpoly.to_adjoin_equiv K hx)
+
+lemma adjoin.power_basis_gen' (hx : _root_.is_integral R x) :
+  (adjoin.power_basis' K hx).gen = ⟨x, self_mem_adjoin_singleton R x⟩ :=
+by simp
+
+end algebra
