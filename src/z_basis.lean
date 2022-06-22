@@ -9,6 +9,8 @@ open algebra adjoin_root is_cyclotomic_extension.rat
 
 variables {p : ℕ+} {k : ℕ} {K : Type*} [field K] [char_zero K] {ζ : K} [fact (p : ℕ).prime]
 
+/-- The `power_basis` of `𝓞 K` given by a primitive root of unity, where `K` is a cyclotomic
+extension of `ℚ`. -/
 noncomputable
 def power_basis_int [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : power_basis ℤ (𝓞 K) :=
