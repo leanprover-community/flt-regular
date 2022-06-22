@@ -1,15 +1,11 @@
 import number_theory.cyclotomic.rat
 import ready_for_mathlib.adjoin_root
---import number_theory.cyclotomic.cyclotomic_units
 
 namespace is_cyclotomic_extension.rat
 
 open_locale number_field
 
 open algebra adjoin_root is_cyclotomic_extension.rat
-
--- --local attribute [instance] cyclotomic_ring.algebra_base
--- --local attribute [instance] cyclotomic_field.algebra_base
 
 variables {p : ℕ+} {k : ℕ} {K : Type*} [field K] [char_zero K] {ζ : K} [fact (p : ℕ).prime]
 
@@ -22,7 +18,11 @@ let _ := is_integral_closure_adjoing_singleton_of_prime_pow hζ in by exactI
 
 @[simp] lemma power_basis_int_gen [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : (power_basis_int hζ).gen = ⟨ζ, hζ.is_integral (p ^ k).pos⟩ :=
-sorry
+begin
+  suffices : algebra_map _ K (power_basis_int hζ).gen = (⟨ζ, hζ.is_integral (p ^ k).pos⟩ : (𝓞 K)),
+    { exact subtype.ext this },
+  simpa [power_basis_int]
+end
 
 end is_cyclotomic_extension.rat
 
