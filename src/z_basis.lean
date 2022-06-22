@@ -1,6 +1,30 @@
-import number_theory.cyclotomic.basic
+import number_theory.cyclotomic.rat
+import ready_for_mathlib.adjoin_root
+--import number_theory.cyclotomic.cyclotomic_units
 
-.
+namespace is_cyclotomic_extension.rat
+
+open_locale number_field
+
+open algebra adjoin_root is_cyclotomic_extension.rat
+
+-- --local attribute [instance] cyclotomic_ring.algebra_base
+-- --local attribute [instance] cyclotomic_field.algebra_base
+
+variables {p : ℕ+} {k : ℕ} {K : Type*} [field K] [char_zero K] {ζ : K} [fact (p : ℕ).prime]
+
+noncomputable
+def power_basis_int [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
+  (hζ : is_primitive_root ζ ↑(p ^ k)) : power_basis ℤ (𝓞 K) :=
+let _ := is_integral_closure_adjoing_singleton_of_prime_pow hζ in by exactI
+  (adjoin.power_basis' ℚ (hζ.is_integral (p ^ k).pos)).map
+  (is_integral_closure.equiv ℤ (adjoin ℤ ({ζ} : set K)) K (𝓞 K))
+
+@[simp] lemma power_basis_int_gen [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
+  (hζ : is_primitive_root ζ ↑(p ^ k)) : (power_basis_int hζ).gen = ⟨ζ, hζ.is_integral (p ^ k).pos⟩ :=
+sorry
+
+end is_cyclotomic_extension.rat
 
 instance {n : ℕ+} : is_domain (adjoin_root $ polynomial.cyclotomic n ℤ) :=
 begin
@@ -10,36 +34,6 @@ begin
   rw ←gcd_monoid.irreducible_iff_prime,
   exact polynomial.cyclotomic.irreducible n.pos,
 end
-
-
-noncomputable example {R S : Type*} [comm_ring R] [is_domain R] [normalized_gcd_monoid R]
-  [comm_ring S] [is_domain S] [algebra R S] {x : S} (hx : is_integral R x) :
-  algebra.adjoin R ({x} : set S) ≃ₐ[R] adjoin_root (minpoly R x) :=
-alg_equiv.symm $ alg_equiv.of_bijective
-  (alg_hom.cod_restrict
-    (adjoin_root.lift_hom _ x $ minpoly.aeval R x) _
-    (λ p, adjoin_root.induction_on _ p $ λ p,
-      (algebra.adjoin_singleton_eq_range_aeval R x).symm ▸
-        (polynomial.aeval _).mem_range.mpr ⟨p, rfl⟩))
-  ⟨(alg_hom.injective_cod_restrict _ _ _).2 $ (injective_iff_map_eq_zero _).2 $ λ p,
-    adjoin_root.induction_on _ p $ λ p hp, ideal.quotient.eq_zero_iff_mem.2 $
-    ideal.mem_span_singleton.2 $
-    begin
-      haveI : algebra (fraction_ring R) S, sorry,
-      haveI : is_scalar_tower R (fraction_ring R) S, sorry,
-      -- the obvious results for these two need `field S`
-      apply minpoly.gcd_domain_dvd (fraction_ring R) hx,
-      { -- `p` is primitive
-        have := (minpoly.monic hx).is_primitive,
-        -- you said this was no problem, so hopefully it isn't!
-        sorry },
-      { simpa using hp },
-    end,
-  λ y,
-    let ⟨p, hp⟩ := (set_like.ext_iff.1
-      (algebra.adjoin_singleton_eq_range_aeval R x) (y : S)).1 y.2 in
-    ⟨adjoin_root.mk _ p, subtype.eq hp⟩⟩
-
 
 instance {n} : is_cyclotomic_extension {n} ℤ (adjoin_root $ polynomial.cyclotomic n ℤ) :=
 { exists_prim_root := λ a ha,
