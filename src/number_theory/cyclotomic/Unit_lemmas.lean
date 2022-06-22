@@ -3,6 +3,7 @@ import number_theory.cyclotomic.cyclotomic_units
 import ring_theory.roots_of_unity
 import number_theory.number_field
 import ready_for_mathlib.totient_stuff
+import z_basis
 
 variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
@@ -294,11 +295,36 @@ begin
   { simp only [units.coe_pow, subsemiring_class.coe_pow, coe_coe]}
 end
 
-
-lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p) (u : RRˣ) (n : ℕ) :
+lemma unit_inv_conj_not_neg_zeta_runity (h : 2 < p) (u : RRˣ) (n : ℕ) (hp : (p : ℕ).prime) :
   u * (unit_gal_conj K p u)⁻¹ ≠ -hζ.unit' ^ n :=
 begin
   by_contra H,
+  haveI := fact.mk hp,
+  have hu := (rat.power_basis_int' hζ).basis.sum_repr u,
+  set a := (rat.power_basis_int' hζ).basis.repr with ha,
+  set φn := (rat.power_basis_int' hζ).dim with hφn,
+  simp_rw [power_basis.basis_eq_pow, rat.power_basis_int'_gen] at hu,
+  have hu' := congr_arg (int_gal (gal_conj K p)) hu,
+  --⇑(int_gal (gal_conj K p)) ↑u
+  replace hu' :
+    (∑ (x : fin φn), (a u) x • (int_gal (gal_conj K p)) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ))) =
+    (unit_gal_conj K p u),
+  sorry { refine eq.trans _ hu',
+    rw map_sum,
+    congr' 1,
+    ext x,
+    congr' 1,
+    rw map_zsmul },
+  have : ∀ x, int_gal (gal_conj K p) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ)) =
+              ⟨ζ, hζ.is_integral p.pos⟩ ^ ((p : ℕ) - x),
+  { intro x,
+    ext,
+    simp only [int_gal_apply_coe, map_pow, subsemiring_class.coe_pow, subtype.coe_mk],
+    rw [alg_hom.restrict_domain],
+    simp only [alg_hom.coe_comp, alg_hom.coe_restrict_scalars', is_scalar_tower.coe_to_alg_hom',
+               function.comp_app, gal_conj_zeta_runity, inv_pow],
+    sorry
+  },
   sorry,
 end
 
