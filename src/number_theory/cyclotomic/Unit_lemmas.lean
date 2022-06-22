@@ -329,9 +329,13 @@ begin
 end
 
 -- this proof has mild coe annoyances rn
-lemma unit_inv_conj_is_root_of_unity (h : 2 < p) (hpo : odd (p : ℕ)) (u : RRˣ) :
+lemma unit_inv_conj_is_root_of_unity (h : 2 < p) (hp : (p : ℕ).prime) (u : RRˣ) :
   ∃ m : ℕ, u * (unit_gal_conj K p u)⁻¹ = (hζ.unit' ^ m)^2 :=
 begin
+  have hpo : odd (p : ℕ),
+  { refine (or_iff_right (λ h2, _)).1 hp.eq_two_or_odd',
+    rw [show (2 : ℕ) = (2 : ℕ+), by simp, pnat.coe_inj] at h2,
+    exact h.ne' h2 },
   have := mem_roots_of_unity_of_abs_eq_one
     (u * (unit_gal_conj K p u)⁻¹ : K) _ _,
   have H := roots_of_unity_in_cyclo hζ hpo ((u * (unit_gal_conj K p u)⁻¹ : K)) this,
@@ -351,7 +355,7 @@ begin
     rw [coe_life, ← subalgebra.coe_mul, ← units.coe_mul, ← subalgebra.coe_pow,
       ← units.coe_pow] at hz,
     norm_cast at hz,
-    simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ h u n },
+    simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ h u n hp },
   { exact unit_lemma_val_one K p u,},
   { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
@@ -361,10 +365,10 @@ begin
 end
 
 
-lemma unit_lemma_gal_conj (h : 2 < p) (hpo : odd (p : ℕ)) (u : RRˣ) :
+lemma unit_lemma_gal_conj (h : 2 < p) (hp : (p : ℕ).prime) (u : RRˣ) :
   ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p (x : K)) ∧ (u : K) = x * (hζ.unit' ^ n) :=
 begin
-  have := unit_inv_conj_is_root_of_unity hζ h hpo u,
+  have := unit_inv_conj_is_root_of_unity hζ h hp u,
   obtain ⟨m, hm⟩ := this,
   let xuu:=u * (hζ.unit'⁻¹ ^ (m)),
   use [xuu, m],
