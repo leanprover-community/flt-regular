@@ -9,7 +9,7 @@ open algebra adjoin_root is_cyclotomic_extension.rat
 
 variables {p : ℕ+} {k : ℕ} {K : Type*} [field K] [char_zero K] {ζ : K} [fact (p : ℕ).prime]
 
-/-- The `power_basis` of `𝓞 K` given by a primitive root of unity, where `K` is a cyclotomic
+/-- The `power_basis` of `𝓞 K` given by a primitive root of unity, where `K` is a `p ^ k` cyclotomic
 extension of `ℚ`. -/
 noncomputable def power_basis_int [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : power_basis ℤ (𝓞 K) :=
@@ -25,6 +25,8 @@ subtype.ext $ show algebra_map _ K (power_basis_int hζ).gen = _, by simpa [powe
   (hζ : is_primitive_root ζ ↑(p ^ k)) : (power_basis_int hζ).dim = φ (p ^ k) :=
 by simp [power_basis_int, ←polynomial.cyclotomic_eq_minpoly hζ, polynomial.nat_degree_cyclotomic]
 
+/-- The `power_basis` of `𝓞 K` given by a primitive root of unity, where `K` is a `p`-th cyclotomic
+extension of `ℚ`. -/
 noncomputable def power_basis_int' [hcycl : is_cyclotomic_extension {p} ℚ K]
   (hζ : is_primitive_root ζ p) : power_basis ℤ (𝓞 K) :=
 @power_basis_int p 1 K _ _ _ _ (by { convert hcycl, rw pow_one }) (by rwa pow_one)
