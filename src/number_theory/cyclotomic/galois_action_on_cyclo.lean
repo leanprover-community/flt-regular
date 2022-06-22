@@ -29,42 +29,65 @@ open polynomial
 
 /-- complex conjugation as a Galois automorphism -/
 def gal_conj : K →ₐ[ℚ] K :=
-((is_cyclotomic_extension.aut_equiv_pow _ (cyclotomic.irreducible_rat p.pos)).symm (-1)).to_alg_hom
+↑((is_cyclotomic_extension.aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1))
 
 variables {K p}
 
-@[simp]
-lemma gal_conj_zeta_runity : gal_conj K p ζ = ζ⁻¹ := sorry
+lemma zmod.val_neg_one' : ∀ {n : ℕ}, 0 < n → (-1 : zmod n).val = n - 1
+| (n + 1) _ := zmod.val_neg_one _
+
+lemma gal_conj_zeta : gal_conj K p (zeta p ℚ K) = (zeta p ℚ K)⁻¹ :=
+begin
+  let hζ := zeta_spec p ℚ K,
+  simp only [gal_conj, units.coe_neg_one, aut_equiv_pow_symm_apply, alg_equiv.coe_alg_hom,
+             power_basis.equiv_of_minpoly_apply],
+  convert (hζ.power_basis ℚ).lift_gen _ _,
+  rw [is_primitive_root.power_basis_gen, zmod.val_neg_one' p.pos,
+      pow_sub₀ _ (hζ.ne_zero p.ne_zero) p.pos, pow_one, hζ.pow_eq_one, one_mul]
+end
+
+include hζ
+
+@[simp] lemma gal_conj_zeta_runity : gal_conj K p ζ = ζ⁻¹ :=
+begin
+  obtain ⟨t, ht, rfl⟩ := (zeta_spec p ℚ K).eq_pow_of_pow_eq_one hζ.pow_eq_one p.pos,
+  rw [map_pow, gal_conj_zeta, inv_pow]
+end
 
 lemma gal_conj_zeta_runity_pow (n : ℕ) :  gal_conj K p (ζ^n) = (ζ⁻¹)^n :=
-begin
-sorry
-end
+by rw [map_pow, gal_conj_zeta_runity hζ]
+
+omit hζ
 
 open_locale complex_conjugate
 
-lemma conj_norm_one (x : ℂ) (h : complex.abs x = 1) : conj x = x⁻¹ := sorry
+lemma conj_norm_one (x : ℂ) (h : complex.abs x = 1) : conj x = x⁻¹ :=
+by rw [←complex.abs_mul_exp_arg_mul_I x, h, complex.of_real_one, one_mul, ←complex.exp_conj,
+       ←complex.exp_neg, map_mul, complex.conj_I, mul_neg, complex.conj_of_real]
 
 include hζ
 
 @[simp]
 lemma embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (gal_conj K p x) :=
 begin
-  swap,
   revert x,
   suffices : φ (gal_conj K p ζ) = conj (φ ζ),
   sorry, -- this should be a general lemma about checking automorphisms agree only on a generator
-  rw conj_norm_one,
-  simp [ring_hom.map_inv],
-  sorry,
+  -- Eric: this exists as `power_basis.alg_hom_ext`, but this doesn't work here for free.
+  rw conj_norm_one; sorry
 end
 
+-- `gal_conj` not being an `alg_equiv` makes me very sad
+-- but I was determined to make this proof work!
 lemma gal_conj_idempotent : (gal_conj K p).comp (gal_conj K p) = (alg_hom.id ℚ K) :=
 begin
-  suffices : (gal_conj K p ∘ gal_conj K p) ζ = (alg_hom.id ℚ _) ζ,
-  sorry, -- this should be a general lemma about checking automorphisms agree only on a generator
-  simp,
+  convert_to ↑(((aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1)) *
+               ((aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1))) = alg_hom.id ℚ K,
+  rw [←map_mul, neg_one_mul, neg_neg, map_one],
+  refl,
 end
+
+#exit
 
 omit hζ
 
