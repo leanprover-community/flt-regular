@@ -89,8 +89,8 @@ begin
     { exact this },
     { exact algebra_rat } },
   rw [conj_norm_one, ←ring_hom.map_inv, gal_conj_zeta_runity hζ],
-  -- complex.abs (φ ζ) = 1
-  sorry
+  refine complex.norm_eq_one_of_pow_eq_one _ p.ne_zero,
+  rw [←map_pow, hζ.pow_eq_one, map_one]
 end
 
 -- `gal_conj` not being an `alg_equiv` makes me very sad
