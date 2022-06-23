@@ -305,26 +305,26 @@ begin
   set φn := (rat.power_basis_int' hζ).dim with hφn,
   simp_rw [power_basis.basis_eq_pow, rat.power_basis_int'_gen] at hu,
   have hu' := congr_arg (int_gal (gal_conj K p)) hu,
-  --⇑(int_gal (gal_conj K p)) ↑u
   replace hu' :
     (∑ (x : fin φn), (a u) x • (int_gal (gal_conj K p)) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ))) =
     (unit_gal_conj K p u),
-  sorry { refine eq.trans _ hu',
+  { refine eq.trans _ hu',
     rw map_sum,
     congr' 1,
     ext x,
     congr' 1,
     rw map_zsmul },
-  have : ∀ x, int_gal (gal_conj K p) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ)) =
-              ⟨ζ, hζ.is_integral p.pos⟩ ^ ((p : ℕ) - x),
+  have : ∀ x : fin φn, int_gal (gal_conj K p) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ)) =
+                        ⟨ζ, hζ.is_integral p.pos⟩ ^ ((p : ℕ) - x),
   { intro x,
     ext,
     simp only [int_gal_apply_coe, map_pow, subsemiring_class.coe_pow, subtype.coe_mk],
-    rw [alg_hom.restrict_domain],
-    simp only [alg_hom.coe_comp, alg_hom.coe_restrict_scalars', is_scalar_tower.coe_to_alg_hom',
-               function.comp_app, gal_conj_zeta_runity, inv_pow],
-    sorry
-  },
+    rw [pow_sub₀ _ (hζ.ne_zero hp.ne_zero), hζ.pow_eq_one, one_mul, ←map_pow,
+        gal_conj_zeta_runity_pow hζ, inv_pow],
+    have := x.prop.le,
+    simp_rw [hφn, rat.power_basis_int'_dim, nat.totient_prime hp] at this,
+    exact this.trans tsub_le_self },
+  -- enjoy coercion hell
   sorry,
 end
 
@@ -364,6 +364,7 @@ begin
     simpa only [coe_coe, coe_life] },
 end
 
+.
 
 lemma unit_lemma_gal_conj (h : 2 < p) (hp : (p : ℕ).prime) (u : RRˣ) :
   ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p (x : K)) ∧ (u : K) = x * (hζ.unit' ^ n) :=
@@ -379,7 +380,8 @@ begin
   apply this hm},
   dsimp,
   simp only [inv_pow, alg_hom.map_mul],
-  have hz: gal_conj K p (hζ.unit' ^ m)⁻¹ =(hζ.unit' ^ m) := by simp,
+  have hz: gal_conj K p (hζ.unit' ^ m)⁻¹ =(hζ.unit' ^ m),
+  { simp [gal_conj_zeta_runity_pow hζ] },
   rw ← coe_coe,
   rw ← coe_coe,
   split,
