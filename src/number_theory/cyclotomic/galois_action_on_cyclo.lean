@@ -7,6 +7,13 @@ universes u
 
 open finite_dimensional
 
+theorem power_basis.rat_hom_ext {S S' : Type*} [comm_ring S] [hS : algebra ℚ S] [ring S']
+  [hS' : algebra ℚ S'] (pb : power_basis ℚ S) ⦃f g : S →+* S'⦄ (h : f pb.gen = g pb.gen) :
+f = g :=
+let f' := f.to_rat_alg_hom, g' := g.to_rat_alg_hom in
+fun_like.ext f g $
+by convert fun_like.ext_iff.mp (pb.alg_hom_ext (show f' pb.gen = g' pb.gen, from h))
+
 variables (K : Type*) (p : ℕ+) [field K] [char_zero K] [is_cyclotomic_extension {p} ℚ K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
 
@@ -70,11 +77,20 @@ include hζ
 @[simp]
 lemma embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (gal_conj K p x) :=
 begin
+  -- dependent type theory is my favourite
+  rw [←ring_hom.comp_apply, ←alg_hom.coe_to_ring_hom, ←ring_hom.comp_apply],
   revert x,
   suffices : φ (gal_conj K p ζ) = conj (φ ζ),
-  sorry, -- this should be a general lemma about checking automorphisms agree only on a generator
-  -- Eric: this exists as `power_basis.alg_hom_ext`, but this doesn't work here for free.
-  rw conj_norm_one; sorry
+  { rw ←function.funext_iff,
+    dsimp only,
+    congr' 1,
+    symmetry,
+    apply (hζ.power_basis ℚ).rat_hom_ext,
+    { exact this },
+    { exact algebra_rat } },
+  rw [conj_norm_one, ←ring_hom.map_inv, gal_conj_zeta_runity hζ],
+  -- complex.abs (φ ζ) = 1
+  sorry
 end
 
 -- `gal_conj` not being an `alg_equiv` makes me very sad
@@ -99,47 +115,36 @@ lemma gal_map_mem_subtype (x : RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
 by simp [gal_map_mem]
 
 /-- Restriction of `σ : K →ₐ[ℚ] K` to the ring of integers.  -/
-@[simps] def int_gal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
+def int_gal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
 ((σ.restrict_scalars ℤ).restrict_domain RR).cod_restrict RR (λ x, gal_map_mem_subtype K x _)
 
+@[simp] lemma int_gal_apply_coe (σ : K →ₐ[ℚ] K) (x : RR) :
+  (int_gal σ x : K) = σ x := rfl
+
 /-- Restriction of `σ : K →ₐ[ℚ] K` to the units of the ring of integers.  -/
-@[simps] def units_gal (σ : K →ₐ[ℚ] K) : RRˣ →* RRˣ :=
+def units_gal (σ : K →ₐ[ℚ] K) : RRˣ →* RRˣ :=
 units.map $ int_gal σ
 
+@[simp] lemma units_gal_apply_coe (σ : K →ₐ[ℚ] K) (x : RRˣ) :
+(units_gal σ x : K) = σ x := rfl
+
 /-- `unit_gal_conj` as a bundled hom. -/
-@[simps] def unit_gal_conj : RRˣ →* RRˣ :=
+def unit_gal_conj : RRˣ →* RRˣ :=
 units_gal (gal_conj K p)
 
-lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p u = unit_gal_conj K p u :=
-begin
-  cases u,
-  simp [unit_gal_conj],
-  sorry
-end
+lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p u = unit_gal_conj K p u := rfl
 
-lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj K p u)⁻¹ = (unit_gal_conj K p u⁻¹) :=
-begin
-rw unit_gal_conj,
-simp,
-end
+lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj K p u)⁻¹ = (unit_gal_conj K p u⁻¹) := rfl
 
 lemma unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
   complex.abs (φ (u * (unit_gal_conj K p u)⁻¹)) = 1 :=
 begin
-  rw ring_hom.map_mul,
-  rw complex.abs.is_absolute_value.abv_mul,
-  rw ring_hom.map_inv,
-  rw is_absolute_value.abv_inv complex.abs,
-  rw ← unit_gal_conj_spec,
-  rw ← embedding_conj,
-  simp [-embedding_conj],
-  sorry,
-  sorry,
+  rw [map_mul, complex.abs.is_absolute_value.abv_mul, ring_hom.map_inv,
+      complex.abs_inv, ←unit_gal_conj_spec, ←embedding_conj $ zeta_spec p ℚ K],
+  simp only [coe_coe, complex.abs_conj, mul_inv_cancel, ne.def, complex.abs_eq_zero,
+             ring_hom.map_eq_zero, add_submonoid_class.coe_eq_zero, units.ne_zero, not_false_iff]
 end
 
 lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj K p (unit_gal_conj K p u)) = u :=
-begin
-   have:=  (unit_gal_conj_spec K p u),
-   simp at this,
-   sorry,
-end
+units.ext $ subtype.ext $ by erw [←unit_gal_conj_spec, ←unit_gal_conj_spec, ←alg_hom.comp_apply,
+                                  gal_conj_idempotent $ zeta_spec p ℚ K, alg_hom.id_apply, coe_coe]
