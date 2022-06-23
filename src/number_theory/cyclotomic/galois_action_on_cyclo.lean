@@ -93,6 +93,8 @@ begin
   rw [←map_pow, hζ.pow_eq_one, map_one]
 end
 
+omit hζ
+
 -- `gal_conj` not being an `alg_equiv` makes me very sad
 -- but I was determined to make this proof work!
 lemma gal_conj_idempotent : (gal_conj K p).comp (gal_conj K p) = (alg_hom.id ℚ K) :=
@@ -103,20 +105,18 @@ begin
   refl,
 end
 
-omit hζ
-
 variable (p)
 
 --generalize this
 lemma gal_map_mem {x : K} (hx : x ∈ RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
 is_integral_alg_hom (σ.restrict_scalars ℤ) hx
 
-lemma gal_map_mem_subtype (x : RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
+lemma gal_map_mem_subtype (σ : K →ₐ[ℚ] K) (x : RR) : σ x ∈ RR :=
 by simp [gal_map_mem]
 
 /-- Restriction of `σ : K →ₐ[ℚ] K` to the ring of integers.  -/
 def int_gal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
-((σ.restrict_scalars ℤ).restrict_domain RR).cod_restrict RR (λ x, gal_map_mem_subtype K x _)
+((σ.restrict_scalars ℤ).restrict_domain RR).cod_restrict RR (gal_map_mem_subtype σ)
 
 @[simp] lemma int_gal_apply_coe (σ : K →ₐ[ℚ] K) (x : RR) :
   (int_gal σ x : K) = σ x := rfl
@@ -147,4 +147,4 @@ end
 
 lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj K p (unit_gal_conj K p u)) = u :=
 units.ext $ subtype.ext $ by erw [←unit_gal_conj_spec, ←unit_gal_conj_spec, ←alg_hom.comp_apply,
-                                  gal_conj_idempotent $ zeta_spec p ℚ K, alg_hom.id_apply, coe_coe]
+                                  gal_conj_idempotent, alg_hom.id_apply, coe_coe]
