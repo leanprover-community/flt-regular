@@ -48,6 +48,8 @@ begin
   -- with proper lemmas for `ring_of_integers_algebra`
 end
 
+variable (x)
+
 lemma dvd_norm [is_galois K L] : x ∣ algebra_map (𝓞 K) (𝓞 L) (norm' K x) :=
 begin
   classical,
