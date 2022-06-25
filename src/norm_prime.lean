@@ -5,8 +5,7 @@ open_locale number_field
 
 open algebra ideal finset nat finite_dimensional
 
-variables {K : Type*} [field K] [number_field K] (pb : power_basis ℤ (𝓞 K))
-variables (hpr : prime (norm' ℚ pb.gen)) (hunit : ¬is_unit (norm' ℚ pb.gen))
+variables {K : Type*} [field K] (pb : power_basis ℤ (𝓞 K))
 
 local notation `R` := 𝓞 K
 
@@ -40,9 +39,10 @@ begin
   { exact not_mem_erase ⟨0, pb.dim_pos⟩ univ }
 end
 
-variables [is_galois ℚ K] {pb}
+variables [number_field K] {pb}
+variables (hpr : prime (norm' ℚ pb.gen)) (hunit : ¬is_unit (norm' ℚ pb.gen))
 
-lemma p_eq_zero :
+lemma p_eq_zero [is_galois ℚ K] :
   (rat.ring_of_integers_equiv (norm' ℚ pb.gen) : (R ⧸ (span ({pb.gen} : set R)))) = 0 :=
 begin
   set p := rat.ring_of_integers_equiv (norm' ℚ pb.gen) with hpdef,
@@ -68,6 +68,8 @@ end
 omit hpr
 
 include hunit
+
+variable [is_galois ℚ K]
 
 lemma quotient_not_trivial : nontrivial (R ⧸ (span ({pb.gen} : set R))) :=
 quotient.nontrivial (λ h, hunit ((norm_unit_iff ℚ).1 (span_singleton_eq_top.1 h)))
@@ -102,7 +104,7 @@ begin
   simp only [quotient.mk_eq_mk, ring_hom.map_int_cast] at h₁ h₂,
   cases hpr.dvd_or_dvd hz with Hn Hm,
   { simpa [h₁] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm ℚ pb.gen)
-      (ring_hom.map_dvd (algebra_map (𝓞 ℚ) (𝓞 K)) (hpr.dvd_of_dvd_pow Hn)))) },
+      (ring_hom.map_dvd (algebra_map (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hn)))) },
   { simpa [h₂] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm ℚ pb.gen)
-      (ring_hom.map_dvd (algebra_map (𝓞 ℚ) (𝓞 K)) (hpr.dvd_of_dvd_pow Hm)))) },
+      (ring_hom.map_dvd (algebra_map (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hm)))) },
 end
