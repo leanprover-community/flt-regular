@@ -1,6 +1,6 @@
 import ring_theory.integral_closure
 
-namespace ring_hom
+namespace alg_hom
 
 open polynomial
 
@@ -15,4 +15,4 @@ begin
     aeval_alg_hom_apply, aeval_map, aeval_def, hP.2, map_zero]
 end
 
-end ring_hom
+end alg_hom
