@@ -40,7 +40,7 @@ begin
 end
 
 variables [number_field K] {pb}
-variables (hpr : prime (norm' ℚ pb.gen)) (hunit : ¬is_unit (norm' ℚ pb.gen))
+variables (hpr : prime (norm' ℚ pb.gen))
 
 lemma p_eq_zero [is_galois ℚ K] :
   (rat.ring_of_integers_equiv (norm' ℚ pb.gen) : (R ⧸ (span ({pb.gen} : set R)))) = 0 :=
@@ -65,23 +65,17 @@ begin
   simpa using prime.ne_zero hpr
 end
 
-omit hpr
-
-include hunit
-
 variable [is_galois ℚ K]
 
 lemma quotient_not_trivial : nontrivial (R ⧸ (span ({pb.gen} : set R))) :=
-quotient.nontrivial (λ h, hunit ((norm_unit_iff ℚ).1 (span_singleton_eq_top.1 h)))
-
-include hpr
+quotient.nontrivial (λ h, hpr.not_unit ((norm_unit_iff ℚ).1 (span_singleton_eq_top.1 h)))
 
 local attribute [instance] number_field.ring_of_integers_algebra
 
 lemma prime_of_norm_prime : prime pb.gen :=
 begin
   rw [← span_singleton_prime (gen_ne_zero hpr), ← quotient.is_domain_iff_prime],
-  refine ⟨_, (quotient_not_trivial hunit).exists_pair_ne⟩,
+  refine ⟨_, (quotient_not_trivial hpr).exists_pair_ne⟩,
   rintro ⟨x, hx⟩ ⟨y, hy⟩ hxy,
   by_contra' h,
   have h₁ := h.1, have h₂ := h.2,
