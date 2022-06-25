@@ -5,7 +5,7 @@ namespace alg_hom
 open polynomial
 
 variables {R A B : Type*} [comm_ring R] [comm_ring A] [comm_ring B] [algebra R A] [algebra R B]
-variables [algebra A B] [is_scalar_tower R A B] {x : B} {f : B →ₐ[A] B}
+variables [algebra A B] [is_scalar_tower R A B] {x : B} (f : B →ₐ[A] B)
 
 lemma is_integral_of_is_scalar_tower (hx : _root_.is_integral R x) : _root_.is_integral R (f x) :=
 begin
