@@ -69,8 +69,8 @@ lemma gcd_domain_unique {R A : Type*} [comm_ring R] [is_domain R] [normalized_gc
   [comm_ring A] [is_domain A] [algebra R A] {x : A}
   (hinj : function.injective (algebra_map R A)) {P : R[X]} (hmo : P.monic)
   (hP : polynomial.aeval x P = 0)
-  (Pmin : ∀ Q : R[X], Q.monic → polynomial.aeval x Q = 0 → degree P ≤ degree Q)
-  (hroot : polynomial.aeval x P = 0) : P = minpoly R x :=
+  (Pmin : ∀ Q : R[X], Q.monic → polynomial.aeval x Q = 0 → degree P ≤ degree Q) :
+  P = minpoly R x :=
 begin
   have hx : is_integral R x := ⟨P, hmo, hP⟩,
   symmetry, apply eq_of_sub_eq_zero,
