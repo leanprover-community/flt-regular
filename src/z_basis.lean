@@ -14,8 +14,8 @@ extension of `ℚ`. -/
 noncomputable def power_basis_int [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : power_basis ℤ (𝓞 K) :=
 let _ := is_integral_closure_adjoing_singleton_of_prime_pow hζ in by exactI
-  (adjoin.power_basis' ℚ (hζ.is_integral (p ^ k).pos)).map
-  (is_integral_closure.equiv ℤ (adjoin ℤ ({ζ} : set K)) K (𝓞 K))
+ (adjoin.power_basis' (algebra_map ℤ K).injective_int (hζ.is_integral (p ^ k).pos)).map
+ (is_integral_closure.equiv ℤ (adjoin ℤ ({ζ} : set K)) K (𝓞 K))
 
 @[simp] lemma power_basis_int_gen [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : (power_basis_int hζ).gen = ⟨ζ, hζ.is_integral (p ^ k).pos⟩ :=
@@ -24,6 +24,10 @@ subtype.ext $ show algebra_map _ K (power_basis_int hζ).gen = _, by simpa [powe
 @[simp] lemma power_basis_int_dim [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : (power_basis_int hζ).dim = φ (p ^ k) :=
 by simp [power_basis_int, ←polynomial.cyclotomic_eq_minpoly hζ, polynomial.nat_degree_cyclotomic]
+
+@[simp] lemma power_basis_sub_one_int_gen [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
+  (hζ : is_primitive_root ζ ↑(p ^ k)) : (power_basis_int hζ).gen = ⟨ζ, hζ.is_integral (p ^ k).pos⟩ :=
+subtype.ext $ show algebra_map _ K (power_basis_int hζ).gen = _, by simpa [power_basis_int]
 
 /-- The `power_basis` of `𝓞 K` given by a primitive root of unity, where `K` is a `p`-th cyclotomic
 extension of `ℚ`. -/
