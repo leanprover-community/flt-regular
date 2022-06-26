@@ -3,7 +3,7 @@ import number_theory.cyclotomic.gal
 import number_theory.cyclotomic.rat
 import z_basis
 
-variables {K : Type*} [field K] [char_zero K] {ζ : K}
+variables {K : Type*} [field K] {ζ : K}
 
 open_locale number_field
 
@@ -31,7 +31,7 @@ end is_primitive_root
 
 namespace is_cyclotomic_extension.rat
 
-variables {p : ℕ+} {k : ℕ} [hp : fact (p : ℕ).prime]
+variables {p : ℕ+} {k : ℕ} [hp : fact (p : ℕ).prime] [char_zero K]
 
 include hp
 
