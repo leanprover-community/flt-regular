@@ -14,15 +14,13 @@ begin
   exact (dvd_iff_dvd_of_dvd_sub this).mpr (dvd.intro i rfl),
   { rw [int.cast_mul],
     congr,
-    ext,
     simp [nat.mod_eq_of_lt hi], }
 end
 
 lemma nat.dvd_of_dvd_coe_zmod {m n a : ℕ} (hmn : m ∣ n) (h : (m : zmod n) ∣ a) : m ∣ a :=
 begin
   rcases n with r | n,
-  { rw [int.nat_cast_eq_coe_nat, int.nat_cast_eq_coe_nat] at h,
-    exact_mod_cast h, },
+  { exact_mod_cast h, },
   rcases hmn with ⟨k, hk⟩,
   rcases h with ⟨⟨i, hi⟩, hmi⟩,
   rw [(_ : (m : zmod (n + 1)) * ⟨i, hi⟩ = ↑(m * i)), zmod.nat_coe_eq_nat_coe_iff', hk] at hmi,
@@ -36,6 +34,5 @@ begin
     rwa [nat.dvd_iff_mod_eq_zero, nat.sub_mul_mod _ _ _ h, ← nat.dvd_iff_mod_eq_zero] at this },
   { rw [nat.cast_mul],
     congr,
-    ext,
     simp [nat.mod_eq_of_lt hi], }
 end

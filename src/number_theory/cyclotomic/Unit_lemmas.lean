@@ -2,7 +2,6 @@ import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.cyclotomic_units
 import ring_theory.roots_of_unity
 import number_theory.number_field
-import ready_for_mathlib.totient_stuff
 import number_theory.cyclotomic.z_basis
 
 variables {p : ℕ+} {K : Type*} [field K]
@@ -219,7 +218,7 @@ by_contra,
   rw hrank at KEY,
   have pdivlcm : (p : ℕ) ∣ lcm l p := dvd_lcm_right l ↑p,
   cases pdivlcm,
-  have ineq1 := totient_super_multiplicative (p: ℕ) pdivlcm_w,
+  have ineq1 := nat.totient_super_multiplicative (p: ℕ) pdivlcm_w,
   rw ←pdivlcm_h at ineq1,
   have KEY3 := (mul_le_iff_le_one_right (nat.totient_pos p.prop)).mp (le_trans ineq1 KEY),
   have pdiv_ne_zero : 0 < pdivlcm_w, by {by_contra,
