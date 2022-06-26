@@ -97,3 +97,18 @@ lemma adjoin.power_basis_gen' (hx : _root_.is_integral R x) :
 by simp
 
 end algebra
+
+namespace power_basis
+
+variables (K) {R} {x} [is_domain R] [normalized_gcd_monoid R] [is_domain A]
+
+include K
+
+/-- The power basis given by `x` if `B.gen ∈ adjoin R {x}`. -/
+@[simps] noncomputable def of_gen_mem_adjoin' (B : power_basis R A) (hint : is_integral R x)
+  (hx : B.gen ∈ adjoin R ({x} : set A)) : power_basis R A :=
+(algebra.adjoin.power_basis' K hint).map $
+  (subalgebra.equiv_of_eq _ _ $ power_basis.adjoin_eq_top_of_gen_mem_adjoin hx).trans
+  subalgebra.top_equiv
+
+end power_basis
