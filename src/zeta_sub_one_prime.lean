@@ -37,7 +37,6 @@ include hp
 
 /-- The `power_basis` of `𝓞 K` given by `ζ - 1`, where `K` is a `p ^ k` cyclotomic
 extension of `ℚ`. -/
-@[simps]
 noncomputable def power_basis_sub_one_int [is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : power_basis ℤ (𝓞 K) :=
 let _ := is_cyclotomic_extension.number_field {p ^ k} ℚ K in by exactI
@@ -51,6 +50,11 @@ begin
   convert this,
   simp
 end
+
+@[simp] lemma power_basis_sub_one_int_gen [is_cyclotomic_extension {p ^ k} ℚ K]
+  (hζ : is_primitive_root ζ ↑(p ^ k)) :
+  (power_basis_sub_one_int hζ).gen = ⟨ζ - 1, hζ.sub_one_mem_ring_of_integers⟩ :=
+by simp [power_basis_sub_one_int]
 
 lemma zeta_sub_one_prime [is_cyclotomic_extension {p ^ (k + 1)} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ (k + 1))) (hodd : p ≠ 2) :
