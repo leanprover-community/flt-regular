@@ -70,7 +70,6 @@ begin
   simp only [set_like.coe_mk, ring_equiv.symm_apply_apply],
   norm_cast,
   simp [← ring_equiv.coe_to_ring_hom, ring_hom.eq_int_cast]
-
 end
 
 end is_cyclotomic_extension.rat

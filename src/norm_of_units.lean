@@ -18,8 +18,6 @@ namespace algebra
 variables {K L : Type*} [field K] [field L] [algebra K L] [finite_dimensional K L] {x y : 𝓞 L}
 variables (K)
 
-lemma cast_norm' [is_separable K L] (x : 𝓞 L) : (norm' K x : K) = norm K (x : L) := rfl
-
 open_locale big_operators
 
 section using_cursed_algebra_instance
