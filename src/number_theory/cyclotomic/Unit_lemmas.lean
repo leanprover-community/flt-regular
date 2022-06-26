@@ -3,7 +3,7 @@ import number_theory.cyclotomic.cyclotomic_units
 import ring_theory.roots_of_unity
 import number_theory.number_field
 import ready_for_mathlib.totient_stuff
-import z_basis
+import number_theory.cyclotomic.z_basis
 
 variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)

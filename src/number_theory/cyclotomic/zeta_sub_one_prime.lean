@@ -1,7 +1,7 @@
-import norm_prime
+import norm.norm_prime
 import number_theory.cyclotomic.gal
 import number_theory.cyclotomic.rat
-import z_basis
+import number_theory.cyclotomic.z_basis
 
 variables {K : Type*} [field K] {ζ : K}
 
