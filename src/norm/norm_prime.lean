@@ -1,4 +1,4 @@
-import norm_of_units
+import norm.norm_of_units
 import linear_algebra.smodeq
 
 open_locale number_field
