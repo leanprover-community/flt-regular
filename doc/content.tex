@@ -237,8 +237,8 @@ The proof is classical.
 	Any unit $u$ in $\ZZ[\zeta_p]$ can be written in the form $\beta \zeta_p^k  $ with $k$ an integer and $\beta \in \RR$.
 \end{lemma}
 
-\begin{lemma}\label{lemma:fac_of_p_in_p_th_root}
-	Let $p$ be a prime and $n=p^k$. Then \[p=u(1-\zeta_n)^{\varphi(n)}\] where $u \in \ZZ[\zeta_n]^{\times}$.
+\begin{lemma}\label{lemma:sum_pow_unit}
+	Let $n$ be a positive integer and let $\zeta_n$ be an $n$-th root of unity. Show that if $k$ is coprime to $n$ then \[1+\zeta_n+\cdots+\zeta_n^{k-1}\] is a unit in $\ZZ[\zeta_n]$ with inverse $\frac{1-\zeta_n}{1-\zeta_n^k}$. 
 \end{lemma}
 
 \begin{lemma}\label{lemma:ideals_mult_to_power}
@@ -256,14 +256,14 @@ The proof is classical.
 
 \begin{lemma}\label{lem:flt_fact_2}
 	\lean{flt_fact_2}
-	\uses{lemma:fac_of_p_in_p_th_root}
+	\uses{lemma:sum_pow_unit}
 	\leanok
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $x, y \in \ZZ$ coprime.
 
 	 For $i \neq j$ we can write \[(\zeta_p^i-\zeta_p^j)=u(1-\zeta_p)\] with $u$ a unit in $\ZZ[\zeta_p]$. From this it follows that the ideals \[(x+y),(x+\zeta_py),(x+\zeta_p^2y),\dots,(x+\zeta_p^{p-1}y)\] are pairwise coprime.
 \end{lemma}
 \begin{proof}
-	 Lemma \ref{lemma:fac_of_p_in_p_th_root} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. We know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_+p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
+	 Lemma \ref{lemma:sum_pow_unit} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. We know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_+p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
 \end{proof}
 
 \begin{lemma}\label{lem:flt_fact_3}
@@ -295,7 +295,7 @@ The proof is classical.
 \end{proof}
 
 \begin{lemma}\label{lemma:may_assume}
-	\uses{lemma:unit_lemma,lemma:fac_of_p_in_p_th_root,lemma:ideals_mult_to_power,theorem:ring_of_ints_of_cyclo}
+	\uses{lemma:unit_lemma,lemma:sum_pow_unit,lemma:ideals_mult_to_power,theorem:ring_of_ints_of_cyclo}
 
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$.  Assume that we have $x,y,z \in \ZZ$ with $\gcd(xyz,p)=1$ and such that \[x^p+y^p=z^p.\]
 
