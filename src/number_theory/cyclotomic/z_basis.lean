@@ -14,7 +14,7 @@ extension of `ℚ`. -/
 noncomputable def power_basis_int [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : power_basis ℤ (𝓞 K) :=
 let _ := is_integral_closure_adjoing_singleton_of_prime_pow hζ in by exactI
- (adjoin.power_basis' (algebra_map ℤ K).injective_int (hζ.is_integral (p ^ k).pos)).map
+ (adjoin.power_basis' (hζ.is_integral (p ^ k).pos)).map
  (is_integral_closure.equiv ℤ (adjoin ℤ ({ζ} : set K)) K (𝓞 K))
 
 @[simp] lemma power_basis_int_gen [hcycl : is_cyclotomic_extension {p ^ k} ℚ K]
