@@ -245,7 +245,7 @@ begin
     ← intermediate_field.finrank_eq_finrank_subalgebra],
   convert submodule.finrank_le (ℚ⟮x⟯.to_subalgebra.to_submodule : submodule _ _),
   have : minpoly ℚ x = (minpoly ℤ x).map (algebra_map ℤ ℚ),
-  from minpoly.gcd_domain_eq_field_fractions ℚ hx,
+  from minpoly.gcd_domain_eq_field_fractions' ℚ hx,
   rw [this, nat_degree_map_eq_of_injective _],
   exact is_fraction_ring.injective ℤ ℚ,
 end
@@ -259,7 +259,7 @@ lemma minpoly_coeff_le_of_all_abs_eq_one (hx : x ∈ {x : K | ∀ (φ : K →+* 
 begin
   by_cases hi : i ≤ (minpoly ℤ x).nat_degree,
   { have h_mins : minpoly ℚ x = (map (algebra_map ℤ ℚ) (minpoly ℤ x)),
-    from minpoly.gcd_domain_eq_field_fractions ℚ hxi,
+    from minpoly.gcd_domain_eq_field_fractions' ℚ hxi,
     have h_degree : (minpoly ℚ x).nat_degree = (minpoly ℤ x).nat_degree,
     { rw ( _ : (minpoly ℤ x).nat_degree = (map (algebra_map ℤ ℚ) (minpoly ℤ x)).nat_degree),
       rwa h_mins,

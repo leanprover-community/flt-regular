@@ -40,8 +40,7 @@ extension of `ℚ`. -/
 noncomputable def power_basis_sub_one_int [is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : power_basis ℤ (𝓞 K) :=
 let _ := is_cyclotomic_extension.number_field {p ^ k} ℚ K in by exactI
-  power_basis.of_gen_mem_adjoin' (algebra_map ℤ (𝓞 K)).injective_int (power_basis_int hζ)
-  hζ.sub_one_int_is_integral
+  power_basis.of_gen_mem_adjoin' (power_basis_int hζ) hζ.sub_one_int_is_integral
 begin
   simp only [power_basis_int_gen],
   have := subalgebra.add_mem _
