@@ -323,6 +323,7 @@ begin
     have := x.prop.le,
     simp_rw [hφn, rat.power_basis_int'_dim, nat.totient_prime hp] at this,
     exact this.trans tsub_le_self },
+
   -- enjoy coercion hell
   sorry,
 end
