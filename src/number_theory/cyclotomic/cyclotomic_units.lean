@@ -174,7 +174,7 @@ begin
   exact hp,
 end
 
-lemma zeta_pow_sub_eq_unit_zeta_sub_one {p k i j : ℕ} {ζ : A} (hn : 2 ≤ p) (hp : p.prime )
+lemma zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A} (hn : 2 ≤ p) (hp : p.prime )
   (hi : i < p) (hj : j < p) (hij : i ≠ j) (hζ : is_primitive_root ζ p) :
   ∃ (u : Aˣ), (ζ^i - ζ^j ) = u * (1- ζ) :=
 begin
@@ -230,8 +230,6 @@ begin
 
 
 end
-
-
 
 /-
 def unitlem2 {n k : ℕ} {ζ : A} (hk : nat.coprime n k)
