@@ -396,9 +396,9 @@ begin
   set a := (rat.power_basis_int' hζ).basis.repr with ha,
   set φn := (rat.power_basis_int' hζ).dim with hφn,
   simp_rw [power_basis.basis_eq_pow, rat.power_basis_int'_gen] at hu,
-  have hu' := congr_arg (int_gal (gal_conj K p)) hu,
+  have hu' := congr_arg (int_gal ↑(gal_conj K p)) hu,
   replace hu' :
-    (∑ (x : fin φn), (a u) x • (int_gal (gal_conj K p)) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ))) =
+    (∑ (x : fin φn), (a u) x • (int_gal ↑(gal_conj K p)) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ))) =
     (unit_gal_conj K p u),
   { refine eq.trans _ hu',
     rw map_sum,
@@ -407,12 +407,12 @@ begin
     congr' 1,
     rw map_zsmul },
   -- todo: probably swap `is_primitive_root.inv` and `is_primitive_root.inv'`.
-  have : ∀ x : fin φn, int_gal (gal_conj K p) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ)) =
+  have : ∀ x : fin φn, int_gal ↑(gal_conj K p) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ)) =
                         ⟨ζ⁻¹, hζ.inv'.is_integral p.pos⟩ ^ (x : ℕ),
   { intro x,
     ext,
     simp only [int_gal_apply_coe, map_pow, subsemiring_class.coe_pow, subtype.coe_mk],
-    rw [←map_pow, gal_conj_zeta_runity_pow hζ] },
+    rw [←map_pow, alg_equiv.coe_alg_hom, gal_conj_zeta_runity_pow hζ] },
     conv_lhs at hu' { congr, congr, funext, rw [this x] },
   set u' := (unit_gal_conj K p) u,
   replace hu := aux hζ hζ hu,
@@ -486,10 +486,10 @@ begin
   rw ← coe_coe,
   split,
   rw (_ : (↑(hζ.unit' ^ m)⁻¹ : K) = (hζ.unit' ^ m : K)⁻¹),
-  rw hz,
+  rw [map_mul, hz],
   have hzz := unit_gal_conj_spec K p u,
-  rw hzz,
   simp only [coe_coe],
+  rw hzz,
   rw [←subalgebra.coe_pow, ←units.coe_pow, ←subalgebra.coe_mul, ←units.coe_mul],
   rw ← hy,
   simp only [subalgebra.coe_pow, subalgebra.coe_eq_zero, mul_eq_mul_left_iff,

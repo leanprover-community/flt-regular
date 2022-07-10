@@ -35,8 +35,8 @@ open polynomial
 --local notation `ζ` := zeta p ℚ KK
 
 /-- complex conjugation as a Galois automorphism -/
-def gal_conj : K →ₐ[ℚ] K :=
-↑((is_cyclotomic_extension.aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1))
+def gal_conj : K ≃ₐ[ℚ] K :=
+((is_cyclotomic_extension.aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1))
 
 variables {K p}
 
@@ -78,15 +78,14 @@ include hζ
 lemma embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (gal_conj K p x) :=
 begin
   -- dependent type theory is my favourite
-  rw [←ring_hom.comp_apply, ←alg_hom.coe_to_ring_hom, ←ring_hom.comp_apply],
+  change (ring_hom.comp conj φ x) = (φ.comp $ ↑(gal_conj K p)) x,
   revert x,
   suffices : φ (gal_conj K p ζ) = conj (φ ζ),
   { rw ←function.funext_iff,
     dsimp only,
     congr' 1,
-    symmetry,
     apply (hζ.power_basis ℚ).rat_hom_ext,
-    { exact this },
+    { exact this.symm },
     { exact algebra_rat } },
   rw [conj_norm_one, ←ring_hom.map_inv, gal_conj_zeta_runity hζ],
   refine complex.norm_eq_one_of_pow_eq_one _ p.ne_zero,
@@ -95,13 +94,10 @@ end
 
 omit hζ
 
--- `gal_conj` not being an `alg_equiv` makes me very sad
--- but I was determined to make this proof work!
-lemma gal_conj_idempotent : (gal_conj K p).comp (gal_conj K p) = (alg_hom.id ℚ K) :=
+-- this proof makes me happy inside
+lemma gal_conj_idempotent : (gal_conj K p).trans (gal_conj K p) = alg_equiv.refl :=
 begin
-  convert_to ↑(((aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1)) *
-               ((aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1))) = alg_hom.id ℚ K,
-  rw [←map_mul, neg_one_mul, neg_neg, map_one],
+  rw [←alg_equiv.aut_mul, gal_conj, ←map_mul, neg_one_mul, neg_neg, map_one],
   refl,
 end
 
@@ -132,19 +128,19 @@ units.map $ int_gal σ
 def unit_gal_conj : RRˣ →* RRˣ :=
 units_gal (gal_conj K p)
 
-lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p u = unit_gal_conj K p u := rfl
+lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p (u : 𝓞 K) = ↑(unit_gal_conj K p u : 𝓞 K) := rfl
 
 lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj K p u)⁻¹ = (unit_gal_conj K p u⁻¹) := rfl
 
 lemma unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
   complex.abs (φ (u * (unit_gal_conj K p u)⁻¹)) = 1 :=
 begin
-  rw [map_mul, complex.abs.is_absolute_value.abv_mul, ring_hom.map_inv,
-      complex.abs_inv, ←unit_gal_conj_spec, ←embedding_conj $ zeta_spec p ℚ K],
+  rw [map_mul, complex.abs.is_absolute_value.abv_mul, ring_hom.map_inv, complex.abs_inv,
+      coe_coe (unit_gal_conj K p u), ←unit_gal_conj_spec, ←embedding_conj $ zeta_spec p ℚ K],
   simp only [coe_coe, complex.abs_conj, mul_inv_cancel, ne.def, complex.abs_eq_zero,
              ring_hom.map_eq_zero, add_submonoid_class.coe_eq_zero, units.ne_zero, not_false_iff]
 end
 
 lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj K p (unit_gal_conj K p u)) = u :=
-units.ext $ subtype.ext $ by erw [←unit_gal_conj_spec, ←unit_gal_conj_spec, ←alg_hom.comp_apply,
-                                  gal_conj_idempotent, alg_hom.id_apply, coe_coe]
+units.ext $ subtype.ext $ by rw [←unit_gal_conj_spec, ←unit_gal_conj_spec, ←alg_equiv.trans_apply,
+                                 gal_conj_idempotent, alg_equiv.coe_refl, id]
