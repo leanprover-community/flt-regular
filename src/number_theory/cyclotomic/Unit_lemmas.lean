@@ -4,6 +4,7 @@ import ring_theory.roots_of_unity
 import number_theory.number_field
 import number_theory.cyclotomic.z_basis
 import number_theory.cyclotomic.zeta_sub_one_prime
+import data.nat.prime_extras
 
 variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
@@ -14,9 +15,6 @@ open cyclotomic_ring
 open number_field polynomial
 
 local notation `RR` := 𝓞 K
-
-lemma nat.prime.odd {p : ℕ} (hp : p.prime) (h : p ≠ 2) : odd p :=
-hp.eq_two_or_odd'.resolve_left h
 
 --The whole file is now for a generic primitive root ζ, quite a lot of names should be changed.
 
