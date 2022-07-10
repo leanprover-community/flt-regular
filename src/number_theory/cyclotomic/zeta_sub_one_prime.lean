@@ -75,4 +75,11 @@ begin
   simp [← ring_equiv.coe_to_ring_hom, ring_hom.eq_int_cast]
 end
 
+lemma zeta_sub_one_prime' [h : is_cyclotomic_extension {p} ℚ K] (hζ : is_primitive_root ζ p)
+  (hodd : p ≠ 2) : prime (⟨ζ - 1, hζ.sub_one_mem_ring_of_integers⟩ : R) :=
+begin
+  convert @zeta_sub_one_prime K _ _ p 0 _ _ (by { convert h, rw [zero_add, pow_one] }) _ hodd,
+  simpa,
+end
+
 end is_cyclotomic_extension.rat
