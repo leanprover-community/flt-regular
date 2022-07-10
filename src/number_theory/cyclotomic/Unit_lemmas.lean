@@ -63,67 +63,46 @@ noncomputable theory
 @[simps {attrs := [`simp, `norm_cast]}] def is_primitive_root.unit' {p : ℕ+} {K : Type*}
   [field K] {ζ : K} (hζ : is_primitive_root ζ p) : (𝓞 K)ˣ :=
 { val := (⟨ζ, hζ.is_integral' ℤ p.pos⟩ : 𝓞 K),
-  inv:= (⟨ζ ^ ((p - 1): ℕ), subalgebra.pow_mem _ (hζ.is_integral' ℤ p.pos) _⟩ : 𝓞 K),
-  val_inv :=
-  begin
-    ext1,
-    dsimp at *,
-    rw [pow_sub₀, hζ.pow_eq_one, pow_one, one_mul],
-    apply mul_inv_cancel,
-    any_goals { apply hζ.ne_zero p.ne_zero },
-    exact pnat.one_le p
-  end,
-  inv_val:=
-  begin
-    ext1,
-    dsimp at *,
-    rw [pow_sub₀, hζ.pow_eq_one, pow_one, one_mul],
-    apply inv_mul_cancel,
-    any_goals { apply hζ.ne_zero p.ne_zero },
-    exact pnat.one_le p
- end }
+  inv:= (⟨ζ⁻¹, hζ.inv'.is_integral' ℤ p.pos⟩ : 𝓞 K),
+  val_inv := subtype.ext $ mul_inv_cancel $ hζ.ne_zero p.ne_zero,
+  inv_val := subtype.ext $ inv_mul_cancel $ hζ.ne_zero p.ne_zero }
 
-@[norm_cast] lemma is_primitive_root.unit'_coe : (hζ.unit' : K) = ζ := rfl
+local notation `ζ1` := (hζ.unit' - 1 : 𝓞 K)
+local notation `I` := ((ideal.span ({ζ1} : set (𝓞 K)) : ideal (𝓞 K)))
 
-lemma is_primitive_root.unit_pow : hζ.unit' ^ (p : ℤ) = 1 :=
-begin
-simp_rw is_primitive_root.unit',
-ext1,
-ext1,
-simp,
-apply hζ.pow_eq_one,
-end
+-- I don't know if this is so good: I've found the `simps` version (`coe_unit'_coe`) better.
+-- Furthermore, this takes the name for the `is_primitive_root` one, which is super important.
+-- This may be worth having with an obscure name for `norm_cast`.
+--@[norm_cast] lemma is_primitive_root.unit'_coe : (hζ.unit' : K) = ζ := rfl
+
+lemma is_primitive_root.unit'_zpow : hζ.unit' ^ (p : ℤ) = 1 :=
+units.ext $ subtype.ext $ by simpa using hζ.pow_eq_one
+
+lemma is_primitive_root.unit'_pow : hζ.unit' ^ (p : ℕ) = 1 :=
+units.ext $ subtype.ext $ by simpa using hζ.pow_eq_one
 
 lemma zeta_runity_pow_even (hpo : odd (p : ℕ)) (n : ℕ) : ∃ (m : ℕ),
   hζ.unit' ^ n = hζ.unit' ^ (2 * m) :=
 begin
-  by_cases n = 0,
-  use 0,
-  rw h,
-  simp only [mul_zero],
-  rw odd at hpo,
+  rcases eq_or_ne n 0 with rfl | h,
+  { use 0,
+    simp only [mul_zero] },
   obtain ⟨r, hr⟩ := hpo,
-  have he : 2*(r+1)*n=p*n+n, by {rw hr, linarith,},
-  use (r+1)*n,
-  rw ←mul_assoc,
-  simp_rw he,
-  rw pow_add,
-  have h1 : hζ.unit' ^ ((p : ℤ) * n) = 1,
-  { rw [zpow_mul, hζ.unit_pow, one_zpow] },
-  norm_cast at h1,
-  simp_rw h1,
-  simp only [one_mul],
+  have he : 2 * (r + 1) * n = p * n + n, by {rw hr, ring},
+  use (r + 1) * n,
+  rw [←mul_assoc, he, pow_add],
+  convert (one_mul _).symm,
+  rw [pow_mul, hζ.unit'_pow, one_pow]
 end
 
 variables [number_field K]
 
-lemma is_primitive_root.unit'_coe_2 : is_primitive_root (hζ.unit' : RR) p :=
+lemma is_primitive_root.unit'_coe : is_primitive_root (hζ.unit' : RR) p :=
 begin
  have z1 := hζ,
  have : (algebra_map RR K) (hζ.unit' : RR) = ζ := rfl,
  rw ← this at z1,
- apply is_primitive_root.of_map_of_injective z1,
- apply is_fraction_ring.injective,
+ exact z1.of_map_of_injective (is_fraction_ring.injective _ _),
 end
 
 variable (p)
@@ -193,10 +172,59 @@ begin
   simp [h]
 end
 
+lemma eq_one_mod_one_sub {R} [comm_ring R] {t : R} :
+  algebra_map R (R ⧸ ideal.span ({t - 1} : set R)) t = 1 :=
+begin
+  rw [←map_one $ algebra_map R $ R ⧸ ideal.span ({t - 1} : set R), ←sub_eq_zero, ←map_sub,
+      ideal.quotient.algebra_map_eq, ideal.quotient.eq_zero_iff_mem],
+  apply ideal.subset_span,
+  exact set.mem_singleton _
+end
+
+lemma is_primitive_root.eq_one_mod_sub_of_pow {R} [comm_ring R] [is_domain R] {ζ : R}
+  (hζ : is_primitive_root ζ p) {μ : R} (hμ : μ ^ (p : ℕ) = 1) :
+  algebra_map R (R ⧸ ideal.span ({ζ - 1} : set R)) μ = 1 :=
+begin
+  obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ p.pos,
+  rw [map_pow, eq_one_mod_one_sub, one_pow]
+end
+
+lemma aux {t} {l : 𝓞 K} {f : fin t → ℤ} {μ : K} (hμ : is_primitive_root μ p)
+          (h : ∑ (x : fin t), f x • (⟨μ, hμ.is_integral p.pos⟩ : 𝓞 K) ^ (x : ℕ) = l) :
+  algebra_map (𝓞 K) (𝓞 K ⧸ I) l = ∑ (x : fin t), f x :=
+begin
+  apply_fun algebra_map (𝓞 K) ((𝓞 K) ⧸ I) at h,
+  simp only [map_sum, map_zsmul] at h,
+  convert h.symm,
+  funext x,
+  convert (zsmul_one (f x)).symm,
+  obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ.pow_eq_one p.pos,
+  convert_to (1 : (𝓞 K) ⧸ I) ^ (x : ℕ) = 1,
+  swap, { exact one_pow _ },
+  rw [one_pow, hζ.unit'_coe.eq_one_mod_sub_of_pow], -- this file seriously needs tidying
+  ext,
+  push_cast,
+  rw [subtype.coe_mk, ←pow_mul, ←pow_mul, ←mul_rotate', pow_mul, hζ.pow_eq_one, one_pow]
+end
+
+lemma is_primitive_root.p_mem_one_sub_zeta [hp : fact ((p : ℕ).prime)] :
+  (p : 𝓞 K) ∈ I :=
+begin
+  classical,
+  have key : _ = (p : 𝓞 K) := @@polynomial.eval_one_cyclotomic_prime _ hp,
+  rw [cyclotomic_eq_prod_X_sub_primitive_roots hζ.unit'_coe, eval_prod] at key,
+  simp only [eval_sub, eval_X, eval_C] at key,
+  have : {↑hζ.unit'} ⊆ primitive_roots p (𝓞 K),
+  { simpa using hζ.unit'_coe },
+  rw [←finset.prod_sdiff this, finset.prod_singleton] at key,
+  rw ←key,
+  have := I .neg_mem_iff.mpr (ideal.subset_span (set.mem_singleton ζ1)),
+  rw neg_sub at this,
+  exact ideal.mul_mem_left _ _ this,
+end
+
 variable [is_cyclotomic_extension {p} ℚ K]
 
--- please speed this up
--- is it faster now?
 lemma roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ}
   (hl : l ∈ n.divisors) (hx : x ∈ RR) (hhl : (cyclotomic l RR).is_root ⟨x, hx⟩)
   {ζ : K} (hζ : is_primitive_root ζ p) : l ∣ 2 * p :=
@@ -261,7 +289,7 @@ begin
   by {obtain ⟨l, hl, hhl⟩ := ((_root_.is_root_of_unity_iff hn0 _).1 hxu),
   have hlp := roots_of_unity_in_cyclo_aux hl hx hhl hζ,
   simp only [is_root.def] at hhl,
-  have isPrimRoot : is_primitive_root (hζ.unit' : RR) p := hζ.unit'_coe_2,
+  have isPrimRoot : is_primitive_root (hζ.unit' : RR) p := hζ.unit'_coe,
   have hxl : (⟨x, hx⟩: RR)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl,
     simp only [nat.mem_divisors, dvd_refl, ne.def, true_and],
    apply (pos_iff_ne_zero.1 (nat.pos_of_mem_divisors hl))},
@@ -293,24 +321,8 @@ begin
   rw [subalgebra.coe_mul],
   congr' 1,
   { push_cast },
-  { push_cast }
-end
-
-lemma eq_one_mod_one_sub {R} [comm_ring R] {t : R} :
-  algebra_map R (R ⧸ ideal.span ({t - 1} : set R)) t = 1 :=
-begin
-  rw [←map_one $ algebra_map R $ R ⧸ ideal.span ({t - 1} : set R), ←sub_eq_zero, ←map_sub,
-      ideal.quotient.algebra_map_eq, ideal.quotient.eq_zero_iff_mem],
-  apply ideal.subset_span,
-  exact set.mem_singleton _
-end
-
-lemma is_primitive_root.eq_one_mod_sub_of_pow {R} [comm_ring R] [is_domain R] {ζ : R}
-  (hζ : is_primitive_root ζ p) {μ : R} (hμ : μ ^ (p : ℕ) = 1) :
-  algebra_map R (R ⧸ ideal.span ({ζ - 1} : set R)) μ = 1 :=
-begin
-  obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ p.pos,
-  rw [map_pow, eq_one_mod_one_sub, one_pow]
+  { rw coe_coe,
+    push_cast }
 end
 
 lemma fuck_norm_cast (h : p ≠ 2) : (p : ℕ) ≠ 2 :=
@@ -320,27 +332,6 @@ begin
 end
 
 include hζ
-
-local notation `ζ1` := (hζ.unit' - 1 : 𝓞 K)
-local notation `I` := ((ideal.span ({ζ1} : set (𝓞 K)) : ideal (𝓞 K)))
-
-lemma aux {t} {l : 𝓞 K} {f : fin t → ℤ} {μ : K} (hμ : is_primitive_root μ p)
-          (h : ∑ (x : fin t), f x • (⟨μ, hμ.is_integral p.pos⟩ : 𝓞 K) ^ (x : ℕ) = l) :
-  algebra_map (𝓞 K) (𝓞 K ⧸ I) l = ∑ (x : fin t), f x :=
-begin
-  apply_fun algebra_map (𝓞 K) ((𝓞 K) ⧸ I) at h,
-  simp only [map_sum, map_zsmul] at h,
-  convert h.symm,
-  funext x,
-  convert (zsmul_one (f x)).symm,
-  obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ.pow_eq_one p.pos,
-  convert_to (1 : (𝓞 K) ⧸ I) ^ (x : ℕ) = 1,
-  swap, { exact one_pow _ },
-  rw [one_pow, hζ.unit'_coe_2.eq_one_mod_sub_of_pow], -- this file seriously needs tidying
-  ext,
-  push_cast,
-  rw [subtype.coe_mk, ←pow_mul, ←pow_mul, ←mul_rotate', pow_mul, hζ.pow_eq_one, one_pow]
-end
 
 lemma is_primitive_root.is_prime_one_sub_zeta [hp : fact ((p : ℕ).prime)] (h : p ≠ 2) :
   I .is_prime := -- this doesn't work without the space🤮
@@ -354,28 +345,10 @@ begin
   exact hp.1.ne_one (hζ.unique is_primitive_root.one)
 end
 
-.
-
-lemma is_primitive_root.p_mem_one_sub_zeta [hp : fact ((p : ℕ).prime)] (h : p ≠ 2) :
-  (p : 𝓞 K) ∈ I :=
-begin
-  classical,
-  have key : _ = (p : 𝓞 K) := @@polynomial.eval_one_cyclotomic_prime _ hp,
-  rw [cyclotomic_eq_prod_X_sub_primitive_roots hζ.unit'_coe_2, eval_prod] at key,
-  simp only [eval_sub, eval_X, eval_C] at key,
-  have : {↑hζ.unit'} ⊆ primitive_roots p (𝓞 K),
-  { simpa using hζ.unit'_coe_2 },
-  rw [←finset.prod_sdiff this, finset.prod_singleton] at key,
-  rw ←key,
-  have := I .neg_mem_iff.mpr (ideal.subset_span (set.mem_singleton ζ1)),
-  rw neg_sub at this,
-  exact ideal.mul_mem_left _ _ this,
-end
-
 lemma is_primitive_root.two_not_mem_one_sub_zeta [hp : fact ((p : ℕ).prime)] (h : p ≠ 2) :
   (2 : 𝓞 K) ∉ I :=
 begin
-  have hpm := hζ.p_mem_one_sub_zeta h,
+  have hpm := hζ.p_mem_one_sub_zeta,
   obtain ⟨k, hk⟩ := hp.1.odd (fuck_norm_cast h),
   apply_fun (coe : ℕ → 𝓞 K) at hk,
   rw [nat.cast_add, nat.cast_mul, nat.cast_two, nat.cast_one, ←coe_coe, add_comm] at hk,
@@ -421,9 +394,9 @@ begin
   -- subst H seems to be broken
   nth_rewrite 0 H at hu,
   push_cast at hu,
-  rw [map_mul, map_neg, hζ.unit'_coe_2.eq_one_mod_sub_of_pow, neg_one_mul] at hu,
+  rw [map_mul, map_neg, hζ.unit'_coe.eq_one_mod_sub_of_pow, neg_one_mul] at hu,
   swap,
-  { rw [←pow_mul, mul_comm, pow_mul, hζ.unit'_coe_2.pow_eq_one, one_pow] },
+  { rw [←pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one, one_pow] },
   have key := hu'.trans hu.symm,
   have hI := hζ.is_prime_one_sub_zeta h,
   rw [←sub_eq_zero, sub_neg_eq_add, ←map_add, ←two_mul, ideal.quotient.algebra_map_eq,
@@ -503,8 +476,8 @@ begin
   simp,
   rw [← coe_life, units.coe_pow],
   simp only [subalgebra.coe_pow, units.coe_pow, ← inv_pow],
-  rw [mul_assoc, ← mul_pow, ← coe_coe hζ.unit', hζ.unit'_coe, inv_mul_cancel (hζ.ne_zero p.ne_zero),
-    one_pow, mul_one],
+  rw [mul_assoc, ←mul_pow, hζ.coe_unit'_coe, inv_mul_cancel (hζ.ne_zero p.ne_zero),
+      one_pow, mul_one],
 end
 
 /-
