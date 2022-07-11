@@ -233,8 +233,8 @@ def unitlem2 {n k : ℕ} {ζ : A} (hk : nat.coprime n k)
 (hζ : is_primitive_root ζ n) : Aˣ :=
 { val := (∑ (i : finset.range k), ζ^(i : ℕ)),
   inv := (ζ-1)  ,
-  val_inv := sorry,
-  inv_val := sorry,
+  val_inv := admit,
+  inv_val := admit,
 
 }
 

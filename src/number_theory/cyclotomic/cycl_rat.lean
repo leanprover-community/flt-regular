@@ -9,8 +9,6 @@ variables (n : ℕ+) (L : Type u) [field L] [char_zero L]
 
 namespace is_cyclotomic_extension
 
-instance : is_integral_closure (cyclotomic_ring n ℤ ℚ) ℤ (cyclotomic_field n ℚ) := sorry
-
 end is_cyclotomic_extension
 
 section int_facts
@@ -24,8 +22,9 @@ local notation `KK` := cyclotomic_field n ℚ
 local notation `RR` := 𝓞 (cyclotomic_field n ℚ)
 
 --A.K.A theorem:FLT_facts 3
+-- Eric: is this superseded by `exists_int_sub_pow_prime_dvd`?
 lemma flt_fact_3 [fact (n : ℕ).prime] (a : RR) :
-  ∃ (m : ℤ), (a ^ (n : ℕ) - m) ∈ ideal.span ({n} : set RR) := sorry
+  ∃ (m : ℤ), (a ^ (n : ℕ) - m) ∈ ideal.span ({n} : set RR) := by admit
 
 open ideal is_cyclotomic_extension
 
@@ -76,28 +75,28 @@ begin
   { intros r,
     use r ^ (n : ℕ),
     simp, },
-  { rintros x y ⟨hx_m, hx_p⟩ ⟨hy_m, hy_p⟩,
+  { rintros x y ⟨b, hb⟩ ⟨c, hc⟩,
     obtain ⟨r, hr⟩ := add_pow_prime_eq_pow_add_pow_add_prime_mul n x y,
     rw [hr],
-    existsi hx_m + hy_m,
+    use c + b,
     push_cast,
-    rw sub_add_eq_sub_sub, -- horrible calculation time
-    rw sub_eq_add_neg,
-    rw sub_eq_add_neg,
-    rw add_comm _ (↑↑n * r),
-    rw add_assoc,
-    rw add_assoc,
+    rw [sub_add_eq_sub_sub, sub_eq_add_neg, sub_eq_add_neg, add_comm _ (↑↑n * r),
+        add_assoc, add_assoc],
     apply' ideal.add_mem _ _,
-    sorry, -- TODO this is just a silly computation should be easy from here.
-    rw mem_span_singleton, -- TODO probably a lemma
-    sorry, -- hopefully easy?
-   },
-  { rintros x y ⟨hx_m, hx_p⟩ ⟨hy_m, hy_p⟩,
+    { convert ideal.add_mem _ hb hc using 1,
+      ring },
+    { rw [mem_span_singleton, coe_coe],
+      exact dvd_mul_right _ _ } },
+  { rintros x y ⟨b, hb⟩ ⟨c, hc⟩,
     rw mul_pow,
-    simp,
-    use hx_m * hy_m,
-    sorry, -- TODO also shouldn't be too hard a calculation
-  },
+    use b * c,
+    have := ideal.mul_mem_left _ (x ^ (n : ℕ)) hc,
+    rw [mul_sub] at this,
+    rw [←ideal.quotient.eq_zero_iff_mem, map_sub] at this ⊢ hb,
+    convert this using 2,
+    rw [int.cast_mul, _root_.map_mul, _root_.map_mul],
+    congr' 1,
+    exact (sub_eq_zero.mp hb).symm }
 end
 
 -- Eric: I thought Riccardo's new work meant we had this?
