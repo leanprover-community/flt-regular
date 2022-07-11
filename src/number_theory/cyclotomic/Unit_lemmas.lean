@@ -9,7 +9,7 @@ import data.nat.prime_extras
 variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
 
-open_locale big_operators non_zero_divisors number_field pnat cyclotomic
+open_locale big_operators non_zero_divisors number_field cyclotomic
 open is_cyclotomic_extension
 open cyclotomic_ring
 open number_field polynomial
