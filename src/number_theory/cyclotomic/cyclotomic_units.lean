@@ -10,11 +10,10 @@ import ring_theory.polynomial.cyclotomic.eval
 import ready_for_mathlib.ideal_stuff
 
 import tactic.may_assume
-import number_theory.pnat
 
 noncomputable theory
 
-open_locale big_operators non_zero_divisors number_field pnat
+open_locale big_operators non_zero_divisors number_field
 open number_field polynomial finset module units fractional_ideal submodule
 
 universe variables u v w z
@@ -78,11 +77,9 @@ begin
  apply zeta_integral,
 end
 
-
 local attribute [instance] cyclotomic_field.algebra_base
 
---zeta should be in `(cyclotomic_ring n A K)` by definition.
-lemma zeta_mem_base  [ne_zero (⥉n : K)] : ∃ (x : (cyclotomic_ring n A K)), algebra_map
+lemma zeta_mem_base [ne_zero ((n : ℕ) : K)] : ∃ (x : (cyclotomic_ring n A K)), algebra_map
   (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta n K (cyclotomic_field n K) :=
 begin
   have := ne_zero.of_no_zero_smul_divisors K (cyclotomic_field n K) n,
