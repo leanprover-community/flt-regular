@@ -23,13 +23,13 @@ theorem flt_regular_case_one_main {p a b c : ℕ} [fact p.prime] (hp : is_regula
   (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : false :=
 begin
   have h_prime : p.prime := fact.out _,
-  let pp : ℕ+ := ⟨p, h_prime.pos⟩,
+  unfreezingI { lift p to ℕ+ using h_prime.pos },
   have := pow_add_pow_eq_prod_add_zeta_runity_mul (nat.odd_iff.mp (h_prime.odd hp_ne_two))
-    (is_cyclotomic_extension.zeta_spec pp ℚ (cyclotomic_field pp ℚ)) a b,
+    (is_cyclotomic_extension.zeta_spec p ℚ (cyclotomic_field p ℚ)) a b,
   rw_mod_cast h at this,
   symmetry' at this,
   push_cast at this,
-  apply_fun span_singleton (cyclotomic_ring pp ℤ ℚ)⁰ at this,
+  apply_fun span_singleton (cyclotomic_ring p ℤ ℚ)⁰ at this,
   simp only [span_singleton_prod, ← span_singleton_pow] at this,
   sorry,
 end
