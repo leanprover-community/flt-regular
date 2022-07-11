@@ -62,18 +62,18 @@ instance {n} : is_cyclotomic_extension {n} ℤ (adjoin_root $ polynomial.cycloto
   begin
     obtain rfl : a = n := ha,
     use adjoin_root.root _,
-    sorry,
+    admit,
     --rw ←polynomial.is_root_cyclotomic_iff,
     -- I want to get `char_zero` automatically - surely quotienting by a pos-degree poly
     -- preserves characteristic, but I haven't given it too much thought (my idea: if you have
     -- an ideal of the form `(p)`, then all polys have degree ≥ `p`'s (bar `0`))
   end,
-  adjoin_roots := sorry }
+  adjoin_roots := admit }
 
 example {K L M} [comm_ring K] [comm_ring L] [comm_ring M] [algebra K L] [algebra K M]
   {n} [is_cyclotomic_extension {n} K L] [is_cyclotomic_extension {n} K M] : L ≃ₐ[K] M :=
 begin
-  sorry
+  admit
 end
 
 -/

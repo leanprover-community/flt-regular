@@ -7,6 +7,7 @@ import algebra.module.basic
 section resultant
 variables {R : Type*}
 open matrix polynomial
+open_locale polynomial
 -- TODO redefine this in terms of a matrix.from_column_blocks, or maybe dont as types of
 -- indices will be weird
 noncomputable theory
@@ -89,10 +90,10 @@ end
 -- -4ac^3 - 27 a^2d^2 = -(n-1)^(n-1)a c ^n - n^n a^(n-1) b^(n-1)
 
 -- example of computing this thing
-example : false :=
+example : discriminant' ((X : ℚ[X]) ^ 5 + -X + -1) = 3381 :=
 begin
   have := @discriminant'_mul_X_pow_add_C_mul_X_add_C _ _ (1 : ℚ) (-1) (-1) one_ne_zero 5,
   norm_num at this,
-  sorry,
+  exact this,
 end
 end resultant
