@@ -28,6 +28,7 @@ open_locale classical
 -- set_option trace.class_instances true
 -- set_option pp.all true
 
+-- can we just make this a pnat definition please lord
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
 def is_regular_number : Prop :=
 n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
@@ -41,14 +42,38 @@ def is_Bernoulli_regular : Prop :=
 def is_super_regular : Prop :=
  is_regular_number p ∧ is_Bernoulli_regular p
 
--- some nice results about class number of isom rings needed I guess
--- example : is_regular_prime 2 := -- LOOL good luck
--- begin
---   rw is_regular_prime,
---   delta cyclotomic_field,
---   delta cyclotomic,
---   simp,
---   split_ifs,
---   simpa using h,
+section two_regular
 
--- end
+variables (A K : Type*) [comm_ring A] [is_domain A] [field K] [algebra A K] [is_fraction_ring A K]
+
+local attribute [instance] cyclotomic_ring.algebra_base cyclotomic_field.algebra_base
+
+def cyclotomic_ring_two_equiv_bot : cyclotomic_ring 2 A K ≃ₐ[A] A :=
+begin
+  change (algebra.adjoin _ _) ≃ₐ[A] A,
+  refine alg_equiv.trans _ (algebra.bot_equiv_of_injective $ no_zero_smul_divisors.algebra_map_injective A $ cyclotomic_field 2 K),
+  apply subalgebra.equiv_of_eq,
+  rw [eq_bot_iff, algebra.adjoin_le_iff],
+  convert_to ({1, -1} : set $ cyclotomic_field 2 K) ⊆ (⊥ : subalgebra A $ cyclotomic_field 2 K),
+  { ext, simp },
+  rintro x (rfl | hx),
+  { exact subalgebra.one_mem' _ },
+  rw set.mem_singleton_iff at hx,
+  rw [hx, set_like.mem_coe],
+  exact subalgebra.neg_mem _ (subalgebra.one_mem _)
+end
+
+example : is_regular_number 2 :=
+begin
+  rw is_regular_number,
+  convert coprime_one_right _,
+  suffices : is_principal_ideal_ring (cyclotomic_ring 2 ℤ ℚ), --TC does't wanna play ball
+  { convert card_class_group_eq_one_iff.mpr _,
+    apply_instance,
+    exact @@is_principal_ideal_ring.is_dedekind_domain _ _ _ this,
+    exact this },
+  let f := (cyclotomic_ring_two_equiv_bot ℤ ℚ).symm.to_ring_equiv,
+  exact is_principal_ideal_ring.of_surjective f.to_ring_hom f.surjective
+end
+
+end two_regular
