@@ -48,19 +48,25 @@ variables (A K : Type*) [comm_ring A] [is_domain A] [field K] [algebra A K] [is_
 
 local attribute [instance] cyclotomic_ring.algebra_base cyclotomic_field.algebra_base
 
+/-- The second cyclotomic field is equivalent to the base field. -/
+def cyclotomic_field_two_equiv_bot : cyclotomic_field 2 K ≃ₐ[K] K :=
+begin
+  suffices : is_splitting_field K K (cyclotomic 2 K),
+  { exactI (is_splitting_field.alg_equiv K $ cyclotomic 2 K).symm },
+  exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (ring_hom.id K) (-1), by simp⟩,
+end
+
+/-- The second cyclotomic ring is equivalent to the base ring. -/
 def cyclotomic_ring_two_equiv_bot : cyclotomic_ring 2 A K ≃ₐ[A] A :=
 begin
-  change (algebra.adjoin _ _) ≃ₐ[A] A,
   refine alg_equiv.trans _ (algebra.bot_equiv_of_injective $ no_zero_smul_divisors.algebra_map_injective A $ cyclotomic_field 2 K),
   apply subalgebra.equiv_of_eq,
   rw [eq_bot_iff, algebra.adjoin_le_iff],
-  convert_to ({1, -1} : set $ cyclotomic_field 2 K) ⊆ (⊥ : subalgebra A $ cyclotomic_field 2 K),
-  { ext, simp },
-  rintro x (rfl | hx),
-  { exact subalgebra.one_mem' _ },
-  rw set.mem_singleton_iff at hx,
-  rw [hx, set_like.mem_coe],
-  exact subalgebra.neg_mem _ (subalgebra.one_mem _)
+  intro x,
+  simp only [pnat.coe_bit0, pnat.one_coe, sq_eq_one_iff, set_like.mem_coe],
+  rintro (rfl | rfl),
+  { exact subalgebra.one_mem _ },
+  { exact subalgebra.neg_mem _ (subalgebra.one_mem _) }
 end
 
 example : is_regular_number 2 :=
