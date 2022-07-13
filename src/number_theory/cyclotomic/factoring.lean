@@ -36,14 +36,6 @@ begin
   simpa [homogenization_prod, algebra_map_eq, hpos],
 end
 
--- PR'd to replace `nat.pos_of_odd` in #15186.
-lemma odd.pos {M} [canonically_ordered_comm_semiring M] [nontrivial M] : ∀ {n : M}, odd n → 0 < n
-| _ ⟨k, rfl⟩ :=
-begin
-  rw [pos_iff_ne_zero, ne.def, add_eq_zero_iff, not_and'],
-  exact λ h, (one_ne_zero h).elim
-end
-
 /-- If there is a primitive `n`th root of unity in `K` and `n` is odd, then
 `X ^ n + Y ^ n = ∏ (X + μ Y)`, where `μ` varies over the `n`-th roots of unity. -/
 lemma pow_add_pow_eq_prod_add_zeta_runity_mul {K : Type*} [comm_ring K] [is_domain K] {ζ : K}
