@@ -1,8 +1,11 @@
 
-import number_theory.class_number.finite
 import field_theory.splitting_field
-import number_theory.cyclotomic.class_group
 import number_theory.bernoulli
+import number_theory.class_number.finite
+import number_theory.class_number.admissible_abs
+import number_theory.cyclotomic.cycl_rat
+import number_theory.cyclotomic.rat
+
 
 /-!
 # Regular primes
@@ -19,23 +22,37 @@ noncomputable theory
 open nat polynomial
 
 open number_field
+open_locale classical number_field
+
+section safe_instances
+
+/- The idea of `open_locale cyclotomic` is that it provides some of these instances when needed,
+but sadly its implementation is so unsafe that using it here creates a lot of diamonds.
+We instead put some safe specialised instances here, and we can maybe look at generalising them
+later, when this is needed. Most results from here on genuinely only work for ℚ, so this is
+very fine for the moment. -/
+
+instance safe {p : ℕ+} := is_cyclotomic_extension.number_field {p} ℚ $ cyclotomic_field p ℚ
+instance safe' {p : ℕ+} := is_cyclotomic_extension.finite_dimensional {p} ℚ $ cyclotomic_field p ℚ
+
+instance cyclotomic_field.class_group_finite {p : ℕ+} :
+  fintype (class_group (𝓞 (cyclotomic_field p ℚ)) (cyclotomic_field p ℚ)) :=
+class_group.fintype_of_admissible_of_finite ℚ _ absolute_value.abs_is_admissible
+
+end safe_instances
 
 variables (n p : ℕ) [fact (0 < n)] [fact p.prime]
--- local attribute [priority 5, instance] rat.normed_field -- hack to avoid diamond?
 
-open_locale classical
--- set_option trace.type_context.is_def_eq true
--- set_option trace.class_instances true
--- set_option pp.all true
-
+-- note that this definition can be annoying to work with whilst #14984 isn't merged.
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
 def is_regular_number : Prop :=
-n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
-                                     (cyclotomic_field ⟨n, fact.out _⟩ ℚ)))
+n.coprime $ fintype.card $
+class_group (𝓞 $ cyclotomic_field ⟨n, fact.out _⟩ ℚ) $ cyclotomic_field ⟨n, fact.out _⟩ ℚ
+
 /-- A prime number is Bernoulli regular if it does not divide the numerator of any of
-the first `p-3` (non-zero) Bernoulli numbers-/
+the first `p - 3` (non-zero) Bernoulli numbers-/
 def is_Bernoulli_regular : Prop :=
-∀ i ∈ finset.range((p-3)/2), ((bernoulli 2*i).num : zmod p) ≠ 0
+∀ i ∈ finset.range((p - 3) / 2), ((bernoulli 2 * i).num : zmod p) ≠ 0
 
 /--A prime is super regular if its regular and Bernoulli regular.-/
 def is_super_regular : Prop :=
@@ -48,37 +65,45 @@ variables (A K : Type*) [comm_ring A] [is_domain A] [field K] [algebra A K] [is_
 local attribute [instance] cyclotomic_ring.algebra_base cyclotomic_field.algebra_base
 
 /-- The second cyclotomic field is equivalent to the base field. -/
-def cyclotomic_field_two_equiv_bot : cyclotomic_field 2 K ≃ₐ[K] K :=
+def cyclotomic_field_two_equiv : cyclotomic_field 2 K ≃ₐ[K] K :=
 begin
   suffices : is_splitting_field K K (cyclotomic 2 K),
   { exactI (is_splitting_field.alg_equiv K $ cyclotomic 2 K).symm },
   exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (ring_hom.id K) (-1), by simp⟩,
 end
 
-/-- The second cyclotomic ring is equivalent to the base ring. -/
-def cyclotomic_ring_two_equiv_bot : cyclotomic_ring 2 A K ≃ₐ[A] A :=
+.
+
+/-- Reinterpret a `ring_hom` as a `ℤ`-algebra homomorphism. -/
+def ring_equiv.to_int_alg_equiv {R S} [ring R] [ring S] [algebra ℤ R] [algebra ℤ S] (f : R ≃+* S) :
+  R ≃ₐ[ℤ] S :=
+{ commutes' := λ n,
+  show (f : R →+* S) _  = _, by simp only [ring_hom.eq_int_cast, ring_hom.map_int_cast], .. f }
+--todo : `fun_like` on the `int/cast` file.
+
+instance : is_principal_ideal_ring (𝓞 (cyclotomic_field 2 ℚ)) :=
 begin
-  refine alg_equiv.trans _ (algebra.bot_equiv_of_injective $ no_zero_smul_divisors.algebra_map_injective A $ cyclotomic_field 2 K),
-  apply subalgebra.equiv_of_eq,
-  rw [eq_bot_iff, algebra.adjoin_le_iff],
-  intro x,
-  simp only [pnat.coe_bit0, pnat.one_coe, sq_eq_one_iff, set_like.mem_coe],
-  rintro (rfl | rfl),
-  { exact subalgebra.one_mem _ },
-  { exact subalgebra.neg_mem _ (subalgebra.one_mem _) }
+  -- this proof idea 100% works, but is incredibly painful until the `algebra_rat` diamond is fixed.
+  -- when #14984 is merged, I will un-sorry this.
+  admit
+  /-
+  let ζ := is_cyclotomic_extension.zeta 2 ℚ (cyclotomic_field 2 ℚ),
+  let hζ := is_cyclotomic_extension.zeta_spec 2 ℚ (cyclotomic_field 2 ℚ),
+  have : fact (nat.prime (2 : ℕ+)) := ⟨prime_two⟩,
+  haveI := cyclotomic_field.is_cyclotomic_extension 2 ℚ,
+  haveI := is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime hζ,
+  let f := ((cyclotomic_field_two_equiv ℚ : cyclotomic_field 2 ℚ ≃+* ℚ).to_int_alg_equiv).subalgebra_map (algebra.adjoin ℤ {ζ}),
+  suffices : algebra.adjoin ℤ {ζ} = ⊥,
+  { let := is_integral_closure.equiv ℤ (𝓞 (cyclotomic_field 2 ℚ)) (cyclotomic_field 2 ℚ) (algebra.adjoin ℤ ({ζ} : set (cyclotomic_field 2 ℚ))), }, -/
 end
 
 example : is_regular_number 2 :=
 begin
   rw is_regular_number,
   convert coprime_one_right _,
-  suffices : is_principal_ideal_ring (cyclotomic_ring 2 ℤ ℚ), --TC does't wanna play ball
-  { convert card_class_group_eq_one_iff.mpr _,
-    apply_instance,
-    exact @@is_principal_ideal_ring.is_dedekind_domain _ _ _ this,
-    exact this },
-  let f := (cyclotomic_ring_two_equiv_bot ℤ ℚ).symm.to_ring_equiv,
-  exact is_principal_ideal_ring.of_surjective f.to_ring_hom f.surjective
+  dsimp,
+  rw card_class_group_eq_one_iff,
+  apply_instance,
 end
 
 end two_regular
