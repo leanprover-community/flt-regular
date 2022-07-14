@@ -41,14 +41,44 @@ def is_Bernoulli_regular : Prop :=
 def is_super_regular : Prop :=
  is_regular_number p ∧ is_Bernoulli_regular p
 
--- some nice results about class number of isom rings needed I guess
--- example : is_regular_prime 2 := -- LOOL good luck
--- begin
---   rw is_regular_prime,
---   delta cyclotomic_field,
---   delta cyclotomic,
---   simp,
---   split_ifs,
---   simpa using h,
+section two_regular
 
--- end
+variables (A K : Type*) [comm_ring A] [is_domain A] [field K] [algebra A K] [is_fraction_ring A K]
+
+local attribute [instance] cyclotomic_ring.algebra_base cyclotomic_field.algebra_base
+
+/-- The second cyclotomic field is equivalent to the base field. -/
+def cyclotomic_field_two_equiv_bot : cyclotomic_field 2 K ≃ₐ[K] K :=
+begin
+  suffices : is_splitting_field K K (cyclotomic 2 K),
+  { exactI (is_splitting_field.alg_equiv K $ cyclotomic 2 K).symm },
+  exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (ring_hom.id K) (-1), by simp⟩,
+end
+
+/-- The second cyclotomic ring is equivalent to the base ring. -/
+def cyclotomic_ring_two_equiv_bot : cyclotomic_ring 2 A K ≃ₐ[A] A :=
+begin
+  refine alg_equiv.trans _ (algebra.bot_equiv_of_injective $ no_zero_smul_divisors.algebra_map_injective A $ cyclotomic_field 2 K),
+  apply subalgebra.equiv_of_eq,
+  rw [eq_bot_iff, algebra.adjoin_le_iff],
+  intro x,
+  simp only [pnat.coe_bit0, pnat.one_coe, sq_eq_one_iff, set_like.mem_coe],
+  rintro (rfl | rfl),
+  { exact subalgebra.one_mem _ },
+  { exact subalgebra.neg_mem _ (subalgebra.one_mem _) }
+end
+
+example : is_regular_number 2 :=
+begin
+  rw is_regular_number,
+  convert coprime_one_right _,
+  suffices : is_principal_ideal_ring (cyclotomic_ring 2 ℤ ℚ), --TC does't wanna play ball
+  { convert card_class_group_eq_one_iff.mpr _,
+    apply_instance,
+    exact @@is_principal_ideal_ring.is_dedekind_domain _ _ _ this,
+    exact this },
+  let f := (cyclotomic_ring_two_equiv_bot ℤ ℚ).symm.to_ring_equiv,
+  exact is_principal_ideal_ring.of_surjective f.to_ring_hom f.surjective
+end
+
+end two_regular
