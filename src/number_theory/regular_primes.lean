@@ -19,19 +19,30 @@ noncomputable theory
 open nat polynomial
 
 open number_field
+open_locale classical number_field cyclotomic
 
 variables (n p : ℕ) [fact (0 < n)] [fact p.prime]
 -- local attribute [priority 5, instance] rat.normed_field -- hack to avoid diamond?
 
-open_locale classical
--- set_option trace.type_context.is_def_eq true
--- set_option trace.class_instances true
--- set_option pp.all true
+-- even this doesn't seem to be enough
+localized "attribute [priority 100] is_cyclotomic_extension.number_field
+                                    is_cyclotomic_extension.finite_dimensional
+                                    is_cyclotomic_extension.is_galois
+                                    is_alg_closed_of_char_zero.is_cyclotomic_extension
+                                    cyclotomic_field.char_zero
+                                    cyclotomic_field.is_cyclotomic_extension" in cyclotomic
+
+local attribute [-instance] cyclotomic_field.algebra
 
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
 def is_regular_number : Prop :=
-n.coprime (fintype.card (class_group (cyclotomic_ring ⟨n, fact.out _⟩ ℤ ℚ)
+n.coprime (fintype.card (class_group (𝓞 (cyclotomic_field ⟨n, fact.out _⟩ ℚ))
                                      (cyclotomic_field ⟨n, fact.out _⟩ ℚ)))
+
+#exit
+
+set_option trace.class_instances false
+
 /-- A prime number is Bernoulli regular if it does not divide the numerator of any of
 the first `p-3` (non-zero) Bernoulli numbers-/
 def is_Bernoulli_regular : Prop :=
