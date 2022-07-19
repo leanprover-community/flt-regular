@@ -1,5 +1,4 @@
 import number_theory.cyclotomic.rat
-import ready_for_mathlib.adjoin_root
 
 namespace is_cyclotomic_extension.rat
 
