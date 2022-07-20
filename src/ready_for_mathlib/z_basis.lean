@@ -40,39 +40,3 @@ by erw [@power_basis_int_dim p 1 K _ _ _ _ (by { convert hcycl, rw pow_one }) (b
 
 
 end is_cyclotomic_extension.rat
-
-/-
-
-This was an attempt to make `adjoin_root $ polynomial.cyclotomic n R` a cyclotomic extension in
-some generality, but it's not true in such generality in many cases, and is anyways completely
-overkill for this project.
-
-instance {n : ℕ+} : is_domain (adjoin_root $ polynomial.cyclotomic n ℤ) :=
-begin
-  suffices : prime (polynomial.cyclotomic n ℤ),
-  { erw [ideal.quotient.is_domain_iff_prime, ideal.span_singleton_prime this.1],
-    exact this },
-  rw ←gcd_monoid.irreducible_iff_prime,
-  exact polynomial.cyclotomic.irreducible n.pos,
-end
-
-instance {n} : is_cyclotomic_extension {n} ℤ (adjoin_root $ polynomial.cyclotomic n ℤ) :=
-{ exists_prim_root := λ a ha,
-  begin
-    obtain rfl : a = n := ha,
-    use adjoin_root.root _,
-    admit,
-    --rw ←polynomial.is_root_cyclotomic_iff,
-    -- I want to get `char_zero` automatically - surely quotienting by a pos-degree poly
-    -- preserves characteristic, but I haven't given it too much thought (my idea: if you have
-    -- an ideal of the form `(p)`, then all polys have degree ≥ `p`'s (bar `0`))
-  end,
-  adjoin_roots := admit }
-
-example {K L M} [comm_ring K] [comm_ring L] [comm_ring M] [algebra K L] [algebra K M]
-  {n} [is_cyclotomic_extension {n} K L] [is_cyclotomic_extension {n} K M] : L ≃ₐ[K] M :=
-begin
-  admit
-end
-
--/
