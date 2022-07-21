@@ -16,7 +16,7 @@ by dec_trivial!
 
 open polynomial fractional_ideal
 
-open_locale non_zero_divisors
+open_locale non_zero_divisors number_field
 
 theorem flt_regular_case_one_main {p a b c : ℕ} [fact p.prime] (hp : is_regular_number p)
   (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
@@ -29,7 +29,7 @@ begin
   rw_mod_cast h at this,
   symmetry' at this,
   push_cast at this,
-  apply_fun span_singleton (cyclotomic_ring p ℤ ℚ)⁰ at this,
+  apply_fun span_singleton (𝓞 (cyclotomic_field p ℚ))⁰ at this,
   simp only [span_singleton_prod, ← span_singleton_pow] at this,
   sorry,
 end

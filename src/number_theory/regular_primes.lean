@@ -62,8 +62,6 @@ section two_regular
 
 variables (A K : Type*) [comm_ring A] [is_domain A] [field K] [algebra A K] [is_fraction_ring A K]
 
-local attribute [instance] cyclotomic_ring.algebra_base cyclotomic_field.algebra_base
-
 /-- The second cyclotomic field is equivalent to the base field. -/
 def cyclotomic_field_two_equiv : cyclotomic_field 2 K ≃ₐ[K] K :=
 begin

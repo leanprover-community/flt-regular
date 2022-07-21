@@ -10,9 +10,7 @@ variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
 
 open_locale big_operators non_zero_divisors number_field cyclotomic
-open is_cyclotomic_extension
-open cyclotomic_ring
-open number_field polynomial
+open is_cyclotomic_extension number_field polynomial
 
 local notation `RR` := 𝓞 K
 

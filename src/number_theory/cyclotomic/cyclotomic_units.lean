@@ -54,10 +54,6 @@ roots_of_unity.mk_of_pow_eq (zeta n A B) $ (zeta_spec n A B).pow_eq_one
 
 lemma coe_zeta_runity_unit : ↑(zeta_runity n A B) = zeta_unit n A B := rfl
 
-end is_cyclotomic_extension
-
-namespace cyclotomic_ring
-
 variables [is_domain A] [algebra A K] [is_fraction_ring A K]
 
 open is_cyclotomic_extension
@@ -77,30 +73,15 @@ begin
  apply zeta_integral,
 end
 
-local attribute [instance] cyclotomic_field.algebra_base
-
-lemma zeta_mem_base [ne_zero ((n : ℕ) : K)] : ∃ (x : (cyclotomic_ring n A K)), algebra_map
-  (cyclotomic_ring n A K) (cyclotomic_field n K) x = zeta n K (cyclotomic_field n K) :=
-begin
-  have := ne_zero.of_no_zero_smul_divisors K (cyclotomic_field n K) n,
-  letI := classical.prop_decidable,
-  let μ := zeta n K (cyclotomic_field n K),
-  have hμ := zeta_spec n K (cyclotomic_field n K),
-  refine ⟨⟨μ, _⟩, rfl⟩,
-  have := is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots hμ,
-  simp only [set.mem_singleton_iff, exists_eq_left] at this,
-  rw [← this, is_cyclotomic_extension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic hμ],
-  exact algebra.subset_adjoin (set.mem_singleton _),
-end
+lemma zeta_mem_base [is_cyclotomic_extension {n} K L] :
+  ∃ (x : 𝓞 L), algebra_map (𝓞 L) L x = zeta n K L :=
+⟨⟨zeta n K L, (mem_ring_of_integers _ _).2 ((zeta_spec n K L).is_integral n.pos)⟩, rfl⟩
 
 open is_cyclotomic_extension
 
 section cyclotomic_unit
 
 variable {n}
-
-local notation `RR` := ring_of_integers (cyclotomic_field n K)
-local notation `L` := cyclotomic_field n K
 
 namespace cyclotomic_unit
 
@@ -271,4 +252,4 @@ end cyclotomic_unit
 
 end cyclotomic_unit
 
-end cyclotomic_ring
+end is_cyclotomic_extension

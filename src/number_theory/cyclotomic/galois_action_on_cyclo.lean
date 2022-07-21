@@ -26,11 +26,9 @@ local notation `RR` := number_field.ring_of_integers K
 
 open_locale number_field cyclotomic
 
-open cyclotomic_ring number_field.embeddings
+open number_field.embeddings is_cyclotomic_extension polynomial
 
 noncomputable theory
-open is_cyclotomic_extension
-open polynomial
 
 --local notation `ζ` := zeta p ℚ KK
 
