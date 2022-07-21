@@ -5,7 +5,7 @@ universes u
 
 open finite_dimensional polynomial algebra
 
-variables (n : ℕ+) (L : Type u) [field L] [char_zero L]
+variables (n : ℕ+) (L : Type u) [field L] [char_zero L] [is_cyclotomic_extension {n} ℚ L]
 
 namespace is_cyclotomic_extension
 
@@ -17,14 +17,10 @@ noncomputable theory
 
 open_locale number_field
 
-local notation `KK` := cyclotomic_field n ℚ
-
-local notation `RR` := 𝓞 (cyclotomic_field n ℚ)
-
 --A.K.A theorem:FLT_facts 3
 -- Eric: is this superseded by `exists_int_sub_pow_prime_dvd`?
-lemma flt_fact_3 [fact (n : ℕ).prime] (a : RR) :
-  ∃ (m : ℤ), (a ^ (n : ℕ) - m) ∈ ideal.span ({n} : set RR) := by admit
+lemma flt_fact_3 [fact (n : ℕ).prime] (a : 𝓞 L) :
+  ∃ (m : ℤ), (a ^ (n : ℕ) - m) ∈ ideal.span ({n} : set (𝓞 L)) := by admit
 
 open ideal is_cyclotomic_extension
 
@@ -100,7 +96,18 @@ begin
 end
 
 -- Eric: I thought Riccardo's new work meant we had this?
-instance : is_cyclotomic_extension {n} ℤ ↥(𝓞 (cyclotomic_field n ℚ)) := sorry
+instance aaaa : is_cyclotomic_extension {n} ℤ (𝓞 L) := sorry
+
+local notation `KK` := cyclotomic_field n ℚ
+
+local notation `RR` := 𝓞 KK
+
+local attribute [instance] algebra_rat_subsingleton
+
+--This is still annoying
+instance : is_cyclotomic_extension {n} ℤ ↥(𝓞 (cyclotomic_field n ℚ)) :=
+@aaaa n (cyclotomic_field n ℚ) _ _
+  (by { convert cyclotomic_field.is_cyclotomic_extension n ℚ, exact subsingleton.elim _ _ })
 
 -- TODO I (alex) am not sure whether this is better as ideal span,
 -- or fractional_ideal.span_singleton

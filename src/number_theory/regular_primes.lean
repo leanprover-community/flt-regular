@@ -62,11 +62,16 @@ section two_regular
 
 variables (A K : Type*) [comm_ring A] [is_domain A] [field K] [algebra A K] [is_fraction_ring A K]
 
+variables (L : Type*) [field L] [algebra K L] [is_cyclotomic_extension {2} K L]
+
 /-- The second cyclotomic field is equivalent to the base field. -/
-def cyclotomic_field_two_equiv : cyclotomic_field 2 K ≃ₐ[K] K :=
+def cyclotomic_field_two_equiv : L ≃ₐ[K] K :=
 begin
   suffices : is_splitting_field K K (cyclotomic 2 K),
-  { exactI (is_splitting_field.alg_equiv K $ cyclotomic 2 K).symm },
+  { letI : is_splitting_field K L (cyclotomic 2 K) :=
+      is_cyclotomic_extension.splitting_field_cyclotomic 2 K L,
+    exact (is_splitting_field.alg_equiv L (cyclotomic 2 K)).trans
+      (is_splitting_field.alg_equiv K $ cyclotomic 2 K).symm },
   exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (ring_hom.id K) (-1), by simp⟩,
 end
 
@@ -79,7 +84,7 @@ def ring_equiv.to_int_alg_equiv {R S} [ring R] [ring S] [algebra ℤ R] [algebra
   show (f : R →+* S) _  = _, by simp only [ring_hom.eq_int_cast, ring_hom.map_int_cast], .. f }
 --todo : `fun_like` on the `int/cast` file.
 
-instance : is_principal_ideal_ring (𝓞 (cyclotomic_field 2 ℚ)) :=
+instance : is_principal_ideal_ring (𝓞 L) :=
 begin
   -- this proof idea 100% works, but is incredibly painful until the `algebra_rat` diamond is fixed.
   -- when #14984 is merged, I will un-sorry this.

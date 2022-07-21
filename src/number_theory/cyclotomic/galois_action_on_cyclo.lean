@@ -7,6 +7,8 @@ universes u
 
 open finite_dimensional
 
+open_locale number_field
+
 theorem power_basis.rat_hom_ext {S S' : Type*} [comm_ring S] [hS : algebra ℚ S] [ring S']
   [hS' : algebra ℚ S'] (pb : power_basis ℚ S) ⦃f g : S →+* S'⦄ (h : f pb.gen = g pb.gen) :
 f = g :=
@@ -17,9 +19,7 @@ by convert fun_like.ext_iff.mp (pb.alg_hom_ext (show f' pb.gen = g' pb.gen, from
 variables (K : Type*) (p : ℕ+) [field K] [char_zero K] [is_cyclotomic_extension {p} ℚ K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
 
---local notation `KK` := cyclotomic_field p ℚ
-
-local notation `RR` := number_field.ring_of_integers K
+local notation `RR` := 𝓞 K
 
 -- @Chris: you mentioned "checking automorphisms agree only on a generator" -
 -- what you want is `power_basis.alg_hom_ext`
@@ -29,8 +29,6 @@ open_locale number_field cyclotomic
 open number_field.embeddings is_cyclotomic_extension polynomial
 
 noncomputable theory
-
---local notation `ζ` := zeta p ℚ KK
 
 /-- complex conjugation as a Galois automorphism -/
 def gal_conj : K ≃ₐ[ℚ] K :=
