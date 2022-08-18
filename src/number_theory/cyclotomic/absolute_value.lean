@@ -250,9 +250,6 @@ begin
   exact is_fraction_ring.injective ℤ ℚ,
 end
 
---again the algebra_rat diamond
-local attribute [-instance] complex.algebra
-
 lemma minpoly_coeff_le_of_all_abs_eq_one (hx : x ∈ {x : K | ∀ (φ : K →+* ℂ), abs (φ x) = 1})
   (hxi : is_integral ℤ x) (i : ℕ) :
   |(minpoly ℤ x).coeff i| ≤ ((minpoly ℤ x).nat_degree.choose i) :=
