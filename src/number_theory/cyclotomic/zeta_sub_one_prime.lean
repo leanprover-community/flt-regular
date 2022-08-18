@@ -1,7 +1,6 @@
 import norm.norm_prime
 import number_theory.cyclotomic.gal
 import number_theory.cyclotomic.rat
-import ready_for_mathlib.z_basis
 
 variables {K : Type*} [field K] {ζ : K}
 
@@ -40,14 +39,14 @@ extension of `ℚ`. -/
 noncomputable def power_basis_sub_one_int [is_cyclotomic_extension {p ^ k} ℚ K]
   (hζ : is_primitive_root ζ ↑(p ^ k)) : power_basis ℤ (𝓞 K) :=
 let _ := is_cyclotomic_extension.number_field {p ^ k} ℚ K in by exactI
-  power_basis.of_gen_mem_adjoin' (power_basis_int hζ) hζ.sub_one_int_is_integral
+  power_basis.of_gen_mem_adjoin' hζ.integral_power_basis hζ.sub_one_int_is_integral
 begin
-  simp only [power_basis_int_gen],
+  rw [is_primitive_root.integral_power_basis_gen],
   have := subalgebra.add_mem _
     (self_mem_adjoin_singleton ℤ (⟨ζ - 1, hζ.sub_one_mem_ring_of_integers⟩ : R))
     (subalgebra.one_mem _),
   convert this,
-  simp
+  simp,
 end
 
 @[simp] lemma power_basis_sub_one_int_gen [is_cyclotomic_extension {p ^ k} ℚ K]

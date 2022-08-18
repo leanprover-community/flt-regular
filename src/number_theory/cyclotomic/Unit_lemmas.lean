@@ -2,7 +2,6 @@ import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.cyclotomic_units
 import ring_theory.roots_of_unity
 import number_theory.number_field
-import ready_for_mathlib.z_basis
 import number_theory.cyclotomic.zeta_sub_one_prime
 import data.nat.prime_extras
 
@@ -363,10 +362,10 @@ lemma unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : RRˣ) (n : ℕ) (hp :
 begin
   by_contra H,
   haveI := fact.mk hp,
-  have hu := (rat.power_basis_int' hζ).basis.sum_repr u,
-  set a := (rat.power_basis_int' hζ).basis.repr with ha,
-  set φn := (rat.power_basis_int' hζ).dim with hφn,
-  simp_rw [power_basis.basis_eq_pow, rat.power_basis_int'_gen] at hu,
+  have hu := hζ.integral_power_basis'.basis.sum_repr u,
+  set a := hζ.integral_power_basis'.basis.repr with ha,
+  set φn := hζ.integral_power_basis'.dim with hφn,
+  simp_rw [power_basis.basis_eq_pow, is_primitive_root.integral_power_basis'_gen] at hu,
   have hu' := congr_arg (int_gal ↑(gal_conj K p)) hu,
   replace hu' :
     (∑ (x : fin φn), (a u) x • (int_gal ↑(gal_conj K p)) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ))) =
