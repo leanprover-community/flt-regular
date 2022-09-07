@@ -135,7 +135,7 @@ by rwa [mul_add, mul_one, ← mul_assoc, units.mul_inv, one_mul]
 
 end to_move
 
-lemma flt_fact_2 {p : ℕ} [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y z : ℤ} {i j : ℤ} (h : i ≠ j)
+lemma flt_ideals_coprime {p : ℕ} [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y z : ℤ} {i j : ℤ} (h : i ≠ j)
   (hp : is_coprime x y) (h : x ^ p + y ^ p = z ^ p) : flt_ideals n x y i + flt_ideals n x y j = ⊤ :=
 begin
   let I := flt_ideals n x y i + flt_ideals n x y j,
