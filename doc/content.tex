@@ -279,8 +279,8 @@ Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\
 
 \begin{lemma}\label{lem:exists_int_sub_pow_prime_dvd}
 	\lean{exists_int_sub_pow_prime_dvd}
-    \leanok
-	 	Let $p$ be an prime number, $\zeta_p$ a $p$-th root of unity and $\a \in \ZZ[\zeta_p]$. Then $\a^p$ is congruent to an integer modulo $p$.
+  \leanok
+	Let $p$ be an prime number, $\zeta_p$ a $p$-th root of unity and $\a \in \ZZ[\zeta_p]$. Then $\a^p$ is congruent to an integer modulo $p$.
 \end{lemma}
 \begin{proof}
 		\leanok
@@ -288,6 +288,8 @@ Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\
 \end{proof}
 
 \begin{lemma}\label{lem:dvd_coeff_cycl_integer}
+	\lean{dvd_coeff_cycl_integer}
+  \leanok
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$ with $\a=\sum_i a_i \zeta_p^i$. If there is an integer $n$ such that $\a/n \in \ZZ[\zeta_p]$, then $n$ divides each $a_i$.
 \end{lemma}
 \begin{proof}

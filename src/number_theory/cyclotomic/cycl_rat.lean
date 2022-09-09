@@ -1,5 +1,6 @@
 import ring_theory.polynomial.eisenstein
 import number_theory.cyclotomic.galois_action_on_cyclo
+import number_theory.cyclotomic.rat
 
 universes u
 
@@ -151,5 +152,8 @@ begin
     -- I cannot get the tactic state to work here :/
   }, sorry,
 end
+
+lemma dvd_coeff_cycl_integer [fact (nat.prime ↑n)] {ζ : L} (hζ : is_primitive_root ζ n) {x : 𝓞 L}
+  {m : ℕ} (hx : ↑m ∣ x) : ∀ i, ↑m ∣ hζ.integral_power_basis'.basis.repr x i := sorry
 
 end int_facts
