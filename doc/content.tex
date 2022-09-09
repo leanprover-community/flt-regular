@@ -304,7 +304,7 @@ Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\
  Using lemma \ref{lemma:unit_lemma} we have $(x+y\zeta_p^i) =\beta \zeta_p^k \a^p$ which is equivalent to $\beta \zeta_p^k a \pmod p$ with $a$ and integer \ref{lem:exists_int_sub_pow_prime_dvd}. Now, if we consider the complex conjugate we have $\ov{(x+y\zeta_p^i)  }\equiv \beta \zeta_p^{-k}a \pmod p$. Looking at $(x+y\zeta_p^i)-\zeta_p^{2k}\ov{(x+y\zeta_p^i)  }$ then gives the result.
 \end{proof}
 
-\begin{lemma}\label{lemma:may_assume}
+\begin{lemma}\label{lemma:may_assume_coprime}
 	\uses{lemma:unit_lemma,lemma:zeta_pow_sub_eq_unit_zeta_sub_one,lemma:ideals_mult_to_power,theorem:ring_of_ints_of_cyclo}
 
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$.  Assume that we have $x,y,z \in \ZZ$ with $\gcd(xyz,p)=1$ and such that \[x^p+y^p=z^p.\]
@@ -331,7 +331,7 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 \begin{theorem}\label{theorem:FLT_case_one}
     \lean{flt_regular_case_one}
     \leanok
-	\uses{defn:is_regular_number,lem:exists_int_sum_eq_zero,lem:dvd_coeff_cycl_integer,lemma:may_assume,lem:flt_ideals_coprime}
+	\uses{defn:is_regular_number,lem:exists_int_sum_eq_zero,lem:dvd_coeff_cycl_integer,lemma:may_assume_coprime,lem:flt_ideals_coprime}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $\gcd(xyz,p)=1$.
 \end{theorem}
 \begin{proof}
@@ -345,7 +345,7 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 \begin{theorem}\label{theorem:FLT_case_two}\lean{flt_regular_case_two}
 	\lean{eq_pow_prime_of_unit_of_congruent}
 	\leanok
-	\uses{lemma:may_assume,defn:is_regular_number,thm:Kummers_lemma}
+	\uses{lemma:may_assume_coprime,defn:is_regular_number,thm:Kummers_lemma}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
 \end{theorem}
 
