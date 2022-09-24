@@ -9,8 +9,6 @@ import data.set.finite
 import ring_theory.polynomial.homogeneous
 import ring_theory.polynomial.basic
 import order.symm_diff
-import tactic.omega
--- import home_finder
 
 /-!
 # Homogenization
