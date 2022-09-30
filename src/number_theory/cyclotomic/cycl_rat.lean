@@ -11,10 +11,6 @@ open finite_dimensional polynomial algebra nat finset fintype
 
 variables (p : ℕ+) (L : Type u) [field L] [char_zero L] [is_cyclotomic_extension {p} ℚ L]
 
-namespace is_cyclotomic_extension
-
-end is_cyclotomic_extension
-
 section int_facts
 
 noncomputable theory
