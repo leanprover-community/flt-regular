@@ -437,7 +437,7 @@ begin
 end
 
 lemma unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).prime) (u : RRˣ) :
-  ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p (x : K)) ∧ (u : K) = x * (hζ.unit' ^ n) :=
+  ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p (x : K)) ∧ (u : 𝓞 K) = x * (hζ.unit' ^ n : (𝓞 K)ˣ) :=
 begin
   have := unit_inv_conj_is_root_of_unity hζ h hp u,
   obtain ⟨m, hm⟩ := this,
@@ -470,11 +470,9 @@ begin
   simp only [inv_pow, coe_coe],
   rw ← coe_life,
   simp only [subalgebra.coe_pow, units.coe_pow],
+  simp only [zpow_coe_nat, units.coe_pow],
+  norm_cast,
   simp,
-  rw [← coe_life, units.coe_pow],
-  simp only [subalgebra.coe_pow, units.coe_pow, ← inv_pow],
-  rw [mul_assoc, ←mul_pow, hζ.coe_unit'_coe, inv_mul_cancel (hζ.ne_zero p.ne_zero),
-      one_pow, mul_one],
 end
 
 /-
