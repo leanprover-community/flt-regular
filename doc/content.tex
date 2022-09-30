@@ -298,10 +298,10 @@ Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\
 \end{proof}
 
 \begin{lemma}\label{lem:exists_int_sum_eq_zero}
-	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$. Let $x$ and $y$ be integers such that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. Then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
+	Let $p \geq 3$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$. Let $x$ and $y$ be integers such that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. Then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
 \end{lemma}
 \begin{proof}
- \uses{lem:dvd_coeff_cycl_integer,lem:exists_int_sub_pow_prime_dvd}
+ \uses{lemma:unit_lemma,lem:exists_int_sub_pow_prime_dvd}
  Using lemma \ref{lemma:unit_lemma} we have $(x+y\zeta_p^i) =\beta \zeta_p^k \a^p$ which is congruent modulo $p$ to $\beta \zeta_p^k a \pmod p$ for some integer $a$ by \ref{lem:exists_int_sub_pow_prime_dvd}. Now, if we consider the complex conjugate we have $\ov{(x+y\zeta_p^i)  }\equiv \beta \zeta_p^{-k}a \pmod p$. Looking at $(x+y\zeta_p^i)-\zeta_p^{2k}\ov{(x+y\zeta_p^i)  }$ then gives the result.
 \end{proof}
 
