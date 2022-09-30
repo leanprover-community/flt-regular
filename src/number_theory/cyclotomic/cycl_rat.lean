@@ -3,10 +3,11 @@ import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.rat
 
 import ready_for_mathlib.basis
+import ready_for_mathlib.roots_of_unity
 
 universes u
 
-open finite_dimensional polynomial algebra nat
+open finite_dimensional polynomial algebra nat finset fintype
 
 variables (p : ℕ+) (L : Type u) [field L] [char_zero L] [is_cyclotomic_extension {p} ℚ L]
 
@@ -155,12 +156,83 @@ begin
   }, sorry,
 end
 
-lemma dvd_last_coeff_cycl_integer [hp : fact (p : ℕ).prime] {ζ :𝓞 L} (hζ : is_primitive_root ζ p)
-  {f : fin p → 𝓞 L} {i : fin p} (hf : f i = 0) {m : ℕ} (hx : ↑m ∣ ∑ i, f i * ζ ^ (i : ℕ)) :
-  ↑m ∣ f ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ := sorry
+variable {L}
 
-lemma dvd_coeff_cycl_integer [fact (p : ℕ).prime] {ζ :𝓞 L} (hζ : is_primitive_root ζ p)
-  {f : fin p → 𝓞 L} {i : fin p} (hf : f i = 0) {m : ℕ} (hx : ↑m ∣ ∑ i, f i * ζ ^ (i : ℕ)) :
-  ∀ j, ↑m ∣ f j := sorry
+lemma dvd_last_coeff_cycl_integer [hp : fact (p : ℕ).prime] {ζ : L} (hζ : is_primitive_root ζ p)
+  {f : fin p → ℤ} {i : fin p} (hf : f i = 0) {m : ℤ}
+  (hdiv : ↑m ∣ ∑ j, f j • (⟨ζ, hζ.is_integral p.pos⟩ : 𝓞 L) ^ (j : ℕ)) :
+  m ∣ f ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ :=
+begin
+  have hlast : (fin.cast (succ_pred_prime hp.out)) (fin.last (p : ℕ).pred) =
+    ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ := fin.ext rfl,
+  have h : ∀ x, (fin.cast (succ_pred_prime hp.out)) (fin.cast_succ x) =
+    ⟨x, lt_trans x.2 (pred_lt hp.out.ne_zero)⟩ := λ x, fin.ext rfl,
+  have hζ' : is_primitive_root (⟨ζ, hζ.is_integral p.pos⟩ : 𝓞 L) p :=
+    is_primitive_root.coe_submonoid_class_iff.1 hζ,
+  set b := hζ.integral_power_basis' with hb,
+  have hdim : b.dim = (p : ℕ).pred,
+  { rw [hζ.power_basis_int'_dim, totient_prime hp.out, pred_eq_sub_one] },
+
+  by_cases H : i = ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩,
+  { simp [H.symm, hf] },
+  have hi : ↑i < (p : ℕ).pred,
+  { by_contra' habs,
+    simpa [le_antisymm habs (le_pred_of_lt (fin.is_lt i))] using H },
+  obtain ⟨y, hy⟩ := hdiv,
+  rw [← equiv.sum_comp (fin.cast (succ_pred_prime hp.out)).to_equiv, fin.sum_univ_cast_succ] at hy,
+  simp only [hlast, h, rel_iso.coe_fn_to_equiv, fin.coe_mk] at hy,
+  rw [hζ'.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
+    ← (fin.cast hdim).to_equiv.sum_comp] at hy,
+  simp only [rel_iso.coe_fn_to_equiv, fin.coe_cast, mul_neg] at hy,
+  conv_lhs at hy { congr, skip, funext,
+    rw [add_comm, smul_neg, ← sub_eq_neg_add, ← sub_smul, ← hζ.integral_power_basis'_gen,
+      ← hb, ← show ∀ x, _ = _, from λ x, congr_fun b.coe_basis x] },
+  replace hy := congr_arg (b.basis.coord ((fin.cast hdim.symm) ⟨i, hi⟩)) hy,
+  rw [← b.basis.equiv_fun_symm_apply, b.basis.coord_equiv_fun_symm] at hy,
+  simp only [hf, fin.coe_cast, smul_eq_mul, mul_boole, sum_ite_eq', mem_univ, fin.coe_mk,
+    fin.eta, zero_sub, if_true] at hy,
+  rw [← smul_eq_mul, ← zsmul_eq_smul_cast, neg_eq_iff_neg_eq] at hy,
+  obtain ⟨n, hn⟩ := b.basis.coord_dvd_of_dvd ((fin.cast hdim.symm) ⟨i, hi⟩) y m,
+  rw [hn] at hy,
+  simp [← hy, dvd_neg]
+end
+
+lemma dvd_coeff_cycl_integer [hp : fact (p : ℕ).prime] {ζ : L} (hζ : is_primitive_root ζ p)
+  {f : fin p → ℤ} {i : fin p} (hf : f i = 0) {m : ℤ}
+  (hdiv : ↑m ∣ ∑ j, f j • (⟨ζ, hζ.is_integral p.pos⟩ : 𝓞 L) ^ (j : ℕ)) : ∀ j, m ∣ f j :=
+begin
+  have hlast : (fin.cast (succ_pred_prime hp.out)) (fin.last (p : ℕ).pred) =
+    ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ := fin.ext rfl,
+  have h : ∀ x, (fin.cast (succ_pred_prime hp.out)) (fin.cast_succ x) =
+    ⟨x, lt_trans x.2 (pred_lt hp.out.ne_zero)⟩ := λ x, fin.ext rfl,
+  have hζ' : is_primitive_root (⟨ζ, hζ.is_integral p.pos⟩ : 𝓞 L) p :=
+    is_primitive_root.coe_submonoid_class_iff.1 hζ,
+  set b := hζ.integral_power_basis' with hb,
+  have hdim : b.dim = (p : ℕ).pred,
+  { rw [hζ.power_basis_int'_dim, totient_prime hp.out, pred_eq_sub_one] },
+  have last_dvd := dvd_last_coeff_cycl_integer hζ hf hdiv,
+
+  intro j,
+  by_cases H : j = ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩,
+  { simpa [H] using last_dvd },
+  have hj : ↑j < (p : ℕ).pred,
+  { by_contra' habs,
+    simpa [le_antisymm habs (le_pred_of_lt (fin.is_lt j))] using H },
+  obtain ⟨y, hy⟩ := hdiv,
+  rw [← equiv.sum_comp (fin.cast (succ_pred_prime hp.out)).to_equiv, fin.sum_univ_cast_succ] at hy,
+  simp only [hlast, h, rel_iso.coe_fn_to_equiv, fin.coe_mk] at hy,
+  rw [hζ'.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
+    ← (fin.cast hdim).to_equiv.sum_comp] at hy,
+  simp only [rel_iso.coe_fn_to_equiv, fin.coe_cast, mul_neg] at hy,
+  conv_lhs at hy { congr, skip, funext,
+    rw [add_comm, smul_neg, ← sub_eq_neg_add, ← sub_smul, ← hζ.integral_power_basis'_gen,
+      ← hb, ← show ∀ x, _ = _, from λ x, congr_fun b.coe_basis x] },
+  replace hy := congr_arg (b.basis.coord ((fin.cast hdim.symm) ⟨j, hj⟩)) hy,
+  rw [← b.basis.equiv_fun_symm_apply, b.basis.coord_equiv_fun_symm] at hy,
+  simp only [fin.cast_mk, fin.coe_mk, fin.eta, basis.coord_apply, sub_eq_iff_eq_add] at hy,
+  obtain ⟨n, hn⟩ := b.basis.coord_dvd_of_dvd ((fin.cast hdim.symm) ⟨j, hj⟩) y m,
+  rw [hy, ← smul_eq_mul, ← zsmul_eq_smul_cast, ← b.basis.coord_apply, ← fin.cast_mk, hn],
+  exact dvd_add (dvd_mul_right _ _) last_dvd
+end
 
 end int_facts
