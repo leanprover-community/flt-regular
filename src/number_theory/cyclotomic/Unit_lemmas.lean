@@ -43,6 +43,14 @@ begin
   { simp }
 end
 
+@[simp, norm_cast]
+lemma coe_zpow (u : RRˣ) (n : ℤ) : (((u ^ n : RRˣ) : RR) : K) = (u : K) ^ n :=
+begin
+  induction n with n hn,
+  { simp },
+  { simp [← coe_life] }
+end
+
 lemma auxil (a b c d : RRˣ) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
 begin
   rw mul_inv_eq_iff_eq_mul at *,
