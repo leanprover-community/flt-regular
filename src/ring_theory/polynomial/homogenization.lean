@@ -6,7 +6,7 @@ Authors: Alex J. Best
 
 import data.mv_polynomial.comm_ring
 import data.set.finite
-import ring_theory.polynomial.homogeneous
+import ring_theory.mv_polynomial.homogeneous
 import ring_theory.polynomial.basic
 import order.symm_diff
 

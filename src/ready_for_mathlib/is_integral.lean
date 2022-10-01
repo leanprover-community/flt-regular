@@ -13,7 +13,7 @@ begin
   obtain ⟨P, hP⟩ := hx,
   refine ⟨P, hP.1, _⟩,
   rw [← aeval_def, show (aeval (f x)) P = (aeval (f x)) (P.map (algebra_map R A)), by simp,
-    aeval_alg_hom_apply, aeval_map, aeval_def, hP.2, map_zero]
+    aeval_alg_hom_apply, aeval_map_algebra_map, aeval_def, hP.2, map_zero]
 end
 
 end alg_hom

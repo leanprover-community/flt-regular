@@ -11,7 +11,6 @@ local notation `R` := 𝓞 K
 
 lemma exists_int_smodeq (x : R) : ∃ (n : ℤ), smodeq (span ({pb.gen} : set R)) x n  :=
 begin
-  letI : fintype {i // i < pb.dim} := fin.fintype pb.dim,
   refine ⟨((pb.basis.repr) x) ⟨0, pb.dim_pos⟩, _⟩,
   have H := basis.sum_repr pb.basis x,
   rw [power_basis.coe_basis, ← insert_erase
@@ -51,8 +50,10 @@ begin
   { simpa using quotient.eq_zero_iff_mem.2 this },
   replace hpdef : (norm' ℚ pb.gen) = rat.ring_of_integers_equiv.symm p := by simp,
   rw [← ring_equiv.coe_to_ring_hom] at hpdef,
-  rw [hpdef, ← ring_hom.comp_apply, ring_hom.eq_int_cast] at hx,
-  exact mem_span_singleton.2 ⟨x, hx⟩
+  refine mem_span_singleton.2 ⟨x, _⟩,
+  rw [hpdef, ← ring_hom.comp_apply] at hx,
+  convert hx,
+  simp
 end
 
 include hpr
@@ -95,7 +96,7 @@ begin
   replace hz : (norm' ℚ pb.gen) ∣ n ^ (finrank ℚ K) * m ^ (finrank ℚ K),
   { refine ⟨norm' ℚ z, _⟩,
     rwa [← hnm, ← _root_.map_mul] },
-  simp only [quotient.mk_eq_mk, ring_hom.map_int_cast] at h₁ h₂,
+  simp only [quotient.mk_eq_mk, map_int_cast] at h₁ h₂,
   cases hpr.dvd_or_dvd hz with Hn Hm,
   { simpa [h₁] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm ℚ pb.gen)
       (ring_hom.map_dvd (algebra_map (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hn)))) },

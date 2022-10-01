@@ -83,7 +83,7 @@ begin
     apply (hζ.power_basis ℚ).rat_hom_ext,
     { exact this.symm },
     { exact algebra_rat } },
-  rw [conj_norm_one, ←ring_hom.map_inv, gal_conj_zeta_runity hζ],
+  rw [conj_norm_one, gal_conj_zeta_runity hζ, map_inv₀],
   refine complex.norm_eq_one_of_pow_eq_one _ p.ne_zero,
   rw [←map_pow, hζ.pow_eq_one, map_one]
 end
@@ -131,10 +131,14 @@ lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj K p u)⁻¹ = (unit_gal_conj 
 lemma unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
   complex.abs (φ (u * (unit_gal_conj K p u)⁻¹)) = 1 :=
 begin
-  rw [map_mul, complex.abs.is_absolute_value.abv_mul, ring_hom.map_inv, complex.abs_inv,
+  rw [map_mul, complex.abs.is_absolute_value.abv_mul, map_inv₀,
       coe_coe (unit_gal_conj K p u), ←unit_gal_conj_spec, ←embedding_conj $ zeta_spec p ℚ K],
-  simp only [coe_coe, complex.abs_conj, mul_inv_cancel, ne.def, complex.abs_eq_zero,
-             ring_hom.map_eq_zero, add_submonoid_class.coe_eq_zero, units.ne_zero, not_false_iff]
+  simp only [coe_coe, map_inv₀, complex.abs_conj],
+  rw [mul_inv_eq_one₀],
+  intro h,
+  simp only [_root_.map_eq_zero] at h,
+  norm_cast at h,
+  exact units.ne_zero _ h
 end
 
 lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj K p (unit_gal_conj K p u)) = u :=

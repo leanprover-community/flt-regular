@@ -41,6 +41,8 @@ class_group.fintype_of_admissible_of_finite ℚ _ absolute_value.abs_is_admissib
 
 end safe_instances
 
+instance (p : ℕ) [hp : fact p.prime] : fact (0 < p) := ⟨hp.out.pos⟩
+
 variables (n p : ℕ) [fact (0 < n)] [fact p.prime]
 
 -- note that this definition can be annoying to work with whilst #14984 isn't merged.
@@ -81,7 +83,7 @@ end
 def ring_equiv.to_int_alg_equiv {R S} [ring R] [ring S] [algebra ℤ R] [algebra ℤ S] (f : R ≃+* S) :
   R ≃ₐ[ℤ] S :=
 { commutes' := λ n,
-  show (f : R →+* S) _  = _, by simp only [ring_hom.eq_int_cast, ring_hom.map_int_cast], .. f }
+  show (f : R →+* S) _  = _, by simp, .. f }
 --todo : `fun_like` on the `int/cast` file.
 
 instance : is_principal_ideal_ring (𝓞 L) :=
@@ -100,7 +102,7 @@ begin
   { let := is_integral_closure.equiv ℤ (𝓞 (cyclotomic_field 2 ℚ)) (cyclotomic_field 2 ℚ) (algebra.adjoin ℤ ({ζ} : set (cyclotomic_field 2 ℚ))), }, -/
 end
 
-example : is_regular_number 2 :=
+example : @is_regular_number 2 ⟨prime_two.pos⟩ :=
 begin
   rw is_regular_number,
   convert coprime_one_right _,

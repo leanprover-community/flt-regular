@@ -43,11 +43,11 @@ begin
   have h_pow : (abs (φ x)) ^ n = 1,
   { rw (_ : abs (φ x) ^ n = abs (φ x ^ n)),
     rw (_ : φ x ^ n = φ (x ^ n)),
-    simp only [hx, complex.abs_one, monoid_hom.map_one],
+    simp only [hx, map_one],
     rw monoid_hom.map_pow,
     rw is_absolute_value.abv_pow complex.abs, },
   set t := abs (φ x),
-  have : 0 ≤ t, from (φ x).abs_nonneg,
+  have : 0 ≤ t := map_nonneg _ _,
   clear_value t,
   lift t to ℝ≥0 using this,
   norm_cast at *,
@@ -159,15 +159,6 @@ section polynomial
 open polynomial
 variables {R : Type*} [comm_ring R]
 
-lemma multiset.prod_map_neg (s : multiset R) : (s.map (λ x, -x)).prod = (-1) ^ s.card * s.prod :=
-begin
-  have : (λ (x : R), -x) = (λ x, (-1 : R) * x),
-  { ext x,
-    simp, },
-  rw [this, multiset.prod_map_mul],
-  simp,
-end
-
 -- TODO lol I hope this monstrosity is golfable
 lemma multiset_prod_X_sub_C_coeff (t : multiset R) {i : ℕ} (hi : i ≤ t.card) :
   (t.map (λ x, (X - C x))).prod.coeff i =
@@ -186,8 +177,7 @@ begin
     { refl },
     { intros s hs,
       simp at hs,
-      rw ← hs.2,
-      rw multiset.prod_map_neg } },
+      rw ← hs.2 } },
   { simp [hi] }
 end
 
@@ -266,9 +256,9 @@ begin
     { suffices : (|(minpoly ℤ x).coeff i| : ℝ) ≤ ↑((minpoly ℤ x).nat_degree.choose i),
       { exact_mod_cast this, },
       convert this,
-      simp only [h_mins, coeff_map, ring_hom.eq_int_cast, rat.cast_coe_int],
+      simp only [h_mins, coeff_map, rat.cast_coe_int, eq_int_cast],
       norm_cast, },
-    rw (by simp [coeff_map, ring_hom.eq_rat_cast] :
+    rw (by simp [coeff_map] :
       ((minpoly ℚ x).coeff i : ℂ) = ((minpoly ℚ x).map (algebra_map ℚ ℂ)).coeff i),
     have : splits (algebra_map ℚ ℂ) (minpoly ℚ x),
       from is_alg_closed.splits_codomain (minpoly ℚ x),
@@ -279,8 +269,8 @@ begin
         one_mul, ring_hom.map_one],
     rw multiset_prod_X_sub_C_coeff,
     swap, rwa [h_roots, h_degree],
-    simp only [is_absolute_value.abv_pow complex.abs, complex.abs_mul, complex.abs_neg,
-      complex.abs_one, one_pow, one_mul],
+    simp only [absolute_value.map_mul, complex.abs_pow, absolute_value.map_neg,
+      absolute_value.map_one, one_pow, one_mul],
     let T := (multiset.powerset_len (multiset.card (map (algebra_map ℚ ℂ) (minpoly ℚ x)).roots - i)
         (map (algebra_map ℚ ℂ) (minpoly ℚ x)).roots),
     suffices : complex.abs (multiset.map multiset.prod T).sum  ≤
@@ -321,10 +311,10 @@ begin
       suffices :  ∀ t ∈ T, complex.abs (multiset.prod t) = (multiset.map complex.abs t).prod,
       { simp only [multiset.map_congr (eq.refl T) this, multiset.map_map], },
       intros t ht,
-      exact (multiset.prod_hom t complex.abs_hom).symm, },
+      exact (multiset.prod_hom t _).symm },
       refine multiset.le_sum_of_subadditive complex.abs _ _ (multiset.map multiset.prod T),
-      exact complex.abs_zero,
-      exact (λ a b, complex.abs_add a b), },
+      simp,
+      exact (λ a b, complex.abs.add_le a b) },
   { push_neg at hi,
     rw nat.choose_eq_zero_of_lt hi,
     rw coeff_eq_zero_of_nat_degree_lt,
@@ -404,7 +394,7 @@ begin
     refine ⟨b - a, tsub_pos_of_lt habne, _⟩,
     have hxne : x ≠ 0,
     { contrapose! hx,
-      simp only [hx, complex.abs_zero, ring_hom.map_zero, ne.def, not_false_iff, zero_ne_one],
+      simp only [hx, ring_hom.map_zero, ne.def, not_false_iff, zero_ne_one, absolute_value.map_zero],
       use (is_alg_closed.lift (number_field.is_algebraic K)).to_ring_hom },
     rw [pow_sub₀ _ hxne habne.le, h, mul_inv_cancel (pow_ne_zero b hxne)] },
   { rw [set.maps_univ_to],

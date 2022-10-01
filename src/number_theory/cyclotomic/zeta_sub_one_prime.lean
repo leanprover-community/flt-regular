@@ -33,7 +33,7 @@ begin
   refine equiv_like.injective rat.ring_of_integers_equiv.symm (subtype.ext _),
   simp only [set_like.coe_mk, ring_equiv.symm_apply_apply],
   norm_cast,
-  simp [← ring_equiv.coe_to_ring_hom, ring_hom.eq_int_cast]
+  simp [← ring_equiv.coe_to_ring_hom]
 end
 
 lemma zeta_sub_one_prime' [h : is_cyclotomic_extension {p} ℚ K] (hζ : is_primitive_root ζ p)

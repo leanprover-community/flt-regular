@@ -39,8 +39,12 @@ begin
   rw [eq_div_iff],
   { cases u with u₁ u₂ hmul hinv,
     simp only [units.inv_mk, coe_coe, units.coe_mk],
-    rw [← mul_mem_class.coe_mul _ u₂, hinv, submonoid_class.coe_one] },
-  { simp }
+    rw [← mul_mem_class.coe_mul _ u₂, hinv],
+    simp },
+  { intro h,
+    simp only [coe_coe] at h,
+    norm_cast at h,
+    exact units.ne_zero _ h }
 end
 
 @[simp, norm_cast]
@@ -68,7 +72,7 @@ noncomputable theory
 @[simps {attrs := [`simp, `norm_cast]}] def is_primitive_root.unit' {p : ℕ+} {K : Type*}
   [field K] {ζ : K} (hζ : is_primitive_root ζ p) : (𝓞 K)ˣ :=
 { val := (⟨ζ, hζ.is_integral' ℤ p.pos⟩ : 𝓞 K),
-  inv:= (⟨ζ⁻¹, hζ.inv'.is_integral' ℤ p.pos⟩ : 𝓞 K),
+  inv:= (⟨ζ⁻¹, hζ.inv.is_integral' ℤ p.pos⟩ : 𝓞 K),
   val_inv := subtype.ext $ mul_inv_cancel $ hζ.ne_zero p.ne_zero,
   inv_val := subtype.ext $ inv_mul_cancel $ hζ.ne_zero p.ne_zero }
 
@@ -288,8 +292,7 @@ begin
   { exact (monic_X_pow_sub_C 1 (ne_of_lt hn0).symm) },
   { simp only [hn, eval₂_one, eval₂_X_pow, eval₂_sub,
       sub_self] },},
-  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp only [submonoid_class.mk_pow, set_like.coe_mk,
-    submonoid_class.coe_one], apply hn} ,
+  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp [hn] },
   have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * hζ.unit' ^ (m : ℕ),
   by {obtain ⟨l, hl, hhl⟩ := ((_root_.is_root_of_unity_iff hn0 _).1 hxu),
   have hlp := roots_of_unity_in_cyclo_aux hl hx hhl hζ,
@@ -386,7 +389,7 @@ begin
     rw map_zsmul },
   -- todo: probably swap `is_primitive_root.inv` and `is_primitive_root.inv'`.
   have : ∀ x : fin φn, int_gal ↑(gal_conj K p) (⟨ζ, hζ.is_integral p.pos⟩ ^ (x : ℕ)) =
-                        ⟨ζ⁻¹, hζ.inv'.is_integral p.pos⟩ ^ (x : ℕ),
+                        ⟨ζ⁻¹, hζ.inv.is_integral p.pos⟩ ^ (x : ℕ),
   { intro x,
     ext,
     simp only [int_gal_apply_coe, map_pow, subsemiring_class.coe_pow, subtype.coe_mk],
@@ -394,7 +397,7 @@ begin
     conv_lhs at hu' { congr, congr, funext, rw [this x] },
   set u' := (unit_gal_conj K p) u,
   replace hu := aux hζ hζ hu,
-  replace hu' := aux hζ hζ.inv' hu', -- cool fact: `aux hζ _ hu'` works!
+  replace hu' := aux hζ hζ.inv hu', -- cool fact: `aux hζ _ hu'` works!
   rw mul_inv_eq_iff_eq_mul at H,
   -- subst H seems to be broken
   nth_rewrite 0 H at hu,
