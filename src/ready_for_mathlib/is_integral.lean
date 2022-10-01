@@ -27,7 +27,7 @@ variables {K : Type*} [field K] [number_field K] (φ : K ≃ₐ[ℚ] K)
 lemma alg_equiv_is_integral {x : K} (hx : is_integral ℤ x) : is_integral ℤ (φ x) :=
 alg_hom.is_integral_of_is_scalar_tower φ.to_alg_hom hx
 
-lemma alg_equiv_mem_ring_of_integers {x : 𝓞 K} : φ x ∈ 𝓞 K :=
+lemma alg_equiv_mem_ring_of_integers (x : 𝓞 K) : φ x ∈ 𝓞 K :=
 (mem_ring_of_integers _ _).2 $ alg_equiv_is_integral _ $ ring_of_integers.is_integral_coe x
 
 end number_field
