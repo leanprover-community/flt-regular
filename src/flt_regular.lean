@@ -11,45 +11,9 @@ import number_theory.cyclotomic.factoring
 -- lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
 --     : b.coprime c ∧ a.coprime c := admit
 
-lemma flt_three_case_one_aux {A B C : zmod 9} (h : A ^ 3 + B ^ 3 = C ^ 3) : 3 ∣ A * B * C :=
-by dec_trivial!
-
 open polynomial fractional_ideal
 
 open_locale non_zero_divisors number_field
-
-theorem flt_regular_case_one_main {p a b c : ℕ} [fact p.prime] (hp : is_regular_number p)
-  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
-  (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : false :=
-begin
-  have h_prime : p.prime := fact.out _,
-  unfreezingI { lift p to ℕ+ using h_prime.pos },
-  have := pow_add_pow_eq_prod_add_zeta_runity_mul (nat.odd_iff.mp (h_prime.odd hp_ne_two))
-    (is_cyclotomic_extension.zeta_spec p ℚ (cyclotomic_field p ℚ)) a b,
-  rw_mod_cast h at this,
-  symmetry' at this,
-  push_cast at this,
-  apply_fun span_singleton (𝓞 (cyclotomic_field p ℚ))⁰ at this,
-  simp only [span_singleton_prod, ← span_singleton_pow] at this,
-  sorry,
-end
-
-/-- Case I (when a,b,c are coprime to the exponent), of FLT for regular primes, by reduction to
-  the case of 5 ≤ p. -/
-theorem flt_regular_case_one {p a b c : ℕ} [h_prime : fact p.prime] (hp : is_regular_number p)
-  (hp_ne_two : p ≠ 2) (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
-  (hpabc : p.coprime (a * b * c)) : false :=
-begin
-  unfreezingI { rcases eq_or_ne p 3 with rfl | hp_three },
-  { suffices : 3 ∣ a * b * c,
-    { exact (nat.prime_three.dvd_iff_not_coprime.mp this) hpabc, },
-    have : (a : zmod 9) ^ 3 + b ^ 3 = c ^ 3,
-    { rw_mod_cast h },
-    convert nat.dvd_of_dvd_coe_zmod (by norm_num : 3 ∣ 9)
-      (by exact_mod_cast flt_three_case_one_aux this) },
-  { have hp_five : 5 ≤ p, from h_prime.elim.five_le hp_ne_two hp_three,
-    exact flt_regular_case_one_main hp hp_ne_two h hab hpabc hp_five, }
-end
 
 /-- Case II (when a,b,c are not coprime to the exponent), of FLT for regular primes. -/
 theorem flt_regular_case_two (p a b c : ℕ) [fact p.prime] (hp : is_regular_number p)
