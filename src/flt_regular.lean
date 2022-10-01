@@ -6,6 +6,7 @@ import tactic
 import data.nat.prime_extras
 import algebra.gcd_monoid.nat
 import number_theory.cyclotomic.factoring
+import number_theory.cyclotomic.case_I
 
 -- TODO I (alex) commented this out as it seems redundent now? -- agree, seems redundant - Eric
 -- lemma flt_coprime (p a b c : ℕ) [fact p.prime] (h : a ^ p + b ^ p = c ^ p) (hab : a.coprime b)
