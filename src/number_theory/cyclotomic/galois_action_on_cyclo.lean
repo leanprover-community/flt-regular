@@ -1,5 +1,5 @@
 import number_theory.cyclotomic.cyclotomic_units
-import number_theory.cyclotomic.absolute_value
+-- import number_theory.cyclotomic.absolute_value
 
 import number_theory.cyclotomic.gal
 

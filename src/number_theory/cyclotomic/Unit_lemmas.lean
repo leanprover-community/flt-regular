@@ -8,7 +8,7 @@ import data.nat.prime_extras
 variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
 
-open_locale big_operators non_zero_divisors number_field cyclotomic
+open_locale big_operators non_zero_divisors number_field
 open is_cyclotomic_extension number_field polynomial
 
 local notation `RR` := 𝓞 K
@@ -419,7 +419,8 @@ lemma unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).prime) (u : R
   ∃ m : ℕ, u * (unit_gal_conj K p u)⁻¹ = (hζ.unit' ^ m)^2 :=
 begin
   have hpo : odd (p : ℕ) := hp.odd (fuck_norm_cast h),
-  have := mem_roots_of_unity_of_abs_eq_one
+  haveI : normed_algebra ℚ ℂ := normed_algebra_rat,
+  have := @number_field.embeddings.pow_eq_one_of_norm_eq_one K _ _ ℂ _ _ _
     (u * (unit_gal_conj K p u)⁻¹ : K) _ _,
   have H := roots_of_unity_in_cyclo hζ hpo ((u * (unit_gal_conj K p u)⁻¹ : K)) this,
   obtain ⟨n, k, hz⟩ := H,
@@ -439,12 +440,12 @@ begin
       ← units.coe_pow] at hz,
     norm_cast at hz,
     simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ h u n hp },
-  { exact unit_lemma_val_one K p u,},
   { apply is_integral_mul,
     exact number_field.ring_of_integers.is_integral_coe (coe_b u),
     rw (_ : ((unit_gal_conj K p u)⁻¹ : K) = (↑(unit_gal_conj K p u⁻¹))),
     exact number_field.ring_of_integers.is_integral_coe (coe_b _),
     simpa only [coe_coe, coe_life] },
+  { exact unit_lemma_val_one K p u,},
 end
 
 lemma unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).prime) (u : RRˣ) :
