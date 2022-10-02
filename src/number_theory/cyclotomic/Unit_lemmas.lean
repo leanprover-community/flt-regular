@@ -445,7 +445,7 @@ begin
     rw (_ : ((unit_gal_conj K p u)⁻¹ : K) = (↑(unit_gal_conj K p u⁻¹))),
     exact number_field.ring_of_integers.is_integral_coe (coe_b _),
     simpa only [coe_coe, coe_life] },
-  { exact unit_lemma_val_one K p u,},
+  { exact unit_lemma_val_one K p u, },
 end
 
 lemma unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).prime) (u : RRˣ) :
