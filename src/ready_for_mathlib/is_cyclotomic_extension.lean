@@ -7,6 +7,7 @@ namespace is_cyclotomic_extension
 
 open algebra
 
+@[protected]
 lemma equiv [h : is_cyclotomic_extension S R A] (f : A ≃ₐ[R] B) : is_cyclotomic_extension S R B :=
 begin
   refine (iff_adjoin_eq_top _ _ _).2 ⟨λ s hs, _, _⟩,
