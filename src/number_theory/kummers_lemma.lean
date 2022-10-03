@@ -14,7 +14,7 @@ variables {K : Type*} [field K] [char_zero K]
 
 open_locale number_field
 
-lemma eq_pow_prime_of_unit_of_congruent (p : ℕ) [fact (0 < p)] (hpp : prime p) (hptwo : p ≠ 2)
-  (hpr : is_regular_number p) [is_cyclotomic_extension {⟨p, fact.out _⟩} ℚ K]
+lemma eq_pow_prime_of_unit_of_congruent (p : ℕ) (hpp : p.prime) (hptwo : p ≠ 2)
+  (hpr : is_regular_number p hpp.pos) [is_cyclotomic_extension {⟨p, hpp.pos⟩} ℚ K]
   (u : (𝓞 K)ˣ)  (hcong : ∃ n : ℤ, (↑u : 𝓞 K) - n ∈ ideal.span ({p} : set (𝓞 K))) :
   ∃ v, u = v ^ p := sorry

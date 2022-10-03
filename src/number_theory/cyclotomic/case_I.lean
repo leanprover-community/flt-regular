@@ -3,7 +3,6 @@ import number_theory.cyclotomic.cycl_rat
 import ready_for_mathlib.is_integral
 import number_theory.regular_primes
 import number_theory.cyclotomic.factoring
-import data.zmod.extras
 
 open_locale number_field non_zero_divisors
 
@@ -55,9 +54,10 @@ end
 lemma flt_three_case_one_aux {A B C : zmod 9} (h : A ^ 3 + B ^ 3 = C ^ 3) : 3 ∣ A * B * C :=
 by dec_trivial!
 
-theorem flt_regular_case_one_main {p a b c : ℕ} [fact p.prime] (hp : is_regular_number p)
-  (hp_ne_two : p ≠ 2) (hab : a.coprime b)
-  (hpabc : p.coprime (a * b * c)) (hp_five : 5 ≤ p) : a ^ p + b ^ p ≠ c ^ p :=
+theorem flt_regular_case_one_main {p : ℕ} {a b c : ℤ} [hp : fact p.prime]
+  (hp : is_regular_number p hp.out.pos)
+  (hp_ne_two : p ≠ 2) (hab : is_coprime a b)
+  (hpabc : is_coprime ↑p (a * b * c)) (hp_five : 5 ≤ p) : a ^ p + b ^ p ≠ c ^ p :=
 begin
   intro h,
   have h_prime : p.prime := fact.out _,
@@ -74,18 +74,20 @@ end
 
 /-- Case I (when a,b,c are coprime to the exponent), of FLT for regular primes, by reduction to
   the case of 5 ≤ p. -/
-theorem flt_regular_case_one {p a b c : ℕ} [h_prime : fact p.prime] (hp : is_regular_number p)
-  (hp_ne_two : p ≠ 2) (hab : a.coprime b)
-  (hpabc : p.coprime (a * b * c)) : a ^ p + b ^ p ≠ c ^ p :=
+theorem flt_regular_case_one {p : ℕ} {a b c : ℤ} [h_prime : fact p.prime]
+  (hp : is_regular_number p h_prime.out.pos)
+  (hp_ne_two : p ≠ 2) (hab : is_coprime a b)
+  (hpabc : is_coprime ↑p (a * b * c)) : a ^ p + b ^ p ≠ c ^ p :=
 begin
   intro h,
   unfreezingI { rcases eq_or_ne p 3 with rfl | hp_three },
   { suffices : 3 ∣ a * b * c,
-    { exact (nat.prime_three.dvd_iff_not_coprime.mp this) hpabc, },
+    { exact (int.prime_three.irreducible.dvd_iff_not_coprime.1 this) hpabc },
     have : (a : zmod 9) ^ 3 + b ^ 3 = c ^ 3,
     { rw_mod_cast h },
-    convert nat.dvd_of_dvd_coe_zmod (by norm_num : 3 ∣ 9)
-      (by exact_mod_cast flt_three_case_one_aux this) },
+    sorry },
+  --   convert nat.dvd_of_dvd_coe_zmod (by norm_num : (3 : ℤ) ∣ 9)
+  --     (by exact_mod_cast flt_three_case_one_aux this) },
   { have hp_five : 5 ≤ p, from h_prime.elim.five_le hp_ne_two hp_three,
-    exact flt_regular_case_one_main hp hp_ne_two hab hpabc hp_five h }
+     exact flt_regular_case_one_main hp hp_ne_two hab hpabc hp_five h }
 end
