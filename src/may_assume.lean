@@ -10,7 +10,7 @@ namespace flt_regular
 
 namespace may_assume
 
-lemma p_ne_three {a b c : ℤ} {n : ℕ} (hn : n ≠ 2) (hprod : a * b * c ≠ 0)
+lemma p_ne_three {a b c : ℤ} {n : ℕ} (hprod : a * b * c ≠ 0)
   (h : a ^ n + b ^ n = c^ n) : n ≠ 3 :=
 begin
   intro hn,
@@ -137,11 +137,13 @@ begin
     exact caseI }
 end
 
+/-- Case I with additional assumptions. -/
 def caseI_slightly_easier : Prop := ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ (hpri : p.prime)
   (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
   (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
 
+/-- Case I. -/
 def caseI : Prop := ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ (hpri : p.prime) (hreg : is_regular_number p hpri.pos)
   (hodd : p ≠ 2) (hprod : a * b * c ≠ 0) (caseI : ¬ ↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
 
@@ -155,7 +157,7 @@ begin
     have : p ∈ finset.Ioo 2 5 := finset.mem_Icc.2 ⟨nat.lt_of_le_and_ne hpri.two_le hodd.symm,
       by linarith⟩,
     fin_cases this,
-    { exact may_assume.p_ne_three (by norm_num) hprod H rfl },
+    { exact may_assume.p_ne_three hprod H rfl },
     { rw [show 4 = 2 * 2, from rfl] at hpri,
       refine nat.not_prime_mul one_lt_two one_lt_two hpri } },
   rcases may_assume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩,
