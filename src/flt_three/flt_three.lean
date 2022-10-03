@@ -24,12 +24,14 @@ This follows the proof by Euler as presented by H. M. Edwards in
 *Fermat's Last Theorem: A Genetic Introduction to Algebraic Number Theory*, pp. 39-54.
 -/
 
+/-- solutions to Fermat's last theorem for the exponent `3`. -/
 def flt_solution
   (n : ℕ)
   (a b c : ℤ) :=
   a ≠ 0 ∧ b ≠ 0 ∧ c ≠ 0 ∧
   a ^ n + b ^ n = c ^ n
 
+/-- Coprime solutions to Fermat's last theorem for the exponent `3`. -/
 def flt_coprime
   (n : ℕ)
   (a b c : ℤ) :=
@@ -253,7 +255,7 @@ end
 
 lemma gcd1or3
   (p q : ℤ)
-  (hp : p ≠ 0) (hq : q ≠ 0)
+  (hp : p ≠ 0)
   (hcoprime : is_coprime p q)
   (hparity : even p ↔ ¬even q) :
   int.gcd (2 * p) (p ^ 2 + 3 * q ^ 2) = 1 ∨ int.gcd (2 * p) (p ^ 2 + 3 * q ^ 2) = 3 :=
@@ -341,7 +343,7 @@ end
 
 lemma obscure'
   (p q : ℤ)
-  (hp : p ≠ 0) (hq : q ≠ 0)
+  (hp : p ≠ 0)
   (hcoprime : is_coprime p q)
   (hparity : even p ↔ ¬even q)
   (hcube : ∃ r, p ^ 2 + 3 * q ^ 2 = r ^ 3) :
@@ -490,7 +492,7 @@ begin
     exact hcube },
   obtain ⟨hcubeleft, hcuberight⟩ := int.eq_pow_of_mul_eq_pow_bit1 hgcd hr,
   -- todo shadowing hq
-  obtain ⟨u, v, hpfactor, hq, huvcoprime, huvodd⟩ := obscure' p q hp hq hcoprime hodd hcuberight,
+  obtain ⟨u, v, hpfactor, hq, huvcoprime, huvodd⟩ := obscure' p q hp hcoprime hodd hcuberight,
   have u_ne_zero : u ≠ 0,
   { rintro rfl,
     rw [zero_mul, zero_mul] at hpfactor,
@@ -696,7 +698,7 @@ begin
 
   -- 5.
   -- todo shadows hq hq
-  obtain ⟨u, v, hq, hs, huvcoprime, huvodd⟩ := obscure' q s hq hspos hcoprime'.symm hodd' hcuberight,
+  obtain ⟨u, v, hq, hs, huvcoprime, huvodd⟩ := obscure' q s hq hcoprime'.symm hodd' hcuberight,
   have hu : u ≠ 0,
   { rintro rfl,
     norm_num at hq },
@@ -770,7 +772,7 @@ begin
       simp [mul_pow, int.nat_abs_mul, int.nat_abs_pow] },
 
   -- 4.
-  cases gcd1or3 p q hp hq hcoprime hodd with hgcd hgcd,
+  cases gcd1or3 p q hp hcoprime hodd with hgcd hgcd,
   -- 5.
   { rw int.gcd_eq_one_iff_coprime at hgcd,
     apply descent_gcd1 a b c p q hp hq hcoprime hodd hcube h hgcd },

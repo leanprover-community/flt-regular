@@ -7,6 +7,7 @@ import data.int.parity
 import ring_theory.int.basic
 import ring_theory.prime
 
+/-- Being equal to `4` or odd. -/
 def odd_prime_or_four (z : ℤ) : Prop :=
   z = 4 ∨ (prime z ∧ odd z)
 
@@ -159,7 +160,7 @@ begin
       rwa [← multiset.prod_cons, ← multiset.prod_cons, multiset.cons_erase hbg] } },
 end
 
-
+/-- The odd factors. -/
 noncomputable def odd_factors (x : ℤ) := multiset.filter odd (unique_factorization_monoid.normalized_factors x)
 
 lemma odd_factors.zero : odd_factors 0 = 0 := rfl
@@ -183,6 +184,7 @@ begin
   rw [unique_factorization_monoid.normalized_factors_pow, multiset.filter_nsmul],
 end
 
+/-- The exponent of `2` in the factorization. -/
 noncomputable def even_factor_exp (x : ℤ) := multiset.count 2 (unique_factorization_monoid.normalized_factors x)
 
 lemma even_factor_exp.def (x : ℤ) : even_factor_exp x = multiset.count 2 (unique_factorization_monoid.normalized_factors x) := rfl
@@ -247,6 +249,7 @@ begin
 end
 
 -- most useful with  (hz : even (even_factor_exp z))
+/-- Odd factors or `4`. -/
 noncomputable def factors_odd_prime_or_four (z : ℤ) : multiset ℤ :=
 multiset.repeat 4 (even_factor_exp z / 2) + odd_factors z
 

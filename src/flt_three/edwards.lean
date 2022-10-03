@@ -337,6 +337,7 @@ begin
   { rwa [prod_map_norm, prod_map_norm] },
 end
 
+/-- The multiset of factors. -/
 noncomputable def factorization'
   {a : ℤ√-3}
   (hcoprime : is_coprime a.re a.im)
@@ -399,6 +400,7 @@ begin
       zsqrtd.mul_im, zsqrtd.coe_int_im] },
 end
 
+/-- Associated elements in `ℤ√-3`. -/
 def associated' (x y : ℤ√-3) : Prop := associated x y ∨  associated x y.conj
 
 @[refl] theorem associated'.refl (x : ℤ√-3) : associated' x x := or.inl (by refl)
