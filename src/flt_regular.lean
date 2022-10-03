@@ -64,6 +64,6 @@ begin
       exact habc,
       all_goals { apply finset.gcd_dvd, simp } } },
   cases nat.coprime_or_dvd_of_prime (fact.out p.prime) (a * b * c) with hpabc hpabc,
-  { exact absurd hpabc (flt_regular_case_one hp hpne_two h sorry) },
+  { exact absurd hpabc (λ _, flt_regular_case_one hp hpne_two sorry hpabc h) },
   { exact flt_regular_case_two p a b c hp hpne_two h hpabc }
 end
