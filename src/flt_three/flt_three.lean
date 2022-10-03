@@ -469,7 +469,6 @@ end
 
 lemma descent_gcd1 (a b c p q : ℤ)
   (hp : p ≠ 0)
-  (hq : q ≠ 0)
   (hcoprime : is_coprime p q)
   (hodd : even p ↔ ¬even q)
   (hcube : 2 * p * (p ^ 2 + 3 * q ^ 2) = a ^ 3 ∨
@@ -775,7 +774,7 @@ begin
   cases gcd1or3 p q hp hcoprime hodd with hgcd hgcd,
   -- 5.
   { rw int.gcd_eq_one_iff_coprime at hgcd,
-    apply descent_gcd1 a b c p q hp hq hcoprime hodd hcube h hgcd },
+    apply descent_gcd1 a b c p q hp hcoprime hodd hcube h hgcd },
   { apply descent_gcd3 a b c p q hp hq hcoprime hodd hcube h hgcd },
 end
 
