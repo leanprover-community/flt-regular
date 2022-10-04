@@ -309,20 +309,23 @@ Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\
 \end{proof}
 
 \begin{lemma}\label{lemma:may_assume_coprime}
+	\lean{flt_regular.caseI.may_assume}
+	\leanok
 	\uses{lemma:unit_lemma,lemma:zeta_pow_sub_eq_unit_zeta_sub_one,lemma:ideals_mult_to_power,theorem:ring_of_ints_of_cyclo}
 
-	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$.  Assume that we have $x,y,z \in \ZZ$ with $\gcd(xyz,p)=1$ and such that \[x^p+y^p=z^p.\]
+Let $p \geq 3$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$.  Assume that we have $x,y,z \in \ZZ$ with $\gcd(xyz,p)=1$ and such that \[x^p+y^p=z^p.\]
 
-Then without loss of generality, we may assume $x,y,z$ are pairwise coprime and \[x \not \equiv y \mod p.\]
+This is the so called "case I". To prove Fermat's last theorem, we may assume that:
+\begin{itemize}
+	\item $p \geq 5$;
+	\item $x,y,z$ are pairwise coprime;
+	\item $x \not \equiv y \mod p$.
+end{itemize}
 \end{lemma}
-
-
-
 \begin{proof}
 The first part is easy.
 
 Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod p$ then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd).
-
 \end{proof}
 
 \begin{definition}\label{defn:is_regular_number}
@@ -331,9 +334,8 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 	A prime number $p$ is called regular if it does not divide the class number of $\QQ(\zeta_p)$.
 \end{definition}
 
-
 \begin{theorem}\label{theorem:FLT_case_one}
-    \lean{flt_regular_case_one}
+    \lean{flt_regular.caseI}
     \leanok
 	\uses{defn:is_regular_number,lem:exists_int_sum_eq_zero,lem:dvd_coeff_cycl_integer,lemma:may_assume_coprime,lem:flt_ideals_coprime}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $\gcd(xyz,p)=1$.
@@ -346,7 +348,8 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u^p \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
 \end{theorem}
 
-\begin{theorem}\label{theorem:FLT_case_two}\lean{flt_regular_case_two}
+\begin{theorem}\label{theorem:FLT_case_two}
+	\lean{flt_regular.caseII}
 	\lean{eq_pow_prime_of_unit_of_congruent}
 	\leanok
 	\uses{lemma:may_assume_coprime,defn:is_regular_number,thm:Kummers_lemma}
