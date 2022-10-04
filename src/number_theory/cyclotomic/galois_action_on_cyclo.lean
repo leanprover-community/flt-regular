@@ -1,5 +1,4 @@
 import number_theory.cyclotomic.cyclotomic_units
--- import number_theory.cyclotomic.absolute_value
 
 import number_theory.cyclotomic.gal
 
@@ -26,13 +25,13 @@ local notation `RR` := 𝓞 K
 
 open_locale number_field cyclotomic
 
-open number_field.embeddings is_cyclotomic_extension polynomial
+open is_cyclotomic_extension polynomial
 
 noncomputable theory
 
 /-- complex conjugation as a Galois automorphism -/
 def gal_conj : K ≃ₐ[ℚ] K :=
-((is_cyclotomic_extension.aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1))
+((aut_equiv_pow K (cyclotomic.irreducible_rat p.pos)).symm (-1))
 
 variables {K p}
 

@@ -1,5 +1,5 @@
 import ring_theory.integral_closure
-import number_theory.number_field
+import number_theory.number_field.basic
 
 namespace alg_hom
 

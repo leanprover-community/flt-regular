@@ -3,7 +3,6 @@ import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.rat
 
 import ready_for_mathlib.basis
-import ready_for_mathlib.roots_of_unity
 import ready_for_mathlib.is_cyclotomic_extension
 
 universes u

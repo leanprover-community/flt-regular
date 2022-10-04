@@ -1,7 +1,7 @@
 import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.cyclotomic_units
 import ring_theory.roots_of_unity
-import number_theory.number_field
+import number_theory.number_field.embeddings
 import number_theory.cyclotomic.zeta_sub_one_prime
 import data.nat.prime_extras
 

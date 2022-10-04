@@ -1,5 +1,4 @@
 import ring_theory.norm
-import number_theory.number_field
 import ready_for_mathlib.is_integral
 
 -- mapping `is_integral`: `is_integral_alg_hom` (I'd rename to `is_integral.map` for dot notation)
@@ -62,7 +61,7 @@ begin
   simp only [mul_mem_class.coe_mul, set_like.coe_mk],
   nth_rewrite 0 [← insert_erase (mem_univ alg_equiv.refl)],
   rw [prod_insert (not_mem_erase alg_equiv.refl (univ : finset (L ≃ₐ[K] L)))],
-  refl, --simp instead of rw in the previous line produces a strange error
+  refl,
 end
 
 end using_cursed_algebra_instance
