@@ -353,14 +353,14 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
 \end{theorem}
 
-\begin{theorem}
+\begin{theorem}\label{thm:tot_real_sub_class_number_div}
 	Let $h,h^+$ denote the class number of $\QQ(\zeta_p)$ and $\QQ(\zeta_p+\zeta_p^{-1})$ respectively. If $p \nmid h$ then $p \nmid h^+$.
 \end{theorem}
 
 \begin{theorem}\label{theorem:FLT_case_two}
 	\lean{flt_regular.caseII}
 	\leanok
-	\uses{lemma:defn:is_regular_number,thm:Kummers_lemma}
+	\uses{lemma:defn:is_regular_number,thm:Kummers_lemma, thm:tot_real_sub_class_number_div}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
 \end{theorem}
 
