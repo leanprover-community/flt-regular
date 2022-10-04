@@ -323,6 +323,7 @@ This is the so called "case I". To prove Fermat's last theorem, we may assume th
 \end{itemize}
 \end{lemma}
 \begin{proof}
+	\leanok
 The first part is easy.
 
 Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod p$ then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd).
