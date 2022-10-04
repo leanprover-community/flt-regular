@@ -345,12 +345,13 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 \end{proof}
 
 \begin{theorem}\label{thm:Kummers_lemma}
+	\leanok
+	\lean{eq_pow_prime_of_unit_of_congruent}
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u^p \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
 \end{theorem}
 
 \begin{theorem}\label{theorem:FLT_case_two}
 	\lean{flt_regular.caseII}
-	\lean{eq_pow_prime_of_unit_of_congruent}
 	\leanok
 	\uses{lemma:may_assume_coprime,defn:is_regular_number,thm:Kummers_lemma}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
