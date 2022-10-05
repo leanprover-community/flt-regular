@@ -49,10 +49,11 @@ end
 
 open finset
 
-lemma ideal.exists_eq_pow_of_prod_eq_pow {ι : Type*} [decidable_eq ι] (p : nat) (c : ideal α)
+lemma ideal.exists_eq_pow_of_prod_eq_pow {ι : Type*} (p : nat) (c : ideal α)
   {s : finset ι} {f : ι → ideal α} (h : ∀ i j ∈ s, i ≠ j → is_coprime (f i) (f j))
   (hprod : ∏ i in s, f i = c^p) : ∀ i ∈ s, ∃ d : ideal α, f i = d ^ p :=
 begin
+  classical,
   intros i hi,
   rw [← insert_erase hi, prod_insert (not_mem_erase i s)] at hprod,
   refine ideal.exists_eq_pow_of_mul_eq_pow p
