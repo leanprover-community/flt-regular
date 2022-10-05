@@ -136,7 +136,7 @@ mem_span_singleton.mpr dvd_rfl
 lemma flt_ideals_coprime [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
   (H : x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ)) {η₁ η₂ : R} (hxy : is_coprime x y)
   (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
-  (caseI : ¬ ↑p ∣ x * y * z) : is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂):=
+  (caseI : ¬ ↑p ∣ x * y * z) : is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂) :=
 begin
   -- let I := flt_ideals p x y i + flt_ideals p x y j,
   -- have : ∃ v : RRˣ, (v : RR) * y * (1 - (zeta_runity p ℤ RR)) ∈ I,
