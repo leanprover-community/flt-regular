@@ -85,27 +85,25 @@ begin
   exact not_is_unit_of_not_is_unit_dvd hqpri.not_unit Hq hgcd
 end
 
-theorem exist_ideal {a b c : ℤ} (h5p : 5 ≤ p)
-  (H : a ^ p + b ^ p = c ^ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
-  (caseI : ¬ ↑p ∣ a * b * c) :
-  ∀ i ∈ nth_roots_finset p R, ∃ I, span ({a + i * b} : set R) = I ^ p :=
+theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
+  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
+  {ζ : R} (hζ : ζ ∈ nth_roots_finset p R) : ∃ I, span ({a + ζ * b} : set R) = I ^ p :=
 begin
   have h5P : 5 ≤ P := h5p,
   haveI : fact ((P : ℕ).prime) := ⟨hpri⟩,
   classical,
   have H₁ := congr_arg (algebra_map ℤ R) H,
   simp only [eq_int_cast, int.cast_add, int.cast_pow] at H₁,
-  have hζ := is_primitive_root.unit'_coe (zeta_spec P ℚ K),
+  have hζ' := is_primitive_root.unit'_coe (zeta_spec P ℚ K),
   rw [pow_add_pow_eq_prod_add_zeta_runity_mul (or.resolve_left (prime.eq_two_or_odd hpri)
-    (λ _, by linarith)) hζ] at H₁,
+    (λ _, by linarith)) hζ'] at H₁,
   replace H₁ := congr_arg (λ x, span ({x} : set R)) H₁,
   simp only [span_singleton_prod, ← span_singleton_pow] at H₁,
-  intros i hi,
-  obtain ⟨I, hI⟩ := exists_eq_pow_of_prod_eq_pow p (span ({c} : set R)) (λ η₁ hη₁ η₂ hη₂ hη, _) H₁ i hi,
+  obtain ⟨I, hI⟩ := exists_eq_pow_of_prod_eq_pow p (span ({c} : set R)) (λ η₁ hη₁ η₂ hη₂ hη, _) H₁ ζ hζ,
   { exact ⟨I, hI⟩ },
   { exact flt_ideals_coprime h5P H (ab_coprime H hpri.ne_zero hgcd) hη₁ hη₂ hη caseI }
 end
+.
 
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} {p : ℕ} (hpri : p.prime)
@@ -113,6 +111,12 @@ theorem caseI_easier {a b c : ℤ} {p : ℕ} (hpri : p.prime)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
   (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
 begin
+  intro H,
+  haveI : fact ((P : ℕ).prime) := ⟨hpri⟩,
+  let ζ := zeta P ℤ R,
+  have hζ : ζ ∈ nth_roots_finset p R := sorry,
+  obtain ⟨I, hI⟩ := exists_ideal hpri hp5 H hgcd caseI hζ,
+  have hIprin : I.is_principal := sorry,
   sorry
 end
 
