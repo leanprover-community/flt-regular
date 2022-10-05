@@ -132,13 +132,26 @@ lemma mem_flt_ideals [fact ((p : ℕ).prime)] (x y : ℤ) {η : R}
   ↑x + η * ↑y ∈ flt_ideals p x y hη :=
 mem_span_singleton.mpr dvd_rfl
 
-lemma flt_ideals_coprime [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
-  (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
-  (hp : is_coprime x y) : is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂) :=
+lemma not_coprime_not_top (a b : ideal R) : ¬ is_coprime a b ↔ a + b ≠ ⊤ :=
 begin
-  -- let I := flt_ideals p x y i + flt_ideals p x y j,
-  -- have : ∃ v : RRˣ, (v : RR) * y * (1 - (zeta_runity p ℤ RR)) ∈ I,
-  -- { have := I.add_mem (ideal.add_left_subset $ mem_flt_ideals)
+ sorry,
+end
+
+
+lemma flt_ideals_coprime2 [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
+  (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
+  (hp : is_coprime x y) (hp2 : ¬ (p : ℤ) ∣ (x + y : ℤ) ) :
+  is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂) :=
+begin
+  let I := flt_ideals p x y hη₁ + flt_ideals p x y hη₂,
+  by_contra,
+  have he := (not_coprime_not_top p (flt_ideals p x y hη₁)  (flt_ideals p x y hη₂)).1 h,
+  have := exists_le_maximal I he,
+  obtain ⟨P, hP1, hP2⟩:= this,
+  have hiP : (flt_ideals p x y hη₁) ≤ P, by {apply le_trans _ hP2, apply ideal.add_left_subset,},
+  have hjP : (flt_ideals p x y hη₂) ≤ P, by {apply le_trans _ hP2, apply ideal.add_right_subset,},
+  have hel1: ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I, by {
+    -- { have := I.add_mem (ideal.add_left_subset $ mem_flt_ideals)
   --                     (ideal.mul_mem_left _ (-1) $ ideal.add_right_subset $ mem_flt_ideals),
   --   simp only [neg_mul, one_mul, neg_add_rev] at this,
   --   rw [neg_mul_eq_mul_neg, add_comm] at this,
@@ -147,9 +160,62 @@ begin
   --       ←zpow_neg] at this,
   --  sorry
     -- I cannot get the tactic state to work here :/
-  --},
+
+    sorry},
+  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I, by {sorry},
+  have hel11:  (y : R) * (1 - η₁) ∈ P, by {sorry},
+  have hel22 : (x : R) * (1 - η₁) ∈ P, by {sorry},
+  have hPrime:= hP1.is_prime,
+  have hprime2 := is_prime.mem_or_mem hPrime hel11,
+  have hprime3 := is_prime.mem_or_mem hPrime hel22,
+  cases hprime2,
+  cases hprime3,
+  obtain ⟨a, b, hab ⟩ := hp,
+  have hone := P.add_mem (ideal.mul_mem_left _ a hprime3) (ideal.mul_mem_left _ b hprime2),
+  norm_cast at hone,
+  rw hab at hone,
+  norm_cast at hone,
+  rw ←eq_top_iff_one at hone,
+  have hcontra := is_prime.ne_top hPrime,
+  rw hone at hcontra,
+  simp only [ne.def, eq_self_iff_true, not_true] at hcontra,
+  exact hcontra,
+  have hηprime : is_prime (ideal.span ({1 - η₁} : set R)) := by {sorry},
+  have hηP : (ideal.span ({1 - η₁} : set R)) = P, by {sorry},
+  have hcapZ : P.comap (int.cast_ring_hom R) = ideal.span ({(p : ℤ)} : set ℤ), by {
+    have H1 : ideal.span ({(p : ℤ)} : set ℤ) ≤ P.comap (int.cast_ring_hom R), by {sorry},
+
+
+    sorry},
+  have hxyinP : (x + y : R) ∈ P, by {
+    have H1 : (x : R) + η₁* y ∈ P, by { apply hiP, apply submodule.mem_span_singleton_self},
+    have H2 : η₁ * y = y - y * (1 - η₁), by {ring},
+    rw H2 at H1,
+    have H3 : ↑x + (↑y - ↑y * (1 - η₁)) = (↑x + ↑y) + (-↑y * (1 - η₁)), by {ring},
+    rw H3 at H1,
+    have H4 : -↑y * (1 - η₁) ∈ P, by {rw ←hηP, rw ideal.mem_span_singleton',
+    refine ⟨-(y : R), rfl⟩, },
+    apply (ideal.add_mem_iff_left P H4).1 H1,},
+  have hxyinP2 : (x + y ) ∈ ideal.span ({(p : ℤ)} : set ℤ), by {rw ←hcapZ, simp [hxyinP]},
+  rw mem_span_singleton at hxyinP2,
+  apply absurd hxyinP2 hp2,
   sorry,
+  --same as the sorry above
 end
+
+lemma flt_ideals_coprime [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
+  (H : x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ)) {η₁ η₂ : R} (hxy : is_coprime x y)
+  (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
+  (caseI : ¬ ↑p ∣ x * y * z) : is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂) :=
+begin
+   apply flt_ideals_coprime2 p5 hη₁ hη₂ hdiff hxy _,
+  sorry,
+
+
+end
+
+
+
 
 variable {L}
 
