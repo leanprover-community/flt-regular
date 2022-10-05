@@ -3,6 +3,7 @@ import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.rat
 
 import ready_for_mathlib.basis
+
 import ready_for_mathlib.is_cyclotomic_extension
 
 universes u
@@ -134,7 +135,7 @@ by rwa [mul_add, mul_one, ← mul_assoc, units.mul_inv, one_mul]
 
 end to_move
 
-lemma flt_ideals_coprime [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {i j : ℤ} (h : i ≠ j)
+lemma flt_ideals_coprime [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {i j : fin p} (h : i ≠ j)
   (hp : is_coprime x y) : flt_ideals p x y i + flt_ideals p x y j = ⊤ :=
 begin
   let I := flt_ideals p x y i + flt_ideals p x y j,
