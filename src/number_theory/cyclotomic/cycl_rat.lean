@@ -132,7 +132,7 @@ lemma mem_flt_ideals [fact ((p : ℕ).prime)] (x y : ℤ) {η : R}
   ↑x + ↑y * η ∈ flt_ideals p x y hη :=
 mem_span_singleton.mpr dvd_rfl
 
-lemma flt_ideals_coprime [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} (x y : ℤ) {η₁ η₂ : R}
+lemma flt_ideals_coprime [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
   (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R)
   (hp : is_coprime x y) : is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂) :=
 begin
