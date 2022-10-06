@@ -2,6 +2,7 @@ import may_assume.lemmas
 import number_theory.cyclotomic.factoring
 import number_theory.cyclotomic.Unit_lemmas
 import ready_for_mathlib.exists_eq_pow_of_mul_eq_pow
+import ready_for_mathlib.roots_of_unity
 
 open finset nat is_cyclotomic_extension ideal polynomial int
 
@@ -105,20 +106,47 @@ begin
 end
 .
 
+theorem is_principal {a b c : ℤ} {ζ : R} (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p)
+  (hprod : a * b * c ≠ 0) (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (hab : ¬a ≡ b [ZMOD p])
+  (caseI : ¬ ↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p) (hζ : is_primitive_root ζ p) :
+  ∃ (u : Rˣ) (α : R), ↑u * (α ^ p) = ↑a + ζ * ↑b :=
+begin
+  replace hζ := hζ.mem_nth_roots_finset hpri.pos,
+  obtain ⟨I, hI⟩ := exists_ideal hpri hp5 H hgcd caseI hζ,
+  by_cases hIpzero : I ^ p = 0,
+  { refine ⟨1, 0, _⟩,
+    simp [hIpzero, zero_eq_bot, span_singleton_eq_bot] at hI,
+    simp [hpri.pos, hI] },
+  have hIzero : I ≠ 0,
+  { intro hIzero,
+    simp only [hIzero, zero_pow hpri.pos] at hIpzero,
+    exact hIpzero rfl },
+  have hIprin : I.is_principal,
+  { let J : class_group R K := class_group.mk0 _ ⟨I, mem_non_zero_divisors_of_ne_zero hIzero⟩,
+    have : class_group.mk0 _ ⟨_, mem_non_zero_divisors_of_ne_zero hIpzero⟩ = (1 : class_group R K),
+    { rw [class_group.mk0_eq_one_iff (mem_non_zero_divisors_of_ne_zero hIpzero)],
+      exact ⟨⟨↑a + ζ * ↑b, hI.symm⟩⟩ },
+    rw [← submonoid_class.mk_pow I (mem_non_zero_divisors_of_ne_zero hIzero), map_pow] at this,
+    cases (dvd_prime hpri).1 (order_of_dvd_of_pow_eq_one this) with h1 habs,
+    { exact (class_group.mk0_eq_one_iff _).1 (order_of_eq_one_iff.1 h1) },
+    { exfalso,
+      refine hpri.coprime_iff_not_dvd.1 hreg _,
+      simp_rw [← habs],
+      exact order_of_dvd_card_univ, } },
+  obtain ⟨α, hα⟩ := hIprin,
+  replace hα := congr_arg (λ J, J ^ p) hα,
+  simp only [←hI, submodule_span_eq, span_singleton_pow, span_singleton_eq_span_singleton] at hα,
+  obtain ⟨u, hu⟩ := hα,
+  refine ⟨u⁻¹, α, _⟩,
+  rw [← hu, mul_comm _ ↑u, ← mul_assoc],
+  simp
+end
+
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} {p : ℕ} (hpri : p.prime)
   (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
-  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
-begin
-  intro H,
-  haveI : fact ((P : ℕ).prime) := ⟨hpri⟩,
-  let ζ := zeta P ℤ R,
-  have hζ : ζ ∈ nth_roots_finset p R := sorry,
-  obtain ⟨I, hI⟩ := exists_ideal hpri hp5 H hgcd caseI hζ,
-  have hIprin : I.is_principal := sorry,
-  sorry
-end
+  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p := sorry
 
 /-- CaseI. -/
 theorem caseI {a b c : ℤ} {p : ℕ} (hpri : p.prime) (hreg : is_regular_number p hpri.pos)
