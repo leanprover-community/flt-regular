@@ -107,7 +107,7 @@ end
 .
 
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p)
-  (hprod : a * b * c ≠ 0) (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (hab : ¬a ≡ b [ZMOD p])
+  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
   (caseI : ¬ ↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p) (hζ : is_primitive_root ζ p) :
   ∃ (u : Rˣ) (α : R), ↑u * (α ^ p) = ↑a + ζ * ↑b :=
 begin
