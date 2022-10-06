@@ -62,10 +62,10 @@ section two_regular
 
 variables (A K : Type*) [comm_ring A] [is_domain A] [field K] [algebra A K] [is_fraction_ring A K]
 
-variables (L : Type*) [field L] [algebra K L] [is_cyclotomic_extension {2} K L]
+variables (L : Type*) [field L] [algebra K L]
 
 /-- The second cyclotomic field is equivalent to the base field. -/
-def cyclotomic_field_two_equiv : L ≃ₐ[K] K :=
+def cyclotomic_field_two_equiv [is_cyclotomic_extension {2} K L] : L ≃ₐ[K] K :=
 begin
   suffices : is_splitting_field K K (cyclotomic 2 K),
   { letI : is_splitting_field K L (cyclotomic 2 K) :=
@@ -84,11 +84,10 @@ def ring_equiv.to_int_alg_equiv {R S} [ring R] [ring S] [algebra ℤ R] [algebra
   show (f : R →+* S) _  = _, by simp, .. f }
 --todo : `fun_like` on the `int/cast` file.
 
-instance : is_principal_ideal_ring (𝓞 L) :=
+instance (L : Type*) [field L] [char_zero L] [is_cyclotomic_extension {2} ℚ L] :
+  is_principal_ideal_ring (𝓞 L) :=
 begin
-  -- this proof idea 100% works, but is incredibly painful until the `algebra_rat` diamond is fixed.
-  -- when #14984 is merged, I will un-sorry this.
-  admit
+  sorry
   /-
   let ζ := is_cyclotomic_extension.zeta 2 ℚ (cyclotomic_field 2 ℚ),
   let hζ := is_cyclotomic_extension.zeta_spec 2 ℚ (cyclotomic_field 2 ℚ),
@@ -106,7 +105,7 @@ begin
   convert coprime_one_right _,
   dsimp,
   rw card_class_group_eq_one_iff,
-  apply_instance,
+  sorry
 end
 
 end two_regular
