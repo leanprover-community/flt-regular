@@ -3,6 +3,7 @@ import number_theory.cyclotomic.factoring
 import number_theory.cyclotomic.Unit_lemmas
 import ready_for_mathlib.exists_eq_pow_of_mul_eq_pow
 import ready_for_mathlib.roots_of_unity
+import number_theory.cyclotomic.case_I
 
 open finset nat is_cyclotomic_extension ideal polynomial int
 
@@ -141,11 +142,26 @@ begin
   simp
 end
 
+--local attribute [-instance] cyclotomic_field.algebra
+
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} {p : ℕ} (hpri : p.prime)
   (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
-  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p := sorry
+  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
+begin
+  intro H,
+  haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
+  haveI diamond : is_cyclotomic_extension {P} ℚ K := cyclotomic_field.is_cyclotomic_extension P ℚ,
+  let ζ := zeta P ℚ K, have hζ := (zeta_spec P ℚ K),
+  let ζ' := (⟨ζ, hζ.is_integral hpri.pos⟩ : 𝓞 K),
+  have hζ' : is_primitive_root ζ' p := is_primitive_root.coe_submonoid_class_iff.1 hζ,
+  obtain ⟨u, α, hu⟩ := is_principal hpri hreg hp5 hgcd caseI H hζ',
+  rw [show ζ' = (hζ.unit' : R), from rfl, mul_comm _ ↑b, ← pow_one hζ.unit'] at hu,
+  obtain ⟨k, hk⟩ := @flt_regular.caseI.exists_int_sum_eq_zero P K _ _
+    (by {convert diamond, by exact subsingleton.elim _ _ }) ζ hζ sorry _ a b 1 u α hu.symm,
+  sorry
+end
 
 /-- CaseI. -/
 theorem caseI {a b c : ℤ} {p : ℕ} (hpri : p.prime) (hreg : is_regular_number p hpri.pos)
