@@ -286,6 +286,13 @@ begin
   apply HC hprime2,
 end
 
+lemma aux_lem_flt [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
+  (H : x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ))
+  (caseI : ¬ ↑p ∣ x * y * z) : ¬ (p : ℤ) ∣ (x + y : ℤ) :=
+begin
+  sorry,
+end
+
 lemma flt_ideals_coprime [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
   (H : x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ)) {η₁ η₂ : R} (hxy : is_coprime x y)
   (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
@@ -293,14 +300,11 @@ lemma flt_ideals_coprime [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
 begin
    --how does wlog work? I want to have η₁ ≠ 1...
   by_cases h : η₁ ≠ 1,
-   apply flt_ideals_coprime2 p5 hη₁ hη₂ hdiff hxy _ h,
-  sorry,
+   apply flt_ideals_coprime2 p5 hη₁ hη₂ hdiff hxy (aux_lem_flt p5 H caseI) h,
   have h2 : η₂ ≠ 1, by {simp at h, rw h at hdiff, exact hdiff.symm},
-  have := flt_ideals_coprime2 p5 hη₂ hη₁ hdiff.symm hxy _ h2,
+  have := flt_ideals_coprime2 p5 hη₂ hη₁ hdiff.symm hxy (aux_lem_flt p5 H caseI) h2,
   apply is_coprime.symm,
   exact this,
-  sorry,
-
 end
 #exit
 
