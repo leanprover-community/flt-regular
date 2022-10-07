@@ -3,8 +3,9 @@ import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.rat
 
 import ready_for_mathlib.basis
-
+import ring_theory.dedekind_domain.ideal
 import ready_for_mathlib.is_cyclotomic_extension
+import number_theory.cyclotomic.zeta_sub_one_prime
 
 universes u
 
@@ -138,10 +139,38 @@ begin
  sorry,
 end
 
+lemma zeta_sub_one_dvb_p [fact (p : ℕ).prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nth_roots_finset p R)
+  (hne1 : η ≠ 1): (1 -η) ∣ (p : R) :=
+begin
+  sorry,
+end
+
+lemma one_sub_zeta_prime [fact (p : ℕ).prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nth_roots_finset p R)
+  (hne1 : η ≠ 1) : prime (1 - η) :=
+begin
+sorry,
+end
+
+lemma diff_of_roots  [fact (p : ℕ).prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nth_roots_finset p R)
+  (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂) (hwlog : η₁ ≠ 1) :
+  ∃ (u : Rˣ), (η₁ - η₂) = u * (1 - η₁)  :=
+begin
+ sorry,
+end
+
+
+lemma diff_of_roots2  [fact (p : ℕ).prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nth_roots_finset p R)
+  (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂) (hwlog : η₁ ≠ 1) :
+  ∃ (u : Rˣ), (η₂ - η₁) = u * (1 - η₁)  :=
+begin
+ sorry,
+end
+
+instance arg : is_dedekind_domain R := sorry
 
 lemma flt_ideals_coprime2 [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
   (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
-  (hp : is_coprime x y) (hp2 : ¬ (p : ℤ) ∣ (x + y : ℤ) ) :
+  (hp : is_coprime x y) (hp2 : ¬ (p : ℤ) ∣ (x + y : ℤ) ) (hwlog : η₁ ≠ 1) :
   is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂) :=
 begin
   let I := flt_ideals p x y hη₁ + flt_ideals p x y hη₂,
@@ -152,23 +181,95 @@ begin
   have hiP : (flt_ideals p x y hη₁) ≤ P, by {apply le_trans _ hP2, apply ideal.add_left_subset,},
   have hjP : (flt_ideals p x y hη₂) ≤ P, by {apply le_trans _ hP2, apply ideal.add_right_subset,},
   have hel1: ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I, by {
-    -- { have := I.add_mem (ideal.add_left_subset $ mem_flt_ideals)
-  --                     (ideal.mul_mem_left _ (-1) $ ideal.add_right_subset $ mem_flt_ideals),
-  --   simp only [neg_mul, one_mul, neg_add_rev] at this,
-  --   rw [neg_mul_eq_mul_neg, add_comm] at this,
-  --   simp only [← add_assoc] at this,
-  --   rw [add_assoc _ (-_) _, neg_add_self, add_zero, ←mul_add, add_comm, add_eq_mul_one_add_div,
-  --       ←zpow_neg] at this,
-  --  sorry
-    -- I cannot get the tactic state to work here :/
-
-    sorry},
-  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I, by {sorry},
-  have hel11:  (y : R) * (1 - η₁) ∈ P, by {sorry},
-  have hel22 : (x : R) * (1 - η₁) ∈ P, by {sorry},
+  have := I.add_mem (ideal.add_left_subset $ (mem_flt_ideals _ _ hη₁))
+                      (ideal.mul_mem_left _ (-1) $ ideal.add_right_subset $ (mem_flt_ideals _ _ _) ),
+    simp only [neg_mul, one_mul, neg_add_rev] at this,
+    rw [neg_mul_eq_mul_neg, add_comm] at this,
+    simp only [← add_assoc] at this,
+    simp at this,
+    have hh := diff_of_roots ph hη₁ hη₂ hdiff hwlog,
+    obtain ⟨v, hv⟩ := hh,
+    refine ⟨v, _⟩,
+    have  h3 : -(η₂ * ↑y) + η₁ * ↑y = (η₁ - η₂) * y, by {ring},
+    rw h3 at this,
+    rw hv at this,
+    have h4 :  ↑v * (1 - η₁) * ↑y = v * y * (1-η₁) , by {ring},
+    rw ←h4,
+    apply this},
+  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I, by {
+    have := I.add_mem (ideal.mul_mem_left _ (η₂) $ ideal.add_left_subset $ (mem_flt_ideals _ _ hη₁))
+                      (ideal.mul_mem_left _ (-η₁) $ ideal.add_right_subset $ (mem_flt_ideals _ _ _)),
+    have h1 :  η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) = (η₂ - η₁) * x, by {ring},
+    rw h1 at this,
+    have hh := diff_of_roots2 ph hη₁ hη₂ hdiff hwlog,
+    obtain ⟨v, hv⟩ := hh,
+    refine ⟨v, _⟩,
+    rw hv at this,
+    have h4 :  ↑v * (1 - η₁) * ↑x = v * x * (1-η₁) , by {ring},
+    rw h4 at this,
+    exact this},
+  have hel11:  (y : R) * (1 - η₁) ∈ P, by {
+    obtain ⟨v, hv ⟩:= hel1,
+    rw mul_assoc at hv,
+    have hvunit : is_unit (v : R), by {exact units.is_unit v, },
+    apply (unit_mul_mem_iff_mem P hvunit).1 _,
+    apply hP2,
+    apply hv,},
+  have hel22 : (x : R) * (1 - η₁) ∈ P, by {
+      obtain ⟨v, hv ⟩:= hel2,
+    rw mul_assoc at hv,
+    have hvunit : is_unit (v : R), by {exact units.is_unit v, },
+    apply (unit_mul_mem_iff_mem P hvunit).1 _,
+    apply hP2,
+    apply hv,
+  },
   have hPrime:= hP1.is_prime,
   have hprime2 := is_prime.mem_or_mem hPrime hel11,
   have hprime3 := is_prime.mem_or_mem hPrime hel22,
+  have HC : (1 - η₁) ∈ P → false,
+    begin
+    intro h,
+    have eta_sub_one_ne_zero :=  sub_ne_zero.mpr (ne.symm hwlog),
+    have hηprime : is_prime (ideal.span ({1 - η₁} : set R)) := by {
+      rw span_singleton_prime eta_sub_one_ne_zero,
+      apply one_sub_zeta_prime ph hη₁ hwlog,},
+    have H5 : is_prime (ideal.span ({(p : ℤ)} : set ℤ)), by {
+    have h2 : (p : ℤ) ≠ 0, by {simp, },
+    have h1 : prime (p : ℤ) , by {simp only [coe_coe], rw  ←prime_iff_prime_int, exact _inst_4.out,},
+    rw (span_singleton_prime h2),
+    apply h1,  },
+    have hηP : (ideal.span ({1 - η₁} : set R)) = P, by {
+      have hRdim1 : ring.dimension_le_one R,  by {exact is_dedekind_domain.dimension_le_one,},
+      have hle : (ideal.span ({1 - η₁} : set R)) ≤ P, by {rw span_le, simp [h],},
+      apply ((@ring.dimension_le_one.prime_le_prime_iff_eq _ _ hRdim1 _ _ hηprime hPrime _).1 hle),
+      simp,
+      exact sub_ne_zero.mpr (ne.symm hwlog)},
+    have hcapZ : P.comap (int.cast_ring_hom R) = ideal.span ({(p : ℤ)} : set ℤ), by {
+      have H1 : ideal.span ({(p : ℤ)} : set ℤ) ≤ P.comap (int.cast_ring_hom R), by {
+        rw ←hηP,
+        apply le_comap_of_map_le _,
+        rw map_span,
+        simp,
+        rw span_singleton_le_span_singleton,
+        apply zeta_sub_one_dvb_p ph hη₁ hwlog},
+      have H2 : is_prime (P.comap (int.cast_ring_hom R)),
+        by {apply @is_prime.comap _ _ _ _ _ _ _ _ hPrime,},
+      have H3 : ring.dimension_le_one ℤ, by {exact is_dedekind_domain.dimension_le_one, },
+      have H4 :  (ideal.span ({(p : ℤ)} : set ℤ)) ≠ ⊥, by {simp,},
+      apply ((@ring.dimension_le_one.prime_le_prime_iff_eq _ _ H3 _ _ H5 H2 H4).1 H1).symm,},
+    have hxyinP : (x + y : R) ∈ P, by {
+      have H1 : (x : R) + η₁* y ∈ P, by { apply hiP, apply submodule.mem_span_singleton_self},
+      have H2 : η₁ * y = y - y * (1 - η₁), by {ring},
+      rw H2 at H1,
+      have H3 : ↑x + (↑y - ↑y * (1 - η₁)) = (↑x + ↑y) + (-↑y * (1 - η₁)), by {ring},
+      rw H3 at H1,
+      have H4 : -↑y * (1 - η₁) ∈ P, by {rw ←hηP, rw ideal.mem_span_singleton',
+      refine ⟨-(y : R), rfl⟩, },
+      apply (ideal.add_mem_iff_left P H4).1 H1,},
+    have hxyinP2 : (x + y ) ∈ ideal.span ({(p : ℤ)} : set ℤ), by {rw ←hcapZ, simp [hxyinP]},
+    rw mem_span_singleton at hxyinP2,
+    apply absurd hxyinP2 hp2,
+    end,
   cases hprime2,
   cases hprime3,
   obtain ⟨a, b, hab ⟩ := hp,
@@ -181,27 +282,8 @@ begin
   rw hone at hcontra,
   simp only [ne.def, eq_self_iff_true, not_true] at hcontra,
   exact hcontra,
-  have hηprime : is_prime (ideal.span ({1 - η₁} : set R)) := by {sorry},
-  have hηP : (ideal.span ({1 - η₁} : set R)) = P, by {sorry},
-  have hcapZ : P.comap (int.cast_ring_hom R) = ideal.span ({(p : ℤ)} : set ℤ), by {
-    have H1 : ideal.span ({(p : ℤ)} : set ℤ) ≤ P.comap (int.cast_ring_hom R), by {sorry},
-
-
-    sorry},
-  have hxyinP : (x + y : R) ∈ P, by {
-    have H1 : (x : R) + η₁* y ∈ P, by { apply hiP, apply submodule.mem_span_singleton_self},
-    have H2 : η₁ * y = y - y * (1 - η₁), by {ring},
-    rw H2 at H1,
-    have H3 : ↑x + (↑y - ↑y * (1 - η₁)) = (↑x + ↑y) + (-↑y * (1 - η₁)), by {ring},
-    rw H3 at H1,
-    have H4 : -↑y * (1 - η₁) ∈ P, by {rw ←hηP, rw ideal.mem_span_singleton',
-    refine ⟨-(y : R), rfl⟩, },
-    apply (ideal.add_mem_iff_left P H4).1 H1,},
-  have hxyinP2 : (x + y ) ∈ ideal.span ({(p : ℤ)} : set ℤ), by {rw ←hcapZ, simp [hxyinP]},
-  rw mem_span_singleton at hxyinP2,
-  apply absurd hxyinP2 hp2,
-  sorry,
-  --same as the sorry above
+  apply HC hprime3,
+  apply HC hprime2,
 end
 
 lemma flt_ideals_coprime [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
@@ -209,12 +291,18 @@ lemma flt_ideals_coprime [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
   (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
   (caseI : ¬ ↑p ∣ x * y * z) : is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂) :=
 begin
-   apply flt_ideals_coprime2 p5 hη₁ hη₂ hdiff hxy _,
+   --how does wlog work? I want to have η₁ ≠ 1...
+  by_cases h : η₁ ≠ 1,
+   apply flt_ideals_coprime2 p5 hη₁ hη₂ hdiff hxy _ h,
+  sorry,
+  have h2 : η₂ ≠ 1, by {simp at h, rw h at hdiff, exact hdiff.symm},
+  have := flt_ideals_coprime2 p5 hη₂ hη₁ hdiff.symm hxy _ h2,
+  apply is_coprime.symm,
+  exact this,
   sorry,
 
-
 end
-
+#exit
 
 
 
