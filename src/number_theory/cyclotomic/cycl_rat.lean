@@ -134,9 +134,26 @@ lemma mem_flt_ideals [fact ((p : ℕ).prime)] (x y : ℤ) {η : R}
   ↑x + η * ↑y ∈ flt_ideals p x y hη :=
 mem_span_singleton.mpr dvd_rfl
 
+lemma ideal.le_add (a b c d : ideal R) (hab : a ≤ b) (hcd : c ≤ d) : a + c ≤ b + d :=
+begin
+  sorry,
+end
+
 lemma not_coprime_not_top (a b : ideal R) : ¬ is_coprime a b ↔ a + b ≠ ⊤ :=
 begin
- sorry,
+  apply not_iff_not_of_iff,
+  rw is_coprime,
+  split,
+  intro h,
+  obtain ⟨x, y , hxy ⟩ := h,
+  rw eq_top_iff_one,
+  have h2 : x * a + y * b ≤ a + b, by {apply ideal.le_add, all_goals {apply mul_le_left},  },
+  apply h2,
+  rw hxy,
+  simp,
+  intro h,
+  rw eq_top_iff_one at h,
+  sorry,
 end
 
 lemma zeta_sub_one_dvb_p [fact (p : ℕ).prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nth_roots_finset p R)
@@ -167,7 +184,7 @@ begin
 end
 
 instance arg : is_dedekind_domain R := sorry
-
+#exit
 lemma flt_ideals_coprime2 [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
   (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
   (hp : is_coprime x y) (hp2 : ¬ (p : ℤ) ∣ (x + y : ℤ) ) (hwlog : η₁ ≠ 1) :
