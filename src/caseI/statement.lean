@@ -163,8 +163,29 @@ begin
   obtain ⟨k, hk⟩ := @flt_regular.caseI.exists_int_sum_eq_zero P K _ _
     (by {convert diamond, by exact subsingleton.elim _ _ }) ζ hζ' hP _ a b 1 u α hu.symm,
   simp only [zpow_one, zpow_neg, coe_coe, pnat.mk_coe, mem_span_singleton, ← this] at hk,
-  refine ⟨⟨nat_mod k p, sorry⟩, _⟩,
-  sorry
+  have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.ne_zero],
+  refine ⟨⟨(k % p).nat_abs, _⟩, _⟩,
+  { rw [← nat_abs_of_nat p],
+    refine nat_abs_lt_nat_abs_of_nonneg_of_lt (mod_nonneg _ hpcoe) _,
+    rw [nat_abs_of_nat],
+    exact mod_lt_of_pos _ (by simp [hpri.pos]) },
+  simp only [add_sub_assoc, sub_sub] at hk ⊢,
+  convert hk using 3,
+  rw [mul_add, mul_comm ↑a],
+  congr' 1,
+  { congr' 1,
+    rw [← subtype.coe_inj],
+    simp only [fin.coe_mk, subsemiring_class.coe_pow, _root_.coe_zpow, coe_coe,
+      is_primitive_root.coe_unit'_coe],
+    refine eq_of_div_eq_one _,
+    rw [← zpow_coe_nat, ← zpow_sub₀ (hζ'.ne_zero hpri.ne_zero), hζ'.zpow_eq_one_iff_dvd],
+    simp only [pnat.mk_coe, nat.cast_mul, coe_nat_bit0, nat.cast_one, ←mul_sub, int.add_mod_mod,
+      nat_abs_of_nonneg (mod_nonneg _ hpcoe)],
+    refine dvd_mul_of_dvd_right _ _,
+    nth_rewrite 1 [← int.div_add_mod k p],
+    ring_nf,
+    exact (dvd_neg _ _).2 ⟨k / ↑p, mul_comm _ _⟩ },
+  { sorry },
 end
 
 /-- Case I with additional assumptions. -/
