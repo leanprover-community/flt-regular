@@ -105,11 +105,10 @@ begin
   { exact ⟨I, hI⟩ },
   { exact flt_ideals_coprime h5P H (ab_coprime H hpri.ne_zero hgcd) hη₁ hη₂ hη caseI }
 end
-.
 
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
-  (caseI : ¬ ↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p) (hζ : is_primitive_root ζ p) :
+  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
+  (H : a ^ p + b ^ p = c ^ p) (hζ : is_primitive_root ζ p) :
   ∃ (u : Rˣ) (α : R), ↑u * (α ^ p) = ↑a + ζ * ↑b :=
 begin
   replace hζ := hζ.mem_nth_roots_finset hpri.pos,
@@ -141,27 +140,38 @@ begin
   rw [← hu, mul_comm _ ↑u, ← mul_assoc],
   simp
 end
+.
 
---local attribute [-instance] cyclotomic_field.algebra
-
-/-- Case I with additional assumptions. -/
-theorem caseI_easier {a b c : ℤ} {p : ℕ} (hpri : p.prime)
-  (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
+theorem ex_int_div {a b c : ℤ} {ζ : R} (hpri : p.prime) (hp5 : 5 ≤ p)
+  (hreg : is_regular_number p hpri.pos)
+  (hprod : a * b * c ≠ 0) (hζ : is_primitive_root ζ p)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
-  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
+  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p) :
+  ∃ (k : fin p), ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (2 * ↑k) - ↑b * ζ ^ (2 * ↑k - 1) :=
 begin
-  intro H,
+  let ζ' := (ζ : K),
+  have hζ' : is_primitive_root ζ' P := is_primitive_root.coe_submonoid_class_iff.2 hζ,
+  have : ζ = (hζ'.unit' : R) := by simp [is_primitive_root.unit'],
+  have hP : P ≠ 2,
+  { intro hP,
+    rw [← pnat.coe_inj, pnat.mk_coe, pnat.coe_bit0, pnat.one_coe] at hP,
+    linarith },
   haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
   haveI diamond : is_cyclotomic_extension {P} ℚ K := cyclotomic_field.is_cyclotomic_extension P ℚ,
-  let ζ := zeta P ℚ K, have hζ := (zeta_spec P ℚ K),
-  let ζ' := (⟨ζ, hζ.is_integral hpri.pos⟩ : 𝓞 K),
-  have hζ' : is_primitive_root ζ' p := is_primitive_root.coe_submonoid_class_iff.1 hζ,
-  obtain ⟨u, α, hu⟩ := is_principal hpri hreg hp5 hgcd caseI H hζ',
-  rw [show ζ' = (hζ.unit' : R), from rfl, mul_comm _ ↑b, ← pow_one hζ.unit'] at hu,
+  obtain ⟨u, α, hu⟩ := is_principal hpri hreg hp5 hgcd caseI H hζ,
+  rw [this, mul_comm _ ↑b, ← pow_one hζ'.unit'] at hu,
   obtain ⟨k, hk⟩ := @flt_regular.caseI.exists_int_sum_eq_zero P K _ _
-    (by {convert diamond, by exact subsingleton.elim _ _ }) ζ hζ sorry _ a b 1 u α hu.symm,
+    (by {convert diamond, by exact subsingleton.elim _ _ }) ζ hζ' hP _ a b 1 u α hu.symm,
+  simp only [zpow_one, zpow_neg, coe_coe, pnat.mk_coe, mem_span_singleton, ← this] at hk,
+  refine ⟨⟨nat_mod k p, sorry⟩, _⟩,
   sorry
 end
+
+/-- Case I with additional assumptions. -/
+theorem caseI_easier {a b c : ℤ} (hpri : p.prime)
+  (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
+  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
+  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p := sorry
 
 /-- CaseI. -/
 theorem caseI {a b c : ℤ} {p : ℕ} (hpri : p.prime) (hreg : is_regular_number p hpri.pos)
