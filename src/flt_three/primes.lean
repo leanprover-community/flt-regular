@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 
 import data.int.basic
 import data.int.parity
-import data.nat.gcd
+import data.nat.gcd.big_operators
 import data.pnat.basic
 import ring_theory.coprime.lemmas
 import ring_theory.int.basic
