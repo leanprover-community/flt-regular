@@ -184,7 +184,7 @@ begin
 end
 
 instance arg : is_dedekind_domain R := sorry
-#exit
+
 lemma flt_ideals_coprime2 [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
   (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
   (hp : is_coprime x y) (hp2 : ¬ (p : ℤ) ∣ (x + y : ℤ) ) (hwlog : η₁ ≠ 1) :
