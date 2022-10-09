@@ -36,8 +36,9 @@ instance safe {p : ℕ+} := is_cyclotomic_extension.number_field {p} ℚ $ cyclo
 instance safe' {p : ℕ+} := is_cyclotomic_extension.finite_dimensional {p} ℚ $ cyclotomic_field p ℚ
 
 instance cyclotomic_field.class_group_finite {p : ℕ+} :
-  fintype (class_group (𝓞 (cyclotomic_field p ℚ)) (cyclotomic_field p ℚ)) :=
-class_group.fintype_of_admissible_of_finite ℚ _ absolute_value.abs_is_admissible
+  fintype (class_group $ 𝓞 (cyclotomic_field p ℚ)) :=
+class_group.fintype_of_admissible_of_finite ℚ (cyclotomic_field p ℚ)
+  absolute_value.abs_is_admissible
 
 end safe_instances
 
@@ -46,8 +47,7 @@ variables (n p : ℕ) [fact p.prime]
 -- note that this definition can be annoying to work with whilst #14984 isn't merged.
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
 def is_regular_number (hpos : 0 < n) : Prop :=
-n.coprime $ fintype.card $
-class_group (𝓞 $ cyclotomic_field ⟨n, hpos⟩ ℚ) $ cyclotomic_field ⟨n, hpos⟩ ℚ
+n.coprime $ fintype.card $ class_group (𝓞 $ cyclotomic_field ⟨n, hpos⟩ ℚ)
 
 /-- A prime number is Bernoulli regular if it does not divide the numerator of any of
 the first `p - 3` (non-zero) Bernoulli numbers-/
@@ -80,8 +80,8 @@ end
 /-- Reinterpret a `ring_hom` as a `ℤ`-algebra homomorphism. -/
 def ring_equiv.to_int_alg_equiv {R S} [ring R] [ring S] [algebra ℤ R] [algebra ℤ S] (f : R ≃+* S) :
   R ≃ₐ[ℤ] S :=
-{ commutes' := λ n,
-  show (f : R →+* S) _  = _, by simp, .. f }
+{ commutes' := λ n, show (f : R →+* S) _ = _, by simp,
+  .. f }
 --todo : `fun_like` on the `int/cast` file.
 
 instance (L : Type*) [field L] [char_zero L] [is_cyclotomic_extension {2} ℚ L] :

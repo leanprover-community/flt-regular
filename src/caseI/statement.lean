@@ -91,19 +91,18 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
   {ζ : R} (hζ : ζ ∈ nth_roots_finset p R) : ∃ I, span ({a + ζ * b} : set R) = I ^ p :=
 begin
-  have h5P : 5 ≤ P := h5p,
   haveI : fact ((P : ℕ).prime) := ⟨hpri⟩,
   classical,
   have H₁ := congr_arg (algebra_map ℤ R) H,
   simp only [eq_int_cast, int.cast_add, int.cast_pow] at H₁,
-  have hζ' := is_primitive_root.unit'_coe (zeta_spec P ℚ K),
-  rw [pow_add_pow_eq_prod_add_zeta_runity_mul (or.resolve_left (prime.eq_two_or_odd hpri)
-    (λ _, by linarith)) hζ'] at H₁,
+  have hζ' := (zeta_spec P ℚ K).unit'_coe,
+  rw [pow_add_pow_eq_prod_add_zeta_runity_mul
+      (hpri.eq_two_or_odd.resolve_left $ λ h, by norm_num [h] at h5p) hζ'] at H₁,
   replace H₁ := congr_arg (λ x, span ({x} : set R)) H₁,
   simp only [span_singleton_prod, ← span_singleton_pow] at H₁,
   obtain ⟨I, hI⟩ := exists_eq_pow_of_prod_eq_pow p (span ({c} : set R)) (λ η₁ hη₁ η₂ hη₂ hη, _) H₁ ζ hζ,
   { exact ⟨I, hI⟩ },
-  { exact flt_ideals_coprime h5P H (ab_coprime H hpri.ne_zero hgcd) hη₁ hη₂ hη caseI }
+  { exact flt_ideals_coprime h5p H (ab_coprime H hpri.ne_zero hgcd) hη₁ hη₂ hη caseI }
 end
 
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p)
@@ -122,7 +121,7 @@ begin
     simp only [hIzero, zero_pow hpri.pos] at hIpzero,
     exact hIpzero rfl },
   have hIprin : I.is_principal,
-  { have : class_group.mk0 _ ⟨_, mem_non_zero_divisors_of_ne_zero hIpzero⟩ = (1 : class_group R K),
+  { have : class_group.mk0 ⟨_, mem_non_zero_divisors_of_ne_zero hIpzero⟩ = 1,
     { rw [class_group.mk0_eq_one_iff (mem_non_zero_divisors_of_ne_zero hIpzero)],
       exact ⟨⟨↑a + ζ * ↑b, hI.symm⟩⟩ },
     rw [← submonoid_class.mk_pow I (mem_non_zero_divisors_of_ne_zero hIzero), map_pow] at this,
@@ -151,11 +150,11 @@ theorem ex_int_div {a b c : ℤ} {ζ : R} (hpri : p.prime) (hp5 : 5 ≤ p)
 begin
   let ζ' := (ζ : K),
   have hζ' : is_primitive_root ζ' P := is_primitive_root.coe_submonoid_class_iff.2 hζ,
-  have : ζ = (hζ'.unit' : R) := by simp [is_primitive_root.unit'],
+  have : ζ = (hζ'.unit' : R) := by simp only [is_primitive_root.unit', set_like.eta, units.coe_mk],
   have hP : P ≠ 2,
   { intro hP,
     rw [← pnat.coe_inj, pnat.mk_coe, pnat.coe_bit0, pnat.one_coe] at hP,
-    linarith },
+    norm_num [hP] at hp5 },
   haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
   haveI diamond : is_cyclotomic_extension {P} ℚ K := cyclotomic_field.is_cyclotomic_extension P ℚ,
   obtain ⟨u, α, hu⟩ := is_principal hpri hreg hp5 hgcd caseI H hζ,
@@ -183,8 +182,8 @@ begin
       nat_abs_of_nonneg (mod_nonneg _ hpcoe)],
     refine dvd_mul_of_dvd_right _ _,
     nth_rewrite 1 [← int.div_add_mod k p],
-    ring_nf,
-    exact (dvd_neg _ _).2 ⟨k / ↑p, mul_comm _ _⟩ },
+    rw [←sub_sub, sub_right_comm, sub_self, zero_sub],
+    exact (dvd_neg _ _).2 (dvd_mul_right _ _) },
   { sorry },
 end
 
