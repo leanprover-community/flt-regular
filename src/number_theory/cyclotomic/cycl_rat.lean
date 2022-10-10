@@ -1,7 +1,7 @@
 import ring_theory.polynomial.eisenstein
 import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.rat
-
+import number_theory.cyclotomic.Unit_lemmas
 import ready_for_mathlib.basis
 import ring_theory.dedekind_domain.ideal
 import ready_for_mathlib.is_cyclotomic_extension
@@ -136,7 +136,10 @@ mem_span_singleton.mpr dvd_rfl
 
 lemma ideal.le_add (a b c d : ideal R) (hab : a ≤ b) (hcd : c ≤ d) : a + c ≤ b + d :=
 begin
-  sorry,
+  simp at *,
+  split,
+  apply le_trans hab (@le_sup_left _ _ _ _ ),
+  apply le_trans hcd (@le_sup_right _ _ _ _ ),
 end
 
 lemma not_coprime_not_top (a b : ideal R) : ¬ is_coprime a b ↔ a + b ≠ ⊤ :=
@@ -152,19 +155,78 @@ begin
   rw hxy,
   simp,
   intro h,
-  rw eq_top_iff_one at h,
-  sorry,
+  refine ⟨1,1,_⟩,
+  simp [h],
+end
+
+instance a1 : is_galois ℚ (cyclotomic_field p ℚ) := sorry
+
+instance a2 :  finite_dimensional ℚ (cyclotomic_field p ℚ) := sorry
+
+instance a3 : number_field (cyclotomic_field p ℚ) := sorry
+
+open is_primitive_root
+
+lemma nth_roots_prim [fact (p : ℕ).prime] {η : R} (hη : η ∈ nth_roots_finset p R)
+  (hne1 : η ≠ 1) : is_primitive_root η p :=
+begin
+  have hζ' := (zeta_spec p ℚ ((cyclotomic_field p ℚ))).unit'_coe,
+    rw (nth_roots_one_eq_bUnion_primitive_roots' hζ') at hη,
+    simp at *,
+    obtain ⟨a, ha, h2⟩ := hη,
+    have ha2 : a = p, by {rw (dvd_prime _inst_4.out) at ha,
+    cases ha,
+    exfalso,
+    rw ha at h2,
+    simp at h2,
+    rw h2 at hne1,
+    simp at *,
+    exact hne1,
+    exact ha,},
+    rw ha2 at h2,
+    have hn :  0 <(p : ℕ), by {norm_num,},
+    rw (mem_primitive_roots hn) at h2,
+    exact h2,
+end
+
+lemma prim_coe [fact (p : ℕ).prime] (ζ : R) (hζ : is_primitive_root ζ p) :
+  is_primitive_root (ζ : (cyclotomic_field p ℚ))  p :=
+begin
+  --I bet this is already somewhere
+  have : (ζ : (cyclotomic_field p ℚ))^(p : ℕ) = 1, by {norm_cast, apply hζ.1},
+  refine ⟨this,_⟩,
+  norm_cast,
+  exact hζ.2,
 end
 
 lemma zeta_sub_one_dvb_p [fact (p : ℕ).prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nth_roots_finset p R)
-  (hne1 : η ≠ 1): (1 -η) ∣ (p : R) :=
+  (hne1 : η ≠ 1): (1 - η) ∣ (p : R) :=
 begin
-  sorry,
+  have h00 : (1 - η) ∣ (p : R) ↔ (η - 1) ∣ (p : R), by {have hh : -(η - 1) = (1 - η), by {ring},
+  simp_rw [←hh],
+  apply neg_dvd},
+  rw h00,
+  have : is_primitive_root (η : (cyclotomic_field p ℚ))  p, by {
+    apply prim_coe η (nth_roots_prim hη hne1)},
+  have h0 : p ≠ 2, by   { intro hP,
+    norm_num [hP] at ph },
+  have h := dvd_norm ℚ ((η - 1) : R),
+  have h2 := is_primitive_root.sub_one_norm_prime this (cyclotomic.irreducible_rat p.2) h0,
+  convert h,
+  ext,
+  rw algebra_map_norm',
+  norm_cast at h2,
+  rw h2,
+  simp,
 end
+
+
 
 lemma one_sub_zeta_prime [fact (p : ℕ).prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nth_roots_finset p R)
   (hne1 : η ≠ 1) : prime (1 - η) :=
 begin
+  have h := (prim_coe η (nth_roots_prim hη hne1)),
+
 sorry,
 end
 
