@@ -187,9 +187,8 @@ begin
 end
 
 lemma aux₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p)
-  (hreg : is_regular_number p hpri.pos) (hζ : is_primitive_root ζ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
-  (H : a ^ p + b ^ p = c ^ p) {k₁ k₂ : fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
+  (hζ : is_primitive_root ζ p)
+  (caseI : ¬ ↑p ∣ a * b * c) {k₁ k₂ : fin p}
   (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) :
   ¬((k₁ : ℕ) = 0 ∧ (k₂ : ℕ) = p - 1) :=
 begin
@@ -242,10 +241,8 @@ begin
   linarith
 end
 
-lemma aux₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p)
-  (hreg : is_regular_number p hpri.pos) (hζ : is_primitive_root ζ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
-  (H : a ^ p + b ^ p = c ^ p) (k₁ k₂ : fin p) (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
+lemma aux₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : is_primitive_root ζ p)
+  (caseI : ¬ ↑p ∣ a * b * c) {k₁ k₂ : fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
   (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : ↑k₁ ≠ 0 :=
 begin
   haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
@@ -273,7 +270,7 @@ begin
   have h2 : (k₂ : ℕ) < B.dim,
   { simp only [totient_prime hpri, is_primitive_root.power_basis_int'_dim, pnat.mk_coe],
     refine ne.lt_of_le (λ H₁, _) (le_of_lt_succ _),
-    { exact aux₁ hpri hp5 hreg hζ hgcd caseI H hcong hdiv ⟨habs, H₁⟩ },
+    { exact aux₁ hpri hp5 hζ caseI hdiv ⟨habs, H₁⟩ },
     { rw [nat.sub_one, succ_pred_eq_of_pos hpri.pos],
       exact fin.is_lt k₂} },
   have hζpow₂ : ζ ^ (k₂ : ℕ) = B.basis ⟨k₂, h2⟩ := by simp,
