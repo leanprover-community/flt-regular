@@ -5,7 +5,7 @@ import ready_for_mathlib.exists_eq_pow_of_mul_eq_pow
 import ready_for_mathlib.roots_of_unity
 import number_theory.cyclotomic.case_I
 
-open finset nat is_cyclotomic_extension ideal polynomial int
+open finset nat is_cyclotomic_extension ideal polynomial int basis
 
 open_locale big_operators number_field
 
@@ -140,11 +140,11 @@ begin
   simp
 end
 
-theorem ex_fin_div {a b c : ℤ} {ζ : R} (hpri : p.prime) (hp5 : 5 ≤ p)
+theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p)
   (hreg : is_regular_number p hpri.pos) (hζ : is_primitive_root ζ p)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
   (H : a ^ p + b ^ p = c ^ p) :
-  ∃ (k₁ k₂ : fin p), ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) :=
+  ∃ (k₁ k₂ : fin p), k₂ ≡ k₁ - 1 [ZMOD p] ∧ ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) :=
 begin
   let ζ' := (ζ : K),
   have hζ' : is_primitive_root ζ' P := is_primitive_root.coe_submonoid_class_iff.2 hζ,
@@ -161,11 +161,12 @@ begin
     (by {convert diamond, by exact subsingleton.elim _ _ }) ζ hζ' hP _ a b 1 u α hu.symm,
   simp only [zpow_one, zpow_neg, coe_coe, pnat.mk_coe, mem_span_singleton, ← this] at hk,
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.ne_zero],
-  refine ⟨⟨(2 * k % p).nat_abs, _⟩, ⟨((2 * k - 1) % p).nat_abs, _⟩, _⟩,
+  refine ⟨⟨(2 * k % p).nat_abs, _⟩, ⟨((2 * k - 1) % p).nat_abs, _⟩, _, _⟩,
   repeat { rw [← nat_abs_of_nat p],
     refine nat_abs_lt_nat_abs_of_nonneg_of_lt (mod_nonneg _ hpcoe) _,
     rw [nat_abs_of_nat],
     exact mod_lt_of_pos _ (by simp [hpri.pos]) },
+  { simp [nat_abs_of_nonneg (mod_nonneg _ hpcoe), ← zmod.int_coe_eq_int_coe_iff] },
   simp only [add_sub_assoc, sub_sub] at hk ⊢,
   convert hk using 3,
   rw [mul_add, mul_comm ↑a, ← mul_assoc _ ↑b, mul_comm _ ↑b, mul_assoc ↑b],
@@ -183,6 +184,113 @@ begin
     rw [← zpow_coe_nat, ← zpow_sub_one₀ (hζ'.ne_zero hpri.ne_zero),
       ← zpow_sub₀ (hζ'.ne_zero hpri.ne_zero), hζ'.zpow_eq_one_iff_dvd, pnat.mk_coe],
     simp [nat_abs_of_nonneg (mod_nonneg _ hpcoe), ← zmod.int_coe_zmod_eq_zero_iff_dvd] },
+end
+
+lemma aux₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p)
+  (hreg : is_regular_number p hpri.pos) (hζ : is_primitive_root ζ p)
+  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
+  (H : a ^ p + b ^ p = c ^ p) {k₁ k₂ : fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
+  (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) :
+  ¬((k₁ : ℕ) = 0 ∧ (k₂ : ℕ) = p - 1) :=
+begin
+  haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
+  let ζ' := (ζ : K),
+  have hζ' : is_primitive_root ζ' P := is_primitive_root.coe_submonoid_class_iff.2 hζ,
+  haveI diamond : is_cyclotomic_extension {P} ℚ K := cyclotomic_field.is_cyclotomic_extension P ℚ,
+  let B := @is_primitive_root.integral_power_basis' P K _ _ _ _ (by {convert diamond, by exact
+    subsingleton.elim _ _ }) hζ',
+
+  rintro ⟨habs₁, habs₂⟩,
+  rw [habs₁, pow_zero, mul_one, habs₂] at hdiv,
+  ring_nf at hdiv,
+  have h1 : 1 < B.dim,
+  { simp only [totient_prime hpri, is_primitive_root.power_basis_int'_dim, pnat.mk_coe],
+    exact lt_of_lt_of_le (by norm_num) (le_pred_of_lt hp5) },
+  have hζpow : ζ = B.basis ⟨1, h1⟩ := by simp,
+  obtain ⟨x, hx⟩ := hdiv,
+  have := B.basis.coord_dvd_of_dvd ⟨1, h1⟩ x p,
+  rw [zsmul_eq_mul, cast_coe_nat, ← hx, mul_comm, ← zsmul_eq_mul, linear_map.map_smul,
+    linear_map.map_sub, coord_apply, coord_apply, hζpow, repr_self_apply] at this,
+  have key : B.basis.repr (ζ ^ (p - 1)) ⟨1, h1⟩ = -1,
+  { rw [← pred_eq_sub_one, hζ.pow_sub_one_eq hpri.one_lt, ← coord_apply, linear_map.map_neg,
+      linear_map.map_sum, sum_range],
+    have Hi : ∀ i : fin p.pred, (i : ℕ) < B.dim,
+    { rintro ⟨i, hi⟩,
+      convert hi,
+      simp [totient_prime hpri, pred_eq_sub_one] },
+    have subkey : ∀ i : fin p.pred, ζ ^ (i : ℕ) = B.basis ⟨i, Hi i⟩ := by simp,
+    congr' 1,
+    conv_lhs { congr, skip, funext,
+      rw [subkey, coord_apply, repr_self_apply] },
+    simp only [fin.mk_eq_mk, sum_boole, cast_eq_one],
+    suffices hfilter : (filter (λ (x : fin p.pred), ↑x = 1) univ) =
+      {⟨1, lt_of_lt_of_le (by norm_num) (le_pred_of_lt hp5)⟩},
+    { rw [hfilter, card_singleton] },
+    refine finset.ext (λ x, ⟨λ hx, mem_singleton.2 _, λ hx, _⟩),
+    { simp only [mem_filter, mem_univ, true_and] at hx,
+      exact fin.ext hx },
+    { simp only [mem_singleton.1 hx, mem_filter, mem_univ, fin.coe_mk,
+        eq_self_iff_true, and_self] } },
+  simp only [key, fin.mk_eq_mk, eq_self_iff_true, if_true, power_basis.coe_basis, pnat.pos,
+    is_primitive_root.integral_power_basis'_gen, set_like.eta, fin.coe_mk, pow_one, sub_neg_eq_add,
+    algebra.id.smul_eq_mul] at this,
+  suffices hpb : ↑p ∣ b,
+  { exact caseI (has_dvd.dvd.mul_right (has_dvd.dvd.mul_left hpb _) _) },
+  refine (int.prime.dvd_mul' hpri this).resolve_right (λ h2, _),
+  replace h2 : p ∣ 2 := int.coe_nat_dvd.1 (by simpa using h2),
+  replace h2 := (nat.prime_dvd_prime_iff_eq hpri prime_two).1 h2,
+  linarith
+end
+
+lemma aux₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p)
+  (hreg : is_regular_number p hpri.pos) (hζ : is_primitive_root ζ p)
+  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
+  (H : a ^ p + b ^ p = c ^ p) (k₁ k₂ : fin p) (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
+  (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : ↑k₁ ≠ 0 :=
+begin
+  haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
+  let ζ' := (ζ : K),
+  have hζ' : is_primitive_root ζ' P := is_primitive_root.coe_submonoid_class_iff.2 hζ,
+  haveI diamond : is_cyclotomic_extension {P} ℚ K := cyclotomic_field.is_cyclotomic_extension P ℚ,
+  let B := @is_primitive_root.integral_power_basis' P K _ _ _ _ (by {convert diamond, by exact
+    subsingleton.elim _ _ }) hζ',
+  have h1 : 1 < B.dim,
+  { simp only [totient_prime hpri, is_primitive_root.power_basis_int'_dim, pnat.mk_coe],
+    exact lt_of_lt_of_le (by norm_num) (le_pred_of_lt hp5) },
+  have hζpow₁ : ζ = B.basis ⟨1, h1⟩ := by simp,
+
+  intro habs,
+  have hne : (k₂ : ℕ) ≠ 1,
+  { intro hne,
+    replace hne : (k₂ : ℤ) = 1 := by simpa using hne,
+    replace habs : (k₁ : ℤ) = 0 := by simpa using habs,
+    rw [hne, habs, zero_sub] at hcong,
+    haveI : fact (2 < p) := ⟨lt_of_lt_of_le (by norm_num) hp5⟩,
+    rw [← zmod.int_coe_eq_int_coe_iff ] at hcong,
+    refine @zmod.neg_one_ne_one p _ _,
+    convert hcong.symm;
+    simp },
+  have h2 : (k₂ : ℕ) < B.dim,
+  { simp only [totient_prime hpri, is_primitive_root.power_basis_int'_dim, pnat.mk_coe],
+    refine ne.lt_of_le (λ H₁, _) (le_of_lt_succ _),
+    { exact aux₁ hpri hp5 hreg hζ hgcd caseI H hcong hdiv ⟨habs, H₁⟩ },
+    { rw [nat.sub_one, succ_pred_eq_of_pos hpri.pos],
+      exact fin.is_lt k₂} },
+  have hζpow₂ : ζ ^ (k₂ : ℕ) = B.basis ⟨k₂, h2⟩ := by simp,
+
+  rw [habs, pow_zero, mul_one] at hdiv,
+  replace habs := coe_nat_eq_zero.2 habs,
+  rw [← coe_coe] at habs,
+  rw [habs, zero_sub] at hcong,
+  ring_nf at hdiv,
+  obtain ⟨x, hx⟩ := hdiv,
+  have := B.basis.coord_dvd_of_dvd ⟨1, h1⟩ x p,
+  rw [zsmul_eq_mul, cast_coe_nat, ← hx, mul_comm, ← zsmul_eq_mul, linear_map.map_smul,
+    linear_map.map_sub, coord_apply, coord_apply, hζpow₂, hζpow₁, repr_self_apply,
+    repr_self_apply] at this,
+  simp only [hne, fin.mk_eq_mk, eq_self_iff_true, if_true, if_false, tsub_zero,
+    algebra.id.smul_eq_mul, mul_one] at this,
+  exact caseI (has_dvd.dvd.mul_right (has_dvd.dvd.mul_left this _) _)
 end
 
 /-- Case I with additional assumptions. -/
