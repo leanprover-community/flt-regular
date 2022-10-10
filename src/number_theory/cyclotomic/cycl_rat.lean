@@ -189,15 +189,9 @@ begin
     exact h2,
 end
 
-lemma prim_coe [fact (p : ℕ).prime] (ζ : R) (hζ : is_primitive_root ζ p) :
+lemma prim_coe (ζ : R) (hζ : is_primitive_root ζ p) :
   is_primitive_root (ζ : (cyclotomic_field p ℚ))  p :=
-begin
-  --I bet this is already somewhere
-  have : (ζ : (cyclotomic_field p ℚ))^(p : ℕ) = 1, by {norm_cast, apply hζ.1},
-  refine ⟨this,_⟩,
-  norm_cast,
-  exact hζ.2,
-end
+coe_submonoid_class_iff.mpr hζ
 
 lemma zeta_sub_one_dvb_p [fact (p : ℕ).prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nth_roots_finset p R)
   (hne1 : η ≠ 1): (1 - η) ∣ (p : R) :=
@@ -207,7 +201,7 @@ begin
   apply neg_dvd},
   rw h00,
   have : is_primitive_root (η : (cyclotomic_field p ℚ))  p, by {
-    apply prim_coe η (nth_roots_prim hη hne1)},
+    apply prim_coe p η (nth_roots_prim hη hne1)},
   have h0 : p ≠ 2, by   { intro hP,
     norm_num [hP] at ph },
   have h := dvd_norm ℚ ((η - 1) : R),
@@ -225,7 +219,7 @@ end
 lemma one_sub_zeta_prime [fact (p : ℕ).prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nth_roots_finset p R)
   (hne1 : η ≠ 1) : prime (1 - η) :=
 begin
-  have h := (prim_coe η (nth_roots_prim hη hne1)),
+  have h := (prim_coe p η (nth_roots_prim hη hne1)),
 
 sorry,
 end
