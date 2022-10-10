@@ -139,14 +139,12 @@ begin
   rw [← hu, mul_comm _ ↑u, ← mul_assoc],
   simp
 end
-.
 
-theorem ex_int_div {a b c : ℤ} {ζ : R} (hpri : p.prime) (hp5 : 5 ≤ p)
-  (hreg : is_regular_number p hpri.pos)
-  (hprod : a * b * c ≠ 0) (hζ : is_primitive_root ζ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
-  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p) :
-  ∃ (k : fin p), ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (2 * ↑k) - ↑b * ζ ^ (2 * ↑k - 1) :=
+theorem ex_fin_div {a b c : ℤ} {ζ : R} (hpri : p.prime) (hp5 : 5 ≤ p)
+  (hreg : is_regular_number p hpri.pos) (hζ : is_primitive_root ζ p)
+  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
+  (H : a ^ p + b ^ p = c ^ p) :
+  ∃ (k₁ k₂ : fin p), ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) :=
 begin
   let ζ' := (ζ : K),
   have hζ' : is_primitive_root ζ' P := is_primitive_root.coe_submonoid_class_iff.2 hζ,
@@ -163,28 +161,28 @@ begin
     (by {convert diamond, by exact subsingleton.elim _ _ }) ζ hζ' hP _ a b 1 u α hu.symm,
   simp only [zpow_one, zpow_neg, coe_coe, pnat.mk_coe, mem_span_singleton, ← this] at hk,
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.ne_zero],
-  refine ⟨⟨(k % p).nat_abs, _⟩, _⟩,
-  { rw [← nat_abs_of_nat p],
+  refine ⟨⟨(2 * k % p).nat_abs, _⟩, ⟨((2 * k - 1) % p).nat_abs, _⟩, _⟩,
+  repeat { rw [← nat_abs_of_nat p],
     refine nat_abs_lt_nat_abs_of_nonneg_of_lt (mod_nonneg _ hpcoe) _,
     rw [nat_abs_of_nat],
     exact mod_lt_of_pos _ (by simp [hpri.pos]) },
   simp only [add_sub_assoc, sub_sub] at hk ⊢,
   convert hk using 3,
-  rw [mul_add, mul_comm ↑a],
-  congr' 1,
-  { congr' 1,
-    rw [← subtype.coe_inj],
+  rw [mul_add, mul_comm ↑a, ← mul_assoc _ ↑b, mul_comm _ ↑b, mul_assoc ↑b],
+  congr' 2,
+  { rw [← subtype.coe_inj],
     simp only [fin.coe_mk, subsemiring_class.coe_pow, _root_.coe_zpow, coe_coe,
       is_primitive_root.coe_unit'_coe],
     refine eq_of_div_eq_one _,
     rw [← zpow_coe_nat, ← zpow_sub₀ (hζ'.ne_zero hpri.ne_zero), hζ'.zpow_eq_one_iff_dvd],
-    simp only [pnat.mk_coe, nat.cast_mul, coe_nat_bit0, nat.cast_one, ←mul_sub, int.add_mod_mod,
-      nat_abs_of_nonneg (mod_nonneg _ hpcoe)],
-    refine dvd_mul_of_dvd_right _ _,
-    nth_rewrite 1 [← int.div_add_mod k p],
-    rw [←sub_sub, sub_right_comm, sub_self, zero_sub],
-    exact (dvd_neg _ _).2 (dvd_mul_right _ _) },
-  { sorry },
+    simp [nat_abs_of_nonneg (mod_nonneg _ hpcoe), ← zmod.int_coe_zmod_eq_zero_iff_dvd] },
+  { rw [← subtype.coe_inj],
+    simp only [fin.coe_mk, subsemiring_class.coe_pow, mul_mem_class.coe_mul, _root_.coe_zpow,
+      coe_coe, is_primitive_root.coe_unit'_coe, is_primitive_root.coe_inv_unit'_coe],
+    refine eq_of_div_eq_one _,
+    rw [← zpow_coe_nat, ← zpow_sub_one₀ (hζ'.ne_zero hpri.ne_zero),
+      ← zpow_sub₀ (hζ'.ne_zero hpri.ne_zero), hζ'.zpow_eq_one_iff_dvd, pnat.mk_coe],
+    simp [nat_abs_of_nonneg (mod_nonneg _ hpcoe), ← zmod.int_coe_zmod_eq_zero_iff_dvd] },
 end
 
 /-- Case I with additional assumptions. -/
