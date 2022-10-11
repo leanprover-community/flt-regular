@@ -386,10 +386,11 @@ end
 variable {L}
 
 lemma dvd_last_coeff_cycl_integer [hp : fact (p : ℕ).prime] {ζ : L} (hζ : is_primitive_root ζ p)
-  {f : fin p → ℤ} {i : fin p} (hf : f i = 0) {m : ℤ}
+  {f : fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ}
   (hdiv : ↑m ∣ ∑ j, f j • (⟨ζ, hζ.is_integral p.pos⟩ : 𝓞 L) ^ (j : ℕ)) :
   m ∣ f ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ :=
 begin
+  obtain ⟨i, Hi⟩ := hf,
   have hlast : (fin.cast (succ_pred_prime hp.out)) (fin.last (p : ℕ).pred) =
     ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ := fin.ext rfl,
   have h : ∀ x, (fin.cast (succ_pred_prime hp.out)) (fin.cast_succ x) =
@@ -401,7 +402,7 @@ begin
   { rw [hζ.power_basis_int'_dim, totient_prime hp.out, pred_eq_sub_one] },
 
   by_cases H : i = ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩,
-  { simp [H.symm, hf] },
+  { simp [H.symm, Hi] },
   have hi : ↑i < (p : ℕ).pred,
   { by_contra' habs,
     simpa [le_antisymm habs (le_pred_of_lt (fin.is_lt i))] using H },
@@ -416,7 +417,7 @@ begin
       ← hb, ← show ∀ x, _ = _, from λ x, congr_fun b.coe_basis x] },
   replace hy := congr_arg (b.basis.coord ((fin.cast hdim.symm) ⟨i, hi⟩)) hy,
   rw [← b.basis.equiv_fun_symm_apply, b.basis.coord_equiv_fun_symm] at hy,
-  simp only [hf, fin.coe_cast, smul_eq_mul, mul_boole, sum_ite_eq', mem_univ, fin.coe_mk,
+  simp only [Hi, fin.coe_cast, smul_eq_mul, mul_boole, sum_ite_eq', mem_univ, fin.coe_mk,
     fin.eta, zero_sub, if_true] at hy,
   rw [← smul_eq_mul, ← zsmul_eq_smul_cast, neg_eq_iff_neg_eq] at hy,
   obtain ⟨n, hn⟩ := b.basis.coord_dvd_of_dvd ((fin.cast hdim.symm) ⟨i, hi⟩) y m,
@@ -425,7 +426,7 @@ begin
 end
 
 lemma dvd_coeff_cycl_integer [hp : fact (p : ℕ).prime] {ζ : L} (hζ : is_primitive_root ζ p)
-  {f : fin p → ℤ} {i : fin p} (hf : f i = 0) {m : ℤ}
+  {f : fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ}
   (hdiv : ↑m ∣ ∑ j, f j • (⟨ζ, hζ.is_integral p.pos⟩ : 𝓞 L) ^ (j : ℕ)) : ∀ j, m ∣ f j :=
 begin
   have hlast : (fin.cast (succ_pred_prime hp.out)) (fin.last (p : ℕ).pred) =
