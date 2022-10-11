@@ -49,6 +49,7 @@ begin
   simp [zmod.neg_val, zmod.val_one]
 end
 
+/-- Auxiliary function -/
 def f₂ (b : ℤ) (p : ℕ) : ℕ → ℤ := λ x, if x = 1 then b else if x = p.pred then -b else 0
 
 lemma auxf₂ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : fin P, f₂ b p (i : ℕ) = 0 :=
