@@ -184,7 +184,7 @@ begin
   linarith
 end
 
-lemma auxf₂₁ (hp5 : 5 ≤ p) (a : ℤ) : ∃ i : fin P, f₂₁ a (i : ℕ) = 0 :=
+lemma auxf₂₁ (a : ℤ) : ∃ i : fin P, f₂₁ a (i : ℕ) = 0 :=
 begin
   refine ⟨⟨1, hpri.one_lt⟩, _⟩,
   have h2 : ((⟨1, hpri.one_lt⟩ : fin p) : ℕ) ≠ 2,
@@ -222,7 +222,7 @@ begin
     simp [hpri.pos, two_lt hp5, fin.coe_mk (two_lt hp5),eq_self_iff_true, -fin.mk_bit0] },
   rw [sum_range] at key,
   refine caseI (has_dvd.dvd.mul_right (has_dvd.dvd.mul_right _ _) _),
-  simpa [f₂₁] using dvd_coeff_cycl_integer (by exact hζ) (auxf₂₁ hpri hp5 a) key ⟨0, hpri.pos⟩
+  simpa [f₂₁] using dvd_coeff_cycl_integer (by exact hζ) (auxf₂₁ hpri a) key ⟨0, hpri.pos⟩
 end
 
 end k_two_one
