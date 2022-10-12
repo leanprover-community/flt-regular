@@ -239,7 +239,7 @@ begin
  sorry,
 end
 
-instance arg : is_dedekind_domain R := sorry
+instance arg : is_dedekind_domain R := infer_instance
 
 lemma flt_ideals_coprime2 [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
   (hη₁ : η₁ ∈ nth_roots_finset p R) (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂)
@@ -419,7 +419,7 @@ begin
     rw [smul_neg, hcoe, ← hζ'.integral_power_basis'_gen, ← hb, ← subsemiring_class.coe_pow,
       ← show ∀ x, _ = _, from λ x, congr_fun b.coe_basis x, ← sub_eq_add_neg] },
   norm_cast at hy,
-  rw [show (m : L) * (y : L) = ↑(↑m * y), by simp, subtype.coe_inj, sum_sub_distrib] at hy,
+  rw [sum_sub_distrib] at hy,
   replace hy := congr_arg (b.basis.coord ((fin.cast hdim.symm) ⟨i, hi⟩)) hy,
   rw [← b.basis.equiv_fun_symm_apply, ← b.basis.equiv_fun_symm_apply, linear_map.map_sub,
     b.basis.coord_equiv_fun_symm, b.basis.coord_equiv_fun_symm] at hy,
@@ -465,7 +465,7 @@ begin
     rw [smul_neg, hcoe, ← hζ'.integral_power_basis'_gen, ← hb, ← subsemiring_class.coe_pow,
       ← show ∀ x, _ = _, from λ x, congr_fun b.coe_basis x, ← sub_eq_add_neg] },
   norm_cast at hy,
-  rw [show (m : L) * (y : L) = ↑(↑m * y), by simp, subtype.coe_inj, sum_sub_distrib] at hy,
+  rw [sum_sub_distrib] at hy,
   replace hy := congr_arg (b.basis.coord ((fin.cast hdim.symm) ⟨j, hj⟩)) hy,
   rw [← b.basis.equiv_fun_symm_apply, ← b.basis.equiv_fun_symm_apply, linear_map.map_sub,
     b.basis.coord_equiv_fun_symm, b.basis.coord_equiv_fun_symm] at hy,
