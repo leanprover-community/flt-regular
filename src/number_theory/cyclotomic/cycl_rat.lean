@@ -159,11 +159,11 @@ begin
   simp [h],
 end
 
-instance a1 : is_galois ℚ (cyclotomic_field p ℚ) := sorry
+instance a1 : is_galois ℚ (cyclotomic_field p ℚ) := is_galois p _ _
 
-instance a2 :  finite_dimensional ℚ (cyclotomic_field p ℚ) := sorry
+instance a2 :  finite_dimensional ℚ (cyclotomic_field p ℚ) := finite_dimensional {p} _ _
 
-instance a3 : number_field (cyclotomic_field p ℚ) := sorry
+instance a3 : number_field (cyclotomic_field p ℚ) := number_field {p} ℚ _
 
 open is_primitive_root
 
