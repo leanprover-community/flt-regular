@@ -6,6 +6,7 @@ import ready_for_mathlib.basis
 import ring_theory.dedekind_domain.ideal
 import ready_for_mathlib.is_cyclotomic_extension
 import number_theory.cyclotomic.zeta_sub_one_prime
+import number_theory.cyclotomic.cyclotomic_units
 
 universes u
 
@@ -237,13 +238,22 @@ begin
   ring,
 end
 
-lemma diff_of_roots  [fact (p : ℕ).prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nth_roots_finset p R)
+lemma diff_of_roots [hp : fact (p : ℕ).prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nth_roots_finset p R)
   (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂) (hwlog : η₁ ≠ 1) :
   ∃ (u : Rˣ), (η₁ - η₂) = u * (1 - η₁)  :=
 begin
- sorry,
+  replace ph : 2 ≤ p := le_trans (by norm_num) ph,
+  have h := nth_roots_prim hη₁ hwlog,
+  obtain ⟨i, ⟨H, hi⟩⟩ := h.eq_pow_of_pow_eq_one ((mem_nth_roots_finset hp.out.pos).1 hη₂) hp.out.pos,
+  have hi1 : 1 ≠ i,
+  { intro hi1,
+    rw [← hi1, pow_one] at hi,
+    exact hdiff hi },
+  obtain ⟨u, hu⟩ := cyclotomic_unit.is_primitive_root.zeta_pow_sub_eq_unit_zeta_sub_one
+    R ph hp.out hp.out.one_lt H hi1 h,
+  refine ⟨u, _⟩,
+  rw [← hu, hi, pow_one],
 end
-
 
 lemma diff_of_roots2  [fact (p : ℕ).prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nth_roots_finset p R)
   (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂) (hwlog : η₁ ≠ 1) :
