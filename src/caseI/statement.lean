@@ -219,7 +219,7 @@ local attribute [-instance] cyclotomic_field.algebra
 
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (hpri : p.prime)
-  (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
+  (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
   (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
 begin
