@@ -214,14 +214,27 @@ begin
   simp,
 end
 
-
+local attribute [-instance] cyclotomic_field.algebra
+local notation `K` := cyclotomic_field p ℚ
+local notation `R` := 𝓞 K
 
 lemma one_sub_zeta_prime [fact (p : ℕ).prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nth_roots_finset p R)
   (hne1 : η ≠ 1) : prime (1 - η) :=
 begin
+  replace ph : p ≠ 2,
+  { intro h,
+    rw [h] at ph,
+    simpa using ph },
+  haveI diamond : is_cyclotomic_extension {p} ℚ K,
+  { convert cyclotomic_field.is_cyclotomic_extension p ℚ,
+    exact subsingleton.elim _ _ },
   have h := (prim_coe p η (nth_roots_prim hη hne1)),
-
-sorry,
+  have := rat.zeta_sub_one_prime' h ph,
+  have H : ((⟨η - 1, subalgebra.sub_mem _ (h.is_integral p.pos) (subalgebra.one_mem _)⟩ : R)) =
+    η -1 := rfl,
+  rw [H] at this,
+  convert this.neg,
+  ring,
 end
 
 lemma diff_of_roots  [fact (p : ℕ).prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nth_roots_finset p R)
