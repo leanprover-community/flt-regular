@@ -389,7 +389,13 @@ lemma aux_lem_flt [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
   (H : x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ))
   (caseI : ¬ ↑p ∣ x * y * z) : ¬ (p : ℤ) ∣ (x + y : ℤ) :=
 begin
-  sorry,
+  intro habs,
+  replace habs : ↑(p : ℕ) ∣ (x + y : ℤ) := by simpa using habs,
+  rw [← zmod.int_coe_zmod_eq_zero_iff_dvd, int.cast_add] at habs,
+  replace H := congr_arg (λ x : ℤ, (x : zmod p)) H.symm,
+  simp only [int.cast_add, int.cast_pow, zmod.pow_card, habs, zmod.int_coe_zmod_eq_zero_iff_dvd,
+    ← coe_coe] at H,
+  exact caseI (has_dvd.dvd.mul_left H _)
 end
 
 lemma flt_ideals_coprime [fact (p : ℕ).prime] (p5 : 5 ≤ p) {x y z : ℤ}
@@ -405,9 +411,6 @@ begin
   apply is_coprime.symm,
   exact this,
 end
-
-
-
 
 variable {L}
 

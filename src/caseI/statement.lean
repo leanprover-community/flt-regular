@@ -16,18 +16,22 @@ namespace caseI
 
 /-- Statement of case I with additional assumptions. -/
 def slightly_easier : Prop := ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ (hpri : p.prime)
-  (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
+  (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
   (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
 
 /-- Statement of case I. -/
-def statement : Prop := ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ (hpri : p.prime) (hreg : is_regular_number p hpri.pos)
-  (hodd : p ≠ 2) (hprod : a * b * c ≠ 0) (caseI : ¬ ↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
+def statement : Prop := ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ (hpri : p.prime)
+  (hreg : is_regular_number p hpri.pos) (hodd : p ≠ 2) (caseI : ¬ ↑p ∣ a * b * c),
+  a ^ p + b ^ p ≠ c ^ p
 
 lemma may_assume : slightly_easier → statement :=
 begin
   intro Heasy,
-  intros a b c p hpri hreg hodd hprod hI H,
+  intros a b c p hpri hreg hodd hI H,
+  have hprod : a * b * c ≠ 0,
+  { intro h,
+    simpa [h] using hI },
   have hp5 : 5 ≤ p,
   { by_contra' habs,
     have : p ∈ finset.Ioo 2 5 := finset.mem_Icc.2 ⟨nat.lt_of_le_and_ne hpri.two_le hodd.symm,
@@ -50,7 +54,7 @@ begin
       mul_comm c, ← mul_assoc] at hdiv,
     exact hI hdiv },
   obtain ⟨X, Y, Z, H1, H2, H3, H4, H5⟩ := a_not_cong_b hpri hp5 hprodxyx Hxyz hunit hdiv,
-  exact Heasy hpri hreg hp5 H4 H2 H3 (λ hfin, H5 hfin) H1
+  exact Heasy hpri hreg hp5 H2 H3 (λ hfin, H5 hfin) H1
 end
 
 end caseI
@@ -254,8 +258,8 @@ end
 
 /-- CaseI. -/
 theorem caseI {a b c : ℤ} {p : ℕ} (hpri : p.prime) (hreg : is_regular_number p hpri.pos)
-  (hodd : p ≠ 2) (hprod : a * b * c ≠ 0) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
-flt_regular.caseI.may_assume (λ x y z p₁ Hpri Hreg HP5 Hprod Hunit Hxy HI,
-    caseI_easier Hpri Hreg HP5 Hunit Hxy HI) hpri hreg hodd hprod caseI
+  (hodd : p ≠ 2) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
+flt_regular.caseI.may_assume (λ x y z p₁ Hpri Hreg HP5 Hunit Hxy HI,
+    caseI_easier Hpri Hreg HP5 Hunit Hxy HI) hpri hreg hodd caseI
 
 end flt_regular
