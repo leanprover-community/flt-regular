@@ -257,6 +257,19 @@ end
 
 end onek_two
 
+section kone_ktwo
+
+lemma auxk₁k₂ {k₁ k₂ : fin p} (hpri : p.prime) (hcong : k₂ ≡ k₁ - 1 [ZMOD p]) : (k₁ : ℕ) ≠ (k₂ : ℕ) :=
+begin
+  haveI := (⟨hpri⟩ : fact (p.prime)),
+  intro habs,
+  rw [show (k₁ : ℤ) = (k₂ : ℕ), by simpa using habs, ← zmod.int_coe_eq_int_coe_iff, ← sub_eq_zero,
+    int.cast_sub, sub_sub_eq_add_sub, coe_coe, add_sub_cancel', algebra_map.coe_one] at hcong,
+  exact one_ne_zero hcong
+end
+
+end kone_ktwo
+
 end caseI
 
 end flt_regular
