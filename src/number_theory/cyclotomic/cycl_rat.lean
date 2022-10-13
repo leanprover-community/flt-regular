@@ -249,7 +249,10 @@ lemma diff_of_roots2  [fact (p : ℕ).prime] (ph : 5 ≤ p) {η₁ η₂ : R} (h
   (hη₂ : η₂ ∈ nth_roots_finset p R) (hdiff : η₁ ≠ η₂) (hwlog : η₁ ≠ 1) :
   ∃ (u : Rˣ), (η₂ - η₁) = u * (1 - η₁)  :=
 begin
- sorry,
+  obtain ⟨u, hu⟩ := diff_of_roots ph hη₁ hη₂ hdiff hwlog,
+  refine ⟨-u, _⟩,
+  rw [units.coe_neg, neg_mul, ← hu],
+  ring
 end
 
 instance arg : is_dedekind_domain R := infer_instance
