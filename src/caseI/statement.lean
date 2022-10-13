@@ -1,11 +1,6 @@
-import may_assume.lemmas
-import number_theory.cyclotomic.factoring
-import number_theory.cyclotomic.Unit_lemmas
-import ready_for_mathlib.exists_eq_pow_of_mul_eq_pow
-import ready_for_mathlib.roots_of_unity
-import number_theory.cyclotomic.case_I
+import caseI.aux
 
-open finset nat is_cyclotomic_extension ideal polynomial int basis
+open finset nat is_cyclotomic_extension ideal polynomial int basis flt_regular.caseI
 
 open_locale big_operators number_field
 
@@ -186,11 +181,76 @@ begin
     simp [nat_abs_of_nonneg (mod_nonneg _ hpcoe), ← zmod.int_coe_zmod_eq_zero_iff_dvd] },
 end
 
+/-- Auxiliary function -/
+def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := λ x, if x = 0 then a else if x = 1 then b else
+  if x = k₁ then -a else if x = k₂ then -b else 0
+
+lemma auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : fin p) : ∃ i ∈ range p, f a b k₁ k₂ (i : ℕ) = 0 :=
+begin
+  have h0 : 0 < p := by linarith,
+  have h1 : 1 < p := by linarith,
+  let s := ({0, 1, k₁, k₂} : finset ℕ),
+  have : s.card ≤ 4,
+  { repeat { refine le_trans (card_insert_le _ _) (succ_le_succ _) },
+    exact rfl.ge },
+  replace this : s.card < 5 := lt_of_le_of_lt this (by norm_num),
+  have hs : s ⊆ range p := insert_subset.2 ⟨mem_range.2 h0, insert_subset.2 ⟨mem_range.2 h1,
+    insert_subset.2 ⟨mem_range.2 (fin.is_lt _), singleton_subset_iff.2 (mem_range.2 (fin.is_lt _))⟩⟩⟩,
+  have hcard := card_sdiff hs,
+  replace hcard : (range p \ s).nonempty,
+  { rw [← card_pos, hcard, card_range],
+    exact nat.sub_pos_of_lt (lt_of_lt_of_le this hp5) },
+  obtain ⟨i, hi⟩ := hcard,
+  refine ⟨i, sdiff_subset _ _ hi, _⟩,
+  have hi0 : i ≠ 0 := λ h, by simpa [h] using hi,
+  have hi1 : i ≠ 1 := λ h, by simpa [h] using hi,
+  have hik₁ : i ≠ k₁ := λ h, by simpa [h] using hi,
+  have hik₂ : i ≠ k₂ := λ h, by simpa [h] using hi,
+  simp [f, hi0, hi1, hik₁, hik₂]
+end
+
+lemma auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : fin p) : ∃ i : fin p, f a b k₁ k₂ (i : ℕ) = 0 :=
+begin
+  obtain ⟨i, hrange, hi⟩ := auxf' hp5 a b k₁ k₂,
+  exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
+end
+
+local attribute [-instance] cyclotomic_field.algebra
+
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (hpri : p.prime)
   (hreg : is_regular_number p hpri.pos) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
   (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
-  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p := sorry
+  (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
+begin
+  haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
+  haveI diamond : is_cyclotomic_extension {P} ℚ K,
+  { convert cyclotomic_field.is_cyclotomic_extension P ℚ,
+    exact subsingleton.elim _ _ },
+  set ζ := zeta P ℤ R with hζdef,
+  have hζ := zeta_spec P ℤ R,
+
+  intro H,
+  obtain ⟨k₁, k₂, hcong, hdiv⟩ := ex_fin_div hpri hp5 hreg hζ hgcd caseI H,
+  have key : ↑(p : ℤ) ∣ ∑ j in range p, (f a b k₁ k₂ j) • ζ ^ j,
+  { convert hdiv using 1,
+    { simp },
+    have h01 : 0 ≠ 1 := zero_ne_one,
+    have h0k₁ : 0 ≠ ↑k₁ := aux0k₁ hpri hp5 hζ caseI hcong hdiv,
+    have h0k₂ : 0 ≠ ↑k₂ := aux0k₂ hpri hp5 hζ hab hcong hdiv,
+    have h1k₁ : 1 ≠ ↑k₁ := aux1k₁ hpri hp5 hζ hab hcong hdiv,
+    have h1k₂ : 1 ≠ ↑k₂ := aux1k₂ hpri hp5 hζ caseI hcong hdiv,
+    have hk₁k₂ : (k₁ : ℕ) ≠ (k₂ : ℕ) := auxk₁k₂ hpri hcong,
+    simp_rw [f, ite_smul, sum_ite, filter_filter, ← ne.def, ne_and_eq_iff_right h01,
+      and_assoc, ne_and_eq_iff_right h1k₁, ne_and_eq_iff_right h0k₁, ne_and_eq_iff_right hk₁k₂,
+      ne_and_eq_iff_right h1k₂, ne_and_eq_iff_right h0k₂, finset.range_filter_eq],
+    simp only [hpri.pos, hpri.one_lt, if_true, zsmul_eq_mul, sum_singleton, pow_zero, mul_one,
+      pow_one, fin.is_lt, neg_smul, sum_neg_distrib, ne.def, filter_congr_decidable, zero_smul, sum_const_zero, add_zero],
+    ring },
+  rw [sum_range] at key,
+  refine caseI (has_dvd.dvd.mul_right (has_dvd.dvd.mul_right _ _) _),
+  simpa [f] using dvd_coeff_cycl_integer hζ (by exact auxf hp5 a b k₁ k₂) key ⟨0, hpri.pos⟩
+end
 
 /-- CaseI. -/
 theorem caseI {a b c : ℤ} {p : ℕ} (hpri : p.prime) (hreg : is_regular_number p hpri.pos)
