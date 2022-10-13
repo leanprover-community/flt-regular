@@ -1,6 +1,5 @@
 import number_theory.cyclotomic.Unit_lemmas
 import number_theory.cyclotomic.cycl_rat
-import ready_for_mathlib.is_integral
 import number_theory.regular_primes
 import number_theory.cyclotomic.factoring
 
@@ -38,7 +37,8 @@ begin
     alg_equiv.map_add, map_int_cast, alg_equiv.map_mul, ← coe_coe β, coe_zpow, map_zpow₀, coe_coe,
     coe_zpow] at this,
   simp only [coe_coe, hζ.coe_unit'_coe, subring_class.coe_nat_cast, map_nat_cast] at this,
-  let γ' := (⟨gal_conj K p γ, number_field.alg_equiv_mem_ring_of_integers (gal_conj K p) γ⟩ : 𝓞 K),
+  let γ' := (⟨gal_conj K p γ, number_field.ring_of_integers.map_mem_ring_of_integers
+    (gal_conj K p) γ⟩ : 𝓞 K),
   have hint : ↑γ' = gal_conj K p γ := rfl,
   rw [← coe_coe β, hβreal, gal_conj_zeta_runity hζ, ← hζ.coe_unit'_coe, inv_zpow, ← zpow_neg,
     coe_coe, ← hint, ← subring_class.coe_int_cast (𝓞 K) x, ← subring_class.coe_int_cast (𝓞 K) y,

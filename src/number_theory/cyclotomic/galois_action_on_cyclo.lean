@@ -100,7 +100,7 @@ variable (p)
 
 --generalize this
 lemma gal_map_mem {x : K} (hx : x ∈ RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
-is_integral_alg_hom (σ.restrict_scalars ℤ) hx
+map_is_integral (σ.restrict_scalars ℤ) hx
 
 lemma gal_map_mem_subtype (σ : K →ₐ[ℚ] K) (x : RR) : σ x ∈ RR :=
 by simp [gal_map_mem]
