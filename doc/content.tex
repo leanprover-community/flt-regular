@@ -7,23 +7,23 @@ We prove Fermat's Last Theorem for regular primes and give some of the necessary
 We recall basic facts about the discriminant.
 
 \begin{lemma}\label{lemma:alt_definition_of_norm}
-    \lean{algebra.norm_eq_prod_embeddings}
-    \leanok
+	\lean{algebra.norm_eq_prod_embeddings}
+	\leanok
 	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[N_{K/\QQ}(\a)=\prod_i \sigma_i(\a)  \].
 \end{lemma}
 \begin{proof}
-  \leanok
-  The proof is standard.
+	\leanok
+	The proof is standard.
 \end{proof}
 
 \begin{lemma}\label{lemma:alt_definition_of_trace}
 	\lean{trace_eq_sum_embeddings}
 	\leanok
-Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a). \]
+	Let $K$ be a number field, $\a \in K$ and let $\sigma_i$ be the embeddings of $K$ into $\CC$. Then \[\Tr_{K/\QQ}(\a) =\sum_i \sigma_i(\a). \]
 \end{lemma}
 \begin{proof}
-\leanok
-The proof is standard.
+	\leanok
+	The proof is standard.
 \end{proof}
 
 \begin{definition}\label{defn_of_disc}
@@ -34,58 +34,58 @@ The proof is standard.
 \end{definition}
 
 \begin{lemma}\label{lem:lin_indep_iff_disc_ne_zero}
-    \uses{defn_of_disc, lemma:alt_definition_of_norm}
-    \leanok
-    \lean{algebra.discr_not_zero_of_basis}
+	\uses{defn_of_disc, lemma:alt_definition_of_norm}
+	\leanok
+	\lean{algebra.discr_not_zero_of_basis}
 	Let $L/K$ be an extension of fields and let $B=\{b_1,\dots,b_n\}$ be a $K$-basis of $L$. Then $\Delta(B) \neq 0$.
 \end{lemma}
 \begin{proof}
-  \leanok
-  The proof is standard.
+	\leanok
+	The proof is standard.
 \end{proof}
 
 \begin{lemma}\label{lem:disc_change_of_basis}
-    \uses{defn_of_disc}
-    \leanok
-    \lean{algebra.discr_of_matrix_mul_vec}
+	\uses{defn_of_disc}
+	\leanok
+	\lean{algebra.discr_of_matrix_mul_vec}
 	Let $K$ be a number field and $B,B'$ bases for $K/\QQ$. If $P$ denotes the change of basis matrix, then \[\Delta(B)=\det(P)^2 \Delta(B').\]
 \end{lemma}
 \begin{proof}
-  \leanok
-  The proof is standard.
+	\leanok
+	The proof is standard.
 \end{proof}
 
 \begin{lemma}\label{lemma:disc_via_embs}
-    \uses{defn_of_disc, trace_eq_sum_embeddings, lemma:alt_definition_of_trace}
-    \leanok
-    \lean{algebra.discr_eq_det_embeddings_matrix_reindex_pow_two}
+	\uses{defn_of_disc, trace_eq_sum_embeddings, lemma:alt_definition_of_trace}
+	\leanok
+	\lean{algebra.discr_eq_det_embeddings_matrix_reindex_pow_two}
 	Let $K$ be a number field with basis $B=\{b_1,\dots,b_n\}$ and let $\sigma_1,\dots,\sigma_n$ be the embeddings of $K$ into $\CC$. Now let $M$ be the matrix  \[\left (\begin{matrix} \sigma_1(b_1) &\cdots& \sigma_1(b_n)\\ \vdots & & \vdots \\  \sigma_n(b_1) &\cdots& \sigma_n(b_n)
 	\end{matrix} \right ).\] Then \[\Delta(B)=\det(M)^2.\]
 \end{lemma}
 \begin{proof}
-    \leanok
+	\leanok
 	By Lemma \ref{lemma:alt_definition_of_trace} we know that  $\Tr_{K/\QQ}(b_i b_j)= \sum_k \sigma_k(b_i)\sigma_k(b_j)$ which is the same as the $(i,j)$ entry of $M^t M$. Therefore \[\det(T_B)=\det(M^t M)=\det(M)^2.\]
 \end{proof}
 
 \begin{lemma}\label{lemma:disc_of_prim_elt_basis}
 	\lean{algebra.discr_power_basis_eq_prod}
 	\leanok
-    \uses{defn_of_disc,lemma:disc_via_embs}
+	\uses{defn_of_disc,lemma:disc_via_embs}
 	Let $K$ be a number field and $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$ for some $\a \in K$. Then \[\Delta(B)=\prod_{i < j} (\sigma_i(\a)-\sigma_j(\a))^2\] where $\sigma_i$ are the embeddings of $K $ into $\CC$. Here $\Delta(B)$ denotes the discriminant.
 \end{lemma}
 \begin{proof}
-    \leanok
+	\leanok
 	First we recall a classical linear algebra result relating to the Vandermonde matrix, which states that  \[\det \left (\begin{matrix} 1 & x_1& x_1^2&\cdots&x_1^{n-1} \\ \vdots & & & \vdots \\   1 & x_n& x_n^2&\cdots&x_n^{n-1}
 	\end{matrix} \right ) =\prod_{i<j} (x_i-x_j).\] Combining this with Lemma \ref{lemma:disc_via_embs} gives the result.
 \end{proof}
 
 \begin{lemma}\label{lemma:diff_of_irr_pol}
-    \lean{polynomial.aeval_root_derivative_of_splits}
-    \leanok
+	\lean{polynomial.aeval_root_derivative_of_splits}
+	\leanok
 	Let $f$ be a monic irreducible polynomial over a number field $K$ and let $\a$ be one of its roots in $\CC$. Then \[f'(\a)=\prod_{\beta \neq \a} (\a-\beta),  \] where the product is over the roots of $f$ different from $\a$.
 \end{lemma}
 \begin{proof}
-    \leanok
+	\leanok
 	We first write $f(x)=(x-\a)g(x)$ which we can do (over $\CC$) as $\a$ is a root of $f$, where now $g(x)=\prod_{\beta \neq \a} (x-\beta)$. Differentiating we get \[f'(x)=g(x)+(x-\a)g'(x).\] If we now evaluate at $\a$ we get the result.
 \end{proof}
 
@@ -96,41 +96,41 @@ The proof is standard.
 	Let $K=\QQ(\a)$ be a number field with $n=[K:\QQ]$ and let $B=\{1,\a,\a^2,\dots,\a^{n-1}\}$. Then \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}N_{K/\QQ}(m_\a'(\a))\] where $m_\a'$ is the derivative of $m_\a(x)$ (which we recall denotes the minimal polynomial of $\a$).
 \end{lemma}
 \begin{proof}
-    \leanok
+	\leanok
 	By Lemma \ref{lemma:disc_of_prim_elt_basis} we have $\Delta(B)=\prod_{i < j}(\a_i-\a_j)^2$ where $\a_k:=\sigma_k(\a)$. Next, we note that the number of terms in this product is $1+2+\cdots+(n-1)=\frac{n(n-1)}{2}$. So if we write each term as $(\a_i-\a_j)^2=-(\a_i-\a_j)(\a_j-\a_i)$ we get \[\Delta(B)=(-1)^{\frac{n(n-1)}{2}}\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j). \]
-
+	
 	Now, by lemmas \ref{lemma:diff_of_irr_pol} and \ref{lemma:alt_definition_of_norm} we see that \[N_{K/\QQ}(m_\a'(\a))=\prod_{i=1}^n m_\a'(\a_i)=\prod_{i=1}^n \prod_{i \neq j} (\a_i-\a_j),\] which gives the result.
 \end{proof}
 
 \begin{lemma}\label{lemma:norm_of_alg_int_is_int}
-    \lean{algebra.is_integral_norm}
+	\lean{algebra.is_integral_norm}
 	\leanok
 	If $K$ is a number field and $\a \in \OO_K$ then $N_{K/\QQ}(\a)$ is in $\ZZ$.
 \end{lemma}
 \begin{proof}
-  \leanok
-  The proof is standard.
+	\leanok
+	The proof is standard.
 \end{proof}
 
 \begin{lemma}\label{lemma:trace_of_alg_int_is_int}
-    \lean{algebra.is_integral_trace}
+	\lean{algebra.is_integral_trace}
 	\leanok
 	If $K$ is a number field and $\a \in \OO_K$ then $\Tr_{K/\QQ}(\a)$ is in $\ZZ$.
 \end{lemma}
 \begin{proof}
-  \leanok
-  The proof is standard.
+	\leanok
+	The proof is standard.
 \end{proof}
 
 \begin{lemma}\label{lemma:int_basis_int_disc}
-    \lean{algebra.discr_is_integral}
-    \leanok
-    \uses{defn_of_disc,lemma:trace_of_alg_int_is_int}
+	\lean{algebra.discr_is_integral}
+	\leanok
+	\uses{defn_of_disc,lemma:trace_of_alg_int_is_int}
 	Let $K$ be a number field and $B=\{b_1,\dots,b_n\}$ be elements in $\OO_K$, then $\Delta(B) \in \ZZ$.
 \end{lemma}
 \begin{proof}
-    \leanok
-    Immediate by \ref{lemma:trace_of_alg_int_is_int}.
+	\leanok
+	Immediate by \ref{lemma:trace_of_alg_int_is_int}.
 \end{proof}
 
 
@@ -142,8 +142,8 @@ The proof is standard.
 \end{lemma}
 
 \begin{proof}
-    \leanok
-    See the Lean proof.
+	\leanok
+	See the Lean proof.
 \end{proof}
 
 \begin{lemma}\label{lemma:eis_crit_and_alg_ints}
@@ -153,31 +153,31 @@ The proof is standard.
 	Let $K = \QQ(\alpha)$ be a number field, where $\alpha$ is an algebraic integer with minimal polynomial that is Eisenstein at $p$. Let $x \in \mathcal{O}_K$ such that $p^n x \in \ZZ[\alpha]$ for some $n$. Then $x \in \ZZ[\alpha]$.
 \end{lemma}
 \begin{proof}
-    \leanok
-    See the Lean proof.
+	\leanok
+	See the Lean proof.
 \end{proof}
 
 \section{Cyclotomic fields}
 
 \begin{lemma}\label{lemma:cyclo_poly_deg}
-    \lean{polynomial.degree_cyclotomic}
-    \leanok
+	\lean{polynomial.degree_cyclotomic}
+	\leanok
 	For $n$ any integer, $\Phi_n$ (the $n$-th cyclotomic polynomial) is a polynomial of degree $\varphi(n)$ (where $\varphi$ is Euler's Totient function).
 \end{lemma}
 \begin{proof}
-    \leanok
-The proof is classical.
+	\leanok
+	The proof is classical.
 \end{proof}
 
 
 \begin{lemma}\label{lemma:cyclo_poly_irr}
-    \lean{polynomial.cyclotomic.irreducible}
-    \leanok
+	\lean{polynomial.cyclotomic.irreducible}
+	\leanok
 	For $n$ any integer, $\Phi_n$ (the $n$-th cyclotomic polynomial) is an irreducible polynomial .
 \end{lemma}
 \begin{proof}
-    \leanok
-The proof is classical.
+	\leanok
+	The proof is classical.
 \end{proof}
 
 \begin{lemma}\label{lem:discr_of_cyclo}
@@ -187,14 +187,14 @@ The proof is classical.
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then \[\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})=(-1)^{\frac{(p-1)}{2}}p^{p-2}.\]
 \end{lemma}
 \begin{proof}
-    \leanok
+	\leanok
 	First note $[K:\QQ]=p-1$.
-
+	
 	Since $\zeta_p=1-\lam_p$ we at once get $\ZZ[\zeta_p]=\ZZ[\lam_p]$ (just do double inclusion). Next, let $\a_i=\sigma_i(\zeta_p)$ denote the conjugates of $\zeta_p$, which is the same as the image of $\zeta_p$ under one of the embeddings $\sigma_i: \QQ(\zeta_p) \to \CC$. Now  by Proposition \ref{lemma:disc_of_prim_elt_basis} we have \begin{align*}\Delta(\{1,\zeta_p,\dots,\zeta_p^{p-2}\})=\prod_{i < j}  (\a_i-\a_j)^2 &=\prod_{i < j}  ((1-\a_i)-(1-\a_j))^2\\&=\Delta(\{1,\lam_p,\dots,\lam_p^{p-2}\})\end{align*}
-
+	
 	Now, by Proposition \ref{lemma:num_field_disc_in_terms_of_norm}, we have \[\Delta(\{1,\zeta_p,\cdots,\zeta_p^{p-2}\})=(-1)^{\frac{(p-1)(p-2)}{2}}N_{K/\QQ}(\Phi_p'(\zeta_p)  )\]
 	Since $p$ is odd $(-1)^{\frac{(p-1)(p-2)}{2}}=(-1)^{\frac{(p-1)}{2}}$. Next, we see that \[\Phi_p'(x)=\frac{px^{p-1}(x-1)-(x^p-1)}{(x-1)^2}\] therefore \[\Phi_p'(\zeta_p)=-\frac{p\zeta_p^{p-1}}{\lam_p}.\]
-
+	
 	Lastly, note that $N_{K/\QQ}(\zeta_p)=1$, since this is the constant term in its minimal polynomial. Similarly, we see $N_{K/\QQ}(\lam_p)=p$. Putting this all together, we get \[N_{K/\QQ}(\Phi_p'(\zeta_p)  )=\frac{N_{K/\QQ}(p)N_{K\QQ}(\zeta_p)^{p-1}}{N_{K/\QQ}(-\lam_p)}=(-1)^{p-1}p^{p-2}=p^{p-2}\]
 \end{proof}
 
@@ -205,13 +205,13 @@ The proof is classical.
 	Let $\zeta_p$ be a $p$-th root of unity for $p$ an odd prime, let $\lam_p=1-\zeta_p$ and $K=\QQ(\zeta_p)$. Then $\OO_K=\ZZ[\zeta_p]=\ZZ[\lam_p]$.
 \end{theorem}
 \begin{proof}
-    \leanok
-    We need to prove is that $\OO_K=\ZZ[\zeta_p]$. The inclusion $\ZZ[\zeta_p] \subseteq \OO_K$ is obvious. Let now $x \in \OO_K$. By Lemma \ref{lemma:disc_int_basis} and Proposition \ref{lem:discr_of_cyclo}, there is $k \in \NN$ such that $p^k x \in \ZZ[\zeta_p]$. We conclude by Lemma \ref{lemma:eis_crit_and_alg_ints}.
+	\leanok
+	We need to prove is that $\OO_K=\ZZ[\zeta_p]$. The inclusion $\ZZ[\zeta_p] \subseteq \OO_K$ is obvious. Let now $x \in \OO_K$. By Lemma \ref{lemma:disc_int_basis} and Proposition \ref{lem:discr_of_cyclo}, there is $k \in \NN$ such that $p^k x \in \ZZ[\zeta_p]$. We conclude by Lemma \ref{lemma:eis_crit_and_alg_ints}.
 \end{proof}
 
 \begin{lemma}\label{lemma:alg_int_abs_val_one}
-    \lean{mem_roots_of_unity_of_abs_eq_one}
-    \leanok
+	\lean{mem_roots_of_unity_of_abs_eq_one}
+	\leanok
 	Let $\a$ be an algebraic integer all of whose conjugates have absolute value one. Then $\a$ is a root of unity.
 \end{lemma}
 \begin{proof}
@@ -244,7 +244,7 @@ The proof is classical.
 \begin{lemma}\label{lemma:zeta_pow_sub_eq_unit_zeta_sub_one}
 	\lean{is_primitive_root.zeta_pow_sub_eq_unit_zeta_sub_one}
 	\leanok
-Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\QQ(\zeta_p)$. Then for any $i,j \in {0,\dots,p-1}$ with $i \ne j$, there exists a unit $u \in \mathcal{O}_K^\times$ such that $\zeta_p^i-\zeta_p^j = u * (\zeta_p-1)$.
+	Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\QQ(\zeta_p)$. Then for any $i,j \in {0,\dots,p-1}$ with $i \ne j$, there exists a unit $u \in \mathcal{O}_K^\times$ such that $\zeta_p^i-\zeta_p^j = u * (\zeta_p-1)$.
 \end{lemma}
 \begin{proof}
 	\leanok
@@ -253,13 +253,13 @@ Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\
 
 
 \begin{lemma}\label{lemma:ideals_mult_to_power}
-    \lean{ideal.exists_eq_pow_of_mul_eq_pow}
-    \leanok
+	\lean{ideal.exists_eq_pow_of_mul_eq_pow}
+	\leanok
 	Let $R$ be a Dedekind domain, $p$ a prime and $\gotha,\gothb,\gothc$ ideals such that \[\gotha\gothb=\gothc^p\] and suppose $\gotha,\gothb$ are coprime. Then there exist ideals $\mathfrak{e},\mathfrak{d}$ such that \[\gotha=\mathfrak{e}^p \qquad \gothb=\mathfrak{d}^p \qquad \mathfrak{e}\mathfrak{d}=\gothc\]
 \end{lemma}
 \begin{proof}
- \leanok
- It follows from the unique decomposition of ideals in a Dedekind domain.
+	\leanok
+	It follows from the unique decomposition of ideals in a Dedekind domain.
 \end{proof}
 
 
@@ -270,31 +270,31 @@ Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\
 	\uses{lemma:zeta_pow_sub_eq_unit_zeta_sub_one}
 	\leanok
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $x, y \in \ZZ$ coprime.
-
-	 For $i \neq j$ with $i,j \in {0,\dots,p-1}$ we can write \[(\zeta_p^i-\zeta_p^j)=u(1-\zeta_p)\] with $u$ a unit in $\ZZ[\zeta_p]$. From this it follows that the ideals \[(x+y),(x+\zeta_py),(x+\zeta_p^2y),\dots,(x+\zeta_p^{p-1}y)\] are pairwise coprime.
+	
+	For $i \neq j$ with $i,j \in {0,\dots,p-1}$ we can write \[(\zeta_p^i-\zeta_p^j)=u(1-\zeta_p)\] with $u$ a unit in $\ZZ[\zeta_p]$. From this it follows that the ideals \[(x+y),(x+\zeta_py),(x+\zeta_p^2y),\dots,(x+\zeta_p^{p-1}y)\] are pairwise coprime.
 \end{lemma}
 \begin{proof}
-	 Lemma \ref{lemma:zeta_pow_sub_eq_unit_zeta_sub_one} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. We know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
+	Lemma \ref{lemma:zeta_pow_sub_eq_unit_zeta_sub_one} gives that $u$ is a unit. So all that needs to be proved is that the ideals are coprime. Assume not, then for some $i \neq j$ we have some prime ideal $\gothp$ dividing by $(x+y\zeta_p^i)$ and $(x+y\zeta_p^j)$. It must then also divide their sum and their difference, so we must have $\gothp | (1-\zeta_p)$ or $\gothp | y$. Similarly, $\gothp$ divides $\zeta_p^j(x+y\zeta_p^i)-\zeta_p^i(x+y\zeta_p^j)$ so $\gothp$ divides $x$ or $(1-\zeta_p)$. We can't have $\gothp$ dividing $x,y$ since they are coprime, therefore $\gothp |(1-\zeta_p)$. We know that since $(1-\zeta_p)$ has norm $p$ it must be a prime ideal, so $\gothp=(1-\zeta_p)$. Now, note that $x+y \equiv x+y\zeta_p^i \equiv 0 \mod \gothp$. But since $x,y \in \ZZ$ this means we would have $x+y \equiv 0 \pmod p$, which implies $z^p \equiv 0 \pmod p$ which contradicts our assumptions.
 \end{proof}
 
 \begin{lemma}\label{lem:exists_int_sub_pow_prime_dvd}
 	\lean{exists_int_sub_pow_prime_dvd}
-  \leanok
+	\leanok
 	Let $p$ be an prime number, $\zeta_p$ a $p$-th root of unity and $\a \in \ZZ[\zeta_p]$. Then $\a^p$ is congruent to an integer modulo $p$.
 \end{lemma}
 \begin{proof}
-		\leanok
-	  Just use $(x+y)^p \equiv x^p + y^p \pmod p$ and that $\zeta_p$ is a $p$-th root of unity.
+	\leanok
+	Just use $(x+y)^p \equiv x^p + y^p \pmod p$ and that $\zeta_p$ is a $p$-th root of unity.
 \end{proof}
 
 \begin{lemma}\label{lem:dvd_coeff_cycl_integer}
 	\lean{dvd_coeff_cycl_integer}
-  \leanok
+	\leanok
 	Let $p$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$ with $\a=\sum_i a_i \zeta_p^i$. Let us suppose that there is $i$ such that $a_i = 0$. If $n$ is an integer that divides $\a$ in $\ZZ[\zeta_p]$, then $n$ divides each $a_i$.
 \end{lemma}
 \begin{proof}
 	\leanok
-	 Looking at $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$, if one of the $a_i$'s is zero and $\a/n \in \ZZ[\zeta_p]$, then $\a/n=\sum_i a_i/n \zeta_p^i$. Now, as $\a/n \in \ZZ[\zeta_p]$, pick the basis of $\ZZ[\zeta_p]$ which does not contain $\zeta_p$ (which is possible as any subset of $\{1,\zeta_p,\dots,\zeta_p^{p-1}\}$ with $p-1$ elements forms a basis of $\ZZ[\zeta_p]$.). Then $\a=\sum_i b_i \zeta_p^i$ where $b_i \in \ZZ$. Therefore comparing coefficients, we get the result.
+	Looking at $\a=a_0+a_1\zeta_p+\cdots+a_{p-1}\zeta_p^{p-1}$, if one of the $a_i$'s is zero and $\a/n \in \ZZ[\zeta_p]$, then $\a/n=\sum_i a_i/n \zeta_p^i$. Now, as $\a/n \in \ZZ[\zeta_p]$, pick the basis of $\ZZ[\zeta_p]$ which does not contain $\zeta_p$ (which is possible as any subset of $\{1,\zeta_p,\dots,\zeta_p^{p-1}\}$ with $p-1$ elements forms a basis of $\ZZ[\zeta_p]$.). Then $\a=\sum_i b_i \zeta_p^i$ where $b_i \in \ZZ$. Therefore comparing coefficients, we get the result.
 \end{proof}
 
 \begin{lemma}\label{lem:exists_int_sum_eq_zero}
@@ -303,30 +303,30 @@ Let $p$ be an odd prime, $\zeta_p$ a primitive $p$-th root of unity and let $K=\
 	Let $p \geq 3$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$. Let $x$ and $y$ be integers such that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. Then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
 \end{lemma}
 \begin{proof}
- \leanok
- \uses{lemma:unit_lemma,lem:exists_int_sub_pow_prime_dvd}
- Using lemma \ref{lemma:unit_lemma} we have $(x+y\zeta_p^i) =\beta \zeta_p^k \a^p$ which is congruent modulo $p$ to $\beta \zeta_p^k a \pmod p$ for some integer $a$ by \ref{lem:exists_int_sub_pow_prime_dvd}. Now, if we consider the complex conjugate we have $\ov{(x+y\zeta_p^i)  }\equiv \beta \zeta_p^{-k}a \pmod p$. Looking at $(x+y\zeta_p^i)-\zeta_p^{2k}\ov{(x+y\zeta_p^i)  }$ then gives the result.
+	\leanok
+	\uses{lemma:unit_lemma,lem:exists_int_sub_pow_prime_dvd}
+	Using lemma \ref{lemma:unit_lemma} we have $(x+y\zeta_p^i) =\beta \zeta_p^k \a^p$ which is congruent modulo $p$ to $\beta \zeta_p^k a \pmod p$ for some integer $a$ by \ref{lem:exists_int_sub_pow_prime_dvd}. Now, if we consider the complex conjugate we have $\ov{(x+y\zeta_p^i)  }\equiv \beta \zeta_p^{-k}a \pmod p$. Looking at $(x+y\zeta_p^i)-\zeta_p^{2k}\ov{(x+y\zeta_p^i)  }$ then gives the result.
 \end{proof}
 
 \begin{lemma}\label{lemma:may_assume_coprime}
 	\lean{flt_regular.caseI.may_assume}
 	\leanok
 	\uses{lemma:unit_lemma,lemma:zeta_pow_sub_eq_unit_zeta_sub_one,lemma:ideals_mult_to_power,theorem:ring_of_ints_of_cyclo}
-
-Let $p \geq 3$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$.  Assume that we have $x,y,z \in \ZZ$ with $\gcd(xyz,p)=1$ and such that \[x^p+y^p=z^p.\]
-
-This is the so called "case I". To prove Fermat's last theorem, we may assume that:
-\begin{itemize}
-	\item $p \geq 5$;
-	\item $x,y,z$ are pairwise coprime;
-	\item $x \not \equiv y \mod p$.
-\end{itemize}
+	
+	Let $p \geq 3$ be an prime number, $\zeta_p$ a $p$-th root of unity and $K=\QQ(\zeta_p)$.  Assume that we have $x,y,z \in \ZZ$ with $\gcd(xyz,p)=1$ and such that \[x^p+y^p=z^p.\]
+	
+	This is the so called "case I". To prove Fermat's last theorem, we may assume that:
+	\begin{itemize}
+		\item $p \geq 5$;
+		\item $x,y,z$ are pairwise coprime;
+		\item $x \not \equiv y \mod p$.
+	\end{itemize}
 \end{lemma}
 \begin{proof}
 	\leanok
-The first part is easy.
-
-Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod p$ then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd).
+	The first part is easy.
+	
+	Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y \equiv -z \pmod p$ then $3z \equiv 0 \pmod p$. But since $p >3$ this means $p |z$ but this contradicts $\gcd(xyz,p)=1$. Now, if $x \equiv y \pmod p$ then  $x \not \equiv -z \pmod p$ we can relabel $y,z$ so that wlog $x \not \equiv y$ (this uses that $p$ is odd).
 \end{proof}
 
 \begin{definition}\label{defn:is_regular_number}
@@ -336,14 +336,14 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 \end{definition}
 
 \begin{theorem}\label{theorem:FLT_case_one}
-    \lean{flt_regular.caseI}
-    \leanok
+	\lean{flt_regular.caseI}
+	\leanok
 	\uses{defn:is_regular_number,lem:exists_int_sum_eq_zero,lem:dvd_coeff_cycl_integer,lemma:may_assume_coprime,lem:flt_ideals_coprime}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $\gcd(xyz,p)=1$.
 \end{theorem}
 \begin{proof}
 	For $p=3$ use the standard elementary arguments, so assume $p \geq 5$.
-
+	
 	First thing is to note that if $x^p+y^p=z^p$ then \[z^p=(x+y)(x+\zeta_py)\cdots(x+y\zeta_p^{p-1})\] as ideals. Then since by \ref{lem:flt_ideals_coprime} we know the ideals are coprime, then by lemma \ref{lemma:ideals_mult_to_power} we have that each $(x+y\zeta_p^i)=\gotha^p$, for $\gotha$ some ideal. Note that, $[\gotha^p]=1$ in the class group. Now, since $p$ does not divide the size of the class group we have that $[\gotha]=1$ in the class group, so its principal. So we have $x+y\zeta_p^i=u_i\a_i^p$ with $u_i$ a unit. So by \ref{lem:exists_int_sum_eq_zero} we have some $k$ such that $x+y\zeta_p-\zeta_p^{2k}x-\zeta_p^{2k-1}y \equiv 0 \pmod p$. If $1,\zeta_p,\zeta_p^{2k},\zeta_p^{2k-1}$ are distinct, then \ref{lem:dvd_coeff_cycl_integer} says that (since $p \geq 5$) $p$  divides $x,y$, contrary to our assumption. So they cannot be distinct, but checking each case leads to a contradiction, therefore there cannot be any such solutions.
 \end{proof}
 
@@ -353,14 +353,14 @@ Reducing modulo $p$, using Fermat's little theorem, you get that if $x \equiv y 
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
 \end{theorem}
 
-\begin{theorem}\label{thm:tot_real_sub_class_number_div}
-	Let $h,h^+$ denote the class number of $\QQ(\zeta_p)$ and $\QQ(\zeta_p+\zeta_p^{-1})$ respectively. If $p \nmid h$ then $p \nmid h^+$.
+\begin{theorem}\label{thm:gen_flt_eqn}
+	Let $p$ be a regular odd prime, $\epsilon \in \ZZ[\zeta_p]$ and $n \in \ZZ_{\geq 1}$. Then the equation $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$ has no solutions with $x,y,z \in \ZZ[\zeta_p]$, all non-zero and $xyz$ coprime to $(1-\zeta_p)$. 
 \end{theorem}
 
 \begin{theorem}\label{theorem:FLT_case_two}
 	\lean{flt_regular.caseII}
 	\leanok
-	\uses{lemma:defn:is_regular_number,thm:Kummers_lemma, thm:tot_real_sub_class_number_div}
+	\uses{lemma:defn:is_regular_number,thm:Kummers_lemma, thm:gen_flt_eqn}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
 \end{theorem}
 
