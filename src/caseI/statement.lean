@@ -1,4 +1,4 @@
-import caseI.aux
+import caseI.aux_lemmas
 
 open finset nat is_cyclotomic_extension ideal polynomial int basis flt_regular.caseI
 
