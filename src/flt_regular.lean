@@ -14,5 +14,5 @@ theorem flt_regular {a b c : ℤ} {p : ℕ} [fact p.prime] (hreg : is_regular_pr
 begin
   by_cases case : ↑p ∣ a * b * c,
   exact caseII hreg hodd hprod case,
-  exact caseI hreg hodd case
+  exact caseI hreg case
 end

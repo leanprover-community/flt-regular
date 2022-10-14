@@ -22,13 +22,23 @@ def slightly_easier : Prop := ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : fact p.pri
 
 /-- Statement of case I. -/
 def statement : Prop := ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : fact p.prime]
-  (hreg : @is_regular_prime p hpri) (hodd : p ≠ 2) (caseI : ¬ ↑p ∣ a * b * c),
+  (hreg : @is_regular_prime p hpri) (caseI : ¬ ↑p ∣ a * b * c),
   a ^ p + b ^ p ≠ c ^ p
 
 lemma may_assume : slightly_easier → statement :=
 begin
   intro Heasy,
-  intros a b c p hpri hreg hodd hI H,
+  intros a b c p hpri hreg hI H,
+  have hodd : p ≠ 2,
+  { intro h,
+    rw [h] at H hI,
+    refine hI _,
+    refine has_dvd.dvd.mul_left _ _,
+    simp only [coe_nat_bit0, algebra_map.coe_one, ← even_iff_two_dvd] at ⊢ hI,
+    rw [← int.odd_iff_not_even] at hI,
+    rw [← int.even_pow' (show 2 ≠ 0, by norm_num), ← H],
+    exact (odd.of_mul_left (odd.of_mul_left hI)).pow.add_odd
+      (odd.of_mul_right (odd.of_mul_left hI)).pow },
   have hprod : a * b * c ≠ 0,
   { intro h,
     simpa [h] using hI },
@@ -258,8 +268,8 @@ end
 
 /-- CaseI. -/
 theorem caseI {a b c : ℤ} {p : ℕ} [fact p.prime] (hreg : is_regular_prime p)
-  (hodd : p ≠ 2) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
+  (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
 flt_regular.caseI.may_assume (λ x y z p₁ Hpri Hreg Hp5 Hunit Hxy HI H,
-  by exactI caseI_easier p₁ Hreg Hp5 Hunit Hxy HI H) hreg hodd caseI
+  by exactI caseI_easier p₁ Hreg Hp5 Hunit Hxy HI H) hreg caseI
 
 end flt_regular
