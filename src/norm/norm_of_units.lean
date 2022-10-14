@@ -1,5 +1,5 @@
 import ring_theory.norm
-import ready_for_mathlib.is_integral
+import number_theory.number_field.basic
 
 -- mapping `is_integral`: `is_integral_alg_hom` (I'd rename to `is_integral.map` for dot notation)
 
@@ -34,7 +34,7 @@ begin
   replace hx : is_unit (algebra_map (𝓞 K) (𝓞 L) $ norm' K x) := hx.map (algebra_map (𝓞 K) $ 𝓞 L),
   refine @is_unit_of_mul_is_unit_right (𝓞 L) _
          ⟨(finset.univ \ { alg_equiv.refl }).prod (λ (σ : L ≃ₐ[K] L), σ x),
-          prod_mem (λ σ hσ, is_integral_alg_hom (σ : L →+* L).to_int_alg_hom x.2)⟩ _ _,
+          prod_mem (λ σ hσ, map_is_integral (σ : L →+* L).to_int_alg_hom x.2)⟩ _ _,
   convert hx using 1,
   ext,
   push_cast,
@@ -55,7 +55,7 @@ begin
     (univ : finset (L ≃ₐ[K] L))), subtype.val_eq_coe, alg_equiv.coe_refl, id.def] at this,
   have hint : (∏ (σ : L ≃ₐ[K] L) in univ.erase alg_equiv.refl, σ x) ∈ 𝓞 L :=
     subalgebra.prod_mem _ (λ σ hσ, (mem_ring_of_integers _ _).2
-    (σ.to_alg_hom.is_integral_of_is_scalar_tower (ring_of_integers.is_integral_coe x))),
+    (map_is_integral σ (ring_of_integers.is_integral_coe x))),
   refine ⟨⟨_, hint⟩, subtype.ext _⟩,
   rw [algebra_map_norm' K x, norm_eq_prod_automorphisms],
   simp only [mul_mem_class.coe_mul, set_like.coe_mk],

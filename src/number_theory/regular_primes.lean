@@ -44,10 +44,15 @@ end safe_instances
 
 variables (n p : ℕ) [fact p.prime]
 
+instance {p : ℕ} [hp : fact p.prime] : fact (0 < p) := ⟨hp.out.pos⟩
+
 -- note that this definition can be annoying to work with whilst #14984 isn't merged.
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
-def is_regular_number (hpos : 0 < n) : Prop :=
-n.coprime $ fintype.card $ class_group (𝓞 $ cyclotomic_field ⟨n, hpos⟩ ℚ)
+def is_regular_number [hn : fact (0 < n)]  : Prop :=
+n.coprime $ fintype.card $ class_group (𝓞 $ cyclotomic_field ⟨n, hn.out⟩ ℚ)
+
+/-- The definition of regular primes. -/
+def is_regular_prime : Prop := is_regular_number p
 
 /-- A prime number is Bernoulli regular if it does not divide the numerator of any of
 the first `p - 3` (non-zero) Bernoulli numbers-/
@@ -55,8 +60,8 @@ def is_Bernoulli_regular : Prop :=
 ∀ i ∈ finset.range((p - 3) / 2), ((bernoulli 2 * i).num : zmod p) ≠ 0
 
 /--A prime is super regular if its regular and Bernoulli regular.-/
-def is_super_regular (hpos : 0 < p) : Prop :=
- is_regular_number p hpos ∧ is_Bernoulli_regular p
+def is_super_regular : Prop :=
+ is_regular_number p ∧ is_Bernoulli_regular p
 
 section two_regular
 
@@ -99,7 +104,7 @@ begin
   { let := is_integral_closure.equiv ℤ (𝓞 (cyclotomic_field 2 ℚ)) (cyclotomic_field 2 ℚ) (algebra.adjoin ℤ ({ζ} : set (cyclotomic_field 2 ℚ))), }, -/
 end
 
-example : is_regular_number 2 prime_two.pos :=
+example : is_regular_number 2 :=
 begin
   rw is_regular_number,
   convert coprime_one_right _,
