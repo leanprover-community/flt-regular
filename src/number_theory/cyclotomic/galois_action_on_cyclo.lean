@@ -136,8 +136,8 @@ begin
   rw [mul_inv_eq_one₀],
   intro h,
   simp only [_root_.map_eq_zero] at h,
-  norm_cast at h,
-  exact units.ne_zero _ h
+  rw [← subalgebra.coe_zero (𝓞 K), subtype.coe_inj] at h,
+  refine units.ne_zero _ h
 end
 
 lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj K p (unit_gal_conj K p u)) = u :=
