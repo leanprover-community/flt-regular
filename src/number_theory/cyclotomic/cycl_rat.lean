@@ -4,7 +4,6 @@ import number_theory.cyclotomic.rat
 import number_theory.cyclotomic.Unit_lemmas
 import ready_for_mathlib.basis
 import ring_theory.dedekind_domain.ideal
-import ready_for_mathlib.is_cyclotomic_extension
 import number_theory.cyclotomic.zeta_sub_one_prime
 import number_theory.cyclotomic.cyclotomic_units
 
@@ -109,7 +108,7 @@ end
 
 instance aaaa [fact ((p : ℕ).prime)] : is_cyclotomic_extension {p} ℤ (𝓞 L) :=
 let _ := (zeta_spec p ℚ L).adjoin_is_cyclotomic_extension ℤ in
-  by exactI is_cyclotomic_extension.equiv {p} (zeta_spec p ℚ L).adjoin_equiv_ring_of_integers'
+ by exactI is_cyclotomic_extension.equiv {p} _ _ (zeta_spec p ℚ L).adjoin_equiv_ring_of_integers'
 
 local notation `R` := 𝓞 (cyclotomic_field p ℚ)
 
