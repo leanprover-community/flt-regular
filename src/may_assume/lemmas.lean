@@ -1,6 +1,7 @@
 import flt_three.flt_three
 import algebra.gcd_monoid.finset
 import field_theory.finite.basic
+import algebra.gcd_monoid.div
 import number_theory.regular_primes
 
 open int finset
@@ -22,7 +23,7 @@ end
 lemma coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a * b * c ≠ 0) :
   let d := ({a, b, c} : finset ℤ).gcd id in
   (a / d) ^ n + (b / d) ^ n = (c / d) ^ n ∧
-  is_unit (({a / d, b / d, c / d} : finset ℤ).gcd id) ∧
+  ({a / d, b / d, c / d} : finset ℤ).gcd id = 1 ∧
   (a / d) * (b / d) * (c / d) ≠ 0 :=
 begin
   have ha : a ≠ 0 := λ ha, by simpa [ha] using hprod,
@@ -42,7 +43,7 @@ begin
     simpa [hna, hnb, hnc, mul_pow, hdzero, int.add_mul_div_left (d ^ n * na ^ n) (nb ^ n), hdp]
       using congr_arg (/ d ^ n) H },
   { simpa [gcd_eq_gcd_image] using
-      is_unit_div_gcd_id ({a, b, c} : finset ℤ) (show a ∈ _, by simp) ha },
+      finset.int.gcd_div_gcd_id_eq_one ({a, b, c} : finset ℤ) (show a ∈ _, by simp) ha },
   { simp only [mul_eq_zero] at habs,
     rcases habs with (Ha | Hb) | Hc,
     { exact ha (int.eq_zero_of_div_eq_zero (by exact gcd_dvd (by simp)) Ha) },
@@ -74,17 +75,17 @@ begin
 end
 
 lemma a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.prime) (hp5 : 5 ≤ p) (hprod : a * b * c ≠ 0)
-  (h : a ^ p + b ^ p = c ^ p) (hunit : is_unit (({a, b, c} : finset ℤ).gcd id))
+  (h : a ^ p + b ^ p = c ^ p) (hgcd : ({a, b, c} : finset ℤ).gcd id = 1)
   (caseI : ¬ ↑p ∣ (a * b * c)) :
   ∃ (x y z : ℤ), x ^ p + y ^ p = z ^ p ∧
-  is_unit (({x, y, z} : finset ℤ).gcd id) ∧
+  ({x, y, z} : finset ℤ).gcd id = 1 ∧
   ¬x ≡ y [ZMOD p] ∧
   x * y * z ≠ 0 ∧
   ¬ ↑p ∣ x * y * z :=
 begin
   by_cases H : a ≡ b [ZMOD p],
   swap,
-  { exact ⟨a, b, c, ⟨h, hunit, H, hprod, caseI⟩⟩ },
+  { exact ⟨a, b, c, ⟨h, hgcd, H, hprod, caseI⟩⟩ },
   refine ⟨a, -c, -b, ⟨_, _, λ habs, _, _, _⟩⟩,
   { have hpodd : p ≠ 2 := by linarith,
     simp only [neg_pow, (or.resolve_left hpri.eq_two_or_odd' hpodd).neg_one_pow, neg_one_mul,
@@ -92,7 +93,7 @@ begin
     symmetry,
     rw [neg_add_eq_iff_eq_add, add_comm],
     exact h.symm },
-  { convert hunit using 1,
+  { convert hgcd using 1,
     have : ({a, -c, -b} : finset ℤ) = {a, -b, -c},
     { refine finset.ext (λ x, ⟨λ hx, _, λ hx, _⟩);
       { simp only [mem_insert, mem_singleton] at hx,

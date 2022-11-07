@@ -17,7 +17,7 @@ namespace caseI
 /-- Statement of case I with additional assumptions. -/
 def slightly_easier : Prop := ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : fact p.prime]
   (hreg : @is_regular_prime p hpri) (hp5 : 5 ≤ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
+  (hgcd : ({a, b, c} : finset ℤ).gcd id = 1)
   (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
 
 /-- Statement of case I. -/
@@ -70,7 +70,7 @@ end
 end caseI
 
 lemma ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) : is_coprime a b  :=
+  (hgcd : ({a, b, c} : finset ℤ).gcd id = 1) : is_coprime a b  :=
 begin
   rw [← gcd_eq_one_iff_coprime],
   by_contra' h,
@@ -93,11 +93,12 @@ begin
     simp only [mem_insert, mem_singleton] at hx,
     rcases hx with H | H | H;
     simpa [H] },
-  exact not_is_unit_of_not_is_unit_dvd hqpri.not_unit Hq hgcd
+  rw [hgcd] at Hq,
+  exact hqpri.not_unit (is_unit_of_dvd_one _ Hq)
 end
 
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
+  (hgcd : ({a, b, c} : finset ℤ).gcd id = 1) (caseI : ¬ ↑p ∣ a * b * c)
   {ζ : R} (hζ : ζ ∈ nth_roots_finset p R) : ∃ I, span ({a + ζ * b} : set R) = I ^ p :=
 begin
   haveI : fact ((P : ℕ).prime) := ⟨hpri.out⟩,
@@ -115,7 +116,7 @@ begin
 end
 
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : is_regular_prime p) (hp5 : 5 ≤ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
+  (hgcd : ({a, b, c} : finset ℤ).gcd id = 1) (caseI : ¬ ↑p ∣ a * b * c)
   (H : a ^ p + b ^ p = c ^ p) (hζ : is_primitive_root ζ p) :
   ∃ (u : Rˣ) (α : R), ↑u * (α ^ p) = ↑a + ζ * ↑b :=
 begin
@@ -151,7 +152,7 @@ end
 
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p)
   (hreg : is_regular_prime p) (hζ : is_primitive_root ζ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id)) (caseI : ¬ ↑p ∣ a * b * c)
+  (hgcd : ({a, b, c} : finset ℤ).gcd id = 1) (caseI : ¬ ↑p ∣ a * b * c)
   (H : a ^ p + b ^ p = c ^ p) :
   ∃ (k₁ k₂ : fin p), k₂ ≡ k₁ - 1 [ZMOD p] ∧ ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) :=
 begin
@@ -234,7 +235,7 @@ local attribute [-instance] cyclotomic_field.algebra
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (p : ℕ) [hpri : fact p.prime]
   (hreg : is_regular_prime p) (hp5 : 5 ≤ p)
-  (hgcd : is_unit (({a, b, c} : finset ℤ).gcd id))
+  (hgcd : ({a, b, c} : finset ℤ).gcd id = 1)
   (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
 begin
   haveI := (⟨hpri.out⟩ : fact ((P : ℕ).prime)),
