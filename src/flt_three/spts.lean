@@ -13,6 +13,7 @@ import tactic
 import data.nat.modeq
 import ring_theory.int.basic
 import number_theory.zsqrtd.basic
+import data.int.units
 import .primes
 
 lemma zsqrtd.exists {d : ℤ} (a : ℤ√d) (him : a.im ≠ 0) :
