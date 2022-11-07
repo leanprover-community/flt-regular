@@ -1,7 +1,6 @@
 import flt_three.flt_three
 import algebra.gcd_monoid.finset
 import field_theory.finite.basic
-import ready_for_mathlib.gcd
 import number_theory.regular_primes
 
 open int finset
