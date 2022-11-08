@@ -355,8 +355,32 @@ We recall basic facts about the discriminant.
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
 \end{theorem}
 
+
+\begin{lemma}\label{lem:gen_dvd_by_frak_p}
+		Let $p$ be a regular odd prime, $x,y,z,\epsilon \in \ZZ[\zeta_p]$, $\epsilon$ a unit, and $n \in \ZZ_{\geq 1}$. Assume $x,y,z$ are coprime to $(1-\zeta_p)$ and that $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$. Then each of $(x+\zeta_p^i y)$ is divisible by $(1-\zeta_p)$ and there is a unique $i_0$ such that $(x+\zeta_p^{i_0})$ is divisible by $(1-\zeta_p)^2$.
+\end{lemma}	
+\begin{proof}
+	By our assumptions we have the following equality of ideals in  $\ZZ[\zeta_p]$: \[ \prod_{k=0}^{p-1} (x+\zeta_p^ky) = \mathfrak{p}^{pm}\mathfrak{a}^p  \], where $\mathfrak{a}=(z)$, $\mathfrak{p}=(1-\zeta_p)$ (which is prime) and $m=n(p-1)$. Now as $mp \geq p$ we must have that at least one of the terms on the lhs is divisible by $\mathfrak{p}$. 
+	
+	Note that since \[x+\zeta_p^iy= x+\zeta_p^ky - \zeta_p^k(1-\zeta_p^{i-k})y\] it follows every  $x+\zeta_p^k$ is divisible by $\mathfrak{p}$ for $0 \le k \le p-1$. This proves the first claim.
+	
+	For the second claim, we begin by observing that if $x+\zeta_p^ky \equiv x + \zeta_p^i y \mod \mathfrak{p}^2$ (for $0 \leq k < i \leq p-1$) then $\zeta_p^ky(1-\zeta_p^{i-k}) \equiv 0 \mod \mathfrak{p}^2$ which cannot happen as $y$ is coprime to $\mathfrak{p}$. Therefore since, for $0 \leq k \leq p-1$, $x+\zeta_p^ky$ are all distinct modulo $\mathfrak{p}^2$ we must have that $\frac{x+\zeta_p^k}{1-\zeta_p}$ are non-congruent modulo $\mathfrak{p}$. The second claim now follows by noting that (since $N(\mathfrak{p})=p$), the numbers $\frac{x+\zeta_p^k}{1-\zeta_p}$ form a complete set of residues modulo $\mathfrak{p}$, so one must be divisible by $\mathfrak{p}$.
+\end{proof}	
+
+\begin{lemma}\label{lem:gen_ideal_coprimality}
+		Let $p$ be a regular odd prime, $x,y,z,\epsilon \in \ZZ[\zeta_p]$, $\epsilon$ a unit, and $n \in \ZZ_{\geq 1}$. Assume $x,y,z$ are coprime to $(1-\zeta_p)$,  $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$ and $x+y$ is divisible by $\mathfrak{p}^2$ and $x+ \zeta_p^ky$ is only divisible by $\mathfrak{p}=(1-\zeta_p)$ (for $0 < k \leq p-1$).
+		Let $\mathfrak{m}= \mathrm{gcd}((x),(y))$. Then 
+		\begin{enumerate}
+			\item We can write 	\[(x+y)=\mathfrak{p}^{p(m-1)+1}\mathfrak{m}\mathfrak{c}_0\] and \[ (x+\zeta_p^k y)=\mathfrak{p}\mathfrak{m}\mathfrak{c}_k \] (for $0 < k \leq p-1$) where $m=n(p-1)$ and with $\mathfrak{c}_i$ pairwise coprime. 
+			\item Each $\mathfrak{c}_k=\mathfrak{a}_k^p$ and $\mathfrak{a}_k\mathrfrak{a}_0^{-1}$ is principal (as a fractional ideal).
+		\end{enumerate}
+	
+\end{lemma}	
+
+
 \begin{theorem}\label{thm:gen_flt_eqn}
-	Let $p$ be a regular odd prime, $\epsilon \in \ZZ[\zeta_p]$ and $n \in \ZZ_{\geq 1}$. Then the equation $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$ has no solutions with $x,y,z \in \ZZ[\zeta_p]$, all non-zero and $xyz$ coprime to $(1-\zeta_p)$.
+	\uses{lem:gen_dvd_by_frak_p_lem, lem:gen_ideal_coprimality}
+	Let $p$ be a regular odd prime, $\epsilon \in \ZZ[\zeta_p]^\times$ and $n \in \ZZ_{\geq 1}$. Then the equation $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$ has no solutions with $x,y,z \in \ZZ[\zeta_p]$, all non-zero and $xyz$ coprime to $(1-\zeta_p)$.
 \end{theorem}
 
 \begin{theorem}\label{theorem:FLT_case_two}
