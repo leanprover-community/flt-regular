@@ -7,7 +7,6 @@ import data.int.basic
 import data.int.parity
 import data.nat.gcd.big_operators
 import data.pnat.basic
-import algebra.euclidean_domain
 import algebra.gcd_monoid.basic
 import tactic
 import data.nat.modeq

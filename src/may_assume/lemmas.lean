@@ -43,7 +43,7 @@ begin
     simpa [hna, hnb, hnc, mul_pow, hdzero, int.add_mul_div_left (d ^ n * na ^ n) (nb ^ n), hdp]
       using congr_arg (/ d ^ n) H },
   { simpa [gcd_eq_gcd_image] using
-      finset.int.gcd_div_gcd_id_eq_one ({a, b, c} : finset ℤ) (show a ∈ _, by simp) ha },
+      finset.int.gcd_div_id_eq_one (show a ∈ ({a, b, c} : finset ℤ), by simp) ha },
   { simp only [mul_eq_zero] at habs,
     rcases habs with (Ha | Hb) | Hc,
     { exact ha (int.eq_zero_of_div_eq_zero (by exact gcd_dvd (by simp)) Ha) },

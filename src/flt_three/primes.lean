@@ -9,7 +9,7 @@ import data.nat.gcd.big_operators
 import data.pnat.basic
 import ring_theory.coprime.lemmas
 import ring_theory.int.basic
-import ring_theory.euclidean_domain
+import algebra.euclidean_domain.basic
 import ring_theory.noetherian
 import ring_theory.principal_ideal_domain
 import ring_theory.prime

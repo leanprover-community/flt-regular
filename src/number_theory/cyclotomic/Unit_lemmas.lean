@@ -47,8 +47,8 @@ begin
     exact units.ne_zero _ h }
 end
 
-@[simp, norm_cast]
-lemma coe_zpow (u : RRˣ) (n : ℤ) : (((u ^ n : RRˣ) : RR) : K) = (u : K) ^ n :=
+@[simp, norm_cast] --generalize coe_zpow to allow group with zero
+lemma coe_zpow' (u : RRˣ) (n : ℤ) : (((u ^ n : RRˣ) : RR) : K) = (u : K) ^ n :=
 begin
   induction n with n hn,
   { simp },
