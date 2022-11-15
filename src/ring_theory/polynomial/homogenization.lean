@@ -430,9 +430,10 @@ lemma support_add_eq [decidable_eq ι] {g₁ g₂ : mv_polynomial ι R}
   (h : disjoint g₁.support g₂.support) : (g₁ + g₂).support = g₁.support ∪ g₂.support :=
 finsupp.support_add_eq h
 
-lemma add_ne_zero_of_ne_zero_of_support_disjoint [decidable_eq ι] (p q : mv_polynomial ι R)
+lemma add_ne_zero_of_ne_zero_of_support_disjoint (p q : mv_polynomial ι R)
   (hp : p ≠ 0) (h : disjoint p.support q.support) : p + q ≠ 0 :=
 begin
+  classical,
   contrapose! hp,
   have := congr_arg support hp,
   rw [support_zero, support_add_eq h, finset.union_eq_empty_iff, -- TODO should this be simp?
