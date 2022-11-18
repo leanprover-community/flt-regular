@@ -3,7 +3,7 @@ import number_theory.cyclotomic.cyclotomic_units
 import ring_theory.roots_of_unity
 import number_theory.number_field.embeddings
 import number_theory.cyclotomic.zeta_sub_one_prime
-import data.nat.prime_extras
+import ready_for_mathlib.prime_extras
 
 variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
