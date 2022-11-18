@@ -1,5 +1,6 @@
 import data.zmod.basic
 import algebra.euclidean_domain.instances
+import algebra.euclidean_domain.basic
 
 lemma int.dvd_of_dvd_coe_zmod {m a : ℤ} {n : ℕ} (hmn : m ∣ n) (h : (m : zmod n) ∣ a) : m ∣ a :=
 begin

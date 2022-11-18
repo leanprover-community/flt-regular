@@ -165,7 +165,7 @@ begin
     { rw [int.nat_abs_mul],
       apply lt_mul_of_one_lt_left (int.nat_abs_pos_of_ne_zero hg'pos),
       norm_num },
-    { rw [←mul_right_inj' (@four_ne_zero ℤ _ _), ←hc, ←hfactor, mul_left_comm] },
+    { rw [←mul_right_inj' (four_ne_zero' ℤ), ←hc, ←hfactor, mul_left_comm] },
     { intros f' hf'dvd hf'odd,
       refine hnotform f' _ hf'odd,
       exact hf'dvd.mul_left _ } },

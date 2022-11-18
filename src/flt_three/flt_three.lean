@@ -289,7 +289,7 @@ begin
       rw nat.prime_dvd_prime_iff_eq nat.prime_two hdprime,
       exact hne2.symm },
     have hp : p = d * H,
-    { rw [←mul_right_inj' (@two_ne_zero ℤ _ _), hP, hH, mul_left_comm] },
+    { rw [←mul_right_inj' (two_ne_zero' ℤ), hP, hH, mul_left_comm] },
 
     apply hcoprime.is_unit_of_dvd',
     { rw hp, exact dvd_mul_right d H },
@@ -334,7 +334,7 @@ begin
   apply is_coprime.is_unit_of_dvd' hcoprime hdvdp,
   { rw ←int.pow_dvd_pow_iff zero_lt_two at hdvdp,
     apply prime.dvd_of_dvd_pow int.prime_three,
-    rw [←mul_dvd_mul_iff_left (@three_ne_zero ℤ _ _), ←pow_two, dvd_add_iff_right hdvdp],
+    rw [←mul_dvd_mul_iff_left (three_ne_zero' ℤ), ←pow_two, dvd_add_iff_right hdvdp],
     refine dvd_trans _ (int.gcd_dvd_right (2 * p) (p ^ 2 + 3 * q ^ 2)),
     rw [←hg', hg, int.coe_nat_mul],
     apply dvd_mul_right }
