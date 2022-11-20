@@ -1,8 +1,8 @@
 [package]
 name = "flt-regular"
 version = "0.1"
-lean_version = "leanprover-community/lean:3.49.0"
+lean_version = "leanprover-community/lean:3.49.1"
 path = "src"
 
 [dependencies]
-mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "c3019c79074b0619edb4b27553a91b2e82242395"}
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "568eb9b432c885f2a2cb8fe3bbfa77467e774da7"}

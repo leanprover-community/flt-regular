@@ -3,7 +3,6 @@ import number_theory.cyclotomic.cyclotomic_units
 import ring_theory.roots_of_unity
 import number_theory.number_field.embeddings
 import number_theory.cyclotomic.zeta_sub_one_prime
-import ready_for_mathlib.prime_extras
 
 variables {p : ℕ+} {K : Type*} [field K]
 variables {ζ : K} (hζ : is_primitive_root ζ p)
@@ -333,7 +332,7 @@ begin
     push_cast }
 end
 
-lemma fuck_norm_cast (h : p ≠ 2) : (p : ℕ) ≠ 2 :=
+lemma norm_cast_ne_two (h : p ≠ 2) : (p : ℕ) ≠ 2 :=
 begin
   contrapose! h,
   exact pnat.coe_injective h
@@ -357,7 +356,7 @@ lemma is_primitive_root.two_not_mem_one_sub_zeta [hp : fact ((p : ℕ).prime)] (
   (2 : 𝓞 K) ∉ I :=
 begin
   have hpm := hζ.p_mem_one_sub_zeta,
-  obtain ⟨k, hk⟩ := hp.1.odd (fuck_norm_cast h),
+  obtain ⟨k, hk⟩ := hp.1.odd_of_ne_two (norm_cast_ne_two h),
   apply_fun (coe : ℕ → 𝓞 K) at hk,
   rw [nat.cast_add, nat.cast_mul, nat.cast_two, nat.cast_one, ←coe_coe, add_comm] at hk,
   intro h2m,
@@ -418,7 +417,7 @@ end
 lemma unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).prime) (u : RRˣ) :
   ∃ m : ℕ, u * (unit_gal_conj K p u)⁻¹ = (hζ.unit' ^ m)^2 :=
 begin
-  have hpo : odd (p : ℕ) := hp.odd (fuck_norm_cast h),
+  have hpo : odd (p : ℕ) := hp.odd_of_ne_two (norm_cast_ne_two h),
   haveI : normed_algebra ℚ ℂ := normed_algebra_rat,
   have := @number_field.embeddings.pow_eq_one_of_norm_eq_one K _ _ ℂ _ _ _
     (u * (unit_gal_conj K p u)⁻¹ : K) _ _,

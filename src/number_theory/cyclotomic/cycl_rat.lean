@@ -2,7 +2,6 @@ import ring_theory.polynomial.eisenstein
 import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.rat
 import number_theory.cyclotomic.Unit_lemmas
-import ready_for_mathlib.basis
 import ring_theory.dedekind_domain.ideal
 import number_theory.cyclotomic.zeta_sub_one_prime
 import number_theory.cyclotomic.cyclotomic_units
@@ -454,7 +453,7 @@ begin
   simp only [Hi, fin.coe_cast, smul_eq_mul, mul_boole, sum_ite_eq', mem_univ, fin.coe_mk,
     fin.eta, zero_sub, if_true] at hy,
   rw [← smul_eq_mul, ← zsmul_eq_smul_cast, neg_eq_iff_neg_eq] at hy,
-  obtain ⟨n, hn⟩ := b.basis.coord_dvd_of_dvd ((fin.cast hdim.symm) ⟨i, hi⟩) y m,
+  obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((fin.cast hdim.symm) ⟨i, hi⟩) y m,
   rw [hn] at hy,
   simp [← hy, dvd_neg]
 end
@@ -498,7 +497,7 @@ begin
   rw [← b.basis.equiv_fun_symm_apply, ← b.basis.equiv_fun_symm_apply, linear_map.map_sub,
     b.basis.coord_equiv_fun_symm, b.basis.coord_equiv_fun_symm] at hy,
   simp only [fin.cast_mk, fin.coe_mk, fin.eta, basis.coord_apply, sub_eq_iff_eq_add] at hy,
-  obtain ⟨n, hn⟩ := b.basis.coord_dvd_of_dvd ((fin.cast hdim.symm) ⟨j, hj⟩) y m,
+  obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((fin.cast hdim.symm) ⟨j, hj⟩) y m,
   rw [hy, ← smul_eq_mul, ← zsmul_eq_smul_cast, ← b.basis.coord_apply, ← fin.cast_mk, hn],
   exact dvd_add (dvd_mul_right _ _) last_dvd
 end
