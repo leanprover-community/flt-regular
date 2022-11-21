@@ -4,27 +4,14 @@ import number_theory.cyclotomic.Unit_lemmas
 import ready_for_mathlib.exists_eq_pow_of_mul_eq_pow
 import ready_for_mathlib.roots_of_unity
 import number_theory.cyclotomic.case_I
+import ready_for_mathlib.finset
+import ready_for_mathlib.logic
 
 open finset nat is_cyclotomic_extension ideal polynomial int basis
 
 open_locale big_operators number_field
 
 local attribute [-instance] cyclotomic_field.algebra
-
-section move_me
-
-@[simp]
-lemma finset.range_filter_eq {n m : ℕ} : (range n).filter (= m) = if m < n then {m} else ∅ :=
-begin
-  convert filter_eq (range n) m,
-  { ext, exact comm },
-  { simp }
-end
-
-lemma ne_and_eq_iff_right {α : Type*} {a b c : α} (h : b ≠ c) : a ≠ b ∧ a = c ↔ a = c :=
-and_iff_right_of_imp (λ h2, h2.symm ▸ h.symm)
-
-end move_me
 
 namespace flt_regular
 

@@ -1,4 +1,4 @@
-import norm.norm_of_units
+import ready_for_mathlib.norm
 import linear_algebra.smodeq
 
 open_locale number_field
@@ -45,7 +45,7 @@ lemma p_eq_zero [is_galois ℚ K] :
   (rat.ring_of_integers_equiv (norm' ℚ pb.gen) : (R ⧸ (span ({pb.gen} : set R)))) = 0 :=
 begin
   set p := rat.ring_of_integers_equiv (norm' ℚ pb.gen) with hpdef,
-  obtain ⟨x, hx⟩ := dvd_norm ℚ pb.gen,
+  obtain ⟨x, hx⟩ := dvd_norm' ℚ pb.gen,
   suffices : (p : R) ∈ (span ({pb.gen} : set R)),
   { simpa using quotient.eq_zero_iff_mem.2 this },
   replace hpdef : (norm' ℚ pb.gen) = rat.ring_of_integers_equiv.symm p := by simp,
@@ -69,7 +69,7 @@ end
 variable [is_galois ℚ K]
 
 lemma quotient_not_trivial : nontrivial (R ⧸ (span ({pb.gen} : set R))) :=
-quotient.nontrivial (λ h, hpr.not_unit ((norm_unit_iff ℚ).1 (span_singleton_eq_top.1 h)))
+quotient.nontrivial (λ h, hpr.not_unit ((norm'_unit_iff ℚ).2 (span_singleton_eq_top.1 h)))
 
 local attribute [instance] number_field.ring_of_integers_algebra
 
@@ -98,8 +98,8 @@ begin
     rwa [← hnm, ← _root_.map_mul] },
   simp only [quotient.mk_eq_mk, map_int_cast] at h₁ h₂,
   cases hpr.dvd_or_dvd hz with Hn Hm,
-  { simpa [h₁] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm ℚ pb.gen)
+  { simpa [h₁] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm' ℚ pb.gen)
       (ring_hom.map_dvd (algebra_map (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hn)))) },
-  { simpa [h₂] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm ℚ pb.gen)
+  { simpa [h₂] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm' ℚ pb.gen)
       (ring_hom.map_dvd (algebra_map (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hm)))) },
 end

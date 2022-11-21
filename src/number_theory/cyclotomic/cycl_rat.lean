@@ -5,6 +5,7 @@ import number_theory.cyclotomic.Unit_lemmas
 import ring_theory.dedekind_domain.ideal
 import number_theory.cyclotomic.zeta_sub_one_prime
 import number_theory.cyclotomic.cyclotomic_units
+import ready_for_mathlib.semiring
 
 universes u
 
@@ -17,20 +18,6 @@ section int_facts
 noncomputable theory
 
 open_locale number_field big_operators
-
-section to_move
-
-variables {R : Type*} [semiring R] {s t : ideal R}
-
-lemma ideal.add_left_subset  : s ≤ s + t := le_sup_left
-lemma ideal.add_right_subset : t ≤ s + t := le_sup_right
-
-variables {K : Type*} [semiring K]
-
-lemma add_eq_mul_one_add_div {a : Kˣ} {b : K} : ↑a + b = a * (1 + ↑a⁻¹ * b) :=
-by rwa [mul_add, mul_one, ← mul_assoc, units.mul_inv, one_mul]
-
-end to_move
 
 open ideal is_cyclotomic_extension
 
@@ -203,7 +190,7 @@ begin
     apply prim_coe p η (nth_roots_prim hη hne1)},
   have h0 : p ≠ 2, by   { intro hP,
     norm_num [hP] at ph },
-  have h := dvd_norm ℚ ((η - 1) : R),
+  have h := dvd_norm' ℚ ((η - 1) : R),
   have h2 := is_primitive_root.sub_one_norm_prime this (cyclotomic.irreducible_rat p.2) h0,
   convert h,
   ext,
@@ -275,11 +262,12 @@ begin
   have he := (not_coprime_not_top p (flt_ideals p x y hη₁)  (flt_ideals p x y hη₂)).1 h,
   have := exists_le_maximal I he,
   obtain ⟨P, hP1, hP2⟩:= this,
-  have hiP : (flt_ideals p x y hη₁) ≤ P, by {apply le_trans _ hP2, apply ideal.add_left_subset,},
-  have hjP : (flt_ideals p x y hη₂) ≤ P, by {apply le_trans _ hP2, apply ideal.add_right_subset,},
-  have hel1: ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I, by {
-  have := I.add_mem (ideal.add_left_subset $ (mem_flt_ideals _ _ hη₁))
-                      (ideal.mul_mem_left _ (-1) $ ideal.add_right_subset $ (mem_flt_ideals _ _ _) ),
+  have hiP : (flt_ideals p x y hη₁) ≤ P := le_trans le_sup_left hP2,
+  have hjP : (flt_ideals p x y hη₂) ≤ P := le_trans le_sup_right hP2,
+  have hel1: ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I,
+  { have : ↑x + η₁ * ↑y + (-1) * (↑x + η₂ * ↑y) ∈ I := ideal.add_mem _
+      (mem_sup_left (mem_flt_ideals _ _ hη₁))
+      (mul_mem_left _ (-1) (mem_sup_right (mem_flt_ideals _ _ _))),
     simp only [neg_mul, one_mul, neg_add_rev] at this,
     rw [neg_mul_eq_mul_neg, add_comm] at this,
     simp only [← add_assoc] at this,
@@ -292,11 +280,12 @@ begin
     rw hv at this,
     have h4 :  ↑v * (1 - η₁) * ↑y = v * y * (1-η₁) , by {ring},
     rw ←h4,
-    apply this},
-  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I, by {
-    have := I.add_mem (ideal.mul_mem_left _ (η₂) $ ideal.add_left_subset $ (mem_flt_ideals _ _ hη₁))
-                      (ideal.mul_mem_left _ (-η₁) $ ideal.add_right_subset $ (mem_flt_ideals _ _ _)),
-    have h1 :  η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) = (η₂ - η₁) * x, by {ring},
+    apply this },
+  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I,
+  { have : η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) ∈ I := ideal.add_mem _
+      (mul_mem_left _ _ (mem_sup_left (mem_flt_ideals _ _ hη₁)))
+      (mul_mem_left _ _ (mem_sup_right (mem_flt_ideals _ _ _))),
+    have h1 :  η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) = (η₂ - η₁) * x, by ring,
     rw h1 at this,
     have hh := diff_of_roots2 ph hη₁ hη₂ hdiff hwlog,
     obtain ⟨v, hv⟩ := hh,
@@ -304,7 +293,7 @@ begin
     rw hv at this,
     have h4 :  ↑v * (1 - η₁) * ↑x = v * x * (1-η₁) , by {ring},
     rw h4 at this,
-    exact this},
+    exact this },
   have hel11:  (y : R) * (1 - η₁) ∈ P, by {
     obtain ⟨v, hv ⟩:= hel1,
     rw mul_assoc at hv,
