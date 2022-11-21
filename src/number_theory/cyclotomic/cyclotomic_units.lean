@@ -9,8 +9,6 @@ import ring_theory.polynomial.cyclotomic.eval
 
 import ready_for_mathlib.ideal_stuff
 
-import tactic.may_assume
-
 noncomputable theory
 
 open_locale big_operators non_zero_divisors number_field
