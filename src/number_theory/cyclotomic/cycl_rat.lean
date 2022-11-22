@@ -7,6 +7,7 @@ import number_theory.cyclotomic.zeta_sub_one_prime
 import number_theory.cyclotomic.cyclotomic_units
 import ready_for_mathlib.semiring
 import ready_for_mathlib.char_p
+import algebra.char_p.quotient
 
 universes u
 
@@ -67,30 +68,23 @@ example {R A : Type*} [comm_ring R] [comm_ring A] [algebra R A] [is_cyclotomic_e
   [fact (p : ℕ).prime] (a : A) :
   ∃ (m : R), (a ^ (p : ℕ) - (algebra_map R A m)) ∈ span ({p} : set A) :=
 begin
+  by_cases hpunit : ↑(p : ℕ) ∈ nonunits A,
+  swap,
+  { simp only [mem_nonunits_iff, not_not] at hpunit,
+    exact ⟨0, by simp [ideal.span_singleton_eq_top.2 hpunit]⟩ },
   have : a ∈ algebra.adjoin R _ := @adjoin_roots {p} R A _ _ _ _ a,
-  apply algebra.adjoin_induction this,
-  { intros x hx,
-    rcases hx with ⟨hx_w, hx_m, hx_p⟩,
+  refine algebra.adjoin_induction this _ (λ r, ⟨r ^ (p : ℕ), by simp⟩) _ _,
+  { rintros x ⟨hx_w, hx_m, hx_p⟩,
     simp only [set.mem_singleton_iff] at hx_m,
     rw [hx_m] at hx_p,
-    simp only [hx_p, coe_coe],
-    use 1,
-    simp, },
-  { intros r,
-    use r ^ (p : ℕ),
-    simp, },
+    exact ⟨1, by simp [hx_p, coe_coe]⟩ },
   { rintros x y ⟨b, hb⟩ ⟨c, hc⟩,
-    obtain ⟨r, hr⟩ := add_pow_prime_eq_pow_add_pow_add_prime_mul p x y,
-    rw [hr],
     use c + b,
-    push_cast,
-    rw [map_add, sub_add_eq_sub_sub, sub_eq_add_neg, sub_eq_add_neg, add_comm _ (↑↑p * r),
-        add_assoc, add_assoc],
-    apply' ideal.add_mem _ _,
-    { convert ideal.add_mem _ hb hc using 1,
-      ring },
-    { rw [mem_span_singleton, coe_coe],
-      exact dvd_mul_right _ _ } },
+    rw [←ideal.quotient.eq_zero_iff_mem, map_sub, sub_eq_zero] at ⊢ hb hc,
+    haveI : char_p (A ⧸ span ({p} : set A)) (p : ℕ) := by convert char_p.quotient A (p : ℕ) hpunit,
+    rw [map_add, map_pow, map_add, add_pow_char_of_commute, ← map_pow, ← map_pow],
+    { simp [hb, hc, add_comm] },
+    { exact commute.all _ _ } },
   { rintros x y ⟨b, hb⟩ ⟨c, hc⟩,
     rw mul_pow,
     use b * c,
