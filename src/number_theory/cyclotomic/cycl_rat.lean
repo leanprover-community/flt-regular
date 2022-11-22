@@ -63,6 +63,41 @@ begin
     exact (sub_eq_zero.mp hb).symm }
 end
 
+example {R A : Type*} [comm_ring R] [comm_ring A] [algebra R A] [is_cyclotomic_extension {p} R A]
+  [fact (p : ℕ).prime] (a : A) :
+  ∃ (m : R), (a ^ (p : ℕ) - (algebra_map R A m)) ∈ span ({p} : set A) :=
+begin
+  have : a ∈ algebra.adjoin R _ := @adjoin_roots {p} R A _ _ _ _ a,
+  apply algebra.adjoin_induction this,
+  { intros x hx,
+    rcases hx with ⟨hx_w, hx_m, hx_p⟩,
+    simp only [set.mem_singleton_iff] at hx_m,
+    rw [hx_m] at hx_p,
+    simp only [hx_p, coe_coe],
+    use 1,
+    simp, },
+  { intros r,
+    use r ^ (p : ℕ),
+    simp, },
+  { rintros x y ⟨b, hb⟩ ⟨c, hc⟩,
+    obtain ⟨r, hr⟩ := add_pow_prime_eq_pow_add_pow_add_prime_mul p x y,
+    rw [hr],
+    use c + b,
+    push_cast,
+    rw [map_add, sub_add_eq_sub_sub, sub_eq_add_neg, sub_eq_add_neg, add_comm _ (↑↑p * r),
+        add_assoc, add_assoc],
+    apply' ideal.add_mem _ _,
+    { convert ideal.add_mem _ hb hc using 1,
+      ring },
+    { rw [mem_span_singleton, coe_coe],
+      exact dvd_mul_right _ _ } },
+  { rintros x y ⟨b, hb⟩ ⟨c, hc⟩,
+    rw mul_pow,
+    use b * c,
+    rw [←ideal.quotient.eq_zero_iff_mem, map_sub, sub_eq_zero] at ⊢ hb hc,
+    simp [hb, hc] }
+end
+
 instance aaaa [fact ((p : ℕ).prime)] : is_cyclotomic_extension {p} ℤ (𝓞 L) :=
 let _ := (zeta_spec p ℚ L).adjoin_is_cyclotomic_extension ℤ in
  by exactI is_cyclotomic_extension.equiv {p} _ _ (zeta_spec p ℚ L).adjoin_equiv_ring_of_integers'
