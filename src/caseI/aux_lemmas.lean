@@ -5,7 +5,6 @@ import ready_for_mathlib.exists_eq_pow_of_mul_eq_pow
 import ready_for_mathlib.roots_of_unity
 import number_theory.cyclotomic.case_I
 import ready_for_mathlib.finset
-import ready_for_mathlib.logic
 
 open finset nat is_cyclotomic_extension ideal polynomial int basis
 
