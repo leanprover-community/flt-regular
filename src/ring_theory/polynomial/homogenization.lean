@@ -774,7 +774,7 @@ begin
     finsupp.single_zero, zero_add, single_eq_monomial],
   rw [X, X],
   congr,
-  rw [monomial_eq_C_mul_X, pow_one],
+  rw [← C_mul_X_pow_eq_monomial, pow_one],
   refl,
 end
 
@@ -803,8 +803,8 @@ begin
   { rw total_degree_add_eq_left_of_total_degree_lt,
     simp [one_ne_zero],
     simp [one_ne_zero, hn], },
-  { convert monomial_eq_C_mul_X,
-    rw monomial_eq_C_mul_X,
+  { convert C_mul_X_pow_eq_monomial.symm,
+    rw ← C_mul_X_pow_eq_monomial,
     simp [this], },
 end
 
