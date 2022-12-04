@@ -5,7 +5,6 @@ import number_theory.cyclotomic.Unit_lemmas
 import ring_theory.dedekind_domain.ideal
 import number_theory.cyclotomic.zeta_sub_one_prime
 import number_theory.cyclotomic.cyclotomic_units
-import ready_for_mathlib.semiring
 import ready_for_mathlib.char_p
 import algebra.char_p.quotient
 
