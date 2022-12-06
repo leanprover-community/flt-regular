@@ -76,7 +76,10 @@ local attribute [instance] number_field.ring_of_integers_algebra
 lemma prime_of_norm_prime : prime pb.gen :=
 begin
   rw [← span_singleton_prime (gen_ne_zero hpr), ← quotient.is_domain_iff_prime],
-  refine ⟨_, (quotient_not_trivial hpr).exists_pair_ne⟩,
+  haveI : nontrivial ((𝓞 K) ⧸ span {pb.gen}) := ⟨(quotient_not_trivial hpr).exists_pair_ne⟩,
+  suffices : no_zero_divisors ((𝓞 K) ⧸ span {pb.gen}),
+  { exact @no_zero_divisors.to_is_domain _ _ _ this },
+  refine ⟨_⟩,
   rintro ⟨x, hx⟩ ⟨y, hy⟩ hxy,
   by_contra' h,
   have h₁ := h.1, have h₂ := h.2,
