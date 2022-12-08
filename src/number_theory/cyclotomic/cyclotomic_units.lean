@@ -7,12 +7,10 @@ Authors: Alex J. Best
 import number_theory.cyclotomic.primitive_roots
 import ring_theory.polynomial.cyclotomic.eval
 
-import ready_for_mathlib.ideal_stuff
-
 noncomputable theory
 
 open_locale big_operators non_zero_divisors number_field
-open number_field polynomial finset module units fractional_ideal submodule
+open number_field polynomial finset module units submodule
 
 universe variables u v w z
 
@@ -23,16 +21,6 @@ variables [field K] [field L] [algebra K L]
 namespace is_primitive_root
 
 variable {B}
-
-lemma is_integral' {n : ℕ} {μ : B} (hμ : is_primitive_root μ n) (hn : 0 < n) :
-  _root_.is_integral A μ :=
-begin
-  use (X ^ n - 1),
-  split,
-  { exact (monic_X_pow_sub_C 1 (ne_of_lt hn).symm) },
-  { simp only [((is_primitive_root.iff_def μ n).mp hμ).left, eval₂_one, eval₂_X_pow, eval₂_sub,
-      sub_self] }
-end
 
 variable (B)
 
