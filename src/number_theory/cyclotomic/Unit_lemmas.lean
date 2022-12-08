@@ -70,8 +70,8 @@ noncomputable theory
 /-- zeta now as a unit in the ring of integers. This way there are no coe issues-/
 @[simps {attrs := [`simp, `norm_cast]}] def is_primitive_root.unit' {p : ℕ+} {K : Type*}
   [field K] {ζ : K} (hζ : is_primitive_root ζ p) : (𝓞 K)ˣ :=
-{ val := (⟨ζ, hζ.is_integral' ℤ p.pos⟩ : 𝓞 K),
-  inv:= (⟨ζ⁻¹, hζ.inv.is_integral' ℤ p.pos⟩ : 𝓞 K),
+{ val := (⟨ζ, hζ.is_integral p.pos⟩ : 𝓞 K),
+  inv:= (⟨ζ⁻¹, hζ.inv.is_integral p.pos⟩ : 𝓞 K),
   val_inv := subtype.ext $ mul_inv_cancel $ hζ.ne_zero p.ne_zero,
   inv_val := subtype.ext $ inv_mul_cancel $ hζ.ne_zero p.ne_zero }
 
