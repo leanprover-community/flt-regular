@@ -92,25 +92,34 @@ def ring_equiv.to_int_alg_equiv {R S} [ring R] [ring S] [algebra ℤ R] [algebra
 instance (L : Type*) [field L] [char_zero L] [is_cyclotomic_extension {2} ℚ L] :
   is_principal_ideal_ring (𝓞 L) :=
 begin
-  sorry
-  /-
-  let ζ := is_cyclotomic_extension.zeta 2 ℚ (cyclotomic_field 2 ℚ),
-  let hζ := is_cyclotomic_extension.zeta_spec 2 ℚ (cyclotomic_field 2 ℚ),
-  have : fact (nat.prime (2 : ℕ+)) := ⟨prime_two⟩,
-  haveI := cyclotomic_field.is_cyclotomic_extension 2 ℚ,
-  haveI := is_cyclotomic_extension.rat.is_integral_closure_adjoing_singleton_of_prime hζ,
-  let f := ((cyclotomic_field_two_equiv ℚ : cyclotomic_field 2 ℚ ≃+* ℚ).to_int_alg_equiv).subalgebra_map (algebra.adjoin ℤ {ζ}),
-  suffices : algebra.adjoin ℤ {ζ} = ⊥,
-  { let := is_integral_closure.equiv ℤ (𝓞 (cyclotomic_field 2 ℚ)) (cyclotomic_field 2 ℚ) (algebra.adjoin ℤ ({ζ} : set (cyclotomic_field 2 ℚ))), }, -/
+  haveI : is_integral_closure ℤ ℤ L :=
+  { algebra_map_injective := (algebra_map ℤ L).injective_int,
+    is_integral_iff := λ x,
+    begin
+      let f := (cyclotomic_field_two_equiv ℚ L),
+      refine ⟨λ hx, ⟨is_integral_closure.mk' ℤ (f x) (map_is_integral_int f hx), f.injective _⟩, _⟩,
+      { convert is_integral_closure.algebra_map_mk' ℤ (f x) (map_is_integral_int f hx),
+        simp },
+      { rintro ⟨y, hy⟩,
+        simpa [← hy] using is_integral_algebra_map }
+    end },
+  let F : 𝓞 L ≃+* ℤ := number_field.ring_of_integers.equiv _,
+  exact is_principal_ideal_ring.of_surjective F.symm.to_ring_hom F.symm.surjective,
 end
 
-example : is_regular_number 2 :=
+local attribute [-instance] cyclotomic_field.algebra
+
+lemma is_regular_number_two : is_regular_number 2 :=
 begin
+  haveI : is_cyclotomic_extension {2} ℚ (cyclotomic_field 2 ℚ),
+  { convert cyclotomic_field.is_cyclotomic_extension 2 _,
+    { exact subsingleton.elim _ _ },
+    { refine ⟨λ h, by simpa using h⟩ } },
   rw is_regular_number,
   convert coprime_one_right _,
   dsimp,
   rw card_class_group_eq_one_iff,
-  sorry
+  apply_instance,
 end
 
 end two_regular
