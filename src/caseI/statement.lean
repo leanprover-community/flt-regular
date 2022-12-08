@@ -109,7 +109,7 @@ begin
   rw [pow_add_pow_eq_prod_add_zeta_runity_mul
       (hpri.out.eq_two_or_odd.resolve_left $ λ h, by norm_num [h] at h5p) hζ'] at H₁,
   replace H₁ := congr_arg (λ x, span ({x} : set R)) H₁,
-  simp only [span_singleton_prod, ← span_singleton_pow] at H₁,
+  simp only [← prod_span_singleton, ← span_singleton_pow] at H₁,
   obtain ⟨I, hI⟩ := exists_eq_pow_of_prod_eq_pow p (span ({c} : set R)) (λ η₁ hη₁ η₂ hη₂ hη, _) H₁ ζ hζ,
   { exact ⟨I, hI⟩ },
   { exact flt_ideals_coprime h5p H (ab_coprime H hpri.out.ne_zero hgcd) hη₁ hη₂ hη caseI }
