@@ -17,13 +17,3 @@ begin
   { simp, },
   simp [hiT, span_singleton_mul_span_singleton, ih.symm],
 end
-
-@[simp]
-lemma ideal.span_singleton_prod {R ι : Type*} [comm_ring R] (T : finset ι) (I : ι → R) :
-  ideal.span ({∏ t in T, I t} : set R) = ∏ t in T, ideal.span {I t} :=
-begin
-  classical,
-  induction T using finset.induction with i T hiT ih,
-  { simp, },
-  simp [hiT, ideal.span_singleton_mul_span_singleton, ih.symm],
-end
