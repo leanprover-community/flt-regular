@@ -49,7 +49,7 @@ begin
   { replace hi := nat.add_lt_add_right hi 1,
     rwa [nat.sub_add_cancel (nat.one_le_pow _ _ hp.out.pos)] at hi },
   have H := nat.prime.multiplicity_choose_prime_pow (fact.out _) hi.le (nat.succ_pos _),
-  rw [multiplicity.multiplicity_eq_zero_of_not_dvd habs, zero_add, multiplicity.eq_coe_iff ] at H,
+  rw [multiplicity.multiplicity_eq_zero.2 habs, zero_add, multiplicity.eq_coe_iff ] at H,
   exact hi.not_le (nat.le_of_dvd (nat.succ_pos i) H.1),
 end
 
