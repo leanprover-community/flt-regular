@@ -1,7 +1,6 @@
 import may_assume.lemmas
 import number_theory.cyclotomic.factoring
 import number_theory.cyclotomic.Unit_lemmas
-import ready_for_mathlib.exists_eq_pow_of_mul_eq_pow
 import number_theory.cyclotomic.case_I
 
 open finset nat is_cyclotomic_extension ideal polynomial int basis
