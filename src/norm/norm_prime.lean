@@ -1,9 +1,9 @@
-import ready_for_mathlib.norm
 import linear_algebra.smodeq
+import number_theory.number_field.norm
 
 open_locale number_field
 
-open algebra ideal finset nat finite_dimensional
+open ring_of_integers ideal finset nat finite_dimensional
 
 variables {K : Type*} [field K] (pb : power_basis ℤ (𝓞 K))
 
@@ -39,16 +39,16 @@ begin
 end
 
 variables [number_field K] {pb}
-variables (hpr : prime (norm' ℚ pb.gen))
+variables (hpr : prime (norm ℚ pb.gen))
 
 lemma p_eq_zero [is_galois ℚ K] :
-  (rat.ring_of_integers_equiv (norm' ℚ pb.gen) : (R ⧸ (span ({pb.gen} : set R)))) = 0 :=
+  (rat.ring_of_integers_equiv (norm ℚ pb.gen) : (R ⧸ (span ({pb.gen} : set R)))) = 0 :=
 begin
-  set p := rat.ring_of_integers_equiv (norm' ℚ pb.gen) with hpdef,
-  obtain ⟨x, hx⟩ := dvd_norm' ℚ pb.gen,
+  set p := rat.ring_of_integers_equiv (norm ℚ pb.gen) with hpdef,
+  obtain ⟨x, hx⟩ := dvd_norm ℚ pb.gen,
   suffices : (p : R) ∈ (span ({pb.gen} : set R)),
   { simpa using quotient.eq_zero_iff_mem.2 this },
-  replace hpdef : (norm' ℚ pb.gen) = rat.ring_of_integers_equiv.symm p := by simp,
+  replace hpdef : (norm ℚ pb.gen) = rat.ring_of_integers_equiv.symm p := by simp,
   rw [← ring_equiv.coe_to_ring_hom] at hpdef,
   refine mem_span_singleton.2 ⟨x, _⟩,
   rw [hpdef, ← ring_hom.comp_apply] at hx,
@@ -61,15 +61,15 @@ include hpr
 lemma gen_ne_zero : pb.gen ≠ 0 :=
 begin
   intro h,
-  simp only [norm', monoid_hom.restrict_apply, monoid_hom.cod_restrict_apply,
-    norm_eq_zero_iff.2 (show (pb.gen : K) = 0, by exact_mod_cast h)] at hpr,
+  simp only [norm, monoid_hom.restrict_apply, monoid_hom.cod_restrict_apply,
+    algebra.norm_eq_zero_iff.2 (show (pb.gen : K) = 0, by exact_mod_cast h)] at hpr,
   simpa using prime.ne_zero hpr
 end
 
 variable [is_galois ℚ K]
 
 lemma quotient_not_trivial : nontrivial (R ⧸ (span ({pb.gen} : set R))) :=
-quotient.nontrivial (λ h, hpr.not_unit ((norm'_unit_iff ℚ).2 (span_singleton_eq_top.1 h)))
+quotient.nontrivial (λ h, hpr.not_unit ((is_unit_norm ℚ).2 (span_singleton_eq_top.1 h)))
 
 local attribute [instance] number_field.ring_of_integers_algebra
 
@@ -89,20 +89,20 @@ begin
   rw [smodeq.def, quotient.mk_eq_mk] at hn hm,
   rw [hn] at h₁ hxy, rw [hm] at h₂ hxy,
   obtain ⟨z, hz⟩ := mem_span_singleton.1 (quotient.eq_zero_iff_mem.1 hxy),
-  replace hz := congr_arg (norm' ℚ) hz,
-  have hnm : (norm' ℚ) ((n : R) * (m : R)) = n ^ (finrank ℚ K) * m ^ (finrank ℚ K),
+  replace hz := congr_arg (norm ℚ) hz,
+  have hnm : (norm ℚ) ((n : R) * (m : R)) = n ^ (finrank ℚ K) * m ^ (finrank ℚ K),
   { refine subtype.ext _,
-    simp only [norm', monoid_hom.restrict_apply, mul_mem_class.coe_mul, subring_class.coe_int_cast,
+    simp only [norm, monoid_hom.restrict_apply, mul_mem_class.coe_mul, subring_class.coe_int_cast,
       _root_.map_mul, monoid_hom.cod_restrict_apply, set_like.coe_mk, subsemiring_class.coe_pow],
     rw [show (n : K) = algebra_map ℚ K (n : ℚ), by simp, show (m : K) = algebra_map ℚ K (m : ℚ),
       by simp, algebra.norm_algebra_map, algebra.norm_algebra_map] },
-  replace hz : (norm' ℚ pb.gen) ∣ n ^ (finrank ℚ K) * m ^ (finrank ℚ K),
-  { refine ⟨norm' ℚ z, _⟩,
+  replace hz : (norm ℚ pb.gen) ∣ n ^ (finrank ℚ K) * m ^ (finrank ℚ K),
+  { refine ⟨norm ℚ z, _⟩,
     rwa [← hnm, ← _root_.map_mul] },
   simp only [quotient.mk_eq_mk, map_int_cast] at h₁ h₂,
   cases hpr.dvd_or_dvd hz with Hn Hm,
-  { simpa [h₁] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm' ℚ pb.gen)
+  { simpa [h₁] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm ℚ pb.gen)
       (ring_hom.map_dvd (algebra_map (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hn)))) },
-  { simpa [h₂] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm' ℚ pb.gen)
+  { simpa [h₂] using quotient.eq_zero_iff_mem.2 (mem_span_singleton.2 (dvd_trans (dvd_norm ℚ pb.gen)
       (ring_hom.map_dvd (algebra_map (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hm)))) },
 end
