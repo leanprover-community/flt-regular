@@ -9,7 +9,7 @@ jobs:
     name: Bump Lean and dependency versions
     steps:
       - name: checkout project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: upgrade Lean and dependencies
         uses: leanprover-contrib/lean-upgrade-action@master
         with:
