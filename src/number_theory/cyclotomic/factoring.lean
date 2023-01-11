@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alex J. Best
 -/
 import number_theory.cyclotomic.basic
-import ring_theory.polynomial.homogenization
+import ready_for_mathlib.homogenization
 
 open_locale big_operators
 
