@@ -41,21 +41,6 @@ end
 variables [number_field K] {pb}
 variables (hpr : prime (norm ℚ pb.gen))
 
-lemma p_eq_zero [is_galois ℚ K] :
-  (rat.ring_of_integers_equiv (norm ℚ pb.gen) : (R ⧸ (span ({pb.gen} : set R)))) = 0 :=
-begin
-  set p := rat.ring_of_integers_equiv (norm ℚ pb.gen) with hpdef,
-  obtain ⟨x, hx⟩ := dvd_norm ℚ pb.gen,
-  suffices : (p : R) ∈ (span ({pb.gen} : set R)),
-  { simpa using quotient.eq_zero_iff_mem.2 this },
-  replace hpdef : (norm ℚ pb.gen) = rat.ring_of_integers_equiv.symm p := by simp,
-  rw [← ring_equiv.coe_to_ring_hom] at hpdef,
-  refine mem_span_singleton.2 ⟨x, _⟩,
-  rw [hpdef, ← ring_hom.comp_apply] at hx,
-  convert hx,
-  simp
-end
-
 include hpr
 
 lemma gen_ne_zero : pb.gen ≠ 0 :=

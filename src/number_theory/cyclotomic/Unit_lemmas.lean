@@ -14,23 +14,6 @@ local notation `RR` := 𝓞 K
 
 --The whole file is now for a generic primitive root ζ, quite a lot of names should be changed.
 
---bunch of lemmas that should be stated more generally if we decide to go this way
-lemma unit_coe (u : RRˣ) : (u : RR) * ((u⁻¹ : RRˣ) : RR) = 1 :=
-begin
-  norm_cast,
-  simp only [mul_right_inv, units.coe_one],
-end
-
-lemma unit_coe_non_zero (u : RRˣ) : (u : K) ≠ 0 :=
-begin
-  by_contra h,
-  have : (u : K) * ((u⁻¹ : RRˣ ) : K) = 1,
-  { rw [coe_coe, coe_coe, ←subalgebra.coe_mul, ←units.coe_mul, mul_right_inv], refl },
-  rw h at this,
-  simp at this,
-  exact this,
-end
-
 lemma coe_life (u : RRˣ) : ((u : RR) : K)⁻¹ = ((u⁻¹ : RRˣ) : RR) :=
 begin
   rw [←coe_coe, ←coe_coe, inv_eq_one_div],
@@ -77,14 +60,6 @@ noncomputable theory
 
 local notation `ζ1` := (hζ.unit' - 1 : 𝓞 K)
 local notation `I` := ((ideal.span ({ζ1} : set (𝓞 K)) : ideal (𝓞 K)))
-
--- I don't know if this is so good: I've found the `simps` version (`coe_unit'_coe`) better.
--- Furthermore, this takes the name for the `is_primitive_root` one, which is super important.
--- This may be worth having with an obscure name for `norm_cast`.
---@[norm_cast] lemma is_primitive_root.unit'_coe : (hζ.unit' : K) = ζ := rfl
-
-lemma is_primitive_root.unit'_zpow : hζ.unit' ^ (p : ℤ) = 1 :=
-units.ext $ subtype.ext $ by simpa using hζ.pow_eq_one
 
 lemma is_primitive_root.unit'_pow : hζ.unit' ^ (p : ℕ) = 1 :=
 units.ext $ subtype.ext $ by simpa using hζ.pow_eq_one

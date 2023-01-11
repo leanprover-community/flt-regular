@@ -116,16 +116,11 @@ def int_gal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
 def units_gal (σ : K →ₐ[ℚ] K) : RRˣ →* RRˣ :=
 units.map $ int_gal σ
 
-@[simp] lemma units_gal_apply_coe (σ : K →ₐ[ℚ] K) (x : RRˣ) :
-(units_gal σ x : K) = σ x := rfl
-
 /-- `unit_gal_conj` as a bundled hom. -/
 def unit_gal_conj : RRˣ →* RRˣ :=
 units_gal (gal_conj K p)
 
 lemma unit_gal_conj_spec (u : RRˣ) : gal_conj K p (u : 𝓞 K) = ↑(unit_gal_conj K p u : 𝓞 K) := rfl
-
-lemma uni_gal_conj_inv (u : RRˣ) : (unit_gal_conj K p u)⁻¹ = (unit_gal_conj K p u⁻¹) := rfl
 
 lemma unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
   complex.abs (φ (u * (unit_gal_conj K p u)⁻¹)) = 1 :=
@@ -139,7 +134,3 @@ begin
   rw [← subalgebra.coe_zero (𝓞 K), subtype.coe_inj] at h,
   refine units.ne_zero _ h
 end
-
-lemma unit_gal_conj_idempotent (u : RRˣ) : (unit_gal_conj K p (unit_gal_conj K p u)) = u :=
-units.ext $ subtype.ext $ by rw [←unit_gal_conj_spec, ←unit_gal_conj_spec, ←alg_equiv.trans_apply,
-                                 gal_conj_idempotent, alg_equiv.coe_refl, id]

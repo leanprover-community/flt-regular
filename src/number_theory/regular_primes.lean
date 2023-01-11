@@ -80,15 +80,6 @@ begin
   exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (ring_hom.id K) (-1), by simp⟩,
 end
 
-.
-
-/-- Reinterpret a `ring_hom` as a `ℤ`-algebra homomorphism. -/
-def ring_equiv.to_int_alg_equiv {R S} [ring R] [ring S] [algebra ℤ R] [algebra ℤ S] (f : R ≃+* S) :
-  R ≃ₐ[ℤ] S :=
-{ commutes' := λ n, show (f : R →+* S) _ = _, by simp,
-  .. f }
---todo : `fun_like` on the `int/cast` file.
-
 instance (L : Type*) [field L] [char_zero L] [is_cyclotomic_extension {2} ℚ L] :
   is_principal_ideal_ring (𝓞 L) :=
 begin

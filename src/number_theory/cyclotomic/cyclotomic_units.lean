@@ -30,38 +30,9 @@ namespace is_cyclotomic_extension
 
 variables [is_cyclotomic_extension {n} A B]
 
--- how do I get `simps` to make the `coe_inv_coe` lemma? `coe_inv_coe` doesn't work#
-/-- `zeta n A B` as a member of the `roots_of_unity` subgroup. -/
-@[simps coe_coe] def zeta_runity : roots_of_unity n B :=
-roots_of_unity.mk_of_pow_eq (zeta n A B) $ (zeta_spec n A B).pow_eq_one
-
-/-- `zeta n A B` as a member of `Bˣ`. -/
-@[simps] def zeta_unit : Bˣ := zeta_runity n A B
-
-lemma coe_zeta_runity_unit : ↑(zeta_runity n A B) = zeta_unit n A B := rfl
-
 variables [is_domain A] [algebra A K] [is_fraction_ring A K]
 
 open is_cyclotomic_extension
-
-lemma zeta_integral [is_cyclotomic_extension {n} K L] :
-  zeta n K L ∈ 𝓞 L :=
-begin
-  refine ⟨X ^ (n : ℕ) - 1, monic_X_pow_sub_C _ n.ne_zero, _⟩,
-  simp only [eval₂_sub, eval₂_X_pow, eval₂_one, sub_eq_zero],
-  exact (zeta_spec n _ _).pow_eq_one,
-end
-
-lemma zeta_integral' [is_cyclotomic_extension {n} K L] (i : ℕ):
-  (zeta n K L)^i ∈ 𝓞 L :=
-begin
- apply subalgebra.pow_mem,
- apply zeta_integral,
-end
-
-lemma zeta_mem_base [is_cyclotomic_extension {n} K L] :
-  ∃ (x : 𝓞 L), algebra_map (𝓞 L) L x = zeta n K L :=
-⟨⟨zeta n K L, (mem_ring_of_integers _ _).2 ((zeta_spec n K L).is_integral n.pos)⟩, rfl⟩
 
 open is_cyclotomic_extension
 
@@ -100,17 +71,6 @@ begin
   { rw [←pow_mul, pow_eq_mod_order_of, ←hζ.eq_order_of, hm, pow_one] },
   nth_rewrite 0 this,
   rw [← geom_sum_mul_neg, mul_comm]
-end
-
-lemma _root_.is_primitive_root.one_add_is_unit {n : ℕ} {ζ : A} (hζ : is_primitive_root ζ n)
-  (hn : n ≠ 1) (hn': ¬ 2 ∣ n) : is_unit (1 + ζ) :=
-begin
-  have := (associated_one_sub_pow_primitive_root_of_coprime A hζ
-            n.coprime_one_left (nat.prime_two.coprime_iff_not_dvd.mpr hn')),
-  rw [pow_one, ← one_pow 2, sq_sub_sq, one_pow, mul_comm] at this,
-  refine is_unit_of_associated_mul this (sub_ne_zero.mpr _),
-  rintro rfl,
-  exact hn (hζ.eq_order_of.trans order_of_one)
 end
 
 lemma is_primitive_root.sum_pow_unit {n k : ℕ} {ζ : A} (hn : 2 ≤ n) (hk : k.coprime n)
