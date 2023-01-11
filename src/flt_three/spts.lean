@@ -255,11 +255,11 @@ begin
     refine ⟨y, hy, _⟩,
     have h0'' : 0 < x.nat_abs,
     { zify,
-      rw ←int.abs_eq_nat_abs,
       exact zero_lt_one.trans h },
     rw [←mul_lt_mul_left h0'', ←pow_two, ←int.nat_abs_mul, ←hy],
     zify,
-    rwa [int.nat_abs_pow_two x, int.nat_abs_of_nonneg (zsqrtd.norm_nonneg (by norm_num) c)] },
+    rwa [← int.coe_nat_abs x, int.nat_abs_pow_two x, ← int.coe_nat_abs,
+      int.nat_abs_of_nonneg (zsqrtd.norm_nonneg (by norm_num) c)] },
 end
 
 -- Edwards p50 step (5')

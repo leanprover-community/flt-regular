@@ -240,7 +240,7 @@ begin
   ... ≤ (a ^ 3 * b ^ 3 * c ^ 3).nat_abs : _,
   { rw [int.nat_abs_mul (2 * p)],
     apply lt_mul_of_one_lt_right (int.nat_abs_pos_of_ne_zero (mul_ne_zero two_ne_zero hp)),
-    zify,
+    rw [← int.coe_nat_lt_coe_nat_iff],
     rw int.nat_abs_of_nonneg (zsqrtd.norm_nonneg (by norm_num) P),
     exact spts.one_lt_of_im_ne_zero ⟨p, q⟩ hq },
   { apply nat.le_of_dvd,
