@@ -10,11 +10,11 @@ variables {ζ : K} (hζ : is_primitive_root ζ p)
 open_locale big_operators non_zero_divisors number_field
 open is_cyclotomic_extension number_field polynomial
 
-local notation `RR` := 𝓞 K
+local notation `R` := 𝓞 K
 
 --The whole file is now for a generic primitive root ζ, quite a lot of names should be changed.
 
-lemma coe_life (u : RRˣ) : ((u : RR) : K)⁻¹ = ((u⁻¹ : RRˣ) : RR) :=
+lemma coe_life (u : Rˣ) : ((u : R) : K)⁻¹ = ((u⁻¹ : Rˣ) : R) :=
 begin
   rw [←coe_coe, ←coe_coe, inv_eq_one_div],
   symmetry,
@@ -30,14 +30,14 @@ begin
 end
 
 @[simp, norm_cast] --generalize coe_zpow to allow group with zero
-lemma coe_zpow' (u : RRˣ) (n : ℤ) : (((u ^ n : RRˣ) : RR) : K) = (u : K) ^ n :=
+lemma coe_zpow' (u : Rˣ) (n : ℤ) : (((u ^ n : Rˣ) : R) : K) = (u : K) ^ n :=
 begin
   induction n with n hn,
   { simp },
   { simp [← coe_life] }
 end
 
-lemma auxil (a b c d : RRˣ) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
+lemma auxil (a b c d : Rˣ) (h : a * b⁻¹ = c * d ) : a * d⁻¹ = b * c :=
 begin
   rw mul_inv_eq_iff_eq_mul at *,
   rw h,
@@ -80,10 +80,10 @@ end
 
 variables [number_field K]
 
-lemma is_primitive_root.unit'_coe : is_primitive_root (hζ.unit' : RR) p :=
+lemma is_primitive_root.unit'_coe : is_primitive_root (hζ.unit' : R) p :=
 begin
  have z1 := hζ,
- have : (algebra_map RR K) (hζ.unit' : RR) = ζ := rfl,
+ have : (algebra_map R K) (hζ.unit' : R) = ζ := rfl,
  rw ← this at z1,
  exact z1.of_map_of_injective (is_fraction_ring.injective _ _),
 end
@@ -155,18 +155,18 @@ begin
   simp [h]
 end
 
-lemma eq_one_mod_one_sub {R} [comm_ring R] {t : R} :
-  algebra_map R (R ⧸ ideal.span ({t - 1} : set R)) t = 1 :=
+lemma eq_one_mod_one_sub {A : Type*} [comm_ring A] {t : A} :
+  algebra_map A (A ⧸ ideal.span ({t - 1} : set A)) t = 1 :=
 begin
-  rw [←map_one $ algebra_map R $ R ⧸ ideal.span ({t - 1} : set R), ←sub_eq_zero, ←map_sub,
+  rw [←map_one $ algebra_map A $ A ⧸ ideal.span ({t - 1} : set A), ←sub_eq_zero, ←map_sub,
       ideal.quotient.algebra_map_eq, ideal.quotient.eq_zero_iff_mem],
   apply ideal.subset_span,
   exact set.mem_singleton _
 end
 
-lemma is_primitive_root.eq_one_mod_sub_of_pow {R} [comm_ring R] [is_domain R] {ζ : R}
-  (hζ : is_primitive_root ζ p) {μ : R} (hμ : μ ^ (p : ℕ) = 1) :
-  algebra_map R (R ⧸ ideal.span ({ζ - 1} : set R)) μ = 1 :=
+lemma is_primitive_root.eq_one_mod_sub_of_pow {A : Type*} [comm_ring A] [is_domain A] {ζ : A}
+  (hζ : is_primitive_root ζ p) {μ : A} (hμ : μ ^ (p : ℕ) = 1) :
+  algebra_map A (A ⧸ ideal.span ({ζ - 1} : set A)) μ = 1 :=
 begin
   obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ p.pos,
   rw [map_pow, eq_one_mod_one_sub, one_pow]
@@ -209,11 +209,11 @@ end
 variable [is_cyclotomic_extension {p} ℚ K]
 
 lemma roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ}
-  (hl : l ∈ n.divisors) (hx : x ∈ RR) (hhl : (cyclotomic l RR).is_root ⟨x, hx⟩)
+  (hl : l ∈ n.divisors) (hx : x ∈ R) (hhl : (cyclotomic l R).is_root ⟨x, hx⟩)
   {ζ : K} (hζ : is_primitive_root ζ p) : l ∣ 2 * p :=
 begin
 by_contra,
-  have hpl': is_primitive_root (⟨x, hx⟩ : RR) l,
+  have hpl': is_primitive_root (⟨x, hx⟩ : R) l,
     { rw is_root_cyclotomic_iff.symm,
       apply hhl,
       apply_instance,
@@ -221,7 +221,7 @@ by_contra,
       rw [← subalgebra.coe_eq_zero] at hzero,
       simp only [subring_class.coe_nat_cast, nat.cast_eq_zero] at hzero,
       simpa [hzero] using hl },
-  have hpl: is_primitive_root x l, by {have : (algebra_map RR K) (⟨x, hx⟩) = x, by{refl},
+  have hpl: is_primitive_root x l, by {have : (algebra_map R K) (⟨x, hx⟩) = x, by{refl},
   have h4 := is_primitive_root.map_of_injective hpl', rw ← this,
   apply h4,
   apply is_fraction_ring.injective, },
@@ -260,27 +260,27 @@ lemma roots_of_unity_in_cyclo (hpo : odd (p : ℕ)) (x : K)
   ∃ (m : ℕ) (k : ℕ+), x = (-1) ^ (k : ℕ) * hζ.unit' ^ (m : ℕ) :=
 begin
   obtain ⟨n, hn0, hn⟩ := h,
-  have hx : x ∈ RR, by {rw mem_ring_of_integers,
+  have hx : x ∈ R, by {rw mem_ring_of_integers,
   refine ⟨(X ^ n - 1),_⟩,
   split,
   { exact (monic_X_pow_sub_C 1 (ne_of_lt hn0).symm) },
   { simp only [hn, eval₂_one, eval₂_X_pow, eval₂_sub,
       sub_self] },},
-  have hxu : (⟨x, hx⟩ : RR)^n = 1, by {ext, simp [hn] },
-  have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : RR) = (-1)^(k : ℕ) * hζ.unit' ^ (m : ℕ),
+  have hxu : (⟨x, hx⟩ : R)^n = 1, by {ext, simp [hn] },
+  have H: ∃ (m : ℕ) (k: ℕ+), (⟨x, hx⟩ : R) = (-1)^(k : ℕ) * hζ.unit' ^ (m : ℕ),
   by {obtain ⟨l, hl, hhl⟩ := ((_root_.is_root_of_unity_iff hn0 _).1 hxu),
   have hlp := roots_of_unity_in_cyclo_aux hl hx hhl hζ,
   simp only [is_root.def] at hhl,
-  have isPrimRoot : is_primitive_root (hζ.unit' : RR) p := hζ.unit'_coe,
-  have hxl : (⟨x, hx⟩: RR)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl,
+  have isPrimRoot : is_primitive_root (hζ.unit' : R) p := hζ.unit'_coe,
+  have hxl : (⟨x, hx⟩: R)^l =1 , by {apply is_root_of_unity_of_root_cyclotomic _ hhl,
     simp only [nat.mem_divisors, dvd_refl, ne.def, true_and],
    apply (pos_iff_ne_zero.1 (nat.pos_of_mem_divisors hl))},
-  have hxp' : (⟨x, hx⟩: RR) ^ (2* p : ℕ) = 1,
+  have hxp' : (⟨x, hx⟩: R) ^ (2* p : ℕ) = 1,
   { cases hlp,
     rw [hlp_h, pow_mul, hxl], simp only [one_pow] },
-  have hxp'': (⟨x, hx⟩: RR)^(p : ℕ) = 1 ∨ (⟨x, hx⟩: RR)^(p : ℕ) = -1,
+  have hxp'': (⟨x, hx⟩: R)^(p : ℕ) = 1 ∨ (⟨x, hx⟩: R)^(p : ℕ) = -1,
   by {rw mul_comm at hxp', rw pow_mul at hxp',
-  apply eq_or_eq_neg_of_sq_eq_sq (⟨x, hx⟩^(p : ℕ) : RR) 1 _,
+  apply eq_or_eq_neg_of_sq_eq_sq (⟨x, hx⟩^(p : ℕ) : R) 1 _,
   simp only [submonoid_class.mk_pow, one_pow],
   apply hxp',},
   cases hxp'',
@@ -288,8 +288,8 @@ begin
   refine ⟨i, 2, _⟩,
   simp only [pnat.coe_bit0, pnat.one_coe, neg_one_sq, one_mul],
   apply Hi.symm,
-  have hone : (-1 : RR)^(p : ℕ)= (-1 : RR), by {apply odd.neg_one_pow hpo,},
-  have hxp3 : (-1 * ⟨x, hx⟩: RR)^( p : ℕ) = 1, by {rw [mul_pow, hone, hxp''],
+  have hone : (-1 : R)^(p : ℕ)= (-1 : R), by {apply odd.neg_one_pow hpo,},
+  have hxp3 : (-1 * ⟨x, hx⟩: R)^( p : ℕ) = 1, by {rw [mul_pow, hone, hxp''],
   simp only [mul_neg, mul_one, neg_neg],},
   obtain ⟨i, hi,Hi⟩ := (is_primitive_root.eq_pow_of_pow_eq_one isPrimRoot hxp3 p.prop),
   refine ⟨i, 1, _⟩,
@@ -297,7 +297,7 @@ begin
   simp only [pnat.one_coe, pow_one, neg_mul, one_mul, neg_neg] },
   obtain ⟨m, k, hmk⟩ := H,
   refine ⟨m, k, _⟩,
-  have eq : ((⟨x, hx⟩ : RR) : K) = x := rfl,
+  have eq : ((⟨x, hx⟩ : R) : K) = x := rfl,
   rw [←eq, hmk],
   norm_cast,
   rw [subalgebra.coe_mul],
@@ -316,7 +316,7 @@ end
 include hζ
 
 lemma is_primitive_root.is_prime_one_sub_zeta [hp : fact ((p : ℕ).prime)] (h : p ≠ 2) :
-  I .is_prime := -- this doesn't work without the space🤮
+  (I : ideal (𝓞 K)).is_prime :=
 begin
   rw ideal.span_singleton_prime,
   { exact is_cyclotomic_extension.rat.zeta_sub_one_prime' hζ h },
@@ -342,7 +342,7 @@ end
 
 omit hζ
 
-lemma unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : RRˣ) (n : ℕ) (hp : (p : ℕ).prime) :
+lemma unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp : (p : ℕ).prime) :
   u * (unit_gal_conj K p u)⁻¹ ≠ -hζ.unit' ^ n :=
 begin
   by_contra H,
@@ -389,7 +389,7 @@ begin
 end
 
 -- this proof has mild coe annoyances rn
-lemma unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).prime) (u : RRˣ) :
+lemma unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).prime) (u : Rˣ) :
   ∃ m : ℕ, u * (unit_gal_conj K p u)⁻¹ = (hζ.unit' ^ m)^2 :=
 begin
   have hpo : odd (p : ℕ) := hp.odd_of_ne_two (norm_cast_ne_two h),
@@ -422,8 +422,8 @@ begin
   { exact unit_lemma_val_one K p u, },
 end
 
-lemma unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).prime) (u : RRˣ) :
-  ∃ (x : RRˣ) (n : ℤ), (is_gal_conj_real p (x : K)) ∧ (u : 𝓞 K) = x * (hζ.unit' ^ n : (𝓞 K)ˣ) :=
+lemma unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).prime) (u : Rˣ) :
+  ∃ (x : Rˣ) (n : ℤ), (is_gal_conj_real p (x : K)) ∧ (u : 𝓞 K) = x * (hζ.unit' ^ n : (𝓞 K)ˣ) :=
 begin
   have := unit_inv_conj_is_root_of_unity hζ h hp u,
   obtain ⟨m, hm⟩ := this,
