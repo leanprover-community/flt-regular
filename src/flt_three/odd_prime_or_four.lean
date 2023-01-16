@@ -224,7 +224,8 @@ begin
 end
 
 lemma even_and_odd_factors' (x : ℤ) :
-  unique_factorization_monoid.normalized_factors x = multiset.repeat 2 (even_factor_exp x) + odd_factors x :=
+  unique_factorization_monoid.normalized_factors x =
+  multiset.replicate (even_factor_exp x) 2 + odd_factors x :=
 begin
   convert even_and_odd_factors'' x,
   simp [even_factor_exp, ←multiset.filter_eq],
@@ -252,13 +253,13 @@ end
 -- most useful with  (hz : even (even_factor_exp z))
 /-- Odd factors or `4`. -/
 noncomputable def factors_odd_prime_or_four (z : ℤ) : multiset ℤ :=
-multiset.repeat 4 (even_factor_exp z / 2) + odd_factors z
+  multiset.replicate (even_factor_exp z / 2) 4 + odd_factors z
 
 lemma factors_odd_prime_or_four.nonneg {z a : ℤ} (ha : a ∈ factors_odd_prime_or_four z) : 0 ≤ a :=
 begin
   simp only [factors_odd_prime_or_four, multiset.mem_add] at ha,
   cases ha,
-  { rw multiset.eq_of_mem_repeat ha, norm_num },
+  { rw multiset.eq_of_mem_replicate ha, norm_num },
   { exact odd_factors.nonneg ha }
 end
 
@@ -273,7 +274,8 @@ begin
     apply associated.trans _ this,
     obtain ⟨m, hm⟩ := even_iff_two_dvd.mp heven,
     rw [even_and_odd_factors' _, multiset.prod_add, factors_odd_prime_or_four, multiset.prod_add,
-      hm, nat.mul_div_right _ zero_lt_two, multiset.prod_repeat, multiset.prod_repeat, pow_mul],
+      hm, nat.mul_div_right _ zero_lt_two, multiset.prod_replicate, multiset.prod_replicate,
+      pow_mul],
     exact associated.refl _ },
   { apply multiset.prod_nonneg,
     apply factors_odd_prime_or_four.nonneg },
@@ -293,7 +295,7 @@ begin
   { intros x hx,
     simp only [factors_odd_prime_or_four, multiset.mem_add] at hx,
     apply or.imp _ _ hx,
-    { exact multiset.eq_of_mem_repeat },
+    { exact multiset.eq_of_mem_replicate },
     { simp only [odd_factors, multiset.mem_filter],
       exact and.imp_left (unique_factorization_monoid.prime_of_normalized_factor _) } },
   { rwa factors_odd_prime_or_four.prod' ha heven, }
@@ -319,6 +321,6 @@ lemma factors_odd_prime_or_four.pow
   (z : ℤ) (n : ℕ) (hz : even (even_factor_exp z)) :
   factors_odd_prime_or_four (z ^ n) = n • factors_odd_prime_or_four z :=
 begin
-  simp only [factors_odd_prime_or_four, nsmul_add, multiset.nsmul_repeat, even_factor_exp.pow,
+  simp only [factors_odd_prime_or_four, nsmul_add, multiset.nsmul_replicate, even_factor_exp.pow,
     nat.mul_div_assoc _ (even_iff_two_dvd.mp hz), odd_factors.pow],
 end
