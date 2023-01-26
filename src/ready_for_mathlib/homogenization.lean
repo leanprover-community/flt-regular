@@ -56,6 +56,7 @@ lemma finsupp.sum_update_add {α β : Type*} [add_comm_monoid α] [add_comm_mono
   (hgg : ∀ (a : ι) (b₁ b₂ : α), g a (b₁ + b₂) = g a b₁ + g a b₂) :
   (f.update i a).sum g + g i (f i) = f.sum g + g i a :=
 begin
+  classical,
   simp_rw finsupp.update_eq_erase_add_single,
   rw finsupp.sum_add_index (λ i _, hg i) (λ i _, hgg i),
   conv_rhs {rw ← finsupp.update_self f i},
@@ -208,6 +209,7 @@ end
 lemma aux {i : ι} {p : mv_polynomial ι R} {x : ι →₀ ℕ} (hp : x ∈ p.support) :
   (x + finsupp.single i (p.total_degree - x.sum (λ _ m, m))).sum (λ _ m, m) = p.total_degree :=
 begin
+  classical,
   rw finsupp.sum_add_index,
   rw [finsupp.sum_single_index],
   rw [add_tsub_cancel_iff_le],
@@ -714,6 +716,7 @@ lemma homogenization_mul {S : Type*} [comm_ring S] [is_domain S] (i : ι) (p q :
   --(hp : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) (hq : ∀ j ∈ q.support, (j : ι → ℕ) i = 0) :
   (p * q).homogenization i = p.homogenization i * q.homogenization i :=
 begin
+  classical,
   by_cases hp : p = 0,
   { simp [hp], },
   by_cases hq : q = 0,

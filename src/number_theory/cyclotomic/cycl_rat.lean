@@ -1,4 +1,4 @@
-import ring_theory.polynomial.eisenstein
+import ring_theory.polynomial.eisenstein.is_integral
 import number_theory.cyclotomic.galois_action_on_cyclo
 import number_theory.cyclotomic.rat
 import number_theory.cyclotomic.Unit_lemmas

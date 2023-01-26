@@ -2,7 +2,7 @@ import algebra.char_p.basic
 import data.nat.multiplicity
 
 theorem add_pow_prime_eq_pow_add_pow_add_prime_mul_of_commute {R : Type*} [semiring R] (p : ℕ)
-  [fact p.prime] (x y : R) (h : commute x y) : ∃ r : R, (x + y) ^ p = x ^ p + y ^ p + p * r :=
+  [hp : fact p.prime] (x y : R) (h : commute x y) : ∃ r : R, (x + y) ^ p = x ^ p + y ^ p + p * r :=
 begin
   have : p = p - 1 + 1 := (nat.succ_pred_prime (fact.out _)).symm,
   rw [commute.add_pow h, finset.sum_range_succ_comm, tsub_self, pow_zero, nat.choose_self,
@@ -21,7 +21,7 @@ begin
   congr,
   norm_cast,
   rw nat.div_mul_cancel,
-  exact nat.prime.dvd_choose_self (nat.succ_pos _) (lt_tsub_iff_right.mp hi) (fact.out _),
+  exact nat.prime.dvd_choose_self hp.out (nat.succ_ne_zero _) (lt_tsub_iff_right.mp hi),
 end
 
 example {R : Type*} [semiring R] (p n : ℕ) [hp : fact p.prime] (x y : R) (h : commute x y) :
