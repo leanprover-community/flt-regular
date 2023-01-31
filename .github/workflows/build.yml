@@ -202,8 +202,8 @@ jobs:
       #      python3 -m pip install invoke git+https://github.com/plastex/plastex.git git+https://github.com/PatrickMassot/leanblueprint.git
       #      inv pdf; cp print/blueprint.bbl doc/web.bbl; inv qweb
       #      cp print/blueprint.pdf web/
-      - name: deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.github_token }}
-          publish_dir: ./web
+      # name: deploy
+     # uses: peaceiris/actions-gh-pages@v3
+      #  with:
+       #   github_token: ${{ secrets.github_token }}
+        #  publish_dir: ./web
