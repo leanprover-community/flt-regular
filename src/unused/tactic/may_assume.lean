@@ -109,10 +109,6 @@ end -/
 
 namespace tactic
 
-meta def take_pi_args : nat → expr → list name
-| (n+1) (expr.pi h _ _ e) := h :: take_pi_args n e
-| _ _ := []
-
 namespace interactive
 setup_tactic_parser
 
