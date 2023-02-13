@@ -2,7 +2,7 @@ import field_theory.galois
 import linear_algebra.determinant
 import data.polynomial.derivative
 import data.matrix.notation
-import data.multiset
+import data.multiset.basic
 import algebra.module.basic
 section resultant
 variables {R : Type*}
