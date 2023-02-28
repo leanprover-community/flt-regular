@@ -48,9 +48,9 @@ begin
   replace hi : i + 1 < p ^ n,
   { replace hi := nat.add_lt_add_right hi 1,
     rwa [nat.sub_add_cancel (nat.one_le_pow _ _ hp.out.pos)] at hi },
-  have H := nat.prime.multiplicity_choose_prime_pow (fact.out _) hi.le (nat.succ_pos _),
+  have H := hp.out.multiplicity_choose_prime_pow_add_multiplicity hi.le (nat.succ_ne_zero _),
   rw [multiplicity.multiplicity_eq_zero.2 habs, zero_add, multiplicity.eq_coe_iff ] at H,
-  exact hi.not_le (nat.le_of_dvd (nat.succ_pos i) H.1),
+  exact hi.not_le (nat.le_of_dvd (nat.succ_pos i) H.1)
 end
 
 theorem add_pow_prime_eq_pow_add_pow_add_prime_mul {R : Type*} [comm_semiring R] (p : ℕ)
