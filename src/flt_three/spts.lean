@@ -3,17 +3,9 @@ Copyright (c) 2020 Ruben Van de Velde. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 
-import data.int.basic
-import data.int.parity
-import data.nat.gcd.big_operators
-import data.pnat.basic
-import algebra.euclidean_domain.basic
-import algebra.gcd_monoid.basic
-import tactic
-import data.nat.modeq
-import ring_theory.int.basic
-import number_theory.zsqrtd.basic
 import data.int.order.units
+import number_theory.zsqrtd.basic
+import ring_theory.prime
 import .primes
 
 lemma zsqrtd.exists {d : ℤ} (a : ℤ√d) (him : a.im ≠ 0) :
