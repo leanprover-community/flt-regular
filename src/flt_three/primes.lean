@@ -3,18 +3,8 @@ Copyright (c) 2020 Ruben Van de Velde. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 
-import data.int.basic
 import data.int.parity
-import data.nat.gcd.big_operators
-import data.pnat.basic
-import ring_theory.coprime.lemmas
 import ring_theory.int.basic
-import algebra.euclidean_domain.basic
-import ring_theory.noetherian
-import ring_theory.principal_ideal_domain
-import ring_theory.prime
-import ring_theory.unique_factorization_domain
-import tactic
 
 section
 variables {R : Type*} [comm_ring R] {x y z : R}
