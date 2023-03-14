@@ -5,7 +5,6 @@ import number_theory.cyclotomic.Unit_lemmas
 import ring_theory.dedekind_domain.ideal
 import number_theory.cyclotomic.zeta_sub_one_prime
 import number_theory.cyclotomic.cyclotomic_units
-import ready_for_mathlib.char_p
 import algebra.char_p.quotient
 
 universes u
@@ -25,7 +24,7 @@ open ideal is_cyclotomic_extension
 -- TODO can we make a relative version of this with another base ring instead of ℤ ?
 -- A version of flt_facts_3 indep of the ring
 lemma exists_int_sub_pow_prime_dvd {A : Type*} [comm_ring A] [is_cyclotomic_extension {p} ℤ A]
-  [fact (p : ℕ).prime] (a : A) : ∃ (m : ℤ), (a ^ (p : ℕ) - m) ∈ span ({p} : set A) :=
+  [hp : fact (p : ℕ).prime] (a : A) : ∃ (m : ℤ), (a ^ (p : ℕ) - m) ∈ span ({p} : set A) :=
 begin
   have : a ∈ algebra.adjoin ℤ _ := @adjoin_roots {p} ℤ A _ _ _ _ a,
   apply algebra.adjoin_induction this,
@@ -40,7 +39,7 @@ begin
     use r ^ (p : ℕ),
     simp, },
   { rintros x y ⟨b, hb⟩ ⟨c, hc⟩,
-    obtain ⟨r, hr⟩ := add_pow_prime_eq_pow_add_pow_add_prime_mul p x y,
+    obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hp.out x y,
     rw [hr],
     use c + b,
     push_cast,
@@ -440,10 +439,10 @@ begin
     b.basis.coord_equiv_fun_symm, b.basis.coord_equiv_fun_symm] at hy,
   simp only [Hi, fin.coe_cast, smul_eq_mul, mul_boole, sum_ite_eq', mem_univ, fin.coe_mk,
     fin.eta, zero_sub, if_true] at hy,
-  rw [← smul_eq_mul, ← zsmul_eq_smul_cast, neg_eq_iff_neg_eq] at hy,
+  rw [← smul_eq_mul, ← zsmul_eq_smul_cast, neg_eq_iff_eq_neg] at hy,
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((fin.cast hdim.symm) ⟨i, hi⟩) y m,
   rw [hn] at hy,
-  simp [← hy, dvd_neg]
+  simp [hy, dvd_neg]
 end
 
 lemma dvd_coeff_cycl_integer [hp : fact (p : ℕ).prime] {ζ : 𝓞 L} (hζ : is_primitive_root ζ p)

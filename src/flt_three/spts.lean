@@ -49,7 +49,7 @@ lemma spts.mul_of_dvd'
   {a p : ℤ√-3}
   (hdvd : p.norm ∣ a.norm)
   (hpprime : prime p.norm) :
-  ∃ u : ℤ√-3, a = p * u ∨ a = p.conj * u :=
+  ∃ u : ℤ√-3, a = p * u ∨ a = star p * u :=
 begin
   obtain ⟨f, hf⟩ := hdvd,
   have h0 : p.norm ∣ p.re * a.im - a.re * p.im ∨
@@ -109,7 +109,7 @@ lemma spts.mul_of_dvd''
   (hdvd : p.norm ∣ a.norm)
   (hpprime : prime p.norm) :
   ∃ u : ℤ√-3,
-    (a = p * u ∨ a = p.conj * u) ∧
+    (a = p * u ∨ a = star p * u) ∧
     a.norm = p.norm * u.norm :=
 begin
   obtain ⟨u, hu⟩ := spts.mul_of_dvd' hdvd hpprime,

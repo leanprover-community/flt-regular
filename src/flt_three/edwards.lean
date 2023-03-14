@@ -142,11 +142,11 @@ lemma step1'' {a p : ℤ√-3}
   (heven : even a.norm) :
   ∃ (u : ℤ√-3),
     is_coprime u.re u.im ∧
-      (a = p * u ∨ a = p.conj * u) ∧ a.norm = 4 * u.norm :=
+      (a = p * u ∨ a = star p * u) ∧ a.norm = 4 * u.norm :=
 begin
   obtain ⟨u, h2⟩ := step1 hcoprime heven,
   set q : ℤ√-3 := ⟨1, 1⟩,
-  replace h2 : a = q * u ∨ a = q.conj * u := h2,
+  replace h2 : a = q * u ∨ a = star q * u := h2,
   obtain ⟨hp', hq'⟩ := spts.four hp hq,
   refine ⟨p.re * u, _, _, _⟩,
   { rw ←int.is_unit_iff_abs_eq at hp',
@@ -155,19 +155,18 @@ begin
     obtain (rfl|rfl) := h2; apply dvd_mul_left },
   { rw (abs_eq $ zero_le_one' ℤ) at hp' hq',
     cases hp',
-    { have h4 : p = q ∨ p = q.conj,
+    { have h4 : p = q ∨ p = star q,
       { apply or.imp _ _ hq';
         { intro h5, simp [zsqrtd.ext, hp', h5] } },
       simp only [hp', one_mul, int.cast_one],
-      cases h4; simp [h4, h2, zsqrtd.conj_conj, or_comm] },
-    { have h4 : p = -q ∨ p = -q.conj,
+      cases h4; cases h2; simp [h4, h2, or_comm], },
+    { have h4 : p = -q ∨ p = -star q,
       { apply or.imp _ _ hq'.symm,
         { intro h5, simp [zsqrtd.ext, hp', h5] },
         { intro h5, simp [zsqrtd.ext, hp', h5] } },
       simp only [hp', one_mul, zsqrtd.norm_neg, int.cast_one, int.cast_neg, neg_one_mul],
-      cases h4,
-      simp [h4, h2],
-      simp [h4, h2, or_comm] } },
+      cases h4; cases h2;
+      simp [h4, h2] } },
   { rw [zsqrtd.norm_mul, zsqrtd.norm_int_cast, ←sq, ←sq_abs, hp', one_pow, one_mul],
     cases h2;
     { rw [h2, zsqrtd.norm_mul], congr } },
@@ -180,7 +179,7 @@ lemma step2
   (hpprime : prime p.norm) :
   ∃ u : ℤ√-3,
     is_coprime u.re u.im ∧
-    (a = p * u ∨ a = p.conj * u) ∧
+    (a = p * u ∨ a = star p * u) ∧
     a.norm = p.norm * u.norm :=
 begin
   obtain ⟨u', h, h'⟩ := spts.mul_of_dvd'' hdvd hpprime,
@@ -197,7 +196,7 @@ lemma step1_2
   (hq : p.im ≠ 0) :
   ∃ u : ℤ√-3,
     is_coprime u.re u.im ∧
-    (a = p * u ∨ a = p.conj * u) ∧
+    (a = p * u ∨ a = star p * u) ∧
     a.norm = p.norm * u.norm :=
 begin
   obtain hp|⟨hpprime, hpodd⟩ := hp,
@@ -235,11 +234,11 @@ begin
 
   obtain ⟨u, huvcoprime, huv, huvdvd⟩ := step1_2 hcoprime hpdvd hp' hd,
   use u,
-  cases huv; [use q', use q'.conj];
-  try { rw [zsqrtd.conj_re, zsqrtd.conj_im, neg_ne_zero, zsqrtd.norm_conj] };
+  cases huv; [use q', use star q'];
+  simp only [is_coprime, zsqrtd.star_re, zsqrtd.star_im, ne.def, neg_eq_zero, zsqrtd.norm_conj];
   use [hc, hd, hp', huv, huvcoprime];
   { rw [huvdvd, lt_mul_iff_one_lt_left (spts.pos_of_coprime' huvcoprime), ←hcd],
-    exact hp.one_lt_abs },
+    exact hp.one_lt_abs, },
 end
 
 lemma step3
@@ -308,7 +307,7 @@ begin
     simp only [hb, zsqrtd.ext, zsqrtd.mul_re, zsqrtd.mul_im, add_zero, zero_add, mul_zero] at H,
     rw [H.1, H.2, abs_mul, abs_mul, ha, mul_one, mul_one],
     try { rw [zsqrtd.conj_re, zsqrtd.conj_im, abs_neg] },
-    split; refl },
+    simp },
 end
 
 lemma prod_map_norm {d : ℤ} {s : multiset ℤ√d} :
@@ -367,7 +366,7 @@ lemma no_conj
   {p : ℤ√-3}
   (hp : ¬ is_unit p)
   (hcoprime : is_coprime s.prod.re s.prod.im) :
-  ¬(p ∈ s ∧ p.conj ∈ s) :=
+  ¬(p ∈ s ∧ star p ∈ s) :=
 begin
   contrapose! hp,
   obtain ⟨h1, h2⟩ := hp,
@@ -379,14 +378,14 @@ begin
     simp only [him, and_true, eq_self_iff_true],
     rw ←int.is_unit_iff_abs_eq,
     apply is_coprime.is_unit_of_dvd' hcoprime; apply dvd_mul_right },
-  { have : p.conj ≠ p,
+  { have : star p ≠ p,
     { rw [ne.def, zsqrtd.ext],
       rintro ⟨-, H⟩,
       apply him,
       apply eq_zero_of_neg_eq,
-      rwa [zsqrtd.conj_im] at H },
+      simpa using H },
     obtain ⟨t1, rfl⟩ := multiset.exists_cons_of_mem h1,
-    have : p.conj ∈ t1,
+    have : star p ∈ t1,
     { rw multiset.mem_cons at h2,
       exact h2.resolve_left this },
     obtain ⟨t2, rfl⟩ := multiset.exists_cons_of_mem this,
@@ -398,7 +397,7 @@ begin
 end
 
 /-- Associated elements in `ℤ√-3`. -/
-def associated' (x y : ℤ√-3) : Prop := associated x y ∨  associated x y.conj
+def associated' (x y : ℤ√-3) : Prop := associated x y ∨  associated x (star y)
 
 @[refl] theorem associated'.refl (x : ℤ√-3) : associated' x x := or.inl (by refl)
 
@@ -417,8 +416,7 @@ begin
   cases hre with h1 h1;
   cases him with h2 h2;
   [{ left, use 1}, {right, use 1}, {right, use -1}, {left, use -1}];
-  simp only [units.coe_one, mul_one, units.coe_neg_one, mul_neg_one, zsqrtd.ext, zsqrtd.neg_im,
-    zsqrtd.neg_re, h1, h2, neg_neg, zsqrtd.conj_re, zsqrtd.conj_im, eq_self_iff_true, and_self],
+  simp [zsqrtd.ext, h1, h2],
 end
 
 lemma associated'_of_associated_norm {x y : ℤ√-3} (h : associated (zsqrtd.norm x) (zsqrtd.norm y))
@@ -507,7 +505,7 @@ lemma eq_or_eq_conj_of_associated_of_re_zero
   {x A : ℤ√-3}
   (hx : x.re = 0)
   (h : associated x A) :
-  x = A ∨ x = A.conj :=
+  x = A ∨ x = star A :=
 begin
   obtain ⟨u, hu⟩ := h,
   obtain ⟨v, hv1, hv2⟩ := zsqrt3.coe_of_is_unit' u.is_unit,
@@ -519,15 +517,14 @@ begin
     simpa only [hv1, hv2, mul_one, int.cast_one] using hu },
   { right,
     simp only [hv1, hv2, mul_one, int.cast_one, mul_neg, int.cast_neg] at hu,
-    simp only [←hu, hx, zsqrtd.conj_neg, zsqrtd.ext, zsqrtd.neg_re, zsqrtd.neg_im, zsqrtd.conj_re,
-      zsqrtd.conj_im, neg_neg, neg_zero, eq_self_iff_true, and_self] }
+    simp [←hu, hx, zsqrtd.ext] }
 end
 
 lemma eq_or_eq_conj_iff_associated'_of_nonneg
   {x A : ℤ√-3}
   (hx : 0 ≤ x.re)
   (hA : 0 ≤ A.re) :
-  associated' x A ↔ (x = A ∨ x = A.conj) :=
+  associated' x A ↔ (x = A ∨ x = star A) :=
 begin
   split,
   { rintro (⟨u, hu⟩|⟨u, hu⟩); obtain ⟨v, hv1, hv2⟩ := zsqrt3.coe_of_is_unit' u.is_unit,
@@ -552,7 +549,7 @@ begin
     -- associated x A.conj
     { by_cases hxre : x.re = 0,
       { convert (eq_or_eq_conj_of_associated_of_re_zero hxre ⟨u, hu⟩).symm,
-        rw zsqrtd.conj_conj },
+        rw star_star },
       { rw hv1 at hu,
         rw (abs_eq $ zero_le_one' ℤ) at hv2,
         cases hv2 with habsv habsv,
@@ -564,8 +561,8 @@ begin
           calc 0 ≤ A.re : hA
           ... = -x.re : _
           ... < 0 : _,
-          { rw [←zsqrtd.conj_conj A, ←hu],
-            simp only [zsqrtd.conj_re, zsqrtd.neg_re] },
+          { rw [←star_star A, ←hu],
+            simp only [zsqrtd.neg_re, zsqrtd.star_re]},
           { simp only [neg_neg_iff_pos],
             apply lt_of_le_of_ne hx (ne.symm hxre) } } } } },
   { rintro (rfl|rfl),
@@ -638,7 +635,7 @@ begin
     { exact hcoprime },
     { rwa [←is_coprime.neg_neg_iff, ←zsqrtd.neg_im, ←zsqrtd.neg_re] } },
   { refine ⟨hx, _⟩,
-    rwa [H, zsqrtd.conj_conj] },
+    rwa [H, star_star] },
 end
 
 lemma step5 -- lemma page 54
