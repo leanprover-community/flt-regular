@@ -50,7 +50,7 @@ begin
   obtain ⟨C, HC⟩ : ↑d ∣ c,
   { rw [←int.pow_dvd_pow_iff hn, ←h, HA, HB, mul_pow, mul_pow, ←mul_add],
     exact dvd_mul_right (↑d ^ n) (A ^ n + B ^ n) },
-  have hdpos : 0 < d := int.gcd_pos_of_non_zero_left _ ha',
+  have hdpos : 0 < d := int.gcd_pos_of_ne_zero_left _ ha',
   have hd := int.coe_nat_ne_zero_iff_pos.mpr hdpos,
   have hsoln : A ^ n + B ^ n = C ^ n,
   { apply int.eq_of_mul_eq_mul_left (pow_ne_zero n hd),
