@@ -327,7 +327,7 @@ begin
   apply is_coprime.is_unit_of_dvd' hcoprime hdvdp,
   { rw ←int.pow_dvd_pow_iff zero_lt_two at hdvdp,
     apply prime.dvd_of_dvd_pow int.prime_three,
-    rw [←mul_dvd_mul_iff_left (three_ne_zero' ℤ), ←pow_two, dvd_add_iff_right hdvdp],
+    rw [←mul_dvd_mul_iff_left (three_ne_zero' ℤ), ←pow_two, ← dvd_add_right hdvdp],
     refine dvd_trans _ (int.gcd_dvd_right (2 * p) (p ^ 2 + 3 * q ^ 2)),
     rw [←hg', hg, int.coe_nat_mul],
     apply dvd_mul_right }
@@ -610,7 +610,7 @@ begin
   have h3ndvd : ¬(3 ∣ (q ^ 2 + 3 * s ^ 2)),
   { intro H,
     apply h3_ndvd_q,
-    rw ←dvd_add_iff_left (dvd_mul_right _ _) at H,
+    rw dvd_add_left (dvd_mul_right _ _) at H,
     exact prime.dvd_of_dvd_pow int.prime_three H },
 
   apply is_coprime_of_prime_dvd,
@@ -627,7 +627,7 @@ begin
     ring },
   apply hcoprime'.is_unit_of_dvd' this,
   apply hkprime.dvd_of_dvd_pow,
-  rw dvd_add_iff_left ((this.pow two_ne_zero).mul_left _),
+  rw ← dvd_add_left ((this.pow two_ne_zero).mul_left _),
   exact hkdvdright
 end
 
