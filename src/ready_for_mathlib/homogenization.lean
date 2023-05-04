@@ -424,10 +424,6 @@ begin
   { exact mem_support_iff.mp hb₁, },
 end
 
--- TODO mathlib
-@[simp] lemma support_eq_empty {f : mv_polynomial ι R} : f.support = ∅ ↔ f = 0 :=
-finsupp.support_eq_empty
-
 lemma support_add_eq [decidable_eq ι] {g₁ g₂ : mv_polynomial ι R}
   (h : disjoint g₁.support g₂.support) : (g₁ + g₂).support = g₁.support ∪ g₂.support :=
 finsupp.support_add_eq h
