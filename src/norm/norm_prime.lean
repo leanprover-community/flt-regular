@@ -51,8 +51,6 @@ begin
   simpa using prime.ne_zero hpr
 end
 
-variable [is_galois ℚ K]
-
 lemma quotient_not_trivial : nontrivial (R ⧸ (span ({pb.gen} : set R))) :=
 quotient.nontrivial (λ h, hpr.not_unit ((is_unit_norm ℚ).2 (span_singleton_eq_top.1 h)))
 
