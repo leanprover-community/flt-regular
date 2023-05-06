@@ -56,7 +56,7 @@ quotient.nontrivial (λ h, hpr.not_unit ((is_unit_norm ℚ).2 (span_singleton_eq
 
 local attribute [instance] number_field.ring_of_integers_algebra
 
-lemma prime_of_norm_prime : prime pb.gen :=
+lemma prime_of_norm_prime [is_galois ℚ K] : prime pb.gen :=
 begin
   rw [← span_singleton_prime (gen_ne_zero hpr), ← quotient.is_domain_iff_prime],
   haveI : nontrivial ((𝓞 K) ⧸ span {pb.gen}) := ⟨(quotient_not_trivial hpr).exists_pair_ne⟩,
