@@ -851,7 +851,8 @@ begin
       convert finset.subset_union_left _ (finset.image g S), },
     { apply finset.subset.trans hsi _,
       rw finset.image_insert,
-      exact finset.subset_insert (g s) (finset.image g S), }, },
+      exact finset.subset_insert (g s) (finset.image g S), },
+    exact classical.dec_eq ι, },
 end
 open_locale pointwise
 
