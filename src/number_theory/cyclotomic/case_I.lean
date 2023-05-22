@@ -14,7 +14,7 @@ variable (i : ℤ)
 
 namespace flt_regular.caseI
 
-lemma exists_int_sum_eq_zero (hpodd : p ≠ 2) [hp : fact(p : ℕ).prime] {x y i : ℤ} {u : (𝓞 K)ˣ}
+lemma exists_int_sum_eq_zero (hpodd : p ≠ 2) [hp : fact(p : ℕ).prime] (x y i : ℤ) {u : (𝓞 K)ˣ}
   {α : 𝓞 K} (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ (p : ℕ)) :
   ∃ k : ℤ, (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) - (hζ.unit' ^ (2 * k) : (𝓞 K)ˣ) *
     (x + y * (hζ.unit' ^ -i : (𝓞 K)ˣ)) ∈ ideal.span ({p} : set (𝓞 K)) :=

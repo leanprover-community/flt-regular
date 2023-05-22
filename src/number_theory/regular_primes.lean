@@ -31,6 +31,7 @@ but sadly its implementation is so unsafe that using it here creates a lot of di
 We instead put some safe specialised instances here, and we can maybe look at generalising them
 later, when this is needed. Most results from here on genuinely only work for ℚ, so this is
 very fine for the moment. -/
+-- todo: now the diamond is fixed, `open_locale cyclotomic` may be fine.
 
 instance safe {p : ℕ+} := is_cyclotomic_extension.number_field {p} ℚ $ cyclotomic_field p ℚ
 instance safe' {p : ℕ+} := is_cyclotomic_extension.finite_dimensional {p} ℚ $ cyclotomic_field p ℚ
@@ -98,14 +99,8 @@ begin
   exact is_principal_ideal_ring.of_surjective F.symm.to_ring_hom F.symm.surjective,
 end
 
-local attribute [-instance] cyclotomic_field.algebra
-
 lemma is_regular_number_two : is_regular_number 2 :=
 begin
-  haveI : is_cyclotomic_extension {2} ℚ (cyclotomic_field 2 ℚ),
-  { convert cyclotomic_field.is_cyclotomic_extension 2 _,
-    { exact subsingleton.elim _ _ },
-    { refine ⟨λ h, by simpa using h⟩ } },
   rw is_regular_number,
   convert coprime_one_right _,
   dsimp,

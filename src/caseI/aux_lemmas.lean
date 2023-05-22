@@ -7,8 +7,6 @@ open finset nat is_cyclotomic_extension ideal polynomial int basis
 
 open_locale big_operators number_field
 
-local attribute [-instance] cyclotomic_field.algebra
-
 namespace flt_regular
 
 variables {p : ℕ} (hpri : p.prime)
@@ -60,10 +58,6 @@ lemma aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : is_primitive_root �
   (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : 0 ≠ ↑k₁ :=
 begin
   haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
-  haveI diamond : is_cyclotomic_extension {P} ℚ K,
-  { convert cyclotomic_field.is_cyclotomic_extension P ℚ,
-    exact subsingleton.elim _ _ },
-
   symmetry,
   intro habs,
   rw [show (k₁ : ℤ) = 0, by simpa using habs, zero_sub] at hcong,
@@ -71,7 +65,6 @@ begin
   nth_rewrite 0 [show ζ = ζ ^ ((⟨1, hpri.one_lt⟩ : fin p) : ℕ), by simp] at hdiv,
   have key : ↑(p : ℤ) ∣ ∑ j in range p, (f0k₁ b p j) • ζ ^ j,
   { convert hdiv using 1,
-    { simp },
     have h : 1 ≠ p.pred := λ h, by linarith [pred_eq_succ_iff.1 h.symm],
     simp_rw [f0k₁, ite_smul, sum_ite, filter_filter, ← ne.def, ne_and_eq_iff_right h,
       finset.range_filter_eq],
@@ -118,10 +111,6 @@ lemma aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : is_primitive_root ζ 
   (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : 0 ≠ ↑k₂ :=
 begin
   haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
-  haveI diamond : is_cyclotomic_extension {P} ℚ K,
-  { convert cyclotomic_field.is_cyclotomic_extension P ℚ,
-    exact subsingleton.elim _ _ },
-
   symmetry,
   intro habs,
   replace hcong := hcong.symm,
@@ -132,7 +121,6 @@ begin
     ← neg_sub ↑a, neg_mul, ← sub_eq_add_neg] at hdiv,
   have key : ↑(p : ℤ) ∣ ∑ j in range p, (f0k₂ a b j) • ζ ^ j,
   { convert hdiv using 1,
-    { simp },
     simp_rw [f0k₂, ite_smul, sum_ite, filter_filter, ← ne.def, ne_and_eq_iff_right zero_ne_one,
       finset.range_filter_eq],
     simp only [hpri.pos, hpri.one_lt, if_true, zsmul_eq_mul, int.cast_sub, sum_singleton, pow_zero,
@@ -215,10 +203,6 @@ lemma aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : is_primitive_root �
   (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : 1 ≠ ↑k₂ :=
 begin
   haveI := (⟨hpri⟩ : fact ((P : ℕ).prime)),
-  haveI diamond : is_cyclotomic_extension {P} ℚ K,
-  { convert cyclotomic_field.is_cyclotomic_extension P ℚ,
-    exact subsingleton.elim _ _ },
-
   symmetry,
   intro habs,
   replace hcong := hcong.symm,
@@ -229,7 +213,6 @@ begin
   rw [add_mul, one_mul, add_comm, mul_comm, mul_neg] at hdiv,
   have key : ↑(p : ℤ) ∣ ∑ j in range p, (f1k₂ a j) • ζ ^ j,
   { convert hdiv using 1,
-    { simp },
     simp_rw [f1k₂, ite_smul, sum_ite, filter_filter, ← ne.def, ne_and_eq_iff_right
       (show 0 ≠ 2, by norm_num), finset.range_filter_eq],
     simp [hpri.pos, two_lt hp5, fin.coe_mk (two_lt hp5),eq_self_iff_true, -fin.mk_bit0] },

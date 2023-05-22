@@ -164,11 +164,9 @@ begin
     rw [← pnat.coe_inj, pnat.mk_coe, pnat.coe_bit0, pnat.one_coe] at hP,
     norm_num [hP] at hp5 },
   haveI := (⟨hpri.out⟩ : fact ((P : ℕ).prime)),
-  haveI diamond : is_cyclotomic_extension {P} ℚ K := cyclotomic_field.is_cyclotomic_extension P ℚ,
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ,
   rw [this, mul_comm _ ↑b, ← pow_one hζ'.unit'] at hu,
-  obtain ⟨k, hk⟩ := @flt_regular.caseI.exists_int_sum_eq_zero P K _ _
-    (by {convert diamond, by exact subsingleton.elim _ _ }) ζ hζ' hP _ a b 1 u α hu.symm,
+  obtain ⟨k, hk⟩ := flt_regular.caseI.exists_int_sum_eq_zero hζ' hP a b 1 hu.symm,
   simp only [zpow_one, zpow_neg, coe_coe, pnat.mk_coe, mem_span_singleton, ← this] at hk,
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.out.ne_zero],
   refine ⟨⟨(2 * k % p).nat_abs, _⟩, ⟨((2 * k - 1) % p).nat_abs, _⟩, _, _⟩,
@@ -230,8 +228,6 @@ begin
   exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
 end
 
-local attribute [-instance] cyclotomic_field.algebra
-
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (p : ℕ) [hpri : fact p.prime]
   (hreg : is_regular_prime p) (hp5 : 5 ≤ p)
@@ -239,9 +235,6 @@ theorem caseI_easier {a b c : ℤ} (p : ℕ) [hpri : fact p.prime]
   (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬ ↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
 begin
   haveI := (⟨hpri.out⟩ : fact ((P : ℕ).prime)),
-  haveI diamond : is_cyclotomic_extension {P} ℚ K,
-  { convert cyclotomic_field.is_cyclotomic_extension P ℚ,
-    exact subsingleton.elim _ _ },
   set ζ := zeta P ℤ R with hζdef,
   have hζ := zeta_spec P ℤ R,
 
@@ -249,7 +242,6 @@ begin
   obtain ⟨k₁, k₂, hcong, hdiv⟩ := ex_fin_div hp5 hreg hζ hgcd caseI H,
   have key : ↑(p : ℤ) ∣ ∑ j in range p, (f a b k₁ k₂ j) • ζ ^ j,
   { convert hdiv using 1,
-    { simp },
     have h01 : 0 ≠ 1 := zero_ne_one,
     have h0k₁ : 0 ≠ ↑k₁ := aux0k₁ hpri.out hp5 hζ caseI hcong hdiv,
     have h0k₂ : 0 ≠ ↑k₂ := aux0k₂ hpri.out hp5 hζ hab hcong hdiv,
