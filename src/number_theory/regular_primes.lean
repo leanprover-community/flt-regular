@@ -1,5 +1,5 @@
 
-import field_theory.splitting_field
+import field_theory.splitting_field.construction
 import number_theory.bernoulli
 import number_theory.class_number.finite
 import number_theory.class_number.admissible_abs
