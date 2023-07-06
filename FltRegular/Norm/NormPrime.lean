@@ -1,4 +1,4 @@
-import Mathlib.LinearAlgebra.Smodeq
+import Mathlib.LinearAlgebra.SModEq
 import Mathlib.NumberTheory.NumberField.Norm
 
 open scoped NumberField
