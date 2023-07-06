@@ -110,7 +110,11 @@ begin
       (hpri.out.eq_two_or_odd.resolve_left $ λ h, by norm_num [h] at h5p) hζ'] at H₁,
   replace H₁ := congr_arg (λ x, span ({x} : set R)) H₁,
   simp only [← prod_span_singleton, ← span_singleton_pow] at H₁,
-  obtain ⟨I, hI⟩ := finset.exists_eq_pow_of_mul_eq_pow_of_coprime (λ η₁ hη₁ η₂ hη₂ hη, _) H₁ ζ hζ,
+  have hdom : is_domain (ideal (𝓞 (cyclotomic_field ⟨p, hpri.out.pos⟩ ℚ))) := ideal.is_domain,
+  let gcddom : gcd_monoid (ideal (𝓞 (cyclotomic_field ⟨p, hpri.out.pos⟩ ℚ))) :=
+    (ideal.normalized_gcd_monoid).to_gcd_monoid,
+  obtain ⟨I, hI⟩ := @finset.exists_eq_pow_of_mul_eq_pow_of_coprime _ _ _ hdom gcddom _ _ _ _ _
+    (λ η₁ hη₁ η₂ hη₂ hη, _) H₁ ζ hζ,
   { exact ⟨I, hI⟩ },
   { exact flt_ideals_coprime h5p H (ab_coprime H hpri.out.ne_zero hgcd) hη₁ hη₂ hη caseI }
 end
@@ -147,7 +151,7 @@ begin
   obtain ⟨u, hu⟩ := hα,
   refine ⟨u⁻¹, α, _⟩,
   rw [← hu, mul_comm _ ↑u, ← mul_assoc],
-  simp
+  simp only [units.inv_mul, one_mul]
 end
 
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p)

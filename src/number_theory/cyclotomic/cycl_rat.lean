@@ -241,7 +241,7 @@ lemma flt_ideals_coprime2 [fact (p : ℕ).prime] (ph : 5 ≤ p) {x y : ℤ} {η�
   (hp : is_coprime x y) (hp2 : ¬ (p : ℤ) ∣ (x + y : ℤ) ) (hwlog : η₁ ≠ 1) :
   is_coprime (flt_ideals p x y hη₁) (flt_ideals p x y hη₂) :=
 begin
-  let I := flt_ideals p x y hη₁ + flt_ideals p x y hη₂,
+  let I := flt_ideals p x y hη₁ ⊔ flt_ideals p x y hη₂,
   by_contra,
   have he := (not_coprime_not_top p (flt_ideals p x y hη₁)  (flt_ideals p x y hη₂)).1 h,
   have := exists_le_maximal I he,
@@ -267,8 +267,8 @@ begin
     apply this },
   have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I,
   { have : η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) ∈ I := ideal.add_mem _
-      (mul_mem_left _ _ (mem_sup_left (mem_flt_ideals _ _ hη₁)))
-      (mul_mem_left _ _ (mem_sup_right (mem_flt_ideals _ _ _))),
+        (mul_mem_left _ _ (mem_sup_left (mem_flt_ideals x y hη₁)))
+        (mul_mem_left _ _ (mem_sup_right (mem_flt_ideals x y hη₂))),
     have h1 :  η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) = (η₂ - η₁) * x, by ring,
     rw h1 at this,
     have hh := diff_of_roots2 ph hη₁ hη₂ hdiff hwlog,
@@ -291,8 +291,7 @@ begin
     have hvunit : is_unit (v : R), by {exact units.is_unit v, },
     apply (unit_mul_mem_iff_mem P hvunit).1 _,
     apply hP2,
-    apply hv,
-  },
+    apply hv },
   have hPrime:= hP1.is_prime,
   have hprime2 := is_prime.mem_or_mem hPrime hel11,
   have hprime3 := is_prime.mem_or_mem hPrime hel22,
