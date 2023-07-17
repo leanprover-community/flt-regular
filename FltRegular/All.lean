@@ -1,7 +1,4 @@
 import FltRegular.FltRegular
-import FltRegular.Unused.IdealStuff
-import FltRegular.Unused.Tactic.MayAssume
-import FltRegular.Unused.Resultant.Basic
 import FltRegular.Norm.NormPrime
 import FltRegular.MayAssume.Lemmas
 import FltRegular.CaseI.AuxLemmas
@@ -22,4 +19,3 @@ import FltRegular.FltThree.Edwards
 import FltRegular.FltThree.OddPrimeOrFour
 import FltRegular.CaseII.Statement
 import FltRegular.ReadyForMathlib.Homogenization
-
