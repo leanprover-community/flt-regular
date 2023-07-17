@@ -103,10 +103,11 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     ∃ u : Aˣ, ζ ^ i - ζ ^ j = u * (1 - ζ) :=
   by
   by_cases hilj : j < i
-  have h1 : ζ ^ i - ζ ^ j = ζ ^ j * (ζ ^ (i - j) - 1) :=
-    by
-    ring; rw [pow_mul_pow_sub _ hilj.le]
+  have h1 : ζ ^ i - ζ ^ j = ζ ^ j * (ζ ^ (i - j) - 1) := by
+    ring_nf
+    rw [pow_mul_pow_sub _ hilj.le]
     rw [add_comm]
+    ring
   rw [h1]
   have h2 := mul_neg_geom_sum ζ (i - j)
   have hic : (i - j).coprime p := by
@@ -131,7 +132,9 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
   rw [h2]
   ring
   simp at *
-  have h1 : ζ ^ i - ζ ^ j = ζ ^ i * (1 - ζ ^ (j - i)) := by ring; simp; rw [pow_mul_pow_sub _ hilj]
+  have h1 : ζ ^ i - ζ ^ j = ζ ^ i * (1 - ζ ^ (j - i)) := by
+    ring_nf
+    simp; rw [pow_mul_pow_sub _ hilj]
   rw [h1]
   have h2 := mul_neg_geom_sum ζ (j - i)
   have hjc : (j - i).coprime p := by
