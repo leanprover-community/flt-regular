@@ -191,7 +191,7 @@ variable [IsCyclotomicExtension {p} ℚ K]
 
 theorem roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ} (hl : l ∈ n.divisors) (hx : x ∈ R)
     (hhl : (cyclotomic l R).IsRoot ⟨x, hx⟩) {ζ : K} (hζ : IsPrimitiveRoot ζ p) : l ∣ 2 * p := by
-  by_contra
+  by_contra h
   have hpl' : IsPrimitiveRoot (⟨x, hx⟩ : R) l := by
     have nezero : NeZero (l : 𝓞 K) := by
       refine' ⟨fun hzero => _⟩
@@ -201,7 +201,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ} (hl : l ∈ n.divisors) 
     apply hhl
   have hpl : IsPrimitiveRoot x l := by
     have : (algebraMap R K) ⟨x, hx⟩ = x := by rfl
-    have h4 := IsPrimitiveRoot.map_of_injective hpl'; rw [← this]
+    have h4 := IsPrimitiveRoot.map_of_injective hpl' (f := algebraMap (𝓞 K) K); rw [← this]
     apply h4
     apply IsFractionRing.injective
   have KEY := contains_two_primitive_roots hpl hζ
@@ -209,22 +209,22 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ} (hl : l ∈ n.divisors) 
   have hrank := IsCyclotomicExtension.finrank K hirr
   rw [hrank] at KEY
   have pdivlcm : (p : ℕ) ∣ lcm l p := dvd_lcm_right l ↑p
-  cases pdivlcm
+  cases' pdivlcm with pdivlcm_w pdivlcm_h
   have ineq1 := Nat.totient_super_multiplicative (p : ℕ) pdivlcm_w
   rw [← pdivlcm_h] at ineq1
   have KEY3 := (mul_le_iff_le_one_right (Nat.totient_pos p.prop)).mp (le_trans ineq1 KEY)
   have pdiv_ne_zero : 0 < pdivlcm_w := by
-    by_contra
+    by_contra h
     simp only [not_lt, le_zero_iff] at h
     rw [h] at pdivlcm_h
     simp only [MulZeroClass.mul_zero, lcm_eq_zero_iff, PNat.ne_zero, or_false_iff] at pdivlcm_h
     apply absurd pdivlcm_h (ne_of_gt (Nat.pos_of_mem_divisors hl))
   have K5 := (Nat.dvd_prime Nat.prime_two).1 (totient_le_one_dvd_two pdiv_ne_zero KEY3)
-  cases K5
+  cases' K5 with K5 K5
   rw [K5] at pdivlcm_h
   simp only [mul_one] at pdivlcm_h
   rw [lcm_eq_right_iff] at pdivlcm_h
-  have K6 : (p : ℕ) ∣ 2 * (p : ℕ) := dvd_mul_left (↑p) 2
+  have K6 : (p : ℕ) ∣ 2 * (p : ℕ) := dvd_mul_left (↑p : ℕ) 2
   apply absurd (dvd_trans pdivlcm_h K6) h
   simp only [eq_self_iff_true, normalize_eq, PNat.coe_inj]
   rw [K5] at pdivlcm_h
