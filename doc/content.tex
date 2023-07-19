@@ -358,7 +358,7 @@ We recall basic facts about the discriminant.
 In these next few lemmas we are following \cite{Borevich_Shafarevich}.
 
 \begin{lemma}\label{lem:gen_dvd_by_frak_p}
-		Let $p$ be a regular odd prime, $x,y,z,\epsilon \in \ZZ[\zeta_p]$, $\epsilon$ a unit, and $n \in \ZZ_{\geq 1}$. Assume $x,y,z$ are coprime to $(1-\zeta_p)$ and that $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$. Then each of $(x+\zeta_p^i y)$ is divisible by $(1-\zeta_p)$ and there is a unique $i_0$ such that $(x+\zeta_p^{i_0})$ is divisible by $(1-\zeta_p)^2$.
+		Let $p$ be a regular odd prime, $x,y,z,\epsilon \in \ZZ[\zeta_p]$, $\epsilon$ a unit, and $n \in \ZZ_{\geq 1}$. Assume $x,y,z$ are coprime to $(1-\zeta_p)$ and that $x^p+y^p+\epsilon(1-\zeta_p)^{pn(p-1)}z^p=0$. Then each of $(x+\zeta_p^i y)$ is divisible by $(1-\zeta_p)$ and there is a unique $i_0$ such that $(x+\zeta_p^{i_0})$ is divisible by $(1-\zeta_p)^2$.
 \end{lemma}
 \begin{proof}
 	By our assumptions we have the following equality of ideals in  $\ZZ[\zeta_p]$: \[ \prod_{k=0}^{p-1} (x+\zeta_p^ky) = \mathfrak{p}^{pm}\mathfrak{a}^p,  \] where $\mathfrak{a}=(z)$, $\mathfrak{p}=(1-\zeta_p)$ (which is prime) and $m=n(p-1)$. Now as $mp \geq p$ we must have that at least one of the terms on the lhs is divisible by $\mathfrak{p}$.
@@ -369,7 +369,7 @@ In these next few lemmas we are following \cite{Borevich_Shafarevich}.
 \end{proof}
 
 \begin{lemma}\label{lem:gen_ideal_coprimality}
-		Let $p$ be a regular odd prime, $x,y,z,\epsilon \in \ZZ[\zeta_p]$, $\epsilon$ a unit, and $n \in \ZZ_{\geq 1}$. Assume $x,y,z$ are coprime to $(1-\zeta_p)$,  $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$ and $x+y$ is divisible by $\mathfrak{p}^2$ and $x+ \zeta_p^ky$ is only divisible by $\mathfrak{p}=(1-\zeta_p)$ (for $0 < k \leq p-1$).
+		Let $p$ be a regular odd prime, $x,y,z,\epsilon \in \ZZ[\zeta_p]$, $\epsilon$ a unit, and $n \in \ZZ_{\geq 1}$. Assume $x,y,z$ are coprime to $(1-\zeta_p)$,  $x^p+y^p+\epsilon(1-\zeta_p)^{pn(p-1)}z^p=0$ and $x+y$ is divisible by $\mathfrak{p}^2$ and $x+ \zeta_p^ky$ is only divisible by $\mathfrak{p}=(1-\zeta_p)$ (for $0 < k \leq p-1$).
 		Let $\mathfrak{m}= \mathrm{gcd}((x),(y))$. Then:
 		\begin{enumerate}
 			\item We can write 	\[(x+y)=\mathfrak{p}^{p(m-1)+1}\mathfrak{m}\mathfrak{c}_0\] and \[ (x+\zeta_p^k y)=\mathfrak{p}\mathfrak{m}\mathfrak{c}_k \] (for $0 < k \leq p-1$) where $m=n(p-1)$ and with $\mathfrak{c}_i$ pairwise coprime.
@@ -381,7 +381,7 @@ In these next few lemmas we are following \cite{Borevich_Shafarevich}.
 
 \begin{theorem}\label{thm:gen_flt_eqn}
 	\uses{lem:gen_dvd_by_frak_p,lem:gen_ideal_coprimality}
-	Let $p$ be a regular odd prime, $\epsilon \in \ZZ[\zeta_p]^\times$ and $n \in \ZZ_{\geq 1}$. Then the equation $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$ has no solutions with $x,y,z \in \ZZ[\zeta_p]$, all non-zero and $xyz$ coprime to $(1-\zeta_p)$.
+	Let $p$ be a regular odd prime, $\epsilon \in \ZZ[\zeta_p]^\times$ and $n \in \ZZ_{\geq 1}$. Then the equation $x^p+y^p+\epsilon(1-\zeta_p)^{pn(p-1)}z^p=0$ has no solutions with $x,y,z \in \ZZ[\zeta_p]$, all non-zero and $xyz$ coprime to $(1-\zeta_p)$.
 \end{theorem}
 
 \begin{theorem}\label{theorem:FLT_case_two}
