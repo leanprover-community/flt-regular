@@ -109,14 +109,15 @@ theorem mem_fltIdeals [Fact (p : ℕ).Prime] (x y : ℤ) {η : R} (hη : η ∈ 
     ↑x + η * ↑y ∈ fltIdeals p x y hη :=
   mem_span_singleton.mpr dvd_rfl
 
-theorem Ideal.le_add (a b c d : Ideal R) (hab : a ≤ b) (hcd : c ≤ d) : a + c ≤ b + d := by
+theorem Ideal.le_add {S : Type _} [CommRing S] (a b c d : Ideal S) (hab : a ≤ b) (hcd : c ≤ d) :
+    a + c ≤ b + d := by
   simp at *
   constructor
   apply le_trans hab (@le_sup_left _ _ _ _)
   apply le_trans hcd (@le_sup_right _ _ _ _)
 
-theorem not_coprime_not_top (a b : Ideal R) : ¬IsCoprime a b ↔ a + b ≠ ⊤ :=
-  by
+theorem not_coprime_not_top {S : Type _} [CommRing S] (a b : Ideal S) :
+    ¬IsCoprime a b ↔ a + b ≠ ⊤ := by
   apply not_congr
   rw [IsCoprime]
   constructor
@@ -129,24 +130,25 @@ theorem not_coprime_not_top (a b : Ideal R) : ¬IsCoprime a b ↔ a + b ≠ ⊤ 
   simp
   intro h
   refine' ⟨1, 1, _⟩
-  simp [h]
+  simp only [one_eq_top, top_mul, Submodule.add_eq_sup, ge_iff_le]
+  rw [← h]
+  rfl
 
 instance a1 : IsGalois ℚ (CyclotomicField p ℚ) :=
-  IsGalois p _ _
+  IsCyclotomicExtension.isGalois p _ _
 
 instance a2 : FiniteDimensional ℚ (CyclotomicField p ℚ) :=
-  FiniteDimensional {p} _ _
+  IsCyclotomicExtension.finiteDimensional {p} _ _
 
 instance a3 : NumberField (CyclotomicField p ℚ) :=
-  NumberField {p} ℚ _
+  IsCyclotomicExtension.numberField {p} ℚ _
 
 open IsPrimitiveRoot
 
 theorem nth_roots_prim [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R) (hne1 : η ≠ 1) :
-    IsPrimitiveRoot η p :=
-  by
+    IsPrimitiveRoot η p := by
   have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe
-  rw [nth_roots_one_eq_bUnion_primitive_roots' hζ'] at hη
+  rw [nthRoots_one_eq_biUnion_primitiveRoots' hζ'] at hη
   simp at *
   obtain ⟨a, ha, h2⟩ := hη
   have ha2 : a = p := by
