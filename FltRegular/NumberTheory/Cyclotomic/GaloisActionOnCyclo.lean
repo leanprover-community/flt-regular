@@ -114,6 +114,8 @@ def unitGalConj : RRˣ →* RRˣ :=
 theorem unitGalConj_spec (u : RRˣ) : galConj K p (u : 𝓞 K) = ↑(unitGalConj K p u : 𝓞 K) :=
   rfl
 
+variable {K}
+
 theorem coe_life (u : (𝓞 K)ˣ) : ((u : 𝓞 K) : K)⁻¹ = ((u⁻¹ : (𝓞 K)ˣ) : 𝓞 K) := by
   rw [inv_eq_one_div]
   symm
