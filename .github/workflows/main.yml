@@ -1,0 +1,21 @@
+ - name: Install Leanblueprint and generate web in tex env
+        id: generate_files
+        uses: xu-cheng/texlive-action/full@v1
+        with:
+          run: |
+            apk update
+            apk add --update make py3-pip git
+            git config --global --add safe.directory `pwd`/lean-liquid
+            python3 -m pip install --upgrade pip requests wheel
+            apk add pkgconfig graphviz graphviz-dev gcc musl-dev && \
+            python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
+            python3 -m pip install invoke git+https://github.com/collares/plastex.git@12db048be9223086ddf9d17e4855b978f29782d5 git+https://github.com/PatrickMassot/leanblueprint.git
+            inv pdf; cp print/blueprint.bbl src/web.bbl; inv qweb
+            cp print/blueprint.pdf web/
+            branch=${GITHUB_REF##*/}
+            if [[ $branch != "master" ]]; then
+              mv web web2
+              mkdir web
+              mv web2 "web/$branch"
+            fi
+            echo "##[set-output name=keep_files;]$([[ ${GITHUB_REF##*/} == "master" ]] && echo "false" || echo "true")"
