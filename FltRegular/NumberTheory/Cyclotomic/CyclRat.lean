@@ -145,21 +145,20 @@ instance a3 : NumberField (CyclotomicField p ℚ) :=
 
 open IsPrimitiveRoot
 
+set_option synthInstance.maxHeartbeats 80000 in
 theorem nth_roots_prim [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R) (hne1 : η ≠ 1) :
     IsPrimitiveRoot η p := by
   have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe
-  rw [nthRoots_one_eq_biUnion_primitiveRoots' hζ'] at hη
-  simp at *
+  rw [nthRoots_one_eq_biUnion_primitiveRoots' hζ', @Finset.mem_biUnion _ _ (_) _ _ _] at hη
   obtain ⟨a, ha, h2⟩ := hη
   have ha2 : a = p := by
-    rw [dvd_prime _inst_4.out] at ha
-    cases ha
+    rw [Nat.Prime.divisors (Fact.out : Nat.Prime p), mem_insert, mem_singleton] at ha
+    cases' ha with ha ha
     exfalso
     rw [ha] at h2
     simp at h2
     rw [h2] at hne1
-    simp at *
-    exact hne1
+    exact hne1 rfl
     exact ha
   rw [ha2] at h2
   have hn : 0 < (p : ℕ) := by norm_num
