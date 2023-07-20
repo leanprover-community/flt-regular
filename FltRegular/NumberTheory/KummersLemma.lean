@@ -12,7 +12,6 @@ variable {K : Type _} [Field K] [CharZero K]
 open scoped NumberField
 
 theorem eq_pow_prime_of_unit_of_congruent (p : ℕ) [hp : Fact p.Prime] (hptwo : p ≠ 2)
-    (hpr : IsRegularNumber p) [IsCyclotomicExtension {⟨p, hp.out.Pos⟩} ℚ K] (u : (𝓞 K)ˣ)
-    (hcong : ∃ n : ℤ, (↑u : 𝓞 K) - n ∈ Ideal.span ({p} : Set (𝓞 K))) : ∃ v, u = v ^ p :=
+    (hpr : IsRegularNumber p) [IsCyclotomicExtension {⟨p, hp.out.pos⟩} ℚ K] (u : (𝓞 K)ˣ)
+    (hcong : ∃ n : ℤ, (↑u : 𝓞 K) - n ∈ Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K))) : ∃ v, u = v ^ p :=
   sorry
-
