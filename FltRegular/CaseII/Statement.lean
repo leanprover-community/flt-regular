@@ -4,8 +4,8 @@ namespace FltRegular
 
 /-- Statement of case II. -/
 def CaseII.Statement : Prop :=
-  ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ [hp : Fact p.Prime] (hreg : @IsRegularPrime p hp) (hodd : p ≠ 2)
-    (hprod : a * b * c ≠ 0) (caseII : ↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
+  ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ [hp : Fact p.Prime] (_ : @IsRegularPrime p hp) (_ : p ≠ 2)
+    (_ : a * b * c ≠ 0) (_ : ↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
 
 /-- CaseII. -/
 theorem caseII {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) (hodd : p ≠ 2)
@@ -13,4 +13,3 @@ theorem caseII {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) 
   sorry
 
 end FltRegular
-
