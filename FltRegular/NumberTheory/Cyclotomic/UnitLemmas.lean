@@ -45,6 +45,10 @@ def IsPrimitiveRoot.unit' {p : ℕ+} {K : Type _} [Field K] {ζ : K} (hζ : IsPr
   val_inv := Subtype.ext <| mul_inv_cancel <| hζ.ne_zero p.ne_zero
   inv_val := Subtype.ext <| inv_mul_cancel <| hζ.ne_zero p.ne_zero
 
+@[simp, norm_cast]
+theorem IsPrimitiveRoot.coe_unit'_coe {p : ℕ+} {K : Type _} [Field K] {ζ : K}
+  (hζ : IsPrimitiveRoot ζ p) : ↑↑(hζ.unit') = ζ := rfl
+
 set_option quotPrecheck false
 local notation "ζ1" => (hζ.unit' - 1 : 𝓞 K)
 
