@@ -163,7 +163,6 @@ end Finsupp
 @[simp]
 theorem homogenization_zero (i : ι) : (0 : MvPolynomial ι R).homogenization i = 0 := by
   simp [homogenization]
-  rfl
 
 -- TODO this is probably useless
 -- lemma map_domain_one {α β M : Type*} [has_zero β] [has_zero α] [has_one M]
