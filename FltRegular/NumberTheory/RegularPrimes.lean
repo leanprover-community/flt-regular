@@ -32,10 +32,10 @@ We instead put some safe specialised instances here, and we can maybe look at ge
 later, when this is needed. Most results from here on genuinely only work for ℚ, so this is
 very fine for the moment. -/
 -- todo: now the diamond is fixed, `open_locale cyclotomic` may be fine.
-instance safe {p : ℕ+} : _ :=
+instance safe {p : ℕ+} : NumberField (CyclotomicField p ℚ) :=
   IsCyclotomicExtension.numberField {p} ℚ <| CyclotomicField p ℚ
 
-instance safe' {p : ℕ+} : _ :=
+instance safe' {p : ℕ+} : FiniteDimensional ℚ (CyclotomicField p ℚ) :=
   IsCyclotomicExtension.finiteDimensional {p} ℚ <| CyclotomicField p ℚ
 
 instance CyclotomicField.classGroupFinite {p : ℕ+} :
@@ -47,7 +47,7 @@ end SafeInstances
 variable (n p : ℕ) [Fact p.Prime]
 
 instance {p : ℕ} [hp : Fact p.Prime] : Fact (0 < p) :=
-  ⟨hp.out.Pos⟩
+  ⟨hp.out.pos⟩
 
 -- note that this definition can be annoying to work with whilst #14984 isn't merged.
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
@@ -74,23 +74,20 @@ variable (A K : Type _) [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFra
 variable (L : Type _) [Field L] [Algebra K L]
 
 /-- The second cyclotomic field is equivalent to the base field. -/
-def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K :=
-  by
-  suffices is_splitting_field K K (cyclotomic 2 K)
-    by
-    letI : is_splitting_field K L (cyclotomic 2 K) :=
+def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := by
+  suffices IsSplittingField K K (cyclotomic 2 K) by
+    letI : IsSplittingField K L (cyclotomic 2 K) :=
       IsCyclotomicExtension.splitting_field_cyclotomic 2 K L
     exact
-      (is_splitting_field.alg_equiv L (cyclotomic 2 K)).trans
-        (is_splitting_field.alg_equiv K <| cyclotomic 2 K).symm
+      (IsSplittingField.algEquiv L (cyclotomic 2 K)).trans
+        (IsSplittingField.algEquiv K <| cyclotomic 2 K).symm
   exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (RingHom.id K) (-1), by simp⟩
 
 instance (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
-    IsPrincipalIdealRing (𝓞 L) :=
-  by
+    IsPrincipalIdealRing (𝓞 L) := by
   haveI : IsIntegralClosure ℤ ℤ L :=
-    { algebraMap_injective := (algebraMap ℤ L).injective_int
-      isIntegral_iff := fun x => by
+    { algebraMap_injective' := (algebraMap ℤ L).injective_int
+      isIntegral_iff := fun {x} => by
         let f := cyclotomicFieldTwoEquiv ℚ L
         refine'
           ⟨fun hx => ⟨IsIntegralClosure.mk' ℤ (f x) (map_isIntegral_int f hx), f.injective _⟩, _⟩
@@ -99,15 +96,16 @@ instance (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
         · rintro ⟨y, hy⟩
           simpa [← hy] using isIntegral_algebraMap }
   let F : 𝓞 L ≃+* ℤ := NumberField.RingOfIntegers.equiv _
-  exact IsPrincipalIdealRing.of_surjective F.symm.to_ring_hom F.symm.surjective
+  exact IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
 
+set_option maxHeartbeats 1600000 in
+set_option synthInstance.maxHeartbeats 400000 in
 theorem isRegularNumber_two : IsRegularNumber 2 :=
   by
   rw [IsRegularNumber]
   convert coprime_one_right _
   dsimp
-  rw [card_classGroup_eq_one_iff]
+  apply (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField (⟨2, two_pos⟩ : ℕ+) ℚ))).2
   infer_instance
 
 end TwoRegular
-
