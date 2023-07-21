@@ -1,6 +1,6 @@
 import FltRegular.CaseI.AuxLemmas
 
-open Finset Nat IsCyclotomicExtension Ideal Polynomial Int Basis FltRegular.caseI
+open Finset Nat IsCyclotomicExtension Ideal Polynomial Int Basis FltRegular.CaseI
 
 open scoped BigOperators NumberField
 
@@ -8,7 +8,8 @@ namespace FltRegular
 
 variable {p : ℕ} [hpri : Fact p.Prime]
 
-local notation "P" => (⟨p, hpri.out.Pos⟩ : ℕ+)
+set_option quotPrecheck false
+local notation "P" => (⟨p, hpri.out.pos⟩ : ℕ+)
 
 local notation "K" => CyclotomicField P ℚ
 
@@ -18,39 +19,38 @@ namespace CaseI
 
 /-- Statement of case I with additional assumptions. -/
 def SlightlyEasier : Prop :=
-  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : Fact p.Prime] (hreg : @IsRegularPrime p hpri) (hp5 : 5 ≤ p)
-    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬↑p ∣ a * b * c),
+  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : Fact p.Prime] (_ : @IsRegularPrime p hpri) (_ : 5 ≤ p)
+    (_ : ({a, b, c} : Finset ℤ).gcd id = 1) (_ : ¬a ≡ b [ZMOD p]) (_ : ¬↑p ∣ a * b * c),
     a ^ p + b ^ p ≠ c ^ p
 
 /-- Statement of case I. -/
 def Statement : Prop :=
-  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : Fact p.Prime] (hreg : @IsRegularPrime p hpri)
-    (caseI : ¬↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
+  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : Fact p.Prime] (_ : @IsRegularPrime p hpri)
+    (_ : ¬↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
 
-theorem may_assume : SlightlyEasier → Statement :=
-  by
+theorem may_assume : SlightlyEasier → Statement := by
   intro Heasy
   intro a b c p hpri hreg hI H
   have hodd : p ≠ 2 := by
     intro h
-    rw [h] at H hI 
+    rw [h] at H hI
     refine' hI _
-    refine' Dvd.Dvd.mul_left _ _
-    simp only [coe_nat_bit0, algebraMap.coe_one, ← even_iff_two_dvd] at hI ⊢
-    rw [← Int.odd_iff_not_even] at hI 
-    rw [← Int.even_pow' (show 2 ≠ 0 by norm_num), ← H]
-    exact
-      (odd.of_mul_left (odd.of_mul_left hI)).pow.add_odd (odd.of_mul_right (odd.of_mul_left hI)).pow
+    refine' Dvd.dvd.mul_left _ _
+    simp only [Nat.cast_ofNat] at hI ⊢
+    rw [← even_iff_two_dvd, ← Int.odd_iff_not_even] at hI
+    rw [← even_iff_two_dvd, ← Int.even_pow' (show 2 ≠ 0 by norm_num), ← H]
+    exact (Int.Odd.of_mul_left (Odd.of_mul_left hI)).pow.add_odd
+      (Int.Odd.of_mul_right (Odd.of_mul_left hI)).pow
   have hprod : a * b * c ≠ 0 := by
     intro h
-    simpa [h] using hI
+    simp [h] at hI
   have hp5 : 5 ≤ p := by
     by_contra' habs
     have : p ∈ Finset.Ioo 2 5 :=
       Finset.mem_Icc.2 ⟨Nat.lt_of_le_and_ne hpri.out.two_le hodd.symm, by linarith⟩
     fin_cases this
     · exact may_assume.p_ne_three hprod H rfl
-    · rw [show 4 = 2 * 2 from rfl] at hpri 
+    · rw [show 4 = 2 * 2 from rfl] at hpri
       refine' Nat.not_prime_mul one_lt_two one_lt_two hpri.out
   rcases may_assume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
   let d := ({a, b, c} : Finset ℤ).gcd id
@@ -63,7 +63,7 @@ theorem may_assume : SlightlyEasier → Statement :=
     replace hdiv := dvd_mul_of_dvd_right hdiv (d * d * d)
     rw [mul_assoc, ← mul_assoc d, ← mul_assoc d, Int.mul_ediv_cancel' hadiv, mul_assoc, mul_comm a,
       mul_assoc (b / d), ← mul_assoc _ (b / d), Int.mul_ediv_cancel' hbdiv, mul_comm, mul_assoc,
-      mul_assoc, Int.ediv_mul_cancel hcdiv, mul_comm, mul_assoc, mul_comm c, ← mul_assoc] at hdiv 
+      mul_assoc, Int.ediv_mul_cancel hcdiv, mul_comm, mul_assoc, mul_comm c, ← mul_assoc] at hdiv
     exact hI hdiv
   obtain ⟨X, Y, Z, H1, H2, H3, H4, H5⟩ := a_not_cong_b hpri.out hp5 hprodxyx Hxyz hunit hdiv
   exact Heasy hreg hp5 H2 H3 (fun hfin => H5 hfin) H1
@@ -91,9 +91,9 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   have Hq : ↑q ∣ ({a, b, c} : Finset ℤ).gcd id :=
     by
     refine' dvd_gcd fun x hx => _
-    simp only [mem_insert, mem_singleton] at hx 
+    simp only [mem_insert, mem_singleton] at hx
     rcases hx with (H | H | H) <;> simpa [H]
-  rw [hgcd] at Hq 
+  rw [hgcd] at Hq
   exact hqpri.not_unit (isUnit_of_dvd_one _ Hq)
 
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
@@ -103,13 +103,13 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   haveI : Fact (P : ℕ).Prime := ⟨hpri.out⟩
   classical
   have H₁ := congr_arg (algebraMap ℤ R) H
-  simp only [eq_intCast, Int.cast_add, Int.cast_pow] at H₁ 
+  simp only [eq_intCast, Int.cast_add, Int.cast_pow] at H₁
   have hζ' := (zeta_spec P ℚ K).unit'_coe
   rw [pow_add_pow_eq_prod_add_zeta_runity_mul
       (hpri.out.eq_two_or_odd.resolve_left fun h => by norm_num [h] at h5p ) hζ'] at
-    H₁ 
+    H₁
   replace H₁ := congr_arg (fun x => span ({x} : Set R)) H₁
-  simp only [← prod_span_singleton, ← span_singleton_pow] at H₁ 
+  simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
   have hdom : IsDomain (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) := Ideal.isDomain
   let gcddom : GCDMonoid (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) :=
     Ideal.normalizedGcdMonoid.toGcdMonoid
@@ -127,11 +127,11 @@ theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 �
   obtain ⟨I, hI⟩ := exists_ideal hp5 H hgcd caseI hζ
   by_cases hIpzero : I ^ p = 0
   · refine' ⟨1, 0, _⟩
-    simp [hIpzero, zero_eq_bot, span_singleton_eq_bot] at hI 
+    simp [hIpzero, zero_eq_bot, span_singleton_eq_bot] at hI
     simp [hpri.out.pos, hI]
   have hIzero : I ≠ 0 := by
     intro hIzero
-    simp only [hIzero, zero_pow hpri.out.pos] at hIpzero 
+    simp only [hIzero, zero_pow hpri.out.pos] at hIpzero
     exact hIpzero rfl
   have hIprin : I.is_principal :=
     by
@@ -139,7 +139,7 @@ theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 �
       by
       rw [ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero hIpzero)]
       exact ⟨⟨↑a + ζ * ↑b, hI.symm⟩⟩
-    rw [← SubmonoidClass.mk_pow I (mem_nonZeroDivisors_of_ne_zero hIzero), map_pow] at this 
+    rw [← SubmonoidClass.mk_pow I (mem_nonZeroDivisors_of_ne_zero hIzero), map_pow] at this
     cases' (dvd_prime hpri.out).1 (orderOf_dvd_of_pow_eq_one this) with h1 habs
     · exact (ClassGroup.mk0_eq_one_iff _).1 (orderOf_eq_one_iff.1 h1)
     · exfalso
@@ -148,7 +148,7 @@ theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 �
       exact orderOf_dvd_card_univ
   obtain ⟨α, hα⟩ := hIprin
   replace hα := congr_arg (fun J => J ^ p) hα
-  simp only [← hI, submodule_span_eq, span_singleton_pow, span_singleton_eq_span_singleton] at hα 
+  simp only [← hI, submodule_span_eq, span_singleton_pow, span_singleton_eq_span_singleton] at hα
   obtain ⟨u, hu⟩ := hα
   refine' ⟨u⁻¹, α, _⟩
   rw [← hu, mul_comm _ ↑u, ← mul_assoc]
@@ -165,13 +165,13 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
   have : ζ = (hζ'.unit' : R) := by simp only [IsPrimitiveRoot.unit', SetLike.eta, Units.val_mk]
   have hP : P ≠ 2 := by
     intro hP
-    rw [← PNat.coe_inj, PNat.mk_coe, PNat.coe_bit0, PNat.one_coe] at hP 
-    norm_num [hP] at hp5 
+    rw [← PNat.coe_inj, PNat.mk_coe, PNat.coe_bit0, PNat.one_coe] at hP
+    norm_num [hP] at hp5
   haveI := (⟨hpri.out⟩ : Fact (P : ℕ).Prime)
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ
-  rw [this, mul_comm _ ↑b, ← pow_one hζ'.unit'] at hu 
+  rw [this, mul_comm _ ↑b, ← pow_one hζ'.unit'] at hu
   obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' hP a b 1 hu.symm
-  simp only [zpow_one, zpow_neg, coe_coe, PNat.mk_coe, mem_span_singleton, ← this] at hk 
+  simp only [zpow_one, zpow_neg, coe_coe, PNat.mk_coe, mem_span_singleton, ← this] at hk
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.out.ne_zero]
   refine' ⟨⟨(2 * k % p).natAbs, _⟩, ⟨((2 * k - 1) % p).natAbs, _⟩, _, _⟩
   repeat'
@@ -262,7 +262,7 @@ theorem caseI_easier {a b c : ℤ} (p : ℕ) [hpri : Fact p.Prime] (hreg : IsReg
       mul_one, pow_one, Fin.is_lt, neg_smul, sum_neg_distrib, Ne.def, filter_congr_decidable,
       zero_smul, sum_const_zero, add_zero]
     ring
-  rw [sum_range] at key 
+  rw [sum_range] at key
   refine' caseI (Dvd.Dvd.mul_right (Dvd.Dvd.mul_right _ _) _)
   simpa [f] using dvd_coeff_cycl_integer hζ (auxf hp5 a b k₁ k₂) key ⟨0, hpri.out.pos⟩
 
@@ -274,4 +274,3 @@ theorem caseI {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p)
     caseI
 
 end FltRegular
-
