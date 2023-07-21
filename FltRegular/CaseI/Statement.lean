@@ -47,12 +47,13 @@ theorem may_assume : SlightlyEasier → Statement := by
   have hp5 : 5 ≤ p := by
     by_contra' habs
     have : p ∈ Finset.Ioo 2 5 :=
-      Finset.mem_Icc.2 ⟨Nat.lt_of_le_and_ne hpri.out.two_le hodd.symm, by linarith⟩
-    fin_cases this
-    · exact may_assume.p_ne_three hprod H rfl
+     (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_and_ne hpri.out.two_le hodd.symm, by linarith⟩
+    -- replace with --fin_cases this, see #6046
+    replace this : p = 3 ∨ p = 4 := sorry; rcases this with (rfl | rfl)
+    · exact MayAssume.p_ne_three hprod H rfl
     · rw [show 4 = 2 * 2 from rfl] at hpri
       refine' Nat.not_prime_mul one_lt_two one_lt_two hpri.out
-  rcases may_assume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
+  rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
   let d := ({a, b, c} : Finset ℤ).gcd id
   have hdiv : ¬↑p ∣ a / d * (b / d) * (c / d) :=
     by
@@ -106,8 +107,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   simp only [eq_intCast, Int.cast_add, Int.cast_pow] at H₁
   have hζ' := (zeta_spec P ℚ K).unit'_coe
   rw [pow_add_pow_eq_prod_add_zeta_runity_mul
-      (hpri.out.eq_two_or_odd.resolve_left fun h => by norm_num [h] at h5p ) hζ'] at
-    H₁
+      (hpri.out.eq_two_or_odd.resolve_left fun h => by norm_num [h] at h5p ) hζ'] at H₁
   replace H₁ := congr_arg (fun x => span ({x} : Set R)) H₁
   simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
   have hdom : IsDomain (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) := Ideal.isDomain
@@ -121,8 +121,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
 
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p)
-    (hζ : IsPrimitiveRoot ζ p) : ∃ (u : Rˣ) (α : R), ↑u * α ^ p = ↑a + ζ * ↑b :=
-  by
+    (hζ : IsPrimitiveRoot ζ p) : ∃ (u : Rˣ) (α : R), ↑u * α ^ p = ↑a + ζ * ↑b := by
   replace hζ := hζ.mem_nth_roots_finset hpri.out.pos
   obtain ⟨I, hI⟩ := exists_ideal hp5 H hgcd caseI hζ
   by_cases hIpzero : I ^ p = 0
@@ -158,8 +157,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     (hζ : IsPrimitiveRoot ζ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
     (H : a ^ p + b ^ p = c ^ p) :
     ∃ k₁ k₂ : Fin p,
-      k₂ ≡ k₁ - 1 [ZMOD p] ∧ ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) :=
-  by
+      k₂ ≡ k₁ - 1 [ZMOD p] ∧ ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) := by
   let ζ' := (ζ : K)
   have hζ' : IsPrimitiveRoot ζ' P := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
   have : ζ = (hζ'.unit' : R) := by simp only [IsPrimitiveRoot.unit', SetLike.eta, Units.val_mk]
@@ -202,13 +200,12 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
 def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>
   if x = 0 then a else if x = 1 then b else if x = k₁ then -a else if x = k₂ then -b else 0
 
-theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i ∈ range p, f a b k₁ k₂ (i : ℕ) = 0 :=
-  by
+theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
+    ∃ i ∈ range p, f a b k₁ k₂ (i : ℕ) = 0 := by
   have h0 : 0 < p := by linarith
   have h1 : 1 < p := by linarith
   let s := ({0, 1, k₁, k₂} : Finset ℕ)
-  have : s.card ≤ 4 :=
-    by
+  have : s.card ≤ 4 := by
     repeat' refine' le_trans (card_insert_le _ _) (succ_le_succ _)
     exact rfl.ge
   replace this : s.card < 5 := lt_of_le_of_lt this (by norm_num)
@@ -239,8 +236,7 @@ theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f 
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (p : ℕ) [hpri : Fact p.Prime] (hreg : IsRegularPrime p)
     (hp5 : 5 ≤ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p])
-    (caseI : ¬↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
-  by
+    (caseI : ¬↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p := by
   haveI := (⟨hpri.out⟩ : Fact (P : ℕ).Prime)
   set ζ := zeta P ℤ R with hζdef
   have hζ := zeta_spec P ℤ R
