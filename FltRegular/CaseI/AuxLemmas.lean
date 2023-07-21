@@ -53,8 +53,6 @@ theorem auxf0k₁ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : Fin P, f0k₁ b p (i : ℕ
   apply hpred
   simp [h2]
 
-set_option pp.explicit true
-
 theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
     (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : 0 ≠ (↑k₁ : ℕ) := by
