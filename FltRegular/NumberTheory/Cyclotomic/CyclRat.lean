@@ -456,7 +456,7 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   have h : ∀ x, (Fin.castIso (succ_pred_prime hp)) (Fin.castSuccEmb x) =
     ⟨x, lt_trans x.2 (pred_lt hp.ne_zero)⟩ := fun x => Fin.ext rfl
   set b := hζ'.integralPowerBasis' with hb
-  have hdim : b.dim = (p : ℕ).pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp.out,
+  have hdim : b.dim = (p : ℕ).pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp,
     pred_eq_sub_one]
   have last_dvd := dvd_last_coeff_cycl_integer hζ hf hdiv
   intro j
