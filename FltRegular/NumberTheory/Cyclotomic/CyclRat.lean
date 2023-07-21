@@ -244,10 +244,10 @@ theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η
   have := exists_le_maximal I he
   obtain ⟨P, hP1, hP2⟩ := this
   have hiP : fltIdeals p x y hη₁ ≤ P := le_trans le_sup_left hP2
-  have hel1 : ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I :=
-    by
-    have : ↑x + η₁ * ↑y + -1 * (↑x + η₂ * ↑y) ∈ I :=
-      Ideal.add_mem _ (mem_sup_left (mem_fltIdeals _ _ hη₁)) (mul_mem_left _ (-1) (mem_sup_right (mem_fltIdeals _ _ _)))
+  have hel1 : ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I := by
+    have : ↑x + η₁ * ↑y + -1 * (↑x + η₂ * ↑y) ∈ I := Ideal.add_mem _
+      (mem_sup_left (mem_fltIdeals _ _ hη₁)) (mul_mem_left _ (-1)
+      (mem_sup_right (mem_fltIdeals _ _ _)))
     simp only [neg_mul, one_mul] at this
     rw [neg_one_mul, neg_add_rev, neg_mul_eq_mul_neg, add_comm] at this
     simp only [← add_assoc] at this
@@ -326,7 +326,8 @@ theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η
         simp
         rw [span_singleton_le_span_singleton]
         apply zeta_sub_one_dvb_p ph hη₁ hwlog
-      have H2 : IsPrime (P.comap (Int.castRingHom R)) := by apply @IsPrime.comap _ _ _ _ _ _ _ _ hPrime
+      have H2 : IsPrime (P.comap (Int.castRingHom R)) := by
+        apply @IsPrime.comap _ _ _ _ _ _ _ _ hPrime
       have H3 : Ring.DimensionLEOne ℤ := IsDedekindDomain.dimensionLEOne
       have H4 : Ideal.span ({(p : ℤ)} : Set ℤ) ≠ ⊥ := by simp
       apply ((@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ H3 _ _ H5 H2 H4).1 H1).symm
@@ -443,32 +444,32 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
 
 set_option synthInstance.maxHeartbeats 160000 in
 set_option maxHeartbeats 400000 in
-theorem dvd_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L} (hζ : IsPrimitiveRoot ζ p) {f : Fin p → ℤ}
-    (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) : ∀ j, m ∣ f j :=
-  by
+theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRoot ζ p)
+    {f : Fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
+    ∀ j, m ∣ f j := by
   let ζ' := (ζ : L)
+  have : Fact (p : ℕ).Prime := ⟨hp⟩
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
   have hcoe : ζ = ⟨ζ', hζ'.isIntegral p.pos⟩ := by simp
-  have hlast :
-    (Fin.castIso (succ_pred_prime hp.out)) (Fin.last (p : ℕ).pred) = ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ :=
-    Fin.ext rfl
-  have h :
-    ∀ x, (Fin.castIso (succ_pred_prime hp.out)) (Fin.castSuccEmb x) = ⟨x, lt_trans x.2 (pred_lt hp.out.ne_zero)⟩ :=
-    fun x => Fin.ext rfl
+  have hlast : (Fin.castIso (succ_pred_prime hp)) (Fin.last (p : ℕ).pred) =
+      ⟨(p : ℕ).pred, pred_lt hp.ne_zero⟩ := Fin.ext rfl
+  have h : ∀ x, (Fin.castIso (succ_pred_prime hp)) (Fin.castSuccEmb x) =
+    ⟨x, lt_trans x.2 (pred_lt hp.ne_zero)⟩ := fun x => Fin.ext rfl
   set b := hζ'.integralPowerBasis' with hb
-  have hdim : b.dim = (p : ℕ).pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp.out, pred_eq_sub_one]
+  have hdim : b.dim = (p : ℕ).pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp.out,
+    pred_eq_sub_one]
   have last_dvd := dvd_last_coeff_cycl_integer hζ hf hdiv
   intro j
-  by_cases H : j = ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩
+  by_cases H : j = ⟨(p : ℕ).pred, pred_lt hp.ne_zero⟩
   · simpa [H] using last_dvd
   have hj : ↑j < (p : ℕ).pred := by
     by_contra' habs
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt j))] at H
   obtain ⟨y, hy⟩ := hdiv
-  rw [← Equiv.sum_comp (Fin.castIso (succ_pred_prime hp.out)).toEquiv, Fin.sum_univ_castSucc] at hy
+  rw [← Equiv.sum_comp (Fin.castIso (succ_pred_prime hp)).toEquiv, Fin.sum_univ_castSucc] at hy
   simp only [hlast, h, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
-  rw [hζ.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib, ←
-    (Fin.castIso hdim).toEquiv.sum_comp] at hy
+  rw [hζ.pow_sub_one_eq hp.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
+    ← (Fin.castIso hdim).toEquiv.sum_comp] at hy
   simp only [RelIso.coe_fn_toEquiv, Fin.coe_castIso, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
     Fin.coe_orderIso_apply] at hy
   push_cast at hy
@@ -481,12 +482,13 @@ theorem dvd_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L} (hζ : 
     rw [hcoe, ← hζ'.integralPowerBasis'_gen, ← hb]
   conv_lhs at hy =>
     congr; rfl; ext x
-    rw [← SubsemiringClass.coe_pow, ← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
+    rw [← SubsemiringClass.coe_pow, ← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y,
+      ← sub_eq_add_neg]
   norm_cast at hy
   rw [sum_sub_distrib] at hy
   replace hy := congr_arg (b.basis.coord ((Fin.castIso hdim.symm) ⟨j, hj⟩)) hy
-  rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub, b.basis.coord_equivFun_symm,
-    b.basis.coord_equivFun_symm] at hy
+  rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
+    b.basis.coord_equivFun_symm, b.basis.coord_equivFun_symm] at hy
   simp only [Fin.castIso_mk, Fin.castSucc_mk, Fin.eta, Basis.coord_apply, sub_eq_iff_eq_add] at hy
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.castIso hdim.symm) ⟨j, hj⟩) y m
   rw [hy, ← smul_eq_mul, ← zsmul_eq_smul_cast, ← b.basis.coord_apply, ← Fin.castIso_mk, hn]
