@@ -372,11 +372,13 @@ theorem aux_lem_flt [Fact (p : ℕ).Prime] {x y z : ℤ} (H : x ^ (p : ℕ) + y 
   exact caseI (Dvd.dvd.mul_left H _)
 
 set_option synthInstance.maxHeartbeats 80000 in
-theorem fltIdeals_coprime [Fact (p : ℕ).Prime] (p5 : 5 ≤ p) {x y z : ℤ}
+theorem fltIdeals_coprime (hpri : (p : ℕ).Prime) (p5 : 5 ≤ p) {x y z : ℤ}
     (H : x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ)) {η₁ η₂ : R} (hxy : IsCoprime x y)
     (hη₁ : η₁ ∈ nthRootsFinset p R) (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂)
-    (caseI : ¬↑p ∣ x * y * z) : IsCoprime (fltIdeals p x y hη₁) (fltIdeals p x y hη₂) := by
-  --how does wlog work? I want to have η₁ ≠ 1...
+    (caseI : ¬↑p ∣ x * y * z) :
+    have : Fact (p : ℕ).Prime := ⟨hpri⟩
+    IsCoprime (fltIdeals p x y hη₁) (fltIdeals p x y hη₂) := by
+  have : Fact (p : ℕ).Prime := ⟨hpri⟩
   by_cases h : η₁ ≠ 1
   apply fltIdeals_coprime2 p5 hη₁ hη₂ hdiff hxy (aux_lem_flt H caseI) h
   have h2 : η₂ ≠ 1 := by
