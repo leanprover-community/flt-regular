@@ -48,10 +48,9 @@ theorem may_assume : SlightlyEasier → Statement := by
     by_contra' habs
     have : p ∈ Finset.Ioo 2 5 :=
      (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_and_ne hpri.out.two_le hodd.symm, by linarith⟩
-    -- replace with --fin_cases this, see #6046
-    replace this : p = 3 ∨ p = 4 := sorry; rcases this with (rfl | rfl)
+    fin_cases this
     · exact MayAssume.p_ne_three hprod H rfl
-    · rw [show 4 = 2 * 2 from rfl] at hpri
+    · rw [show 2 + 1 + 1 = 2 * 2 from rfl] at hpri
       refine' Nat.not_prime_mul one_lt_two one_lt_two hpri.out
   rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
   let d := ({a, b, c} : Finset ℤ).gcd id
@@ -66,18 +65,17 @@ theorem may_assume : SlightlyEasier → Statement := by
       mul_assoc (b / d), ← mul_assoc _ (b / d), Int.mul_ediv_cancel' hbdiv, mul_comm, mul_assoc,
       mul_assoc, Int.ediv_mul_cancel hcdiv, mul_comm, mul_assoc, mul_comm c, ← mul_assoc] at hdiv
     exact hI hdiv
-  obtain ⟨X, Y, Z, H1, H2, H3, H4, H5⟩ := a_not_cong_b hpri.out hp5 hprodxyx Hxyz hunit hdiv
+  obtain ⟨X, Y, Z, H1, H2, H3, _, H5⟩ := a_not_cong_b hpri.out hp5 hprodxyx Hxyz hunit hdiv
   exact Heasy hreg hp5 H2 H3 (fun hfin => H5 hfin) H1
 
 end CaseI
 
 theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
-    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) : IsCoprime a b :=
-  by
+    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) : IsCoprime a b := by
   rw [← gcd_eq_one_iff_coprime]
   by_contra' h
   obtain ⟨q, hqpri, hq⟩ := exists_prime_and_dvd h
-  replace hqpri : Prime (q : ℤ) := prime_iff_nat_abs_prime.2 (by simp [hqpri])
+  replace hqpri : Prime (q : ℤ) := prime_iff_natAbs_prime.2 (by simp [hqpri])
   obtain ⟨n, hn⟩ := hq
   have haq : ↑q ∣ a := by
     obtain ⟨m, hm⟩ := Int.gcd_dvd_left a b
@@ -89,13 +87,12 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
     suffices ↑q ∣ c ^ p by exact hqpri.dvd_of_dvd_pow this
     rw [← H]
     exact dvd_add (dvd_pow haq hpzero) (dvd_pow hbq hpzero)
-  have Hq : ↑q ∣ ({a, b, c} : Finset ℤ).gcd id :=
-    by
+  have Hq : ↑q ∣ ({a, b, c} : Finset ℤ).gcd id := by
     refine' dvd_gcd fun x hx => _
     simp only [mem_insert, mem_singleton] at hx
     rcases hx with (H | H | H) <;> simpa [H]
   rw [hgcd] at Hq
-  exact hqpri.not_unit (isUnit_of_dvd_one _ Hq)
+  exact hqpri.not_unit (isUnit_of_dvd_one Hq)
 
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c) {ζ : R}
