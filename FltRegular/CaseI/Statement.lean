@@ -94,27 +94,24 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   rw [hgcd] at Hq
   exact hqpri.not_unit (isUnit_of_dvd_one Hq)
 
+set_option synthInstance.maxHeartbeats 200000 in
+set_option maxHeartbeats 800000 in
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
-    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c) {ζ : R}
-    (hζ : ζ ∈ nthRootsFinset p R) : ∃ I, span ({a + ζ * b} : Set R) = I ^ p :=
-  by
-  haveI : Fact (P : ℕ).Prime := ⟨hpri.out⟩
+    (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1)
+    (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p R) :
+    ∃ I, span ({a + ζ * b} : Set R) = I ^ p := by
   classical
   have H₁ := congr_arg (algebraMap ℤ R) H
   simp only [eq_intCast, Int.cast_add, Int.cast_pow] at H₁
   have hζ' := (zeta_spec P ℚ K).unit'_coe
   rw [pow_add_pow_eq_prod_add_zeta_runity_mul
-      (hpri.out.eq_two_or_odd.resolve_left fun h => by norm_num [h] at h5p ) hζ'] at H₁
-  replace H₁ := congr_arg (fun x => span ({x} : Set R)) H₁
+    (hpri.out.eq_two_or_odd.resolve_left fun h => by simp [h] at h5p ) hζ'] at H₁
+  replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
   simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
-  have hdom : IsDomain (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) := Ideal.isDomain
-  let gcddom : GCDMonoid (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) :=
-    Ideal.normalizedGcdMonoid.toGcdMonoid
-  obtain ⟨I, hI⟩ :=
-    @Finset.exists_eq_pow_of_mul_eq_pow_of_coprime _ _ _ hdom gcddom _ _ _ _ _
-      (fun η₁ hη₁ η₂ hη₂ hη => _) H₁ ζ hζ
-  · exact ⟨I, hI⟩
-  · exact fltIdeals_coprime h5p H (ab_coprime H hpri.out.ne_zero hgcd) hη₁ hη₂ hη caseI
+  refine' Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη => ?_) H₁ ζ hζ
+  refine' fltIdeals_coprime _ _ H (ab_coprime H hpri.out.ne_zero hgcd) hη₁ hη₂ hη caseI
+  · exact hpri.out
+  · exact h5p
 
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p)
