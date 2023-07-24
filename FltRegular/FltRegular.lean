@@ -1,12 +1,12 @@
 import FltRegular.CaseI.Statement
 import FltRegular.CaseII.Statement
 
-open flt_regular
+open FltRegular
 
 /-- Statement of Fermat's last theorem for regular primes. -/
 def FltRegular.Statement : Prop :=
-  ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ [hpri : Fact p.Prime] (hreg : @IsRegularPrime p hpri) (hodd : p ≠ 2)
-    (hprod : a * b * c ≠ 0), a ^ p + b ^ p ≠ c ^ p
+  ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ [hpri : Fact p.Prime] (_ : @IsRegularPrime p hpri) (_ : p ≠ 2)
+    (_ : a * b * c ≠ 0), a ^ p + b ^ p ≠ c ^ p
 
 /-- Fermat's last theorem for regular primes.. -/
 theorem flt_regular {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) (hodd : p ≠ 2)
@@ -15,4 +15,3 @@ theorem flt_regular {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrim
   by_cases case : ↑p ∣ a * b * c
   exact caseII hreg hodd hprod case
   exact caseI hreg case
-
