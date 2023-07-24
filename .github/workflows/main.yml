@@ -1,0 +1,57 @@
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install elan
+        run: |
+          set -o pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -v -y
+          sudo ln -s $HOME/.elan/bin/* /usr/local/bin;
+      - name: Install python Lean dependencies
+        run: python -m pip install --upgrade pip requests markdown2 toml mathlibtools toposort invoke
+
+      - name: Install Leanblueprint and generate web in tex env
+        id: generate_files
+        uses: xu-cheng/texlive-action/full@v1
+        with:
+          run: |
+            apk update
+            apk add --update make py3-pip git
+            git config --global --add safe.directory `pwd`/lean-liquid
+            python3 -m pip install --upgrade pip requests wheel
+            apk add pkgconfig graphviz graphviz-dev gcc musl-dev && \
+            python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
+            python3 -m pip install invoke git+https://github.com/collares/plastex.git@12db048be9223086ddf9d17e4855b978f29782d5 git+https://github.com/PatrickMassot/leanblueprint.git
+            inv pdf; cp print/blueprint.bbl src/web.bbl; inv qweb
+            cp print/blueprint.pdf web/
+            branch=${GITHUB_REF##*/}
+            if [[ $branch != "master" ]]; then
+              mv web web2
+              mkdir web
+              mv web2 "web/$branch"
+            fi
+            echo "##[set-output name=keep_files;]$([[ ${GITHUB_REF##*/} == "master" ]] && echo "false" || echo "true")"
+      # For non-master branches we temporarily deploy to https://leanprover-community.github.io/liquid/<branch_name>
+      # All such files will then get deleted when there's a deploy to master.
+
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.github_token }}
+          publish_dir: ./web
+          keep_files: ${{ steps.generate_files.outputs.keep_files }}
