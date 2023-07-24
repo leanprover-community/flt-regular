@@ -229,39 +229,40 @@ theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f 
   exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
 
 /-- Case I with additional assumptions. -/
-theorem caseI_easier {a b c : ℤ} (p : ℕ) [hpri : Fact p.Prime] (hreg : IsRegularPrime p)
-    (hp5 : 5 ≤ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p])
-    (caseI : ¬↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p := by
-  haveI := (⟨hpri.out⟩ : Fact (P : ℕ).Prime)
-  set ζ := zeta P ℤ R with hζdef
+theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
+    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬↑p ∣ a * b * c) :
+    a ^ p + b ^ p ≠ c ^ p := by
+  have hcycl : IsCyclotomicExtension {P} ℤ (𝓞 (CyclotomicField P ℚ)) := by
+    apply @IsCyclotomicExtension.ring_of_integers' _ _ _ _ (by exact hpri) _
+  set ζ := zeta P ℤ R
   have hζ := zeta_spec P ℤ R
   intro H
   obtain ⟨k₁, k₂, hcong, hdiv⟩ := ex_fin_div hp5 hreg hζ hgcd caseI H
-  have key : ↑(p : ℤ) ∣ ∑ j in range p, f a b k₁ k₂ j • ζ ^ j :=
-    by
+  have key : ↑(p : ℤ) ∣ ∑ j in range p, f a b k₁ k₂ j • ζ ^ j := by
     convert hdiv using 1
     have h01 : 0 ≠ 1 := zero_ne_one
-    have h0k₁ : 0 ≠ ↑k₁ := aux0k₁ hpri.out hp5 hζ caseI hcong hdiv
-    have h0k₂ : 0 ≠ ↑k₂ := aux0k₂ hpri.out hp5 hζ hab hcong hdiv
-    have h1k₁ : 1 ≠ ↑k₁ := aux1k₁ hpri.out hp5 hζ hab hcong hdiv
-    have h1k₂ : 1 ≠ ↑k₂ := aux1k₂ hpri.out hp5 hζ caseI hcong hdiv
+    have h0k₁ := aux0k₁ hpri.out hp5 hζ caseI hcong hdiv
+    have h0k₂ := aux0k₂ hpri.out hp5 hζ hab hcong hdiv
+    have h1k₁ := aux1k₁ hpri.out hp5 hζ hab hcong hdiv
+    have h1k₂ := aux1k₂ hpri.out hp5 hζ caseI hcong hdiv
     have hk₁k₂ : (k₁ : ℕ) ≠ (k₂ : ℕ) := auxk₁k₂ hpri.out hcong
-    simp_rw [f, ite_smul, sum_ite, filter_filter, ← Ne.def, ne_and_eq_iff_right h01, and_assoc',
+    simp_rw [f, ite_smul, sum_ite, filter_filter, ← Ne.def, ne_and_eq_iff_right h01, and_assoc,
       ne_and_eq_iff_right h1k₁, ne_and_eq_iff_right h0k₁, ne_and_eq_iff_right hk₁k₂,
       ne_and_eq_iff_right h1k₂, ne_and_eq_iff_right h0k₂, Finset.range_filter_eq]
-    simp only [hpri.out.pos, hpri.out.one_lt, if_true, zsmul_eq_mul, sum_singleton, pow_zero,
-      mul_one, pow_one, Fin.is_lt, neg_smul, sum_neg_distrib, Ne.def, filter_congr_decidable,
-      zero_smul, sum_const_zero, add_zero]
+    simp only [hpri.out.pos, hpri.out.one_lt, if_true, zsmul_eq_mul, sum_singleton, _root_.pow_zero,
+      mul_one, pow_one, Fin.is_lt, neg_smul, sum_neg_distrib, Ne.def, zero_smul, sum_const_zero,
+      add_zero]
     ring
   rw [sum_range] at key
-  refine' caseI (Dvd.Dvd.mul_right (Dvd.Dvd.mul_right _ _) _)
-  simpa [f] using dvd_coeff_cycl_integer hζ (auxf hp5 a b k₁ k₂) key ⟨0, hpri.out.pos⟩
+  refine' caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right _ _) _)
+  simpa [f] using dvd_coeff_cycl_integer (by exact hpri.out) hζ (auxf hp5 a b k₁ k₂) key
+    ⟨0, hpri.out.pos⟩
 
 /-- CaseI. -/
 theorem caseI {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p)
     (caseI : ¬↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
   FltRegular.CaseI.may_assume
-    (fun x y z p₁ Hpri Hreg Hp5 Hunit Hxy HI H => caseI_easier p₁ Hreg Hp5 Hunit Hxy HI H) hreg
+    (fun _ _ _ _ _ Hreg Hp5 Hunit Hxy HI H => caseI_easier Hreg Hp5 Hunit Hxy HI H) hreg
     caseI
 
 end FltRegular
