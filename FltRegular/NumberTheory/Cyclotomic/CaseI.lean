@@ -16,13 +16,14 @@ variable (i : ℤ)
 namespace FltRegular.CaseI
 
 set_option maxHeartbeats 1600000 in
-theorem exists_int_sum_eq_zero (hpodd : p ≠ 2) [hp : Fact (p : ℕ).Prime] (x y i : ℤ) {u : (𝓞 K)ˣ}
+theorem exists_int_sum_eq_zero (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i : ℤ) {u : (𝓞 K)ˣ}
     {α : 𝓞 K} (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ (p : ℕ)) :
     ∃ k : ℤ, (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) - (hζ.unit' ^ (2 * k) : (𝓞 K)ˣ) *
     (x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ)) ∈
     Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
   letI : NumberField K := IsCyclotomicExtension.numberField { p } ℚ _
-  obtain ⟨β, k, hβreal : galConj K p β = β, H⟩ := unit_lemma_gal_conj hζ hpodd hp.out u
+  have : Fact (p : ℕ).Prime := ⟨hp⟩
+  obtain ⟨β, k, hβreal : galConj K p β = β, H⟩ := unit_lemma_gal_conj hζ hpodd hp u
   have : (x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ) : K) =
       galConj K p (x + y * ↑↑(IsPrimitiveRoot.unit' hζ) ^ i) := by
     simp [galConj_zeta_runity hζ, ← coe_life]
