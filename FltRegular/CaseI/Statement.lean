@@ -113,38 +113,38 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   · exact hpri.out
   · exact h5p
 
+set_option maxHeartbeats 6400000 in
+set_option synthInstance.maxHeartbeats 200000 in
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
-    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p)
-    (hζ : IsPrimitiveRoot ζ p) : ∃ (u : Rˣ) (α : R), ↑u * α ^ p = ↑a + ζ * ↑b := by
-  replace hζ := hζ.mem_nth_roots_finset hpri.out.pos
+    (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
+    (H : a ^ p + b ^ p = c ^ p) (hζ : IsPrimitiveRoot ζ p) :
+    ∃ (u : Rˣ) (α : R), ↑u * α ^ p = ↑a + ζ * ↑b := by
+  replace hζ := hζ.mem_nthRootsFinset hpri.out.pos
   obtain ⟨I, hI⟩ := exists_ideal hp5 H hgcd caseI hζ
   by_cases hIpzero : I ^ p = 0
   · refine' ⟨1, 0, _⟩
-    simp [hIpzero, zero_eq_bot, span_singleton_eq_bot] at hI
-    simp [hpri.out.pos, hI]
+    rw [hIpzero, zero_eq_bot, Ideal.span_singleton_eq_bot] at hI
+    rw [zero_pow hpri.out.pos, hI, mul_zero]
   have hIzero : I ≠ 0 := by
     intro hIzero
     simp only [hIzero, zero_pow hpri.out.pos] at hIpzero
-    exact hIpzero rfl
-  have hIprin : I.is_principal :=
-    by
-    have : ClassGroup.mk0 ⟨_, mem_nonZeroDivisors_of_ne_zero hIpzero⟩ = 1 :=
-      by
+  have hIprin : Submodule.IsPrincipal I := by
+    have : ClassGroup.mk0 ⟨I ^ p, mem_nonZeroDivisors_of_ne_zero hIpzero⟩ = 1 := by
       rw [ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero hIpzero)]
-      exact ⟨⟨↑a + ζ * ↑b, hI.symm⟩⟩
+      exact ⟨⟨_, hI.symm⟩⟩
     rw [← SubmonoidClass.mk_pow I (mem_nonZeroDivisors_of_ne_zero hIzero), map_pow] at this
     cases' (dvd_prime hpri.out).1 (orderOf_dvd_of_pow_eq_one this) with h1 habs
     · exact (ClassGroup.mk0_eq_one_iff _).1 (orderOf_eq_one_iff.1 h1)
     · exfalso
       refine' hpri.out.coprime_iff_not_dvd.1 hreg _
-      simp_rw [← habs]
-      exact orderOf_dvd_card_univ
+      convert orderOf_dvd_card_univ (x := ClassGroup.mk0 ⟨I, mem_nonZeroDivisors_of_ne_zero hIzero⟩)
+      apply habs.symm
   obtain ⟨α, hα⟩ := hIprin
-  replace hα := congr_arg (fun J => J ^ p) hα
+  replace hα := congr_arg (fun (J : Submodule _ _) => J ^ p) hα
   simp only [← hI, submodule_span_eq, span_singleton_pow, span_singleton_eq_span_singleton] at hα
   obtain ⟨u, hu⟩ := hα
   refine' ⟨u⁻¹, α, _⟩
-  rw [← hu, mul_comm _ ↑u, ← mul_assoc]
+  rw [← hu, mul_comm ((_ + ζ * _)), ← mul_assoc]
   simp only [Units.inv_mul, one_mul]
 
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime p)
