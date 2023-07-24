@@ -154,41 +154,46 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
       k₂ ≡ k₁ - 1 [ZMOD p] ∧ ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) := by
   let ζ' := (ζ : K)
   have hζ' : IsPrimitiveRoot ζ' P := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
-  have : ζ = (hζ'.unit' : R) := by simp only [IsPrimitiveRoot.unit', SetLike.eta, Units.val_mk]
-  have hP : P ≠ 2 := by
+  have h : ζ = (hζ'.unit' : R) := by simp only [IsPrimitiveRoot.unit', SetLike.eta, Units.val_mk]
+  have hP : P ≠ (2 : ℕ+) := by
     intro hP
-    rw [← PNat.coe_inj, PNat.mk_coe, PNat.coe_bit0, PNat.one_coe] at hP
-    norm_num [hP] at hp5
+    rw [← PNat.coe_inj, PNat.mk_coe] at hP
+    rw [hP] at hp5
+    simp at hp5
   haveI := (⟨hpri.out⟩ : Fact (P : ℕ).Prime)
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ
-  rw [this, mul_comm _ ↑b, ← pow_one hζ'.unit'] at hu
-  obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' hP a b 1 hu.symm
-  simp only [zpow_one, zpow_neg, coe_coe, PNat.mk_coe, mem_span_singleton, ← this] at hk
+  rw [h, mul_comm _ (↑b : 𝓞 _), ← pow_one hζ'.unit'] at hu
+  obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' hP hpri.out a b 1 hu.symm
+  simp only [zpow_one, zpow_neg, PNat.mk_coe, mem_span_singleton, ← h] at hk
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.out.ne_zero]
   refine' ⟨⟨(2 * k % p).natAbs, _⟩, ⟨((2 * k - 1) % p).natAbs, _⟩, _, _⟩
   repeat'
-    rw [← nat_abs_of_nat p]
-    refine' nat_abs_lt_nat_abs_of_nonneg_of_lt (mod_nonneg _ hpcoe) _
-    rw [nat_abs_of_nat]
-    exact mod_lt_of_pos _ (by simp [hpri.out.pos])
-  · simp [nat_abs_of_nonneg (mod_nonneg _ hpcoe), ← ZMod.int_cast_eq_int_cast_iff]
+    rw [← natAbs_ofNat p]
+    refine' natAbs_lt_natAbs_of_nonneg_of_lt (emod_nonneg _ hpcoe) _
+    rw [natAbs_ofNat]
+    exact emod_lt_of_pos _ (by simp [hpri.out.pos])
+  · simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_eq_int_cast_iff,
+      ZMod.int_cast_mod, Int.cast_sub, Int.cast_mul, int_cast_ofNat, Int.cast_one]
   simp only [add_sub_assoc, sub_sub] at hk ⊢
   convert hk using 3
-  rw [mul_add, mul_comm ↑a, ← mul_assoc _ ↑b, mul_comm _ ↑b, mul_assoc ↑b]
+  rw [mul_add, mul_comm (↑a : 𝓞 _), ← mul_assoc _ (↑b : 𝓞 _), mul_comm _ (↑b : 𝓞 _),
+    mul_assoc (↑b : 𝓞 _)]
   congr 2
   · rw [← Subtype.coe_inj]
-    simp only [Fin.val_mk, SubsemiringClass.coe_pow, _root_.coe_zpow', coe_coe,
+    simp only [Fin.val_mk, SubsemiringClass.coe_pow, _root_.coe_zpow',
       IsPrimitiveRoot.coe_unit'_coe]
     refine' eq_of_div_eq_one _
     rw [← zpow_ofNat, ← zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
-    simp [nat_abs_of_nonneg (mod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd]
+    simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd,
+      Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, int_cast_ofNat, sub_self]
   · rw [← Subtype.coe_inj]
-    simp only [Fin.val_mk, SubsemiringClass.coe_pow, MulMemClass.coe_mul, _root_.coe_zpow', coe_coe,
+    simp only [Fin.val_mk, SubsemiringClass.coe_pow, MulMemClass.coe_mul, _root_.coe_zpow',
       IsPrimitiveRoot.coe_unit'_coe, IsPrimitiveRoot.coe_inv_unit'_coe]
     refine' eq_of_div_eq_one _
     rw [← zpow_ofNat, ← zpow_sub_one₀ (hζ'.ne_zero hpri.out.ne_zero), ←
-      zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd, PNat.mk_coe]
-    simp [nat_abs_of_nonneg (mod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd]
+      zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
+    simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd,
+      Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, int_cast_ofNat, Int.cast_one, sub_self]
 
 /-- Auxiliary function -/
 def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>
