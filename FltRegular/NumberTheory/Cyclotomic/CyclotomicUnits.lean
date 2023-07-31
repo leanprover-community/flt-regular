@@ -115,7 +115,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     apply Nat.sub_pos_of_lt hilj
     by_cases hj : 0 < j
     apply lt_trans _ hi
-    apply Nat.sub_lt_of_pos_le _ _ hj hilj.le
+    apply Nat.sub_lt_of_pos_le hj hilj.le
     simp only [not_lt, _root_.le_zero_iff] at hj
     rw [hj]
     simp only [tsub_zero]
@@ -144,7 +144,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     apply Nat.sub_pos_of_lt hilj'
     by_cases hii : 0 < i
     apply lt_trans _ hj
-    apply Nat.sub_lt_of_pos_le _ _ hii hilj
+    apply Nat.sub_lt_of_pos_le hii hilj
     simp only [not_lt, _root_.le_zero_iff] at hii
     rw [hii]
     simp only [tsub_zero]
