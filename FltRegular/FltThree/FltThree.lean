@@ -6,8 +6,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import FltRegular.FltThree.Primes
 import FltRegular.FltThree.Edwards
 import Mathlib.Tactic.IntervalCases
-import Mathlib.Data.Int.GCD 
- 
+import Mathlib.Data.Int.GCD
+
 /-- solutions to Fermat's last theorem for the exponent `3`. -/
 def FltSolution (n : ℕ) (a b c : ℤ) :=
   a ≠ 0 ∧ b ≠ 0 ∧ c ≠ 0 ∧ a ^ n + b ^ n = c ^ n
@@ -183,7 +183,7 @@ theorem descent2 (a b c : ℤ) (h : FltCoprime 3 a b c) :
   -- calc
   --   (2 * p).natAbs < (2 * p * P.norm).natAbs := ?_
   --   _ ≤ (a ^ 3 * b ^ 3 * c ^ 3).natAbs := ?_
-    
+
   · rw [Int.natAbs_mul (2 * p)]
     apply lt_mul_of_one_lt_right (Int.natAbs_pos.mpr (mul_ne_zero two_ne_zero hp))
     rw [← Int.ofNat_lt]
@@ -196,7 +196,7 @@ theorem descent2 (a b c : ℤ) (h : FltCoprime 3 a b c) :
       convert descent11 hcube
       rw [Zsqrtd.norm]
       ring
-  
+
 #align descent2 descent2
 
 theorem Nat.cast_three [AddMonoidWithOne R] : ((3 : ℕ) : R) = (3 : R) := rfl
@@ -283,7 +283,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     exact dvd_trans this (Int.gcd_dvd_left _ _)
   apply IsCoprime.isUnit_of_dvd' hcoprime hdvdp
   · rw [← Int.pow_dvd_pow_iff zero_lt_two] at hdvdp
-    apply Prime.dvd_of_dvd_pow Int.prime_three 
+    apply Prime.dvd_of_dvd_pow Int.prime_three
     rw [← mul_dvd_mul_iff_left (three_ne_zero' ℤ), ← pow_two, ← dvd_add_right hdvdp]
     refine' dvd_trans _ (Int.gcd_dvd_right (2 * p) (p ^ 2 + 3 * q ^ 2))
     rw [← hg', hg, Int.ofNat_mul]
@@ -417,7 +417,7 @@ theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
   by
   -- 5.
   obtain ⟨r, hr⟩ : ∃ r, 2 * p * (p ^ 2 + 3 * q ^ 2) = r ^ 3 := by
-    rcases hcube with (hcube | hcube | hcube) <;> [(use a); (use b); (use c)] <;> exact hcube
+    rcases hcube with (hcube | hcube | hcube) <;> [(use a); (use b); (use c)]
   have : Odd 3 := by norm_num
   obtain ⟨hcubeleft, hcuberight⟩ := Int.eq_pow_of_mul_eq_pow_odd hgcd this hr
   -- todo shadowing hq
@@ -608,7 +608,7 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
     descent_gcd3_coprime h3_ndvd_q hspos hcoprime' hodd'
   -- 4.
   obtain ⟨r, hr⟩ : ∃ r, 2 * (3 * s) * ((3 * s) ^ 2 + 3 * q ^ 2) = r ^ 3 := by
-    rcases hcube with (hcube | hcube | hcube) <;> [(use a); (use b); (use c)] <;> exact hcube
+    rcases hcube with (hcube | hcube | hcube) <;> [(use a); (use b); (use c)]
   rw [hps] at hr
   have : Odd 3 := by norm_num
   obtain ⟨hcubeleft, hcuberight⟩ := Int.eq_pow_of_mul_eq_pow_odd hcoprime'' this hr
@@ -677,7 +677,7 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
       _ = (2 * 3 * s).natAbs := by
         rw [Int.natAbs_mul (2 * 3)]
         rfl
-      
+
   · rw [← HA, ← HB, ← HC]
     ring
 #align descent_gcd3 descent_gcd3

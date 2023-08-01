@@ -232,7 +232,7 @@ instance arg : IsDedekindDomain R :=
   inferInstance
 
 set_option synthInstance.maxHeartbeats 300000 in
-set_option maxHeartbeats 800000 in
+set_option maxHeartbeats 1600000 in
 theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
     (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
