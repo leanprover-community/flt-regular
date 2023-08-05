@@ -61,8 +61,6 @@ theorem gen_ne_zero : pb.gen ≠ 0 := by
 theorem quotient_not_trivial : Nontrivial (R ⧸ span ({pb.gen} : Set R)) :=
   Quotient.nontrivial fun h => hpr.not_unit ((isUnit_norm ℚ).2 (span_singleton_eq_top.1 h))
 
-attribute [local instance] NumberField.ringOfIntegersAlgebra
-
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 800000 in
 theorem prime_of_norm_prime [IsGalois ℚ K] : Prime pb.gen :=
