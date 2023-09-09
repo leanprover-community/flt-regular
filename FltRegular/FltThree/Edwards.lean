@@ -12,7 +12,7 @@ theorem Zsqrtd.associated_norm_of_associated {d : ℤ} {f g : ℤ√d} (h : Asso
   obtain ⟨u, rfl⟩ := h
   have := (Zsqrtd.isUnit_iff_norm_isUnit u).mp u.isUnit
   rw [Zsqrtd.norm_mul]
-  exact associated_mul_unit_right (Zsqrtd.norm f) _ this 
+  exact associated_mul_unit_right (Zsqrtd.norm f) _ this
 #align zsqrtd.associated_norm_of_associated Zsqrtd.associated_norm_of_associated
 
 theorem OddPrimeOrFour.im_ne_zero {p : ℤ√(-3)} (h : OddPrimeOrFour p.norm)
@@ -215,7 +215,6 @@ theorem step3 {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     by exact this a.norm.natAbs rfl
   intro n hn
   induction' n using Nat.strong_induction_on with n ih generalizing a
-  dsimp only at ih
   cases' eq_or_ne a.norm 1 with h h
   · use 0
     constructor
@@ -412,7 +411,6 @@ theorem factors_2_even' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     Even (evenFactorExp a.norm) :=
   by
   induction' hn : a.norm.natAbs using Nat.strong_induction_on with n ih generalizing a
-  dsimp only at ih
   by_cases hparity : Even a.norm
   · obtain ⟨u, huvcoprime, huvprod⟩ := step1' hcoprime hparity
     have huv := Spts.ne_zero_of_coprime' _ huvcoprime
@@ -470,7 +468,7 @@ theorem eq_or_eq_conj_iff_associated'_of_nonneg {x A : ℤ√(-3)} (hx : 0 ≤ x
             0 ≤ A.re := hA
             _ = -x.re := ?_
             _ < 0 := ?_
-            
+
           · simp only [← hu, Zsqrtd.neg_re]
           · simp only [neg_neg_iff_pos]
             exact lt_of_le_of_ne hx (Ne.symm hxre)
@@ -490,7 +488,7 @@ theorem eq_or_eq_conj_iff_associated'_of_nonneg {x A : ℤ√(-3)} (hx : 0 ≤ x
             0 ≤ A.re := hA
             _ = -x.re := ?_
             _ < 0 := ?_
-            
+
           · rw [← star_star A, ← hu]
             simp only [Zsqrtd.neg_re, Zsqrtd.star_re]
           · simp only [neg_neg_iff_pos]
@@ -523,21 +521,21 @@ theorem step5'
       exact factors_2_even' hcoprime
     calc
       Multiset.count x f = Multiset.card (Multiset.filter (x = ·) f) := by
-        rw [Multiset.count, Multiset.countp_eq_card_filter]
+        rw [Multiset.count, Multiset.countP_eq_card_filter]
       _ = Multiset.card (Multiset.filter (fun a : ℤ√(-3) => x.norm = a.norm) f) :=
         (congr_arg _ (Multiset.filter_congr fun A HA => ?_))
-      _ = Multiset.countp (x.norm = ·) (Multiset.map Zsqrtd.norm f) :=
-        (Multiset.countp_map Zsqrtd.norm f (x.norm = ·)).symm
-      _ = Multiset.countp (x.norm = ·) (factorsOddPrimeOrFour a.norm) := ?_
+      _ = Multiset.countP (x.norm = ·) (Multiset.map Zsqrtd.norm f) :=
+        (Multiset.countP_map Zsqrtd.norm f (x.norm = ·)).symm
+      _ = Multiset.countP (x.norm = ·) (factorsOddPrimeOrFour a.norm) := ?_
       _ = Multiset.count x.norm (factorsOddPrimeOrFour a.norm) := by rw [Multiset.count]
       _ = Multiset.count x.norm (factorsOddPrimeOrFour (r ^ 3)) := by rw [hcube]
       _ = Multiset.count x.norm (3 • _) := (congr_arg _ <| factorsOddPrimeOrFour.pow _ _ this)
       _ = 3 * _ := Multiset.count_nsmul x.norm _ _
-      
+
     swap
     show
-      Multiset.countp (Eq x.norm) (Multiset.map Zsqrtd.norm f) =
-        Multiset.countp (Eq x.norm) (factorsOddPrimeOrFour a.norm)
+      Multiset.countP (Eq x.norm) (Multiset.map Zsqrtd.norm f) =
+        Multiset.countP (Eq x.norm) (factorsOddPrimeOrFour a.norm)
     congr
     · apply factorsOddPrimeOrFour.unique hcoprime
       · intro x hx

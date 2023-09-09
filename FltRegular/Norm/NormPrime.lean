@@ -7,21 +7,17 @@ open RingOfIntegers Ideal Finset Nat FiniteDimensional
 
 variable {K : Type _} [Field K] (pb : PowerBasis ℤ (𝓞 K))
 
-local notation "R" => 𝓞 K
-
-set_option maxHeartbeats 800000 in
-set_option synthInstance.maxHeartbeats 400000 in
+set_option maxHeartbeats 6400000 in
+set_option synthInstance.maxHeartbeats 3200000 in
 theorem exists_int_sModEq (x : 𝓞 K) :
-    ∃ n : ℤ, SModEq (span ({ pb.gen } : Set R)) x n :=
-  by
+    ∃ (n : ℤ), SModEq (span ({ pb.gen } : Set (𝓞 K))) x n := by
   refine' ⟨(pb.basis.repr x) ⟨0, pb.dim_pos⟩, _⟩
   have H := Basis.sum_repr pb.basis x
   rw [PowerBasis.coe_basis, ← insert_erase (mem_univ (⟨0, pb.dim_pos⟩ : Fin pb.dim)), sum_insert] at H
   · have :
       ∀ i : (univ : Finset (Fin pb.dim)).erase ⟨0, pb.dim_pos⟩,
         ↑((pb.basis.repr x) i) * pb.gen ^ ((i : Fin pb.dim) : ℕ) =
-          ↑((pb.basis.repr x) i) * pb.gen ^ (i : ℕ).pred.succ :=
-      by
+          ↑((pb.basis.repr x) i) * pb.gen ^ (i : ℕ).pred.succ := by
       rintro ⟨i, hi⟩
       congr 1
       rw [succ_pred_eq_of_pos]
@@ -58,13 +54,12 @@ theorem gen_ne_zero : pb.gen ≠ 0 := by
   apply Prime.ne_zero hpr
   rfl
 
-theorem quotient_not_trivial : Nontrivial (R ⧸ span ({pb.gen} : Set R)) :=
+theorem quotient_not_trivial : Nontrivial ((𝓞 K) ⧸ span ({pb.gen} : Set (𝓞 K))) :=
   Quotient.nontrivial fun h => hpr.not_unit ((isUnit_norm ℚ).2 (span_singleton_eq_top.1 h))
 
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 800000 in
-theorem prime_of_norm_prime [IsGalois ℚ K] : Prime pb.gen :=
-  by
+set_option synthInstance.maxHeartbeats 800000 in
+set_option maxHeartbeats 3200000 in
+theorem prime_of_norm_prime [IsGalois ℚ K] : Prime pb.gen := by
   rw [← span_singleton_prime (gen_ne_zero hpr), ← Quotient.isDomain_iff_prime]
   haveI : Nontrivial (𝓞 K ⧸ span { pb.gen }) := ⟨(quotient_not_trivial hpr).exists_pair_ne⟩
   suffices NoZeroDivisors (𝓞 K ⧸ span { pb.gen }) by exact @NoZeroDivisors.to_isDomain _ _ _ this
@@ -80,7 +75,7 @@ theorem prime_of_norm_prime [IsGalois ℚ K] : Prime pb.gen :=
   rw [hn] at h₁ hxy ; rw [hm] at h₂ hxy
   obtain ⟨z, hz⟩ := mem_span_singleton.1 (Quotient.eq_zero_iff_mem.1 hxy)
   replace hz := congr_arg (norm ℚ) hz
-  have hnm : (norm ℚ) ((n : R) * (m : R)) = n ^ finrank ℚ K * m ^ finrank ℚ K := by
+  have hnm : (norm ℚ) ((n : (𝓞 K)) * (m : (𝓞 K))) = n ^ finrank ℚ K * m ^ finrank ℚ K := by
     refine' Subtype.ext _
     simp only [norm, MonoidHom.restrict_apply, MulMemClass.coe_mul, SubringClass.coe_intCast,
       _root_.map_mul, MonoidHom.codRestrict_apply, SubsemiringClass.coe_pow]
@@ -97,9 +92,11 @@ theorem prime_of_norm_prime [IsGalois ℚ K] : Prime pb.gen :=
     simpa [h₁] using
       Quotient.eq_zero_iff_mem.2
         (mem_span_singleton.2
-          (dvd_trans (dvd_norm ℚ pb.gen) (RingHom.map_dvd (algebraMap (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hn))))
+          (dvd_trans (dvd_norm ℚ pb.gen) (RingHom.map_dvd (algebraMap (𝓞 ℚ) (𝓞 K))
+            (hpr.dvd_of_dvd_pow Hn))))
   · rw [Int.cast_pow] at Hm
     simpa [h₂] using
       Quotient.eq_zero_iff_mem.2
         (mem_span_singleton.2
-          (dvd_trans (dvd_norm ℚ pb.gen) (RingHom.map_dvd (algebraMap (𝓞 ℚ) R) (hpr.dvd_of_dvd_pow Hm))))
+          (dvd_trans (dvd_norm ℚ pb.gen) (RingHom.map_dvd (algebraMap (𝓞 ℚ) (𝓞 K))
+            (hpr.dvd_of_dvd_pow Hm))))

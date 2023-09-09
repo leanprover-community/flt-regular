@@ -18,14 +18,13 @@ local notation "R" => 𝓞 K
 
 --generalize coe_zpow to allow group with zero
 @[simp, norm_cast]
-theorem coe_zpow' (u : Rˣ) (n : ℤ) : (((u ^ n : Rˣ) : R) : K) = (u : K) ^ n :=
-  by
+theorem coe_zpow' (u : Rˣ) (n : ℤ) : (((u ^ n : Rˣ) : R) : K) = (u : K) ^ n := by
   induction' n with n hn
   · simp
-  · simp [← coe_life]
+  · rw [zpow_negSucc, ← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one]
+    simp
 
-theorem auxil (a b c d : Rˣ) (h : a * b⁻¹ = c * d) : a * d⁻¹ = b * c :=
-  by
+theorem auxil (a b c d : Rˣ) (h : a * b⁻¹ = c * d) : a * d⁻¹ = b * c := by
   rw [mul_inv_eq_iff_eq_mul] at *
   rw [h]
   apply symm
@@ -52,6 +51,10 @@ theorem IsPrimitiveRoot.coe_unit'_coe {p : ℕ+} {K : Type _} [Field K] {ζ : K}
 @[simp, norm_cast]
 theorem IsPrimitiveRoot.coe_inv_unit'_coe {p : ℕ+} {K : Type _} [Field K] {ζ : K}
   (hζ : IsPrimitiveRoot ζ p) : ↑↑(hζ.unit'⁻¹) = ζ⁻¹ := rfl
+
+@[simp, norm_cast]
+theorem IsPrimitiveRoot.unit'_val_coe {p : ℕ+} {K : Type u_1} [Field K] {ζ : K}
+  (hζ : IsPrimitiveRoot ζ p) : ↑↑(IsPrimitiveRoot.unit' hζ) = ζ := rfl
 
 set_option quotPrecheck false
 local notation "ζ1" => (hζ.unit' - 1 : 𝓞 K)
@@ -287,7 +290,6 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
       ring
     obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp3 p.prop
     refine' ⟨i, 1, _⟩
-    simp_rw [Hi]
     simp only [PNat.one_coe, pow_one, neg_mul, one_mul, neg_neg]
     rw [← Subtype.val_inj] at Hi
     simp only [SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe, Submonoid.coe_mul,
@@ -381,7 +383,6 @@ theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp 
     exact
       hI.ne_top
         (Ideal.eq_top_of_isUnit_mem I key2 u'.isUnit)
-          -- this proof has mild coe annoyances rn
 
 -- this proof has mild coe annoyances rn
 theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
@@ -397,7 +398,6 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
   have hk := Nat.even_or_odd k
   cases' hk with hk hk
   · simp only [hk.neg_one_pow, one_mul] at hz
-    simp_rw [coe_life] at hz
     rw [← Subalgebra.coe_mul, ← Units.val_mul, ← Subalgebra.coe_pow,
       ← Units.val_pow_eq_pow_val] at hz
     norm_cast at hz
@@ -415,6 +415,7 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
     exact NumberField.RingOfIntegers.isIntegral_coe _
   · exact unit_lemma_val_one p u
 
+set_option maxHeartbeats 400000 in
 theorem unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
     ∃ (x : Rˣ) (n : ℤ), IsGalConjReal p (x : K) ∧ (u : 𝓞 K) = x * (hζ.unit' ^ n : (𝓞 K)ˣ) := by
   have := unit_inv_conj_is_root_of_unity hζ h hp u
@@ -432,13 +433,13 @@ theorem unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
     simp only [Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe,
       map_inv₀, galConj_zeta_runity_pow hζ m, inv_pow, inv_inv]
   constructor
-  rw [map_mul, ← coe_life, hz]
+  rw [map_mul, ← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one, hz]
   have hzz := unitGalConj_spec K p u
   rw [hzz]
   rw [← Subalgebra.coe_mul, ← Units.val_mul, ← hy]
   simp only [Subalgebra.coe_pow, Subalgebra.coe_eq_zero, mul_eq_mul_left_iff, Units.ne_zero,
     or_false_iff, Subalgebra.coe_mul, Units.val_pow_eq_pow_val, Units.val_mul]
-  rw [← coe_life]
+  rw [← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one]
   simp only [Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe]
   rw [mul_assoc, ← Units.val_mul, zpow_coe_nat, mul_left_inv, Units.val_one, mul_one]
 

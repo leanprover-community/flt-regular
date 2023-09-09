@@ -1,5 +1,6 @@
 import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import Mathlib.NumberTheory.Cyclotomic.Gal
+import Mathlib.NumberTheory.NumberField.Units
 
 universe u
 
@@ -111,26 +112,14 @@ variable (K)
 def unitGalConj : RRˣ →* RRˣ :=
   unitsGal (galConj K p)
 
-theorem unitGalConj_spec (u : RRˣ) : galConj K p (u : 𝓞 K) = ↑(unitGalConj K p u : 𝓞 K) :=
-  rfl
+theorem unitGalConj_spec (u : RRˣ) : galConj K p (u : 𝓞 K) = ↑(unitGalConj K p u : 𝓞 K) := rfl
 
 variable {K}
 
-theorem coe_life (u : (𝓞 K)ˣ) : ((u : 𝓞 K) : K)⁻¹ = ((u⁻¹ : (𝓞 K)ˣ) : 𝓞 K) := by
-  rw [inv_eq_one_div]
-  symm
-  rw [eq_div_iff]
-  · cases' u with u₁ u₂ hmul hinv
-    simp only [Units.inv_mk, Units.val_mk]
-    rw [← MulMemClass.coe_mul _ u₂, hinv]
-    simp
-  · intro h
-    norm_cast at h
-    exact Units.ne_zero _ h
-
 theorem unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
     Complex.abs (φ (u * (unitGalConj K p u)⁻¹)) = 1 := by
-  rw [map_mul, IsAbsoluteValue.abv_mul Complex.abs, ← coe_life, map_inv₀, ← unitGalConj_spec,
+  rw [map_mul, IsAbsoluteValue.abv_mul Complex.abs, ← zpow_neg_one, NumberField.Units.coe_zpow,
+    zpow_neg_one, map_inv₀, ← unitGalConj_spec,
     ← embedding_conj <| zeta_spec p ℚ K]
   simp only [map_inv₀, Complex.abs_conj]
   rw [mul_inv_eq_one₀]

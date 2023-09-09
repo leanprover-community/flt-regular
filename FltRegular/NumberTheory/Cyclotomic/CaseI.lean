@@ -26,7 +26,12 @@ theorem exists_int_sum_eq_zero (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i :
   obtain ⟨β, k, hβreal : galConj K p β = β, H⟩ := unit_lemma_gal_conj hζ hpodd hp u
   have : (x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ) : K) =
       galConj K p (x + y * ↑↑(IsPrimitiveRoot.unit' hζ) ^ i) := by
-    simp [galConj_zeta_runity hζ, ← coe_life]
+    simp only [zpow_neg, IsPrimitiveRoot.val_unit'_coe, _root_.map_add, map_intCast, _root_.map_mul,
+      map_zpow₀, galConj_zeta_runity hζ, inv_zpow', add_right_inj, mul_eq_mul_left_iff,
+      Int.cast_eq_zero]
+    left
+    rw [← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one]
+    simp
   obtain ⟨a, ha⟩ := exists_int_sub_pow_prime_dvd p α
   refine' ⟨k, _⟩
   rw [Ideal.mem_span_singleton] at ha ⊢

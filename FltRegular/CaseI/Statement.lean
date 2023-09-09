@@ -114,7 +114,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   · exact h5p
 
 set_option maxHeartbeats 6400000 in
-set_option synthInstance.maxHeartbeats 200000 in
+set_option synthInstance.maxHeartbeats 800000 in
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
     (H : a ^ p + b ^ p = c ^ p) (hζ : IsPrimitiveRoot ζ p) :

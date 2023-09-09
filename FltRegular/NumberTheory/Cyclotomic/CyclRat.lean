@@ -231,7 +231,7 @@ theorem diff_of_roots2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R} (
 instance arg : IsDedekindDomain R :=
   inferInstance
 
-set_option synthInstance.maxHeartbeats 300000 in
+set_option synthInstance.maxHeartbeats 1200000 in
 set_option maxHeartbeats 1600000 in
 theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
@@ -261,8 +261,7 @@ theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η
     have h4 : ↑v * (1 - η₁) * ↑y = v * y * (1 - η₁) := by ring
     rw [← h4]
     apply this
-  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I :=
-    by
+  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I :=  by
     have : η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) ∈ I :=
       Ideal.add_mem _ (mul_mem_left _ _ (mem_sup_left (mem_fltIdeals x y hη₁)))
         (mul_mem_left _ _ (mem_sup_right (mem_fltIdeals x y hη₂)))
@@ -295,31 +294,25 @@ theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η
   have HC : 1 - η₁ ∈ P → False := by
     intro h
     have eta_sub_one_ne_zero := sub_ne_zero.mpr (Ne.symm hwlog)
-    have hηprime : IsPrime (Ideal.span ({1 - η₁} : Set R)) :=
-      by
+    have hηprime : IsPrime (Ideal.span ({1 - η₁} : Set R)) := by
       rw [span_singleton_prime eta_sub_one_ne_zero]
       apply one_sub_zeta_prime ph hη₁ hwlog
-    have H5 : IsPrime (Ideal.span ({(p : ℤ)} : Set ℤ)) :=
-      by
+    have H5 : IsPrime (Ideal.span ({(p : ℤ)} : Set ℤ)) := by
       have h2 : (p : ℤ) ≠ 0 := by simp
       have h1 : Prime (p : ℤ) := by
         rw [← prime_iff_prime_int]
         exact Fact.out
       rw [span_singleton_prime h2]
       apply h1
-    have hηP : Ideal.span ({1 - η₁} : Set R) = P :=
-      by
-      have hRdim1 : Ring.DimensionLEOne R := IsDedekindDomain.dimensionLEOne
+    have hηP : Ideal.span ({1 - η₁} : Set R) = P := by
       have hle : Ideal.span ({1 - η₁} : Set R) ≤ P := by rw [span_le]; simp [h]
-      apply (@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ hRdim1 _ _ hηprime hPrime _).1 hle
+      apply (@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ _ _ _ hηprime hPrime _).1 hle
       intro hbot
       rw [span_eq_bot] at hbot
       simp only [Set.mem_singleton_iff, forall_eq, sub_eq_zero] at hbot
       exact hwlog hbot.symm
-    have hcapZ : P.comap (Int.castRingHom R) = Ideal.span ({(p : ℤ)} : Set ℤ) :=
-      by
-      have H1 : Ideal.span ({(p : ℤ)} : Set ℤ) ≤ P.comap (Int.castRingHom R) :=
-        by
+    have hcapZ : P.comap (Int.castRingHom R) = Ideal.span ({(p : ℤ)} : Set ℤ) := by
+      have H1 : Ideal.span ({(p : ℤ)} : Set ℤ) ≤ P.comap (Int.castRingHom R) := by
         rw [← hηP]
         apply le_comap_of_map_le _
         rw [map_span]
@@ -328,11 +321,9 @@ theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η
         apply zeta_sub_one_dvb_p ph hη₁ hwlog
       have H2 : IsPrime (P.comap (Int.castRingHom R)) := by
         apply @IsPrime.comap _ _ _ _ _ _ _ _ hPrime
-      have H3 : Ring.DimensionLEOne ℤ := IsDedekindDomain.dimensionLEOne
       have H4 : Ideal.span ({(p : ℤ)} : Set ℤ) ≠ ⊥ := by simp
-      apply ((@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ H3 _ _ H5 H2 H4).1 H1).symm
-    have hxyinP : (x + y : R) ∈ P :=
-      by
+      apply ((@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ _ _ _ H5 H2 H4).1 H1).symm
+    have hxyinP : (x + y : R) ∈ P := by
       have H1 : (x : R) + η₁ * y ∈ P := by
         apply hiP
         apply Submodule.mem_span_singleton_self
@@ -391,8 +382,8 @@ theorem fltIdeals_coprime (hpri : (p : ℕ).Prime) (p5 : 5 ≤ p) {x y z : ℤ}
 
 variable {L}
 
-set_option synthInstance.maxHeartbeats 160000 in
-set_option maxHeartbeats 400000 in
+set_option synthInstance.maxHeartbeats 800000 in
+set_option maxHeartbeats 1600000 in
 theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     (hζ : IsPrimitiveRoot ζ p) {f : Fin p → ℤ}
     (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
@@ -444,8 +435,8 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
   simp only [Fin.castIso_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub, neg_eq_iff_eq_neg] at hy
   simp [hy, dvd_neg]
 
-set_option synthInstance.maxHeartbeats 160000 in
-set_option maxHeartbeats 400000 in
+set_option synthInstance.maxHeartbeats 1000000 in
+set_option maxHeartbeats 1600000 in
 theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRoot ζ p)
     {f : Fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
     ∀ j, m ∣ f j := by

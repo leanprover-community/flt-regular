@@ -529,7 +529,6 @@ theorem eq_leadingTerms_add (p : MvPolynomial ι R) (hp : p.totalDegree ≠ 0) :
       simp at hx
       exact hx.2
     simp_rw [coeff_leadingTerms]
-    simp [this]
     rw [← Finset.sum_coe_sort (support (leadingTerms p))]
     conv_rhs =>
       congr; congr; rfl; ext i;
