@@ -5,8 +5,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 
 import FltRegular.FltThree.Primes
 import FltRegular.FltThree.Edwards
-import Mathlib.Tactic.IntervalCases
 import Mathlib.Data.Int.GCD
+import Mathlib.NumberTheory.FLT.Basic
+import Mathlib.Tactic.IntervalCases
 
 /-- solutions to Fermat's last theorem for the exponent `3`. -/
 def FltSolution (n : ℕ) (a b c : ℤ) :=
@@ -708,13 +709,13 @@ theorem descent (a b c : ℤ) (h : FltCoprime 3 a b c) :
   · apply descent_gcd3 a b c p q hp hq hcoprime hodd hcube hgcd
 #align descent descent
 
-theorem flt_three {a b c : ℤ} (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0) : a ^ 3 + b ^ 3 ≠ c ^ 3 :=
-  by
+theorem flt_three : FermatLastTheoremWith ℤ 3 := by
+  intros a b c ha hb hc
   induction' h : (a * b * c).natAbs using Nat.strong_induction_on with k' IH generalizing a b c
   intro H
   obtain ⟨x'', y'', z'', hxle, hyle, hzle, hcoprime⟩ := exists_coprime zero_lt_three ha hb hc H
   obtain ⟨x', y', z', hx'pos, hy'pos, hz'pos, hsmaller, hsolution⟩ := descent x'' y'' z'' hcoprime
-  refine' IH (x' * y' * z').natAbs _ hx'pos hy'pos hz'pos rfl hsolution
+  refine' IH (x' * y' * z').natAbs _ _ _ _ hx'pos hy'pos hz'pos rfl hsolution
   apply lt_of_lt_of_le hsmaller
   rw [← h]
   simp only [Int.natAbs_mul]
