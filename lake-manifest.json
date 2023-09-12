@@ -10,6 +10,14 @@
     "inputRev?": "v0.0.13",
     "inherited": true}},
   {"git":
+   {"url": "https://github.com/CBirkbeck/ModularForms_Lean4.git",
+    "subDir?": null,
+    "rev": "a1b8e721e39afb8ea2e487227481ddcf789de72f",
+    "opts": {},
+    "name": "modularforms",
+    "inputRev?": null,
+    "inherited": false}},
+  {"git":
    {"url": "https://github.com/mhuisi/lean4-cli.git",
     "subDir?": null,
     "rev": "21dac2e9cc7e3cf7da5800814787b833e680b2fd",
