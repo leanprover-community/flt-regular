@@ -410,7 +410,7 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
   simp only [hlast, h, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
     ← (Fin.castIso hdim).toEquiv.sum_comp] at hy
-  simp only [RelIso.coe_fn_toEquiv, Fin.coe_castIso, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
+  simp only [RelIso.coe_fn_toEquiv, Fin.coe_cast, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
     Fin.coe_orderIso_apply] at hy
   push_cast at hy
   conv_lhs at hy =>
@@ -432,7 +432,8 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     ← zsmul_eq_smul_cast] at hy
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.castIso hdim.symm) ⟨i, hi⟩) y m
   rw [hn] at hy
-  simp only [Fin.castIso_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub, neg_eq_iff_eq_neg] at hy
+  simp only [Fin.castIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub,
+    neg_eq_iff_eq_neg] at hy
   simp [hy, dvd_neg]
 
 set_option synthInstance.maxHeartbeats 1000000 in
@@ -463,7 +464,7 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   simp only [hlast, h, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
     ← (Fin.castIso hdim).toEquiv.sum_comp] at hy
-  simp only [RelIso.coe_fn_toEquiv, Fin.coe_castIso, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
+  simp only [RelIso.coe_fn_toEquiv, Fin.coe_cast, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
     Fin.coe_orderIso_apply] at hy
   push_cast at hy
   conv_lhs at hy =>
@@ -482,7 +483,8 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   replace hy := congr_arg (b.basis.coord ((Fin.castIso hdim.symm) ⟨j, hj⟩)) hy
   rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
     b.basis.coord_equivFun_symm, b.basis.coord_equivFun_symm] at hy
-  simp only [Fin.castIso_mk, Fin.castSucc_mk, Fin.eta, Basis.coord_apply, sub_eq_iff_eq_add] at hy
-  obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.castIso hdim.symm) ⟨j, hj⟩) y m
-  rw [hy, ← smul_eq_mul, ← zsmul_eq_smul_cast, ← b.basis.coord_apply, ← Fin.castIso_mk, hn]
+  simp only [Fin.castIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Basis.coord_apply,
+    sub_eq_iff_eq_add] at hy
+  obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.cast hdim.symm) ⟨j, hj⟩) y m
+  rw [hy, ← smul_eq_mul, ← zsmul_eq_smul_cast, ← b.basis.coord_apply, ← Fin.cast_mk, hn]
   exact dvd_add (dvd_mul_right _ _) last_dvd

@@ -55,10 +55,9 @@ theorem Nat.one_lt_of_ne : ∀ n : ℕ, n ≠ 0 → n ≠ 1 → 1 < n
 
 -- this result holds for all primitive roots; dah.
 theorem associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
-    (hζ : IsPrimitiveRoot ζ n) (hk : k.coprime n) (hj : j.coprime n) :
-    Associated (1 - ζ ^ j) (1 - ζ ^ k) :=
-  by
-  suffices ∀ {j : ℕ}, j.coprime n → Associated (1 - ζ) (1 - ζ ^ j) by
+    (hζ : IsPrimitiveRoot ζ n) (hk : k.Coprime n) (hj : j.Coprime n) :
+    Associated (1 - ζ ^ j) (1 - ζ ^ k) := by
+  suffices ∀ {j : ℕ}, j.Coprime n → Associated (1 - ζ) (1 - ζ ^ j) by
     exact (this hj).symm.trans (this hk)
   clear k j hk hj
   intro j hj
@@ -75,10 +74,9 @@ theorem associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
   nth_rw 1 [this]
   rw [← geom_sum_mul_neg, mul_comm]
 
-theorem IsPrimitiveRoot.sum_pow_unit {n k : ℕ} {ζ : A} (hn : 2 ≤ n) (hk : k.coprime n)
-    (hζ : IsPrimitiveRoot ζ n) : IsUnit (∑ i : ℕ in range k, ζ ^ (i : ℕ)) :=
-  by
-  have h1 : (1 : ℕ).coprime n := Nat.coprime_one_left n
+theorem IsPrimitiveRoot.sum_pow_unit {n k : ℕ} {ζ : A} (hn : 2 ≤ n) (hk : k.Coprime n)
+    (hζ : IsPrimitiveRoot ζ n) : IsUnit (∑ i : ℕ in range k, ζ ^ (i : ℕ)) := by
+  have h1 : (1 : ℕ).Coprime n := Nat.coprime_one_left n
   have := associated_one_sub_pow_primitive_root_of_coprime _ hζ hk h1
   simp at this
   rw [Associated] at this
@@ -100,8 +98,7 @@ theorem IsPrimitiveRoot.sum_pow_unit {n k : ℕ} {ζ : A} (hn : 2 ≤ n) (hk : k
 
 theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A} (hn : 2 ≤ p)
     (hp : p.Prime) (hi : i < p) (hj : j < p) (hij : i ≠ j) (hζ : IsPrimitiveRoot ζ p) :
-    ∃ u : Aˣ, ζ ^ i - ζ ^ j = u * (1 - ζ) :=
-  by
+    ∃ u : Aˣ, ζ ^ i - ζ ^ j = u * (1 - ζ) := by
   by_cases hilj : j < i
   have h1 : ζ ^ i - ζ ^ j = ζ ^ j * (ζ ^ (i - j) - 1) := by
     ring_nf
@@ -110,7 +107,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     ring
   rw [h1]
   have h2 := mul_neg_geom_sum ζ (i - j)
-  have hic : (i - j).coprime p := by
+  have hic : (i - j).Coprime p := by
     rw [Nat.coprime_comm]; apply Nat.coprime_of_lt_prime _ _ hp
     apply Nat.sub_pos_of_lt hilj
     by_cases hj : 0 < j
@@ -120,8 +117,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     rw [hj]
     simp only [tsub_zero]
     exact hi
-  have h3 : IsUnit (-ζ ^ j * ∑ k : ℕ in range (i - j), ζ ^ (k : ℕ)) :=
-    by
+  have h3 : IsUnit (-ζ ^ j * ∑ k : ℕ in range (i - j), ζ ^ (k : ℕ)) := by
     apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hic hζ); apply IsUnit.neg
     apply IsUnit.pow; apply hζ.isUnit hp.pos
   obtain ⟨v, hv⟩ := h3
@@ -137,7 +133,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     simp; rw [pow_mul_pow_sub _ hilj]
   rw [h1]
   have h2 := mul_neg_geom_sum ζ (j - i)
-  have hjc : (j - i).coprime p := by
+  have hjc : (j - i).Coprime p := by
     rw [Nat.coprime_comm]
     apply Nat.coprime_of_lt_prime _ _ hp
     have hilj' : i < j := by rw [lt_iff_le_and_ne]; simp [hij, hilj]
@@ -149,8 +145,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     rw [hii]
     simp only [tsub_zero]
     exact hj
-  have h3 : IsUnit (ζ ^ i * ∑ k : ℕ in range (j - i), ζ ^ (k : ℕ)) :=
-    by
+  have h3 : IsUnit (ζ ^ i * ∑ k : ℕ in range (j - i), ζ ^ (k : ℕ)) := by
     apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hjc hζ); apply IsUnit.pow
     apply hζ.isUnit hp.pos
   obtain ⟨v, hv⟩ := h3

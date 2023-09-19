@@ -52,7 +52,7 @@ instance {p : ℕ} [hp : Fact p.Prime] : Fact (0 < p) :=
 -- note that this definition can be annoying to work with whilst #14984 isn't merged.
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
 def IsRegularNumber [hn : Fact (0 < n)] : Prop :=
-  n.coprime <| Fintype.card <| ClassGroup (𝓞 <| CyclotomicField ⟨n, hn.out⟩ ℚ)
+  n.Coprime <| Fintype.card <| ClassGroup (𝓞 <| CyclotomicField ⟨n, hn.out⟩ ℚ)
 
 /-- The definition of regular primes. -/
 def IsRegularPrime : Prop :=
@@ -98,10 +98,9 @@ instance (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
   let F : 𝓞 L ≃+* ℤ := NumberField.RingOfIntegers.equiv _
   exact IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
 
-set_option maxHeartbeats 1600000 in
+set_option maxHeartbeats 400000 in
 set_option synthInstance.maxHeartbeats 400000 in
-theorem isRegularNumber_two : IsRegularNumber 2 :=
-  by
+theorem isRegularNumber_two : IsRegularNumber 2 := by
   rw [IsRegularNumber]
   convert coprime_one_right _
   dsimp
