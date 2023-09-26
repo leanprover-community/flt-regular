@@ -15,48 +15,50 @@ variable (i : ℤ)
 
 namespace FltRegular.CaseI
 
-set_option maxHeartbeats 1600000 in
+lemma coe_unitGalConj (x : (𝓞 K)ˣ) : ↑(unitGalConj K p x) = intGal (galConj K p) (x : 𝓞 K) :=
+rfl
+
+theorem pow_sub_intGalConj_mem (hp : (p : ℕ).Prime) (α : 𝓞 K) :
+    (α ^ (p : ℕ) - intGal (galConj K p) (α ^ (p : ℕ))) ∈ Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
+  have : Fact (p : ℕ).Prime := ⟨hp⟩
+  obtain ⟨a, ha⟩ := exists_int_sub_pow_prime_dvd p α
+  rw [Ideal.mem_span_singleton] at ha ⊢
+  obtain ⟨γ, hγ⟩ := ha
+  rw [sub_eq_iff_eq_add] at hγ
+  rw [hγ, _root_.map_add, _root_.map_mul, map_natCast, map_intCast, add_sub_add_right_eq_sub,
+    ← mul_sub]
+  exact dvd_mul_right _ _
+
+theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) :
+  intGal (galConj K p) (x + y * ↑(hζ.unit' ^ i) : 𝓞 K) = x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ) := by
+  ext1
+  rw [intGal_apply_coe]
+  push_cast
+  simp only [zpow_neg, _root_.map_add, map_intCast, _root_.map_mul, map_zpow₀, AlgHom.coe_coe,
+    galConj_zeta_runity hζ, add_right_inj, mul_eq_mul_left_iff, Int.cast_eq_zero, inv_zpow]
+
+theorem exists_int_sum_eq_zero' (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i : ℤ) {u : (𝓞 K)ˣ}
+    {α : 𝓞 K} (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ (p : ℕ)) :
+    ∃ k : ℕ, (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) - ((hζ.unit' ^ k) ^ 2 : (𝓞 K)ˣ) *
+    (x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ)) ∈
+    Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
+  letI : NumberField K := IsCyclotomicExtension.numberField { p } ℚ _
+  have : Fact (p : ℕ).Prime := ⟨hp⟩
+  obtain ⟨k, H⟩ := unit_inv_conj_is_root_of_unity hζ hpodd hp u
+  refine' ⟨k, _⟩
+  rw [← exists_int_sum_eq_zero'_aux, h, ← H, Units.val_mul, mul_assoc, ← mul_sub, _root_.map_mul,
+    ← coe_unitGalConj, ← mul_assoc, ← Units.val_mul, inv_mul_self, Units.val_one, one_mul]
+  exact Ideal.mul_mem_left _ _ (pow_sub_intGalConj_mem hp α)
+
 theorem exists_int_sum_eq_zero (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i : ℤ) {u : (𝓞 K)ˣ}
     {α : 𝓞 K} (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ (p : ℕ)) :
     ∃ k : ℤ, (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) - (hζ.unit' ^ (2 * k) : (𝓞 K)ˣ) *
     (x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ)) ∈
     Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
-  letI : NumberField K := IsCyclotomicExtension.numberField { p } ℚ _
-  have : Fact (p : ℕ).Prime := ⟨hp⟩
-  obtain ⟨β, k, hβreal : galConj K p β = β, H⟩ := unit_lemma_gal_conj hζ hpodd hp u
-  have : (x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ) : K) =
-      galConj K p (x + y * ↑↑(IsPrimitiveRoot.unit' hζ) ^ i) := by
-    simp only [zpow_neg, IsPrimitiveRoot.val_unit'_coe, _root_.map_add, map_intCast, _root_.map_mul,
-      map_zpow₀, galConj_zeta_runity hζ, inv_zpow', add_right_inj, mul_eq_mul_left_iff,
-      Int.cast_eq_zero]
-    left
-    rw [← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one]
-    simp
-  obtain ⟨a, ha⟩ := exists_int_sub_pow_prime_dvd p α
-  refine' ⟨k, _⟩
-  rw [Ideal.mem_span_singleton] at ha ⊢
-  obtain ⟨γ, hγ⟩ := ha
-  rw [h, sub_eq_iff_eq_add.1 hγ, mul_add, ← mul_assoc, mul_comm (↑u : 𝓞 K), mul_assoc, add_sub_assoc]
-  refine' dvd_add (Dvd.intro _ rfl) _
-  have h' := congr_arg (fun a : 𝓞 K => (a : K)) h
-  have hγ' := congr_arg (fun a : 𝓞 K => (a : K)) hγ
-  simp only [AddSubgroupClass.coe_sub, SubsemiringClass.coe_pow, SubringClass.coe_intCast,
-    MulMemClass.coe_mul, SubringClass.coe_natCast, AddMemClass.coe_add, coe_zpow'] at h' hγ'
-  rw [h', sub_eq_iff_eq_add.1 hγ', H, MulMemClass.coe_mul, AlgEquiv.map_mul, AlgEquiv.map_mul,
-    AlgEquiv.map_add, map_intCast, AlgEquiv.map_mul, coe_zpow', coe_zpow'] at this
-  simp only [hζ.coe_unit'_coe, SubringClass.coe_natCast, map_natCast] at this
-  let γ' := (⟨galConj K p γ, NumberField.RingOfIntegers.map_mem (galConj K p) γ⟩ : 𝓞 K)
-  have hint : ↑γ' = galConj K p γ := rfl
-  rw [hβreal, map_zpow₀, galConj_zeta_runity hζ, ← hζ.coe_unit'_coe, inv_zpow, ← zpow_neg, ← hint, ←
-    SubringClass.coe_intCast (𝓞 K) x, ← SubringClass.coe_intCast (𝓞 K) y, ← coe_zpow', ←
-    SubringClass.coe_natCast (𝓞 K) p, ← coe_zpow', ← SubringClass.coe_intCast (𝓞 K) a,
-    ← MulMemClass.coe_mul (𝓞 K), ← AddMemClass.coe_add (𝓞 K), ← MulMemClass.coe_mul (𝓞 K),
-    ← MulMemClass.coe_mul (𝓞 K), ← AddMemClass.coe_add (𝓞 K), ← MulMemClass.coe_mul (𝓞 K),
-    Subtype.coe_inj] at this
-  rw [this, mul_add, mul_add, sub_add_eq_sub_sub, sub_right_comm]
-  refine' dvd_sub _ (by simp)
-  rw [mul_comm (↑β : 𝓞 K), ← mul_assoc, ← mul_assoc, ← Units.val_mul, ← zpow_add, two_mul,
-    ← sub_eq_add_neg, add_sub_assoc, sub_self, add_zero, mul_comm _ (↑β : 𝓞 K), ← H, sub_self]
-  exact dvd_zero _
+  obtain ⟨k, hk⟩ := exists_int_sum_eq_zero' hζ hpodd hp x y i h
+  use k
+  convert hk
+  rw [mul_comm, zpow_mul, zpow_ofNat]
+  rfl
 
 end FltRegular.CaseI

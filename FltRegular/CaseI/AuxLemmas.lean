@@ -179,8 +179,6 @@ theorem auxf1k₂ (a : ℤ) : ∃ i : Fin P, f1k₂ a (i : ℕ) = 0 := by
     simp only [Fin.ext_iff, Fin.val_mk] at h
   simp only [f1k₂, h2, if_false, hzero]
 
-set_option maxHeartbeats 400000 in
-set_option synthInstance.maxHeartbeats 80000 in
 theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
     (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (1 : ℕ) ≠ ↑k₂ := by
@@ -192,12 +190,14 @@ theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
     sub_eq_iff_eq_add, ← Int.cast_add, ZMod.int_cast_eq_int_cast_iff] at hcong
   rw [habs, pow_one, aux_cong1k₂ hpri hp5 hcong] at hdiv
   ring_nf at hdiv
-  have key : ↑(p : ℤ) ∣ ∑ j in range p, f1k₂ a j • ζ ^ j :=
-    by
-    convert hdiv using 1
+  have key : ↑(p : ℤ) ∣ ∑ j in range p, f1k₂ a j • ζ ^ j := by
+    rw [Int.cast_ofNat]
+    suffices : ∑ j in range p, f1k₂ a j • ζ ^ j = ↑a - ↑a * ζ ^ 2
+    · rwa [this]
     simp_rw [f1k₂, ite_smul, sum_ite, filter_filter, ← Ne.def, ne_and_eq_iff_right
       (show 0 ≠ 2 by norm_num), Finset.range_filter_eq]
-    simp [hpri.pos, two_lt hp5, Fin.val_mk (two_lt hp5), eq_self_iff_true, -Fin.mk_bit0]
+    simp only [hpri.pos, ite_true, zsmul_eq_mul, sum_singleton, _root_.pow_zero, mul_one, two_lt hp5, neg_smul,
+  sum_neg_distrib, ne_eq, mem_range, not_and, not_not, zero_smul, sum_const_zero, add_zero]
     ring
   rw [sum_range] at key
   refine' caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right _ _) _)

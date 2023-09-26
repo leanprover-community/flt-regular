@@ -94,8 +94,36 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   rw [hgcd] at Hq
   exact hqpri.not_unit (isUnit_of_dvd_one Hq)
 
-set_option synthInstance.maxHeartbeats 200000 in
-set_option maxHeartbeats 800000 in
+variable (p)
+
+/-
+These instances are related to the problem described in 
+https://leanprover.zulipchat.com/#narrow/stream/270676-lean4/topic/slowness.20in.20ring.20theory.20file
+-/
+instance foo1 : @IsDomain (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))
+  (@CommSemiring.toSemiring _ CommRing.toCommSemiring) :=
+inferInstance
+
+instance foo2 : IsDedekindDomain (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)) :=
+inferInstance
+
+instance foo3 : @IsDomain (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) CommSemiring.toSemiring := by
+  convert @Ideal.isDomain (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)) _ (foo1 p) (foo2 p)
+
+noncomputable
+instance foo4 : @NormalizedGCDMonoid (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)))
+  (@IsDomain.toCancelCommMonoidWithZero _ (@IdemCommSemiring.toCommSemiring _
+    Submodule.instIdemCommSemiringSubmoduleToSemiringToAddCommMonoidToNonUnitalNonAssocSemiringToNonAssocSemiringToSemiringToModule) (foo3 p)) := by
+  convert @Ideal.instNormalizedGCDMonoidIdealToSemiringToCommSemiringCancelCommMonoidWithZero _ _ (foo1 p) (foo2 p)
+
+noncomputable
+instance foo5 : @GCDMonoid (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)))
+  (@IsDomain.toCancelCommMonoidWithZero _ (@IdemCommSemiring.toCommSemiring _
+    Submodule.instIdemCommSemiringSubmoduleToSemiringToAddCommMonoidToNonUnitalNonAssocSemiringToNonAssocSemiringToSemiringToModule) (foo3 p)) := by
+  convert @NormalizedGCDMonoid.toGCDMonoid (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) _ (foo4 p)
+
+variable {p}
+
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1)
     (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p R) :
@@ -113,39 +141,48 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   · exact hpri.out
   · exact h5p
 
-set_option maxHeartbeats 6400000 in
-set_option synthInstance.maxHeartbeats 800000 in
-theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
-    (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
-    (H : a ^ p + b ^ p = c ^ p) (hζ : IsPrimitiveRoot ζ p) :
-    ∃ (u : Rˣ) (α : R), ↑u * α ^ p = ↑a + ζ * ↑b := by
-  replace hζ := hζ.mem_nthRootsFinset hpri.out.pos
-  obtain ⟨I, hI⟩ := exists_ideal hp5 H hgcd caseI hζ
-  by_cases hIpzero : I ^ p = 0
-  · refine' ⟨1, 0, _⟩
-    rw [hIpzero, zero_eq_bot, Ideal.span_singleton_eq_bot] at hI
-    rw [zero_pow hpri.out.pos, hI, mul_zero]
-  have hIzero : I ≠ 0 := by
-    intro hIzero
-    simp only [hIzero, zero_pow hpri.out.pos] at hIpzero
-  have hIprin : Submodule.IsPrincipal I := by
-    have : ClassGroup.mk0 ⟨I ^ p, mem_nonZeroDivisors_of_ne_zero hIpzero⟩ = 1 := by
-      rw [ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero hIpzero)]
-      exact ⟨⟨_, hI.symm⟩⟩
-    rw [← SubmonoidClass.mk_pow I (mem_nonZeroDivisors_of_ne_zero hIzero), map_pow] at this
-    cases' (dvd_prime hpri.out).1 (orderOf_dvd_of_pow_eq_one this) with h1 habs
-    · exact (ClassGroup.mk0_eq_one_iff _).1 (orderOf_eq_one_iff.1 h1)
-    · exfalso
-      refine' hpri.out.coprime_iff_not_dvd.1 hreg _
-      convert orderOf_dvd_card_univ (x := ClassGroup.mk0 ⟨I, mem_nonZeroDivisors_of_ne_zero hIzero⟩)
-      apply habs.symm
-  obtain ⟨α, hα⟩ := hIprin
+theorem IsPrincipal_of_IsPrincipal_pow_of_Coprime
+  (A : Type*) [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
+  (H : p.Coprime <| Fintype.card <| ClassGroup A) (I : Ideal A)
+  (hI : (I ^ p).IsPrincipal) : I.IsPrincipal := by
+  by_cases Izero : I = 0
+  · rw [Izero]
+    exact bot_isPrincipal
+  rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero _)] at hI ⊢
+  swap; · exact Izero
+  swap; · exact pow_ne_zero p Izero
+  rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
+  refine ⟨?_, orderOf_dvd_card_univ⟩
+  rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]
+
+theorem is_principal_aux (K' : Type*) [Field K'] [CharZero K'] [IsCyclotomicExtension {P} ℚ K']
+  [Fintype (ClassGroup (𝓞 K'))]
+  {a b : ℤ} {ζ : 𝓞 K'} (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K'))
+  (I : Ideal (𝓞 K')) (hI : span ({↑a + ζ * ↑b} : Set (𝓞 K')) = I ^ p) :
+  ∃ (u : (𝓞 K')ˣ) (α : 𝓞 K'), ↑u * α ^ p = ↑a + ζ * ↑b := by
+  letI : NumberField K' := IsCyclotomicExtension.numberField { P } ℚ K'
+  obtain ⟨α, hα⟩ : I.IsPrincipal := by
+    apply IsPrincipal_of_IsPrincipal_pow_of_Coprime (𝓞 K') hreg I
+    constructor
+    use ↑a + ζ * ↑b
+    rw [submodule_span_eq, hI]
   replace hα := congr_arg (fun (J : Submodule _ _) => J ^ p) hα
   simp only [← hI, submodule_span_eq, span_singleton_pow, span_singleton_eq_span_singleton] at hα
   obtain ⟨u, hu⟩ := hα
   refine' ⟨u⁻¹, α, _⟩
   rw [← hu, mul_comm ((_ + ζ * _)), ← mul_assoc]
   simp only [Units.inv_mul, one_mul]
+
+theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
+    (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
+    (H : a ^ p + b ^ p = c ^ p) (hζ : IsPrimitiveRoot ζ p) :
+    ∃ (u : Rˣ) (α : R), ↑u * α ^ p = ↑a + ζ * ↑b := by
+  haveI := CyclotomicField.isCyclotomicExtension P ℚ
+  replace hζ := hζ.mem_nthRootsFinset hpri.out.pos
+  obtain ⟨I, hI⟩ := exists_ideal hp5 H hgcd caseI hζ
+  apply is_principal_aux
+  · rwa [IsRegularPrime, IsRegularNumber] at hreg
+  · exact hI
 
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime p)
     (hζ : IsPrimitiveRoot ζ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)

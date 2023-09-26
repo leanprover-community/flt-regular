@@ -83,7 +83,8 @@ def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := b
         (IsSplittingField.algEquiv K <| cyclotomic 2 K).symm
   exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (RingHom.id K) (-1), by simp⟩
 
-instance (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
+instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
+  (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
     IsPrincipalIdealRing (𝓞 L) := by
   haveI : IsIntegralClosure ℤ ℤ L :=
     { algebraMap_injective' := (algebraMap ℤ L).injective_int
@@ -98,8 +99,12 @@ instance (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
   let F : 𝓞 L ≃+* ℤ := NumberField.RingOfIntegers.equiv _
   exact IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
 
-set_option maxHeartbeats 400000 in
-set_option synthInstance.maxHeartbeats 400000 in
+instance : IsCyclotomicExtension {2} ℚ (CyclotomicField (⟨2, two_pos⟩ : ℕ+) ℚ) :=
+CyclotomicField.isCyclotomicExtension 2 ℚ
+
+instance : IsPrincipalIdealRing (𝓞 (CyclotomicField (⟨2, two_pos⟩ : ℕ+) ℚ)) :=
+IsPrincipalIdealRing_of_IsCyclotomicExtension_two _
+
 theorem isRegularNumber_two : IsRegularNumber 2 := by
   rw [IsRegularNumber]
   convert coprime_one_right _
