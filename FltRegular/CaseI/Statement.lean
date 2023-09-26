@@ -96,6 +96,10 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
 
 variable (p)
 
+/-
+These instances are related to the problem described in 
+https://leanprover.zulipchat.com/#narrow/stream/270676-lean4/topic/slowness.20in.20ring.20theory.20file
+-/
 instance foo1 : @IsDomain (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))
   (@CommSemiring.toSemiring _ CommRing.toCommSemiring) :=
 inferInstance
