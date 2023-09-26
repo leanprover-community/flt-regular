@@ -161,12 +161,14 @@ theorem eq_one_mod_one_sub {A : Type _} [CommRing A] {t : A} :
 
 theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type _} [CommRing A] [IsDomain A] {ζ : A}
     (hζ : IsPrimitiveRoot ζ p) {μ : A} (hμ : μ ^ (p : ℕ) = 1) :
-    algebraMap A (A ⧸ Ideal.span ({ζ - 1} : Set A)) μ = 1 := by
+    (@FunLike.coe _ A (fun _ => A ⧸ Ideal.span {ζ - 1}) _ (algebraMap A (A ⧸ Ideal.span {ζ - 1})) μ) = 1 := by
   obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ p.pos
   rw [map_pow, eq_one_mod_one_sub, one_pow]
 
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 800000 in
+instance : Algebra (𝓞 K) (𝓞 K ⧸ I) := Ideal.Quotient.algebra _
+instance : AddCommMonoid (𝓞 K) := inferInstance
+instance : AddCommMonoid (𝓞 K ⧸ I) := inferInstance
+
 theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot μ p)
     (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral p.pos⟩ : 𝓞 K) ^ (x : ℕ) = l) :
     algebraMap (𝓞 K) (𝓞 K ⧸ I) l = ∑ x : Fin t, (f x : 𝓞 K ⧸ I) := by
@@ -175,15 +177,12 @@ theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot
   convert h.symm using 1
   congr
   funext x
-  convert (zsmul_one (A := 𝓞 K ⧸ I) (f x)).symm
-  obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ.pow_eq_one p.pos
-  convert_to (1 : 𝓞 K ⧸ I) ^ (x : ℕ) = 1
-  swap; · exact one_pow _
-  rw [one_pow]
-  apply hζ.unit'_coe.eq_one_mod_sub_of_pow
-  ext
-  push_cast
-  rw [← pow_mul, ← pow_mul, ← mul_rotate', pow_mul, hζ.pow_eq_one, one_pow]
+  have : (⟨μ, hμ.isIntegral p.pos⟩ : 𝓞 K) ^ (p : ℕ) = 1 := by
+    ext
+    push_cast
+    exact hμ.pow_eq_one
+  have := hζ.unit'_coe.eq_one_mod_sub_of_pow this
+  simp only [map_pow (algebraMap (𝓞 K) (𝓞 K ⧸ I)), this, one_pow, zsmul_one]
 
 theorem IsPrimitiveRoot.p_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] : (p : 𝓞 K) ∈ I := by
   classical
@@ -327,11 +326,29 @@ theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h 
   rw [sub_eq_of_eq_add hk] at this
   exact (hζ.isPrime_one_sub_zeta h).ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
-set_option synthInstance.maxHeartbeats 200000 in
-set_option maxHeartbeats 800000 in
-theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp : (p : ℕ).Prime) :
-    u * (unitGalConj K p u)⁻¹ ≠ -hζ.unit' ^ n := by
-  by_contra H
+example {x y : Type*} (f : x → y) (hf : Function.Injective f) (a b : x) : f a = f b ↔ a = b := by exact?
+
+lemma IsUnit.eq_mul_left_iff {S : Type*} [CommRing S] {x : S} (hx : IsUnit x) (y : S) :
+  x = y * x ↔ y = 1 := by
+  nth_rw 1 [← one_mul x]
+  rw [eq_comm, hx.mul_left_injective.eq_iff]
+
+lemma map_two {S T F: Type*} [NonAssocSemiring S] [NonAssocSemiring T]
+  [RingHomClass F S T] (f : F) : f 2 = 2 := by
+  rw [← one_add_one_eq_two, map_add, map_one]
+  exact one_add_one_eq_two
+
+lemma neg_one_eq_one_iff_two_eq_zero {M : Type*} [AddGroupWithOne M] : (-1 : M) = 1 ↔ (2 : M) = 0 := by
+  rw [neg_eq_iff_add_eq_zero, one_add_one_eq_two]
+
+lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [MonoidHomClass F M N]
+  (f : F) (m : Mˣ) : ↑((Units.map (f : M →* N) m)⁻¹) = f ↑(m⁻¹ : Mˣ) :=
+  m.coe_map_inv (f : M →* N)
+
+lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
+  algebraMap (𝓞 K) (𝓞 K ⧸ I) ((u * (unitGalConj K p u)⁻¹) : _) = 1 := by
+  have := Units.coe_map_inv' (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitGalConj K p u)
+  rw [Units.val_mul, map_mul, ← this, Units.mul_inv_eq_one, Units.coe_map , MonoidHom.coe_coe]
   haveI := Fact.mk hp
   have hu := hζ.integralPowerBasis'.basis.sum_repr u
   let a := hζ.integralPowerBasis'.basis.repr
@@ -359,30 +376,21 @@ theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp 
     congr
     ext a
     rw [this a]
-  set u' := (unitGalConj K p) u
-  replace hu := aux hζ hζ hu
-  replace hu' := aux hζ hζ.inv hu'
-  rw [mul_inv_eq_iff_eq_mul] at H
-  nth_rw 2 [H] at hu
-  push_cast at hu
-  rw [map_mul, map_neg, hζ.unit'_coe.eq_one_mod_sub_of_pow] at hu
-  have :
-      -1 * (algebraMap { x // x ∈ 𝓞 K } ({ x // x ∈ 𝓞 K } ⧸ I)) ↑((unitGalConj K p) u) =
-      -(algebraMap { x // x ∈ 𝓞 K } ({ x // x ∈ 𝓞 K } ⧸ I)) ↑((unitGalConj K p) u) :=
-    by simp
-  rw [this] at hu
-  swap
-  · rw [← pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one, one_pow]
-  have key := hu'.trans hu.symm
-  have hI := hζ.isPrime_one_sub_zeta h
-  rw [← sub_eq_zero, sub_neg_eq_add, ← map_add, ← two_mul, Ideal.Quotient.algebraMap_eq,
-    Ideal.Quotient.eq_zero_iff_mem, hI.mul_mem_iff_mem_or_mem] at key
-  cases' key with key1 key2
-  · exact hζ.two_not_mem_one_sub_zeta h key1
-  ·
-    exact
-      hI.ne_top
-        (Ideal.eq_top_of_isUnit_mem I key2 u'.isUnit)
+  exact (aux hζ hζ hu).trans (aux hζ hζ.inv hu').symm
+
+theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp : (p : ℕ).Prime) :
+    u * (unitGalConj K p u)⁻¹ ≠ -hζ.unit' ^ n := by
+  by_contra H
+  have hμ : algebraMap (𝓞 K) (𝓞 K ⧸ I) ((IsPrimitiveRoot.unit' hζ : 𝓞 K) ^ n) = 1 := by
+    apply hζ.unit'_coe.eq_one_mod_sub_of_pow
+    rw [← pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one, one_pow]
+  have hμ' : algebraMap (𝓞 K) (𝓞 K ⧸ I) ((IsPrimitiveRoot.unit' hζ : 𝓞 K) ^ n) = -1 := by
+    rw [← neg_eq_iff_eq_neg, ← map_neg, ← Units.val_pow_eq_pow_val, ← Units.val_neg, ← H]
+    apply unit_inv_conj_not_neg_zeta_runity_aux hζ u hp
+  haveI := Fact.mk hp
+  apply hζ.two_not_mem_one_sub_zeta h
+  rw [← Ideal.Quotient.eq_zero_iff_mem, map_two, ← neg_one_eq_one_iff_two_eq_zero, ← hμ', hμ]
+
 
 -- this proof has mild coe annoyances rn
 theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
@@ -415,13 +423,18 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
     exact NumberField.RingOfIntegers.isIntegral_coe _
   · exact unit_lemma_val_one p u
 
-set_option maxHeartbeats 400000 in
+lemma inv_coe_coe {K A : Type*} [Field K] [SetLike A K] [SubsemiringClass A K] {S : A} (s : Sˣ) :
+  (s : K)⁻¹ = ((s⁻¹ : Sˣ) : K) := by
+  apply inv_eq_of_mul_eq_one_right
+  change ((s * s⁻¹ : Sˣ) : K) = 1
+  rw [mul_inv_self]
+  rfl
+
+-- This is now not used?
 theorem unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
-    ∃ (x : Rˣ) (n : ℤ), IsGalConjReal p (x : K) ∧ (u : 𝓞 K) = x * (hζ.unit' ^ n : (𝓞 K)ˣ) := by
-  have := unit_inv_conj_is_root_of_unity hζ h hp u
-  obtain ⟨m, hm⟩ := this
-  let xuu := u * hζ.unit'⁻¹ ^ m
-  use xuu, m
+    ∃ (x : Rˣ) (n : ℕ), IsGalConjReal p (x : K) ∧ u = x * (hζ.unit' ^ n : (𝓞 K)ˣ) := by
+  obtain ⟨m, hm⟩ := unit_inv_conj_is_root_of_unity hζ h hp u
+  use u * hζ.unit'⁻¹ ^ m, m
   rw [IsGalConjReal]
   have hy : u * (hζ.unit' ^ m)⁻¹ = unitGalConj K p u * hζ.unit' ^ m := by
     rw [pow_two] at hm
@@ -433,15 +446,10 @@ theorem unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
     simp only [Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe,
       map_inv₀, galConj_zeta_runity_pow hζ m, inv_pow, inv_inv]
   constructor
-  rw [map_mul, ← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one, hz]
-  have hzz := unitGalConj_spec K p u
-  rw [hzz]
-  rw [← Subalgebra.coe_mul, ← Units.val_mul, ← hy]
-  simp only [Subalgebra.coe_pow, Subalgebra.coe_eq_zero, mul_eq_mul_left_iff, Units.ne_zero,
-    or_false_iff, Subalgebra.coe_mul, Units.val_pow_eq_pow_val, Units.val_mul]
-  rw [← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one]
-  simp only [Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe]
-  rw [mul_assoc, ← Units.val_mul, zpow_coe_nat, mul_left_inv, Units.val_one, mul_one]
+  · rw [map_mul, ← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one, hz,
+    unitGalConj_spec K p u, ← Subalgebra.coe_mul, ← Units.val_mul, ← hy, Units.val_mul,
+    Subalgebra.coe_mul, inv_coe_coe]
+  · rw [inv_mul_cancel_right]
 
 /-
 lemma unit_lemma (u : RRˣ) :

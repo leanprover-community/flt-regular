@@ -13,6 +13,8 @@ open FiniteDimensional Polynomial Algebra Nat Finset Fintype
 
 variable (p : ℕ+) (L : Type u) [Field L] [CharZero L] [IsCyclotomicExtension {p} ℚ L]
 
+instance Ring.toSubtractionMonoid {S : Type*} [Ring S] : SubtractionMonoid S := inferInstance
+
 section IntFacts
 
 noncomputable section
@@ -145,7 +147,8 @@ instance a3 : NumberField (CyclotomicField p ℚ) :=
 
 open IsPrimitiveRoot
 
-set_option synthInstance.maxHeartbeats 80000 in
+attribute [-instance] CharP.CharOne.subsingleton
+
 theorem nth_roots_prim [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R) (hne1 : η ≠ 1) :
     IsPrimitiveRoot η p := by
   have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe
@@ -190,7 +193,6 @@ theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη :
   norm_cast at h2
   simp [h2]
 
-set_option synthInstance.maxHeartbeats 80000 in
 theorem one_sub_zeta_prime [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nthRootsFinset p R)
     (hne1 : η ≠ 1) : Prime (1 - η) := by
   replace ph : p ≠ 2
@@ -231,49 +233,31 @@ theorem diff_of_roots2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R} (
 instance arg : IsDedekindDomain R :=
   inferInstance
 
-set_option synthInstance.maxHeartbeats 1200000 in
-set_option maxHeartbeats 1600000 in
-theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
+instance : AddCommGroup R := AddCommGroupWithOne.toAddCommGroup
+instance : AddCommMonoid R := AddCommGroup.toAddCommMonoid
+
+lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
     (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
-    (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) : IsCoprime (fltIdeals p x y hη₁)
-    (fltIdeals p x y hη₂) := by
-  let I := fltIdeals p x y hη₁ ⊔ fltIdeals p x y hη₂
+    (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) :
+    (fltIdeals p x y hη₁) ⊔ (fltIdeals p x y hη₂) = ⊤ := by
   by_contra h
-  have he := (not_coprime_not_top (fltIdeals p x y hη₁) (fltIdeals p x y hη₂)).1 h
-  have := exists_le_maximal I he
-  obtain ⟨P, hP1, hP2⟩ := this
+  let I := fltIdeals p x y hη₁ ⊔ fltIdeals p x y hη₂
+  obtain ⟨P, hP1, hP2⟩ := exists_le_maximal I h
   have hiP : fltIdeals p x y hη₁ ≤ P := le_trans le_sup_left hP2
   have hel1 : ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I := by
-    have : ↑x + η₁ * ↑y + -1 * (↑x + η₂ * ↑y) ∈ I := Ideal.add_mem _
-      (mem_sup_left (mem_fltIdeals _ _ hη₁)) (mul_mem_left _ (-1)
-      (mem_sup_right (mem_fltIdeals _ _ _)))
-    simp only [neg_mul, one_mul] at this
-    rw [neg_one_mul, neg_add_rev, neg_mul_eq_mul_neg, add_comm] at this
-    simp only [← add_assoc] at this
-    simp at this
-    have hh := diff_of_roots ph hη₁ hη₂ hdiff hwlog
-    obtain ⟨v, hv⟩ := hh
-    refine' ⟨v, _⟩
-    have h3 : η₂ * (-↑y) + η₁ * ↑y = (η₁ - η₂) * y := by ring
-    rw [h3] at this
-    rw [hv] at this
-    have h4 : ↑v * (1 - η₁) * ↑y = v * y * (1 - η₁) := by ring
-    rw [← h4]
-    apply this
-  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I :=  by
-    have : η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) ∈ I :=
-      Ideal.add_mem _ (mul_mem_left _ _ (mem_sup_left (mem_fltIdeals x y hη₁)))
-        (mul_mem_left _ _ (mem_sup_right (mem_fltIdeals x y hη₂)))
+    obtain ⟨v, hv⟩ := diff_of_roots ph hη₁ hη₂ hdiff hwlog
+    refine ⟨v, ?_⟩
+    have := Ideal.sub_mem _
+      (mem_sup_left (mem_fltIdeals x y hη₁)) (mem_sup_right (mem_fltIdeals x y hη₂))
+    rwa [add_sub_add_left_eq_sub, ← sub_mul, hv, mul_right_comm] at this
+  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I := by
+    obtain ⟨v, hv⟩ := diff_of_roots2 ph hη₁ hη₂ hdiff hwlog
+    refine ⟨v, ?_⟩
+    have := Ideal.add_mem _ (mul_mem_left _ η₂ (mem_sup_left (mem_fltIdeals x y hη₁)))
+        (mul_mem_left _ (-η₁) (mem_sup_right (mem_fltIdeals x y hη₂)))
     have h1 : η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) = (η₂ - η₁) * x := by ring
-    rw [h1] at this
-    have hh := diff_of_roots2 ph hη₁ hη₂ hdiff hwlog
-    obtain ⟨v, hv⟩ := hh
-    refine' ⟨v, _⟩
-    rw [hv] at this
-    have h4 : ↑v * (1 - η₁) * ↑x = v * x * (1 - η₁) := by ring
-    rw [h4] at this
-    exact this
+    rwa [h1, hv, mul_right_comm] at this
   have hel11 : (y : R) * (1 - η₁) ∈ P := by
     obtain ⟨v, hv⟩ := hel1
     rw [mul_assoc] at hv
@@ -352,6 +336,15 @@ theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η
   apply HC hprime3
   apply HC hprime2
 
+theorem fltIdeals_coprime2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
+    (hη₁ : η₁ ∈ nthRootsFinset p R)
+    (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
+    (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) : IsCoprime (fltIdeals p x y hη₁)
+    (fltIdeals p x y hη₂) := by
+  apply not_not.mp
+  rw [not_coprime_not_top, not_not]
+  exact fltIdeals_coprime2_lemma ph hη₁ hη₂ hdiff hp hp2 hwlog
+
 theorem aux_lem_flt [Fact (p : ℕ).Prime] {x y z : ℤ} (H : x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ))
     (caseI : ¬↑p ∣ x * y * z) : ¬(p : ℤ) ∣ (x + y : ℤ) := by
   intro habs
@@ -362,7 +355,6 @@ theorem aux_lem_flt [Fact (p : ℕ).Prime] {x y z : ℤ} (H : x ^ (p : ℕ) + y 
     ZMod.int_cast_zmod_eq_zero_iff_dvd] at H
   exact caseI (Dvd.dvd.mul_left H _)
 
-set_option synthInstance.maxHeartbeats 80000 in
 theorem fltIdeals_coprime (hpri : (p : ℕ).Prime) (p5 : 5 ≤ p) {x y z : ℤ}
     (H : x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ)) {η₁ η₂ : R} (hxy : IsCoprime x y)
     (hη₁ : η₁ ∈ nthRootsFinset p R) (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂)
@@ -382,8 +374,6 @@ theorem fltIdeals_coprime (hpri : (p : ℕ).Prime) (p5 : 5 ≤ p) {x y z : ℤ}
 
 variable {L}
 
-set_option synthInstance.maxHeartbeats 800000 in
-set_option maxHeartbeats 1600000 in
 theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     (hζ : IsPrimitiveRoot ζ p) {f : Fin p → ℤ}
     (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
@@ -436,8 +426,6 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     neg_eq_iff_eq_neg] at hy
   simp [hy, dvd_neg]
 
-set_option synthInstance.maxHeartbeats 1000000 in
-set_option maxHeartbeats 1600000 in
 theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRoot ζ p)
     {f : Fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
     ∀ j, m ∣ f j := by
