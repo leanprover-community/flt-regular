@@ -326,8 +326,6 @@ theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h 
   rw [sub_eq_of_eq_add hk] at this
   exact (hζ.isPrime_one_sub_zeta h).ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
-example {x y : Type*} (f : x → y) (hf : Function.Injective f) (a b : x) : f a = f b ↔ a = b := by exact?
-
 lemma IsUnit.eq_mul_left_iff {S : Type*} [CommRing S] {x : S} (hx : IsUnit x) (y : S) :
   x = y * x ↔ y = 1 := by
   nth_rw 1 [← one_mul x]
