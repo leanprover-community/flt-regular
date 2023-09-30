@@ -7,11 +7,11 @@ import Mathlib.NumberTheory.Cyclotomic.Rat
 -- the 𝑝-th cyclotomic field) and 𝜉 a primitive 𝑝-th root of unity;
 -- if a unit 𝑢∈𝐐(𝜉) is congruent to an integer modulo 𝑝, then 𝑢 is a 𝑝-th power in 𝐐(𝜉).
 -- if a unit 𝑢∈𝐐(𝜉) is congruent to an integer modulo 𝑝, then 𝑢 is a 𝑝-th power in 𝐐(𝜉).
-variable {K : Type _} [Field K] [CharZero K]
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
+variable (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
 open scoped NumberField
 
-theorem eq_pow_prime_of_unit_of_congruent (p : ℕ) [hp : Fact p.Prime] (hptwo : p ≠ 2)
-    (hpr : IsRegularNumber p) [IsCyclotomicExtension {⟨p, hp.out.pos⟩} ℚ K] (u : (𝓞 K)ˣ)
-    (hcong : ∃ n : ℤ, (↑u : 𝓞 K) - n ∈ Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K))) : ∃ v, u = v ^ p :=
+theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
+    (hcong : ∃ n : ℤ, ↑p ∣ (↑u : 𝓞 K) - n) : ∃ v, u = v ^ (p : ℕ) :=
   sorry
