@@ -4,7 +4,7 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4.git",
     "subDir?": null,
-    "rev": "ad44c68bac5bdcb1d5f9665ba21e63eb5d5aff0a",
+    "rev": "86831e868a1fc76bfa49a25cb554ff97cd8db284",
     "opts": {},
     "name": "mathlib",
     "inputRev?": null,
@@ -34,19 +34,19 @@
     "inputRev?": "nightly",
     "inherited": true}},
   {"git":
-   {"url": "https://github.com/EdAyers/ProofWidgets4",
-    "subDir?": null,
-    "rev": "65bba7286e2395f3163fd0277110578f19b8170f",
-    "opts": {},
-    "name": "proofwidgets",
-    "inputRev?": "v0.0.16",
-    "inherited": true}},
-  {"git":
    {"url": "https://github.com/leanprover/std4",
     "subDir?": null,
     "rev": "f2df4ab8c0726fce3bafb73a5727336b0c3120ea",
     "opts": {},
     "name": "std",
     "inputRev?": "main",
+    "inherited": true}},
+  {"git":
+   {"url": "https://github.com/EdAyers/ProofWidgets4",
+    "subDir?": null,
+    "rev": "9f68f14df384f43b74aeb2908b97ae54a0ad9d95",
+    "opts": {},
+    "name": "proofwidgets",
+    "inputRev?": "v0.0.17",
     "inherited": true}}],
  "name": "«flt-regular»"}

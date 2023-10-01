@@ -236,6 +236,7 @@ instance arg : IsDedekindDomain R :=
 instance : AddCommGroup R := AddCommGroupWithOne.toAddCommGroup
 instance : AddCommMonoid R := AddCommGroup.toAddCommMonoid
 
+set_option maxHeartbeats 800000
 lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
     (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
