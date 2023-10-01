@@ -507,7 +507,7 @@ lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ (hζ.unit' : 𝓞
  (h : (p : 𝓞 K) ∣ ε₁ * x ^ (p : ℕ) + ε₂ * y ^ (p : ℕ)) :
   ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ (p : ℕ) := by
   letI : Fact (Nat.Prime p) := hpri
-  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := is_coprime_of_not_zeta_sub_one_dvd hζ hp hx
+  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hp hx
   have : (p : 𝓞 K) ∣ b * x - 1 := by use -a ; rw [← e]; ring
   have := (this.trans (sub_one_dvd_pow_sub_one _ p)).trans (dvd_mul_left _ ↑(ε₁ / ε₂))
   use - y * b
