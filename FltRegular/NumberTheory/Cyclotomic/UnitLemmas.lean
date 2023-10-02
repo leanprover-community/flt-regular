@@ -489,3 +489,9 @@ begin
      },
 end
 -/
+
+lemma IsPrimitiveRoot.eq_one_mod_one_sub' {A : Type*} [CommRing A] [IsDomain A]
+    {n : ℕ+} {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n A) :
+    Ideal.Quotient.mk (Ideal.span ({ζ - 1} : Set A)) η = 1 := by
+  obtain ⟨i, ⟨_, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset n.2).1 hη) n.2
+  rw [map_pow, ← Ideal.Quotient.algebraMap_eq, eq_one_mod_one_sub, one_pow]

@@ -87,7 +87,7 @@ lemma div_zeta_sub_one_Injective :
 instance : Finite (𝓞 K ⧸ 𝔭) := by
   haveI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rw [← Ideal.absNorm_ne_zero_iff, Ne.def, Ideal.Norm.eq_zero_iff, Ideal.span_singleton_eq_bot]
+  rw [← Ideal.absNorm_ne_zero_iff, Ne.def, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
   exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
 lemma div_zeta_sub_one_Bijective :
@@ -173,7 +173,7 @@ lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ �
 
 lemma coprime_c (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ η₂) :
   IsCoprime (𝔠 η₁) (𝔠 η₂) := by
-  rw [Ideal.coprime_iff_sup, ← top_le_iff, ← Ideal.dvd_iff_le]
+  rw [Ideal.isCoprime_iff_sup, ← top_le_iff, ← Ideal.dvd_iff_le]
   rw [← mul_dvd_mul_iff_left (m_ne_zero hζ e hy), ← mul_dvd_mul_iff_right (p_ne_zero hζ)]
   rw [Ideal.mul_sup, Ideal.sup_mul, m_mul_c_mul_p, m_mul_c_mul_p, Ideal.mul_top]
   exact coprime_c_aux hζ η₁ η₂ hη
@@ -186,7 +186,7 @@ lemma span_pow_add_pow_eq :
   exact ε.isUnit
 
 lemma gcd_m_p_pow_eq_one : gcd 𝔪 (𝔭 ^ (m + 1)) = 1 := by
-  rw [← Ideal.coprime_iff_gcd, IsCoprime.pow_right_iff, Ideal.coprime_iff_gcd,
+  rw [← Ideal.isCoprime_iff_gcd, IsCoprime.pow_right_iff, Ideal.isCoprime_iff_gcd,
     gcd_zeta_sub_one_eq_one hp hζ hy]
   simp only [add_pos_iff, or_true]
 
@@ -284,9 +284,9 @@ lemma p_dvd_c_iff : 𝔭 ∣ (𝔠 η) ↔ η = η₀ := by
 
 lemma p_pow_dvd_c_eta_zero_aux [DecidableEq K] :
   gcd (𝔭 ^ (m * p)) (∏ η in Finset.attach (nthRootsFinset p (𝓞 K)) \ {η₀}, 𝔠 η) = 1 := by
-    rw [← Ideal.coprime_iff_gcd]
+    rw [← Ideal.isCoprime_iff_gcd]
     apply IsCoprime.pow_left
-    rw [Ideal.coprime_iff_gcd, (hζ.prime_span_sub_one hp).irreducible.gcd_eq_one_iff,
+    rw [Ideal.isCoprime_iff_gcd, (hζ.prime_span_sub_one hp).irreducible.gcd_eq_one_iff,
       (hζ.prime_span_sub_one hp).dvd_finset_prod_iff]
     rintro ⟨η, hη, h⟩
     rw [p_dvd_c_iff] at h
@@ -457,29 +457,29 @@ lemma exists_solution :
     ¬((hζ.unit' : 𝓞 K) - 1 ∣ x') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
     ↑ε₁ * x' ^ (p : ℕ) + ε₂ * y' ^ (p : ℕ) = ε₃ * (((hζ.unit' : 𝓞 K) - 1) ^ m * z') ^ (p : ℕ) := by
   letI : Fact (Nat.Prime p) := hpri
-  let η₁ : nthRootsFinset p (𝓞 K) := ⟨η₀ * hζ.unit', mul_mem_nthRootsFinset hpri.out.pos
+  let η₁ : nthRootsFinset p (𝓞 K) := ⟨η₀ * hζ.unit', mul_mem_nthRootsFinset
     (η₀ : _).prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)⟩
-  let η₂ : nthRootsFinset p (𝓞 K) := ⟨η₀ * hζ.unit' * hζ.unit', mul_mem_nthRootsFinset hpri.out.pos
+  let η₂ : nthRootsFinset p (𝓞 K) := ⟨η₀ * hζ.unit' * hζ.unit', mul_mem_nthRootsFinset
     η₁.prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)⟩
   have hη₁ : η₁ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' : 𝓞 K) ≠ η₀
     rw [Ne.def, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
-      ne_zero_of_mem_nthRootsFinset hpri.out.pos (η₀ : _).prop⟩
+      ne_zero_of_mem_nthRootsFinset (η₀ : _).prop⟩
   have hη₂ : η₂ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀
     rw [Ne.def, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.pow_ne_one_of_pos_of_lt zero_lt_two
       (hpri.out.two_le.lt_or_eq.resolve_right (PNat.coe_injective.ne hp.symm)),
-      ne_zero_of_mem_nthRootsFinset hpri.out.pos (η₀ : _).prop⟩
+      ne_zero_of_mem_nthRootsFinset (η₀ : _).prop⟩
   have hη : η₂ ≠ η₁ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀ * hζ.unit'
     rw [Ne.def, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
-      mul_ne_zero (ne_zero_of_mem_nthRootsFinset hpri.out.pos (η₀ : _).prop)
+      mul_ne_zero (ne_zero_of_mem_nthRootsFinset (η₀ : _).prop)
       (hζ.unit'_coe.ne_zero hpri.out.ne_zero)⟩
   obtain ⟨u₁, hu₁⟩ := hζ.unit'_coe.associated_sub_one hpri.out η₂.prop (η₀ : _).prop
     (Subtype.coe_injective.ne_iff.mpr hη₂)

@@ -15,26 +15,7 @@ lemma Ideal.Quotient.eq_zero_iff_dvd {A : Type*} [CommRing A] (x y : A) :
     Ideal.Quotient.mk (Ideal.span ({x} : Set A)) y = 0 ↔ x ∣ y := by
   rw [Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton]
 
-lemma IsPrimitiveRoot.eq_one_mod_one_sub' {A : Type*} [CommRing A] [IsDomain A]
-  {n : ℕ+} {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n A) :
-  Ideal.Quotient.mk (Ideal.span ({ζ - 1} : Set A)) η = 1 := by
-  obtain ⟨i, ⟨_, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset n.2).1 hη) n.2
-  rw [map_pow, ← Ideal.Quotient.algebraMap_eq, eq_one_mod_one_sub, one_pow]
-
-lemma IsUnit_neg_one {A : Type*} [CommRing A] : IsUnit (-1 : A) := by simp
-
-lemma IsPrimitiveRoot.associated_sub_one {A : Type*} [CommRing A] [IsDomain A]
-    {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A} (hη₁ : η₁ ∈ nthRootsFinset p A)
-    {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p A) (e : η₁ ≠ η₂) :
-  Associated (ζ - 1) (η₁ - η₂) := by
-  obtain ⟨i, ⟨hi, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset hp.pos).1 hη₁) hp.pos
-  obtain ⟨j, ⟨hj, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset hp.pos).1 hη₂) hp.pos
-  have : i ≠ j := ne_of_apply_ne _ e
-  obtain ⟨u, h⟩ := IsCyclotomicExtension.CyclotomicUnit.IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one A
-    hp.two_le hp hi hj this hζ
-  rw [h, associated_isUnit_mul_right_iff u.isUnit, ← associated_isUnit_mul_right_iff IsUnit_neg_one,
-    neg_one_mul, neg_sub]
-  rfl
+lemma isUnit_neg_one {A : Type*} [CommRing A] : IsUnit (-1 : A) := isUnit_one.neg
 
 lemma IsPrimitiveRoot.sub_one_ne_zero {A : Type*} [CommRing A] {n : ℕ} (hn : 1 < n) {ζ : A}
     (hζ : IsPrimitiveRoot ζ n) : ζ - 1 ≠ 0 := by
@@ -48,7 +29,7 @@ instance CharZero.subsemiring {A : Type*} [Semiring A] {S : Type*} [SetLike S A]
 
 instance : CharZero (𝓞 K) := CharZero.subsemiring (𝓞 K)
 
-lemma Ideal.Norm.eq_zero_iff {A : Type*} [CommRing A] [IsDomain A] [IsDedekindDomain A]
+lemma Ideal.absNorm_eq_zero_iff {A : Type*} [CommRing A] [IsDomain A] [IsDedekindDomain A]
     [Infinite A] [Module.Free ℤ A] [Module.Finite ℤ A]
     {I : Ideal A} : Ideal.absNorm I = 0 ↔ I = ⊥ := by
   constructor
@@ -62,11 +43,11 @@ lemma Ideal.Norm.eq_zero_iff {A : Type*} [CommRing A] [IsDomain A] [IsDedekindDo
   · rintro rfl
     exact absNorm_bot
 
-lemma Algebra.coe_norm_Int {K : Type*} [Field K] [NumberField K] (x : 𝓞 K) :
+lemma Algebra.coe_norm_int {K : Type*} [Field K] [NumberField K] (x : 𝓞 K) :
     Algebra.norm ℤ x = Algebra.norm ℚ (x : K) :=
   (Algebra.norm_localization (R := ℤ) (Rₘ := ℚ) (S := 𝓞 K) (Sₘ := K) (nonZeroDivisors ℤ) x).symm
 
-lemma Ideal.coprime_iff_sup {R : Type*} [CommRing R] {I J : Ideal R} :
+lemma Ideal.isCoprime_iff_sup {R : Type*} [CommSemiring R] {I J : Ideal R} :
     IsCoprime I J ↔ I ⊔ J = ⊤ := by
   rw [IsCoprime]
   constructor
@@ -80,10 +61,10 @@ lemma Ideal.coprime_iff_sup {R : Type*} [CommRing R] {I J : Ideal R} :
     refine' ⟨1, 1, _⟩
     simpa only [one_eq_top, top_mul, Submodule.add_eq_sup, ge_iff_le]
 
-lemma Ideal.coprime_iff_gcd {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
+lemma Ideal.isCoprime_iff_gcd {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     {I J : Ideal R} :
     IsCoprime I J ↔ gcd I J = 1 := by
-  rw [Ideal.coprime_iff_sup, one_eq_top, gcd_eq_sup]
+  rw [Ideal.isCoprime_iff_sup, one_eq_top, gcd_eq_sup]
 
 instance foofoo [NumberField K] : IsDomain (Ideal (𝓞 K)) := by convert Ideal.isDomain (A := 𝓞 K)
 
@@ -213,18 +194,26 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]
   simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
 
-lemma mul_mem_nthRootsFinset {R : Type*} [CommRing R] [IsDomain R] {n : ℕ} (hn : 0 < n)
-  {η₁ : R} (hη₁ : η₁ ∈ nthRootsFinset n R) {η₂ : R} (hη₂ : η₂ ∈ nthRootsFinset n R) :
-  η₁ * η₂ ∈ nthRootsFinset n R := by
-  rw [mem_nthRootsFinset hn] at hη₁ hη₂ ⊢
-  rw [mul_pow, hη₁, hη₂, one_mul]
+lemma mul_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R]
+    {η₁ : R} (hη₁ : η₁ ∈ nthRootsFinset n R) {η₂ : R} (hη₂ : η₂ ∈ nthRootsFinset n R) :
+    η₁ * η₂ ∈ nthRootsFinset n R := by
+  cases n with
+  | zero =>
+    simp only [Nat.zero_eq, nthRootsFinset_zero, Finset.not_mem_empty] at hη₁
+  | succ n =>
+    rw [mem_nthRootsFinset n.succ_pos] at hη₁ hη₂ ⊢
+    rw [mul_pow, hη₁, hη₂, one_mul]
 
-lemma ne_zero_of_mem_nthRootsFinset {R : Type*} [CommRing R] [IsDomain R] {n : ℕ} (hn : 0 < n)
+lemma ne_zero_of_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R]
     {η : R} (hη : η ∈ nthRootsFinset n R) : η ≠ 0 := by
   nontriviality R
   rintro rfl
-  rw [mem_nthRootsFinset hn, zero_pow hn] at hη
-  exact zero_ne_one hη
+  cases n with
+  | zero =>
+    simp only [Nat.zero_eq, nthRootsFinset_zero, Finset.not_mem_empty] at hη
+  | succ n =>
+    rw [mem_nthRootsFinset n.succ_pos, zero_pow n.succ_pos] at hη
+    exact zero_ne_one hη
 
 variable (hp : p ≠ 2)
 
@@ -241,21 +230,23 @@ lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) -
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   haveI : Fact (Nat.Prime p) := hpri
   apply RingHom.injective_int (algebraMap ℤ ℚ)
-  simp [Algebra.coe_norm_Int, hζ.sub_one_norm_prime (cyclotomic.irreducible_rat p.2) hp]
+  simp [Algebra.coe_norm_int, hζ.sub_one_norm_prime (cyclotomic.irreducible_rat p.2) hp]
 
 lemma Associated.prod {M : Type*} [CommMonoid M] {ι : Type*} (s : Finset ι) (f : ι → M) (g : ι → M)
     (h : ∀ i, i ∈ s → Associated (f i) (g i)) : Associated (∏ i in s, f i) (∏ i in s, g i) := by
-  induction' s using Finset.induction with j s hjs IH
-  · simp only [Finset.prod_empty]
+  induction s using Finset.induction with
+  | empty =>
+    simp only [Finset.prod_empty]
     rfl
-  · classical
+  | @insert j s hjs IH =>
+    classical
     convert_to Associated (∏ i in insert j s, f i) (∏ i in insert j s, g i)
     rw [Finset.prod_insert hjs, Finset.prod_insert hjs]
     exact Associated.mul_mul (h j (Finset.mem_insert_self j s))
       (IH (fun i hi ↦ h i (Finset.mem_insert_of_mem hi)))
 
-lemma one_mem_nthRootsFinset {n : ℕ} (hn : 0 < n) (R : Type*) [CommRing R] [IsDomain R] :
-  1 ∈ nthRootsFinset n R := by rw [mem_nthRootsFinset hn, one_pow]
+lemma one_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R] (hn : 0 < n) :
+    1 ∈ nthRootsFinset n R := by rw [mem_nthRootsFinset hn, one_pow]
 
 lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^ (p - 1 : ℕ)) p := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -263,26 +254,27 @@ lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^
   rw [← eval_one_cyclotomic_prime (R := 𝓞 K) (p := p),
     cyclotomic_eq_prod_X_sub_primitiveRoots hζ.unit'_coe, eval_prod]
   simp only [eval_sub, eval_X, eval_C]
-  rw [← Nat.totient_prime hpri.out, ← hζ.unit'_coe.card_primitiveRoots, ← Finset.prod_const]
+  rw [← Nat.totient_prime this.out, ← hζ.unit'_coe.card_primitiveRoots, ← Finset.prod_const]
   apply Associated.prod
   intro η hη
   exact hζ.unit'_coe.associated_sub_one hpri.out
-    (one_mem_nthRootsFinset hpri.out.pos _)
+    (one_mem_nthRootsFinset this.out.pos)
     ((isPrimitiveRoot_of_mem_primitiveRoots hη).mem_nthRootsFinset hpri.out.pos)
       ((isPrimitiveRoot_of_mem_primitiveRoots hη).ne_one hpri.out.one_lt).symm
 
-lemma Ideal.isCoprime_span_singleton_iff {R : Type*} [CommRing R] (x y : R) :
+lemma Ideal.isCoprime_span_singleton_iff {R : Type*} [CommSemiring R] (x y : R) :
     IsCoprime (span <| singleton x) (span <| singleton y) ↔ IsCoprime x y := by
-  simp_rw [coprime_iff_sup, eq_top_iff_one, mem_span_singleton_sup, mem_span_singleton]
+  simp_rw [isCoprime_iff_sup, eq_top_iff_one, mem_span_singleton_sup, mem_span_singleton]
   constructor
   · rintro ⟨a, _, ⟨b, rfl⟩, e⟩; exact ⟨a, b, mul_comm b y ▸ e⟩
   · rintro ⟨a, b, e⟩; exact ⟨a, _, ⟨b, rfl⟩, mul_comm y b ▸ e⟩
 
 lemma isCoprime_of_not_zeta_sub_one_dvd (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x) : IsCoprime ↑p x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rwa [← Ideal.isCoprime_span_singleton_iff, ← Ideal.span_singleton_eq_span_singleton.mpr
-    (associated_zeta_sub_one_pow_prime hζ), ← Ideal.span_singleton_pow, IsCoprime.pow_left_iff,
-    Ideal.coprime_iff_gcd, (hζ.prime_span_sub_one hp).irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton,
+  rwa [← Ideal.isCoprime_span_singleton_iff,
+    ← Ideal.span_singleton_eq_span_singleton.mpr (associated_zeta_sub_one_pow_prime hζ),
+    ← Ideal.span_singleton_pow, IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd,
+    (hζ.prime_span_sub_one hp).irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton,
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
@@ -381,8 +373,8 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
         rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton] at hb ⊢
         replace hb := hb.trans (dvd_mul_left _ I)
         have : gcd (Ideal.span <| singleton <| x ^ n') J = 1 := by
-          rwa [← Ideal.coprime_iff_gcd, ← Ideal.span_singleton_pow,
-            IsCoprime.pow_left_iff, Ideal.coprime_iff_gcd, Irreducible.gcd_eq_one_iff]
+          rwa [← Ideal.isCoprime_iff_gcd, ← Ideal.span_singleton_pow,
+            IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd, Irreducible.gcd_eq_one_iff]
           · rwa [GCDMonoid.irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
             · exact hx.ne_zero
             · rw [Ne.def, Ideal.span_singleton_eq_bot]
