@@ -85,45 +85,6 @@ lemma Ideal.coprime_iff_gcd {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDom
     IsCoprime I J ↔ gcd I J = 1 := by
   rw [Ideal.coprime_iff_sup, one_eq_top, gcd_eq_sup]
 
-lemma Irreducible.dvd_iff {M : Type*} [Monoid M]
-    {x y : M} (hx : Irreducible x) : y ∣ x ↔ IsUnit y ∨ Associated x y := by
-  constructor
-  · rintro ⟨z, hz⟩
-    obtain (h|h) := hx.isUnit_or_isUnit hz
-    · exact Or.inl h
-    · rw [hz]
-      exact Or.inr (associated_mul_unit_left _ _ h)
-  · rintro (hy|h)
-    · exact hy.dvd
-    · exact h.symm.dvd
-
-lemma associated_gcd_left_iff
-    {M : Type*} [CancelCommMonoidWithZero M] [GCDMonoid M] {x y : M} :
-    Associated x (gcd x y) ↔ x ∣ y :=
-  ⟨fun hx ↦ hx.dvd.trans (gcd_dvd_right x y),
-    fun hxy ↦ associated_of_dvd_dvd (dvd_gcd dvd_rfl hxy) (gcd_dvd_left x y)⟩
-
-lemma associated_gcd_right_iff
-    {M : Type*} [CancelCommMonoidWithZero M] [GCDMonoid M] {x y : M} :
-    Associated y (gcd x y) ↔ y ∣ x :=
-  ⟨fun hx ↦ hx.dvd.trans (gcd_dvd_left x y),
-    fun hxy ↦ associated_of_dvd_dvd (dvd_gcd hxy dvd_rfl) (gcd_dvd_right x y)⟩
-
-lemma Irreducible.isUnit_iff_not_associated_of_dvd
-    {M : Type*} [Monoid M]
-    {x y : M} (hx : Irreducible x) (hy : y ∣ x) : IsUnit y ↔ ¬ Associated x y :=
-  ⟨fun hy hxy ↦ hx.1 (hxy.symm.isUnit hy), (hx.dvd_iff.mp hy).resolve_right⟩
-
-lemma Irreducible.isUnit_gcd_iff {M : Type*} [CancelCommMonoidWithZero M] [GCDMonoid M]
-    {x y : M} (hx : Irreducible x) :
-    IsUnit (gcd x y) ↔ ¬(x ∣ y) := by
-  rw [hx.isUnit_iff_not_associated_of_dvd (gcd_dvd_left x y), not_iff_not, associated_gcd_left_iff]
-
-lemma Irreducible.gcd_eq_one_iff {M : Type*} [CancelCommMonoidWithZero M] [NormalizedGCDMonoid M]
-    {x y : M} (hx : Irreducible x) :
-    gcd x y = 1 ↔ ¬(x ∣ y) := by
-  rw [← hx.isUnit_gcd_iff, ← normalize_eq_one, NormalizedGCDMonoid.normalize_gcd]
-
 instance foofoo [NumberField K] : IsDomain (Ideal (𝓞 K)) := by convert Ideal.isDomain (A := 𝓞 K)
 
 instance [NumberField K] : CancelMonoidWithZero (Ideal (𝓞 K)) :=
@@ -258,14 +219,6 @@ lemma mul_mem_nthRootsFinset {R : Type*} [CommRing R] [IsDomain R] {n : ℕ} (hn
   rw [mem_nthRootsFinset hn] at hη₁ hη₂ ⊢
   rw [mul_pow, hη₁, hη₂, one_mul]
 
-lemma Prime.dvd_mul {M : Type*} [CommMonoidWithZero M] {p m n : M} (hp : Prime p) :
-    p ∣ m * n ↔ p ∣ m ∨ p ∣ n :=
-  ⟨hp.dvd_or_dvd, (Or.elim · (dvd_mul_of_dvd_left · _) (dvd_mul_of_dvd_right · _))⟩
-
-lemma Prime.not_dvd_mul {M : Type*} [CommMonoidWithZero M] {p : M} (hp : Prime p) {a b : M}
-    (ha : ¬ p ∣ a) (hb : ¬ p ∣ b) : ¬ p ∣ a * b :=
-  hp.dvd_mul.not.mpr <| not_or.mpr ⟨ha, hb⟩
-
 lemma ne_zero_of_mem_nthRootsFinset {R : Type*} [CommRing R] [IsDomain R] {n : ℕ} (hn : 0 < n)
     {η : R} (hη : η ∈ nthRootsFinset n R) : η ≠ 0 := by
   nontriviality R
@@ -373,10 +326,6 @@ lemma norm_dvd_iff {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     ← Ideal.span_singleton_absNorm, Ideal.mem_span_singleton, Ideal.absNorm_span_singleton,
     Int.natAbs_dvd]
   rwa [Ideal.absNorm_span_singleton, ← Int.prime_iff_natAbs_prime]
-
-theorem dvd_gcd_mul_iff_dvd_mul {α : Type*} [CancelCommMonoidWithZero α] [GCDMonoid α]
-    {m n k : α} : k ∣ gcd k m * n ↔ k ∣ m * n :=
-  ⟨fun h ↦ h.trans (mul_dvd_mul (gcd_dvd_right k m) (dvd_refl _)), dvd_gcd_mul_of_dvd_mul⟩
 
 open FractionalIdeal in
 lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]

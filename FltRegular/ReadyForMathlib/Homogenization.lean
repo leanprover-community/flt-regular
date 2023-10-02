@@ -426,7 +426,7 @@ theorem add_ne_zero_of_ne_zero_of_support_disjoint (p q : MvPolynomial ι R) (hp
   contrapose! hp
   have := congr_arg support hp
   rw [support_zero, support_add_eq h,
-    Finset.union_eq_empty_iff,-- TODO should this be simp?
+    Finset.union_eq_empty,-- TODO should this be simp?
     MvPolynomial.support_eq_empty] at this
   exact this.left
 
@@ -537,7 +537,7 @@ theorem eq_leadingTerms_add (p : MvPolynomial ι R) (hp : p.totalDegree ≠ 0) :
     rw [Finset.sum_coe_sort _ (fun x => (monomial x) (coeff x p))]
     have : p.leadingTerms.support ⊆ p.support := support_leadingTerms_subset _
     have : p.leadingTerms.support ∩ p.support = p.leadingTerms.support := by
-      rw [Finset.inter_eq_left_iff_subset]
+      rw [Finset.inter_eq_left]
       exact this
     nth_rw 1 [← this]
     rw [Finset.inter_comm, Finset.sum_inter_add_sum_diff]
