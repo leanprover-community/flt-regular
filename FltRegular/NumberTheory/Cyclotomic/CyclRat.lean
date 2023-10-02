@@ -236,13 +236,14 @@ instance arg : IsDedekindDomain R :=
 instance : AddCommGroup R := AddCommGroupWithOne.toAddCommGroup
 instance : AddCommMonoid R := AddCommGroup.toAddCommMonoid
 
-set_option maxHeartbeats 800000
 lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
     (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
     (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) :
     (fltIdeals p x y hη₁) ⊔ (fltIdeals p x y hη₂) = ⊤ := by
-  by_contra h
+  -- Note: `by_contra h` was extremely slow here.
+  apply by_contradiction
+  intro h
   let I := fltIdeals p x y hη₁ ⊔ fltIdeals p x y hη₂
   obtain ⟨P, hP1, hP2⟩ := exists_le_maximal I h
   have hiP : fltIdeals p x y hη₁ ≤ P := le_trans le_sup_left hP2
