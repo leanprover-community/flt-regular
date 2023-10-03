@@ -15,8 +15,6 @@ lemma Ideal.Quotient.eq_zero_iff_dvd {A : Type*} [CommRing A] (x y : A) :
     Ideal.Quotient.mk (Ideal.span ({x} : Set A)) y = 0 ↔ x ∣ y := by
   rw [Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton]
 
-lemma isUnit_neg_one {A : Type*} [CommRing A] : IsUnit (-1 : A) := isUnit_one.neg
-
 lemma IsPrimitiveRoot.sub_one_ne_zero {A : Type*} [CommRing A] {n : ℕ} (hn : 1 < n) {ζ : A}
     (hζ : IsPrimitiveRoot ζ n) : ζ - 1 ≠ 0 := by
   rw [Ne.def, sub_eq_zero]
@@ -42,10 +40,6 @@ lemma Ideal.absNorm_eq_zero_iff {A : Type*} [CommRing A] [IsDomain A] [IsDedekin
     rwa [Ideal.span_singleton_le_iff_mem]
   · rintro rfl
     exact absNorm_bot
-
-lemma Algebra.coe_norm_int {K : Type*} [Field K] [NumberField K] (x : 𝓞 K) :
-    Algebra.norm ℤ x = Algebra.norm ℚ (x : K) :=
-  (Algebra.norm_localization (R := ℤ) (Rₘ := ℚ) (S := 𝓞 K) (Sₘ := K) (nonZeroDivisors ℤ) x).symm
 
 lemma Ideal.isCoprime_iff_sup {R : Type*} [CommSemiring R] {I J : Ideal R} :
     IsCoprime I J ↔ I ⊔ J = ⊤ := by
@@ -232,19 +226,6 @@ lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) -
   apply RingHom.injective_int (algebraMap ℤ ℚ)
   simp [Algebra.coe_norm_int, hζ.sub_one_norm_prime (cyclotomic.irreducible_rat p.2) hp]
 
-lemma Associated.prod {M : Type*} [CommMonoid M] {ι : Type*} (s : Finset ι) (f : ι → M) (g : ι → M)
-    (h : ∀ i, i ∈ s → Associated (f i) (g i)) : Associated (∏ i in s, f i) (∏ i in s, g i) := by
-  induction s using Finset.induction with
-  | empty =>
-    simp only [Finset.prod_empty]
-    rfl
-  | @insert j s hjs IH =>
-    classical
-    convert_to Associated (∏ i in insert j s, f i) (∏ i in insert j s, g i)
-    rw [Finset.prod_insert hjs, Finset.prod_insert hjs]
-    exact Associated.mul_mul (h j (Finset.mem_insert_self j s))
-      (IH (fun i hi ↦ h i (Finset.mem_insert_of_mem hi)))
-
 lemma one_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R] (hn : 0 < n) :
     1 ∈ nthRootsFinset n R := by rw [mem_nthRootsFinset hn, one_pow]
 
@@ -396,10 +377,6 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
     linarith
   · intro ht
     refine hm (dvd_trans (pow_dvd_pow _ (Nat.le_add_left _ _)) ht)
-
-lemma Prime.dvd_pow_iff_dvd {α : Type*} [CommMonoidWithZero α] {p : α} (hp : Prime p) {a : α} {n : ℕ}
-    (hn : n ≠ 0) : p ∣ a ^ n ↔ p ∣ a :=
-  ⟨hp.dvd_of_dvd_pow, fun h ↦ dvd_pow h hn⟩
 
 lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
