@@ -4,41 +4,34 @@ Released under Apache 2.0 license as described in the file LICENSE.
 
 ! This file was ported from Lean 3 source module main
 -/
-import Mathlib.Data.Int.Parity
 import Mathlib.RingTheory.Int.Basic
-import Mathlib.RingTheory.Prime
 
 /-- Being equal to `4` or odd. -/
-def OddPrimeOrFour (z : ℤ) : Prop :=
-  z = 4 ∨ Prime z ∧ Odd z
+def OddPrimeOrFour (z : ℕ) : Prop :=
+  z = 4 ∨ Nat.Prime z ∧ Odd z
 #align odd_prime_or_four OddPrimeOrFour
 
-theorem OddPrimeOrFour.ne_zero {z : ℤ} (h : OddPrimeOrFour z) : z ≠ 0 :=
+theorem OddPrimeOrFour.ne_zero {z : ℕ} (h : OddPrimeOrFour z) : z ≠ 0 :=
   by
   obtain rfl | ⟨h, -⟩ := h
   · norm_num
   · exact h.ne_zero
 #align odd_prime_or_four.ne_zero OddPrimeOrFour.ne_zero
 
-theorem OddPrimeOrFour.ne_one {z : ℤ} (h : OddPrimeOrFour z) : z ≠ 1 :=
+theorem OddPrimeOrFour.ne_one {z : ℕ} (h : OddPrimeOrFour z) : z ≠ 1 :=
   by
   obtain rfl | ⟨h, -⟩ := h
   · norm_num
   · exact h.ne_one
 #align odd_prime_or_four.ne_one OddPrimeOrFour.ne_one
 
-theorem OddPrimeOrFour.one_lt_abs {z : ℤ} (h : OddPrimeOrFour z) : 1 < abs z :=
+theorem OddPrimeOrFour.one_lt {z : ℕ} (h : OddPrimeOrFour z) : 1 < z :=
   by
   obtain rfl | ⟨h, -⟩ := h
-  · rw [Int.abs_eq_natAbs]
-    norm_num; decide
-  · rw [Int.abs_eq_natAbs]
-    rw [Int.prime_iff_natAbs_prime] at h
-    norm_cast
-    exact h.one_lt
-#align odd_prime_or_four.one_lt_abs OddPrimeOrFour.one_lt_abs
+  · norm_num
+  · exact h.one_lt
 
-theorem OddPrimeOrFour.not_unit {z : ℤ} (h : OddPrimeOrFour z) : ¬IsUnit z :=
+theorem OddPrimeOrFour.not_unit {z : ℕ} (h : OddPrimeOrFour z) : ¬IsUnit z :=
   by
   obtain rfl | ⟨h, -⟩ := h
   · rw [isUnit_iff_dvd_one]
@@ -46,83 +39,68 @@ theorem OddPrimeOrFour.not_unit {z : ℤ} (h : OddPrimeOrFour z) : ¬IsUnit z :=
   · exact h.not_unit
 #align odd_prime_or_four.not_unit OddPrimeOrFour.not_unit
 
-theorem OddPrimeOrFour.abs {z : ℤ} (h : OddPrimeOrFour z) : OddPrimeOrFour (abs z) :=
-  by
-  obtain rfl | ⟨hp, ho⟩ := h
-  · left
-    rw [abs_eq_self]
-    norm_num
-  · right
-    exact ⟨hp.abs, odd_abs.mpr ho⟩
-#align odd_prime_or_four.abs OddPrimeOrFour.abs
-
-theorem OddPrimeOrFour.exists_and_dvd {n : ℤ} (n2 : 2 < n) : ∃ p, p ∣ n ∧ OddPrimeOrFour p := by
-  lift n to ℕ using (zero_lt_two.trans n2).le
-  norm_cast at n2
+theorem OddPrimeOrFour.exists_and_dvd {n : ℕ} (n2 : 2 < n) : ∃ p, p ∣ n ∧ OddPrimeOrFour p := by
   obtain h4 | ⟨p, hpprime, hpdvd, hpodd⟩ := Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt n2
-  · refine ⟨4, ?_, Or.inl rfl⟩
-    norm_cast
-  · exact ⟨p, Int.ofNat_dvd.mpr hpdvd, Or.inr ⟨Nat.prime_iff_prime_int.mp hpprime,
-      (Int.odd_coe_nat p).mpr hpodd⟩⟩
+  · exact ⟨4, h4, Or.inl rfl⟩
+  · exact ⟨p, hpdvd, Or.inr ⟨hpprime, hpodd⟩⟩
 #align odd_prime_or_four.exists_and_dvd OddPrimeOrFour.exists_and_dvd
 
-theorem associated_of_dvd {a p : ℤ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFour p) (h : p ∣ a) :
-    Associated p a :=
+theorem eq_of_dvd {a p : ℕ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFour p) (h : p ∣ a) :
+    p = a :=
   by
   obtain rfl | ⟨ap, aodd⟩ := ha <;> obtain rfl | ⟨pp, podd⟩ := hp
   · rfl
   · exfalso
-    have h0 : (4 : ℤ) = 2 ^ 2 := by norm_num
+    have h0 : (4 : ℕ) = 2 ^ 2 := by norm_num
     rw [h0] at h
-    refine' Int.even_iff_not_odd.mp _ podd
+    refine' Nat.even_iff_not_odd.mp _ podd
     rw [even_iff_two_dvd]
-    apply Associated.dvd _
-    exact ((pp.dvd_prime_iff_associated Int.prime_two).mp (pp.dvd_of_dvd_pow h)).symm
+    exact pp.dvd_symm Nat.prime_two (pp.dvd_of_dvd_pow h)
   · exfalso
-    rw [Int.odd_iff_not_even] at aodd
+    rw [Nat.odd_iff_not_even] at aodd
     refine' aodd _
     rw [even_iff_two_dvd]
     refine' dvd_trans _ h
     norm_num
-  · rwa [Prime.dvd_prime_iff_associated pp ap] at h
-#align associated_of_dvd associated_of_dvd
+  · rwa [Nat.prime_dvd_prime_iff_eq pp ap] at h
 
-theorem dvd_or_dvd {a p x : ℤ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFour p) (hdvd : p ∣ a * x) :
+theorem dvd_or_dvd {a p x : ℕ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFour p) (hdvd : p ∣ a * x) :
     p ∣ a ∨ p ∣ x := by
   obtain rfl | ⟨pp, -⟩ := hp
   · obtain rfl | ⟨ap, aodd⟩ := ha
     · exact Or.inl dvd_rfl
     · right
-      have : (4 : ℤ) = 2 ^ 2 := by norm_num
+      have : (4 : ℕ) = 2 ^ 2 := by norm_num
       rw [this] at hdvd⊢
-      apply Int.prime_two.pow_dvd_of_dvd_mul_left _ _ hdvd
-      rwa [← even_iff_two_dvd, ← Int.odd_iff_not_even]
-  · exact pp.dvd_or_dvd hdvd
+      apply Nat.prime_two.prime.pow_dvd_of_dvd_mul_left _ _ hdvd
+      rwa [← even_iff_two_dvd, ← Nat.odd_iff_not_even]
+  · exact pp.dvd_mul.mp hdvd
 #align dvd_or_dvd dvd_or_dvd
 
-theorem exists_associated_mem_of_dvd_prod'' {p : ℤ} (hp : OddPrimeOrFour p) {s : Multiset ℤ}
-    (hs : ∀ r ∈ s, OddPrimeOrFour r) (hdvd : p ∣ s.prod) : ∃ q ∈ s, Associated p q :=
+theorem mem_of_dvd_prod {p : ℕ} (hp : OddPrimeOrFour p) {s : Multiset ℕ}
+    (hs : ∀ r ∈ s, OddPrimeOrFour r) (hdvd : p ∣ s.prod) : p ∈ s :=
   by
   induction' s using Multiset.induction_on with a s ih hs
-  · simp [hp.not_unit, ← isUnit_iff_dvd_one] at hdvd
+  · simp [hp.ne_one] at hdvd
   · rw [Multiset.prod_cons] at hdvd
     have := hs a (Multiset.mem_cons_self _ _)
     obtain h | h := dvd_or_dvd this hp hdvd
-    · exact ⟨a, Multiset.mem_cons_self _ _, associated_of_dvd this hp h⟩
-    · obtain ⟨q, hq₁, hq₂⟩ := ih (fun r hr => hs _ (Multiset.mem_cons_of_mem hr)) h
-      exact ⟨q, Multiset.mem_cons_of_mem hq₁, hq₂⟩
-#align exists_associated_mem_of_dvd_prod'' exists_associated_mem_of_dvd_prod''
+    · rw [eq_of_dvd this hp h]
+      exact Multiset.mem_cons_self _ _
+    · have := ih (fun r hr => hs _ (Multiset.mem_cons_of_mem hr)) h
+      exact Multiset.mem_cons_of_mem this
 
 theorem factors_unique_prod' :
-    ∀ {f g : Multiset ℤ},
+    ∀ {f g : Multiset ℕ},
       (∀ x ∈ f, OddPrimeOrFour x) →
-        (∀ x ∈ g, OddPrimeOrFour x) → Associated f.prod g.prod → Multiset.Rel Associated f g :=
+        (∀ x ∈ g, OddPrimeOrFour x) →
+          f.prod = g.prod → f = g :=
   by
   intro f
   induction' f using Multiset.induction_on with p f ih
   · rintro g - hg h
     rw [Multiset.prod_zero] at h
-    rw [Multiset.rel_zero_left]
+    symm
     apply Multiset.eq_zero_of_forall_not_mem
     intro x hx
     apply (hg x hx).not_unit
@@ -132,20 +110,20 @@ theorem factors_unique_prod' :
     have hp := hf p (Multiset.mem_cons_self _ _)
     have hdvd : p ∣ g.prod :=
       by
-      rw [← hfg.dvd_iff_dvd_right, Multiset.prod_cons]
+      rw [← hfg, Multiset.prod_cons]
       exact dvd_mul_right _ _
-    obtain ⟨b, hbg, hb⟩ := exists_associated_mem_of_dvd_prod'' hp hg hdvd
+    have hbg := mem_of_dvd_prod hp hg hdvd
     rw [← Multiset.cons_erase hbg]
-    apply Multiset.Rel.cons hb
+    congr
     apply ih _ _ _
     · exact fun q hq => hf _ (Multiset.mem_cons_of_mem hq)
-    · exact fun q (hq : q ∈ g.erase b) => hg q (Multiset.mem_of_mem_erase hq)
-    · apply Associated.of_mul_left _ hb hp.ne_zero
-      rwa [← Multiset.prod_cons, ← Multiset.prod_cons, Multiset.cons_erase hbg]
+    · exact fun q hq => hg q (Multiset.mem_of_mem_erase hq)
+    · apply mul_left_cancel₀ hp.ne_zero
+      rwa [Multiset.prod_erase hbg, ← Multiset.prod_cons]
 #align factors_unique_prod' factors_unique_prod'
 
 /-- The odd factors. -/
-noncomputable def oddFactors (x : ℤ) :=
+noncomputable def oddFactors (x : ℕ) :=
   Multiset.filter Odd (UniqueFactorizationMonoid.normalizedFactors x)
 #align odd_factors oddFactors
 
@@ -153,29 +131,22 @@ theorem oddFactors.zero : oddFactors 0 = 0 :=
   rfl
 #align odd_factors.zero oddFactors.zero
 
-theorem oddFactors.not_two_mem (x : ℤ) : (2 : ℤ) ∉ oddFactors x := by
+theorem oddFactors.not_two_mem (x : ℕ) : 2 ∉ oddFactors x := by
   simp [oddFactors]
 #align odd_factors.not_two_mem oddFactors.not_two_mem
 
-theorem oddFactors.nonneg {z a : ℤ} (ha : a ∈ oddFactors z) : 0 ≤ a :=
-  by
-  simp only [oddFactors, Multiset.mem_filter] at ha
-  exact
-    Int.nonneg_of_normalize_eq_self (UniqueFactorizationMonoid.normalize_normalized_factor a ha.1)
-#align odd_factors.nonneg oddFactors.nonneg
-
-theorem oddFactors.pow (z : ℤ) (n : ℕ) : oddFactors (z ^ n) = n • oddFactors z :=
+theorem oddFactors.pow (z : ℕ) (n : ℕ) : oddFactors (z ^ n) = n • oddFactors z :=
   by
   simp only [oddFactors]
   rw [UniqueFactorizationMonoid.normalizedFactors_pow, Multiset.filter_nsmul]
 #align odd_factors.pow oddFactors.pow
 
 /-- The exponent of `2` in the factorization. -/
-noncomputable def evenFactorExp (x : ℤ) :=
+noncomputable def evenFactorExp (x : ℕ) :=
   Multiset.count 2 (UniqueFactorizationMonoid.normalizedFactors x)
 #align even_factor_exp evenFactorExp
 
-theorem evenFactorExp.def (x : ℤ) :
+theorem evenFactorExp.def (x : ℕ) :
     evenFactorExp x = Multiset.count 2 (UniqueFactorizationMonoid.normalizedFactors x) :=
   rfl
 #align even_factor_exp.def evenFactorExp.def
@@ -184,13 +155,13 @@ theorem evenFactorExp.zero : evenFactorExp 0 = 0 :=
   rfl
 #align even_factor_exp.zero evenFactorExp.zero
 
-theorem evenFactorExp.pow (z : ℤ) (n : ℕ) : evenFactorExp (z ^ n) = n * evenFactorExp z :=
+theorem evenFactorExp.pow (z : ℕ) (n : ℕ) : evenFactorExp (z ^ n) = n * evenFactorExp z :=
   by
   simp only [evenFactorExp]
   rw [UniqueFactorizationMonoid.normalizedFactors_pow, Multiset.count_nsmul]
 #align even_factor_exp.pow evenFactorExp.pow
 
-theorem even_and_odd_factors'' (x : ℤ) :
+theorem even_and_odd_factors'' (x : ℕ) :
     UniqueFactorizationMonoid.normalizedFactors x =
       (UniqueFactorizationMonoid.normalizedFactors x).filter (Eq 2) + oddFactors x :=
   by
@@ -205,22 +176,15 @@ theorem even_and_odd_factors'' (x : ℤ) :
   · symm
     rw [Multiset.filter_eq_self]
     intro a ha
+    rw [eq_comm]
     have hprime : Prime a := UniqueFactorizationMonoid.prime_of_normalized_factor a ha
-    have := UniqueFactorizationMonoid.normalize_normalized_factor a ha
-    rw [← Int.abs_eq_normalize, ← Int.coe_natAbs] at this
-    rw [← this]
-    rw [Int.prime_iff_natAbs_prime] at hprime
-    rcases Nat.Prime.eq_two_or_odd' hprime with (h2 | hodd)
-    · simp [h2]
-    · right
-      rw [this]
-      exact Int.natAbs_odd.1 hodd
+    exact hprime.nat_prime.eq_two_or_odd'
   · rw [Multiset.filter_eq_nil]
     rintro a ha ⟨rfl, hodd⟩
     norm_num at hodd
 #align even_and_odd_factors'' even_and_odd_factors''
 
-theorem even_and_odd_factors' (x : ℤ) :
+theorem even_and_odd_factors' (x : ℕ) :
     UniqueFactorizationMonoid.normalizedFactors x =
       Multiset.replicate (evenFactorExp x) 2 + oddFactors x :=
   by
@@ -228,7 +192,7 @@ theorem even_and_odd_factors' (x : ℤ) :
   simp [evenFactorExp, ← Multiset.filter_eq]
 #align even_and_odd_factors' even_and_odd_factors'
 
-theorem even_and_oddFactors (x : ℤ) (hx : x ≠ 0) :
+theorem even_and_oddFactors (x : ℕ) (hx : x ≠ 0) :
     Associated x (2 ^ evenFactorExp x * (oddFactors x).prod) :=
   by
   convert(UniqueFactorizationMonoid.normalizedFactors_prod hx).symm
@@ -236,74 +200,50 @@ theorem even_and_oddFactors (x : ℤ) (hx : x ≠ 0) :
   rw [Multiset.pow_count, ← Multiset.prod_add, ← even_and_odd_factors'' x]
 #align even_and_odd_factors even_and_oddFactors
 
-theorem factors_2_even {z : ℤ} (hz : z ≠ 0) : evenFactorExp (4 * z) = 2 + evenFactorExp z :=
+theorem factors_2_even {z : ℕ} (hz : z ≠ 0) : evenFactorExp (4 * z) = 2 + evenFactorExp z :=
   by
-  have h₀ : (4 : ℤ) ≠ 0 := four_ne_zero
-  have h₁ : (2 : Int) ^ 2 = 4 := by norm_num
+  have h₀ : (4 : ℕ) ≠ 0 := four_ne_zero
+  have h₁ : (2 : ℕ) ^ 2 = 4 := by norm_num
   simp [evenFactorExp]
   rw [UniqueFactorizationMonoid.normalizedFactors_mul h₀ hz, Multiset.count_add, ← h₁,
     UniqueFactorizationMonoid.normalizedFactors_pow, Multiset.count_nsmul,
-    UniqueFactorizationMonoid.normalizedFactors_irreducible Int.prime_two.irreducible,
-    Int.normalize_of_nonneg zero_le_two, Multiset.count_singleton_self, mul_one]
+    UniqueFactorizationMonoid.normalizedFactors_irreducible Nat.prime_two,
+    normalize_eq, Multiset.count_singleton_self, mul_one]
 #align factors_2_even factors_2_even
 
 -- most useful with  (hz : even (even_factor_exp z))
 /-- Odd factors or `4`. -/
-noncomputable def factorsOddPrimeOrFour (z : ℤ) : Multiset ℤ :=
+noncomputable def factorsOddPrimeOrFour (z : ℕ) : Multiset ℕ :=
   Multiset.replicate (evenFactorExp z / 2) 4 + oddFactors z
 #align factors_odd_prime_or_four factorsOddPrimeOrFour
 
-theorem factorsOddPrimeOrFour.nonneg {z a : ℤ} (ha : a ∈ factorsOddPrimeOrFour z) : 0 ≤ a :=
-  by
-  simp only [factorsOddPrimeOrFour, Multiset.mem_add] at ha
-  cases ha with
-  | inl ha =>
-    rw [Multiset.eq_of_mem_replicate ha]
-    norm_num
-  | inr ha =>
-    exact oddFactors.nonneg ha
-#align factors_odd_prime_or_four.nonneg factorsOddPrimeOrFour.nonneg
-
-theorem factorsOddPrimeOrFour.prod' {a : ℤ} (ha : 0 < a) (heven : Even (evenFactorExp a)) :
+theorem factorsOddPrimeOrFour.prod' {a : ℕ} (ha : 0 < a) (heven : Even (evenFactorExp a)) :
     (factorsOddPrimeOrFour a).prod = a :=
   by
-  apply Int.eq_of_associated_of_nonneg
-  · have := UniqueFactorizationMonoid.normalizedFactors_prod ha.ne'
-    apply Associated.trans _ this
-    obtain ⟨m, hm⟩ := even_iff_two_dvd.mp heven
-    rw [even_and_odd_factors' _, Multiset.prod_add, factorsOddPrimeOrFour, Multiset.prod_add, hm,
-      Nat.mul_div_right _ zero_lt_two, Multiset.prod_replicate, Multiset.prod_replicate, pow_mul]
-    exact Associated.refl _
-  · apply Multiset.prod_nonneg
-    apply factorsOddPrimeOrFour.nonneg
-  · exact ha.le
+  have h₁ : (2 : ℕ) ^ 2 = 4 := by norm_num
+  have := UniqueFactorizationMonoid.normalizedFactors_prod ha.ne'
+  rw [associated_eq_eq] at this
+  conv_rhs => rw [←this]
+  obtain ⟨m, hm⟩ := even_iff_two_dvd.mp heven
+  rw [even_and_odd_factors' _, Multiset.prod_add, factorsOddPrimeOrFour, Multiset.prod_add, hm,
+    Nat.mul_div_right _ zero_lt_two, Multiset.prod_replicate, Multiset.prod_replicate, pow_mul, h₁]
 #align factors_odd_prime_or_four.prod' factorsOddPrimeOrFour.prod'
 
-theorem factorsOddPrimeOrFour.associated' {a : ℤ} {f : Multiset ℤ} (hf : ∀ x ∈ f, OddPrimeOrFour x)
-    (ha : 0 < a) (heven : Even (evenFactorExp a)) (hassoc : Associated f.prod a) :
-    Multiset.Rel Associated f (factorsOddPrimeOrFour a) :=
+theorem factorsOddPrimeOrFour.unique' {f : Multiset ℕ} (hf : ∀ x ∈ f, OddPrimeOrFour x)
+    (ha : 0 < f.prod) (heven : Even (evenFactorExp f.prod)) :
+    factorsOddPrimeOrFour f.prod = f:=
   by
-  apply factors_unique_prod' hf
-  · intro x hx
-    simp only [factorsOddPrimeOrFour, Multiset.mem_add] at hx
-    apply Or.imp _ _ hx
-    · exact Multiset.eq_of_mem_replicate
-    · simp only [oddFactors, Multiset.mem_filter]
-      exact And.imp_left (UniqueFactorizationMonoid.prime_of_normalized_factor _)
-  · rwa [factorsOddPrimeOrFour.prod' ha heven]
-#align factors_odd_prime_or_four.associated' factorsOddPrimeOrFour.associated'
-
-theorem factorsOddPrimeOrFour.unique' {a : ℤ} {f : Multiset ℤ} (hf : ∀ x ∈ f, OddPrimeOrFour x)
-    (hf' : ∀ x ∈ f, (0 : ℤ) ≤ x) (ha : 0 < a) (heven : Even (evenFactorExp a))
-    (hassoc : Associated f.prod a) : f = factorsOddPrimeOrFour a :=
-  by
-  rw [← Multiset.rel_eq]
-  apply Multiset.Rel.mono (factorsOddPrimeOrFour.associated' hf ha heven hassoc)
-  intro x hx y hy hxy
-  exact Int.eq_of_associated_of_nonneg hxy (hf' x hx) (factorsOddPrimeOrFour.nonneg hy)
+  refine factors_unique_prod' ?_ hf (factorsOddPrimeOrFour.prod' ha heven)
+  intro x hx
+  simp only [factorsOddPrimeOrFour, Multiset.mem_add] at hx
+  apply Or.imp _ _ hx
+  · exact Multiset.eq_of_mem_replicate
+  · simp only [oddFactors, Multiset.mem_filter]
+    exact And.imp_left <| Prime.nat_prime ∘ (UniqueFactorizationMonoid.prime_of_normalized_factor _)
+#align factors_odd_prime_or_four.associated' factorsOddPrimeOrFour.unique'
 #align factors_odd_prime_or_four.unique' factorsOddPrimeOrFour.unique'
 
-theorem factorsOddPrimeOrFour.pow (z : ℤ) (n : ℕ) (hz : Even (evenFactorExp z)) :
+theorem factorsOddPrimeOrFour.pow (z : ℕ) (n : ℕ) (hz : Even (evenFactorExp z)) :
     factorsOddPrimeOrFour (z ^ n) = n • factorsOddPrimeOrFour z := by
   simp only [factorsOddPrimeOrFour, nsmul_add, Multiset.nsmul_replicate, evenFactorExp.pow,
     Nat.mul_div_assoc _ (even_iff_two_dvd.mp hz), oddFactors.pow]
