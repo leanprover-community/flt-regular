@@ -41,6 +41,10 @@ lemma Ideal.absNorm_eq_zero_iff {A : Type*} [CommRing A] [IsDomain A] [IsDedekin
   · rintro rfl
     exact absNorm_bot
 
+lemma Algebra.coe_norm_int {K : Type*} [Field K] [NumberField K] (x : 𝓞 K) :
+    Algebra.norm ℤ x = Algebra.norm ℚ (x : K) :=
+  (Algebra.norm_localization (R := ℤ) (Rₘ := ℚ) (S := 𝓞 K) (Sₘ := K) (nonZeroDivisors ℤ) x).symm
+
 theorem Ideal.isCoprime_iff_codisjoint {R : Type*} [CommSemiring R] {I J : Ideal R} :
     IsCoprime I J ↔ Codisjoint I J := by
   rw [IsCoprime, codisjoint_iff]
@@ -191,23 +195,9 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
 lemma mul_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R]
     {η₁ : R} (hη₁ : η₁ ∈ nthRootsFinset n R) {η₂ : R} (hη₂ : η₂ ∈ nthRootsFinset n R) :
     η₁ * η₂ ∈ nthRootsFinset n R := by
-  cases n with
-  | zero =>
-    simp only [Nat.zero_eq, nthRootsFinset_zero, Finset.not_mem_empty] at hη₁
-  | succ n =>
-    rw [mem_nthRootsFinset n.succ_pos] at hη₁ hη₂ ⊢
-    rw [mul_pow, hη₁, hη₂, one_mul]
+  apply mul_mem; assumption'
 
-lemma ne_zero_of_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R]
-    {η : R} (hη : η ∈ nthRootsFinset n R) : η ≠ 0 := by
-  nontriviality R
-  rintro rfl
-  cases n with
-  | zero =>
-    simp only [Nat.zero_eq, nthRootsFinset_zero, Finset.not_mem_empty] at hη
-  | succ n =>
-    rw [mem_nthRootsFinset n.succ_pos, zero_pow n.succ_pos] at hη
-    exact zero_ne_one hη
+alias ne_zero_of_mem_nthRootsFinset := Polynomial.ne_zero_of_mem_nthRootsFinset
 
 variable (hp : p ≠ 2)
 
@@ -226,8 +216,18 @@ lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) -
   apply RingHom.injective_int (algebraMap ℤ ℚ)
   simp [Algebra.coe_norm_int, hζ.sub_one_norm_prime (cyclotomic.irreducible_rat p.2) hp]
 
-lemma one_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R] (hn : 0 < n) :
-    1 ∈ nthRootsFinset n R := by rw [mem_nthRootsFinset hn, one_pow]
+lemma Associated.prod {M : Type*} [CommMonoid M] {ι : Type*} (s : Finset ι) (f : ι → M) (g : ι → M)
+    (h : ∀ i, i ∈ s → Associated (f i) (g i)) : Associated (∏ i in s, f i) (∏ i in s, g i) := by
+  induction s using Finset.induction with
+  | empty =>
+    simp only [Finset.prod_empty]
+    rfl
+  | @insert j s hjs IH =>
+    classical
+    convert_to Associated (∏ i in insert j s, f i) (∏ i in insert j s, g i)
+    rw [Finset.prod_insert hjs, Finset.prod_insert hjs]
+    exact Associated.mul_mul (h j (Finset.mem_insert_self j s))
+      (IH (fun i hi ↦ h i (Finset.mem_insert_of_mem hi)))
 
 lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^ (p - 1 : ℕ)) p := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K

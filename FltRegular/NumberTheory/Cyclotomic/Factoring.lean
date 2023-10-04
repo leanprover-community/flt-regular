@@ -18,12 +18,12 @@ open Polynomial Finset MvPolynomial
 where `μ` varies over the `n`-th roots of unity. -/
 theorem pow_sub_pow_eq_prod_sub_zeta_runity_mul {K : Type _} [CommRing K] [IsDomain K] {ζ : K}
     {n : ℕ} (hpos : 0 < n) (h : IsPrimitiveRoot ζ n) (x y : K) :
-    x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ ζ : K in nthRootsFinset n K, (x - ζ * y) :=
+    x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ ζ : K in (nthRootsFinset n K : Set K).toFinset, (x - ζ * y) :=
   by
   -- suffices to show the identity in a multivariate polynomial ring with two generators over K
   suffices
     (X 0 : MvPolynomial (Fin 2) K) ^ (n : ℕ) - X 1 ^ (n : ℕ) =
-      ∏ ζ in nthRootsFinset n K, (X 0 - MvPolynomial.C ζ * X 1)
+      ∏ ζ in (nthRootsFinset n K : Set K).toFinset, (X 0 - MvPolynomial.C ζ * X 1)
     by
     apply_fun MvPolynomial.eval fun i : Fin 2 => if i = 0 then x else y at this
     simpa [MvPolynomial.eval_prod] using this
@@ -42,7 +42,7 @@ theorem pow_sub_pow_eq_prod_sub_zeta_runity_mul {K : Type _} [CommRing K] [IsDom
 `X ^ n + Y ^ n = ∏ (X + μ Y)`, where `μ` varies over the `n`-th roots of unity. -/
 theorem pow_add_pow_eq_prod_add_zeta_runity_mul {K : Type _} [CommRing K] [IsDomain K] {ζ : K}
     {n : ℕ} (hodd : n % 2 = 1) (h : IsPrimitiveRoot ζ n) (x y : K) :
-    x ^ (n : ℕ) + y ^ (n : ℕ) = ∏ ζ : K in nthRootsFinset n K, (x + ζ * y) :=
+    x ^ (n : ℕ) + y ^ (n : ℕ) = ∏ ζ : K in (nthRootsFinset n K : Set K).toFinset, (x + ζ * y) :=
   by
   have := pow_sub_pow_eq_prod_sub_zeta_runity_mul (Nat.odd_iff.mpr hodd).pos h x (-y)
   simp only [mul_neg, sub_neg_eq_add] at this

@@ -152,7 +152,8 @@ attribute [-instance] CharP.CharOne.subsingleton
 theorem nth_roots_prim [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R) (hne1 : η ≠ 1) :
     IsPrimitiveRoot η p := by
   have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe
-  rw [nthRoots_one_eq_biUnion_primitiveRoots' hζ', @Finset.mem_biUnion _ _ (_) _ _ _] at hη
+  rw [← SetLike.mem_coe, nthRoots_one_eq_biUnion_primitiveRoots' hζ', mem_coe,
+    @Finset.mem_biUnion _ _ (_) _ _ _] at hη
   obtain ⟨a, ha, h2⟩ := hη
   have ha2 : a = p := by
     rw [Nat.Prime.divisors (Fact.out : Nat.Prime p), mem_insert, mem_singleton] at ha
