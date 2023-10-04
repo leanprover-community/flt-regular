@@ -41,9 +41,9 @@ lemma Ideal.absNorm_eq_zero_iff {A : Type*} [CommRing A] [IsDomain A] [IsDedekin
   · rintro rfl
     exact absNorm_bot
 
-lemma Ideal.isCoprime_iff_sup {R : Type*} [CommSemiring R] {I J : Ideal R} :
-    IsCoprime I J ↔ I ⊔ J = ⊤ := by
-  rw [IsCoprime]
+theorem Ideal.isCoprime_iff_codisjoint {R : Type*} [CommSemiring R] {I J : Ideal R} :
+    IsCoprime I J ↔ Codisjoint I J := by
+  rw [IsCoprime, codisjoint_iff]
   constructor
   · rintro ⟨x, y, hxy⟩
     rw [eq_top_iff_one]
@@ -58,7 +58,7 @@ lemma Ideal.isCoprime_iff_sup {R : Type*} [CommSemiring R] {I J : Ideal R} :
 lemma Ideal.isCoprime_iff_gcd {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     {I J : Ideal R} :
     IsCoprime I J ↔ gcd I J = 1 := by
-  rw [Ideal.isCoprime_iff_sup, one_eq_top, gcd_eq_sup]
+  rw [Ideal.isCoprime_iff_codisjoint, codisjoint_iff, one_eq_top, gcd_eq_sup]
 
 instance foofoo [NumberField K] : IsDomain (Ideal (𝓞 K)) := by convert Ideal.isDomain (A := 𝓞 K)
 
@@ -245,7 +245,8 @@ lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^
 
 lemma Ideal.isCoprime_span_singleton_iff {R : Type*} [CommSemiring R] (x y : R) :
     IsCoprime (span <| singleton x) (span <| singleton y) ↔ IsCoprime x y := by
-  simp_rw [isCoprime_iff_sup, eq_top_iff_one, mem_span_singleton_sup, mem_span_singleton]
+  simp_rw [isCoprime_iff_codisjoint, codisjoint_iff, eq_top_iff_one, mem_span_singleton_sup,
+    mem_span_singleton]
   constructor
   · rintro ⟨a, _, ⟨b, rfl⟩, e⟩; exact ⟨a, b, mul_comm b y ▸ e⟩
   · rintro ⟨a, b, e⟩; exact ⟨a, _, ⟨b, rfl⟩, mul_comm y b ▸ e⟩

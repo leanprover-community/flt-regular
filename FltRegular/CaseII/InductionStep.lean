@@ -173,7 +173,7 @@ lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ �
 
 lemma coprime_c (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ η₂) :
   IsCoprime (𝔠 η₁) (𝔠 η₂) := by
-  rw [Ideal.isCoprime_iff_sup, ← top_le_iff, ← Ideal.dvd_iff_le]
+  rw [Ideal.isCoprime_iff_codisjoint, codisjoint_iff_le_sup, ← Ideal.dvd_iff_le]
   rw [← mul_dvd_mul_iff_left (m_ne_zero hζ e hy), ← mul_dvd_mul_iff_right (p_ne_zero hζ)]
   rw [Ideal.mul_sup, Ideal.sup_mul, m_mul_c_mul_p, m_mul_c_mul_p, Ideal.mul_top]
   exact coprime_c_aux hζ η₁ η₂ hη
