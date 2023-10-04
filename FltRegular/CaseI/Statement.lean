@@ -136,8 +136,10 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     (hpri.out.eq_two_or_odd.resolve_left fun h => by simp [h] at h5p ) hζ'] at H₁
   replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
   simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
-  refine' Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη => ?_) H₁ ζ hζ
-  refine' fltIdeals_coprime _ _ H (ab_coprime H hpri.out.ne_zero hgcd) hη₁ hη₂ hη caseI
+  refine' Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη => ?_) H₁ ζ
+    (by simpa using hζ)
+  refine' fltIdeals_coprime _ _ H (ab_coprime H hpri.out.ne_zero hgcd) (by simpa using hη₁)
+    (by simpa using hη₂) hη caseI
   · exact hpri.out
   · exact h5p
 
