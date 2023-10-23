@@ -406,44 +406,44 @@ In this section we prove Theorem \ref{thm:Kummers_lemma}. The proof follows \cit
 
 
 \begin{lemma}\label{lem:exists_alg_int}
-	Let $K$ be a number fields and $\a \in K$. Then there exists a $n \in \ZZ\backslash\{0\}$ such that $n \a$ is an algebraic integer.  
+	Let $K$ be a number fields and $\a \in K$. Then there exists a $n \in \ZZ\backslash\{0\}$ such that $n \a$ is an algebraic integer.
 \end{lemma}
 
 \begin{theorem}[Hilbert 90]\label{Hilbert90}
-Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ is cyclic with generator $\sigma$. If $\a \in K$ is such that $N_{K/F}(\a)=1$, then \[ \a =\beta/ \sigma(\beta)\] for some $\beta \in \OO_K$. 
+Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ is cyclic with generator $\sigma$. If $\a \in K$ is such that $N_{K/F}(\a)=1$, then \[ \a =\beta/ \sigma(\beta)\] for some $\beta \in \OO_K$.
 
 \uses{lem:exists_alg_int}
 \end{theorem}
 
 \begin{proof}
   Pick some $\gamma \in K$ and consider \[\beta=\gamma \a+ \sigma(\gamma)\a \sigma(\a)+\cdots+\sigma^{n-1}(\gamma)\a \sigma(\a)\cdots \sigma^{n-1}(\a),\] where $[K/F]=n$. Since the norm $\a$ is $1$ then we have $\a \sigma(\a)\cdots \sigma^{n-1}(\a)=1$ from which one verifies that $\a \sigma(\beta)=\beta$. This also uses that since we know that Galois group is cyclic, all the embeddings are given by $\sigma^i$. Note that $ \a+ \sigma\a \sigma(\a)+\cdots+\sigma^{n-1}\a \sigma(\a)\cdots \sigma^{n-1}(\a)$ is a linear combination of the embeddings $\sigma^i$. Now, using \ref{lem:lin_indep_iff_disc_ne_zero} we can check that they must be linearly independent. Therefore, it is possible to find a $\gamma$ such that $\beta \neq 0$. Putting everything together we have found $\a=\beta/\sigma(\beta)$. Using \ref{lem:exists_alg_int} we see that its possible to make sure $\beta \in \OO_K$ as required.
-	
 
-	
+
+
 
 \end{proof}
 
 
 \begin{theorem}[Hilbert 92]\label{lem:Hilbert92}
 	Let $K/F$ be a Galois extension of $F=\QQ(\zeta_p)$ with  Galois group $\Gal(K/F)$ cyclic with generator $\sigma$. Then there exists a unit $\eta \in \OO_K$ such that $N_{K/F}(\eta)=1$ but does not have the form $\epsilon/\sigma(\epsilon)$ for any unit $\e \in \OO_K$.
-	
+
 \end{theorem}
 
 \begin{proof}
 This is Hilbert theorem 92 (\cite{Hilbert}), also Lemma 33 of Swinnerton-Dyer's book (\cite{SD}).
-	
-	
+
+
 
 \end{proof}
 
 
-\section{Some Ramification results}
+\subsection{Some Ramification results}
 
 We will need several results about ramification in degree $p$ extensions of $\QQ(\zeta_p)$. Following \cite{SD} we do this by using the relative different ideal of the extension.
 
 \begin{definition}\label{def:rel_different}
-   
-    Let $K, F$ be number fields with $F \subseteq K$. Let  $A$ be an additive subgroup of $K$. Let \[A^{-1}=\{ \a \in K | \a A \in \OO_K\}\] and 
+
+    Let $K, F$ be number fields with $F \subseteq K$. Let  $A$ be an additive subgroup of $K$. Let \[A^{-1}=\{ \a \in K | \a A \in \OO_K\}\] and
     \[A^* = \{ \a \in K | \Tr_{K/F} (\a A) \in \OO_F\}.\] The relative different $\frak{d}_{K/F}$ of $K/F$ is then defined as $((\OO_K)^*)^{-1}$ which one checks is an integral ideal in $\OO_K$. This is also the annihilator of $\Omega^1_{\OO_K/\OO_F}$ if we want to be fancy.
 \end{definition}
 
@@ -451,7 +451,7 @@ We will need several results about ramification in degree $p$ extensions of $\QQ
 \begin{lemma}\label{lem:diff_ideal_eqn}
 	\uses{def:rel_different}
     Let $K/F$ be an extension of number fields and let $S$ denote the set of $\a \in \OO_K$ be such that $K=F(\a)$. Then \[ \gothd_{K/F} = \left (m_{\a}'(\a) : \a \in S \right )\] where $m_\a$ is denotes the minimal polynomial of $\a$.
-	
+
 \end{lemma}
 
 \begin{proof}
@@ -459,7 +459,7 @@ We will need several results about ramification in degree $p$ extensions of $\QQ
 \end{proof}
 
 \begin{lemma}\label{lem:diff_ram}
-    Let $K/F$ be an extension of number fields with $\gothp_F, \gothp_K$ prime ideas in $K,F$ respectively, with $\gothp_K^e \parallel \gothp_F$ for $e >0$. Then $\gothp_K^{e-1} \mid \gothd_{K/F}$ and $\gothp_K^{e} \mid \gothd_{K/F}$ iff $\gothp_F \mid e$. 
+    Let $K/F$ be an extension of number fields with $\gothp_F, \gothp_K$ prime ideas in $K,F$ respectively, with $\gothp_K^e \parallel \gothp_F$ for $e >0$. Then $\gothp_K^{e-1} \mid \gothd_{K/F}$ and $\gothp_K^{e} \mid \gothd_{K/F}$ iff $\gothp_F \mid e$.
 \end{lemma}
 
 \begin{proof}
@@ -468,7 +468,7 @@ We will need several results about ramification in degree $p$ extensions of $\QQ
 
 \begin{lemma}\label{lem:loc_ramification}
 Let $K$ be a number field, $p$ be a rational prime below $\gothp$ and let $\a_0, \xi$ be in $\OO_\gothp^\times$ (the units of the ring of integers of the completion of $K$ at $\gothp$) be such that \[\a_0^p \equiv \xi \mod \gothp^{m+r}\] where $\gothp^m \parallel p$ and $r(p-1)>m$. Then there exists an $\a \in \OO_{\gothp}^\times$ such that $\a^p =\xi$.
-    
+
 \end{lemma}
 
 \begin{proof}
@@ -485,26 +485,23 @@ Let $K$ be a number field, $p$ be a rational prime below $\gothp$ and let $\a_0,
     If we instead have $\lam_p^p \parallel (\xi-\a_0^p)$, then pick some element in $ K$ which agrees with $\a_0$ up to $\lam_p^{p+1}$, which we again call $\a_0$ and consider \[\eta= (\sqrt[p]{\xi}-\a_0)/\lam_p\] so that $K=F(\eta)$. Now, if $m_\eta$ is the minimal monic polynomial for $\eta$ then by definition it follows that \[m_\eta(x) \equiv x^p+\left (\a_0^{p-1}p/\lam_p^{p-1} \right )x+ (\a_0^p-\xi)/\lam_p^p \mod \lam_p\]
 
     So in fact $\eta \in \OO_K$. Now, if we look at $m_\eta'$ we see that $m_\eta'(\eta)$ is coprime to $\lam_p$  and therefore coprime to $\gothd_{K/F}$ (by \ref{lem:diff_ideal_eqn})  and therefore $\lam_p$ is unramified (by \ref{lem:diff_ram}).
-    
+
 \end{proof}
 
 
 
-\section{Proof of Kummers Lemma}
+\subsection{Proof of Kummers Lemma}
 Using the above we have the following lemma (from which Kummer's lemma is immediate):
 
 
 \begin{lemma}\label{Kummer_alt}
 	\uses{lem:ramification_lem, lem:Hilbert92,Hilbert90  }
 Let $u \in F$ with $F=\QQ(\zeta_p)$ be a unit such that \[u \equiv a^p \mod \lam_p^p\] for some $a \in \OO_F$. The either $u = \epsilon^p$ for some $\epsilon \in \OO_F^\times$ or $p$ divides the class number of $F$.
-	
+
 \end{lemma}
 
 \begin{proof}
-	Assume $u$ is not a $p$-th power. Then let $K=F(\sqrt[p]{u})$  and $\eta \in K$ be as in \ref{lem:Hilbert92}. Then $K/F$ is Galois and cyclic of degree $p$. Now by Hilbert 90 (\ref{Hilbert90})  we can find $\beta \in \OO_K$ such that \[\eta = \beta/\sigma(\beta)\] (but note that by our assumption $\beta$ is not a unit). Note that the ideal $(\eta)$ is invariant under $\Gal(K/F)$ by construction and by \ref{lem:ramification_lem} it cannot be ramified, therefore $(\beta)$ is the extension of scalars of some ideal $\gothb$ in $\OO_F$. Now if $\gothb$ is principal generated by some $\gamma$ then $\beta=v \gamma$  for some $v \in \OO_K^\times$. 
+	Assume $u$ is not a $p$-th power. Then let $K=F(\sqrt[p]{u})$  and $\eta \in K$ be as in \ref{lem:Hilbert92}. Then $K/F$ is Galois and cyclic of degree $p$. Now by Hilbert 90 (\ref{Hilbert90})  we can find $\beta \in \OO_K$ such that \[\eta = \beta/\sigma(\beta)\] (but note that by our assumption $\beta$ is not a unit). Note that the ideal $(\eta)$ is invariant under $\Gal(K/F)$ by construction and by \ref{lem:ramification_lem} it cannot be ramified, therefore $(\beta)$ is the extension of scalars of some ideal $\gothb$ in $\OO_F$. Now if $\gothb$ is principal generated by some $\gamma$ then $\beta=v \gamma$  for some $v \in \OO_K^\times$.
 	But this means that \[\eta = \beta/\sigma(\beta)= v/(\sigma(v)) \cdot \gamma / \sigma(\gamma)=v/\sigma(v)  \] contradicting our assumption coming from \ref{lem:Hilbert92}. On the other hand, $\gothb^p= N_{K/F}(\beta)$ is principal, meaning $p$ divides the class group of $F$ as required.
-	
+
 \end{proof}
-
-
-
