@@ -1,0 +1,424 @@
+This is XeTeX, Version 3.141592653-2.6-0.999993 (MiKTeX 21.8) (preloaded format=xelatex 2023.10.4)  4 OCT 2023 18:07
+entering extended mode
+**./print.tex
+(print.tex
+LaTeX2e <2021-06-01> patch level 1
+L3 programming layer <2021-08-27>
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsart.cls
+Document Class: amsart 2020/05/29 v2.20.6
+\linespacing=\dimen138
+\normalparindent=\dimen139
+\normaltopskip=\skip47
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2021/04/20 v2.17j AMS math features
+\@mathmargin=\skip48
+
+For additional information on amsmath, use the `?' option.
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks16
+\ex@=\dimen140
+))
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen141
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count178
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count179
+\leftroot@=\count180
+LaTeX Info: Redefining \overline on input line 399.
+\classnum@=\count181
+\DOTSCASE@=\count182
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box50
+\strutbox@=\box51
+\big@size=\dimen142
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count183
+\c@MaxMatrixCols=\count184
+\dotsspace@=\muskip16
+\c@parentequation=\count185
+\dspbrk@lvl=\count186
+\tag@help=\toks17
+\row@=\count187
+\column@=\count188
+\maxfields@=\count189
+\andhelp@=\toks18
+\eqnshift@=\dimen143
+\alignsep@=\dimen144
+\tagshift@=\dimen145
+\tagwidth@=\dimen146
+\totwidth@=\dimen147
+\lineht@=\dimen148
+\@envbody=\toks19
+\multlinegap=\skip49
+\multlinetaggap=\skip50
+\mathdisplay@stack=\toks20
+LaTeX Info: Redefining \[ on input line 2923.
+LaTeX Info: Redefining \] on input line 2924.
+)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 397
+.
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)
+\copyins=\insert199
+\abstractbox=\box52
+\listisep=\skip51
+\c@part=\count190
+\c@section=\count191
+\c@subsection=\count192
+\c@subsubsection=\count193
+\c@paragraph=\count194
+\c@subparagraph=\count195
+\c@figure=\count196
+\c@table=\count197
+\abovecaptionskip=\skip52
+\belowcaptionskip=\skip53
+\captionindent=\dimen149
+\thm@style=\toks21
+\thm@bodyfont=\toks22
+\thm@headfont=\toks23
+\thm@notefont=\toks24
+\thm@headpunct=\toks25
+\thm@preskip=\skip54
+\thm@postskip=\skip55
+\thm@headsep=\skip56
+\dth@everypar=\toks26
+) (preamble.tex
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+Package: babel 2021/07/22 3.63 The Babel package
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.def
+File: babel.def 2021/07/22 3.63 Babel common definitions
+\babel@savecnt=\count198
+\U@D=\dimen150
+\l@unhyphenated=\language79
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/babel\xebabel.def
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def))
+\bbl@readstream=\read2
+)
+\bbl@dirlevel=\count266
+*************************************
+* Local config file bblopts.cfg used
+*
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
+ babel
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/babel-english\english.l
+df
+Language: english 2017/06/06 v3.3r English support from the babel system
+Package babel Info: Hyphen rules for 'canadian' set to \l@english
+(babel)             (\language0). Reported on input line 102.
+Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
+(babel)             (\language73). Reported on input line 105.
+Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
+(babel)             (\language73). Reported on input line 108.
+))
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/tools\enumerate.sty
+Package: enumerate 2015/07/23 v3.00 enumerate extensions (DPC)
+\@enLab=\toks27
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+Package: setspace 2011/12/19 v6.7a set line spacing
+)
+(blueprint.sty)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/comment\comment.sty
+\CommentStream=\write3
+
+Excluding comment 'comment')
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2021-06-07 v7.00m Hypertext links for LaTeX
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode not found.
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks28
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/kvsetkeys\kvsetkeys.s
+ty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+) (C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
+.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
+)
+\@linkdim=\dimen151
+\Hy@linkcounter=\count267
+\Hy@pagecounter=\count268
+ (C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2021-06-07 v7.00m Hyperref: PDFDocEncoding definition (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref-langp
+atches.def
+File: hyperref-langpatches.def 2021-06-07 v7.00m Hyperref: patches for babel la
+nguages
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/etexcmds\etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count269
+ (C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+File: puenc.def 2021-06-07 v7.00m Hyperref: PDF Unicode definition (HO)
+)
+Package hyperref Info: Option `ocgcolorlinks' set `true' on input line 4073.
+Package hyperref Info: Hyper figures OFF on input line 4192.
+Package hyperref Info: Link nesting OFF on input line 4197.
+Package hyperref Info: Hyper index ON on input line 4200.
+Package hyperref Info: Plain pages OFF on input line 4207.
+Package hyperref Info: Backreferencing OFF on input line 4212.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4445.
+\c@Hy@tempcnt=\count270
+LaTeX Info: Redefining \url on input line 4804.
+\XeTeXLinkMargin=\dimen152
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count271
+\Field@Width=\dimen153
+\Fld@charsize=\dimen154
+Package hyperref Info: Hyper figures OFF on input line 6076.
+Package hyperref Info: Link nesting OFF on input line 6081.
+Package hyperref Info: Hyper index ON on input line 6084.
+Package hyperref Info: backreferencing OFF on input line 6091.
+Package hyperref Info: Link coloring OFF on input line 6096.
+Package hyperref Info: Link coloring with OCG ON on input line 6099.
+Package hyperref Info: PDF/A mode OFF on input line 6106.
+LaTeX Info: Redefining \ref on input line 6146.
+LaTeX Info: Redefining \pageref on input line 6150.
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count272
+\c@Item=\count273
+\c@Hfootnote=\count274
+)
+Package hyperref Info: Driver (autodetected): hxetex.
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hxetex.def
+File: hxetex.def 2021-06-07 v7.00m Hyperref driver for XeTeX
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\pdfm@box=\box53
+\c@Hy@AnnotLevel=\count275
+\HyField@AnnotCount=\count276
+\Fld@listcount=\count277
+\c@bookmark@seq@number=\count278
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atvery packag
+e
+with kernel methods
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+86.
+)
+\Hy@SectionHShift=\skip57
+))
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-xet
+ex.def
+File: l3backend-xetex.def 2021-08-04 L3 backend support: XeTeX
+ ()
+\c__kernel_sys_dvipdfmx_version_int=\count279
+\l__color_backend_stack_int=\count280
+\g__color_backend_stack_int=\count281
+\g__graphics_track_int=\count282
+\l__pdf_internal_box=\box54
+\g__pdf_backend_object_int=\count283
+\g__pdf_backend_annotation_int=\count284
+\g__pdf_backend_link_int=\count285
+)
+(C:\Users\chris\FLT_regular_blueprint\FltRegular\blueprint\print\print.aux)
+\openout1 = `print.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 16.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 1
+6.
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/base\ts1cmr.fd
+File: ts1cmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 16.
+
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 16.
+
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 16.
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
+Package: color 2020/02/24 v1.2b Standard LaTeX Color (DPC)
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: xetex.def on input line 149.
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\xetex.def
+File: xetex.def 2021/03/18 v5.0k Graphics/color driver for xetex
+))
+Package hyperref Info: Link coloring ON on input line 16.
+ (C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count286
+)
+LaTeX Info: Redefining \ref on input line 16.
+LaTeX Info: Redefining \pageref on input line 16.
+LaTeX Info: Redefining \nameref on input line 16.
+
+(C:\Users\chris\FLT_regular_blueprint\FltRegular\blueprint\print\print.out)
+(C:\Users\chris\FLT_regular_blueprint\FltRegular\blueprint\print\print.out)
+\@outlinefile=\write4
+\openout4 = `print.out'.
+
+
+(content.tex (demo.tex
+(C:\Users\chris\FLT_regular_blueprint\FltRegular\blueprint\print\print.toc)
+\tf@toc=\write5
+\openout5 = `print.toc'.
+
+
+[1] [2] [3] [4]
+LaTeX Font Info:    Trying to load font information for U+euf on input line 258
+.
+
+(C:\Users\chris\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\ueuf.fd
+File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
+)
+[5] [6] [7]))
+(C:\Users\chris\FLT_regular_blueprint\FltRegular\blueprint\print\print.bbl)
+[8] (C:\Users\chris\FLT_regular_blueprint\FltRegular\blueprint\print\print.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+Package rerunfilecheck Info: File `print.out' has not changed.
+(rerunfilecheck)             Checksum: A8E1EAC795EDE6729C459F2A0F378DAD;860.
+ ) 
+Here is how much of TeX's memory you used:
+ 10459 strings out of 411335
+ 149031 string characters out of 2832716
+ 491318 words of memory out of 3000000
+ 30541 multiletter control sequences out of 15000+600000
+ 411400 words of font info for 66 fonts, out of 8000000 for 9000
+ 1509 hyphenation exceptions out of 8191
+ 71i,8n,80p,1028b,448s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on C:\Users\chris\FLT_regular_blueprint\FltRegular\blueprint\pri
+nt\print.pdf (8 pages).

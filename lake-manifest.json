@@ -4,10 +4,18 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4.git",
     "subDir?": null,
-    "rev": "b2540cf9b47f7cf8d913114cb688317719bc50b4",
+    "rev": "a5516f580a31bf7ec20be84cc4fe50824cd3e35a",
     "opts": {},
     "name": "mathlib",
     "inputRev?": null,
+    "inherited": false}},
+  {"git":
+   {"url": "https://github.com/leanprover/doc-gen4",
+    "subDir?": null,
+    "rev": "f9d987567129f422ebd8cfac6a1e6233a06c720b",
+    "opts": {},
+    "name": "«doc-gen4»",
+    "inputRev?": "main",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/gebner/quote4",
@@ -48,5 +56,29 @@
     "opts": {},
     "name": "proofwidgets",
     "inputRev?": "v0.0.17",
+    "inherited": true}},
+  {"git":
+   {"url": "https://github.com/xubaiw/CMark.lean",
+    "subDir?": null,
+    "rev": "0077cbbaa92abf855fc1c0413e158ffd8195ec77",
+    "opts": {},
+    "name": "CMark",
+    "inputRev?": "main",
+    "inherited": true}},
+  {"git":
+   {"url": "https://github.com/fgdorais/lean4-unicode-basic",
+    "subDir?": null,
+    "rev": "f09250282cea3ed8c010f430264d9e8e50d7bc32",
+    "opts": {},
+    "name": "«lean4-unicode-basic»",
+    "inputRev?": "main",
+    "inherited": true}},
+  {"git":
+   {"url": "https://github.com/hargonix/LeanInk",
+    "subDir?": null,
+    "rev": "2447df5cc6e48eb965c3c3fba87e46d353b5e9f1",
+    "opts": {},
+    "name": "leanInk",
+    "inputRev?": "doc-gen",
     "inherited": true}}],
- "name": "«flt-regular»"}
+ "name": "FltRegular"}

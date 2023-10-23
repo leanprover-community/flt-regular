@@ -11,6 +11,7 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
 
+/-
 lemma Ideal.Quotient.eq_zero_iff_dvd {A : Type*} [CommRing A] (x y : A) :
     Ideal.Quotient.mk (Ideal.span ({x} : Set A)) y = 0 ↔ x ∣ y := by
   rw [Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton]
@@ -19,6 +20,7 @@ lemma IsPrimitiveRoot.sub_one_ne_zero {A : Type*} [CommRing A] {n : ℕ} (hn : 1
     (hζ : IsPrimitiveRoot ζ n) : ζ - 1 ≠ 0 := by
   rw [Ne.def, sub_eq_zero]
   exact hζ.ne_one hn
+-/
 
 instance CharZero.subsemiring {A : Type*} [Semiring A] {S : Type*} [SetLike S A]
     [SubsemiringClass S A] [CharZero A] (x : S) :
@@ -27,6 +29,7 @@ instance CharZero.subsemiring {A : Type*} [Semiring A] {S : Type*} [SetLike S A]
 
 instance : CharZero (𝓞 K) := CharZero.subsemiring (𝓞 K)
 
+/-
 lemma Ideal.absNorm_eq_zero_iff {A : Type*} [CommRing A] [IsDomain A] [IsDedekindDomain A]
     [Infinite A] [Module.Free ℤ A] [Module.Finite ℤ A]
     {I : Ideal A} : Ideal.absNorm I = 0 ↔ I = ⊥ := by
@@ -40,6 +43,7 @@ lemma Ideal.absNorm_eq_zero_iff {A : Type*} [CommRing A] [IsDomain A] [IsDedekin
     rwa [Ideal.span_singleton_le_iff_mem]
   · rintro rfl
     exact absNorm_bot
+-/
 
 lemma Ideal.isCoprime_iff_sup {R : Type*} [CommSemiring R] {I J : Ideal R} :
     IsCoprime I J ↔ I ⊔ J = ⊤ := by
@@ -55,11 +59,12 @@ lemma Ideal.isCoprime_iff_sup {R : Type*} [CommSemiring R] {I J : Ideal R} :
     refine' ⟨1, 1, _⟩
     simpa only [one_eq_top, top_mul, Submodule.add_eq_sup, ge_iff_le]
 
+/-
 lemma Ideal.isCoprime_iff_gcd {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     {I J : Ideal R} :
     IsCoprime I J ↔ gcd I J = 1 := by
   rw [Ideal.isCoprime_iff_sup, one_eq_top, gcd_eq_sup]
-
+-/
 instance foofoo [NumberField K] : IsDomain (Ideal (𝓞 K)) := by convert Ideal.isDomain (A := 𝓞 K)
 
 instance [NumberField K] : CancelMonoidWithZero (Ideal (𝓞 K)) :=
@@ -243,13 +248,14 @@ lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^
     ((isPrimitiveRoot_of_mem_primitiveRoots hη).mem_nthRootsFinset hpri.out.pos)
       ((isPrimitiveRoot_of_mem_primitiveRoots hη).ne_one hpri.out.one_lt).symm
 
+/-
 lemma Ideal.isCoprime_span_singleton_iff {R : Type*} [CommSemiring R] (x y : R) :
     IsCoprime (span <| singleton x) (span <| singleton y) ↔ IsCoprime x y := by
   simp_rw [isCoprime_iff_sup, eq_top_iff_one, mem_span_singleton_sup, mem_span_singleton]
   constructor
   · rintro ⟨a, _, ⟨b, rfl⟩, e⟩; exact ⟨a, b, mul_comm b y ▸ e⟩
   · rintro ⟨a, b, e⟩; exact ⟨a, _, ⟨b, rfl⟩, mul_comm y b ▸ e⟩
-
+-/
 lemma isCoprime_of_not_zeta_sub_one_dvd (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x) : IsCoprime ↑p x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rwa [← Ideal.isCoprime_span_singleton_iff,
@@ -279,6 +285,7 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : �
   use b, ↑u * ((hζ.unit' - 1 : 𝓞 K) * k ^ (p : ℕ)) - r
   rw [mul_sub, hr, add_sub_cancel]
 
+/-
 lemma Ideal.span_singleton_absNorm {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     [Infinite R] [Module.Free ℤ R] [Module.Finite ℤ R] (I : Ideal R) (hI : (Ideal.absNorm I).Prime) :
     Ideal.span (singleton (Ideal.absNorm I : ℤ)) = I.comap (algebraMap ℤ R) := by
@@ -291,6 +298,7 @@ lemma Ideal.span_singleton_absNorm {R : Type*} [CommRing R] [IsDomain R] [IsDede
     exact absNorm_mem I
   · rw [Ne.def, span_singleton_eq_bot]
     exact Int.ofNat_ne_zero.mpr hI.ne_zero
+-/
 
 lemma norm_dvd_iff {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     [Infinite R] [Module.Free ℤ R] [Module.Finite ℤ R] (x : R) (hx : Prime (Algebra.norm ℤ x)) {y : ℤ} :

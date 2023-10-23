@@ -1,0 +1,344 @@
+
+
+\usepackage[english]{babel}
+\usepackage{enumerate}
+\usepackage{setspace}
+\usepackage[project=..]{blueprint}
+\usepackage{amsfonts,amsthm,amsmath,amssymb,comment,url}
+
+% Set up blueprint options
+
+
+\home{https://leanprover-community.github.io/flt-regular/}
+\github{https://github.com/leanprover-community/flt-regular/}
+
+
+\usepackage[ocgcolorlinks]{hyperref}
+\hypersetup{citecolor=blue,
+	linkcolor=red}
+
+%%==============================================================================
+%
+%              GEOMETRY
+%
+%%==============================================================================
+
+
+
+
+%\addbibresource{bibliog.bib}
+%\usepackage{fullpage}
+%	\bibliography{bibliog}
+
+\renewcommand{\baselinestretch}{1}
+
+
+
+
+%%==============================================================================
+%
+%              ADDRESSES
+%
+%%==============================================================================
+
+%\author{Christopher Birkbeck}	
+%\address{Department of Mathematics, University College London, Gower street, London, WC1E 6BT}
+%\email{c.birkbeck@ucl.ac.uk} 
+%\urladdr{orcid.org/0000-0002-7546-9028}
+
+
+
+
+
+%%==============================================================================
+%
+%              COMMENTS
+%
+%%==============================================================================
+
+
+
+%%==============================================================================
+%
+%              THEOREM STYLES
+%
+%%==============================================================================
+\theoremstyle{plain}
+\newtheorem{theorem}[subsection]{Theorem}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{lemma}[subsection]{Lemma}
+\newtheorem{cor}[subsection]{Corollary}
+\newtheorem{con}[subsection]{Conjecture}
+\newtheorem*{con*}{Conjecture}
+\newtheorem{prop}[subsection]{Proposition}
+\newtheorem*{prop*}{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[subsection]{Definition}
+\newtheorem{exmp}[subsection]{Example}
+\newtheorem{nexmp}[subsection]{Non-example}
+\theoremstyle{definition}
+\newtheorem{rmrk}[subsection]{Remark}
+\newtheorem*{rmrk*}{Remark}
+\newtheorem{warn}[subsection]{Warning}
+\newtheorem*{warn*}{Warning}
+\newtheorem{exmps}[subsection]{Examples} 
+\newtheorem*{exmp*}{Example}
+\newtheorem{obs}[subsection]{Observation}
+\newtheorem*{obs*}{Observation}
+\newtheorem{nota}[subsection]{Notation}
+\newtheorem{question}[subsection]{Exercise}
+\newtheorem{num}[subsection]{\unskip}
+\newtheorem{alg}[subsection]{Algorithm}
+
+
+
+
+%%==============================================================================
+%
+%              MACROS
+%
+%%==============================================================================
+
+%Shortcuts: mathbb
+\newcommand{\Q}{\mathbb{Q}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Ql}{\mathbb{Q}_\ell}
+\newcommand{\Qp}{\mathbb{Q}_p}
+\renewcommand{\c}{\mathfrak c}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\Zp}{\mathbb{Z}_p}
+\newcommand{\Zpthick}{\ZZ_p^\times}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RR}{\mathbb{R}}
+
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\D}{\mathbb{D}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Cp}{\mathbb{C}_p}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathbb{F}}
+
+\newcommand{\TT}{\mathbb{T}}
+\DeclareMathOperator{\bA}{\mathbb{A}}
+\DeclareMathOperator{\bG}{\mathbb{G}}
+\DeclareMathOperator{\bH}{\mathbb{H}}
+\DeclareMathOperator{\bT}{\mathbb{T}}
+\DeclareMathOperator{\bV}{\mathbb{V}}
+\DeclareMathOperator{\bW}{\mathbb{W}}
+\newcommand{\bD}{\mathbb{D}}
+\def\AA{\mathbb{A}}
+\def\CC{\mathbb{C}}
+\def\FF{\mathbb{F}}
+\def\GG{\mathbb{G}}
+\def\NN{\mathbb{N}}
+\renewcommand{\P}{\mathbb{P}}
+\renewcommand{\A}{\mathbb{A}}
+\newcommand{\G}{\mathbb{G}}
+\def\PP{\mathbb{P}}
+\def\QQ{\mathbb{Q}}
+\def\TT{\mathbb{T}}
+\def \Nm {N_{K/\QQ}}
+
+
+% Shortcuts: mathcal
+\newcommand{\f}{\mathcal{F}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\uhp}{\mathcal{H}}
+\newcommand{\roi}{\mathcal{O}}
+\newcommand{\DD}{\mathcal{D}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cV}{\mathcal{V}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\UU}{\mathcal{U}}
+\newcommand{\W}{\mathcal{W}}
+\def \D {\mathcal{D}}
+\def \E {\mathcal{E}}
+\def \B {\mathcal{B}}
+\def \M {\mathcal{M}}
+\def \Y {\mathcal{Y}}
+\def \XX {\mathcal{X}}
+\def \XXt {\mathcal{X}^{\ast}}
+\newcommand*\pp{{\rlap{\('\)}}}
+\newcommand*\mA{\mathcal A} 
+\newcommand*\mB{\mathcal B} 
+\newcommand*\mC{\mathcal C}
+
+% Shortcuts: mathscr
+
+
+\newcommand{\fc}{\mathfrak{c}}
+\newcommand{\ff}{\mathfrak{f}}
+\newcommand{\fg}{\mathfrak{g}}
+\newcommand{\fH}{\mathfrak{H}}
+\newcommand{\fn}{\mathfrak{n}}
+\newcommand{\fm}{\mathfrak{m}}
+\newcommand{\m}{\mathfrak{m}}
+\newcommand{\n}{N}
+\newcommand{\fp}{\mathfrak{p}}
+\newcommand{\pri}{\mathfrak{p}}
+\newcommand{\fW}{\mathfrak{W}}
+\newcommand{\fX}{\mathfrak{X}}
+\def\gothb{\mathfrak{b}}
+\def\gothc{\mathfrak{c}}
+\def\ee{\mathfrak{e}}
+\def\gothm{\mathfrak{m}}
+\def\gothd{\mathfrak{d}}
+\def\gotho{\mathfrak{o}}
+\def\goths{\mathfrak{s}}
+\def\gothz{\mathfrak{z}}
+\def \gothP{\mathfrak{P}}
+\def \gothQ{\mathfrak{Q}}
+\def \nn {N}
+\def \zz {\mathfrak{z}}
+\def \MM {\mathfrak{M}}
+\def\gothp{\mathfrak{p}}
+\def\ps{\mathfrak{p}}
+\def\gothq{\mathfrak{q}}
+
+
+
+
+\def \a{\alpha}
+\def \e {\epsilon}
+\def \aa {\pmb{a}}
+\def \g {\gamma}
+\def \GA {\Gamma}
+\def \w {\omega}
+\def \LL {\mathcal{L}}
+\def \W {\mathcal{W}}
+\def \p {\partial}
+\def \ll {\lambda}
+\def \L {\Lambda}
+\def \st {\star}
+\def \bu {\bullet}
+
+\def \s {\sigma}
+\def \Si {\Sigma}
+\def \lam {\lambda}
+\def \ii {\iota}
+\def \d {\mathfrak{d}}
+\def \OO {\mathcal{O}}
+\def \OF {\mathcal{O}_F}
+\def \OFU {\mathcal{O}_F^{\times,+}}
+\def \OOO {\mathscr{O}}
+
+\def \CD {\mathfrak{D}}
+\def \CX {\mathscr{X}}
+\def \CZ {\mathscr{Z}}
+\def \CM {\mathscr{M}}
+\def \Z {\ZZ}
+\def \s {\sigma}
+\def \SS {S_{k}}
+\def \PGI {\mathrm{P}\Gamma_{\!\scaleto{0}{3pt}}(p^n)}
+\def \GI {\Gamma_{\!\scaleto{0}{3pt}}(p^n)}
+\def \GIst {\Gamma_{\!\scaleto{0}{3pt}}^*(p^n)}
+\def \un {\underline}
+\def \ov{\overline}
+\def \wt{\widetilde}
+\def \wh{\widehat}
+\def \H{\widehat{H}}
+\def \HHH {\mathcal{H}}
+\def \U {\mathcal{U}}
+
+
+\def\gotha{\mathfrak{a}}
+\def \tr {\ttr_{F/\QQ}}
+\def \eU {\e_\k}
+
+
+\def \k {\kappa}
+\def \Norm {N_{F/\QQ}}
+
+
+% Shortcuts: Operators
+\DeclareMathOperator{\coker}{coker}
+\DeclareMathOperator{\Sch}{Sch}
+\DeclareMathOperator{\Set}{Set}
+\DeclareMathOperator{\hH}{H}
+\DeclareMathOperator{\tor}{tor}
+\DeclareMathOperator{\et}{et}
+\DeclareMathOperator{\qproet}{qproet}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Lie}{Lie}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Sp}{Sp}
+\DeclareMathOperator{\Ext}{Ext}
+\DeclareMathOperator{\val}{val}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\lcm}{lcm}
+
+\DeclareMathOperator{\unn}{univ}
+\DeclareMathOperator{\Spa}{Spa}
+\DeclareMathOperator{\Spf}{Spf}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\NP}{NP}
+\DeclareMathOperator{\Inv}{Inv}
+\newcommand{\an}{\mathrm{an}}
+\newcommand{\ad}{\mathrm{ad}}
+\newcommand{\Ig}{\mathrm{Ig}}
+\DeclareMathOperator{\ab}{ab}
+\DeclareMathOperator{\fs}{fs}
+\newcommand{\id}{\operatorname{id}}
+\DeclareMathOperator{\Stab}{Stab}
+\DeclareMathOperator{\coinf}{Coinf}
+\DeclareMathOperator{\trr}{tr}
+\DeclareMathOperator{\Det}{Det}
+\DeclareMathOperator{\nrd}{nrd}
+\DeclareMathOperator{\ttr}{Tr}
+\DeclareMathOperator{\suup}{sup}
+\DeclareMathOperator{\Tor}{Tor}
+
+\newcommand{\AIP}{\mathrm{AIP}}
+\DeclareMathOperator{\Fred}{Fred}
+\DeclareMathOperator{\Frob}{Frob}
+\DeclareMathOperator{\Hdg}{Hdg}
+\DeclareMathOperator{\Coeq}{Coeq}
+\DeclareMathOperator{\Cor}{Cor}
+\newcommand{\cyc}{{\text{cyc}}}
+\newcommand{\cts}{{\text{cts}}}
+\DeclareMathOperator{\disc}{Disc}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\SL}{SL}
+\DeclareMathOperator{\Sh}{Sh}
+\DeclareMathOperator{\Gr}{Gr}
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\GSp}{GSp}
+\DeclareMathOperator{\Isom}{Isom}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Ind}{Ind}
+\DeclareMathOperator{\inv}{inv}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\smcy}{smcy}
+\DeclareMathOperator{\Trace}{Trace}
+\DeclareMathOperator{\Cl}{Cl}
+\DeclareMathOperator{\Inf}{Inf}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Mapc}{\operatorname{Map}_{\cts}}
+\newcommand{\HTf}{\HT_{\mathrm{fin}}}
+\newcommand{\hcg}{\mathrm{H}_{\mathrm{c}}^g}
+
+
+\usepackage{amsfonts, amsthm, amssymb, amsmath}
+

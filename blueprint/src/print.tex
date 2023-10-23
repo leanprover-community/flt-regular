@@ -1,0 +1,25 @@
+% This file is the entry point for generating the PDF by LaTex.
+\documentclass[11pt]{amsart}
+
+% Define `ifplastex` so we can have complicated macros for PDF
+% and simplified macros for the website.
+% See http://plastex.github.io/plastex/plastex/sect0006.html
+\newif\ifplastex
+\plastexfalse
+
+\input{preamble}
+
+\usepackage{blueprint}
+
+% The rest of this file is identical to web.tex
+
+\begin{document}
+
+\input{content}
+
+\bibliographystyle{amsalpha}
+\bibliography{references}
+
+\end{document}
+
+% vim: ts=2 et sw=2 sts=2

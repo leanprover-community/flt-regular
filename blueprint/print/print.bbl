@@ -1,0 +1,29 @@
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{Was82}
+
+\bibitem[BS66]{Borevich_Shafarevich}
+A.~I. Borevich and I.~R. Shafarevich, \emph{Number theory}, Pure and Applied
+  Mathematics, Vol. 20, Academic Press, New York-London, 1966, Translated from
+  the Russian by Newcomb Greenleaf. \MR{0195803}
+
+\bibitem[Mar18]{marcus}
+Daniel~A. Marcus, \emph{Number fields}, Universitext, Springer, Cham, 2018,
+  Second edition of [ MR0457396], With a foreword by Barry Mazur. \MR{3822326}
+
+\bibitem[Sam70]{Samuel}
+Pierre Samuel, \emph{Algebraic theory of numbers}, Translated from the French
+  by Allan J. Silberger, Houghton Mifflin Co., Boston, Mass., 1970.
+  \MR{0265266}
+
+\bibitem[Was82]{washington}
+Lawrence~C. Washington, \emph{Introduction to cyclotomic fields}, Graduate
+  Texts in Mathematics, vol.~83, Springer-Verlag, New York, 1982. \MR{718674
+  (85g:11001)}
+
+\end{thebibliography}

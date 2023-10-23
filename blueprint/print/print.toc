@@ -1,0 +1,6 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\tocsection {}{1}{Introduction}}{1}{section.1}%
+\contentsline {section}{\tocsection {}{2}{Discriminants of number fields}}{1}{section.2}%
+\contentsline {section}{\tocsection {}{3}{Cyclotomic fields}}{4}{section.3}%
+\contentsline {section}{\tocsection {}{4}{Fermat's Last Theorem for regular primes}}{5}{section.4}%
+\contentsline {section}{\tocsection {}{}{References}}{8}{section*.2}%

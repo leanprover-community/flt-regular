@@ -1,0 +1,27 @@
+/*
+    red           RawSienna                #8C2700
+    light red     Salmon!5                 #fef9f8
+    dark green    ForestGreen!70!black     #2f6023
+    green         ForestGreen              #458933
+    light green   ForestGreen!5            #f5f9f4
+    dark blue     MidnightBlue             #19196B
+*/
+.example_thmwrapper {
+    border: 1px solid #8C2700;
+    padding: 1em 1em 1em 1em;
+    background-color: #fef9f8;
+}
+
+.example_thmheading {
+    color: #8C2700;
+}
+
+.remark_thmwrapper {
+    border-left: 5px solid #458933;
+    padding: 1em 1em 1em 1em;
+    background-color: #f5f9f4;
+}
+
+.remark_thmheading {
+    color: #2f6023; /* #399D3C; */
+}
