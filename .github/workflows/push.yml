@@ -48,7 +48,7 @@ jobs:
       - name: Build project
         run: ~/.elan/bin/lake -Kenv=dev build FltRegular
 
-    - uses: actions/cache@v3
+      - uses: actions/cache@v3
         name: Mathlib doc Cache
         with:
           path: build/doc/Mathlib
