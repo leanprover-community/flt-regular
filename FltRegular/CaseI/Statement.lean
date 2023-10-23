@@ -47,7 +47,7 @@ theorem may_assume : SlightlyEasier → Statement := by
   have hp5 : 5 ≤ p := by
     by_contra' habs
     have : p ∈ Finset.Ioo 2 5 :=
-     (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_and_ne hpri.out.two_le hodd.symm, by linarith⟩
+     (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_of_ne hpri.out.two_le hodd.symm, by linarith⟩
     fin_cases this
     · exact MayAssume.p_ne_three hprod H rfl
     · rw [show 2 + 1 + 1 = 2 * 2 from rfl] at hpri
@@ -97,7 +97,7 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
 variable (p)
 
 /-
-These instances are related to the problem described in 
+These instances are related to the problem described in
 https://leanprover.zulipchat.com/#narrow/stream/270676-lean4/topic/slowness.20in.20ring.20theory.20file
 -/
 instance foo1 : @IsDomain (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))
