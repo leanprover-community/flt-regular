@@ -4,7 +4,7 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4.git",
     "subDir?": null,
-    "rev": "726dd08e7eb7c249e8fc658942914384a3a82829",
+    "rev": "81dd376a02781030ead59ee35ca5334a7fccc527",
     "opts": {},
     "name": "mathlib",
     "inputRev?": null,
@@ -12,7 +12,7 @@
   {"git":
    {"url": "https://github.com/leanprover/doc-gen4",
     "subDir?": null,
-    "rev": "8bccb92b531248af1b6692d65486e8640c8bcd10",
+    "rev": "e859e2f777521f82050b8f28e0205491a4ead0f5",
     "opts": {},
     "name": "«doc-gen4»",
     "inputRev?": "main",
@@ -20,7 +20,7 @@
   {"git":
    {"url": "https://github.com/leanprover/std4",
     "subDir?": null,
-    "rev": "fb43b83c13d10b90299d10d96512d20d33daa658",
+    "rev": "869c615eb10130c0637a7bc038e2b80253559913",
     "opts": {},
     "name": "std",
     "inputRev?": "main",
@@ -28,7 +28,7 @@
   {"git":
    {"url": "https://github.com/leanprover-community/quote4",
     "subDir?": null,
-    "rev": "a387c0eb611857e2460cf97a8e861c944286e6b2",
+    "rev": "511eb96eca98a7474683b8ae55193a7e7c51bc39",
     "opts": {},
     "name": "Qq",
     "inputRev?": "master",
@@ -36,18 +36,10 @@
   {"git":
    {"url": "https://github.com/leanprover-community/aesop",
     "subDir?": null,
-    "rev": "ed733adcb79e54e157fafb805ce3518d4411ab70",
+    "rev": "cb87803274405db79ec578fc07c4730c093efb90",
     "opts": {},
     "name": "aesop",
     "inputRev?": "master",
-    "inherited": true}},
-  {"git":
-   {"url": "https://github.com/leanprover-community/ProofWidgets4",
-    "subDir?": null,
-    "rev": "f1a5c7808b001305ba07d8626f45ee054282f589",
-    "opts": {},
-    "name": "proofwidgets",
-    "inputRev?": "v0.0.21",
     "inherited": true}},
   {"git":
    {"url": "https://github.com/leanprover/lean4-cli",
@@ -56,6 +48,14 @@
     "opts": {},
     "name": "Cli",
     "inputRev?": "main",
+    "inherited": true}},
+  {"git":
+   {"url": "https://github.com/leanprover-community/ProofWidgets4",
+    "subDir?": null,
+    "rev": "f1a5c7808b001305ba07d8626f45ee054282f589",
+    "opts": {},
+    "name": "proofwidgets",
+    "inputRev?": "v0.0.21",
     "inherited": true}},
   {"git":
    {"url": "https://github.com/xubaiw/CMark.lean",
@@ -68,9 +68,9 @@
   {"git":
    {"url": "https://github.com/fgdorais/lean4-unicode-basic",
     "subDir?": null,
-    "rev": "f09250282cea3ed8c010f430264d9e8e50d7bc32",
+    "rev": "4ecf4f1f98d14d03a9e84fa1c082630fa69df88b",
     "opts": {},
-    "name": "«lean4-unicode-basic»",
+    "name": "UnicodeBasic",
     "inputRev?": "main",
     "inherited": true}},
   {"git":
