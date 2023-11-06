@@ -1,14 +1,16 @@
-import FltRegular.Norm.NormPrime
 import Mathlib.NumberTheory.Cyclotomic.Gal
 import Mathlib.NumberTheory.Cyclotomic.Rat
+import Mathlib.RingTheory.Ideal.Norm
 
 variable {K : Type _} [Field K] {ζ : K}
 
 open scoped NumberField
 
-open Polynomial Algebra
+instance : Module (𝓞 K) (𝓞 K) := Semiring.toModule
 
-local notation "R" => 𝓞 K
+open scoped NumberField
+
+open Polynomial Algebra
 
 namespace IsCyclotomicExtension.Rat
 
@@ -19,25 +21,24 @@ local macro_rules | `($x ^ $y)   => `(HPow.hPow $x $y) -- Porting note: See issu
 theorem zeta_sub_one_prime [IsCyclotomicExtension {p ^ (k + 1)} ℚ K]
     (hζ : IsPrimitiveRoot ζ ↑(p ^ (k + 1))) (hodd : p ≠ 2) :
     Prime (⟨ζ - 1, Subalgebra.sub_mem _ (hζ.isIntegral (p ^ _).pos)
-    (Subalgebra.one_mem _)⟩ : R) := by
+    (Subalgebra.one_mem _)⟩ : 𝓞 K) := by
   letI := IsCyclotomicExtension.numberField {p ^ (k + 1)} ℚ K
-  letI := IsCyclotomicExtension.isGalois (p ^ (k + 1)) ℚ K
-  rw [← hζ.subOneIntegralPowerBasis_gen]
-  refine' prime_of_norm_prime _
-  rw [hζ.subOneIntegralPowerBasis_gen]
-  simp only [RingOfIntegers.norm, MonoidHom.restrict_apply, MonoidHom.codRestrict_apply,
-    hζ.sub_one_norm_prime_ne_two (cyclotomic.irreducible_rat (p ^ (k + 1)).pos) hodd]
-  rw [MulEquiv.prime_iff Rat.ringOfIntegersEquiv.toMulEquiv]
-  simp only [RingEquiv.toMulEquiv_eq_coe, RingEquiv.coe_toMulEquiv]
-  convert Nat.prime_iff_prime_int.1 hp.1
-  refine' EquivLike.injective Rat.ringOfIntegersEquiv.symm (Subtype.ext _)
-  simp only [RingEquiv.symm_apply_apply]
-  norm_cast
-  simp [← RingEquiv.coe_toRingHom]
+  refine Ideal.prime_of_irreducible_absNorm_span (fun h ↦ ?_) ?_
+  · rw [← Subalgebra.coe_eq_zero, sub_eq_zero] at h
+    exact hζ.pow_ne_one_of_pos_of_lt zero_lt_one (one_lt_pow hp.out.one_lt (by simp)) (by simp [h])
+  rw [Nat.irreducible_iff_prime, Ideal.absNorm_span_singleton, ← Nat.prime_iff,
+    ← Int.prime_iff_natAbs_prime]
+  convert Nat.prime_iff_prime_int.1 hp.out
+  apply RingHom.injective_int (algebraMap ℤ ℚ)
+  rw [← Algebra.norm_localization (Sₘ := K) ℤ (nonZeroDivisors ℤ), Subalgebra.algebraMap_eq]
+  simp only [PNat.pow_coe, id.map_eq_id, RingHomCompTriple.comp_eq, RingHom.coe_coe,
+    Subalgebra.coe_val, algebraMap_int_eq, map_natCast]
+  refine hζ.sub_one_norm_prime_ne_two (Polynomial.cyclotomic.irreducible_rat ?_) hodd
+  simp
 
 theorem zeta_sub_one_prime' [h : IsCyclotomicExtension {p} ℚ K] (hζ : IsPrimitiveRoot ζ p)
     (hodd : p ≠ 2) :
-    Prime (⟨ζ - 1, Subalgebra.sub_mem _ (hζ.isIntegral p.pos) (Subalgebra.one_mem _)⟩ : R) := by
+    Prime (⟨ζ - 1, Subalgebra.sub_mem _ (hζ.isIntegral p.pos) (Subalgebra.one_mem _)⟩ : 𝓞 K) := by
   convert @zeta_sub_one_prime K _ _ p 0 _ _ (by convert h; rw [zero_add, pow_one]) _ hodd
   simpa
 
