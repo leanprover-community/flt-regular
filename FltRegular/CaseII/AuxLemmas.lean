@@ -3,7 +3,7 @@ import FltRegular.NumberTheory.Cyclotomic.Factoring
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import Mathlib.RingTheory.Ideal.Norm
 import Mathlib.RingTheory.ClassGroup
-import FltRegular.Norm.NormPrime
+import FltRegular.ReadyForMathlib.PowerBasis
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 

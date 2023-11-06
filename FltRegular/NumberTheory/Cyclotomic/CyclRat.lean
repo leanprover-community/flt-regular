@@ -3,7 +3,7 @@ import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
 import Mathlib.NumberTheory.Cyclotomic.Rat
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import Mathlib.RingTheory.DedekindDomain.Ideal
-import FltRegular.NumberTheory.Cyclotomic.ZetaSubOnePrime
+import FltRegular.ReadyForMathlib.ZetaSubOnePrime
 import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import Mathlib.Algebra.CharP.Quotient
 

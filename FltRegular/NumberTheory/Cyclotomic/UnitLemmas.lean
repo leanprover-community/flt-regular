@@ -2,7 +2,7 @@ import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
 import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import Mathlib.RingTheory.RootsOfUnity.Basic
 import Mathlib.NumberTheory.NumberField.Embeddings
-import FltRegular.NumberTheory.Cyclotomic.ZetaSubOnePrime
+import FltRegular.ReadyForMathlib.ZetaSubOnePrime
 
 variable {p : ℕ+} {K : Type _} [Field K]
 
