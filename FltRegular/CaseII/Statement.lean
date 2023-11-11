@@ -35,7 +35,7 @@ lemma not_exists_solution' :
     ∃ m z', 1 ≤ m ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧ z = ((hζ.unit' : 𝓞 K) - 1) ^ m * z' := by
     classical
     have H : multiplicity.Finite ((hζ.unit' : 𝓞 K) - 1) z := WfDvdMonoid.multiplicity_finite
-      (M := 𝓞 K) (IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp).not_unit hz'
+      (M := 𝓞 K) hζ.zeta_sub_one_prime'.not_unit hz'
     obtain ⟨z', h⟩ := multiplicity.pow_multiplicity_dvd H
     refine ⟨_, _, ?_, ?_, h⟩
     · rwa [← PartENat.coe_le_coe, PartENat.natCast_get, ← multiplicity.pow_dvd_iff_le_multiplicity,
