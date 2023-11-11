@@ -20,8 +20,11 @@ to install Lean and a supporting toolchain.
 After that, download and open a copy of the repository
 by executing the following command in a terminal:
 ```
-leanproject get flt-regular
-code flt-regular
+git clone https://github.com/leanprover-community/flt-regular.git
+cd flt-regular
+lake exe cache get
+lake build
+code .
 ```
 For detailed instructions on how to work with Lean projects,
 see [this](https://leanprover-community.github.io/install/project.html).
