@@ -170,7 +170,7 @@ lemma IsPrimitiveRoot.prime_span_sub_one : Prime (Ideal.span <| singleton <| (h�
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [Ideal.prime_iff_isPrime,
     Ideal.span_singleton_prime (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)]
-  exact IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp
+  exact hζ.zeta_sub_one_prime'
   · rw [Ne.def, Ideal.span_singleton_eq_bot]
     exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
@@ -202,7 +202,7 @@ lemma isCoprime_of_not_zeta_sub_one_dvd (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x)
   rwa [← Ideal.isCoprime_span_singleton_iff,
     ← Ideal.span_singleton_eq_span_singleton.mpr (associated_zeta_sub_one_pow_prime hζ),
     ← Ideal.span_singleton_pow, IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd,
-    (hζ.prime_span_sub_one hp).irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton,
+    hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton,
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
@@ -212,7 +212,7 @@ lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1
   simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, map_sub, sub_eq_zero, ← SModEq.Ideal_def]
   convert exists_int_sModEq hζ.subOneIntegralPowerBasis' a
   rw [hζ.subOneIntegralPowerBasis'_gen]
-  rw [Subtype.ext_iff, AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one]
+  rw [Subtype.ext_iff, AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one, AddSubgroupClass.coe_sub, OneMemClass.coe_one]
 
 lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : ℕ) - (b : 𝓞 K) ^ (p : ℕ) := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root ℚ (B := K) (Set.mem_singleton p)
