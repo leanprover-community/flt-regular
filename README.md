@@ -50,19 +50,17 @@ There are two pieces of functionality that help a lot when browsing through Lean
 
 ### Organization of the project
 
-* All the Lean code (the juicy stuff) is contained in the directory `src/`.
-* The file `flt_regular.lean` contains the statement of Fermat's Last Theorem for
+* All the Lean code (the juicy stuff) is contained in the directory `FltRegular/`.
+* The file `FltRegular/FltRegular.lean` contains the statement of Fermat's Last Theorem for
   regular primes.
 * The ingredients that go into the theorem statement are defined in several other files.
   The most important pieces are:
-  - `number_theory/regular_primes.lean` we give the definition of what a regular number is.
-  - `number_theory/*` are the files we are actively working on.
-  - `ready_for_mathlib/*` are the files that are (almost) ready to be PRed to mathlib.
-  - Results specific to `ℚ` are in `number_theory/cyclotomic/rat.lean`.
+  - `NumberTheory/RegularPrimes.lean` we give the definition of what a regular number is.
+  - `NumberTheory/*` are the files we are actively working on.
+  - `ReadyForMathlib/*` are the files that are (almost) ready to be PRed to mathlib.
 
 Note that we are trying to move all our results to mathlib as fast as possible, so the
-folder `ready_for_mathlib` changes rapidly. You should also check `number_theory.cyclotomic.*`
-in mathlib.
+folder `ReadyForMathlib` changes rapidly. You should also check `Mathlib.NumberTheory.Cyclotomic.*`.
 
 ## Brief note on type theory
 
