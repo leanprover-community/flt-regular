@@ -1,5 +1,5 @@
 import FltRegular.CaseII.AuxLemmas
-import FltRegular.NumberTheory.KummersLemma
+import FltRegular.NumberTheory.KummersLemma.KummersLemma
 
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
@@ -524,7 +524,7 @@ lemma exists_solution' :
     x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (((hζ.unit' : 𝓞 K) - 1) ^ m * z') ^ (p : ℕ) := by
   obtain ⟨x', y', z', ε₁, ε₂, ε₃, hx', hy', hz', e'⟩ := exists_solution hp hreg hζ e hy hz
   obtain ⟨ε', hε'⟩ : ∃ ε', ε₁ / ε₂ = ε' ^ (p : ℕ) := by
-    apply eq_pow_prime_of_unit_of_congruent
+    apply eq_pow_prime_of_unit_of_congruent hp hreg
     have : p - 1 ≤ m * p := (Nat.sub_le _ _).trans
       ((le_of_eq (one_mul _).symm).trans (Nat.mul_le_mul_right p (one_le_m hp hζ e hy hz)))
     obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime hζ).symm

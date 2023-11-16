@@ -141,20 +141,6 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   · exact hpri.out
   · exact h5p
 
-theorem IsPrincipal_of_IsPrincipal_pow_of_Coprime
-  (A : Type*) [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
-  (H : p.Coprime <| Fintype.card <| ClassGroup A) (I : Ideal A)
-  (hI : (I ^ p).IsPrincipal) : I.IsPrincipal := by
-  by_cases Izero : I = 0
-  · rw [Izero]
-    exact bot_isPrincipal
-  rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero _)] at hI ⊢
-  swap; · exact Izero
-  swap; · exact pow_ne_zero p Izero
-  rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
-  refine ⟨?_, orderOf_dvd_card_univ⟩
-  rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]
-
 theorem is_principal_aux (K' : Type*) [Field K'] [CharZero K'] [IsCyclotomicExtension {P} ℚ K']
   [Fintype (ClassGroup (𝓞 K'))]
   {a b : ℤ} {ζ : 𝓞 K'} (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K'))
@@ -162,7 +148,7 @@ theorem is_principal_aux (K' : Type*) [Field K'] [CharZero K'] [IsCyclotomicExte
   ∃ (u : (𝓞 K')ˣ) (α : 𝓞 K'), ↑u * α ^ p = ↑a + ζ * ↑b := by
   letI : NumberField K' := IsCyclotomicExtension.numberField { P } ℚ K'
   obtain ⟨α, hα⟩ : I.IsPrincipal := by
-    apply IsPrincipal_of_IsPrincipal_pow_of_Coprime (𝓞 K') hreg I
+    apply IsPrincipal_of_IsPrincipal_pow_of_Coprime (𝓞 K') _ hreg I
     constructor
     use ↑a + ζ * ↑b
     rw [submodule_span_eq, hI]
