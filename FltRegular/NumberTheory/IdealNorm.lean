@@ -40,7 +40,7 @@ def Algebra.intNormAux (R S K L) [CommRing R] [CommRing S] [Field K] [Field L]
     [IsFractionRing R K] [FiniteDimensional K L] [IsSeparable K L] :
     S →* R where
   toFun := fun s ↦ IsIntegralClosure.mk' (R := R) R (Algebra.norm K (algebraMap S L s))
-    (isIntegral_norm K <| map_isIntegral (IsScalarTower.toAlgHom R S L)
+    (isIntegral_norm K <| IsIntegral.map (IsScalarTower.toAlgHom R S L)
       (IsIntegralClosure.isIntegral R L s))
   map_one' := by simp
   map_mul' := fun x y ↦ by simpa using IsIntegralClosure.mk'_mul _ _ _ _ _
@@ -288,7 +288,7 @@ theorem spanIntNorm_localization (I : Ideal S) (M : Submonoid R) (hM : M ≤ R�
     isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₘ) (A := Sₘ))
   cases h : subsingleton_or_nontrivial R
   · haveI := IsLocalization.unique R Rₘ M
-    simp
+    simp only [eq_iff_true_of_subsingleton]
   rw [map_spanIntNorm]
   refine span_eq_span (Set.image_subset_iff.mpr ?_) (Set.image_subset_iff.mpr ?_)
   · rintro a' ha'

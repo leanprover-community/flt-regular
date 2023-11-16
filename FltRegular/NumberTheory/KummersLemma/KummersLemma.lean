@@ -5,8 +5,6 @@ import FltRegular.NumberTheory.IdealNorm
 
 open scoped NumberField
 
-local macro_rules | `($x ^ $y) => `(HPow.hPow $x $y) -- Porting note: See issue #2220
-
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
 variable (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
@@ -157,7 +155,7 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
   simp only [not_forall, not_not] at this
   obtain ⟨v, hv⟩ := this
   have hv' : IsIntegral ℤ v
-  · apply isIntegral_of_pow p.pos; rw [hv]; exact (u ^ (p - 1 : ℕ) : 𝓞 K).prop
+  · apply IsIntegral.of_pow p.pos; rw [hv]; exact (u ^ (p - 1 : ℕ) : 𝓞 K).prop
   have : IsUnit (⟨v, hv'⟩ : 𝓞 K)
   · rw [← isUnit_pow_iff p.pos.ne.symm]; convert (u ^ (p - 1 : ℕ) : (𝓞 K)ˣ).isUnit; ext; exact hv
   have hv'' : this.unit ^ (p : ℕ) = u ^ (p - 1 : ℕ)

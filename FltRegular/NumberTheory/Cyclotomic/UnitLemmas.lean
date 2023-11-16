@@ -77,8 +77,7 @@ theorem zeta_runity_pow_even (hpo : Odd (p : ℕ)) (n : ℕ) :
 
 variable [NumberField K]
 
-theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot (hζ.unit' : R) p :=
-  by
+theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot (hζ.unit' : R) p := by
   have z1 := hζ
   have : (algebraMap R K) (hζ.unit' : R) = ζ := rfl
   rw [← this] at z1
@@ -415,7 +414,7 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
       Units.val_pow_eq_pow_val] at hz
     norm_cast at hz
     simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ h u n hp
-  · apply isIntegral_mul
+  · apply RingHom.is_integral_mul
     exact NumberField.RingOfIntegers.isIntegral_coe _
     exact NumberField.RingOfIntegers.isIntegral_coe _
   · exact unit_lemma_val_one p u

@@ -70,7 +70,7 @@ theorem associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
   replace hn := Nat.one_lt_of_ne n hn' hn
   obtain ⟨m, hm⟩ := Nat.exists_mul_emod_eq_one_of_coprime hj hn
   use ∑ i in range m, (ζ ^ j) ^ i
-  have : ζ = (ζ ^ j) ^ m := by rw [← pow_mul, pow_eq_mod_orderOf, ← hζ.eq_orderOf, hm, pow_one]
+  have : ζ = (ζ ^ j) ^ m := by rw [← pow_mul, ←pow_mod_orderOf, ← hζ.eq_orderOf, hm, pow_one]
   nth_rw 1 [this]
   rw [← geom_sum_mul_neg, mul_comm]
 

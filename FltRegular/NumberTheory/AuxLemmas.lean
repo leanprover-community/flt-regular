@@ -53,23 +53,15 @@ lemma AlgEquiv.toAlgHom_toRingHom {R A₁ A₂} [CommSemiring R] [Semiring A₁]
     [Algebra R A₁] [Algebra R A₂] (e : A₁ ≃ₐ[R] A₂) : ((e : A₁ →ₐ[R] A₂) : A₁ →+* A₂) = e :=
   rfl
 
--- Mathlib/Algebra/Algebra/Hom.lean
-lemma AlgEquiv.toRingEquiv_toRingHom {R A₁ A₂} [CommSemiring R] [Semiring A₁] [Semiring A₂]
-    [Algebra R A₁] [Algebra R A₂] (e : A₁ ≃ₐ[R] A₂) : ((e : A₁ ≃+* A₂) : A₁ →+* A₂) = e :=
-  rfl
-
 -- Mathlib/RingTheory/Localization/Away/Basic.lean
 -- Sounds like a bad place but this should go before `IsLocalization.atUnits`.
 lemma IsLocalization.at_units {R : Type*} [CommSemiring R] (S : Submonoid R)
     (hS : ∀ s : S, IsUnit (s : R)) : IsLocalization S R where
   map_units' := hS
   surj' := fun s ↦ ⟨⟨s, 1⟩, by simp⟩
-  eq_iff_exists' := fun {x y} ↦ by
-    constructor
-    · rintro (rfl : x = y)
-      exact ⟨1, rfl⟩
-    · rintro ⟨c, hc⟩
-      exact (hS c).mul_left_cancel hc
+  exists_of_eq := fun {x y} ↦ by
+    rintro (rfl : x = y)
+    exact ⟨1, rfl⟩
 
 -- Mathlib/RingTheory/Localization/FractionRing.lean
 instance {R : Type*} [Field R] : IsFractionRing R R :=
@@ -561,7 +553,7 @@ theorem IsIntegralClosure.isLocalization' (ha : Algebra.IsAlgebraic K L) [NoZero
   haveI : IsDomain C :=
     (IsIntegralClosure.equiv A C L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
   haveI : NoZeroSMulDivisors A C := IsIntegralClosure.noZeroSMulDivisors A L
-  refine' ⟨_, fun z => _, fun {x y} => ⟨fun h => ⟨1, _⟩, _⟩⟩
+  refine' ⟨_, fun z => _, fun {x y} => fun h => ⟨1, _⟩⟩
   · rintro ⟨_, x, hx, rfl⟩
     rw [isUnit_iff_ne_zero, map_ne_zero_iff _ (IsIntegralClosure.algebraMap_injective C A L),
       Subtype.coe_mk, map_ne_zero_iff _ (NoZeroSMulDivisors.algebraMap_injective A C)]
@@ -574,10 +566,6 @@ theorem IsIntegralClosure.isLocalization' (ha : Algebra.IsAlgebraic K L) [NoZero
     rw [Subtype.coe_mk, ← IsScalarTower.algebraMap_apply, hx, mul_comm, Submonoid.smul_def,
       smul_def]
   · simp only [IsIntegralClosure.algebraMap_injective C A L h]
-  · rintro ⟨⟨_, m, hm, rfl⟩, h⟩
-    refine' congr_arg (algebraMap C L) ((mul_right_inj' _).mp h)
-    rw [Subtype.coe_mk, map_ne_zero_iff _ (NoZeroSMulDivisors.algebraMap_injective A C)]
-    exact mem_nonZeroDivisors_iff_ne_zero.mp hm
 end
 
 -- Mathlib/RingTheory/Algebraic.lean
@@ -652,13 +640,14 @@ lemma isAlgebraic_of_isFractionRing {R S} (K L) [CommRing R] [CommRing S] [Field
   intro x
   obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective S⁰ x
   rw [isAlgebraic_iff_isIntegral, IsLocalization.mk'_eq_mul_mk'_one]
-  apply isIntegral_mul
+  apply RingHom.is_integral_mul
   · apply isIntegral_of_isScalarTower (R := R)
-    apply map_isIntegral (IsScalarTower.toAlgHom R S L)
+    apply IsIntegral.map (IsScalarTower.toAlgHom R S L)
     exact h x
-  · rw [← isAlgebraic_iff_isIntegral, ← IsAlgebraic.invOf_iff, isAlgebraic_iff_isIntegral]
+  · show IsIntegral _ _
+    rw [← isAlgebraic_iff_isIntegral, ← IsAlgebraic.invOf_iff, isAlgebraic_iff_isIntegral]
     apply isIntegral_of_isScalarTower (R := R)
-    apply map_isIntegral (IsScalarTower.toAlgHom R S L)
+    apply IsIntegral.map (IsScalarTower.toAlgHom R S L)
     exact h s
 
 -- Mathlib/RingTheory/IntegralClosure.lean
@@ -669,7 +658,7 @@ lemma isIntegralClosure_of_isIntegrallyClosed (R S K) [CommRing R] [CommRing S] 
   refine ⟨IsLocalization.injective _ le_rfl, fun {x} ↦
     ⟨fun hx ↦ IsIntegralClosure.isIntegral_iff.mp (isIntegral_of_isScalarTower (A := S) hx), ?_⟩⟩
   rintro ⟨y, rfl⟩
-  exact map_isIntegral (IsScalarTower.toAlgHom R S K) (hRS y)
+  exact IsIntegral.map (IsScalarTower.toAlgHom R S K) (hRS y)
 
 -- Mathlib/RingTheory/IntegralClosure.lean
 -- or Mathlib/RingTheory/LocalProperties.lean
@@ -707,10 +696,13 @@ lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Co
   obtain ⟨x, ⟨_, t, ht, rfl⟩, rfl⟩ := IsLocalization.mk'_surjective
     (Algebra.algebraMapSubmonoid S M) x
   rw [IsLocalization.mk'_eq_mul_mk'_one]
-  apply isIntegral_mul
-  · exact isIntegral_of_isScalarTower (map_isIntegral (IsScalarTower.toAlgHom R S Sₚ) (hRS x))
-  · convert isIntegral_algebraMap (x := IsLocalization.mk' Rₚ 1 ⟨t, ht⟩)
+  apply RingHom.is_integral_mul
+  · exact isIntegral_of_isScalarTower (IsIntegral.map (IsScalarTower.toAlgHom R S Sₚ) (hRS x))
+  · show IsIntegral _ _
+    convert isIntegral_algebraMap (x := IsLocalization.mk' Rₚ 1 ⟨t, ht⟩)
     rw [this, IsLocalization.map_mk', _root_.map_one]
+
+
 
 -- Mathlib/RingTheory/Polynomial/ScaleRoots.lean (this section is not needed anymore)
 section scaleRoots

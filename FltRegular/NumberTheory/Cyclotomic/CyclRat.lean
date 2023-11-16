@@ -174,8 +174,7 @@ theorem prim_coe (ζ : R) (hζ : IsPrimitiveRoot ζ p) : IsPrimitiveRoot (ζ : C
 
 theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nthRootsFinset p R)
     (hne1 : η ≠ 1) : 1 - η ∣ (p : R) := by
-  have h00 : 1 - η ∣ (p : R) ↔ η - 1 ∣ (p : R) :=
-    by
+  have h00 : 1 - η ∣ (p : R) ↔ η - 1 ∣ (p : R) :=  by
     have hh : -(η - 1) = 1 - η := by ring
     simp_rw [← hh]
     apply neg_dvd
@@ -192,7 +191,8 @@ theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη :
   ext
   rw [RingOfIntegers.coe_algebraMap_norm]
   norm_cast at h2
-  simp [h2]
+  rw [h2]
+  simp
 
 theorem one_sub_zeta_prime [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R)
     (hne1 : η ≠ 1) : Prime (1 - η) := by

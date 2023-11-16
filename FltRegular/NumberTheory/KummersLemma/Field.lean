@@ -7,8 +7,6 @@ import Mathlib.Data.Polynomial.Taylor
 
 open scoped NumberField BigOperators
 
-local macro_rules | `($x ^ $y) => `(HPow.hPow $x $y) -- Porting note: See issue #2220
-
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
 variable (hp : p ≠ 2)
 
@@ -256,7 +254,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one,
     SubmonoidClass.coe_pow] at hv
   have hα : IsIntegral (𝓞 K) α
-  · apply isIntegral_of_pow p.pos; rw [e]; exact isIntegral_algebraMap
+  · apply IsIntegral.of_pow p.pos; rw [e]; exact isIntegral_algebraMap
   have : IsUnit (⟨α, isIntegral_trans (IsIntegralClosure.isIntegral_algebra ℤ K) _ hα⟩ : 𝓞 L)
   · rw [← isUnit_pow_iff p.pos.ne.symm]
     convert (algebraMap (𝓞 K) (𝓞 L)).isUnit_map u.isUnit

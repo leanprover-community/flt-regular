@@ -81,7 +81,9 @@ def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := b
     exact
       (IsSplittingField.algEquiv L (cyclotomic 2 K)).trans
         (IsSplittingField.algEquiv K <| cyclotomic 2 K).symm
-  exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (RingHom.id K) (-1), by simp⟩
+  exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (RingHom.id K) (-1),
+    by simp [eq_iff_true_of_subsingleton]⟩
+
 
 instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
   (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
@@ -126,5 +128,5 @@ theorem IsPrincipal_of_IsPrincipal_pow_of_Coprime
   swap; · exact Izero
   swap; · exact pow_ne_zero p Izero
   rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
-  refine ⟨?_, orderOf_dvd_card_univ⟩
+  refine ⟨?_, orderOf_dvd_card⟩
   rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]

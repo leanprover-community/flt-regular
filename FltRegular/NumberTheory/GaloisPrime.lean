@@ -114,7 +114,7 @@ noncomputable
 def galRestrictHom : (L →ₐ[K] L) →* (S →ₐ[R] S) where
   toFun := fun f ↦ (IsIntegralClosure.equiv R (integralClosure R L) L S).toAlgHom.comp
       (((f.restrictScalars R).comp (IsScalarTower.toAlgHom R S L)).codRestrict
-        (integralClosure R L) (fun x ↦ map_isIntegral _ (IsIntegralClosure.isIntegral R L x)))
+        (integralClosure R L) (fun x ↦ IsIntegral.map _ (IsIntegralClosure.isIntegral R L x)))
   map_one' := by
     ext x
     apply (IsIntegralClosure.equiv R (integralClosure R L) L S).symm.injective

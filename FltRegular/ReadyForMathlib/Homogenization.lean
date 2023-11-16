@@ -410,7 +410,6 @@ theorem exists_coeff_ne_zero_totalDegree {p : MvPolynomial ι R} (hp : p ≠ 0) 
   constructor
   · rw [← totalDegree_eq p] at hb₂
     rw [hb₂]
-    dsimp
 
     -- TODO break this out as a lemma
     exact (Finsupp.card_toMultiset _).symm

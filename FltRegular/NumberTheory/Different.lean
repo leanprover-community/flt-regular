@@ -115,7 +115,7 @@ lemma isIntegral_discr_mul_of_mem_traceFormDualSubmodule
   apply IsIntegral.sum
   intro i _
   rw [smul_mul_assoc, b.equivFun.map_smul, discr_def, mul_comm, ← H, Algebra.smul_def]
-  refine isIntegral_mul ?_ (hb _)
+  refine RingHom.is_integral_mul _ ?_ (hb _)
   apply IsIntegral.algebraMap
   rw [cramer_apply]
   apply IsIntegral.det
@@ -128,7 +128,7 @@ lemma isIntegral_discr_mul_of_mem_traceFormDualSubmodule
     have ⟨y, hy⟩ := (IsIntegralClosure.isIntegral_iff (A := B)).mp (hb j)
     rw [mul_comm, ← hy, ← Algebra.smul_def]
     exact I.smul_mem _ (ha)
-  · exact isIntegral_trace (isIntegral_mul (hb j) (hb k))
+  · exact isIntegral_trace (RingHom.is_integral_mul _ (hb j) (hb k))
 
 variable (A K)
 
@@ -427,7 +427,7 @@ lemma conductor_mul_differentIdeal [NoZeroSMulDivisors A B]
     mem_coeIdeal_conductor]
   have hne₂ : (aeval (algebraMap B L x) (derivative (minpoly K (algebraMap B L x))))⁻¹ ≠ 0
   · rwa [ne_eq, inv_eq_zero]
-  have : IsIntegral A (algebraMap B L x) := map_isIntegral (IsScalarTower.toAlgHom A B L) hAx
+  have : IsIntegral A (algebraMap B L x) := IsIntegral.map (IsScalarTower.toAlgHom A B L) hAx
   simp_rw [← Subalgebra.mem_toSubmodule, ← Submodule.mul_mem_smul_iff (y := y * _) hne₂]
   rw [← traceFormDualSubmodule_span_adjoin A K L _ hx this]
   simp only [mem_traceFormDualSubmodule, traceForm_apply, Subalgebra.mem_toSubmodule,

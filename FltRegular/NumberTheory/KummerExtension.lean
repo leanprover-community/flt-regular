@@ -452,7 +452,7 @@ lemma minpoly_algEquiv_toLinearMap (σ : L ≃ₐ[K] L) :
   -- However `{ σⁱ }` are linear independent (via Dedekind's linear independence of characters).
   have := Fintype.linearIndependent_iff.mp
     ((linearIndependent_algEquiv_toLinearMap K L).comp _
-      (Subtype.val_injective.comp (finEquivPowers σ).injective))
+      (Subtype.val_injective.comp ((finEquivPowers σ (isOfFinOrder_of_finite σ)).injective)))
     ((minpoly K σ.toLinearMap).coeff ∘ (↑)) this ⟨_, H⟩
   simpa using this
 
@@ -500,15 +500,15 @@ lemma irreducible_X_pow_sub_C_of_root_adjoin_eq_top
     {a : K} {α : L} (ha : α ^ (finrank K L) = algebraMap K L a) (hα : K⟮α⟯ = ⊤) :
     Irreducible (X ^ (finrank K L) - C a) := by
   have : minpoly K α = X ^ (finrank K L) - C a
-  · apply eq_of_monic_of_associated (minpoly.monic (isIntegral_of_finite K α))
+  · apply eq_of_monic_of_associated (minpoly.monic (IsIntegral.of_finite K α))
       (monic_X_pow_sub_C _ finrank_pos.ne.symm)
     refine Polynomial.associated_of_dvd_of_natDegree_eq ?_ ?_
       (X_pow_sub_C_ne_zero finrank_pos _)
     · refine minpoly.dvd _ _ ?_
       simp only [aeval_def, eval₂_sub, eval₂_X_pow, ha, eval₂_C, sub_self]
-    · rw [← IntermediateField.adjoin.finrank (isIntegral_of_finite K α), hα, natDegree_X_pow_sub_C]
+    · rw [← IntermediateField.adjoin.finrank (IsIntegral.of_finite K α), hα, natDegree_X_pow_sub_C]
       exact finrank_top K L
-  exact this ▸ minpoly.irreducible (isIntegral_of_finite K α)
+  exact this ▸ minpoly.irreducible (IsIntegral.of_finite K α)
 
 lemma isSplittingField_X_pow_sub_C_of_root_adjoin_eq_top
     {a : K} {α : L} (ha : α ^ (finrank K L) = algebraMap K L a) (hα : K⟮α⟯ = ⊤) :
@@ -520,7 +520,7 @@ lemma isSplittingField_X_pow_sub_C_of_root_adjoin_eq_top
     rw [mem_primitiveRoots finrank_pos] at hζ
     exact X_pow_sub_C_splits_of_isPrimitiveRoot (hζ.map_of_injective (algebraMap K _).injective) ha
   · rw [eq_top_iff, ← IntermediateField.top_toSubalgebra, ← hα,
-      IntermediateField.adjoin_simple_toSubalgebra_of_integral (isIntegral_of_finite K α)]
+      IntermediateField.adjoin_simple_toSubalgebra_of_integral (IsIntegral.of_finite K α)]
     apply Algebra.adjoin_mono
     rw [Set.singleton_subset_iff, mem_rootSet_of_ne (X_pow_sub_C_ne_zero finrank_pos a),
       aeval_def, eval₂_sub, eval₂_X_pow, eval₂_C, ha, sub_self]

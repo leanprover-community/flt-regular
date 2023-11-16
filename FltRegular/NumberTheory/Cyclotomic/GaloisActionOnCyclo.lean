@@ -71,7 +71,6 @@ theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K 
   suffices φ (galConj K p ζ) = conj (φ ζ)
     by
     rw [← Function.funext_iff]
-    dsimp only
     congr
     rw [FunLike.coe_fn_eq]
     apply (hζ.powerBasis ℚ).rat_hom_ext
@@ -90,7 +89,7 @@ variable (p)
 
 --generalize this
 theorem gal_map_mem {x : K} (hx : x ∈ RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
-  map_isIntegral (σ.restrictScalars ℤ) hx
+  map_isIntegral_int (σ.restrictScalars ℤ) hx
 
 theorem gal_map_mem_subtype (σ : K →ₐ[ℚ] K) (x : RR) : σ x ∈ RR := by simp [gal_map_mem]
 
