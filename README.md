@@ -20,8 +20,11 @@ to install Lean and a supporting toolchain.
 After that, download and open a copy of the repository
 by executing the following command in a terminal:
 ```
-leanproject get flt-regular
-code flt-regular
+git clone https://github.com/leanprover-community/flt-regular.git
+cd flt-regular
+lake exe cache get
+lake build
+code .
 ```
 For detailed instructions on how to work with Lean projects,
 see [this](https://leanprover-community.github.io/install/project.html).
@@ -47,19 +50,17 @@ There are two pieces of functionality that help a lot when browsing through Lean
 
 ### Organization of the project
 
-* All the Lean code (the juicy stuff) is contained in the directory `src/`.
-* The file `flt_regular.lean` contains the statement of Fermat's Last Theorem for
+* All the Lean code (the juicy stuff) is contained in the directory `FltRegular/`.
+* The file `FltRegular/FltRegular.lean` contains the statement of Fermat's Last Theorem for
   regular primes.
 * The ingredients that go into the theorem statement are defined in several other files.
   The most important pieces are:
-  - `number_theory/regular_primes.lean` we give the definition of what a regular number is.
-  - `number_theory/*` are the files we are actively working on.
-  - `ready_for_mathlib/*` are the files that are (almost) ready to be PRed to mathlib.
-  - Results specific to `ℚ` are in `number_theory/cyclotomic/rat.lean`.
+  - `NumberTheory/RegularPrimes.lean` we give the definition of what a regular number is.
+  - `NumberTheory/*` are the files we are actively working on.
+  - `ReadyForMathlib/*` are the files that are (almost) ready to be PRed to mathlib.
 
 Note that we are trying to move all our results to mathlib as fast as possible, so the
-folder `ready_for_mathlib` changes rapidly. You should also check `number_theory.cyclotomic.*`
-in mathlib.
+folder `ReadyForMathlib` changes rapidly. You should also check `Mathlib.NumberTheory.Cyclotomic.*`.
 
 ## Brief note on type theory
 
@@ -75,11 +76,10 @@ We highlight two syntactical differences.
   Conveniently, we can write `f : X → Y` to mean "`f` has type `X → Y`",
   in other words "`f` is a function from `X` to `Y`".
 
-* Secondly, type theorists do not use the mapsto symbol (`↦`),
-  but instead use lambda-notation.
+* Secondly, type theorists use lambda-notation.
   This means that we can define the square function on the integers via
-  `λ x, x^2`, which translates to `x ↦ x^2` in set-theoretic notation.
-  For more information about `λ`, see the Wikipedia page on
+  `fun x ↦ x^2`, which translates to `x ↦ x^2` in set-theoretic notation.
+  For more information about `λ` (called `fun` in Lean 4), see the Wikipedia page on
   [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus).
 
 For a more extensive discussion of type theory,

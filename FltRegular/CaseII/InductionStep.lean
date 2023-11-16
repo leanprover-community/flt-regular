@@ -43,7 +43,7 @@ lemma one_sub_zeta_dvd_zeta_pow_sub :
     rw [map_add, map_add, map_mul, map_mul, IsPrimitiveRoot.eq_one_mod_one_sub' hζ.unit'_coe hη',
       IsPrimitiveRoot.eq_one_mod_one_sub' hζ.unit'_coe η.prop, one_mul, mul_one]
   rw [Finset.prod_const, ← map_pow, Ideal.Quotient.eq_zero_iff_dvd] at h
-  exact (IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp).dvd_of_dvd_pow h
+  exact hζ.zeta_sub_one_prime'.dvd_of_dvd_pow h
 
 lemma div_one_sub_zeta_mem : (x + y * η : 𝓞 K) / (ζ - 1) ∈ 𝓞 K := by
   obtain ⟨⟨a, ha⟩, e⟩ := one_sub_zeta_dvd_zeta_pow_sub hp hζ e η
@@ -121,13 +121,13 @@ lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by
   convert gcd_one_right 𝔵 using 2
   rwa [gcd_comm, Irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton, Ideal.mem_span_singleton]
   · rw [GCDMonoid.irreducible_iff_prime]
-    exact hζ.prime_span_sub_one hp
+    exact hζ.prime_span_sub_one
 
 lemma gcd_div_div_zeta_sub_one (η) :
   𝔪 ∣ (Ideal.span <| singleton <| div_zeta_sub_one hp hζ e η) := by
   haveI : Fact (Nat.Prime p) := hpri
   rw [← mul_one (Ideal.span <| singleton <| div_zeta_sub_one hp hζ e η),
-    ← gcd_zeta_sub_one_eq_one hp hζ hy (x := x) (y := y)]
+    ← gcd_zeta_sub_one_eq_one hζ hy (x := x) (y := y)]
   apply dvd_mul_gcd_of_dvd_mul
   rw [Ideal.span_singleton_mul_span_singleton, div_zeta_sub_one_mul_zeta_sub_one,
   Ideal.dvd_span_singleton, Ideal.gcd_eq_sup]
@@ -187,11 +187,11 @@ lemma span_pow_add_pow_eq :
 
 lemma gcd_m_p_pow_eq_one : gcd 𝔪 (𝔭 ^ (m + 1)) = 1 := by
   rw [← Ideal.isCoprime_iff_gcd, IsCoprime.pow_right_iff, Ideal.isCoprime_iff_gcd,
-    gcd_zeta_sub_one_eq_one hp hζ hy]
+    gcd_zeta_sub_one_eq_one hζ hy]
   simp only [add_pos_iff, or_true]
 
 lemma m_dvd_z : 𝔪 ∣ 𝔷 := by
-  rw [← one_mul 𝔷, ← gcd_m_p_pow_eq_one hp hζ hy (x := x) (m := m)]
+  rw [← one_mul 𝔷, ← gcd_m_p_pow_eq_one hζ hy (x := x) (m := m)]
   apply dvd_gcd_mul_of_dvd_mul
   rw [← pow_dvd_pow_iff_dvd hpri.out.ne_zero, ← span_pow_add_pow_eq hζ e,
     Ideal.dvd_span_singleton]
@@ -201,16 +201,16 @@ lemma m_dvd_z : 𝔪 ∣ 𝔷 := by
 
 noncomputable
 def z_div_m : Ideal (𝓞 K) :=
-(m_dvd_z hp hζ e hy).choose
+(m_dvd_z hζ e hy).choose
 
-local notation "𝔷'" => z_div_m hp hζ e hy
+local notation "𝔷'" => z_div_m hζ e hy
 
 lemma z_div_m_spec : 𝔷 = 𝔪 * 𝔷' :=
-(m_dvd_z hp hζ e hy).choose_spec
+(m_dvd_z hζ e hy).choose_spec
 
 lemma exists_ideal_pow_eq_c_aux :
   𝔪 ^ (p : ℕ) * (𝔷' * 𝔭 ^ m) ^ (p : ℕ) * 𝔭 ^ (p : ℕ) = (𝔭 ^ (m + 1) * 𝔷) ^ (p : ℕ) := by
-  rw [mul_comm _ 𝔷, mul_pow, z_div_m_spec hp hζ e hy, mul_pow, mul_pow, ← pow_mul, ← pow_mul,
+  rw [mul_comm _ 𝔷, mul_pow, z_div_m_spec hζ e hy, mul_pow, mul_pow, ← pow_mul, ← pow_mul,
     add_mul, one_mul, pow_add, mul_assoc, mul_assoc, mul_assoc]
 
 lemma prod_c : ∏ η in Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (𝔷' * 𝔭 ^ m) ^ (p : ℕ) := by
@@ -280,14 +280,14 @@ lemma p_dvd_c_iff : 𝔭 ∣ (𝔠 η) ↔ η = η₀ := by
   rw [← (div_zeta_sub_one_Injective hp hζ e hy).eq_iff, zeta_sub_one_dvd_root_spec,
     Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.mem_span_singleton (α := 𝓞 K),
     ← Ideal.dvd_span_singleton, ← div_zeta_sub_one_dvd_gcd_spec (hy := hy),
-    ← dvd_gcd_mul_iff_dvd_mul, gcd_comm, gcd_zeta_sub_one_eq_one hp hζ hy, one_mul]
+    ← dvd_gcd_mul_iff_dvd_mul, gcd_comm, gcd_zeta_sub_one_eq_one hζ hy, one_mul]
 
 lemma p_pow_dvd_c_eta_zero_aux [DecidableEq K] :
   gcd (𝔭 ^ (m * p)) (∏ η in Finset.attach (nthRootsFinset p (𝓞 K)) \ {η₀}, 𝔠 η) = 1 := by
     rw [← Ideal.isCoprime_iff_gcd]
     apply IsCoprime.pow_left
-    rw [Ideal.isCoprime_iff_gcd, (hζ.prime_span_sub_one hp).irreducible.gcd_eq_one_iff,
-      (hζ.prime_span_sub_one hp).dvd_finset_prod_iff]
+    rw [Ideal.isCoprime_iff_gcd, hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff,
+      hζ.prime_span_sub_one.dvd_finset_prod_iff]
     rintro ⟨η, hη, h⟩
     rw [p_dvd_c_iff] at h
     simp only [Finset.mem_sdiff, Finset.mem_singleton] at hη
@@ -302,7 +302,7 @@ lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
 
 lemma p_dvd_a_iff : 𝔭 ∣ (𝔞 η) ↔ η = η₀ := by
   rw [← p_dvd_c_iff hp hζ e hy, ← root_div_zeta_sub_one_dvd_gcd_spec,
-    (hζ.prime_span_sub_one hp).dvd_pow_iff_dvd hpri.out.ne_zero]
+    hζ.prime_span_sub_one.dvd_pow_iff_dvd hpri.out.ne_zero]
 
 lemma p_pow_dvd_a_eta_zero : 𝔭 ^ m ∣ 𝔞 η₀ := by
   rw [← pow_dvd_pow_iff_dvd hpri.out.ne_zero, root_div_zeta_sub_one_dvd_gcd_spec, ← pow_mul]
@@ -325,7 +325,7 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
   rw [prod_c, mul_pow, mul_pow, mul_comm, mul_dvd_mul_iff_right,
     pow_dvd_pow_iff_dvd hpri.out.ne_zero] at this
   apply hz
-  rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton, z_div_m_spec hp hζ e hy]
+  rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton, z_div_m_spec hζ e hy]
   exact this.trans (dvd_mul_left _ _)
   · apply mt pow_eq_zero
     apply mt pow_eq_zero
@@ -334,11 +334,11 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
 
 lemma one_le_m : 1 ≤ m := by
   have ha := not_p_div_a_zero hp hζ e hy hz
-  rw [← (hζ.prime_span_sub_one hp).irreducible.gcd_eq_one_iff] at ha
+  rw [← hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff] at ha
   have := (p_dvd_a_iff hp hζ e hy η₀).mpr rfl
   rw [← a_eta_zero_dvd_p_pow_spec, mul_comm, ← dvd_gcd_mul_iff_dvd_mul, ha, one_mul] at this
   nth_rw 1 [← pow_one 𝔭] at this
-  rwa [← pow_dvd_pow_iff (p_ne_zero hζ) (hζ.prime_span_sub_one hp).not_unit]
+  rwa [← pow_dvd_pow_iff (p_ne_zero hζ) hζ.prime_span_sub_one.not_unit]
 
 lemma isPrincipal_a_div_a_zero :
   Submodule.IsPrincipal ((𝔞 η / 𝔞₀ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) := by
@@ -360,7 +360,7 @@ lemma exists_not_dvd_spanSingleton_eq_a_div_a_zero (hη : η ≠ η₀) :
   ∃ a b : 𝓞 K, ¬((hζ.unit' : 𝓞 K) - 1 ∣ a) ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ b) ∧
     FractionalIdeal.spanSingleton (𝓞 K)⁰ (a / b : K) = 𝔞 η / 𝔞₀ := by
   haveI : Fact (Nat.Prime p) := hpri
-  exact exists_not_dvd_spanSingleton_eq (IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp)
+  exact exists_not_dvd_spanSingleton_eq hζ.zeta_sub_one_prime'
     _ _ ((p_dvd_a_iff hp hζ e hy η).not.mpr hη) (not_p_div_a_zero hp hζ e hy hz)
       (isPrincipal_a_div_a_zero hp hreg hζ e hy η)
 
@@ -493,13 +493,13 @@ lemma exists_solution :
     mul_right_inj' (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt), ← Units.val_mul,
     ← Units.val_mul] at this
   refine ⟨_, _, _, _, _, _, ?_, ?_, ?_, this⟩
-  · exact (IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp).not_dvd_mul
+  · exact hζ.zeta_sub_one_prime'.not_dvd_mul
       (a_div_a_zero_num_spec hp hreg hζ e hy hz η₁ hη₁)
       (a_div_a_zero_denom_spec hp hreg hζ e hy hz η₂ hη₂)
-  · exact (IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp).not_dvd_mul
+  · exact hζ.zeta_sub_one_prime'.not_dvd_mul
       (a_div_a_zero_num_spec hp hreg hζ e hy hz η₂ hη₂)
       (a_div_a_zero_denom_spec hp hreg hζ e hy hz η₁ hη₁)
-  · exact (IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp).not_dvd_mul
+  · exact hζ.zeta_sub_one_prime'.not_dvd_mul
       (a_div_a_zero_denom_spec hp hreg hζ e hy hz η₁ hη₁)
       (a_div_a_zero_denom_spec hp hreg hζ e hy hz η₂ hη₂)
 
@@ -507,7 +507,7 @@ lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ (hζ.unit' : 𝓞
  (h : (p : 𝓞 K) ∣ ε₁ * x ^ (p : ℕ) + ε₂ * y ^ (p : ℕ)) :
   ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ (p : ℕ) := by
   letI : Fact (Nat.Prime p) := hpri
-  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hp hx
+  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hx
   have : (p : 𝓞 K) ∣ b * x - 1 := by use -a ; rw [← e]; ring
   have := (this.trans (sub_one_dvd_pow_sub_one _ p)).trans (dvd_mul_left _ ↑(ε₁ / ε₂))
   use - y * b

@@ -1,8 +1,7 @@
 import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
 import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
-import Mathlib.RingTheory.RootsOfUnity.Basic
+import Mathlib.NumberTheory.Cyclotomic.Rat
 import Mathlib.NumberTheory.NumberField.Embeddings
-import FltRegular.NumberTheory.Cyclotomic.ZetaSubOnePrime
 
 variable {p : ℕ+} {K : Type _} [Field K]
 
@@ -305,10 +304,10 @@ theorem norm_cast_ne_two (h : p ≠ 2) : (p : ℕ) ≠ 2 := by
   contrapose! h
   exact PNat.coe_injective h
 
-theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h : p ≠ 2) :
+theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] :
     (I : Ideal (𝓞 K)).IsPrime := by
   rw [Ideal.span_singleton_prime]
-  · exact IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ h
+  · exact hζ.zeta_sub_one_prime'
   apply_fun (fun x : 𝓞 K => (x : K))
   push_cast
   rw [Ne.def, sub_eq_zero]
@@ -324,7 +323,7 @@ theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h 
   intro h2m
   have := Ideal.sub_mem I hpm (Ideal.mul_mem_right (↑k) I h2m)
   rw [sub_eq_of_eq_add hk] at this
-  exact (hζ.isPrime_one_sub_zeta h).ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
+  exact hζ.isPrime_one_sub_zeta.ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
 lemma IsUnit.eq_mul_left_iff {S : Type*} [CommRing S] {x : S} (hx : IsUnit x) (y : S) :
   x = y * x ↔ y = 1 := by

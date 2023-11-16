@@ -406,8 +406,14 @@ In this section we prove Theorem \ref{thm:Kummers_lemma}. The proof follows \cit
 
 
 \begin{lemma}\label{lem:exists_alg_int}
+	\lean{exists_alg_int}
+	\leanok
 	Let $K$ be a number fields and $\a \in K$. Then there exists a $n \in \ZZ\backslash\{0\}$ such that $n \a$ is an algebraic integer.
 \end{lemma}
+\begin{proof}
+	\leanok
+	See mathlib.
+\end{proof}
 
 \begin{theorem}[Hilbert 90]\label{Hilbert90}
 Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ is cyclic with generator $\sigma$. If $\a \in K$ is such that $N_{K/F}(\a)=1$, then \[ \a =\beta/ \sigma(\beta)\] for some $\beta \in \OO_K$.

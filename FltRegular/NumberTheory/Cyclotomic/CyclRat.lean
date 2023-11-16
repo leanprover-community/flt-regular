@@ -3,7 +3,6 @@ import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
 import Mathlib.NumberTheory.Cyclotomic.Rat
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import Mathlib.RingTheory.DedekindDomain.Ideal
-import FltRegular.NumberTheory.Cyclotomic.ZetaSubOnePrime
 import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import Mathlib.Algebra.CharP.Quotient
 
@@ -20,6 +19,8 @@ section IntFacts
 noncomputable section
 
 open scoped NumberField BigOperators
+
+instance {K : Type*} [Field K] : Module (𝓞 K) (𝓞 K) := Semiring.toModule
 
 open Ideal IsCyclotomicExtension
 
@@ -193,18 +194,10 @@ theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη :
   norm_cast at h2
   simp [h2]
 
-theorem one_sub_zeta_prime [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nthRootsFinset p R)
+theorem one_sub_zeta_prime [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R)
     (hne1 : η ≠ 1) : Prime (1 - η) := by
-  replace ph : p ≠ 2
-  · intro h
-    rw [h] at ph
-    simp at ph
   have h := prim_coe η (nth_roots_prim hη hne1)
-  have := Rat.zeta_sub_one_prime' h ph
-  have H :
-    (⟨η - 1, Subalgebra.sub_mem _ (h.isIntegral p.pos) (Subalgebra.one_mem _)⟩ : R) = η - 1 := rfl
-  rw [H] at this
-  simpa using this.neg
+  simpa using h.zeta_sub_one_prime'.neg
 
 theorem diff_of_roots [hp : Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R) (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂)
@@ -282,7 +275,7 @@ lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ}
     have eta_sub_one_ne_zero := sub_ne_zero.mpr (Ne.symm hwlog)
     have hηprime : IsPrime (Ideal.span ({1 - η₁} : Set R)) := by
       rw [span_singleton_prime eta_sub_one_ne_zero]
-      apply one_sub_zeta_prime ph hη₁ hwlog
+      apply one_sub_zeta_prime hη₁ hwlog
     have H5 : IsPrime (Ideal.span ({(p : ℤ)} : Set ℤ)) := by
       have h2 : (p : ℤ) ≠ 0 := by simp
       have h1 : Prime (p : ℤ) := by
@@ -409,9 +402,9 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     congr; rfl; ext x
     rw [smul_neg]
     congr; congr; rfl; congr
-    rw [hcoe, ← hζ'.integralPowerBasis'_gen, ← hb]
+    rw [hcoe, ← IsPrimitiveRoot.toInteger, ← hζ'.integralPowerBasis'_gen, ← hb]
     rfl; rfl; congr; congr; rfl; congr
-    rw [hcoe, ← hζ'.integralPowerBasis'_gen, ← hb]
+    rw [hcoe, ← IsPrimitiveRoot.toInteger, ← hζ'.integralPowerBasis'_gen, ← hb]
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [← SubsemiringClass.coe_pow, ← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y,
@@ -461,9 +454,9 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
     congr; rfl; ext x
     rw [smul_neg]
     congr; congr; rfl; congr
-    rw [hcoe, ← hζ'.integralPowerBasis'_gen, ← hb]
+    rw [hcoe, ← IsPrimitiveRoot.toInteger, ← hζ'.integralPowerBasis'_gen, ← hb]
     rfl; rfl; congr; congr; rfl; congr
-    rw [hcoe, ← hζ'.integralPowerBasis'_gen, ← hb]
+    rw [hcoe, ← IsPrimitiveRoot.toInteger, ← hζ'.integralPowerBasis'_gen, ← hb]
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [← SubsemiringClass.coe_pow, ← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y,
