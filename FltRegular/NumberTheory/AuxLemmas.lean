@@ -5,7 +5,7 @@ import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.RingTheory.Norm
 import Mathlib.Data.Set.Card
 import Mathlib.RingTheory.RootsOfUnity.Basic
-import MathLib.LinearAlgebra.EigenSpace.Minpoly
+import Mathlib.LinearAlgebra.Eigenspace.Minpoly
 import Mathlib.RingTheory.DedekindDomain.Ideal
 import Mathlib.RingTheory.Discriminant
 import Mathlib.RingTheory.Localization.FractionRing
