@@ -113,3 +113,18 @@ theorem isRegularNumber_two : IsRegularNumber 2 := by
   infer_instance
 
 end TwoRegular
+
+theorem IsPrincipal_of_IsPrincipal_pow_of_Coprime
+  (A : Type*) [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
+  (p : ℕ) [Fact p.Prime]
+  (H : p.Coprime <| Fintype.card <| ClassGroup A) (I : Ideal A)
+  (hI : (I ^ p).IsPrincipal) : I.IsPrincipal := by
+  by_cases Izero : I = 0
+  · rw [Izero]
+    exact bot_isPrincipal
+  rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero _)] at hI ⊢
+  swap; · exact Izero
+  swap; · exact pow_ne_zero p Izero
+  rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
+  refine ⟨?_, orderOf_dvd_card_univ⟩
+  rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]

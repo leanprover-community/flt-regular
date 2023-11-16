@@ -1,7 +1,22 @@
 import FltRegular.NumberTheory.GaloisPrime
 import Mathlib.NumberTheory.KummerDedekind
 import FltRegular.NumberTheory.Different
+/-!
+# Unramified extensions
 
+## Main definition
+- `IsUnramifiedAt`:
+  `IsUnramifiedAt S p` states that every prime in `S` over `p` has ramification index `1`.
+- `IsUnramified`:
+  An extension is unramified if it is unramified at every (finite) primes.
+
+## Main results
+- `comap_map_eq_of_isUnramified`: If `K/L` is galois, `S/R` is unramified, then any
+  ideal `I` fixed by `Gal(L/K) satisfies `(I ∩ R)S = I`.
+- `isUnramifiedAt_of_Separable_minpoly`: If `L = K[α]` with `α` integral over `R`, and `f'(α) mod p`
+  is separable for some ideal `p` of `R` (with `f` being the minpoly of `α` over `R`), then `S/R` is
+  unramified at `p`.
+-/
 open BigOperators UniqueFactorizationMonoid
 
 variable (R K S L : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]

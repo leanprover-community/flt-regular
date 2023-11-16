@@ -12,6 +12,7 @@ import Mathlib.RingTheory.Localization.FractionRing
 import Mathlib.NumberTheory.RamificationInertia
 import Mathlib.NumberTheory.KummerDedekind
 import Mathlib.Data.Polynomial.Taylor
+import Mathlib.RingTheory.Localization.NormTrace
 /-!
 
 This file contains lemmas that should go somewhere in a file in mathlib.
@@ -735,7 +736,7 @@ lemma Polynomial.scaleRoots_mul {R} [CommRing R] (p q : R[X]) (r : R) :
     r ^ (natDegree p + natDegree q - natDegree (p * q)) • (p * q).scaleRoots r =
       p.scaleRoots r * q.scaleRoots r := by
   ext n; simp only [coeff_scaleRoots, coeff_smul, smul_eq_mul]
-  trans (∑ x in Finset.Nat.antidiagonal n, coeff p x.1 * coeff q x.2) *
+  trans (∑ x in Finset.antidiagonal n, coeff p x.1 * coeff q x.2) *
     r ^ (natDegree p + natDegree q - n)
   · rw [← coeff_mul]
     cases lt_or_le (natDegree (p * q)) n with
@@ -744,7 +745,7 @@ lemma Polynomial.scaleRoots_mul {R} [CommRing R] (p q : R[X]) (r : R) :
       rw [mul_comm, mul_assoc, ← pow_add, add_comm, tsub_add_tsub_cancel natDegree_mul_le h]
   · rw [coeff_mul, Finset.sum_mul]
     apply Finset.sum_congr rfl
-    simp only [Finset.Nat.mem_antidiagonal, coeff_scaleRoots, Prod.forall]
+    simp only [Finset.mem_antidiagonal, coeff_scaleRoots, Prod.forall]
     intros a b e
     cases lt_or_le (natDegree p) a with
     | inl h => simp only [coeff_eq_zero_of_natDegree_lt h, zero_mul, mul_zero]
@@ -852,7 +853,6 @@ lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [F
       rw [← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
 
 end scaleRoots
-
 
 -- Mathlib/RingTheory/LocalProperties.lean
 -- Generalized universe from `localization_finite`
@@ -1145,3 +1145,133 @@ lemma Polynomial.dvd_C_mul_X_sub_one_pow_add_one
   rw [map_mul, map_natCast]
   exact mul_dvd_mul_left _ (Finset.dvd_sum (fun x hx ↦ dvd_mul_of_dvd_left
     (dvd_mul_of_dvd_left (dvd_pow (dvd_mul_right _ _) (Finset.mem_Ioo.mp hx).1.ne.symm) _) _))
+
+-- Mathlib/RingTheory/PolynomialAlgebra.lean
+open Polynomial in
+lemma Matrix.eval_det_add_X_smul {n} [Fintype n] [DecidableEq n] {R} [CommRing R]
+    (A) (M : Matrix n n R) :
+    (det (A + (X : R[X]) • M.map C)).eval 0 = (det A).eval 0 := by
+  simp only [eval_det, map_zero, map_add, eval_add, Algebra.smul_def, _root_.map_mul]
+  simp only [algebraMap_eq_smul, matPolyEquiv_smul_one, map_X, X_mul, eval_mul_X, mul_zero,
+    add_zero]
+
+-- Mathlib/LinearAlgebra/Matrix/Trace.lean
+lemma Matrix.trace_submatrix_succ {n : ℕ} {R} [CommRing R] (M : Matrix (Fin n.succ) (Fin n.succ) R) :
+    M 0 0 + trace (submatrix M Fin.succ Fin.succ) = trace M := by
+  delta trace
+  rw [← (finSuccEquiv n).symm.sum_comp]
+  simp
+
+-- Not sure about the following fivem but they should probably go togethere
+
+open Polynomial in
+lemma Matrix.derivative_det_one_add_X_smul_aux {n} {R} [CommRing R] (M : Matrix (Fin n) (Fin n) R) :
+    (derivative <| det (1 + (X : R[X]) • M.map C)).eval 0 = trace M := by
+  induction n with
+  | zero => simp
+  | succ n IH =>
+    rw [det_succ_row_zero, map_sum, eval_finset_sum]
+    simp only [add_apply, smul_apply, map_apply, smul_eq_mul, X_mul_C, submatrix_add,
+      submatrix_smul, Pi.add_apply, Pi.smul_apply, submatrix_map, derivative_mul, map_add,
+      derivative_C, zero_mul, derivative_X, mul_one, zero_add, eval_add, eval_mul, eval_C, eval_X,
+      mul_zero, add_zero, eval_det_add_X_smul, eval_pow, eval_neg, eval_one]
+    rw [Finset.sum_eq_single 0]
+    · simp only [Fin.val_zero, pow_zero, derivative_one, eval_zero, one_apply_eq, eval_one,
+        mul_one, zero_add, one_mul, Fin.succAbove_zero, submatrix_one _ (Fin.succ_injective _),
+        det_one, IH, trace_submatrix_succ]
+    · intro i _ hi
+      cases n with
+      | zero => exact (hi (Subsingleton.elim i 0)).elim
+      | succ n =>
+        simp only [one_apply_ne' hi, eval_zero, mul_zero, zero_add, zero_mul, add_zero]
+        rw [det_eq_zero_of_column_eq_zero 0, eval_zero, mul_zero]
+        intro j
+        rw [submatrix_apply, Fin.succAbove_below, one_apply_ne]
+        · exact (bne_iff_ne (Fin.succ j) (Fin.castSucc 0)).mp rfl
+        · rw [Fin.castSucc_zero]; exact lt_of_le_of_ne (Fin.zero_le _) hi.symm
+    · exact fun H ↦ (H <| Finset.mem_univ _).elim
+
+open Polynomial in
+lemma Matrix.derivative_det_one_add_X_smul {n} [Fintype n] [DecidableEq n] {R} [CommRing R]
+    (M : Matrix n n R) : (derivative <| det (1 + (X : R[X]) • M.map C)).eval 0 = trace M := by
+  let e := Matrix.reindexLinearEquiv R R (Fintype.equivFin n) (Fintype.equivFin n)
+  rw [← Matrix.det_reindexLinearEquiv_self R[X] (Fintype.equivFin n)]
+  convert derivative_det_one_add_X_smul_aux (e M)
+  · ext; simp
+  · delta trace
+    rw [← (Fintype.equivFin n).symm.sum_comp]
+    rfl
+
+open Polynomial in
+lemma Matrix.det_one_add_X_smul {n} [Fintype n] [DecidableEq n] {R} [CommRing R]
+    (M : Matrix n n R) : det (1 + (X : R[X]) • M.map C) =
+      (1 : R[X]) + trace M • X + (det (1 + (X : R[X]) • M.map C)).divX.divX * X ^ 2 := by
+  rw [Algebra.smul_def (trace M), ← C_eq_algebraMap, pow_two, ← mul_assoc, add_assoc,
+    ← add_mul, ← derivative_det_one_add_X_smul, ← coeff_zero_eq_eval_zero, coeff_derivative,
+    Nat.cast_zero, @zero_add R, mul_one, ← coeff_divX, add_comm (C _), divX_mul_X_add,
+    add_comm (1 : R[X]), ← C.map_one]
+  convert (divX_mul_X_add _).symm
+  rw [coeff_zero_eq_eval_zero, eval_det_add_X_smul, det_one, eval_one]
+
+open Polynomial in
+lemma Matrix.det_one_add_smul {n} [Fintype n] [DecidableEq n] {R} [CommRing R] (r : R)
+    (M : Matrix n n R) : det (1 + r • M) =
+      1 + trace M * r + (det (1 + (X : R[X]) • M.map C)).divX.divX.eval r * r ^ 2 := by
+  have := congr_arg (eval r) (Matrix.det_one_add_X_smul M)
+  simp only [eval_det, coe_scalar, map_add, _root_.map_one, eval_add, eval_one, eval_smul, eval_X,
+    smul_eq_mul, eval_mul, eval_pow] at this
+  convert this
+  rw [Algebra.smul_def X, _root_.map_mul]
+  have : matPolyEquiv (M.map C) = C M
+  · ext; simp only [matPolyEquiv_coeff_apply, map_apply, coeff_C]; rw [ite_apply, ite_apply]; rfl
+  simp only [algebraMap_eq_smul, matPolyEquiv_smul_one, map_X, X_mul, eval_mul_X, this,
+    Algebra.mul_smul_comm, mul_one, eval_C]
+
+lemma Algebra.norm_one_add_smul {A B} [CommRing A] [CommRing B] [Algebra A B]
+  [Module.Free A B] [Module.Finite A B] (a : A) (x : B) :
+    ∃ r : A, Algebra.norm A (1 + a • x) = 1 + Algebra.trace A B x * a + r * a ^ 2 := by
+  classical
+  let ι := Module.Free.ChooseBasisIndex A B
+  let b : Basis ι A B := Module.Free.chooseBasis _ _
+  haveI : Fintype ι := inferInstance
+  clear_value ι b
+  simp_rw [Algebra.norm_eq_matrix_det b, Algebra.trace_eq_matrix_trace b]
+  simp only [map_add, map_one, map_smul, Matrix.det_one_add_smul a]
+  exact ⟨_, rfl⟩
+
+-- Mathlib/NumberTheory/NumberField/Units.lean
+-- Not a good place but it should go beside `Algebra.coe_norm_int`.
+open scoped NumberField in
+theorem Algebra.coe_trace_int {K : Type*} [Field K] [NumberField K] (x : 𝓞 K) :
+    Algebra.trace ℤ _ x = Algebra.trace ℚ K x :=
+  (Algebra.trace_localization (R := ℤ) (Rₘ := ℚ) (S := 𝓞 K) (Sₘ := K) (nonZeroDivisors ℤ) x).symm
+
+-- Mathlib/Algebra/Algebra/Hom.lean
+lemma RingHom.toIntAlgHom_injective {R₁ R₂} [Ring R₁] [Ring R₂] [Algebra ℤ R₁] [Algebra ℤ R₂] :
+    Function.Injective (RingHom.toIntAlgHom : (R₁ →+* R₂) → _) :=
+  fun _ _ e ↦ FunLike.ext _ _ (fun x ↦ FunLike.congr_fun e x)
+
+-- Mathlib/Data/Polynomial/RingDivision.lean
+lemma one_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R] (hn : 0 < n) :
+    1 ∈ nthRootsFinset n R := by rw [mem_nthRootsFinset hn, one_pow]
+
+-- Mathlib/LinearAlgebra/FiniteDimensional.lean
+lemma FiniteDimensional.finrank_eq_one_of_linearEquiv {R V} [Field R]
+    [AddCommGroup V] [Module R V] (e : R ≃ₗ[R] V) : finrank R V = 1 :=
+  finrank_eq_one_iff'.mpr ⟨e 1, by simp, fun w ↦ ⟨e.symm w, by simp [← e.map_smul]⟩⟩
+
+-- Mathlib/LinearAlgebra/FiniteDimensional.lean
+lemma FiniteDimensional.finrank_of_equiv_equiv {A₁ B₁ A₂ B₂ : Type*} [Field A₁] [Field B₁]
+    [Field A₂] [Field B₂] [Algebra A₁ B₁] [Algebra A₂ B₂] (e₁ : A₁ ≃+* A₂) (e₂ : B₁ ≃+* B₂)
+    (he : RingHom.comp (algebraMap A₂ B₂) ↑e₁ = RingHom.comp ↑e₂ (algebraMap A₁ B₁)) :
+    finrank A₁ B₁ = finrank A₂ B₂ := by
+  letI := e₁.toRingHom.toAlgebra
+  letI := ((algebraMap A₁ B₁).comp e₁.symm.toRingHom).toAlgebra
+  haveI : IsScalarTower A₁ A₂ B₁ := IsScalarTower.of_algebraMap_eq
+    (fun x ↦ by simp [RingHom.algebraMap_toAlgebra])
+  let e : B₁ ≃ₐ[A₂] B₂ := { e₂ with commutes' := fun r ↦ by simpa [RingHom.algebraMap_toAlgebra]
+                                                  using FunLike.congr_fun he.symm (e₁.symm r) }
+  have H : finrank A₁ A₂ = 1 := finrank_eq_one_of_linearEquiv
+    { e₁ with map_smul' := (IsScalarTower.toAlgHom A₁ A₁ A₂).toLinearMap.map_smul }
+  have := finiteDimensional_of_finrank_eq_succ H
+  rw [← e.toLinearEquiv.finrank_eq, ← finrank_mul_finrank A₁ A₂ B₁, H, one_mul]

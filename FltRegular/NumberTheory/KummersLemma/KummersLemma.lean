@@ -47,40 +47,6 @@ lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRe
     conv_lhs at IH => rw [← hβ, Ideal.map_map]
     exact IH
 
-theorem IsPrincipal_of_IsPrincipal_pow_of_Coprime
-  (A : Type*) [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
-  (p : ℕ) [Fact p.Prime]
-  (H : p.Coprime <| Fintype.card <| ClassGroup A) (I : Ideal A)
-  (hI : (I ^ p).IsPrincipal) : I.IsPrincipal := by
-  by_cases Izero : I = 0
-  · rw [Izero]
-    exact bot_isPrincipal
-  rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero _)] at hI ⊢
-  swap; · exact Izero
-  swap; · exact pow_ne_zero p Izero
-  rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
-  refine ⟨?_, orderOf_dvd_card_univ⟩
-  rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]
-
-lemma FiniteDimensional.finrank_eq_one_of_linearEquiv {R V} [Field R]
-    [AddCommGroup V] [Module R V] (e : R ≃ₗ[R] V) : finrank R V = 1 :=
-  finrank_eq_one_iff'.mpr ⟨e 1, by simp, fun w ↦ ⟨e.symm w, by simp [← e.map_smul]⟩⟩
-
-lemma FiniteDimensional.finrank_of_equiv_equiv {A₁ B₁ A₂ B₂ : Type*} [Field A₁] [Field B₁]
-    [Field A₂] [Field B₂] [Algebra A₁ B₁] [Algebra A₂ B₂] (e₁ : A₁ ≃+* A₂) (e₂ : B₁ ≃+* B₂)
-    (he : RingHom.comp (algebraMap A₂ B₂) ↑e₁ = RingHom.comp ↑e₂ (algebraMap A₁ B₁)) :
-    finrank A₁ B₁ = finrank A₂ B₂ := by
-  letI := e₁.toRingHom.toAlgebra
-  letI := ((algebraMap A₁ B₁).comp e₁.symm.toRingHom).toAlgebra
-  haveI : IsScalarTower A₁ A₂ B₁ := IsScalarTower.of_algebraMap_eq
-    (fun x ↦ by simp [RingHom.algebraMap_toAlgebra])
-  let e : B₁ ≃ₐ[A₂] B₂ := { e₂ with commutes' := fun r ↦ by simpa [RingHom.algebraMap_toAlgebra]
-                                                  using FunLike.congr_fun he.symm (e₁.symm r) }
-  have H : finrank A₁ A₂ = 1 := finrank_eq_one_of_linearEquiv
-    { e₁ with map_smul' := (IsScalarTower.toAlgHom A₁ A₁ A₂).toLinearMap.map_smul }
-  have := finiteDimensional_of_finrank_eq_succ H
-  rw [← e.toLinearEquiv.finrank_eq, ← finrank_mul_finrank A₁ A₂ B₁, H, one_mul]
-
 open FiniteDimensional in
 theorem exists_units_eq_div_root_of_isUnramified
     [IsDedekindDomain A] [IsUnramified A B] [Fintype (ClassGroup A)]
@@ -170,7 +136,7 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
       intro h
       replace h := _root_.map_dvd (Int.castRingHom (𝓞 K)) h
       simp only [map_natCast, eq_intCast, ← dvd_iff_dvd_of_dvd_sub hn] at h
-      refine (IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp).not_unit ((isUnit_pow_iff ?_).mp
+      refine hζ.zeta_sub_one_prime'.not_unit ((isUnit_pow_iff ?_).mp
         (isUnit_of_dvd_unit ((associated_zeta_sub_one_pow_prime hζ).dvd.trans h) u.isUnit))
       simpa only [ge_iff_le, ne_eq, tsub_eq_zero_iff_le, not_le] using hpri.out.one_lt
     replace hn' := _root_.map_dvd (Int.castRingHom (𝓞 K)) hn'
