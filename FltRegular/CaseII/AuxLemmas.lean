@@ -3,6 +3,7 @@ import FltRegular.NumberTheory.Cyclotomic.Factoring
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import Mathlib.RingTheory.Ideal.Norm
 import Mathlib.RingTheory.ClassGroup
+import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 
@@ -164,75 +165,6 @@ lemma ne_zero_of_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain
 
 variable (hp : p ≠ 2)
 
-lemma IsPrimitiveRoot.prime_span_sub_one : Prime (Ideal.span <| singleton <| (hζ.unit' - 1 : 𝓞 K)) := by
-  haveI : Fact (Nat.Prime p) := hpri
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rw [Ideal.prime_iff_isPrime,
-    Ideal.span_singleton_prime (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)]
-  exact IsCyclotomicExtension.Rat.zeta_sub_one_prime' hζ hp
-  · rw [Ne.def, Ideal.span_singleton_eq_bot]
-    exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
-
-lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) - 1 : 𝓞 K) = p := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  haveI : Fact (Nat.Prime p) := hpri
-  apply RingHom.injective_int (algebraMap ℤ ℚ)
-  simp [Algebra.coe_norm_int, hζ.sub_one_norm_prime (cyclotomic.irreducible_rat p.2) hp]
-
-lemma one_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R] (hn : 0 < n) :
-    1 ∈ nthRootsFinset n R := by rw [mem_nthRootsFinset hn, one_pow]
-
-lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^ (p - 1 : ℕ)) p := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  haveI : Fact (Nat.Prime p) := hpri
-  rw [← eval_one_cyclotomic_prime (R := 𝓞 K) (p := p),
-    cyclotomic_eq_prod_X_sub_primitiveRoots hζ.unit'_coe, eval_prod]
-  simp only [eval_sub, eval_X, eval_C]
-  rw [← Nat.totient_prime this.out, ← hζ.unit'_coe.card_primitiveRoots, ← Finset.prod_const]
-  apply Associated.prod
-  intro η hη
-  exact hζ.unit'_coe.associated_sub_one hpri.out
-    (one_mem_nthRootsFinset this.out.pos)
-    ((isPrimitiveRoot_of_mem_primitiveRoots hη).mem_nthRootsFinset hpri.out.pos)
-      ((isPrimitiveRoot_of_mem_primitiveRoots hη).ne_one hpri.out.one_lt).symm
-
-lemma isCoprime_of_not_zeta_sub_one_dvd (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x) : IsCoprime ↑p x := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rwa [← Ideal.isCoprime_span_singleton_iff,
-    ← Ideal.span_singleton_eq_span_singleton.mpr (associated_zeta_sub_one_pow_prime hζ),
-    ← Ideal.span_singleton_pow, IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd,
-    (hζ.prime_span_sub_one hp).irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton,
-    Ideal.mem_span_singleton]
-  · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
-
-lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1: 𝓞 K) ∣ a - b := by
-  letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.unit' - 1: 𝓞 K))) := inferInstance
-  letI : Fact (Nat.Prime p) := hpri
-  simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, map_sub, sub_eq_zero, ← SModEq.Ideal_def]
-  convert exists_int_sModEq hζ.subOneIntegralPowerBasis' a
-  rw [hζ.subOneIntegralPowerBasis'_gen]
-  rw [Subtype.ext_iff, AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one]
-
-lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : ℕ) - (b : 𝓞 K) ^ (p : ℕ) := by
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root ℚ (B := K) (Set.mem_singleton p)
-  obtain ⟨b, k, e⟩ := exists_zeta_sub_one_dvd_sub_Int hζ a
-  obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hpri.out a (-b)
-  obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime hζ).symm
-  rw [(Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp)).neg_pow, ← sub_eq_add_neg, e,
-    mul_pow, ← sub_eq_add_neg] at hr
-  nth_rw 1 [← Nat.sub_add_cancel (n := p) (m := 1) hpri.out.one_lt.le] at hr
-  rw [pow_succ', ← hu, mul_assoc, mul_assoc] at hr
-  use b, ↑u * ((hζ.unit' - 1 : 𝓞 K) * k ^ (p : ℕ)) - r
-  rw [mul_sub, hr, add_sub_cancel]
-
-lemma norm_dvd_iff {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
-    [Infinite R] [Module.Free ℤ R] [Module.Finite ℤ R] (x : R) (hx : Prime (Algebra.norm ℤ x)) {y : ℤ} :
-    Algebra.norm ℤ x ∣ y ↔ x ∣ y := by
-  rw [← Ideal.mem_span_singleton (y := x), ← eq_intCast (algebraMap ℤ R), ← Ideal.mem_comap,
-    ← Ideal.span_singleton_absNorm, Ideal.mem_span_singleton, Ideal.absNorm_span_singleton,
-    Int.natAbs_dvd]
-  rwa [Ideal.absNorm_span_singleton, ← Int.prime_iff_natAbs_prime]
-
 open FractionalIdeal in
 lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
@@ -310,9 +242,3 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
     linarith
   · intro ht
     refine hm (dvd_trans (pow_dvd_pow _ (Nat.le_add_left _ _)) ht)
-
-lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rw [← norm_Int_zeta_sub_one hζ hp, norm_dvd_iff]
-  rw [norm_Int_zeta_sub_one hζ hp, ← Nat.prime_iff_prime_int]
-  exact hpri.out
