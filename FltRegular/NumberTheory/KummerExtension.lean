@@ -3,7 +3,7 @@ import Mathlib.RingTheory.AdjoinRoot
 import Mathlib.RingTheory.Norm
 import FltRegular.NumberTheory.AuxLemmas
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import MathLib.LinearAlgebra.EigenSpace.Minpoly
+import Mathlib.LinearAlgebra.Eigenspace.Minpoly
 /-!
 # Kummer Theory
 
