@@ -97,11 +97,6 @@ lemma isUnit_iff_eq_one {M : Type*} [Monoid M] [Unique Mˣ] {x : M} : IsUnit x �
   ⟨fun h ↦ congr_arg Units.val (Subsingleton.elim (h.unit) 1), fun h ↦ h ▸ isUnit_one⟩
 
 -- Mathlib/RingTheory/UniqueFactorizationDomain.lean
-lemma normalized_eq_self {M : Type*} [CancelCommMonoidWithZero M] [Unique Mˣ]
-    [NormalizationMonoid M] {x : M} : normalize x = x := by
-  rw [normalize_apply, Subsingleton.elim (normUnit x) 1, Units.val_one, mul_one]
-
--- Mathlib/RingTheory/UniqueFactorizationDomain.lean
 lemma factors_pow_count_prod {M} [CancelCommMonoidWithZero M] [UniqueFactorizationMonoid M] [DecidableEq M] {x : M}
     (hx : x ≠ 0) : Associated (∏ p in (factors x).toFinset, p ^ (factors x).count p) x := by
   convert factors_prod hx

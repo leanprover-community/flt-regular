@@ -100,10 +100,10 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
     congr
     rw [dif_pos hp]
     apply PartENat.natCast_inj.mp
-    rw [← normalized_eq_self (x := P), factors_eq_normalizedFactors,
+    rw [← normalize_eq P, factors_eq_normalizedFactors,
       ← multiplicity_eq_count_normalizedFactors
         (prime_of_mem_primesOver hpbot hP).irreducible hIbot,
-      ← normalized_eq_self (x := 𝔓 p hp), ← multiplicity_eq_count_normalizedFactors
+      ← normalize_eq (𝔓 p hp), ← multiplicity_eq_count_normalizedFactors
         (prime_of_mem_primesOver hpbot <| h𝔓' p hp).irreducible hIbot,
       multiplicity.multiplicity_eq_multiplicity_iff]
     intro n
