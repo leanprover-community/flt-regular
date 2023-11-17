@@ -414,9 +414,9 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
       Units.val_pow_eq_pow_val] at hz
     norm_cast at hz
     simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ h u n hp
-  · apply RingHom.is_integral_mul
-    exact NumberField.RingOfIntegers.isIntegral_coe _
-    exact NumberField.RingOfIntegers.isIntegral_coe _
+  · apply RingHom.IsIntegralElem.mul
+    · exact NumberField.RingOfIntegers.isIntegral_coe _
+    · exact NumberField.RingOfIntegers.isIntegral_coe _
   · exact unit_lemma_val_one p u
 
 lemma inv_coe_coe {K A : Type*} [Field K] [SetLike A K] [SubsemiringClass A K] {S : A} (s : Sˣ) :

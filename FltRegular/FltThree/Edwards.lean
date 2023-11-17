@@ -24,7 +24,7 @@ theorem OddPrimeOrFour.im_ne_zero {p : ℤ√(-3)} (h : OddPrimeOrFour p.norm)
   · rw [H, isCoprime_zero_right, Int.isUnit_iff_abs_eq] at hcoprime
     rw [← sq_abs, hcoprime] at h
     norm_num at h
-  · exact pow_not_prime one_lt_two.ne' hp
+  · exact not_prime_pow one_lt_two.ne' hp
 #align odd_prime_or_four.im_ne_zero OddPrimeOrFour.im_ne_zero
 
 theorem Zsqrt3.isUnit_iff {z : ℤ√(-3)} : IsUnit z ↔ abs z.re = 1 ∧ z.im = 0 :=
@@ -67,7 +67,7 @@ theorem OddPrimeOrFour.factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime 
     rw [Zsqrtd.norm_def, H, MulZeroClass.mul_zero, sub_zero, ← pow_two, eq_comm] at hc
     have := hprime.abs
     rw [←hc] at this
-    exact pow_not_prime one_lt_two.ne' this
+    exact not_prime_pow one_lt_two.ne' this
 #align odd_prime_or_four.factors OddPrimeOrFour.factors
 
 theorem step1a {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a.norm) :

@@ -195,7 +195,7 @@ lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [
   isIntegral_iff := fun {x} ↦ by
     refine Iff.trans ?_ (IsIntegralClosure.isIntegral_iff (R := R) (A := B) (B := L))
     exact ⟨isIntegral_trans (IsIntegralClosure.isIntegral_algebra R (A := A) K) x,
-      isIntegral_of_isScalarTower⟩
+      IsIntegral.tower_top⟩
 
 instance {K L} [Field K] [Field L] [Algebra K L] :
     IsIntegralClosure (𝓞 L) (𝓞 K) L := isIntegralClosure_of_isScalarTower ℤ _ K _ _
@@ -212,7 +212,7 @@ lemma minpoly_polyRoot'' {L : Type*} [Field L] [Algebra K L] (α : L)
     minpoly K (polyRoot hp hζ u hcong α e i : L) =
       (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) := by
   have : IsIntegral K (polyRoot hp hζ u hcong α e i : L) :=
-    isIntegral_of_isScalarTower (polyRoot hp hζ u hcong α e i).prop
+    IsIntegral.tower_top (polyRoot hp hζ u hcong α e i).prop
   apply eq_of_monic_of_associated (minpoly.monic this) ((monic_poly hp hζ u hcong).map _)
   refine Irreducible.associated_of_dvd (minpoly.irreducible this)
     (irreducible_map_poly hp hζ u hcong hu) (minpoly.dvd _ _ ?_)
@@ -225,7 +225,7 @@ lemma minpoly_polyRoot' {L : Type*} [Field L] [Algebra K L] (α : L)
   apply map_injective (algebraMap (𝓞 K) K) Subtype.coe_injective
   rw [← minpoly.isIntegrallyClosed_eq_field_fractions' K]
   exact minpoly_polyRoot'' hp hζ u hcong hu α e i
-  exact isIntegral_of_isScalarTower (polyRoot hp hζ u hcong α e i).prop
+  exact IsIntegral.tower_top (polyRoot hp hζ u hcong α e i).prop
 
 lemma minpoly_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (i) :
@@ -283,7 +283,7 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     apply Ideal.Quotient.nontrivial
     rw [ne_eq, Ideal.map_eq_top_iff]; exact Ideal.IsMaximal.ne_top ‹_›
     · intros x y e; ext; exact (algebraMap K L).injective (congr_arg Subtype.val e)
-    · intros x; exact isIntegral_of_isScalarTower (IsIntegralClosure.isIntegral ℤ L x)
+    · intros x; exact IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ L x)
   rw [← Polynomial.separable_map' i, map_map, Ideal.quotientMap_comp_mk, ← map_map]
   apply Separable.map
   apply separable_poly_aux hp hζ u hcong
@@ -318,7 +318,7 @@ lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ (p : �
   constructor
   intros I hI hIbot
   refine isUnramifiedAt_of_Separable_minpoly (R := 𝓞 K) K (S := 𝓞 L) L I hIbot α ?_ hα ?_
-  · exact isIntegral_of_isScalarTower α.prop
+  · exact IsIntegral.tower_top α.prop
   · rw [minpoly_polyRoot' hp hζ u hcong hu]
     haveI := hI.isMaximal hIbot
     exact separable_poly hp hζ u hcong hu I

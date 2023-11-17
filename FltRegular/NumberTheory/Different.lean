@@ -115,7 +115,7 @@ lemma isIntegral_discr_mul_of_mem_traceFormDualSubmodule
   apply IsIntegral.sum
   intro i _
   rw [smul_mul_assoc, b.equivFun.map_smul, discr_def, mul_comm, ← H, Algebra.smul_def]
-  refine RingHom.is_integral_mul _ ?_ (hb _)
+  refine RingHom.IsIntegralElem.mul _ ?_ (hb _)
   apply IsIntegral.algebraMap
   rw [cramer_apply]
   apply IsIntegral.det
@@ -128,7 +128,7 @@ lemma isIntegral_discr_mul_of_mem_traceFormDualSubmodule
     have ⟨y, hy⟩ := (IsIntegralClosure.isIntegral_iff (A := B)).mp (hb j)
     rw [mul_comm, ← hy, ← Algebra.smul_def]
     exact I.smul_mem _ (ha)
-  · exact isIntegral_trace (RingHom.is_integral_mul _ (hb j) (hb k))
+  · exact isIntegral_trace (RingHom.IsIntegralElem.mul _ (hb j) (hb k))
 
 variable (A K)
 
@@ -327,10 +327,10 @@ lemma pow_sub_one_dvd_differentIdeal
     {p : Ideal A} [p.IsMaximal] (P : Ideal B) (e : ℕ) (hp : p ≠ ⊥)
     (hP : P ^ e ∣ p.map (algebraMap A B)) : P ^ (e - 1) ∣ differentIdeal A B := by
   have : IsIntegralClosure B A (FractionRing B) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := A) (A := B))
+    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := A) (B := B))
   have : IsLocalization (algebraMapSubmonoid B A⁰) (FractionRing B) :=
     IsIntegralClosure.isLocalization' _ (FractionRing A) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := A) (A := B)))
+      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := A) (B := B)))
   have : FiniteDimensional (FractionRing A) (FractionRing B) :=
     Module.Finite_of_isLocalization A B _ _ A⁰
   by_cases he : e = 0
@@ -371,7 +371,7 @@ lemma traceFormDualSubmodule_span_adjoin
       (aeval x (derivative <| minpoly K x) : L)⁻¹ •
         (Subalgebra.toSubmodule (Algebra.adjoin A {x})) := by
   classical
-  have hKx : IsIntegral K x := Algebra.IsIntegral.of_finite (R := K) (A := L) x
+  have hKx : IsIntegral K x := Algebra.IsIntegral.of_finite (R := K) (B := L) x
   let pb := (Algebra.adjoin.powerBasis' hKx).map
     ((Subalgebra.equivOfEq _ _ hx).trans (Subalgebra.topEquiv))
   have pbgen : pb.gen = x := by simp
