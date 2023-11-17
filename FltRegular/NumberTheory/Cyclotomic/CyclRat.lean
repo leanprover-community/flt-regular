@@ -184,7 +184,7 @@ theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη :
   have h0 : p ≠ 2 := by
     intro hP
     rw [hP] at ph
-    simp at ph
+    contradiction
   have h := RingOfIntegers.dvd_norm ℚ (η - 1 : R)
   have h2 := IsPrimitiveRoot.sub_one_norm_prime this (cyclotomic.irreducible_rat p.2) h0
   convert h
@@ -202,7 +202,7 @@ theorem one_sub_zeta_prime [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRoot
 theorem diff_of_roots [hp : Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R) (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂)
     (hwlog : η₁ ≠ 1) : ∃ u : Rˣ, η₁ - η₂ = u * (1 - η₁) := by
-  replace ph : 2 ≤ p := le_trans (by norm_num) ph
+  replace ph : 2 ≤ p := le_trans (by decide) ph
   have h := nth_roots_prim hη₁ hwlog
   obtain ⟨i, ⟨H, hi⟩⟩ := h.eq_pow_of_pow_eq_one ((mem_nthRootsFinset hp.out.pos).1 hη₂) hp.out.pos
   have hi1 : 1 ≠ i := by

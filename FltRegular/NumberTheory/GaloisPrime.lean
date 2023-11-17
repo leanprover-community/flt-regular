@@ -174,7 +174,7 @@ instance (p : Ideal R) : MulAction (L ≃ₐ[K] L) (primesOver S p) where
     rfl
 
 lemma coe_smul_primesOver {p : Ideal R} (σ : L ≃ₐ[K] L) (P : primesOver S p) :
-  (σ • P : Ideal S) = Ideal.comap (galRestrict R K S L σ⁻¹) P := rfl
+  (↑(σ • P) : Ideal S) = Ideal.comap (galRestrict R K S L σ⁻¹) P := rfl
 
 open BigOperators
 
@@ -203,7 +203,7 @@ instance [IsGalois K L] (p : Ideal R) :
   by_contra H
   push_neg at H
   -- Then `I := ∏ σ • Q` is coprime to `P`.
-  let I := ∏ σ : L ≃ₐ[K] L, (σ • Q : Ideal S)
+  let I := ∏ σ : L ≃ₐ[K] L, (↑(σ • Q) : Ideal S)
   have : I ⊔ ↑P = ⊤
   · by_contra h
     have := hP.eq_of_le h le_sup_right
@@ -376,7 +376,7 @@ lemma prod_primesOverFinset_pow_ramificationIdxIn [IsDedekindDomain S] [IsGalois
   rwa [Ne.def, Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective hRS]
 
 lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.IsMaximal] :
-    ∏ σ : L ≃ₐ[K] L, (σ • P : Ideal S) = (p.map (algebraMap R S)) ^ (p.inertiaDegIn S) := by
+    ∏ σ : L ≃ₐ[K] L, (↑(σ • P) : Ideal S) = (p.map (algebraMap R S)) ^ (p.inertiaDegIn S) := by
   classical
   have : IsDomain S :=
     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)

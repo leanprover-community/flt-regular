@@ -59,6 +59,7 @@ theorem OddPrimeOrFour.factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime 
   obtain rfl | ⟨hprime, hodd⟩ := hx
   · refine' ⟨⟨1, 1⟩, _, zero_le_one, one_ne_zero⟩
     simp only [Zsqrtd.norm_def, mul_one, abs_of_pos, zero_lt_four, sub_neg_eq_add]
+    decide
   · obtain ⟨c, hc⟩ := _root_.factors a x hcoprime hodd hfactor
     rw [hc]
     apply Zsqrtd.exists c
@@ -73,13 +74,16 @@ theorem step1a {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a
     Odd a.re ∧ Odd a.im :=
   by
   rw [Int.odd_iff_not_even, Int.odd_iff_not_even]
-  have : Even a.re ↔ Even a.im := by simpa [Zsqrtd.norm_def, parity_simps] using heven
+  have : Even a.re ↔ Even a.im := by
+    have : ¬ Even (3 : ℤ) := by decide
+    simpa [this, Zsqrtd.norm_def, parity_simps] using heven
   apply (iff_iff_and_or_not_and_not.mp this).resolve_left
   rw [even_iff_two_dvd, even_iff_two_dvd]
   rintro ⟨hre, him⟩
   have := hcoprime.isUnit_of_dvd' hre him
   rw [isUnit_iff_dvd_one] at this
   norm_num at this
+  contradiction
 #align step1a step1a
 
 theorem step1 {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a.norm) :
@@ -171,7 +175,7 @@ theorem step1_2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.no
     have heven : Even a.norm :=
       by
       apply even_iff_two_dvd.mpr (dvd_trans _ hdvd)
-      norm_num
+      norm_num; decide
     exact step1'' hcoprime hp hq heven
   · apply step2 hcoprime hdvd hpprime
 #align step1_2 step1_2
@@ -418,7 +422,7 @@ theorem factors_2_even' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     apply iff_of_true even_two
     apply ih _ _ huvcoprime rfl
     rw [← hn, huvprod, Int.natAbs_mul, lt_mul_iff_one_lt_left (Int.natAbs_pos.mpr huv)]
-    norm_num
+    norm_num; decide
   · convert even_zero (α := ℕ)
     simp only [evenFactorExp, Multiset.count_eq_zero, hn]
     contrapose! hparity with hfactor
@@ -516,7 +520,7 @@ theorem step5'
         by
         rw [Nat.even_mul] at this
         apply this.resolve_left
-        norm_num
+        norm_num; decide
       rw [← evenFactorExp.pow r 3, hcube]
       exact factors_2_even' hcoprime
     calc
@@ -579,7 +583,7 @@ theorem step5
   | inr h1 =>
     use -f.prod
     rw [h1, hf, Multiset.prod_nsmul, Odd.neg_pow]
-    norm_num
+    norm_num; decide
 #align step5 step5
 
 theorem step6 (a b r : ℤ) (hcoprime : IsCoprime a b) (hcube : r ^ 3 = a ^ 2 + 3 * b ^ 2) :

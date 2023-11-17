@@ -121,7 +121,8 @@ theorem descent1left {a b c : ℤ} (hapos : a ≠ 0) (h : a ^ 3 + b ^ 3 = c ^ 3)
     exact hapos (pow_eq_zero h)
   have hqnezero : q ≠ 0 := by
     rintro rfl
-    rw [zero_sub, add_zero, Odd.neg_pow (by norm_num), ← sub_eq_add_neg, sub_eq_iff_eq_add] at h
+    rw [zero_sub, add_zero, Odd.neg_pow (by norm_num; decide), ← sub_eq_add_neg,
+      sub_eq_iff_eq_add] at h
     exact flt_not_add_self hpnezero h.symm rfl
   refine' ⟨p, q, hpnezero, hqnezero, _, _, _⟩
   · apply isCoprime_of_dvd _ _ (not_and_of_not_left _ hpnezero)
@@ -225,7 +226,8 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     have hne2 : d ≠ 2 := by
       rintro rfl
       rw [Nat.cast_two, ← even_iff_two_dvd] at hdright
-      simp [hparity, two_ne_zero, parity_simps] at hdright
+      have : ¬ Even (3 : ℤ) := by decide
+      simp [this, hparity, two_ne_zero, parity_simps] at hdright
     have : 2 < d := lt_of_le_of_ne hdprime.two_le hne2.symm
     have : 3 < d := lt_of_le_of_ne this hne3.symm
     obtain ⟨P, hP⟩ := hdleft
@@ -270,14 +272,14 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
   rw [← pow_mul_pow_sub _ H] at hg
   have : ¬IsUnit (3 : ℤ) := by
     rw [Int.isUnit_iff_natAbs_eq]
-    norm_num
+    norm_num; decide
   apply this
   have hdvdp : 3 ∣ p :=
     by
     suffices 3 ∣ 2 * p
       by
       apply Int.dvd_mul_cancel_prime' _ dvd_rfl Int.prime_two this
-      norm_num
+      norm_num; decide
     have : 3 ∣ (g : ℤ) := by
       rw [hg, pow_two, mul_assoc, Int.ofNat_mul]
       apply dvd_mul_right
@@ -325,7 +327,8 @@ theorem obscure' (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity 
       · exfalso
         have : Even p := by
           rw [hp']
-          simp [haparity, hbparity, three_ne_zero, parity_simps]
+          have : ¬ Even (9 : ℤ) := by decide
+          simp [this, haparity, hbparity, three_ne_zero, parity_simps]
         have : Even q := by
           rw [hq']
           simp [haparity, hbparity, three_ne_zero, parity_simps]
@@ -341,7 +344,7 @@ theorem Int.cube_of_coprime (a b c s : ℤ) (ha : a ≠ 0) (hb : b ≠ 0) (hc : 
     (hcoprimeab : IsCoprime a b) (hcoprimeac : IsCoprime a c) (hcoprimebc : IsCoprime b c)
     (hs : a * b * c = s ^ 3) : ∃ A B C, A ≠ 0 ∧ B ≠ 0 ∧ C ≠ 0 ∧ a = A ^ 3 ∧ b = B ^ 3 ∧ c = C ^ 3 :=
   by
-  have : Odd 3 := by norm_num
+  have : Odd 3 := by decide
   obtain ⟨⟨AB, HAB⟩, ⟨C, HC⟩⟩ :=
     Int.eq_pow_of_mul_eq_pow_odd (IsCoprime.mul_left hcoprimeac hcoprimebc) this hs
   obtain ⟨⟨A, HA⟩, ⟨B, HB⟩⟩ := Int.eq_pow_of_mul_eq_pow_odd hcoprimeab this HAB
@@ -419,7 +422,7 @@ theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
   -- 5.
   obtain ⟨r, hr⟩ : ∃ r, 2 * p * (p ^ 2 + 3 * q ^ 2) = r ^ 3 := by
     rcases hcube with (hcube | hcube | hcube) <;> [(use a); (use b); (use c)]
-  have : Odd 3 := by norm_num
+  have : Odd 3 := by decide
   obtain ⟨hcubeleft, hcuberight⟩ := Int.eq_pow_of_mul_eq_pow_odd hgcd this hr
   -- todo shadowing hq
   obtain ⟨u, v, hpfactor, hq, huvcoprime, huvodd⟩ := obscure' p q hp hcoprime hodd hcuberight
@@ -431,8 +434,9 @@ theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
     by
     rw [hpfactor]
     ring
-  have : ¬Even (u - 3 * v) := by simp [huvodd, parity_simps]
-  have : ¬Even (u + 3 * v) := by simp [huvodd, parity_simps]
+  have : ¬ Even (3 : ℤ) := by decide
+  have : ¬Even (u - 3 * v) := by simp [‹¬ Even (3 : ℤ)›, huvodd, parity_simps]
+  have : ¬Even (u + 3 * v) := by simp [‹¬ Even (3 : ℤ)›, huvodd, parity_simps]
   have notdvd_2_2 : ¬2 ∣ u - 3 * v := by
     rw [← even_iff_two_dvd]
     exact ‹¬Even (u - 3 * v)›
@@ -446,7 +450,7 @@ theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
     have : 3 ∣ 2 * p := H.mul_left 2
     have := IsCoprime.isUnit_of_dvd' hgcd ‹_› ‹_›
     rw [isUnit_iff_dvd_one] at this
-    norm_num at this
+    norm_num at this; contradiction
   have not_3_dvd_2 : ¬3 ∣ u - 3 * v := by
     intro hd2
     apply hddd
@@ -465,11 +469,11 @@ theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
     · apply mul_ne_zero two_ne_zero u_ne_zero
     · rw [sub_ne_zero]
       rintro rfl
-      simp only [false_or_iff, iff_not_self, parity_simps] at huvodd
+      simp only [‹¬ Even (3 : ℤ)›, false_or_iff, iff_not_self, parity_simps] at huvodd
     · intro H
       rw [add_eq_zero_iff_eq_neg] at H
       apply iff_not_self
-      simpa [H, parity_simps] using huvodd
+      simpa [‹¬ Even (3 : ℤ)›, H, parity_simps] using huvodd
     · apply Int.gcd1_coprime12 u v <;> assumption
     · apply Int.gcd1_coprime13 u v <;> assumption
     · apply Int.gcd1_coprime23 u v <;> assumption
@@ -539,7 +543,8 @@ theorem descent_gcd3_coprime {q s : ℤ} (h3_ndvd_q : ¬3 ∣ q) (hspos : s ≠ 
   have h2ndvd : ¬2 ∣ q ^ 2 + 3 * s ^ 2 :=
     by
     rw [← even_iff_two_dvd]
-    simp [two_ne_zero, hodd', parity_simps]
+    have : ¬ Even (3 : ℤ) := by decide
+    simp [this, two_ne_zero, hodd', parity_simps]
   have h3ndvd : ¬3 ∣ q ^ 2 + 3 * s ^ 2 := by
     intro H
     apply h3_ndvd_q
@@ -581,12 +586,12 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
     · zify  at hgcd
       rw [← hgcd]
       exact Int.gcd_dvd_left _ _
-    · norm_num
+    · norm_num; decide
   have h3_ndvd_q : ¬3 ∣ q := by
     intro H
     have := hcoprime.isUnit_of_dvd' h3_dvd_p H
     rw [Int.isUnit_iff_natAbs_eq] at this
-    norm_num at this
+    norm_num at this; contradiction
   -- 2.
   obtain ⟨s, rfl⟩ := h3_dvd_p
   have hspos : s ≠ 0 := right_ne_zero_of_mul hp
@@ -604,14 +609,15 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
   have hodd' : Even q ↔ ¬Even s :=
     by
     rw [Iff.comm, not_iff_comm, Iff.comm]
-    simpa [parity_simps] using hodd
+    have : ¬ Even (3 : ℤ) := by decide
+    simpa [this, parity_simps] using hodd
   have hcoprime'' : IsCoprime (3 ^ 2 * 2 * s) (q ^ 2 + 3 * s ^ 2) :=
     descent_gcd3_coprime h3_ndvd_q hspos hcoprime' hodd'
   -- 4.
   obtain ⟨r, hr⟩ : ∃ r, 2 * (3 * s) * ((3 * s) ^ 2 + 3 * q ^ 2) = r ^ 3 := by
     rcases hcube with (hcube | hcube | hcube) <;> [(use a); (use b); (use c)]
   rw [hps] at hr
-  have : Odd 3 := by norm_num
+  have : Odd 3 := by norm_num; decide
   obtain ⟨hcubeleft, hcuberight⟩ := Int.eq_pow_of_mul_eq_pow_odd hcoprime'' this hr
   -- 5.
   -- todo shadows hq hq

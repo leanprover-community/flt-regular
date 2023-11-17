@@ -19,7 +19,7 @@ local notation "𝔶" => Ideal.span <| singleton y
 local notation "𝔷" => Ideal.span <| singleton z
 local notation "𝔪" => gcd 𝔵 𝔶
 
-variable {m : ℕ} (e : x ^ (p : ℕ) + y ^ (p : ℕ) = ε * (((hζ.unit' : 𝓞 K) - 1) ^ (m + 1) * z) ^ (p : ℕ))
+variable {m : ℕ} (e : x ^ (p : ℕ) + y ^ (p : ℕ) = ε * ((hζ.unit' - 1 : 𝓞 K) ^ (m + 1) * z) ^ (p : ℕ))
 variable (hy : ¬((hζ.unit' : 𝓞 K) - 1 ∣ y)) (hz : ¬((hζ.unit' : 𝓞 K) - 1 ∣ z))
 variable (η : nthRootsFinset p (𝓞 K))
 
@@ -188,7 +188,7 @@ lemma span_pow_add_pow_eq :
 lemma gcd_m_p_pow_eq_one : gcd 𝔪 (𝔭 ^ (m + 1)) = 1 := by
   rw [← Ideal.isCoprime_iff_gcd, IsCoprime.pow_right_iff, Ideal.isCoprime_iff_gcd,
     gcd_zeta_sub_one_eq_one hζ hy]
-  simp only [add_pos_iff, or_true]
+  simp only [add_pos_iff, or_true, one_pos]
 
 lemma m_dvd_z : 𝔪 ∣ 𝔷 := by
   rw [← one_mul 𝔷, ← gcd_m_p_pow_eq_one hζ hy (x := x) (m := m)]
@@ -437,7 +437,7 @@ lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
   rw [hη, zero_dvd_iff, e] at this
   simp only [mul_eq_zero, Units.ne_zero, PNat.pos,
     pow_eq_zero_iff, add_pos_iff, or_true, false_or] at this
-  rw [this.resolve_left (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)] at hz
+  rw [this.resolve_left (pow_ne_zero (m + 1) (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt))] at hz
   exact hz (dvd_zero _)
 
 lemma stuff (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η₀) :

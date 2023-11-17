@@ -31,7 +31,7 @@ theorem OddPrimeOrFour.one_lt_abs {z : ℤ} (h : OddPrimeOrFour z) : 1 < abs z :
   by
   obtain rfl | ⟨h, -⟩ := h
   · rw [Int.abs_eq_natAbs]
-    norm_num
+    norm_num; decide
   · rw [Int.abs_eq_natAbs]
     rw [Int.prime_iff_natAbs_prime] at h
     norm_cast
@@ -42,7 +42,7 @@ theorem OddPrimeOrFour.not_unit {z : ℤ} (h : OddPrimeOrFour z) : ¬IsUnit z :=
   by
   obtain rfl | ⟨h, -⟩ := h
   · rw [isUnit_iff_dvd_one]
-    norm_num
+    norm_num; decide
   · exact h.not_unit
 #align odd_prime_or_four.not_unit OddPrimeOrFour.not_unit
 
@@ -95,7 +95,7 @@ theorem associated_of_dvd {a p : ℤ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFo
     refine' aodd _
     rw [even_iff_two_dvd]
     refine' dvd_trans _ h
-    norm_num
+    norm_num; decide
   · rwa [Prime.dvd_prime_iff_associated pp ap] at h
 #align associated_of_dvd associated_of_dvd
 
@@ -166,8 +166,7 @@ theorem oddFactors.zero : oddFactors 0 = 0 :=
 #align odd_factors.zero oddFactors.zero
 
 theorem oddFactors.not_two_mem (x : ℤ) : (2 : ℤ) ∉ oddFactors x := by
-  simp only [oddFactors, even_bit0, not_true, not_false_iff, Int.odd_iff_not_even, and_false_iff,
-    Multiset.mem_filter]
+  simp [oddFactors]
 #align odd_factors.not_two_mem oddFactors.not_two_mem
 
 theorem oddFactors.nonneg {z a : ℤ} (ha : a ∈ oddFactors z) : 0 ≤ a :=

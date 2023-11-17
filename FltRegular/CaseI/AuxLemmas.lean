@@ -93,11 +93,11 @@ theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin P, f0k₂ a b (i : �
   refine' ⟨⟨2, two_lt hp5⟩, _⟩
   have h1 : ((⟨2, two_lt hp5⟩ : Fin p) : ℕ) ≠ 1 := by
     intro h
-    simp only [Fin.ext_iff, Fin.val_mk] at h
+    simp only [Fin.ext_iff, Fin.val_mk] at h; contradiction
   have hzero : ((⟨2, two_lt hp5⟩ : Fin p) : ℕ) ≠ 0 := by
     intro h
     simp only [Fin.ext_iff, Fin.val_mk] at h
-  simp only [f0k₂, h1, if_false, hzero]
+  simp only [f0k₂, h1, if_false, hzero, one_lt_two.ne']
 
 theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p) (hab : ¬a ≡ b [ZMOD p])
     {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
@@ -173,12 +173,12 @@ theorem auxf1k₂ (a : ℤ) : ∃ i : Fin P, f1k₂ a (i : ℕ) = 0 := by
   have h2 : ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) ≠ 2 :=
     by
     intro h
-    simp only [Fin.ext_iff, Fin.val_mk] at h
+    simp only [Fin.ext_iff, Fin.val_mk] at h; contradiction
   have hzero : ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) ≠ 0 :=
     by
     intro h
     simp only [Fin.ext_iff, Fin.val_mk] at h
-  simp only [f1k₂, h2, if_false, hzero]
+  simp only [f1k₂, h2, if_false, hzero, one_lt_two.ne]
 
 theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])

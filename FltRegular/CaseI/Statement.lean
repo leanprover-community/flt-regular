@@ -133,7 +133,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   simp only [eq_intCast, Int.cast_add, Int.cast_pow] at H₁
   have hζ' := (zeta_spec P ℚ K).unit'_coe
   rw [pow_add_pow_eq_prod_add_zeta_runity_mul
-    (hpri.out.eq_two_or_odd.resolve_left fun h => by simp [h] at h5p ) hζ'] at H₁
+    (hpri.out.eq_two_or_odd.resolve_left fun h => by simp [h] at h5p; contradiction) hζ'] at H₁
   replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
   simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
   refine' Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη => ?_) H₁ ζ hζ
@@ -182,7 +182,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     intro hP
     rw [← PNat.coe_inj, PNat.mk_coe] at hP
     rw [hP] at hp5
-    simp at hp5
+    contradiction
   haveI := (⟨hpri.out⟩ : Fact (P : ℕ).Prime)
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ
   rw [h, mul_comm _ (↑b : 𝓞 _), ← pow_one hζ'.unit'] at hu

@@ -279,7 +279,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
     simp only [IsPrimitiveRoot.unit'_val_coe]
     rw [← Subtype.val_inj] at Hi
     simp only [SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe] at Hi
-    rw [← Hi, show ((2 : ℕ+) : ℕ) = 2 by simp]
+    rw [← Hi, show ((2 : ℕ+) : ℕ) = 2 by decide]
     simp
     have hone : (-1 : R) ^ (p : ℕ) = (-1 : R) := by apply Odd.neg_one_pow hpo
     have hxp3 : (-1 * ⟨x, hx⟩ : R) ^ (p : ℕ) = 1 := by
@@ -427,25 +427,26 @@ lemma inv_coe_coe {K A : Type*} [Field K] [SetLike A K] [SubsemiringClass A K] {
   rfl
 
 -- This is now not used?
-theorem unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
-    ∃ (x : Rˣ) (n : ℕ), IsGalConjReal p (x : K) ∧ u = x * (hζ.unit' ^ n : (𝓞 K)ˣ) := by
-  obtain ⟨m, hm⟩ := unit_inv_conj_is_root_of_unity hζ h hp u
-  use u * hζ.unit'⁻¹ ^ m, m
-  rw [IsGalConjReal]
-  have hy : u * (hζ.unit' ^ m)⁻¹ = unitGalConj K p u * hζ.unit' ^ m := by
-    rw [pow_two] at hm
-    have := auxil u (unitGalConj K p u) (hζ.unit' ^ m) (hζ.unit' ^ m)
-    apply this hm
-  dsimp
-  simp only [inv_pow, AlgHom.map_mul]
-  have hz : galConj K p (hζ.unit' ^ m)⁻¹ = hζ.unit' ^ m := by
-    simp only [Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe,
-      map_inv₀, galConj_zeta_runity_pow hζ m, inv_pow, inv_inv]
-  constructor
-  · rw [map_mul, ← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one, hz,
-    unitGalConj_spec K p u, ← Subalgebra.coe_mul, ← Units.val_mul, ← hy, Units.val_mul,
-    Subalgebra.coe_mul, inv_coe_coe]
-  · rw [inv_mul_cancel_right]
+-- Failed when updating to leanprover/lean4:v4.3.0-rc2 (coercion / power issues)
+-- theorem unit_lemma_gal_conj (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
+--     ∃ (x : Rˣ) (n : ℕ), IsGalConjReal p (x : K) ∧ u = x * (hζ.unit' ^ n : (𝓞 K)ˣ) := by
+--   obtain ⟨m, hm⟩ := unit_inv_conj_is_root_of_unity hζ h hp u
+--   use u * hζ.unit'⁻¹ ^ m, m
+--   rw [IsGalConjReal]
+--   have hy : u * (hζ.unit' ^ m)⁻¹ = unitGalConj K p u * hζ.unit' ^ m := by
+--     rw [pow_two] at hm
+--     have := auxil u (unitGalConj K p u) (hζ.unit' ^ m) (hζ.unit' ^ m)
+--     apply this hm
+--   dsimp
+--   simp only [inv_pow, AlgHom.map_mul]
+--   have hz : galConj K p (hζ.unit' ^ m)⁻¹ = hζ.unit' ^ m := by
+--     simp only [Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe,
+--       map_inv₀, galConj_zeta_runity_pow hζ m, inv_pow, inv_inv]
+--   constructor
+--   · rw [map_mul, ← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one, hz,
+--     unitGalConj_spec K p u, ← Subalgebra.coe_mul, ← Units.val_mul, ← hy, Units.val_mul,
+--     Subalgebra.coe_mul, inv_coe_coe]
+--   · rw [inv_mul_cancel_right]
 
 /-
 lemma unit_lemma (u : RRˣ) :

@@ -22,7 +22,8 @@ theorem Zsqrtd.exists {d : ℤ} (a : ℤ√d) (him : a.im ≠ 0) :
 theorem factors2 {a : ℤ√(-3)} (heven : Even a.norm) : ∃ b : ℤ√(-3), a.norm = 4 * b.norm :=
   by
   have hparity : Even a.re ↔ Even a.im := by
-    simpa [two_ne_zero, Zsqrtd.norm_def, parity_simps] using heven
+    have : ¬ Even (3 : ℤ) := by decide
+    simpa [this, two_ne_zero, Zsqrtd.norm_def, parity_simps] using heven
   simp only [iff_iff_and_or_not_and_not, ← Int.odd_iff_not_even] at hparity
   obtain ⟨⟨c, hc⟩, ⟨d, hd⟩⟩ | ⟨hre, him⟩ := hparity
   · use ⟨c, d⟩
@@ -138,7 +139,7 @@ theorem factors' (a : ℤ√(-3)) (f : ℤ) (g : ℤ) (hodd : Odd f) (hgpos : g 
     refine' IH g'.natAbs _ c g' hg'pos _ _ rfl
     · rw [Int.natAbs_mul]
       apply lt_mul_of_one_lt_left (Int.natAbs_pos.mpr hg'pos)
-      norm_num
+      norm_num; decide
     · rw [← mul_right_inj' (four_ne_zero' ℤ), ← hc, ← hfactor, mul_left_comm]
     · intro f' hf'dvd hf'odd
       refine' hnotform f' _ hf'odd
@@ -329,7 +330,7 @@ theorem Spts.eq_one {a : ℤ√(-3)} (h : a.norm = 1) : abs a.re = 1 ∧ a.im = 
   · have : a.re = 0 := by rwa [← Int.abs_lt_one_iff]
     simp only [Zsqrtd.norm_def, this, MulZeroClass.zero_mul, zero_sub, neg_mul, neg_neg]
     by_cases hb : a.im = 0
-    · simp only [hb, not_false_iff, zero_ne_one, MulZeroClass.mul_zero]
+    · simp [hb]
     · have : 1 ≤ abs a.im := by rwa [← Int.abs_lt_one_iff, not_lt] at hb
       have : 1 ≤ a.im ^ 2 := by
         rw [← sq_abs]

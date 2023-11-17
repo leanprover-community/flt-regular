@@ -126,7 +126,7 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     ∃ v, u = v ^ (p : ℕ) := by
   haveI : Fact (Nat.Prime p) := hpri
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root (S := {p}) ℚ (B := K) (n := p) rfl
-  obtain ⟨x, hx⟩ : (p : 𝓞 K) ∣ (u ^ (p - 1 : ℕ) : 𝓞 K) - 1
+  obtain ⟨x, hx⟩ : (p : 𝓞 K) ∣ (↑(u ^ (p - 1 : ℕ)) : 𝓞 K) - 1
   · obtain ⟨n, hn⟩ := hcong
     have hn' : (p : ℤ) ∣ n ^ (p - 1 : ℕ) - 1
     · refine Int.modEq_iff_dvd.mp (Int.ModEq.pow_card_sub_one_eq_one hpri.out (n := n) ?_).symm
@@ -155,7 +155,7 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
   simp only [not_forall, not_not] at this
   obtain ⟨v, hv⟩ := this
   have hv' : IsIntegral ℤ v
-  · apply IsIntegral.of_pow p.pos; rw [hv]; exact (u ^ (p - 1 : ℕ) : 𝓞 K).prop
+  · apply IsIntegral.of_pow p.pos; rw [hv]; exact NumberField.RingOfIntegers.isIntegral_coe _
   have : IsUnit (⟨v, hv'⟩ : 𝓞 K)
   · rw [← isUnit_pow_iff p.pos.ne.symm]; convert (u ^ (p - 1 : ℕ) : (𝓞 K)ˣ).isUnit; ext; exact hv
   have hv'' : this.unit ^ (p : ℕ) = u ^ (p - 1 : ℕ)

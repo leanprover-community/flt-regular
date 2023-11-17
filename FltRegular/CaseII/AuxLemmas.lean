@@ -100,7 +100,7 @@ lemma ENat.mul_mono_left {k n m : ℕ∞} (hk : k ≠ 0) (hk' : k ≠ ⊤) : k *
     rw [WithTop.mul_top hk]
     simp
   obtain (k|k) := k
-  · simp at hk'
+  · simp at hk'; contradiction
   simp_rw [WithTop.some_eq_coe, ENat.some_eq_coe]
   rw [← ENat.coe_mul, ← ENat.coe_mul, Nat.cast_le, Nat.cast_le]
   refine (strictMono_mul_left_of_pos (Nat.pos_of_ne_zero ?_)).le_iff_le
@@ -132,7 +132,7 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
     {A K: Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
     [Field K] [Algebra A K] [IsFractionRing A K] (p : ℕ)
     (H : p.Coprime <| Fintype.card <| ClassGroup A) (I : FractionalIdeal A⁰ K)
-    (hI : (I ^ p : Submodule A K).IsPrincipal) : (I : Submodule A K).IsPrincipal := by
+    (hI : (↑(I ^ p) : Submodule A K).IsPrincipal) : (I : Submodule A K).IsPrincipal := by
   by_cases Izero : I = 0
   · rw [Izero, FractionalIdeal.coe_zero]
     exact bot_isPrincipal

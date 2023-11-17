@@ -25,7 +25,7 @@ theorem Int.factor_div (a x : ℤ) (hodd : Odd x) :
   by
   have h0' : x ≠ 0 := by
     rintro rfl
-    simp only at hodd 
+    contradiction
   set c := a % x with hc
   by_cases H : 2 * c.natAbs < x.natAbs
   · exact ⟨a / x, c, Int.emod_add_ediv' a x, H⟩
@@ -56,7 +56,7 @@ nonrec theorem Int.two_not_cube (r : ℤ) : r ^ 3 ≠ 2 :=by
   intro H
   apply two_not_cube r.natAbs
   rw [← Int.natAbs_pow, H]
-  norm_num
+  norm_num; decide
 #align int.two_not_cube Int.two_not_cube  
 
 -- todo square neg_square and neg_pow_bit0

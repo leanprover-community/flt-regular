@@ -946,7 +946,7 @@ lemma Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero {R} [CommRing R] [
     _ ≤ Finset.card p.roots.toFinset := Finset.card_mono ?_
   intro _
   simp only [Finset.mem_image, Finset.mem_univ, true_and, Multiset.mem_toFinset, mem_roots', ne_eq,
-    IsRoot.def, forall_exists_index, hp]
+    IsRoot.def, forall_exists_index, hp, not_false_eq_true]
   rintro x rfl
   exact heval _
 
