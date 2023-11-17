@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import Mathlib.Data.Int.Order.Units
 import Mathlib.NumberTheory.Zsqrtd.Basic
 import Mathlib.RingTheory.Prime
-import FltRegular.FltThree.Primes 
+import FltRegular.FltThree.Primes
 
 theorem Zsqrtd.exists {d : ℤ} (a : ℤ√d) (him : a.im ≠ 0) :
     ∃ c : ℤ√d, a.norm = c.norm ∧ 0 ≤ c.re ∧ c.im ≠ 0 :=
@@ -55,7 +55,7 @@ theorem Spts.mul_of_dvd' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime 
       ring
     · rw [Zsqrtd.norm_def]
       ring
-  obtain ⟨A, HA⟩ : ∃ A : Units ℤ, p.norm ∣ p.re * a.im + A * a.re * p.im := 
+  obtain ⟨A, HA⟩ : ∃ A : Units ℤ, p.norm ∣ p.re * a.im + A * a.re * p.im :=
     by
     cases' h0 with h0 h0 <;> [(use -1); (use 1)] <;> convert h0 using 1 <;>
       simp only [Units.val_neg, Units.val_one, neg_mul, one_mul]
@@ -65,7 +65,7 @@ theorem Spts.mul_of_dvd' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime 
       (A : ℤ) ^ 2 = ((A ^ 2 : Units ℤ) : ℤ) := (Units.val_pow_eq_pow_val _ _).symm
       _ = ((1 : Units ℤ) : ℤ) := (congr_arg _ (Int.units_sq A))
       _ = 1 := Units.val_one
-      
+
   · set X : ℤ√(-3) := ⟨p.re * a.re - A * 3 * p.im * a.im, p.re * a.im + A * a.re * p.im⟩ with HX
     obtain ⟨U, HU⟩ : (p.norm : ℤ√(-3)) ∣ X :=
       by
@@ -206,7 +206,7 @@ theorem Zqrtd.factor_div (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) :
         ring
       _ < x ^ 2 + 3 * x ^ 2 := (add_lt_add ?_ ?_)
       _ = 4 * x ^ 2 := by ring
-      
+
     · rw [mul_pow, ← Int.natAbs_pow_two c, ← Int.natAbs_pow_two x, ← mul_pow]
       norm_cast
       exact Nat.pow_lt_pow_of_lt_left hc zero_lt_two
@@ -313,7 +313,7 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
         rw [hz, Int.natAbs_mul]
         exact Nat.le_mul_of_pos_left (pow_pos hgpos 2)
       _ < x.natAbs := h3
-      
+
   · rw [← h6]
     exact dvd_mul_of_dvd_right hwdvd x
 #align factors factors
@@ -411,7 +411,7 @@ theorem Spts.four {p : ℤ√(-3)} (hfour : p.norm = 4) (hq : p.im ≠ 0) : abs 
         _ = p.norm := by
           rw [Zsqrtd.norm_def]
           ring
-        
+
     · rw [← Int.sub_one_lt_iff, sub_self]
       exact sq_pos_of_ne_zero _ hq
   refine' ⟨_, hq⟩
@@ -423,7 +423,7 @@ theorem Spts.four {p : ℤ√(-3)} (hfour : p.norm = 4) (hq : p.im ≠ 0) : abs 
     _ = 1 := by
       rw [hfour]
       norm_num
-    
+
 #align spts.four Spts.four
 
 theorem Spts.four_of_coprime {p : ℤ√(-3)} (hcoprime : IsCoprime p.re p.im) (hfour : p.norm = 4) :

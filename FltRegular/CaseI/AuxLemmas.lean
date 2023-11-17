@@ -17,8 +17,8 @@ local notation "P" => (⟨p, hpri.pos⟩ : ℕ+)
 local notation "K" => CyclotomicField P ℚ
 
 local notation "R" => 𝓞 K
- 
- 
+
+
 namespace CaseI
 
 theorem two_lt (hp5 : 5 ≤ p) : 2 < p := by linarith

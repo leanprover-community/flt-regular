@@ -66,7 +66,7 @@ theorem OddPrimeOrFour.exists_and_dvd {n : ℤ} (n2 : 2 < n) : ∃ p, p ∣ n �
     calc
       2 ^ k = 2 ^ 2 * 2 ^ (k - 2) := (pow_mul_pow_sub _ ?_).symm
       _ = 4 * 2 ^ (k - 2) := by norm_num
-      
+
     rcases k with (_ | _ | _)
     · exfalso
       norm_num at n2
