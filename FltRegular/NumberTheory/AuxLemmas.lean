@@ -20,19 +20,6 @@ This file contains lemmas that should go somewhere in a file in mathlib.
 -/
 open BigOperators UniqueFactorizationMonoid
 
--- Mathlib/RingTheory/UniqueFactorizationDomain.lean
-lemma UniqueFactorizationMonoid.mem_normalizedFactors_iff {M : Type*}
-    [CancelCommMonoidWithZero M] [Unique Mˣ]
-    [UniqueFactorizationMonoid M] [NormalizationMonoid M] [DecidableEq M] {p x : M} (hx : x ≠ 0) :
-    p ∈ normalizedFactors x ↔ Prime p ∧ p ∣ x := by
-  constructor
-  · intro h
-    exact ⟨prime_of_normalized_factor p h, dvd_of_mem_normalizedFactors h⟩
-  · intro H
-    obtain ⟨q, hq⟩ := exists_mem_normalizedFactors_of_dvd hx H.1.irreducible H.2
-    rw [associated_iff_eq] at hq
-    exact hq.2 ▸ hq.1
-
 -- Mathlib/RingTheory/DedekindDomain/Ideal.lean
 lemma Ideal.mem_normalizedFactors_iff {R} [CommRing R] [IsDedekindDomain R] [DecidableEq (Ideal R)]
       {p I : Ideal R} (hI : I ≠ ⊥) :
@@ -73,35 +60,9 @@ lemma isIntegralClosure_self {R S : Type*} [CommRing R] [CommRing S] [Algebra R 
   algebraMap_injective' := Function.injective_id
   isIntegral_iff := fun {x} ↦ ⟨fun _ ↦ ⟨x, rfl⟩, fun _ ↦ hRS _⟩
 
--- Mathlib/RingTheory/UniqueFactorizationDomain.lean
-lemma normalizedFactors_multiset_prod {M} [CancelCommMonoidWithZero M] [UniqueFactorizationMonoid M]
-    [DecidableEq M] [NormalizationMonoid M] (s : Multiset M) (hs : 0 ∉ s) :
-    normalizedFactors (s.prod) = (s.map normalizedFactors).sum := by
-  cases subsingleton_or_nontrivial M
-  · obtain rfl : s = 0
-    · apply Multiset.eq_zero_of_forall_not_mem
-      intro _
-      convert hs
-    simp
-  induction s using Multiset.induction with
-    | empty => simp
-    | cons IH =>
-      rw [Multiset.prod_cons, Multiset.map_cons, Multiset.sum_cons, normalizedFactors_mul, IH]
-      · exact fun h ↦ hs (Multiset.mem_cons_of_mem h)
-      · exact fun h ↦ hs (h ▸ Multiset.mem_cons_self _ _)
-      · apply Multiset.prod_ne_zero
-        exact fun h ↦ hs (Multiset.mem_cons_of_mem h)
-
 -- Mathlib/Algebra/Group/Units.lean
 lemma isUnit_iff_eq_one {M : Type*} [Monoid M] [Unique Mˣ] {x : M} : IsUnit x ↔ x = 1 :=
   ⟨fun h ↦ congr_arg Units.val (Subsingleton.elim (h.unit) 1), fun h ↦ h ▸ isUnit_one⟩
-
--- Mathlib/RingTheory/UniqueFactorizationDomain.lean
-lemma factors_pow_count_prod {M} [CancelCommMonoidWithZero M] [UniqueFactorizationMonoid M] [DecidableEq M] {x : M}
-    (hx : x ≠ 0) : Associated (∏ p in (factors x).toFinset, p ^ (factors x).count p) x := by
-  convert factors_prod hx
-  conv_rhs => rw [← Multiset.toFinset_sum_count_nsmul_eq (factors x)]
-  simp only [Multiset.prod_sum, Multiset.prod_nsmul, Multiset.prod_singleton]
 
 -- Mathlib/RingTheory/Ideal/Over.lean
 lemma Ideal.exists_ideal_over_prime {R S : Type*} [CommSemiring R] [CommRing S] [Algebra R S]
@@ -1023,25 +984,6 @@ theorem aeval_algebraMap {R A B} [CommSemiring R] [CommSemiring A] [Semiring B]
   [Algebra R A] [Algebra A B] [Algebra R B] [IsScalarTower R A B]
   (x : A) (p : R[X]) : aeval (algebraMap A B x) p = algebraMap A B (aeval x p) := by
   rw [aeval_def, aeval_def, hom_eval₂, IsScalarTower.algebraMap_eq R A B]
-
--- Mathlib/Data/Multiset/Nodup
-theorem Multiset.nodup_iff_count_eq_one [DecidableEq α] {s : Multiset α} :
-    Nodup s ↔ ∀ a ∈ s, count a s = 1 :=
-  ⟨fun H _ ↦ Multiset.count_eq_one_of_mem H,
-    fun H ↦ nodup_iff_count_le_one.mpr (fun a ↦ if h : _ then (H a h).le else
-      (count_eq_zero.mpr h).trans_le (Nat.zero_le 1))⟩
-
--- Mathlib/Data/Multiset/Nodup
-theorem Multiset.nodup_map_iff_of_inj_on {f : α → β} {s : Multiset α}
-    (d : ∀ x ∈ s, ∀ y ∈ s, f x = f y → x = y) :
-    Nodup (map f s) ↔ Nodup s :=
-  ⟨Quot.induction_on s (fun _ ↦ List.Nodup.of_map _), fun h => h.map_on d⟩
-
--- Mathlib/Data/Multiset/Nodup
-theorem Multiset.nodup_map_iff_of_inj {f : α → β} {s : Multiset α}
-    (d : Function.Injective f) :
-    Nodup (map f s) ↔ Nodup s :=
-  ⟨Quot.induction_on s (fun _ ↦ List.Nodup.of_map _), fun h => h.map d⟩
 
 -- Mathlib/RingTheory/Nakayama.lean
 open Ideal in

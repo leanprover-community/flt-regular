@@ -147,7 +147,7 @@ lemma isUnramifiedAt_iff_SquareFree_minpoly [NoZeroSMulDivisors R S] [IsDedekind
   have := hp.isMaximal hpbot
   rw [isUnramifiedAt_iff_normalizedFactors_nodup p hpbot,
     KummerDedekind.normalizedFactors_ideal_map_eq_normalizedFactors_min_poly_mk_map
-    this hpbot hx hx', Multiset.nodup_map_iff_of_inj, Multiset.nodup_attach,
+    this hpbot hx hx', Multiset.nodup_map_iff_of_injective, Multiset.nodup_attach,
     ← squarefree_iff_nodup_normalizedFactors (Polynomial.map_monic_ne_zero (minpoly.monic hx'))]
   exact Subtype.val_injective.comp
     (KummerDedekind.normalizedFactorsMapEquivNormalizedFactorsMinPolyMk
