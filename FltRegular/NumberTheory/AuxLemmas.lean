@@ -447,12 +447,15 @@ lemma Algebra.norm_eq_of_equiv_equiv {A₁ B₁ A₂ B₂ : Type*} [CommRing A�
   rfl
 
 -- Mathlib/LinearAlgebra/Matrix/NonsingularInverse.lean
+lemma Matrix.mulVec_bijective {n R} [CommRing R] [Fintype n] [DecidableEq n]
+    (M : Matrix n n R) (hM : IsUnit M.det) : Function.Bijective (mulVec M) := by
+  rw [Function.bijective_iff_has_inverse]
+  use mulVec M⁻¹
+  simp [Function.LeftInverse, Function.RightInverse, nonsing_inv_mul _ hM, mul_nonsing_inv _ hM]
+
 lemma Matrix.mulVec_injective {n R} [CommRing R] [Fintype n] [DecidableEq n]
-    (M : Matrix n n R) (hM : IsUnit M.det) : Function.Injective (mulVec M) := by
-  intro v₁ v₂ e
-  apply_fun mulVec M⁻¹ at e
-  rwa [mulVec_mulVec, nonsing_inv_mul _ hM, mulVec_mulVec, nonsing_inv_mul _ hM, one_mulVec,
-    one_mulVec] at e
+    (M : Matrix n n R) (hM : IsUnit M.det) : Function.Injective (mulVec M) :=
+  (M.mulVec_bijective hM).injective
 
 -- Mathlib/RingTheory/FractionalIdeal.lean
 namespace FractionalIdeal
