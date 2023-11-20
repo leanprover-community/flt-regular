@@ -81,7 +81,7 @@ jobs:
       - name: Copy documentation
         run: |
           mkdir -p _site
-          mv build/doc _site/doc
+          mv .lake/build/doc _site/doc
           mv blueprint/web _site/blueprint
 
       - name: Upload doc & blueprint artifact
