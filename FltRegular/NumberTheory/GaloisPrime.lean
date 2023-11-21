@@ -69,7 +69,7 @@ lemma primesOver_eq_empty_of_not_isPrime (p : Ideal R) (hp : ¬ p.IsPrime) :
 
 lemma primesOver_finite [Ring.DimensionLEOne R] [IsDedekindDomain S] [NoZeroSMulDivisors R S]
     (p : Ideal R) (hp : p ≠ ⊥) : (primesOver S p).Finite := by
-  by_cases p.IsPrime
+  by_cases h: p.IsPrime
   · classical
     rw [← coe_primesOverFinset S p hp]
     exact Finset.finite_toSet _
@@ -269,7 +269,7 @@ variable (R)
 
 lemma Ideal.ramificationIdxIn_bot : (⊥ : Ideal R).ramificationIdxIn S = 0 := by
   delta ramificationIdxIn
-  by_cases (primesOver S (⊥ : Ideal R)).Nonempty
+  by_cases h : (primesOver S (⊥ : Ideal R)).Nonempty
   · rw [dif_pos h, ramificationIdx_bot]
   · exact dif_neg h
 

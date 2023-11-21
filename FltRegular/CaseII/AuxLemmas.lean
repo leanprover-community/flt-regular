@@ -195,7 +195,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
           (IsFractionRing.injective R K).eq_iff]
         rintro rfl
         apply hb (dvd_zero _)
-      by_cases x ^ n' ∣ a
+      by_cases h : x ^ n' ∣ a
       · have ha' : x ∣ a := (dvd_pow_self _ (Nat.one_le_iff_ne_zero.mp hn')).trans h
         have hb' : x ∣ b := by
           have : gcd (Ideal.span <| singleton x) I = 1 := by
@@ -231,7 +231,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
   rw [isPrincipal_iff] at h
   obtain ⟨a, ha⟩ := h
   obtain ⟨s, t, rfl⟩ := IsLocalization.mk'_surjective R⁰ a
-  by_cases s = 0
+  by_cases h : s = 0
   · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
     exact hI' ha
   obtain ⟨n, hn⟩ := WfDvdMonoid.multiplicity_finite hx.not_unit h

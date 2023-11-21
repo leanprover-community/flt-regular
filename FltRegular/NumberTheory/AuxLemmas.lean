@@ -13,6 +13,8 @@ import Mathlib.NumberTheory.RamificationInertia
 import Mathlib.NumberTheory.KummerDedekind
 import Mathlib.Data.Polynomial.Taylor
 import Mathlib.RingTheory.Localization.NormTrace
+import Mathlib.NumberTheory.NumberField.Norm
+
 /-!
 
 This file contains lemmas that should go somewhere in a file in mathlib.
@@ -191,7 +193,7 @@ theorem Polynomial.associated_of_dvd_of_natDegree_eq {K : Type*} [Field K]
 theorem Polynomial.associated_of_dvd_of_degree_eq {K : Type*} [Field K]
     {P₁ P₂ : K[X]} (h₁ : P₁ ∣ P₂) (h₂ : P₁.degree = P₂.degree) :
     Associated P₁ P₂ := by
-  by_cases P₂ = 0
+  by_cases h : P₂ = 0
   · subst h
     rw [degree_zero, degree_eq_bot] at h₂
     exact h₂ ▸ Associated.refl _
@@ -1154,13 +1156,6 @@ lemma Algebra.norm_one_add_smul {A B} [CommRing A] [CommRing B] [Algebra A B]
   simp_rw [Algebra.norm_eq_matrix_det b, Algebra.trace_eq_matrix_trace b]
   simp only [map_add, map_one, map_smul, Matrix.det_one_add_smul a]
   exact ⟨_, rfl⟩
-
--- Mathlib/NumberTheory/NumberField/Units.lean
--- Not a good place but it should go beside `Algebra.coe_norm_int`.
-open scoped NumberField in
-theorem Algebra.coe_trace_int {K : Type*} [Field K] [NumberField K] (x : 𝓞 K) :
-    Algebra.trace ℤ _ x = Algebra.trace ℚ K x :=
-  (Algebra.trace_localization (R := ℤ) (Rₘ := ℚ) (S := 𝓞 K) (Sₘ := K) (nonZeroDivisors ℤ) x).symm
 
 -- Mathlib/Algebra/Algebra/Hom.lean
 lemma RingHom.toIntAlgHom_injective {R₁ R₂} [Ring R₁] [Ring R₂] [Algebra ℤ R₁] [Algebra ℤ R₂] :

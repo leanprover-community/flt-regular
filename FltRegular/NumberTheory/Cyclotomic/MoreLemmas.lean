@@ -93,7 +93,7 @@ lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
     {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A} (hη₁ : η₁ ∈ nthRootsFinset p A)
     {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p A) :
     ζ - 1 ∣ η₁ - η₂ := by
-  by_cases η₁ = η₂
+  by_cases h : η₁ = η₂
   · rw [h, sub_self]; exact dvd_zero _
   · exact (hζ.associated_sub_one hp hη₁ hη₂ h).dvd
 
