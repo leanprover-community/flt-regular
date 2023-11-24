@@ -9,8 +9,27 @@ open FiniteDimensional
 variable {K L : Type*} [Field K] [Field L] [NumberField K] [Algebra K L] [FiniteDimensional K L]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
+--This is proved in #8599
+theorem hilbert90 (f : (L ≃ₐ[K] L) → Lˣ)
+    (hf : ∀ (g h : (L ≃ₐ[K] L)), f (g * h) = g (f h) * f g) :
+    ∃ β : Lˣ, ∀ g : (L ≃ₐ[K] L), f g * Units.map g β = β := by sorry
+
 lemma Hilbert90 (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
-    (η : L) (hη : Algebra.norm K η = 1) : ∃ ε : L, η = ε / σ ε := sorry
+    (η : L) (hη : Algebra.norm K η = 1) : ∃ ε : L, η = ε / σ ε := by
+  have hηunit : IsUnit η := sorry
+  let ηu : Lˣ := hηunit.unit
+  let E := AlgebraicClosure K
+  have := Algebra.norm_eq_prod_embeddings K E η
+  rw [hη] at this
+  let f : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ηu ^ (Classical.choose (Subgroup.mem_zpowers_iff.1 (hσ τ)))
+  have hf : ∀ (g h : (L ≃ₐ[K] L)), f (g * h) = g (f h) * f g := sorry
+  have hfσ : f σ = ηu := sorry
+  obtain ⟨ε, hε⟩ := hilbert90 f hf
+  use ε
+  specialize hε σ
+  simp [hfσ] at hε
+  nth_rewrite 1 [← hε]
+  simp
 
 variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
 variable [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K] [IsDomain A]
