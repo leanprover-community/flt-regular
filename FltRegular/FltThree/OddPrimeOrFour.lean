@@ -42,7 +42,7 @@ theorem OddPrimeOrFour.not_unit {z : ℤ} (h : OddPrimeOrFour z) : ¬IsUnit z :=
   by
   obtain rfl | ⟨h, -⟩ := h
   · rw [isUnit_iff_dvd_one]
-    norm_num; decide
+    norm_num
   · exact h.not_unit
 #align odd_prime_or_four.not_unit OddPrimeOrFour.not_unit
 
@@ -95,7 +95,7 @@ theorem associated_of_dvd {a p : ℤ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFo
     refine' aodd _
     rw [even_iff_two_dvd]
     refine' dvd_trans _ h
-    norm_num; decide
+    norm_num
   · rwa [Prime.dvd_prime_iff_associated pp ap] at h
 #align associated_of_dvd associated_of_dvd
 

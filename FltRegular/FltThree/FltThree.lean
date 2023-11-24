@@ -279,7 +279,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     suffices 3 ∣ 2 * p
       by
       apply Int.dvd_mul_cancel_prime' _ dvd_rfl Int.prime_two this
-      norm_num; decide
+      norm_num
     have : 3 ∣ (g : ℤ) := by
       rw [hg, pow_two, mul_assoc, Int.ofNat_mul]
       apply dvd_mul_right
@@ -450,7 +450,7 @@ theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
     have : 3 ∣ 2 * p := H.mul_left 2
     have := IsCoprime.isUnit_of_dvd' hgcd ‹_› ‹_›
     rw [isUnit_iff_dvd_one] at this
-    norm_num at this; contradiction
+    norm_num at this
   have not_3_dvd_2 : ¬3 ∣ u - 3 * v := by
     intro hd2
     apply hddd
@@ -586,7 +586,7 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
     · zify  at hgcd
       rw [← hgcd]
       exact Int.gcd_dvd_left _ _
-    · norm_num; decide
+    · norm_num
   have h3_ndvd_q : ¬3 ∣ q := by
     intro H
     have := hcoprime.isUnit_of_dvd' h3_dvd_p H

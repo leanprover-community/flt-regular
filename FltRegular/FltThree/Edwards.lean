@@ -83,7 +83,6 @@ theorem step1a {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a
   have := hcoprime.isUnit_of_dvd' hre him
   rw [isUnit_iff_dvd_one] at this
   norm_num at this
-  contradiction
 #align step1a step1a
 
 theorem step1 {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a.norm) :
@@ -158,8 +157,8 @@ theorem step1'' {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hp : p.norm
 
 theorem step2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.norm ∣ a.norm)
     (hpprime : Prime p.norm) :
-    ∃ u : ℤ√(-3), IsCoprime u.re u.im ∧ (a = p * u ∨ a = star p * u) ∧ a.norm = p.norm * u.norm :=
-  by
+    ∃ u : ℤ√(-3), IsCoprime u.re u.im ∧ (a = p * u ∨ a = star p * u) ∧
+    a.norm = p.norm * u.norm := by
   obtain ⟨u', h, h'⟩ := Spts.mul_of_dvd'' hdvd hpprime
   refine' ⟨u', _, h, h'⟩
   apply Zsqrtd.coprime_of_dvd_coprime hcoprime
@@ -168,14 +167,14 @@ theorem step2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.norm
 
 theorem step1_2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.norm ∣ a.norm)
     (hp : OddPrimeOrFour p.norm) (hq : p.im ≠ 0) :
-    ∃ u : ℤ√(-3), IsCoprime u.re u.im ∧ (a = p * u ∨ a = star p * u) ∧ a.norm = p.norm * u.norm :=
-  by
+    ∃ u : ℤ√(-3), IsCoprime u.re u.im ∧ (a = p * u ∨ a = star p * u) ∧
+    a.norm = p.norm * u.norm := by
   obtain hp | ⟨hpprime, -⟩ := hp
   · rw [hp] at hdvd⊢
     have heven : Even a.norm :=
       by
       apply even_iff_two_dvd.mpr (dvd_trans _ hdvd)
-      norm_num; decide
+      norm_num
     exact step1'' hcoprime hp hq heven
   · apply step2 hcoprime hdvd hpprime
 #align step1_2 step1_2
@@ -183,8 +182,7 @@ theorem step1_2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.no
 theorem OddPrimeOrFour.factors' {a : ℤ√(-3)} (h2 : a.norm ≠ 1) (hcoprime : IsCoprime a.re a.im) :
     ∃ u q : ℤ√(-3),
       0 ≤ q.re ∧
-        q.im ≠ 0 ∧ OddPrimeOrFour q.norm ∧ a = q * u ∧ IsCoprime u.re u.im ∧ u.norm < a.norm :=
-  by
+        q.im ≠ 0 ∧ OddPrimeOrFour q.norm ∧ a = q * u ∧ IsCoprime u.re u.im ∧ u.norm < a.norm := by
   have h2 : 2 < a.norm := by
     apply lt_of_le_of_ne _ (Spts.not_two _).symm
     rw [← one_mul (2 : ℤ), mul_two, Int.add_one_le_iff]
