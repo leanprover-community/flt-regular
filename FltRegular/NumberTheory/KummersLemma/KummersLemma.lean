@@ -112,7 +112,8 @@ theorem false_of_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
   obtain ⟨⟨σ, hσ⟩⟩ :=
     isCyclic_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
       (X_pow_sub_C_irreducible_of_prime hpri.out hu) L
-  obtain ⟨η, hη, hη'⟩ := Hilbert92 p σ hσ
+  obtain ⟨η, hη, hη'⟩ := Hilbert92 p (finrank_of_isSplittingField_X_pow_sub_C
+    ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu) L) σ hσ
   haveI := KummersLemma.isUnramified hp hζ u hcong hu L
   obtain ⟨α, hα⟩ :=
     exists_units_eq_div_root_of_isUnramified hζ u hu σ hσ (A := 𝓞 K) (B := 𝓞 L) hreg η hη
