@@ -21,7 +21,7 @@ lemma Hilbert90 (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
   let E := AlgebraicClosure K
   have := Algebra.norm_eq_prod_embeddings K E η
   rw [hη] at this
-  let f : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ηu ^ (Classical.choose (Subgroup.mem_zpowers_iff.1 (hσ τ)))
+  let f : (L ≃ₐ[K] L) → Lˣ := sorry
   have hf : ∀ (g h : (L ≃ₐ[K] L)), f (g * h) = g (f h) * f g := sorry
   have hfσ : f σ = ηu := sorry
   obtain ⟨ε, hε⟩ := hilbert90 f hf
