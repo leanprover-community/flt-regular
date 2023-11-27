@@ -164,10 +164,6 @@ lemma Ideal.inertiaDeg_comap_eq (e : S₁ ≃ₐ[R] S₂) (p : Ideal R) (P : Ide
 
 end RamificationInertia
 
--- Mathlib/RingTheory/Nilpotent.lean
-theorem not_isNilpotent_one {R : Type*} [MonoidWithZero R] [Nontrivial R] :
-    ¬ IsNilpotent (1 : R) := fun ⟨_, H⟩  ↦ zero_ne_one (H.symm.trans (one_pow _))
-
 open Polynomial IntermediateField
 
 -- Mathlib/FieldTheory/Adjoin.lean
@@ -316,18 +312,6 @@ lemma Module.End.HasEigenvector.pow_apply {R} [CommRing R] {M} [AddCommGroup M] 
     {f : Module.End R M} {μ : R} {v : M}
     (hv : f.HasEigenvector μ v) (n : ℕ) : (f ^ n) v = μ ^ n • v := by
   induction n <;> simp [*, pow_succ f, hv.apply_eq_smul, smul_smul, pow_succ' μ]
-
--- Mathlib/Algebra/Module/Submodule/Basic.lean
-lemma Submodule.restrictScalars_mul {A B C} [CommSemiring A] [CommSemiring B] [Semiring C]
-  [Algebra A B] [Algebra A C] [Algebra B C] [IsScalarTower A B C] {I J : Submodule B C} :
-  (I * J).restrictScalars A = I.restrictScalars A * J.restrictScalars A := by
-  apply le_antisymm
-  · intro x (hx : x ∈ I * J)
-    refine Submodule.mul_induction_on hx ?_ ?_
-    · exact fun m hm n hn ↦ Submodule.mul_mem_mul hm hn
-    · exact fun _ _ ↦ add_mem
-  · apply Submodule.mul_le.mpr
-    exact fun m hm n hn ↦ Submodule.mul_mem_mul hm hn
 
 -- Mathlib/Logic/Equiv/Defs.lean
 lemma EquivLike.coe_coe {E α β : Sort*} [EquivLike E α β] (e : E) :
@@ -1070,8 +1054,8 @@ lemma Matrix.eval_det_add_X_smul {n} [Fintype n] [DecidableEq n] {R} [CommRing R
     (A) (M : Matrix n n R) :
     (det (A + (X : R[X]) • M.map C)).eval 0 = (det A).eval 0 := by
   simp only [eval_det, map_zero, map_add, eval_add, Algebra.smul_def, _root_.map_mul]
-  simp only [algebraMap_eq_smul, matPolyEquiv_smul_one, map_X, X_mul, eval_mul_X, mul_zero,
-    add_zero]
+  simp only [Algebra.algebraMap_eq_smul_one, matPolyEquiv_smul_one, map_X, X_mul, eval_mul_X,
+    mul_zero, add_zero]
 
 -- Mathlib/LinearAlgebra/Matrix/Trace.lean
 lemma Matrix.trace_submatrix_succ {n : ℕ} {R} [CommRing R] (M : Matrix (Fin n.succ) (Fin n.succ) R) :
@@ -1136,14 +1120,15 @@ lemma Matrix.det_one_add_smul {n} [Fintype n] [DecidableEq n] {R} [CommRing R] (
     (M : Matrix n n R) : det (1 + r • M) =
       1 + trace M * r + (det (1 + (X : R[X]) • M.map C)).divX.divX.eval r * r ^ 2 := by
   have := congr_arg (eval r) (Matrix.det_one_add_X_smul M)
-  simp only [eval_det, coe_scalar, map_add, _root_.map_one, eval_add, eval_one, eval_smul, eval_X,
+  simp only [eval_det, scalar_apply, map_add, _root_.map_one, eval_add, eval_one, eval_smul, eval_X,
     smul_eq_mul, eval_mul, eval_pow] at this
   convert this
   rw [Algebra.smul_def X, _root_.map_mul]
   have : matPolyEquiv (M.map C) = C M
   · ext; simp only [matPolyEquiv_coeff_apply, map_apply, coeff_C]; rw [ite_apply, ite_apply]; rfl
-  simp only [algebraMap_eq_smul, matPolyEquiv_smul_one, map_X, X_mul, eval_mul_X, this,
+  simp only [Algebra.algebraMap_eq_smul_one, matPolyEquiv_smul_one, map_X, X_mul, eval_mul_X, this,
     Algebra.mul_smul_comm, mul_one, eval_C]
+  exact Matrix.smul_eq_mul_diagonal _ _
 
 lemma Algebra.norm_one_add_smul {A B} [CommRing A] [CommRing B] [Algebra A B]
   [Module.Free A B] [Module.Finite A B] (a : A) (x : B) :

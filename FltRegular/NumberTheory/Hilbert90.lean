@@ -26,8 +26,7 @@ def φ := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm
 variable {σ}
 
 lemma hφ : ∀ (n : ℕ), φ σ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n ↦ by
-  simpa [Fin.ext_iff] using
-      @finEquivZpowers_symm_apply _ _ _ (isOfFinOrder_of_finite σ) n ⟨n, by simp⟩
+  simpa [Fin.ext_iff] using finEquivZpowers_symm_apply _ (isOfFinOrder_of_finite σ) n
 
 noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ, hσ τ⟩), Units.map (σ ^ i) (ηu hη)
