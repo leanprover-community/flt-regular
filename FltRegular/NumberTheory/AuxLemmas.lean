@@ -475,16 +475,16 @@ lemma inv_le_comm (hI : I ≠ 0) (hJ : J ≠ 0) : I⁻¹ ≤ J ↔ J⁻¹ ≤ I 
 
 end FractionalIdeal
 
--- Mathlib/RingTheory/Localization/FractionRing.lean
-noncomputable
-instance {A B} [CommRing A] [CommRing B] [Algebra A B] [IsDomain A] [IsDomain B]
-    [NoZeroSMulDivisors A B] : Algebra (FractionRing A) (FractionRing B) :=
-  FractionRing.liftAlgebra A _
+-- -- Mathlib/RingTheory/Localization/FractionRing.lean
+-- noncomputable
+-- instance {A B} [CommRing A] [CommRing B] [Algebra A B] [IsDomain A] [IsDomain B]
+--     [NoZeroSMulDivisors A B] : Algebra (FractionRing A) (FractionRing B) :=
+--   FractionRing.liftAlgebra A _
 
--- Mathlib/RingTheory/Localization/FractionRing.lean
-instance {A B} [CommRing A] [CommRing B] [Algebra A B] [IsDomain A] [IsDomain B]
-    [NoZeroSMulDivisors A B] : IsScalarTower A (FractionRing A) (FractionRing B) :=
-  FractionRing.isScalarTower_liftAlgebra _ _
+-- -- Mathlib/RingTheory/Localization/FractionRing.lean
+-- instance {A B} [CommRing A] [CommRing B] [Algebra A B] [IsDomain A] [IsDomain B]
+--     [NoZeroSMulDivisors A B] : IsScalarTower A (FractionRing A) (FractionRing B) :=
+--   FractionRing.isScalarTower_liftAlgebra _ _
 
 open nonZeroDivisors
 section

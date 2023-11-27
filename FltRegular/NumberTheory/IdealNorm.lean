@@ -14,6 +14,8 @@ Generalizes `Ideal.spanNorm` in `Mathlib/RingTheory/Ideal/Norm.lean` to non-free
 -/
 open scoped nonZeroDivisors
 
+attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
+
 section intNorm
 
 universe u v w

@@ -15,6 +15,9 @@ import FltRegular.NumberTheory.AuxLemmas
   The trace map on `B → A` coincides with the trace map on `B⧸pB → A⧸p`.
 
 -/
+
+attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
+
 section LocalRing
 
 variable {R S} [CommRing R] [CommRing S] [Algebra R S] [LocalRing R] [Module.Free R S] [Module.Finite R S]

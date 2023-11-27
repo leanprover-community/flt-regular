@@ -19,6 +19,8 @@ import FltRegular.NumberTheory.Different
 -/
 open BigOperators UniqueFactorizationMonoid
 
+attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
+
 variable (R K S L : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
     [IsDedekindDomain R] [Algebra R K] [IsFractionRing R K] [Algebra S L] -- [IsFractionRing S L]
     [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L] -- [IsNoetherian R S]
