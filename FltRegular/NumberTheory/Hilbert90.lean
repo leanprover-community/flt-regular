@@ -4,7 +4,7 @@ import FltRegular.NumberTheory.AuxLemmas
 import FltRegular.NumberTheory.GaloisPrime
 
 open scoped NumberField nonZeroDivisors
-open FiniteDimensional
+open FiniteDimensional Finset BigOperators
 
 variable {K L : Type*} [Field K] [Field L] [NumberField K] [Algebra K L] [FiniteDimensional K L]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
@@ -21,9 +21,29 @@ lemma Hilbert90 (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
   let E := AlgebraicClosure K
   have := Algebra.norm_eq_prod_embeddings K E η
   rw [hη] at this
-  let f : (L ≃ₐ[K] L) → Lˣ := sorry
+  let φ := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm
+  haveI nezero : NeZero (orderOf σ) :=
+    ⟨fun hzero ↦ orderOf_eq_zero_iff.1 hzero (isOfFinOrder_of_finite σ)⟩
+  have hφ : φ ⟨σ, hσ σ⟩ = 1 := sorry
+  let f : (L ≃ₐ[K] L) → Lˣ := fun τ ↦  ∏ i in range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) ηu
   have hf : ∀ (g h : (L ≃ₐ[K] L)), f (g * h) = g (f h) * f g := sorry
-  have hfσ : f σ = ηu := sorry
+  have hfσ : f σ = ηu := by
+    simp_rw [hφ]
+    by_cases hone : orderOf σ = 1
+    · simp at hone
+      simp [hone]
+      sorry
+    have : 1 % orderOf σ = 1 := by
+      suffices : (orderOf σ).pred.pred + 2 = orderOf σ
+      · rw [← this]
+        exact Nat.one_mod _
+      rw [← Nat.succ_eq_add_one, ← Nat.succ_eq_add_one, Nat.succ_pred, Nat.succ_pred nezero.1]
+      intro h
+      rw [show 0 = Nat.pred 1 by rfl] at h
+      apply hone
+      exact Nat.pred_inj (Nat.pos_of_ne_zero nezero.1) zero_lt_one h
+    simp [this]
+    rfl
   obtain ⟨ε, hε⟩ := hilbert90 f hf
   use ε
   specialize hε σ
