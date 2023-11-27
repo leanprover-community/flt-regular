@@ -18,21 +18,19 @@ lemma Hilbert90 (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
     (η : L) (hη : Algebra.norm K η = 1) : ∃ ε : L, η = ε / σ ε := by
   have hηunit : IsUnit η := sorry
   let ηu : Lˣ := hηunit.unit
-  let E := AlgebraicClosure K
-  have := Algebra.norm_eq_prod_embeddings K E η
-  rw [hη] at this
+  -- let E := AlgebraicClosure K
+  -- have := Algebra.norm_eq_prod_embeddings K E η
+  -- rw [hη] at this
+  by_cases hone : orderOf σ = 1
+  · sorry
   let φ := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm
   haveI nezero : NeZero (orderOf σ) :=
     ⟨fun hzero ↦ orderOf_eq_zero_iff.1 hzero (isOfFinOrder_of_finite σ)⟩
   have hφ : φ ⟨σ, hσ σ⟩ = 1 := sorry
-  let f : (L ≃ₐ[K] L) → Lˣ := fun τ ↦  ∏ i in range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) ηu
+  let f : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) ηu
   have hf : ∀ (g h : (L ≃ₐ[K] L)), f (g * h) = g (f h) * f g := sorry
   have hfσ : f σ = ηu := by
     simp_rw [hφ]
-    by_cases hone : orderOf σ = 1
-    · simp at hone
-      simp [hone]
-      sorry
     have : 1 % orderOf σ = 1 := by
       suffices : (orderOf σ).pred.pred + 2 = orderOf σ
       · rw [← this]
