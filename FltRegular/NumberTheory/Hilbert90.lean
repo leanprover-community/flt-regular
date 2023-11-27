@@ -17,12 +17,8 @@ theorem hilbert90 (f : (L ≃ₐ[K] L) → Lˣ)
     (hf : ∀ (g h : (L ≃ₐ[K] L)), f (g * h) = g (f h) * f g) :
     ∃ β : Lˣ, ∀ g : (L ≃ₐ[K] L), f g * Units.map g β = β := by sorry
 
-lemma ηunit : IsUnit η := by
-  refine Ne.isUnit (fun h ↦ ?_)
-  simp [h] at hη
-
 noncomputable
-def ηu : Lˣ := (ηunit hη).unit
+def ηu : Lˣ := (Ne.isUnit (fun h ↦ by simp [h] at hη) : IsUnit η).unit
 
 noncomputable
 def φ := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm
@@ -50,18 +46,14 @@ lemma foo {a: ℕ} (h : a % orderOf σ = 0) :
     have := Algebra.norm_eq_prod_automorphisms K η
     simp only [hη, map_one] at this
     convert this.symm
-    apply prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n)
-    · simp
-    · intro _ _
-      rfl
-    · intro a b ha hb hab
-      rwa [pow_inj_mod, Nat.mod_eq_of_lt (Finset.mem_range.1 ha),
+    refine prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp) (fun _ _ ↦ by rfl)
+      (fun a b ha hb hab ↦ ?_) (fun τ _ ↦ ?_)
+    · rwa [pow_inj_mod, Nat.mod_eq_of_lt (Finset.mem_range.1 ha),
         Nat.mod_eq_of_lt (Finset.mem_range.1 hb)] at hab
-    · intro τ _
-      let n := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
-      refine ⟨n.1, by simp, ?_⟩
+    · refine ⟨(finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
       have := Equiv.symm_apply_apply (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
       simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this
+      simp only [SetLike.coe_sort_coe]
       rw [← this]
       simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
       rfl
@@ -75,6 +67,27 @@ lemma bar {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
   rw [hc, prod_range_add]
   rw [foo hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
   simp [pow_add, pow_mul, pow_orderOf_eq_one]
+
+lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ hη) σ = (ηu hη) := by
+  haveI nezero : NeZero (orderOf σ) :=
+    ⟨fun hzero ↦ orderOf_eq_zero_iff.1 hzero (isOfFinOrder_of_finite σ)⟩
+  conv =>
+    enter [1, 3]
+    rw [← pow_one σ]
+  have : 1 % orderOf σ = 1 := by
+    suffices (orderOf σ).pred.pred + 2 = orderOf σ by
+      rw [← this]
+      exact Nat.one_mod _
+    rw [← Nat.succ_eq_add_one, ← Nat.succ_eq_add_one, Nat.succ_pred, Nat.succ_pred nezero.1]
+    intro h
+    rw [show 0 = Nat.pred 1 by rfl] at h
+    apply hone
+    exact Nat.pred_inj (Nat.pos_of_ne_zero nezero.1) zero_lt_one h
+  simp [this]
+  have horder :=  hφ hσ 1
+  simp only [SetLike.coe_sort_coe, pow_one] at horder
+  simp only [cocycle, SetLike.coe_sort_coe, horder, this, range_one, prod_singleton, pow_zero]
+  rfl
 
 lemma is_cocycle : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
     α ((cocycle hσ hη) β) * (cocycle hσ hη) α := by
@@ -117,30 +130,10 @@ lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
     refine ⟨σ, fun τ ↦ ?_⟩
     simp only [orderOf_eq_one_iff.1 hone, Subgroup.zpowers_one_eq_bot, Subgroup.mem_bot] at hσ
     rw [orderOf_eq_one_iff.1 hone, hσ τ]
-  haveI nezero : NeZero (orderOf σ) :=
-    ⟨fun hzero ↦ orderOf_eq_zero_iff.1 hzero (isOfFinOrder_of_finite σ)⟩
-  have hfσ : (cocycle hσ hη) σ = (ηu hη) := by
-    conv =>
-      enter [1, 3]
-      rw [← pow_one σ]
-    have : 1 % orderOf σ = 1 := by
-      suffices (orderOf σ).pred.pred + 2 = orderOf σ by
-        rw [← this]
-        exact Nat.one_mod _
-      rw [← Nat.succ_eq_add_one, ← Nat.succ_eq_add_one, Nat.succ_pred, Nat.succ_pred nezero.1]
-      intro h
-      rw [show 0 = Nat.pred 1 by rfl] at h
-      apply hone
-      exact Nat.pred_inj (Nat.pos_of_ne_zero nezero.1) zero_lt_one h
-    simp [this]
-    have horder :=  hφ hσ 1
-    simp only [SetLike.coe_sort_coe, pow_one] at horder
-    simp only [cocycle, SetLike.coe_sort_coe, horder, this, range_one, prod_singleton, pow_zero]
-    rfl
   obtain ⟨ε, hε⟩ := hilbert90 _ (is_cocycle hσ hη)
   use ε
   specialize hε σ
-  rw [hfσ] at hε
+  rw [cocycle_spec hσ hη hone] at hε
   nth_rewrite 1 [← hε]
   simp
   rfl
