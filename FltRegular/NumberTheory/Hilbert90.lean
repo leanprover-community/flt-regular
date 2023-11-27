@@ -51,8 +51,7 @@ lemma foo {a: ℕ} (h : a % orderOf σ = 0) :
         Nat.mod_eq_of_lt (Finset.mem_range.1 hb)] at hab
     · refine ⟨(finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
       have := Equiv.symm_apply_apply (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
-      simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this
-      simp only [SetLike.coe_sort_coe]
+      simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
       rw [← this]
       simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
       rfl
@@ -100,22 +99,15 @@ lemma is_cocycle : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
   have Ha := hφ (L := L) hσ a
   have Hb := hφ (L := L) hσ b
   simp only [SetLike.coe_sort_coe, Nat.cast_add, Fin.ext_iff, Fin.mod_val, Fin.coe_ofNat_eq_mod,
-    Nat.mod_self, Nat.mod_zero] at Hab Ha Hb
-  simp only [cocycle, SetLike.coe_sort_coe, Units.coe_prod, Units.coe_map, MonoidHom.coe_coe,
-    map_prod]
+    Nat.mod_self, Nat.mod_zero, cocycle, Units.coe_prod, Units.coe_map, MonoidHom.coe_coe,
+    map_prod] at Hab Ha Hb ⊢
   rw [Hab, Ha, Hb, mul_comm]
+  have H : ∀ n, σ ^ (a + n) = σ ^ (a % orderOf σ + n) := fun n ↦ by simp [pow_inj_mod]
   conv =>
     enter [2, 2, 2, x]
-    rw [← AlgEquiv.mul_apply, ← pow_add]
-  have H : ∀ n, σ ^ (a + n) = σ ^ (a % orderOf σ + n) := fun n ↦ by
-    rw [pow_inj_mod]
-    simp
-  conv =>
-    enter [2, 2, 2, x, 1]
-    rw [H]
+    rw [← AlgEquiv.mul_apply, ← pow_add, H]
   rw [← prod_range_add (fun (n : ℕ) ↦ (σ ^ n) (ηu hη)) (a % orderOf σ) (b % orderOf σ)]
-  apply bar hσ
-  simp
+  simpa using bar hσ hη (by simp)
 
 lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
   by_cases hone : orderOf σ = 1
