@@ -64,6 +64,9 @@ theorem exists_units_eq_div_root_of_isUnramified
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq A K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hAB
+  letI : Algebra (FractionRing A) (FractionRing B) := FractionRing.liftAlgebra _ _
+  have : IsScalarTower A (FractionRing A) (FractionRing B) :=
+    FractionRing.isScalarTower_liftAlgebra _ _
   have H : RingHom.comp (algebraMap (FractionRing A) (FractionRing B))
     ↑(FractionRing.algEquiv A K).symm.toRingEquiv =
       RingHom.comp ↑(FractionRing.algEquiv B L).symm.toRingEquiv (algebraMap K L)
