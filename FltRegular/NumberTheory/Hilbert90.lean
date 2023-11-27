@@ -38,7 +38,33 @@ def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ,
 
 lemma foo {a: ℕ} (h : a % orderOf σ = 0) :
     ∏ i in range a, (σ ^ i) (ηu hη) = 1 := by
-  sorry
+  obtain ⟨n, hn⟩ := (Nat.dvd_iff_mod_eq_zero _ _).2 h
+  rw [hn]
+  revert a
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    intro a _ _
+    rw [Nat.mul_succ, prod_range_add, ih (Nat.mul_mod_right (orderOf σ) n) rfl, one_mul]
+    simp only [pow_add, pow_mul, pow_orderOf_eq_one, one_pow, one_mul]
+    have := Algebra.norm_eq_prod_automorphisms K η
+    simp only [hη, map_one] at this
+    convert this.symm
+    apply prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n)
+    · simp
+    · intro _ _
+      rfl
+    · intro a b ha hb hab
+      rwa [pow_inj_mod, Nat.mod_eq_of_lt (Finset.mem_range.1 ha),
+        Nat.mod_eq_of_lt (Finset.mem_range.1 hb)] at hab
+    · intro τ _
+      let n := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
+      refine ⟨n.1, by simp, ?_⟩
+      have := Equiv.symm_apply_apply (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
+      simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this
+      rw [← this]
+      simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
+      rfl
 
 lemma bar {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
     ∏ i in range a, (σ ^ i) (ηu hη) = ∏ i in range b, (σ ^ i) (ηu hη) := by
@@ -47,7 +73,7 @@ lemma bar {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
   obtain ⟨c, hc⟩ := (Nat.dvd_iff_mod_eq_zero _ _).2 (Nat.sub_mod_eq_zero_of_mod_eq h)
   rw [Nat.sub_eq_iff_eq_add hab] at hc
   rw [hc, prod_range_add]
-  rw [foo hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
+  rw [foo hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
   simp [pow_add, pow_mul, pow_orderOf_eq_one]
 
 lemma is_cocycle : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
@@ -76,7 +102,7 @@ lemma is_cocycle : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
     enter [2, 2, 2, x, 1]
     rw [H]
   rw [← prod_range_add (fun (n : ℕ) ↦ (σ ^ n) (ηu hη)) (a % orderOf σ) (b % orderOf σ)]
-  apply bar
+  apply bar hσ
   simp
 
 lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
