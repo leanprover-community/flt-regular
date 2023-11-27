@@ -36,9 +36,19 @@ lemma hφ : ∀ (n : ℕ), φ σ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n
 noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ, hσ τ⟩), Units.map (σ ^ i) (ηu hη)
 
-lemma foo {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
-    ∏ i in range a, (σ ^ i) (ηu hη) = ∏ i in range b, (σ ^ i) (ηu hη) := by
+lemma foo {a: ℕ} (h : a % orderOf σ = 0) :
+    ∏ i in range a, (σ ^ i) (ηu hη) = 1 := by
   sorry
+
+lemma bar {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
+    ∏ i in range a, (σ ^ i) (ηu hη) = ∏ i in range b, (σ ^ i) (ηu hη) := by
+  wlog hab : b ≤ a generalizing a b
+  · exact (this h.symm (not_le.1 hab).le).symm
+  obtain ⟨c, hc⟩ := (Nat.dvd_iff_mod_eq_zero _ _).2 (Nat.sub_mod_eq_zero_of_mod_eq h)
+  rw [Nat.sub_eq_iff_eq_add hab] at hc
+  rw [hc, prod_range_add]
+  rw [foo hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
+  simp [pow_add, pow_mul, pow_orderOf_eq_one]
 
 lemma is_cocycle : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
     α ((cocycle hσ hη) β) * (cocycle hσ hη) α := by
@@ -66,7 +76,7 @@ lemma is_cocycle : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
     enter [2, 2, 2, x, 1]
     rw [H]
   rw [← prod_range_add (fun (n : ℕ) ↦ (σ ^ n) (ηu hη)) (a % orderOf σ) (b % orderOf σ)]
-  apply foo
+  apply bar
   simp
 
 lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
