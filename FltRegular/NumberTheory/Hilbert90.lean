@@ -4,9 +4,10 @@ import FltRegular.NumberTheory.AuxLemmas
 import FltRegular.NumberTheory.GaloisPrime
 
 open scoped NumberField nonZeroDivisors
-open FiniteDimensional Finset BigOperators
+open FiniteDimensional Finset BigOperators Submodule
 
-variable {K L : Type*} [Field K] [Field L] [NumberField K] [Algebra K L] [FiniteDimensional K L]
+variable {K L : Type*} [Field K] [Field L] [NumberField K] [Algebra K L]
+variable [IsGalois K L] [FiniteDimensional K L]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
 --This is proved in #8599
@@ -22,18 +23,28 @@ lemma Hilbert90 (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
   -- have := Algebra.norm_eq_prod_embeddings K E η
   -- rw [hη] at this
   by_cases hone : orderOf σ = 1
-  · sorry
+  · suffices finrank K L = 1 by
+      obtain ⟨a, ha⟩ := mem_span_singleton.1 <| (eq_top_iff'.1 <|
+        (finrank_eq_one_iff_of_nonzero _ one_ne_zero).1 this) η
+      rw [← Algebra.algebraMap_eq_smul_one] at ha
+      rw [← ha, Algebra.norm_algebraMap, this, pow_one] at hη
+      exact ⟨1, by simp [← ha, hη]⟩
+    rw [← IsGalois.card_aut_eq_finrank, Fintype.card_eq_one_iff]
+    refine ⟨σ, fun τ ↦ ?_⟩
+    simp only [orderOf_eq_one_iff.1 hone, Subgroup.zpowers_one_eq_bot, Subgroup.mem_bot] at hσ
+    rw [orderOf_eq_one_iff.1 hone, hσ τ]
   let φ := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm
   haveI nezero : NeZero (orderOf σ) :=
     ⟨fun hzero ↦ orderOf_eq_zero_iff.1 hzero (isOfFinOrder_of_finite σ)⟩
-  have hφ : φ ⟨σ, hσ σ⟩ = 1 := sorry
+  have hφ : ∀ (n : ℕ), φ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := sorry
   let f : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) ηu
   have hf : ∀ (g h : (L ≃ₐ[K] L)), f (g * h) = g (f h) * f g := sorry
   have hfσ : f σ = ηu := by
-    simp_rw [hφ]
+    rw [← pow_one σ]
+    simp_rw [hφ 1]
     have : 1 % orderOf σ = 1 := by
-      suffices : (orderOf σ).pred.pred + 2 = orderOf σ
-      · rw [← this]
+      suffices (orderOf σ).pred.pred + 2 = orderOf σ by
+        rw [← this]
         exact Nat.one_mod _
       rw [← Nat.succ_eq_add_one, ← Nat.succ_eq_add_one, Nat.succ_pred, Nat.succ_pred nezero.1]
       intro h
@@ -45,7 +56,7 @@ lemma Hilbert90 (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
   obtain ⟨ε, hε⟩ := hilbert90 f hf
   use ε
   specialize hε σ
-  simp [hfσ] at hε
+  rw [hfσ] at hε
   nth_rewrite 1 [← hε]
   simp
 
@@ -70,7 +81,7 @@ lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowe
   · rw [Algebra.smul_def, IsScalarTower.algebraMap_apply A B L, ht', IsLocalization.mk'_spec']
   refine ⟨x, ?_, ?_⟩
   · rintro rfl
-    simp only [IsLocalization.mk'_zero, map_zero, ne_eq, not_true, div_zero] at hε
+    simp only [IsLocalization.mk'_zero, _root_.map_zero, ne_eq, not_true, div_zero] at hε
     rw [hε, Algebra.norm_zero] at hη
     exact zero_ne_one hη
   · rw [eq_div_iff_mul_eq] at hε
