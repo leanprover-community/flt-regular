@@ -69,7 +69,7 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
     (IsIntegralClosure.isIntegral_algebra R L)) hIbot
   have : ∀ p, (p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) → ∃ P ≥ I, P ∈ primesOver S p
   · intro p ⟨hp₁, hp₂⟩
-    exact Ideal.exists_ideal_over_prime_of_isIntegral''
+    exact Ideal.exists_ideal_over_prime_of_isIntegral
       (IsIntegralClosure.isIntegral_algebra R L) _ _ hp₂
   choose 𝔓 h𝔓 h𝔓' using this
   suffices I = ∏ p in (factors (I.comap <| algebraMap R S)).toFinset,

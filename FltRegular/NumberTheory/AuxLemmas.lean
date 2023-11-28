@@ -42,20 +42,6 @@ lemma AlgEquiv.toAlgHom_toRingHom {R A₁ A₂} [CommSemiring R] [Semiring A₁]
     [Algebra R A₁] [Algebra R A₂] (e : A₁ ≃ₐ[R] A₂) : ((e : A₁ →ₐ[R] A₂) : A₁ →+* A₂) = e :=
   rfl
 
--- Mathlib/RingTheory/Localization/Away/Basic.lean
--- Sounds like a bad place but this should go before `IsLocalization.atUnits`.
-lemma IsLocalization.at_units {R : Type*} [CommSemiring R] (S : Submonoid R)
-    (hS : ∀ s : S, IsUnit (s : R)) : IsLocalization S R where
-  map_units' := hS
-  surj' := fun s ↦ ⟨⟨s, 1⟩, by simp⟩
-  exists_of_eq := fun {x y} ↦ by
-    rintro (rfl : x = y)
-    exact ⟨1, rfl⟩
-
--- Mathlib/RingTheory/Localization/FractionRing.lean
-instance {R : Type*} [Field R] : IsFractionRing R R :=
-  IsLocalization.at_units _ (fun s ↦ isUnit_of_mem_nonZeroDivisors s.prop)
-
 -- Mathlib/RingTheory/IntegralClosure.lean
 lemma isIntegralClosure_self {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
     (hRS : Algebra.IsIntegral R S) : IsIntegralClosure S R S where
@@ -95,15 +81,6 @@ lemma Ideal.exists_ideal_over_prime {R S : Type*} [CommSemiring R] [CommRing S] 
   by_contra hx'
   exact Set.disjoint_left.mp ((IsLocalization.isPrime_iff_isPrime_disjoint
     (Algebra.algebraMapSubmonoid S p.primeCompl) Sₚ M).mp hM.isPrime).2 ⟨_, hx', rfl⟩ hx
-
--- Mathlib/RingTheory/Ideal/Over.lean
-lemma Ideal.exists_ideal_over_prime_of_isIntegral'' {R S : Type*} [CommRing R] [CommRing S]
-  [Algebra R S] [NoZeroSMulDivisors R S] (H : Algebra.IsIntegral R S)
-  (I : Ideal S) (p : Ideal R) [p.IsPrime] (hI : I.comap (algebraMap R S) ≤ p) :
-    ∃ P ≥ I, P.IsPrime ∧ P.comap (algebraMap R S) = p := by
-  have ⟨P, hP, hP', hP''⟩ := Ideal.exists_ideal_over_prime I p hI
-  obtain ⟨Q, hQ, hQ', hQ''⟩ := Ideal.exists_ideal_over_prime_of_isIntegral H p P hP''
-  exact ⟨Q, hP.trans hQ, hQ', hQ''⟩
 
 -- Mathlib/Algebra/Algebra/Hom.lean
 def algHomUnitsEquiv (R S : Type*) [CommSemiring R] [Semiring S] [Algebra R S] :
@@ -580,87 +557,6 @@ lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Co
 -- Mathlib/RingTheory/Polynomial/ScaleRoots.lean (this section is not needed anymore)
 section scaleRoots
 
-lemma Polynomial.scaleRoots_C {R} [CommRing R] (r c : R) : (C c).scaleRoots r = C c := by
-  ext; simp
-
-open Polynomial in
-lemma Polynomial.scaleRoots_scaleRoots {R} [CommRing R] (p : R[X]) (r s) :
-    ((p.scaleRoots r).scaleRoots s) = p.scaleRoots (r * s) := by
-  ext; simp [mul_pow, mul_assoc]
-
-open Polynomial in
-lemma Polynomial.scaleRoots_one {R} [CommRing R] (p : R[X]) :
-    p.scaleRoots 1 = p := by ext; simp
-
-open Polynomial in
-lemma Polynomial.scaleRoots_one' {R} [CommRing R] (r : R) :
-    (1 : R[X]).scaleRoots r = 1 := by ext; simp
-
-open Polynomial BigOperators in
-lemma Polynomial.scaleRoots_mul {R} [CommRing R] (p q : R[X]) (r : R) :
-    r ^ (natDegree p + natDegree q - natDegree (p * q)) • (p * q).scaleRoots r =
-      p.scaleRoots r * q.scaleRoots r := by
-  ext n; simp only [coeff_scaleRoots, coeff_smul, smul_eq_mul]
-  trans (∑ x in Finset.antidiagonal n, coeff p x.1 * coeff q x.2) *
-    r ^ (natDegree p + natDegree q - n)
-  · rw [← coeff_mul]
-    cases lt_or_le (natDegree (p * q)) n with
-    | inl h => simp only [coeff_eq_zero_of_natDegree_lt h, zero_mul, mul_zero]
-    | inr h =>
-      rw [mul_comm, mul_assoc, ← pow_add, add_comm, tsub_add_tsub_cancel natDegree_mul_le h]
-  · rw [coeff_mul, Finset.sum_mul]
-    apply Finset.sum_congr rfl
-    simp only [Finset.mem_antidiagonal, coeff_scaleRoots, Prod.forall]
-    intros a b e
-    cases lt_or_le (natDegree p) a with
-    | inl h => simp only [coeff_eq_zero_of_natDegree_lt h, zero_mul, mul_zero]
-    | inr ha =>
-      cases lt_or_le (natDegree q) b with
-      | inl h => simp only [coeff_eq_zero_of_natDegree_lt h, zero_mul, mul_zero]
-      | inr hb =>
-        simp only [← e, mul_assoc, mul_comm (r ^ (_ - a)), ← pow_add]
-        rw [add_comm (_ - _), tsub_add_tsub_comm ha hb]
-
-open Polynomial BigOperators in
-lemma Polynomial.scaleRoots_add_of_natDegree_eq {R} [CommRing R] (p q : R[X]) (r : R)
-    (h : natDegree p = natDegree q) :
-    r ^ (natDegree p - natDegree (p + q)) • (p + q).scaleRoots r =
-      p.scaleRoots r + q.scaleRoots r := by
-  ext n; simp only [ge_iff_le, coeff_smul, coeff_scaleRoots, coeff_add, smul_eq_mul,
-    mul_comm (r ^ _), mul_assoc, ← pow_add, ← h, ← add_mul, add_comm (_ - n)]
-  cases lt_or_le (natDegree (p + q)) n with
-  | inl hn => simp only [← coeff_add, coeff_eq_zero_of_natDegree_lt hn, zero_mul]
-  | inr hn => rw [tsub_add_tsub_cancel (natDegree_add_le_of_degree_le le_rfl h.ge) hn]
-
-open Polynomial in
-lemma Polynomial.scaleRoots_dvd {R} [CommRing R] (p q : R[X]) (r : R) (hr : IsUnit r)
-    (hpq : p ∣ q) : p.scaleRoots r ∣ q.scaleRoots r := by
-  obtain ⟨a, rfl⟩ := hpq
-  rw [← ((hr.pow (natDegree p + natDegree a - natDegree (p * a))).map
-    (algebraMap R R[X])).dvd_mul_left, ← Algebra.smul_def, Polynomial.scaleRoots_mul]
-  exact dvd_mul_right (scaleRoots p r) (scaleRoots a r)
-
-open Polynomial in
-lemma Polynomial.scaleRoots_dvd_iff {R} [CommRing R] (p q : R[X]) (r : R) (hr : IsUnit r) :
-    p.scaleRoots r ∣ q.scaleRoots r ↔ p ∣ q := by
-  refine ⟨?_ ∘ Polynomial.scaleRoots_dvd _ _ _ (hr.unit⁻¹).isUnit,
-    Polynomial.scaleRoots_dvd p q r hr⟩
-  simp [Polynomial.scaleRoots_scaleRoots, Polynomial.scaleRoots_one]
-
-open Polynomial in
-lemma Polynomial.isCoprime_scaleRoots {R} [CommRing R] (p q : R[X]) (r : R) (hr : IsUnit r)
-    (h : IsCoprime p q) :
-    IsCoprime (p.scaleRoots r) (q.scaleRoots r) := by
-  obtain ⟨a, b, e⟩ := h
-  let s : R := ↑hr.unit⁻¹
-  have : natDegree (a * p) = natDegree (b * q)
-  · rw [eq_sub_iff_add_eq.mpr e, ← neg_sub, natDegree_neg, ← C.map_one, natDegree_sub_C]
-  use s ^ natDegree (a * p) • s ^ (natDegree a + natDegree p - natDegree (a * p)) • a.scaleRoots r
-  use s ^ natDegree (a * p) • s ^ (natDegree b + natDegree q - natDegree (b * q)) • b.scaleRoots r
-  simp only [smul_mul_assoc, ← Polynomial.scaleRoots_mul, smul_smul, Units.smul_def, mul_assoc,
-    ← mul_pow, IsUnit.val_inv_mul, one_pow, mul_one, ← smul_add, one_smul, e, natDegree_one,
-    Polynomial.scaleRoots_one', ← Polynomial.scaleRoots_add_of_natDegree_eq _ _ _ this, tsub_zero]
-
 open Polynomial in
 lemma Polynomial.derivative_scaleRoots {R} [CommRing R] (p : R[X]) (r) :
     derivative (p.scaleRoots r) = r ^ (natDegree p - (natDegree (derivative p) + 1)) •
@@ -964,21 +860,6 @@ lemma Polynomial.separable_map' {R S} [Field R] [CommRing S] [Nontrivial S] (f :
   obtain ⟨m, hm⟩ := Ideal.exists_maximal S
   have := Separable.map H (f := Ideal.Quotient.mk m)
   rwa [map_map, separable_map] at this
-
--- Mathlib/RingTheory/Ideal/Over.lean?
-lemma Ideal.map_eq_top_iff {R S} [CommRing R] [CommRing S] [IsDomain S]
-    (f : R →+* S) (hf₁ : Function.Injective f) (f₂ : f.IsIntegral) {I : Ideal R} :
-    I.map f = ⊤ ↔ I = ⊤ := by
-  constructor; swap
-  · rintro rfl; exact Ideal.map_top _
-  contrapose
-  intro h
-  obtain ⟨m, _, hm⟩ := Ideal.exists_le_maximal I h
-  letI := f.toAlgebra
-  obtain ⟨m', _, rfl⟩ := exists_ideal_over_maximal_of_isIntegral f₂ m
-    (by rw [f.algebraMap_toAlgebra, f.injective_iff_ker_eq_bot.mp hf₁]; exact bot_le)
-  rw [← map_le_iff_le_comap] at hm
-  exact (hm.trans_lt (lt_top_iff_ne_top.mpr (IsMaximal.ne_top ‹_›))).ne
 
 -- Somewhere in polynomial.
 lemma Polynomial.dvd_C_mul_X_sub_one_pow_add_one
