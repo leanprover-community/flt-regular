@@ -424,7 +424,7 @@ lemma conductor_mul_differentIdeal [NoZeroSMulDivisors A B]
   · exact aeval_derivative_minpoly_ne_zero _ (IsSeparable.separable _ _)
   have : algebraMap B L (aeval x (derivative (minpoly A x))) ≠ 0
   · rwa [minpoly.isIntegrallyClosed_eq_field_fractions K L hAx, derivative_map,
-      aeval_map_algebraMap, aeval_algebraMap] at hne₁
+      aeval_map_algebraMap, aeval_algebraMap_apply] at hne₁
   rw [Submodule.mem_smul_iff_inv this, FractionalIdeal.mem_coe, FractionalIdeal.mem_dual,
     mem_coeIdeal_conductor]
   have hne₂ : (aeval (algebraMap B L x) (derivative (minpoly K (algebraMap B L x))))⁻¹ ≠ 0
@@ -434,7 +434,7 @@ lemma conductor_mul_differentIdeal [NoZeroSMulDivisors A B]
   rw [← traceFormDualSubmodule_span_adjoin A K L _ hx this]
   simp only [mem_traceFormDualSubmodule, traceForm_apply, Subalgebra.mem_toSubmodule,
     minpoly.isIntegrallyClosed_eq_field_fractions K L hAx,
-    derivative_map, aeval_map_algebraMap, aeval_algebraMap, mul_assoc,
+    derivative_map, aeval_map_algebraMap, aeval_algebraMap_apply, mul_assoc,
     FractionalIdeal.mem_one_iff, forall_exists_index, forall_apply_eq_imp_iff]
   simp_rw [← IsScalarTower.toAlgHom_apply A B L x, ← Algebra.map_adjoin_singleton]
   simp only [Subalgebra.mem_map, IsScalarTower.coe_toAlgHom',

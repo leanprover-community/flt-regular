@@ -212,8 +212,8 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
     obtain ⟨a, b, e⟩ := this
     apply_fun (aeval (Ideal.Quotient.mk P x)) at e
     simp only [← Ideal.Quotient.algebraMap_eq, ← map_map, derivative_map, map_add, map_mul,
-      aeval_map_algebraMap, aeval_algebraMap, minpoly.aeval, map_zero, mul_zero, hxP, zero_add,
-      coe_aeval_eq_eval, eval_one] at e
+      aeval_map_algebraMap, aeval_algebraMap_apply, minpoly.aeval, map_zero, mul_zero, hxP,
+      zero_add, coe_aeval_eq_eval, eval_one] at e
     exact zero_ne_one e
   · rwa [Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count _
       (isMaximal_of_mem_primesOver hpbot hP).isPrime (ne_bot_of_mem_primesOver hpbot hP),
