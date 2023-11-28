@@ -244,31 +244,6 @@ lemma rootsOfUnity_equiv_of_primitiveRoots_symm_apply {K L} [Field K] [Field L]
   obtain ⟨ε, rfl⟩ := (rootsOfUnity_equiv_of_primitiveRoots f n hζ).surjective η
   rw [MulEquiv.symm_apply_apply, rootsOfUnity_equiv_of_primitiveRoots_apply]
 
--- Mathlib/GroupTheory/SpecificGroups/Cyclic.lean
-section Cyclic
-
-instance : IsAddCyclic ℤ := ⟨1, fun n ↦ ⟨n, by simp only [smul_eq_mul, mul_one]⟩⟩
-
-lemma isCyclic_multiplicative_iff {G} [AddGroup G] : IsCyclic (Multiplicative G) ↔ IsAddCyclic G :=
-  ⟨fun H ↦ ⟨H.1⟩, fun H ↦ ⟨H.1⟩⟩
-
-instance isCyclic_multiplicative {G} [AddGroup G] [IsAddCyclic G] : IsCyclic (Multiplicative G) :=
-  isCyclic_multiplicative_iff.mpr inferInstance
-
-@[to_additive isAddCyclic_of_surjective]
-lemma isCyclic_of_surjective {H G F} [Group H] [Group G] [hH : IsCyclic H]
-    [MonoidHomClass F H G] (f : F) (hf : Function.Surjective f) : IsCyclic G := by
-  obtain ⟨x, hx⟩ := hH
-  refine ⟨f x, fun a ↦ ?_⟩
-  obtain ⟨a, rfl⟩ := hf a
-  obtain ⟨n, rfl⟩ := hx a
-  exact ⟨n, (map_zpow _ _ _).symm⟩
-
-instance (n) : IsAddCyclic (ZMod n) :=
-  isAddCyclic_of_surjective (Int.castRingHom _) (ZMod.int_cast_surjective)
-
-end Cyclic
-
 -- Mathlib/Algebra/Algebra/Hom.lean
 @[simps]
 def AlgEquiv.toLinearMapHom (K L) [CommSemiring K] [Semiring L] [Algebra K L] :
@@ -520,37 +495,6 @@ lemma isAlgebraic_of_isLocalization {R} [CommRing R] (M : Submonoid R) (S) [Comm
       Algebra.id.map_eq_id, RingHom.id_apply] using congr_arg (Polynomial.coeff · 1) e
   · simp only [map_sub, Algebra.smul_def, Submonoid.smul_def,
       map_mul, AlgHom.commutes, aeval_X, IsLocalization.mk'_spec', aeval_C, sub_self]
-
--- Mathlib/RingTheory/Algebraic.lean
-lemma IsAlgebraic.invOf {R K} [CommRing R] [CommRing K] [Algebra R K] {x : K} [Invertible x]
-    (h : IsAlgebraic R x) : IsAlgebraic R (⅟ x) := by
-  obtain ⟨p, hp, hp'⟩ := h
-  refine ⟨p.reverse, by simpa using hp, ?_⟩
-  rwa [Polynomial.aeval_def, Polynomial.eval₂_reverse_eq_zero_iff,
-    ← Polynomial.aeval_def]
-
--- Mathlib/RingTheory/Algebraic.lean
-lemma IsAlgebraic.invOf_iff {R K} [CommRing R] [CommRing K] [Algebra R K] {x : K} [Invertible x] :
-    IsAlgebraic R (⅟ x) ↔ IsAlgebraic R x :=
-  ⟨IsAlgebraic.invOf, IsAlgebraic.invOf⟩
-
--- Mathlib/RingTheory/Algebraic.lean
-lemma IsAlgebraic.inv {R K} [CommRing R] [Field K] [Algebra R K] {x : K}
-    (h : IsAlgebraic R x) : IsAlgebraic R (x⁻¹) := by
-  by_cases hx : x = 0
-  · obtain ⟨p, hp, hp'⟩ := h
-    exact ⟨p, hp, by simpa [hx] using hp'⟩
-  have := invertibleOfNonzero hx
-  rw [← invOf_eq_inv]
-  exact h.invOf
-
--- Mathlib/RingTheory/Algebraic.lean
-lemma IsAlgebraic.inv_iff {R K} [CommRing R] [Field K] [Algebra R K] {x : K} :
-    IsAlgebraic R (x⁻¹) ↔ IsAlgebraic R x := by
-  by_cases hx : x = 0
-  · simp [hx]
-  letI := invertibleOfNonzero hx
-  exact IsAlgebraic.invOf_iff (R := R) (x := x)
 
 -- Mathlib/RingTheory/Localization/Basic.lean
 instance {R} [CommRing R] (M : Submonoid R) (S) [CommRing S] [Algebra R S] [IsLocalization M S]
