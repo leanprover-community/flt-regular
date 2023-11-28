@@ -967,12 +967,12 @@ lemma mem_coeIdeal_conductor {A B L} [CommRing A] [CommRing B] [CommRing L] [Alg
       exact ⟨_, H, rfl⟩
   · rw [AlgHom.map_adjoin, Set.image_singleton]; rfl
 
--- Mathlib/Data/Polynomial/AlgebraMap
-open Polynomial in
-theorem aeval_algebraMap {R A B} [CommSemiring R] [CommSemiring A] [Semiring B]
-  [Algebra R A] [Algebra A B] [Algebra R B] [IsScalarTower R A B]
-  (x : A) (p : R[X]) : aeval (algebraMap A B x) p = algebraMap A B (aeval x p) := by
-  rw [aeval_def, aeval_def, hom_eval₂, IsScalarTower.algebraMap_eq R A B]
+-- -- Mathlib/Data/Polynomial/AlgebraMap
+-- open Polynomial in
+-- theorem aeval_algebraMap {R A B} [CommSemiring R] [CommSemiring A] [Semiring B]
+--   [Algebra R A] [Algebra A B] [Algebra R B] [IsScalarTower R A B]
+--   (x : A) (p : R[X]) : aeval (algebraMap A B x) p = algebraMap A B (aeval x p) := by
+--   rw [aeval_def, aeval_def, hom_eval₂, IsScalarTower.algebraMap_eq R A B]
 
 -- Mathlib/RingTheory/Nakayama.lean
 open Ideal in
