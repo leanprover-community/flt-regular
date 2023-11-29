@@ -47,7 +47,7 @@ noncomputable
 abbrev σA : A := MonoidAlgebra.of ℤ H σ
 namespace fundamentalSystemOfUnits
 lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, S.IsFundamental := by
-  obtain ⟨S⟩ := systemOfUnits.existence p G σ r -- TODO use rank
+  obtain ⟨S⟩ := systemOfUnits.existence p G σ r
   have : { a | ∃ S : systemOfUnits p G σ r, a = S.index}.Nonempty := ⟨S.index, S, rfl⟩
   obtain ⟨S', ha⟩ := Nat.sInf_mem this
   use S'
@@ -69,7 +69,12 @@ section application
 variable
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
-local instance : CommGroup (K ≃ₐ[k] K) := sorry
+local instance : CommGroup (K ≃ₐ[k] K) where
+  mul_comm := by
+    have : Fintype.card (K ≃ₐ[k] K) = p := by
+      rwa [IsGalois.card_aut_eq_finrank]
+    have : IsCyclic (K ≃ₐ[k] K) := isCyclic_of_prime_card (hp := ⟨hp⟩) this
+    use IsCyclic.commGroup.mul_comm
 
 local notation3 "G" => (𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : 𝓞 k →* 𝓞 K))
 
