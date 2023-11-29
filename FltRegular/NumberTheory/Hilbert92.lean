@@ -112,6 +112,10 @@ lemma bezout [Module A G] {a : A} (ha : a ≠ 0) : ∃ (f : A) (n : ℤ),
 lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
     exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
+lemma span_eq_span [Module A G] {R : ℕ} (f : Fin R → G) :
+        (Submodule.span A (Set.range f) : Set G) =
+        Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)) := sorry
+
 lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G σ R) (hR : R < r) :
         ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
     by_contra' h
@@ -232,7 +236,7 @@ lemma lemma2' [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (
     (ha : ¬ (p : ℤ) ∣ a) : ∀ g : G, (1 - σA p σ) • g ≠ a • (S.units i) := by
   intro g hg
   obtain ⟨x, y, e⟩ := isCoprime_one_sub_σA p σ a ha
-  apply lemma2 p G σ r S hs i (x • (S.units i) + y • g)
+  apply lemma2 p hp G σ r S hs i (x • (S.units i) + y • g)
   conv_rhs => rw [← one_smul A (S.units i), ← e, add_smul, ← smul_smul y, intCast_smul, ← hg]
   rw [smul_add, smul_smul, smul_smul, smul_smul, mul_comm x, mul_comm y]
 
