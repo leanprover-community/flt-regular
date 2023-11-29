@@ -35,18 +35,26 @@ instance {r} [Module A G] (sys : systemOfUnits p G σ r) : Fintype (G ⧸ Submod
 def systemOfUnits.index [Module A G] (sys : systemOfUnits p G σ r) :=
   Fintype.card (G ⧸ Submodule.span A (Set.range sys.units))
 
-def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G σ r)  :=
+def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G σ r) :=
   ∀ s : systemOfUnits p G σ r, h.index ≤ s.index
 
 namespace systemOfUnits
 lemma existence' [Module A G] (S : systemOfUnits p G σ R) : ∃ S : systemOfUnits p G σ (R + 1), True := sorry
-lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, True := sorry
+lemma existence (r) [Module A G] : ∃ S : systemOfUnits p G σ r, True := sorry
 end systemOfUnits
 
 noncomputable
 abbrev σA : A := MonoidAlgebra.of ℤ H σ
 namespace fundamentalSystemOfUnits
-lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, S.IsFundamental := sorry
+lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, S.IsFundamental := by
+  obtain ⟨S⟩ := systemOfUnits.existence p G σ r -- TODO use rank
+  have : { a | ∃ S : systemOfUnits p G σ r, a = S.index}.Nonempty := ⟨S.index, S, rfl⟩
+  obtain ⟨S', ha⟩ := Nat.sInf_mem this
+  use S'
+  intro a'
+  rw [← ha]
+  apply csInf_le (OrderBot.bddBelow _)
+  use a'
 
 lemma lemma2 [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i : Fin r) :
   ∀ g : G, (1 - σA p σ) • g ≠ S.units i := sorry
