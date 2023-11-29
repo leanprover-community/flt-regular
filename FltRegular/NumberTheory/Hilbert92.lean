@@ -1,7 +1,9 @@
 
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+import FltRegular.NumberTheory.GaloisPrime
 import Mathlib
 
+set_option autoImplicit false
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional
 open NumberField
@@ -19,9 +21,10 @@ open FiniteDimensional BigOperators Finset
 section thm91
 variable
   (G : Type*) {H : Type*} [AddCommGroup G] [CommGroup H] [Fintype H] (hCard : Fintype.card H = p)
-  (σ : H) (hσ : Subgroup.zpowers σ = ⊤)
+  (σ : H) (hσ : Subgroup.zpowers σ = ⊤) (r : ℕ)
   [DistribMulAction H G] [Module.Free ℤ G] (hf : finrank ℤ G = r * (p - 1))
 
+-- TODO maybe abbrev
 local notation3 "A" =>
   MonoidAlgebra ℤ H ⧸ Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ H σ) ^ i}
 
@@ -82,28 +85,42 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
 @[to_additive]
 lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H₁ < H₂)
   [h₁ : Fintype (G ⧸ H₁)] :
-  H₂.index < H₁.index := sorry
+  H₂.index < H₁.index := by
+  rcases eq_or_ne H₂.index 0 with hn | hn
+  · rw [hn, index_eq_card]
+    exact Fintype.card_pos
+  apply lt_of_le_of_ne
+  · refine Nat.le_of_dvd (by rw [index_eq_card]; apply Fintype.card_pos) <| Subgroup.index_dvd_of_le h.le
+  · have := fintypeOfIndexNeZero hn
+    rw [←mul_one H₂.index, ←relindex_mul_index h.le, mul_comm, Ne, eq_comm]
+    simp [-one_mul, -Nat.one_mul, hn, h.not_le]
 
 namespace systemOfUnits
 
-instance : Nontrivial G := sorry
+lemma nontrivial (hr : r ≠ 0) : Nontrivial G := by
+    by_contra' h
+    rw [not_nontrivial_iff_subsingleton] at h
+    rw [FiniteDimensional.finrank_zero_of_subsingleton] at hf
+    simp only [ge_iff_le, zero_eq_mul, tsub_eq_zero_iff_le] at hf
+    cases hf with
+    | inl h => exact hr h
+    | inr h => simpa [Nat.lt_succ_iff, h] using not_lt.2 (Nat.prime_def_lt.1 hp).1
 
 lemma bezout [Module A G] {a : A} (ha : a ≠ 0) : ∃ (f : A) (n : ℤ),
         f * a = n := sorry
 
 lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
-    refine ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
+    exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
-lemma ex_not_mem [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
-        ∃ g, ¬(g ∈ Submodule.span A (Set.range S.units)) := by
+lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G σ R) (hR : R < r) :
+        ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
     by_contra' h
-    rw [← Submodule.eq_top_iff'] at h
     sorry
 
 set_option synthInstance.maxHeartbeats 0 in
-lemma existence' [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
+lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G σ R) (hR : R < r) :
         Nonempty (systemOfUnits p G σ (R + 1)) := by
-    obtain ⟨g, hg⟩ := ex_not_mem p G σ S hR
+    obtain ⟨g, hg⟩ := ex_not_mem p G σ r S hR
     refine ⟨⟨Fin.cases g S.units, ?_⟩⟩
     refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
     by_contra' ha
@@ -111,18 +128,19 @@ lemma existence' [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
     replace hy := congr_arg (f • ·) hy
     simp only at hy
     let mon : Monoid A := inferInstance
-    rw [smul_zero, smul_add, smul_smul, Hf] at hy
+    rw [smul_zero, smul_add, smul_smul, Hf, ← eq_neg_iff_add_eq_zero, intCast_smul] at hy
+    apply hg n
+    rw [hy]
+    exact Submodule.neg_mem _ (Submodule.smul_mem _ _ y.2)
 
-    sorry
-
-lemma existence'' [Module A G] (hR : R ≤ r) :  Nonempty (systemOfUnits p G σ R) := by
+lemma existence'' [Module A G] {R : ℕ} (hR : R ≤ r) :  Nonempty (systemOfUnits p G σ R) := by
     induction R with
     | zero => exact existence0 p G σ
     | succ n ih =>
         obtain ⟨S⟩ := ih (le_trans (Nat.le_succ n) hR)
-        exact existence' p G σ S (lt_of_lt_of_le (Nat.lt.base n) hR)
+        exact existence' p G σ r S (lt_of_lt_of_le (Nat.lt.base n) hR)
 
-lemma existence (r) [Module A G] : Nonempty (systemOfUnits p G σ r) := existence'' p G σ rfl.le
+lemma existence (r) [Module A G] : Nonempty (systemOfUnits p G σ r) := existence'' p G σ r rfl.le
 
 end systemOfUnits
 
@@ -214,7 +232,7 @@ lemma lemma2' [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (
     (ha : ¬ (p : ℤ) ∣ a) : ∀ g : G, (1 - σA p σ) • g ≠ a • (S.units i) := by
   intro g hg
   obtain ⟨x, y, e⟩ := isCoprime_one_sub_σA p σ a ha
-  apply lemma2 p G σ S hs i (x • (S.units i) + y • g)
+  apply lemma2 p G σ r S hs i (x • (S.units i) + y • g)
   conv_rhs => rw [← one_smul A (S.units i), ← e, add_smul, ← smul_smul y, intCast_smul, ← hg]
   rw [smul_add, smul_smul, smul_smul, smul_smul, mul_comm x, mul_comm y]
 
@@ -237,14 +255,98 @@ variable
 --     use IsCyclic.commGroup.mul_comm
 
 local notation3 "G" => (𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : 𝓞 k →* 𝓞 K))
+
 attribute [local instance] IsCyclic.commGroup
 
 open CommGroup
-local instance : Module A (Additive <| G ⧸ torsion G) := sorry
+instance : MulDistribMulAction (K ≃ₐ[k] K) (K) := inferInstance
+-- instance : MulDistribMulAction (K ≃ₐ[k] K) (𝓞 K) := sorry
+
+noncomputable
+instance : MulAction (K ≃ₐ[k] K) (𝓞 K)ˣ where
+  smul a := Units.map (galRestrict _ _ _ _ a : 𝓞 K ≃ₐ[ℤ] 𝓞 K)
+  one_smul b := by
+    change Units.map (galRestrict _ _ _ _ 1 : 𝓞 K ≃ₐ[ℤ] 𝓞 K) b = b
+    rw [MonoidHom.map_one]
+    rfl
+
+  mul_smul a b c := by
+    change (Units.map _) c = (Units.map _) (Units.map _ c)
+    rw [MonoidHom.map_mul]
+    rw [← MonoidHom.comp_apply]
+    rw [← Units.map_comp]
+    rfl
+
+noncomputable
+instance : MulDistribMulAction (K ≃ₐ[k] K) (𝓞 K)ˣ where
+  smul_mul a b c := by
+    change (Units.map _) (_ * _) = (Units.map _) _ * (Units.map _) _
+    rw [MonoidHom.map_mul]
+  smul_one a := by
+    change (Units.map _) 1 = 1
+    rw [MonoidHom.map_one]
+
+instance : MulDistribMulAction (K ≃ₐ[k] K) G := sorry
+-- instance : DistribMulAction (K ≃ₐ[k] K) (Additive G) := inferInstance
+def ρ : Representation ℤ (K ≃ₐ[k] K) (Additive G) := Representation.ofMulDistribMulAction _ _
+noncomputable
+instance foof : Module
+  (MonoidAlgebra ℤ (K ≃ₐ[k] K))
+  (Additive G) := Representation.asModuleModule (ρ (k := k) (K := K))
+
+lemma tors1 (a : Additive G) :
+    (∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i) • a = 0 := by
+  rw [sum_smul]
+  simp only [MonoidAlgebra.of_apply]
+  sorry
+
+lemma tors2 (a : Additive G) (t)
+    (ht : t ∈ Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i}) :
+    t • a = 0 := by
+  simp only [one_pow, Ideal.mem_span_singleton] at ht
+  obtain ⟨r, rfl⟩ := ht
+  let a': Module
+    (MonoidAlgebra ℤ (K ≃ₐ[k] K))
+    (Additive G) := foof
+  let a'': MulAction
+    (MonoidAlgebra ℤ (K ≃ₐ[k] K))
+    (Additive G) := inferInstance
+  rw [mul_comm, mul_smul]
+  let a''': MulActionWithZero
+    (MonoidAlgebra ℤ (K ≃ₐ[k] K))
+    (Additive G) := inferInstance
+  rw [tors1 p σ a, smul_zero] -- TODO this is the worst proof ever maybe because of sorries
+
+lemma isTors : Module.IsTorsionBySet
+    (MonoidAlgebra ℤ (K ≃ₐ[k] K))
+    (Additive G)
+    (Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i} : Set _) := by
+  intro a s
+  rcases s with ⟨s, hs⟩
+  simp only [MonoidAlgebra.of_apply, one_pow, SetLike.mem_coe] at hs -- TODO ew why is MonoidAlgebra.single_pow simp matching here
+  have := tors2 p σ a s hs
+  simpa
+noncomputable
+local instance : Module
+  (MonoidAlgebra ℤ (K ≃ₐ[k] K) ⧸
+    Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i}) (Additive G) :=
+(isTors (k := k) (K := K) p σ).module
+
+def tors : Submodule
+  (MonoidAlgebra ℤ (K ≃ₐ[k] K) ⧸
+    Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i}) (Additive G) := sorry
+-- local instance : Module A (Additive G ⧸ AddCommGroup.torsion (Additive G)) := Submodule.Quotient.module _
+#synth CommGroup G
+#synth AddCommGroup (Additive G)
+-- #check Submodule.Quotient.module (tors (k := k) (K := K) p σ)
+local instance : Module A (Additive G ⧸ tors (k := k) (K := K) p σ) := by
+  -- apply Submodule.Quotient.modue _
+  sorry
 local instance : Module.Free ℤ (Additive <| G ⧸ torsion G) := sorry
+-- #exit
 lemma Hilbert91ish :
-    ∃ S : systemOfUnits p (Additive <| G ⧸ torsion G) σ (NumberField.Units.rank k + 1), S.IsFundamental :=
-  fundamentalSystemOfUnits.existence p (Additive <| G ⧸ torsion G) σ
+    ∃ S : systemOfUnits p (Additive G ⧸ tors (k := k) (K := K) p σ) σ (NumberField.Units.rank k + 1), S.IsFundamental :=
+  fundamentalSystemOfUnits.existence p (Additive G ⧸ tors (k := k) (K := K) p σ) σ (NumberField.Units.rank k + 1)
 end application
 
 end thm91
