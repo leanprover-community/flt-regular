@@ -40,11 +40,34 @@ def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G σ r) :=
 
 namespace systemOfUnits
 
+instance : Nontrivial G := sorry
+
+lemma bezout [Module A G] {a : A} (ha : a ≠ 0) : ∃ (f : A) (n : ℤ),
+        f * a = n := sorry
+
 lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
     refine ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
+lemma ex_not_mem [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
+        ∃ g, ¬(g ∈ Submodule.span A (Set.range S.units)) := by
+    by_contra' h
+    rw [← Submodule.eq_top_iff'] at h
+    sorry
+
+set_option synthInstance.maxHeartbeats 0 in
 lemma existence' [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
-        Nonempty (systemOfUnits p G σ (R + 1)) := sorry
+        Nonempty (systemOfUnits p G σ (R + 1)) := by
+    obtain ⟨g, hg⟩ := ex_not_mem p G σ S hR
+    refine ⟨⟨Fin.cases g S.units, ?_⟩⟩
+    refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
+    by_contra' ha
+    obtain ⟨f, n, Hf⟩ := bezout p G σ ha
+    replace hy := congr_arg (f • ·) hy
+    simp only at hy
+    let mon : Monoid A := inferInstance
+    rw [smul_zero, smul_add, smul_smul, Hf] at hy
+
+    sorry
 
 lemma existence'' [Module A G] (hR : R ≤ r) :  Nonempty (systemOfUnits p G σ R) := by
     induction R with
@@ -54,7 +77,6 @@ lemma existence'' [Module A G] (hR : R ≤ r) :  Nonempty (systemOfUnits p G σ 
         exact existence' p G σ S (lt_of_lt_of_le (Nat.lt.base n) hR)
 
 lemma existence (r) [Module A G] : Nonempty (systemOfUnits p G σ r) := existence'' p G σ rfl.le
-
 
 end systemOfUnits
 
