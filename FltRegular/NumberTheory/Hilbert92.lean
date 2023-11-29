@@ -133,7 +133,7 @@ lemma one_sub_σA_mem : 1 - σA p σ ∈ A⁰ := sorry
 
 lemma one_sub_σA_mem_nonunit : ¬ IsUnit (1 - σA p σ) := sorry
 
-lemma isCoprime_one_sug_σA (n : ℤ) (hn : ¬ (p : ℤ) ∣ n): IsCoprime (1 - σA p σ) n := sorry
+lemma isCoprime_one_sub_σA (n : ℤ) (hn : ¬ (p : ℤ) ∣ n): IsCoprime (1 - σA p σ) n := sorry
 
 namespace fundamentalSystemOfUnits
 lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, S.IsFundamental := by
@@ -177,7 +177,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i
 lemma lemma2' [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i : Fin r) (a : ℤ)
     (ha : ¬ (p : ℤ) ∣ a) : ∀ g : G, (1 - σA p σ) • g ≠ a • (S.units i) := by
   intro g hg
-  obtain ⟨x, y, e⟩ := isCoprime_one_sug_σA p σ a ha
+  obtain ⟨x, y, e⟩ := isCoprime_one_sub_σA p σ a ha
   apply lemma2 p G σ S hs i (x • (S.units i) + y • g)
   conv_rhs => rw [← one_smul A (S.units i), ← e, add_smul, ← smul_smul y, intCast_smul, ← hg]
   rw [smul_add, smul_smul, smul_smul, smul_smul, mul_comm x, mul_comm y]
