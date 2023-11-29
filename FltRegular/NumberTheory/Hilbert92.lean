@@ -223,18 +223,24 @@ def unitlifts
   let u := (((U i)).out').out'
   exact u
 
-
+lemma norm_map_inv (z : K) : Algebra.norm k z⁻¹ = (Algebra.norm k z)⁻¹ := by
+    by_cases h : z = 0
+    rw [h]
+    simp
+    apply eq_inv_of_mul_eq_one_left
+    rw [← map_mul, inv_mul_cancel h, map_one]
 
 lemma Hilbert92
-    [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
+    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
 
-    have S := @Hilbert91ish p K _ k _ _ _ σ
+    have S := @Hilbert91ish p K _ k _ _ _ _ σ
     obtain ⟨S, _⟩ := S
-    let H := @unitlifts p K _ k _ _ _ σ  S
+    let H := @unitlifts p K _ k _ _ _ _ σ  S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
+    have C := fundamentalSystemOfUnits.corollary p (Additive (𝓞 K)ˣ) σ
     have NLI : ¬ LinearIndependent ℤ N := by sorry
     rw [not_linearIndependent_iff] at NLI
     obtain ⟨t, a, ha⟩ := NLI
@@ -249,11 +255,14 @@ lemma Hilbert92
        intro i
        simp
     have H2 : ∏ i in t, ((N i).1 : k)^ a i = 1 := sorry
-    simp
+    simp only [toMul_sum, toMul_zsmul, Units.coe_prod, Submonoid.coe_finset_prod,
+      Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, coe_zpow', map_prod]
     rw [←H2]
     congr
     ext1 v
-    simp
+    simp only [toMul_ofMul, Units.coe_map, RingOfIntegers.norm_apply_coe]
+    rw [map_zpow']
+    apply norm_map_inv
 
 
 
