@@ -31,8 +31,9 @@ structure systemOfUnits (r : ℕ) [Module A G]
   linearIndependent : LinearIndependent A units
 
 instance {r}
-  [Module A G] -- [IsScalarTower ℤ A G]
-  (sys : systemOfUnits (G := G) p σ r) : Fintype (G ⧸ Submodule.span A (Set.range sys.units)) := sorry
+    [Module A G] -- [IsScalarTower ℤ A G]
+    (sys : systemOfUnits (G := G) p σ r) : Fintype (G ⧸ Submodule.span A (Set.range sys.units)) := by
+  sorry
 
 structure fundamentalSystemOfUnits (r : ℕ)
     [Module A G] extends systemOfUnits p G σ r -- [IsScalarTower ℤ A G]
@@ -42,13 +43,23 @@ structure fundamentalSystemOfUnits (r : ℕ)
 
 namespace systemOfUnits
 lemma existence' [Module A G] (S : systemOfUnits p G σ R) : ∃ S : systemOfUnits p G σ (R + 1), True := sorry
-lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, True := sorry
+lemma existence (r) [Module A G] : ∃ S : systemOfUnits p G σ r, True := sorry
 end systemOfUnits
 
 noncomputable
 abbrev σA : A := MonoidAlgebra.of ℤ H σ
 namespace fundamentalSystemOfUnits
-lemma existence [Module A G] : ∃ S : fundamentalSystemOfUnits p G σ r, True := sorry
+lemma existence [Module A G] : ∃ _S : fundamentalSystemOfUnits p G σ r, True := by
+  obtain ⟨S⟩ := systemOfUnits.existence p G σ r -- TODO use rank
+  have : { a | ∃ S : systemOfUnits p G σ r, a = Fintype.card (G ⧸ Submodule.span A (Set.range S.units))}.Nonempty := ⟨Fintype.card (G ⧸ Submodule.span A (Set.range S.units)), ⟨S,rfl⟩⟩
+  obtain ⟨S', ha⟩ := Nat.sInf_mem this
+  use ⟨S', ?_⟩
+  intro a'
+  rw [← ha]
+  apply csInf_le (OrderBot.bddBelow _)
+  use a'
+
+
 
 lemma lemma2 [Module A G] (S : fundamentalSystemOfUnits p G σ r) (i : Fin r) :
   ∀ g : G, (1 - σA p σ) • g ≠ S.units i := sorry
