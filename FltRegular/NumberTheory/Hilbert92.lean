@@ -82,16 +82,18 @@ end fundamentalSystemOfUnits
 section application
 
 variable
-    [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
+    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)] -- technically redundant but useful
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
-local instance : CommGroup (K ≃ₐ[k] K) where
-  mul_comm := by
-    have : Fintype.card (K ≃ₐ[k] K) = p := by
-      rwa [IsGalois.card_aut_eq_finrank]
-    have : IsCyclic (K ≃ₐ[k] K) := isCyclic_of_prime_card (hp := ⟨hp⟩) this
-    use IsCyclic.commGroup.mul_comm
+
+-- local instance : CommGroup (K ≃ₐ[k] K) where
+--   mul_comm := by
+--     have : Fintype.card (K ≃ₐ[k] K) = p := by
+--       rwa [IsGalois.card_aut_eq_finrank]
+--     have : IsCyclic (K ≃ₐ[k] K) := isCyclic_of_prime_card (hp := ⟨hp⟩) this
+--     use IsCyclic.commGroup.mul_comm
 
 local notation3 "G" => (𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : 𝓞 k →* 𝓞 K))
+attribute [local instance] IsCyclic.commGroup
 
 open CommGroup
 local instance : Module A (Additive <| G ⧸ torsion G) := sorry
