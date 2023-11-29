@@ -95,9 +95,8 @@ lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
     refine ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
 lemma ex_not_mem [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
-        ∃ g, ¬(g ∈ Submodule.span A (Set.range S.units)) := by
+        ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
     by_contra' h
-    rw [← Submodule.eq_top_iff'] at h
     sorry
 
 set_option synthInstance.maxHeartbeats 0 in
@@ -111,9 +110,10 @@ lemma existence' [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
     replace hy := congr_arg (f • ·) hy
     simp only at hy
     let mon : Monoid A := inferInstance
-    rw [smul_zero, smul_add, smul_smul, Hf] at hy
-
-    sorry
+    rw [smul_zero, smul_add, smul_smul, Hf, ← eq_neg_iff_add_eq_zero, intCast_smul] at hy
+    apply hg n
+    rw [hy]
+    exact Submodule.neg_mem _ (Submodule.smul_mem _ _ y.2)
 
 lemma existence'' [Module A G] (hR : R ≤ r) :  Nonempty (systemOfUnits p G σ R) := by
     induction R with
