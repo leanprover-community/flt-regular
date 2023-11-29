@@ -30,15 +30,13 @@ structure systemOfUnits (r : ℕ) [Module A G]
   units : Fin r → G
   linearIndependent : LinearIndependent A units
 
-instance {r}
-  [Module A G] -- [IsScalarTower ℤ A G]
-  (sys : systemOfUnits (G := G) p σ r) : Fintype (G ⧸ Submodule.span A (Set.range sys.units)) := sorry
+instance {r} [Module A G] (sys : systemOfUnits p G σ r) : Fintype (G ⧸ Submodule.span A (Set.range sys.units)) := sorry
 
-structure fundamentalSystemOfUnits (r : ℕ)
-    [Module A G] extends systemOfUnits p G σ r -- [IsScalarTower ℤ A G]
-  where
-  maximal : ∀ a : systemOfUnits p G σ r,
-    Fintype.card (G ⧸ Submodule.span A (Set.range units)) ≤ Fintype.card (G ⧸ Submodule.span A (Set.range a.units))
+def systemOfUnits.index [Module A G] (sys : systemOfUnits p G σ r) :=
+  Fintype.card (G ⧸ Submodule.span A (Set.range sys.units))
+
+def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G σ r)  :=
+  ∀ s : systemOfUnits p G σ r, h.index ≤ s.index
 
 namespace systemOfUnits
 lemma existence' [Module A G] (S : systemOfUnits p G σ R) : ∃ S : systemOfUnits p G σ (R + 1), True := sorry
@@ -48,12 +46,12 @@ end systemOfUnits
 noncomputable
 abbrev σA : A := MonoidAlgebra.of ℤ H σ
 namespace fundamentalSystemOfUnits
-lemma existence [Module A G] : ∃ S : fundamentalSystemOfUnits p G σ r, True := sorry
+lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, S.IsFundamental := sorry
 
-lemma lemma2 [Module A G] (S : fundamentalSystemOfUnits p G σ r) (i : Fin r) :
+lemma lemma2 [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i : Fin r) :
   ∀ g : G, (1 - σA p σ) • g ≠ S.units i := sorry
 
-lemma corollary [Module A G] (S : fundamentalSystemOfUnits p G σ r) (a : Fin r → ℤ)
+lemma corollary [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (a : Fin r → ℤ)
     (ha : ∃ i , ¬ (p : ℤ) ∣ a i) :
   ∀ g : G, (1 - σA p σ) • g ≠ ∑ i, a i • S.units i := sorry
 
@@ -63,15 +61,15 @@ section application
 variable
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
-local instance : CommGroup (K ≃ₐ[k] K) where
-  mul_comm := sorry
+local instance : CommGroup (K ≃ₐ[k] K) := sorry
+
 local notation3 "G" => (𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : 𝓞 k →* 𝓞 K))
 
 open CommGroup
 local instance : Module A (Additive <| G ⧸ torsion G) := sorry
 local instance : Module.Free ℤ (Additive <| G ⧸ torsion G) := sorry
 lemma Hilbert91ish :
-    ∃ S : fundamentalSystemOfUnits p (Additive <| G ⧸ torsion G) σ (NumberField.Units.rank k + 1), True :=
+    ∃ S : systemOfUnits p (Additive <| G ⧸ torsion G) σ (NumberField.Units.rank k + 1), S.IsFundamental :=
   fundamentalSystemOfUnits.existence p (Additive <| G ⧸ torsion G) σ
 end application
 
