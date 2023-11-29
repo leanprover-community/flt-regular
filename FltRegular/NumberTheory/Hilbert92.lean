@@ -82,4 +82,4 @@ end thm91
 lemma Hilbert92
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
-    ∃ η : (𝓞 K)ˣ, Algebra.norm K (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := sorry
+    ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := sorry
