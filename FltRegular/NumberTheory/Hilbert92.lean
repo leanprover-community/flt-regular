@@ -86,13 +86,20 @@ lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H�
 
 namespace systemOfUnits
 
-instance : Nontrivial G := sorry
+lemma nontrivial (hr : r ≠ 0) : Nontrivial G := by
+    by_contra' h
+    rw [not_nontrivial_iff_subsingleton] at h
+    rw [FiniteDimensional.finrank_zero_of_subsingleton] at hf
+    simp only [ge_iff_le, zero_eq_mul, tsub_eq_zero_iff_le] at hf
+    cases hf with
+    | inl h => exact hr h
+    | inr h => simpa [Nat.lt_succ_iff, h] using not_lt.2 (Nat.prime_def_lt.1 hp).1
 
 lemma bezout [Module A G] {a : A} (ha : a ≠ 0) : ∃ (f : A) (n : ℤ),
         f * a = n := sorry
 
 lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
-    refine ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
+    exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
 lemma ex_not_mem [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
         ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
