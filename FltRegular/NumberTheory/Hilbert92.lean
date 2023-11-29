@@ -39,8 +39,23 @@ def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G σ r) :=
   ∀ s : systemOfUnits p G σ r, h.index ≤ s.index
 
 namespace systemOfUnits
-lemma existence' [Module A G] (S : systemOfUnits p G σ R) : ∃ S : systemOfUnits p G σ (R + 1), True := sorry
-lemma existence (r) [Module A G] : ∃ S : systemOfUnits p G σ r, True := sorry
+
+lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
+    refine ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
+
+lemma existence' [Module A G] (S : systemOfUnits p G σ R) (hR : R < r) :
+        Nonempty (systemOfUnits p G σ (R + 1)) := sorry
+
+lemma existence'' [Module A G] (hR : R ≤ r) :  Nonempty (systemOfUnits p G σ R) := by
+    induction R with
+    | zero => exact existence0 p G σ
+    | succ n ih =>
+        obtain ⟨S⟩ := ih (le_trans (Nat.le_succ n) hR)
+        exact existence' p G σ S (lt_of_lt_of_le (Nat.lt.base n) hR)
+
+lemma existence (r) [Module A G] : Nonempty (systemOfUnits p G σ r) := existence'' p G σ rfl.le
+
+
 end systemOfUnits
 
 noncomputable
