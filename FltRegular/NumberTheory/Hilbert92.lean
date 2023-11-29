@@ -79,13 +79,58 @@ local instance : Module.Free ℤ (Additive <| G ⧸ torsion G) := sorry
 lemma Hilbert91ish :
     ∃ S : systemOfUnits p (Additive <| G ⧸ torsion G) σ (NumberField.Units.rank k + 1), S.IsFundamental :=
   fundamentalSystemOfUnits.existence p (Additive <| G ⧸ torsion G) σ
-end application
-
-end thm91
 
 -- #exit
+
+
+noncomputable
+
+def unitlifts
+  ( S : systemOfUnits p (Additive <| G ⧸ torsion G) σ (NumberField.Units.rank k + 1) )  :
+  Fin (NumberField.Units.rank k + 1) → Additive (𝓞 K)ˣ := by
+  let U := S.units
+  intro i
+  let u := (((U i)).out').out'
+  exact u
+
+
 
 lemma Hilbert92
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
-    ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := sorry
+    ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
+
+    have S := @Hilbert91ish p K _ k _ _ _ σ
+    obtain ⟨S, _⟩ := S
+    let H := @unitlifts p K _ k _ _ _ σ  S
+    let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
+      fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
+    have NLI : ¬ LinearIndependent ℤ N := by sorry
+    rw [not_linearIndependent_iff] at NLI
+    obtain ⟨t, a, ha⟩ := NLI
+    by_cases T : Monoid.IsTorsionFree (𝓞 K)ˣ
+    let J := Additive.toMul (∑ i in t, a i • H i)
+    use J
+    constructor
+    let r :=   (Additive.toMul (H 1)).1
+
+    have H1 : ∀ i : Fin (NumberField.Units.rank k + 1),
+       (Algebra.norm k (( (Additive.toMul (H i)).1) : K)) = ((N i).1 : k) := by
+       intro i
+       simp
+    have H2 : ∏ i in t, ((N i).1 : k)^ a i = 1 := sorry
+    simp
+    rw [←H2]
+    congr
+    ext1 v
+    simp
+
+
+
+    sorry
+
+
+
+end application
+
+end thm91
