@@ -3,6 +3,7 @@ import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.AuxLemmas
 import FltRegular.NumberTheory.GaloisPrime
 import Mathlib.Tactic.Widget.Conv
+import Mathlib.RepresentationTheory.GroupCohomology.Hilbert90
 
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional Finset BigOperators Submodule
@@ -11,11 +12,6 @@ variable {K L : Type*} [Field K] [Field L] [NumberField K] [Algebra K L]
 variable [IsGalois K L] [FiniteDimensional K L]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 variable {η : L} (hη : Algebra.norm K η = 1)
-
---This is proved in #8599
-theorem hilbert90 (f : (L ≃ₐ[K] L) → Lˣ)
-    (hf : ∀ (g h : (L ≃ₐ[K] L)), f (g * h) = g (f h) * f g) :
-    ∃ β : Lˣ, ∀ g : (L ≃ₐ[K] L), f g * Units.map g β = β := by sorry
 
 noncomputable
 def ηu : Lˣ := (Ne.isUnit (fun h ↦ by simp [h] at hη) : IsUnit η).unit
