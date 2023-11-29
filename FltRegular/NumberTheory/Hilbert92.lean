@@ -1,5 +1,6 @@
 
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+import FltRegular.NumberTheory.GaloisPrime
 import Mathlib
 
 set_option autoImplicit false
@@ -195,7 +196,7 @@ lemma lemma2' [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (
     (ha : ¬ (p : ℤ) ∣ a) : ∀ g : G, (1 - σA p σ) • g ≠ a • (S.units i) := by
   intro g hg
   obtain ⟨x, y, e⟩ := isCoprime_one_sub_σA p σ a ha
-  apply lemma2 p G σ S hs i (x • (S.units i) + y • g)
+  apply lemma2 p G σ r S hs i (x • (S.units i) + y • g)
   conv_rhs => rw [← one_smul A (S.units i), ← e, add_smul, ← smul_smul y, intCast_smul, ← hg]
   rw [smul_add, smul_smul, smul_smul, smul_smul, mul_comm x, mul_comm y]
 
@@ -222,7 +223,33 @@ local notation3 "G" => (𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap 
 attribute [local instance] IsCyclic.commGroup
 
 open CommGroup
-instance : MulDistribMulAction (K ≃ₐ[k] K) (𝓞 K)ˣ := sorry
+instance : MulDistribMulAction (K ≃ₐ[k] K) (K) := inferInstance
+-- instance : MulDistribMulAction (K ≃ₐ[k] K) (𝓞 K) := sorry
+
+noncomputable
+instance : MulAction (K ≃ₐ[k] K) (𝓞 K)ˣ where
+  smul a := Units.map (galRestrict _ _ _ _ a : 𝓞 K ≃ₐ[ℤ] 𝓞 K)
+  one_smul b := by
+    change Units.map (galRestrict _ _ _ _ 1 : 𝓞 K ≃ₐ[ℤ] 𝓞 K) b = b
+    rw [MonoidHom.map_one]
+    rfl
+
+  mul_smul a b c := by
+    change (Units.map _) c = (Units.map _) (Units.map _ c)
+    rw [MonoidHom.map_mul]
+    rw [← MonoidHom.comp_apply]
+    rw [← Units.map_comp]
+    rfl
+
+noncomputable
+instance : MulDistribMulAction (K ≃ₐ[k] K) (𝓞 K)ˣ where
+  smul_mul a b c := by
+    change (Units.map _) (_ * _) = (Units.map _) _ * (Units.map _) _
+    rw [MonoidHom.map_mul]
+  smul_one a := by
+    change (Units.map _) 1 = 1
+    rw [MonoidHom.map_one]
+
 instance : MulDistribMulAction (K ≃ₐ[k] K) G := sorry
 -- instance : DistribMulAction (K ≃ₐ[k] K) (Additive G) := inferInstance
 def ρ : Representation ℤ (K ≃ₐ[k] K) (Additive G) := Representation.ofMulDistribMulAction _ _
