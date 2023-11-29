@@ -452,6 +452,7 @@ lemma stuff (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η₀
   congr 1
   ring
 
+set_option maxHeartbeats 400000 in
 lemma exists_solution :
   ∃ (x' y' z' : 𝓞 K) (ε₁ ε₂ ε₃ : (𝓞 K)ˣ),
     ¬((hζ.unit' : 𝓞 K) - 1 ∣ x') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
