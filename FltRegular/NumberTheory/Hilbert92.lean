@@ -129,9 +129,45 @@ end systemOfUnits
 noncomputable
 abbrev σA : A := MonoidAlgebra.of ℤ H σ
 
-lemma one_sub_σA_mem : 1 - σA p σ ∈ A⁰ := sorry
+lemma isPrimitiveroot : IsPrimitiveRoot (σA p σ) p := sorry
+
+instance : IsDomain A := sorry
+
+lemma one_sub_σA_mem : 1 - σA p σ ∈ A⁰ := by
+  rw [mem_nonZeroDivisors_iff_ne_zero, ne_eq, sub_eq_zero, eq_comm]
+  exact (isPrimitiveroot p σ).ne_one hp.one_lt
 
 lemma one_sub_σA_mem_nonunit : ¬ IsUnit (1 - σA p σ) := sorry
+
+open Polynomial in
+lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
+    (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot x.1 p) : minpoly ℤ x = cyclotomic p ℤ := by
+  apply Polynomial.map_injective (algebraMap ℤ ℚ) (RingHom.injective_int (algebraMap ℤ ℚ))
+  rw [← minpoly.isIntegrallyClosed_eq_field_fractions ℚ (CyclotomicField p ℚ),
+    ← cyclotomic_eq_minpoly_rat (n := p), map_cyclotomic]
+  · exact hx
+  · exact hp.pos
+  · exact IsIntegralClosure.isIntegral _ (CyclotomicField p ℚ) _
+
+open Polynomial in
+noncomputable
+def TheEquiv : ℤ[X] ⧸ Ideal.span (singleton (cyclotomic p ℤ)) ≃+* 𝓞 (CyclotomicField p ℚ) := by
+  letI := Fact.mk hp
+  have : IsCyclotomicExtension {p ^ 1} ℚ (CyclotomicField p ℚ)
+  · rw [pow_one]
+    infer_instance
+  refine (AdjoinRoot.equiv' (cyclotomic p ℤ) (IsPrimitiveRoot.integralPowerBasis
+    (IsCyclotomicExtension.zeta_spec (p ^ 1) ℚ (CyclotomicField p ℚ))) ?_ ?_).toRingEquiv
+  · simp only [pow_one, IsPrimitiveRoot.integralPowerBasis_gen, AdjoinRoot.aeval_eq,
+      AdjoinRoot.mk_eq_zero]
+    rw [IsPrimitiveRoot.cyclotomic_eq_minpoly p hp
+      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).toInteger
+      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ))]
+  · rw [← IsPrimitiveRoot.cyclotomic_eq_minpoly p hp
+      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).toInteger
+      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ))]
+    simp
+
 
 lemma isCoprime_one_sub_σA (n : ℤ) (hn : ¬ (p : ℤ) ∣ n): IsCoprime (1 - σA p σ) n := sorry
 
@@ -150,7 +186,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i
     ∀ g : G, (1 - σA p σ) • g ≠ S.units i := by
   intro g hg
   let S' : systemOfUnits p G σ r := ⟨Function.update S.units i g,
-    LinearIndependent.update (hσ := one_sub_σA_mem p σ) (hg := hg) S.linearIndependent⟩
+    LinearIndependent.update (hσ := one_sub_σA_mem p hp σ) (hg := hg) S.linearIndependent⟩
   suffices : Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units)
   · exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.instFintype) this)
   rw [SetLike.lt_iff_le_and_exists]
