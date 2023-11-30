@@ -47,18 +47,82 @@ lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
     exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
 lemma spanA_eq_spanA [Module A G] {R : ℕ} (f : Fin R → G) :
-        (Submodule.span A (Set.range f) : Set G) =
-        Submodule.span A (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)) := by
+        Submodule.span A (Set.range f) =
+        Submodule.span A (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (σA p σ)^e.2.1 • f e.1)) := by
     refine le_antisymm (Submodule.span_mono (fun x hx ↦ ?_)) ?_
-    · sorry
-    · sorry
+    · obtain ⟨a, ha⟩ := hx
+      refine ⟨⟨a, ⟨0, hp.pred_pos⟩⟩, ?_⟩
+      simp only [MonoidAlgebra.of_apply, pow_zero, ha]
+      exact one_smul A _
+    · rw [Submodule.span_le (R := A)]
+      intro x ⟨⟨a, b⟩, hx⟩
+      simp only [← hx, MonoidAlgebra.of_apply, SetLike.mem_coe]
+      refine Submodule.smul_mem _ _ ?_
+      apply Submodule.subset_span (R := A)
+      use a
+
+set_option synthInstance.maxHeartbeats 0 in
+lemma mem_spanS [Module A G] {R : ℕ} {g : G} (a : A) (f : Fin R → G)
+        (hg : g ∈ Submodule.span ℤ
+        (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (σA p σ)^e.2.1 • f e.1))) :
+        a • g ∈ Submodule.span ℤ
+        (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (σA p σ)^e.2.1 • f e.1)) := by
+    rcases a with ⟨x⟩
+    revert hg
+    apply MonoidAlgebra.induction_on x
+    · intro h hg
+      refine Submodule.span_induction hg ?_ ?_ ?_ ?_
+      · intro g₁ ⟨⟨n, m⟩, key⟩
+        simp only at key
+
+
+        sorry
+      · rw [smul_zero]
+        apply Submodule.zero_mem
+      · intro g₁ g₂ hg₁ hg₂
+        rw [smul_add]
+        exact Submodule.add_mem _ hg₁ hg₂
+      · intro n g hg
+        rw [smul_algebra_smul_comm]
+        apply Submodule.smul_mem
+        exact hg
+    · intro f₁ f₂ hf₁ hf₂ hg
+      simp only [MonoidAlgebra.of_apply, Submodule.Quotient.quot_mk_eq_mk, Ideal.Quotient.mk_eq_mk,
+        map_add]
+      rw [add_smul (R := A)]
+      exact Submodule.add_mem _ (hf₁ hg) (hf₂ hg)
+    · intro n f₁ hf₁ hg
+      rw [Submodule.Quotient.quot_mk_eq_mk, ← intCast_smul (k := MonoidAlgebra ℤ H),
+        Submodule.Quotient.mk_smul, intCast_smul, smul_assoc]
+      apply Submodule.smul_mem
+      specialize hf₁ hg
+      rwa [Submodule.Quotient.quot_mk_eq_mk] at hf₁
+    -- · intro h hg
+    --   have : h ∈ Subgroup.zpowers σ := by simp [hσ]
+    --   rw [Subgroup.mem_zpowers_iff] at this
+    --   obtain ⟨n, hn⟩ := this
+    --   rw [← hn]
+    --   refine ⟨?_, ?_⟩
 
 lemma spanA_eq_spanZ [Module A G] {R : ℕ} (f : Fin R → G) :
         (Submodule.span A (Set.range f) : Set G) =
-        Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)) := by
-    let S := Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)
+        Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (σA p σ)^e.2.1 • f e.1)) := by
+    let S := Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (σA p σ)^e.2.1 • f e.1)
     have := Submodule.span_le_restrictScalars ℤ A S
-    sorry
+    rw [← spanA_eq_spanA p hp] at this
+    refine le_antisymm ?_ this
+    intro x hx
+    refine Submodule.span_induction hx ?_ ?_ ?_ ?_
+    · intro z ⟨a, ha⟩
+      apply Submodule.subset_span
+      refine ⟨⟨a, ⟨0, hp.pred_pos⟩⟩, ?_⟩
+      simp only [MonoidAlgebra.of_apply, pow_zero, ← ha]
+      exact one_smul A _
+    · simp
+    · intro z w hz hw
+      exact Submodule.add_mem _ hz hw
+    · intro a _ hx
+      exact mem_spanS p G σ a f hx
 
 lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G σ R) (hR : R < r) :
         ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
