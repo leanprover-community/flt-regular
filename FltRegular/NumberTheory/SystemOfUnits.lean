@@ -82,7 +82,6 @@ lemma Submodule.mem_stabilizer_span {R M} (S)
     · intros _ _ h₁ h₂; rw [smul_add]; exact add_mem h₁ h₂
     · intros r m h; rw [smul_comm]; exact Submodule.smul_mem _ r h
 
-set_option synthInstance.maxHeartbeats 0 in
 lemma mem_spanS [Module A G] {R : ℕ} {g : G} (a : A) (f : Fin R → G)
     (hg : g ∈ Submodule.span ℤ
     (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p)^e.2.1 • f e.1))) :
@@ -133,7 +132,6 @@ lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
     by_contra' h
     sorry
 
-set_option synthInstance.maxHeartbeats 0 in
 lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
         Nonempty (systemOfUnits p G (R + 1)) := by
     obtain ⟨g, hg⟩ := ex_not_mem p G r S hR
@@ -141,10 +139,9 @@ lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
     refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
     by_contra' ha
     letI := Fact.mk hp
-    obtain ⟨n, hn, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha
+    obtain ⟨n, _, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha
     replace hy := congr_arg (f • ·) hy
     simp only at hy
-    let mon : Monoid A := inferInstance
     rw [smul_zero, smul_add, smul_smul, mul_comm f,
       ← Hf, ← eq_neg_iff_add_eq_zero, intCast_smul] at hy
     apply hg n
