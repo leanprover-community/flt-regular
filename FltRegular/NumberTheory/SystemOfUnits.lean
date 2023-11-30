@@ -124,14 +124,31 @@ lemma spanA_eq_spanZ [Module A G] {R : ℕ} (f : Fin R → G) :
     · intro a _ hx
       exact mem_spanS p hp G _ f hx
 
-lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
+lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) (hr : r ≠ 0) :
         ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
-    by_contra' h
+    change ∃ g, ∀ (k : ℤ), ¬(k • g ∈ (Submodule.span A (Set.range S.units) : Set G))
+    rw [spanA_eq_spanZ p hp G S.units]
+    let M := Submodule.span ℤ
+      (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p) ^ e.2.1 • S.units e.1))
+    have : Finite (Module.Free.ChooseBasisIndex ℤ G) := by
+      replace hf : finrank ℤ G ≠ 0 := fun h0 ↦ by
+        apply hr
+        simp only [h0, ge_iff_le, zero_eq_mul, tsub_eq_zero_iff_le] at hf
+        cases hf with
+        | inl h => exact h
+        | inr h => linarith [hp.one_lt]
+      rw [finrank, Module.Free.rank_eq_card_chooseBasisIndex, Cardinal.toNat_ne_zero] at hf
+      exact Cardinal.mk_lt_aleph0_iff.mp hf.2
+    let BG := Module.Free.chooseBasis ℤ G
+    have : Module.Finite ℤ G := Module.Finite.of_basis BG
+    let BM := Submodule.basisOfPid BG M
     sorry
 
 lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
         Nonempty (systemOfUnits p G (R + 1)) := by
-    obtain ⟨g, hg⟩ := ex_not_mem p G r S hR
+    by_cases hr : r = 0
+    · linarith
+    obtain ⟨g, hg⟩ := ex_not_mem p hp G r hf S hR hr
     refine ⟨⟨Fin.cases g S.units, ?_⟩⟩
     refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
     by_contra' ha
@@ -150,8 +167,8 @@ lemma existence'' [Module A G] {R : ℕ} (hR : R ≤ r) :  Nonempty (systemOfUni
     | zero => exact existence0 p G
     | succ n ih =>
         obtain ⟨S⟩ := ih (le_trans (Nat.le_succ n) hR)
-        exact existence' p hp G r S (lt_of_lt_of_le (Nat.lt.base n) hR)
+        exact existence' p hp G r hf S (lt_of_lt_of_le (Nat.lt.base n) hR)
 
-lemma existence (r) [Module A G] : Nonempty (systemOfUnits p G r) := existence'' p hp G r rfl.le
+lemma existence [Module A G] : Nonempty (systemOfUnits p G r) := existence'' p hp G r hf rfl.le
 
 end systemOfUnits
