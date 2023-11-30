@@ -89,6 +89,7 @@ lemma mem_spanS [Module A G] {R : ℕ} {g : G} (a : A) (f : Fin R → G)
     a • g ∈ Submodule.span ℤ
     (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p)^e.2.1 • f e.1)) := by
   revert hg g
+  letI := Fact.mk hp
   suffices : ⊤ ≤ Submodule.stabilizer A
     (Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p)^e.2.1 • f e.1)))
   · exact @this a trivial
