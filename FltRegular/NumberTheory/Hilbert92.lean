@@ -303,9 +303,8 @@ local instance : Module.Free ℤ (Additive <| G ⧸ torsion G) := sorry
 lemma Hilbert91ish :
     ∃ S : systemOfUnits p (Additive G ⧸ tors (k := k) (K := K) p σ) σ (NumberField.Units.rank k + 1), S.IsFundamental :=
   fundamentalSystemOfUnits.existence p (Additive G ⧸ tors (k := k) (K := K) p σ) σ (NumberField.Units.rank k + 1)
-end application
 
-end thm91
+
 
 -- #exit
 
@@ -313,7 +312,7 @@ end thm91
 noncomputable
 
 def unitlifts
-  ( S : systemOfUnits p (Additive <| G ⧸ torsion G) σ (NumberField.Units.rank k + 1) )  :
+   (S : systemOfUnits p (Additive G ⧸ tors (k := k) (K := K) p σ) σ (NumberField.Units.rank k + 1))  :
   Fin (NumberField.Units.rank k + 1) → Additive (𝓞 K)ˣ := by
   let U := S.units
   intro i
@@ -327,22 +326,45 @@ lemma norm_map_inv (z : K) : Algebra.norm k z⁻¹ = (Algebra.norm k z)⁻¹ := 
     apply eq_inv_of_mul_eq_one_left
     rw [← map_mul, inv_mul_cancel h, map_one]
 
-lemma Hilbert92
+lemma torsion_free_lin_system [Algebra k K] (h : Monoid.IsTorsionFree (𝓞 K)ˣ)
+  (ι : Fin (NumberField.Units.rank k + 1) → Additive (𝓞 k)ˣ) :
+  ∃ (a : (Fin (NumberField.Units.rank k + 1) → ℤ)) (i : Fin (NumberField.Units.rank k + 1)),
+  ¬ ((p : ℤ) ∣ a i) ∧ ∑ i in ⊤, (a i) • (ι i) = 0 := by
+
+  sorry
+
+
+def unit_to_U (u : (𝓞 K)ˣ) : (Additive G ⧸ tors (k := k) (K := K) p σ) := by
+  have u1 := (Additive.ofMul u : Additive G)
+  use Quot.mk _ u1
+
+
+lemma u_lemma2 [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
+    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (u v: (𝓞 K)ˣ)
+    (hu : u = v / (σ v : K)) : (unit_to_U p σ u)  = (1 - σA p σ) • (unit_to_U p σ v):= by
+    simp [unit_to_U]
+
+    sorry
+
+
+
+lemma Hilbert92ish
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
 
     have S := @Hilbert91ish p K _ k _ _ _ _ σ
-    obtain ⟨S, _⟩ := S
+    obtain ⟨S, hS⟩ := S
     let H := @unitlifts p K _ k _ _ _ _ σ  S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
-    have C := fundamentalSystemOfUnits.corollary p (Additive (𝓞 K)ˣ) σ
-    have NLI : ¬ LinearIndependent ℤ N := by sorry
-    rw [not_linearIndependent_iff] at NLI
-    obtain ⟨t, a, ha⟩ := NLI
+
+
     by_cases T : Monoid.IsTorsionFree (𝓞 K)ˣ
-    let J := Additive.toMul (∑ i in t, a i • H i)
+    obtain ⟨a, i, ha⟩ := torsion_free_lin_system p T N
+    have C := fundamentalSystemOfUnits.corollary p (Additive G ⧸ tors (k := k) (K := K) p σ) σ
+      (NumberField.Units.rank k + 1) S hS a ⟨i, ha.1⟩
+    let J := Additive.toMul (∑ i in ⊤, a i • H i)
     use J
     constructor
     let r :=   (Additive.toMul (H 1)).1
@@ -351,7 +373,7 @@ lemma Hilbert92
        (Algebra.norm k (( (Additive.toMul (H i)).1) : K)) = ((N i).1 : k) := by
        intro i
        simp
-    have H2 : ∏ i in t, ((N i).1 : k)^ a i = 1 := sorry
+    have H2 : ∏ i in ⊤, ((N i).1 : k)^ a i = 1 := sorry
     simp only [toMul_sum, toMul_zsmul, Units.coe_prod, Submonoid.coe_finset_prod,
       Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, coe_zpow', map_prod]
     rw [←H2]
@@ -362,9 +384,13 @@ lemma Hilbert92
     apply norm_map_inv
 
 
-
+    sorry
     sorry
 
+lemma Hilbert92
+    [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
+    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
+    ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by sorry
 
 
 end application
