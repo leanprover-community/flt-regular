@@ -78,7 +78,7 @@ lemma primesOver_finite [Ring.DimensionLEOne R] [IsDedekindDomain S] [NoZeroSMul
 
 lemma primesOver_nonempty [IsDomain S] [NoZeroSMulDivisors R S] (hRS : Algebra.IsIntegral R S)
     (p : Ideal R) [p.IsPrime] : (primesOver S p).Nonempty := by
-  have := Ideal.bot_prime (R := S)
+  have := Ideal.bot_prime (α := S)
   obtain ⟨Q, _, hQ⟩ := Ideal.exists_ideal_over_prime_of_isIntegral hRS p ⊥
     (by rw [Ideal.comap_bot_of_injective _
       (NoZeroSMulDivisors.algebraMap_injective R S)]; exact bot_le)
