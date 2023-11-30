@@ -85,7 +85,15 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
 @[to_additive]
 lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H₁ < H₂)
   [h₁ : Fintype (G ⧸ H₁)] :
-  H₂.index < H₁.index := sorry
+  H₂.index < H₁.index := by
+  rcases eq_or_ne H₂.index 0 with hn | hn
+  · rw [hn, index_eq_card]
+    exact Fintype.card_pos
+  apply lt_of_le_of_ne
+  · refine Nat.le_of_dvd (by rw [index_eq_card]; apply Fintype.card_pos) <| Subgroup.index_dvd_of_le h.le
+  · have := fintypeOfIndexNeZero hn
+    rw [←mul_one H₂.index, ←relindex_mul_index h.le, mul_comm, Ne, eq_comm]
+    simp [-one_mul, -Nat.one_mul, hn, h.not_le]
 
 namespace systemOfUnits
 
@@ -103,6 +111,10 @@ lemma bezout [Module A G] {a : A} (ha : a ≠ 0) : ∃ (f : A) (n : ℤ),
 
 lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
     exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
+
+lemma span_eq_span [Module A G] {R : ℕ} (f : Fin R → G) :
+        (Submodule.span A (Set.range f) : Set G) =
+        Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)) := sorry
 
 lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G σ R) (hR : R < r) :
         ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
@@ -139,9 +151,45 @@ end systemOfUnits
 noncomputable
 abbrev σA : A := MonoidAlgebra.of ℤ H σ
 
-lemma one_sub_σA_mem : 1 - σA p σ ∈ A⁰ := sorry
+lemma isPrimitiveroot : IsPrimitiveRoot (σA p σ) p := sorry
+
+instance : IsDomain A := sorry
+
+lemma one_sub_σA_mem : 1 - σA p σ ∈ A⁰ := by
+  rw [mem_nonZeroDivisors_iff_ne_zero, ne_eq, sub_eq_zero, eq_comm]
+  exact (isPrimitiveroot p σ).ne_one hp.one_lt
 
 lemma one_sub_σA_mem_nonunit : ¬ IsUnit (1 - σA p σ) := sorry
+
+open Polynomial in
+lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
+    (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot x.1 p) : minpoly ℤ x = cyclotomic p ℤ := by
+  apply Polynomial.map_injective (algebraMap ℤ ℚ) (RingHom.injective_int (algebraMap ℤ ℚ))
+  rw [← minpoly.isIntegrallyClosed_eq_field_fractions ℚ (CyclotomicField p ℚ),
+    ← cyclotomic_eq_minpoly_rat (n := p), map_cyclotomic]
+  · exact hx
+  · exact hp.pos
+  · exact IsIntegralClosure.isIntegral _ (CyclotomicField p ℚ) _
+
+open Polynomial in
+noncomputable
+def TheEquiv : ℤ[X] ⧸ Ideal.span (singleton (cyclotomic p ℤ)) ≃+* 𝓞 (CyclotomicField p ℚ) := by
+  letI := Fact.mk hp
+  have : IsCyclotomicExtension {p ^ 1} ℚ (CyclotomicField p ℚ)
+  · rw [pow_one]
+    infer_instance
+  refine (AdjoinRoot.equiv' (cyclotomic p ℤ) (IsPrimitiveRoot.integralPowerBasis
+    (IsCyclotomicExtension.zeta_spec (p ^ 1) ℚ (CyclotomicField p ℚ))) ?_ ?_).toRingEquiv
+  · simp only [pow_one, IsPrimitiveRoot.integralPowerBasis_gen, AdjoinRoot.aeval_eq,
+      AdjoinRoot.mk_eq_zero]
+    rw [IsPrimitiveRoot.cyclotomic_eq_minpoly p hp
+      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).toInteger
+      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ))]
+  · rw [← IsPrimitiveRoot.cyclotomic_eq_minpoly p hp
+      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).toInteger
+      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ))]
+    simp
+
 
 lemma isCoprime_one_sub_σA (n : ℤ) (hn : ¬ (p : ℤ) ∣ n): IsCoprime (1 - σA p σ) n := sorry
 
@@ -160,7 +208,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i
     ∀ g : G, (1 - σA p σ) • g ≠ S.units i := by
   intro g hg
   let S' : systemOfUnits p G σ r := ⟨Function.update S.units i g,
-    LinearIndependent.update (hσ := one_sub_σA_mem p σ) (hg := hg) S.linearIndependent⟩
+    LinearIndependent.update (hσ := one_sub_σA_mem p hp σ) (hg := hg) S.linearIndependent⟩
   suffices : Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units)
   · exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.instFintype) this)
   rw [SetLike.lt_iff_le_and_exists]
@@ -188,7 +236,7 @@ lemma lemma2' [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (
     (ha : ¬ (p : ℤ) ∣ a) : ∀ g : G, (1 - σA p σ) • g ≠ a • (S.units i) := by
   intro g hg
   obtain ⟨x, y, e⟩ := isCoprime_one_sub_σA p σ a ha
-  apply lemma2 p G σ r S hs i (x • (S.units i) + y • g)
+  apply lemma2 p hp G σ r S hs i (x • (S.units i) + y • g)
   conv_rhs => rw [← one_smul A (S.units i), ← e, add_smul, ← smul_smul y, intCast_smul, ← hg]
   rw [smul_add, smul_smul, smul_smul, smul_smul, mul_comm x, mul_comm y]
 
