@@ -31,6 +31,42 @@ lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) -
   apply RingHom.injective_int (algebraMap ℤ ℚ)
   simp [Algebra.coe_norm_int, hζ.sub_one_norm_prime (cyclotomic.irreducible_rat p.2) hp]
 
+@[simp]
+lemma PNat.coe_two : (2 : ℕ+) = (2 : ℕ) := rfl
+
+lemma surjective_of_isCyclotomicExtension_two (R S) [CommRing R] [CommRing S]
+    [IsDomain S] [Algebra R S] [IsCyclotomicExtension {2} R S] :
+    Function.Surjective (algebraMap R S) := by
+  intro x
+  have := IsCyclotomicExtension.adjoin_roots (S := {2}) (A := R) (B := S) x
+  simp only [Set.mem_singleton_iff, exists_eq_left, sq_eq_one_iff, PNat.coe_two] at this
+  have H : Algebra.adjoin R {b : S | b = 1 ∨ b = -1} ≤ ⊥
+  · rw [Algebra.adjoin_le_iff]
+    rintro _ (rfl|rfl)
+    · exact one_mem _
+    · exact neg_mem (one_mem _)
+  exact H this
+
+theorem IsPrimitiveRoot.sub_one_norm_two' {K L} [Field K] [Field L] [Algebra K L] {ζ : L}
+    (hζ : IsPrimitiveRoot ζ 2)
+    [IsCyclotomicExtension {2} K L] : Algebra.norm K (ζ - 1) = -2 := by
+  rw [hζ.eq_neg_one_of_two_right]
+  suffices : Algebra.norm K (algebraMap K L (-2)) = -2
+  · simpa only [sub_eq_add_neg, ← one_add_one_eq_two,
+      neg_add_rev, map_add, map_neg, map_one] using this
+  rw [Algebra.norm_algebraMap, finrank_eq_one_iff'.mpr, pow_one]
+  refine ⟨1, one_ne_zero, fun w ↦ ?_⟩
+  simpa only [Algebra.algebraMap_eq_smul_one] using surjective_of_isCyclotomicExtension_two K L w
+
+lemma norm_Int_zeta_sub_one' (hp : p = 2) :
+    Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) - 1 : 𝓞 K) = -p := by
+  clear ‹p ≠ 2›
+  letI := IsCyclotomicExtension.numberField {p} ℚ K
+  haveI : Fact (Nat.Prime p) := hpri
+  apply RingHom.injective_int (algebraMap ℤ ℚ)
+  subst hp
+  simp [Algebra.coe_norm_int, hζ.sub_one_norm_two']
+
 lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^ (p - 1 : ℕ)) p := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   haveI : Fact (Nat.Prime p) := hpri
@@ -83,8 +119,50 @@ lemma norm_dvd_iff {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     Int.natAbs_dvd]
   rwa [Ideal.absNorm_span_singleton, ← Int.prime_iff_natAbs_prime]
 
+section
+
+variable {α} [CommMonoidWithZero α]
+
+theorem prime_units_mul (a : αˣ) (b : α) : Prime (↑a * b) ↔ Prime b := by simp [Prime]
+
+theorem prime_isUnit_mul {a b : α} (h : IsUnit a) : Prime (a * b) ↔ Prime b :=
+  let ⟨a, ha⟩ := h
+  ha ▸ prime_units_mul a b
+
+theorem prime_mul_units (a : αˣ) (b : α) : Prime (b * ↑a) ↔ Prime b := by simp [Prime]
+
+theorem prime_mul_isUnit {a b : α} (h : IsUnit a) : Prime (b * a) ↔ Prime b :=
+  let ⟨a, ha⟩ := h
+  ha ▸ prime_mul_units a b
+
+theorem prime_neg_iff {α} [CommRing α] {a : α} : Prime (-a) ↔ Prime a := by
+  rw [← prime_isUnit_mul isUnit_one.neg, neg_mul, one_mul, neg_neg]
+
+theorem prime_mul_iff {α} [CancelCommMonoidWithZero α] {a b : α} :
+    Prime (a * b) ↔ Prime a ∧ IsUnit b ∨ Prime b ∧ IsUnit a := by
+  constructor
+  · intro h
+    have ha : a ≠ 0 := fun ha ↦ by simp [ha] at h
+    have hb : b ≠ 0 := fun hb ↦ by simp [hb] at h
+    have : a * b ∣ a * 1 ∨ a * b ∣ 1 * b := by simpa using h.2.2 _ _ dvd_rfl
+    rw [mul_dvd_mul_iff_left ha, mul_dvd_mul_iff_right hb,
+      ← isUnit_iff_dvd_one, ← isUnit_iff_dvd_one] at this
+    refine this.imp (fun h' => ⟨?_, h'⟩) (fun h' => ⟨?_, h'⟩)
+    · rwa [prime_mul_isUnit h'] at h
+    · rwa [prime_isUnit_mul h'] at h
+  · rintro (⟨ha, hb⟩ | ⟨hb, ha⟩)
+    · rwa [prime_mul_isUnit hb]
+    · rwa [prime_isUnit_mul ha]
+end
+
 lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by
+  clear hp
   letI := IsCyclotomicExtension.numberField {p} ℚ K
+  by_cases hp : p = 2
+  · rw [← neg_dvd (a := (p : ℤ))]
+    rw [← norm_Int_zeta_sub_one' hζ hp, norm_dvd_iff]
+    rw [norm_Int_zeta_sub_one' hζ hp, prime_neg_iff, ← Nat.prime_iff_prime_int]
+    exact hpri.out
   rw [← norm_Int_zeta_sub_one hζ hp, norm_dvd_iff]
   rw [norm_Int_zeta_sub_one hζ hp, ← Nat.prime_iff_prime_int]
   exact hpri.out
