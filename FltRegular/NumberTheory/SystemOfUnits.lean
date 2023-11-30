@@ -40,9 +40,6 @@ lemma nontrivial (hr : r ≠ 0) : Nontrivial G := by
     | inl h => exact hr h
     | inr h => simpa [Nat.lt_succ_iff, h] using not_lt.2 (Nat.prime_def_lt.1 hp).1
 
-lemma bezout [Module A G] {a : A} (ha : a ≠ 0) : ∃ (f : A) (n : ℤ),
-        f * a = n := sorry
-
 lemma existence0 [Module A G] : Nonempty (systemOfUnits p G 0) := by
     exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
