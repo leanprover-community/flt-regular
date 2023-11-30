@@ -21,6 +21,9 @@ variable
 local notation3 "A" =>
   MonoidAlgebra ℤ H ⧸ Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ H σ) ^ i}
 
+noncomputable
+abbrev σA : A := MonoidAlgebra.of ℤ H σ
+
 structure systemOfUnits (r : ℕ) [Module A G]
   where
   units : Fin r → G
@@ -43,9 +46,19 @@ lemma bezout [Module A G] {a : A} (ha : a ≠ 0) : ∃ (f : A) (n : ℤ),
 lemma existence0 [Module A G] : Nonempty (systemOfUnits p G σ 0) := by
     exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
-lemma span_eq_span [Module A G] {R : ℕ} (f : Fin R → G) :
+lemma spanA_eq_spanA [Module A G] {R : ℕ} (f : Fin R → G) :
         (Submodule.span A (Set.range f) : Set G) =
-        Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)) := sorry
+        Submodule.span A (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)) := by
+    refine le_antisymm (Submodule.span_mono (fun x hx ↦ ?_)) ?_
+    · sorry
+    · sorry
+
+lemma spanA_eq_spanZ [Module A G] {R : ℕ} (f : Fin R → G) :
+        (Submodule.span A (Set.range f) : Set G) =
+        Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)) := by
+    let S := Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ f e.1)
+    have := Submodule.span_le_restrictScalars ℤ A S
+    sorry
 
 lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G σ R) (hR : R < r) :
         ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by

@@ -91,9 +91,6 @@ lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H�
     rw [←mul_one H₂.index, ←relindex_mul_index h.le, mul_comm, Ne, eq_comm]
     simp [-one_mul, -Nat.one_mul, hn, h.not_le]
 
-noncomputable
-abbrev σA : A := MonoidAlgebra.of ℤ H σ
-
 lemma isPrimitiveroot : IsPrimitiveRoot (σA p σ) p := sorry
 
 instance : IsDomain A := sorry
