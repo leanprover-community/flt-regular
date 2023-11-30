@@ -13,6 +13,7 @@ variable (p : ℕ+) {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension
 variable {k : Type*} [Field k] [NumberField k] (hp : Nat.Prime p)
 
 open FiniteDimensional BigOperators Finset
+open CyclotomicIntegers (zeta)
 -- Z[H] module M (rank L) submodule N (rank l) H-stable
 -- H cyclic order p
 -- M / N is free up to torsion rank r (as an ab group free rank r p)
@@ -26,21 +27,21 @@ variable
   [DistribMulAction H G] [Module.Free ℤ G] (hf : finrank ℤ G = r * (p - 1))
 
 -- TODO maybe abbrev
-local notation3 "A" =>
-  MonoidAlgebra ℤ H ⧸ Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ H σ) ^ i}
+local notation3 "A" => CyclotomicIntegers p
+  -- MonoidAlgebra ℤ H ⧸ Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ H σ) ^ i}
 
 instance systemOfUnits.instFintype {r}
   [Module A G] -- [IsScalarTower ℤ A G]
-  (sys : systemOfUnits (G := G) p σ r) : Fintype (G ⧸ Submodule.span A (Set.range sys.units)) := sorry
+  (sys : systemOfUnits (G := G) p r) : Fintype (G ⧸ Submodule.span A (Set.range sys.units)) := sorry
 
-def systemOfUnits.index [Module A G] (sys : systemOfUnits p G σ r) :=
+def systemOfUnits.index [Module A G] (sys : systemOfUnits p G r) :=
   Fintype.card (G ⧸ Submodule.span A (Set.range sys.units))
 
-def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G σ r) :=
-  ∀ s : systemOfUnits p G σ r, h.index ≤ s.index
+def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G r) :=
+  ∀ s : systemOfUnits p G r, h.index ≤ s.index
 
-lemma systemOfUnits.IsFundamental.maximal' [Module A G] (S : systemOfUnits p G σ r)
-    (hs : S.IsFundamental) (a : systemOfUnits p G σ r) :
+lemma systemOfUnits.IsFundamental.maximal' [Module A G] (S : systemOfUnits p G r)
+    (hs : S.IsFundamental) (a : systemOfUnits p G r) :
     (Submodule.span A (Set.range S.units)).toAddSubgroup.index ≤
       (Submodule.span A (Set.range a.units)).toAddSubgroup.index := by
   convert hs a <;> symm <;> exact Nat.card_eq_fintype_card.symm
@@ -91,52 +92,10 @@ lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H�
     rw [←mul_one H₂.index, ←relindex_mul_index h.le, mul_comm, Ne, eq_comm]
     simp [-one_mul, -Nat.one_mul, hn, h.not_le]
 
-lemma isPrimitiveroot : IsPrimitiveRoot (σA p σ) p := sorry
-
-instance : IsDomain A := sorry
-
-lemma one_sub_σA_mem : 1 - σA p σ ∈ A⁰ := by
-  rw [mem_nonZeroDivisors_iff_ne_zero, ne_eq, sub_eq_zero, eq_comm]
-  exact (isPrimitiveroot p σ).ne_one hp.one_lt
-
-lemma one_sub_σA_mem_nonunit : ¬ IsUnit (1 - σA p σ) := sorry
-
-open Polynomial in
-lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
-    (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot x.1 p) : minpoly ℤ x = cyclotomic p ℤ := by
-  apply Polynomial.map_injective (algebraMap ℤ ℚ) (RingHom.injective_int (algebraMap ℤ ℚ))
-  rw [← minpoly.isIntegrallyClosed_eq_field_fractions ℚ (CyclotomicField p ℚ),
-    ← cyclotomic_eq_minpoly_rat (n := p), map_cyclotomic]
-  · exact hx
-  · exact hp.pos
-  · exact IsIntegralClosure.isIntegral _ (CyclotomicField p ℚ) _
-
-open Polynomial in
-noncomputable
-def TheEquiv : ℤ[X] ⧸ Ideal.span (singleton (cyclotomic p ℤ)) ≃+* 𝓞 (CyclotomicField p ℚ) := by
-  letI := Fact.mk hp
-  have : IsCyclotomicExtension {p ^ 1} ℚ (CyclotomicField p ℚ)
-  · rw [pow_one]
-    infer_instance
-  refine (AdjoinRoot.equiv' (cyclotomic p ℤ) (IsPrimitiveRoot.integralPowerBasis
-    (IsCyclotomicExtension.zeta_spec (p ^ 1) ℚ (CyclotomicField p ℚ))) ?_ ?_).toRingEquiv
-  · simp only [pow_one, IsPrimitiveRoot.integralPowerBasis_gen, AdjoinRoot.aeval_eq,
-      AdjoinRoot.mk_eq_zero]
-    rw [IsPrimitiveRoot.cyclotomic_eq_minpoly p hp
-      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).toInteger
-      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ))]
-  · rw [← IsPrimitiveRoot.cyclotomic_eq_minpoly p hp
-      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).toInteger
-      (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ))]
-    simp
-
-
-lemma isCoprime_one_sub_σA (n : ℤ) (hn : ¬ (p : ℤ) ∣ n): IsCoprime (1 - σA p σ) n := sorry
-
 namespace fundamentalSystemOfUnits
-lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, S.IsFundamental := by
-  obtain ⟨S⟩ := systemOfUnits.existence p G σ r
-  have : { a | ∃ S : systemOfUnits p G σ r, a = S.index}.Nonempty := ⟨S.index, S, rfl⟩
+lemma existence [Module A G] : ∃ S : systemOfUnits p G r, S.IsFundamental := by
+  obtain ⟨S⟩ := systemOfUnits.existence p hp G r
+  have : { a | ∃ S : systemOfUnits p G r, a = S.index}.Nonempty := ⟨S.index, S, rfl⟩
   obtain ⟨S', ha⟩ := Nat.sInf_mem this
   use S'
   intro a'
@@ -144,11 +103,13 @@ lemma existence [Module A G] : ∃ S : systemOfUnits p G σ r, S.IsFundamental :
   apply csInf_le (OrderBot.bddBelow _)
   use a'
 
-lemma lemma2 [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i : Fin r) :
-    ∀ g : G, (1 - σA p σ) • g ≠ S.units i := by
+lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : Fin r) :
+    ∀ g : G, (1 - zeta p) • g ≠ S.units i := by
   intro g hg
-  let S' : systemOfUnits p G σ r := ⟨Function.update S.units i g,
-    LinearIndependent.update (hσ := one_sub_σA_mem p hp σ) (hg := hg) S.linearIndependent⟩
+  letI := Fact.mk hp
+  let S' : systemOfUnits p G r := ⟨Function.update S.units i g,
+    LinearIndependent.update (hσ := CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
+      (hg := hg) S.linearIndependent⟩
   suffices : Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units)
   · exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.instFintype) this)
   rw [SetLike.lt_iff_le_and_exists]
@@ -170,19 +131,21 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i
       ← (Finsupp.total (Fin r) G A S.units).map_sub] at hg
     have := FunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
     simp only [Finsupp.coe_sub, Pi.sub_apply, Finsupp.single_eq_same] at this
-    exact one_sub_σA_mem_nonunit p σ (isUnit_of_mul_eq_one _ _ (sub_eq_zero.mp this))
+    exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
+      (isUnit_of_mul_eq_one _ _ (sub_eq_zero.mp this))
 
-lemma lemma2' [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (i : Fin r) (a : ℤ)
-    (ha : ¬ (p : ℤ) ∣ a) : ∀ g : G, (1 - σA p σ) • g ≠ a • (S.units i) := by
+lemma lemma2' [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : Fin r) (a : ℤ)
+    (ha : ¬ (p : ℤ) ∣ a) : ∀ g : G, (1 - zeta p) • g ≠ a • (S.units i) := by
   intro g hg
-  obtain ⟨x, y, e⟩ := isCoprime_one_sub_σA p σ a ha
-  apply lemma2 p hp G σ r S hs i (x • (S.units i) + y • g)
+  letI := Fact.mk hp
+  obtain ⟨x, y, e⟩ := CyclotomicIntegers.isCoprime_one_sub_zeta p a ha
+  apply lemma2 p hp G r S hs i (x • (S.units i) + y • g)
   conv_rhs => rw [← one_smul A (S.units i), ← e, add_smul, ← smul_smul y, intCast_smul, ← hg]
   rw [smul_add, smul_smul, smul_smul, smul_smul, mul_comm x, mul_comm y]
 
-lemma corollary [Module A G] (S : systemOfUnits p G σ r) (hs : S.IsFundamental) (a : Fin r → ℤ)
+lemma corollary [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (a : Fin r → ℤ)
     (ha : ∃ i , ¬ (p : ℤ) ∣ a i) :
-  ∀ g : G, (1 - σA p σ) • g ≠ ∑ i, a i • S.units i := sorry
+  ∀ g : G, (1 - zeta p) • g ≠ ∑ i, a i • S.units i := sorry
 
 end fundamentalSystemOfUnits
 section application
@@ -198,7 +161,13 @@ variable
 --     have : IsCyclic (K ≃ₐ[k] K) := isCyclic_of_prime_card (hp := ⟨hp⟩) this
 --     use IsCyclic.commGroup.mul_comm
 
-local notation3 "G" => (𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : 𝓞 k →* 𝓞 K))
+def RelativeUnits (k K : Type*) [Field k] [Field K] [Algebra k K] :=
+  ((𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))))
+
+
+local notation "G" => RelativeUnits k K
+
+instance : CommGroup G := by delta RelativeUnits; infer_instance
 
 attribute [local instance] IsCyclic.commGroup
 
@@ -276,21 +245,21 @@ local instance : Module
     Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i}) (Additive G) :=
 (isTors (k := k) (K := K) p σ).module
 
-def tors : Submodule
-  (MonoidAlgebra ℤ (K ≃ₐ[k] K) ⧸
-    Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i}) (Additive G) := sorry
+instance : Module A (Additive G) := sorry
+
+def tors : Submodule A (Additive G) := sorry
 -- local instance : Module A (Additive G ⧸ AddCommGroup.torsion (Additive G)) := Submodule.Quotient.module _
-#synth CommGroup G
-#synth AddCommGroup (Additive G)
+-- #synth CommGroup G
+-- #synth AddCommGroup (Additive G)
 -- #check Submodule.Quotient.module (tors (k := k) (K := K) p σ)
-local instance : Module A (Additive G ⧸ tors (k := k) (K := K) p σ) := by
-  -- apply Submodule.Quotient.modue _
-  sorry
+-- local instance : Module A (Additive G ⧸ tors) := by
+--   -- apply Submodule.Quotient.modue _
+--   sorry
 local instance : Module.Free ℤ (Additive <| G ⧸ torsion G) := sorry
 -- #exit
 lemma Hilbert91ish :
-    ∃ S : systemOfUnits p (Additive G ⧸ tors (k := k) (K := K) p σ) σ (NumberField.Units.rank k + 1), S.IsFundamental :=
-  fundamentalSystemOfUnits.existence p (Additive G ⧸ tors (k := k) (K := K) p σ) σ (NumberField.Units.rank k + 1)
+    ∃ S : systemOfUnits p (Additive G ⧸ tors (k := k) (K := K) p) (NumberField.Units.rank k + 1), S.IsFundamental :=
+  fundamentalSystemOfUnits.existence p hp (Additive G ⧸ tors (k := k) (K := K) p) (NumberField.Units.rank k + 1)
 
 
 
@@ -300,7 +269,7 @@ lemma Hilbert91ish :
 noncomputable
 
 def unitlifts
-   (S : systemOfUnits p (Additive G ⧸ tors (k := k) (K := K) p σ) σ (NumberField.Units.rank k + 1))  :
+   (S : systemOfUnits p (Additive G ⧸ tors (k := k) (K := K) p) (NumberField.Units.rank k + 1))  :
   Fin (NumberField.Units.rank k + 1) → Additive (𝓞 K)ˣ := by
   let U := S.units
   intro i
@@ -321,16 +290,18 @@ lemma torsion_free_lin_system [Algebra k K] (h : Monoid.IsTorsionFree (𝓞 K)ˣ
 
   sorry
 
+variable (k)
 
-def unit_to_U (u : (𝓞 K)ˣ) : (Additive G ⧸ tors (k := k) (K := K) p σ) := by
-  have u1 := (Additive.ofMul u : Additive G)
+def unit_to_U (u : (𝓞 K)ˣ) : (Additive G ⧸ tors (k := k) (K := K) p) := by
+  have u1 := (Additive.ofMul (QuotientGroup.mk u) : Additive G)
   use Quot.mk _ u1
 
+variable {k}
 
 lemma u_lemma2 [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
-    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (u v: (𝓞 K)ˣ)
-    (hu : u = v / (σ v : K)) : (unit_to_U p σ u)  = (1 - σA p σ) • (unit_to_U p σ v):= by
-    simp [unit_to_U]
+    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (u v : (𝓞 K)ˣ)
+    (hu : u = v / (σ v : K)) : (unit_to_U p k u) = (1 - zeta p : A) • (unit_to_U p k v):= by
+    -- simp [unit_to_U]
 
     sorry
 
@@ -341,16 +312,16 @@ lemma Hilbert92ish
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
 
-    have S := @Hilbert91ish p K _ k _ _ _ _ σ
+    have S := Hilbert91ish p (K := K) (k := k) hp
     obtain ⟨S, hS⟩ := S
-    let H := @unitlifts p K _ k _ _ _ _ σ  S
+    let H := @unitlifts p K _ k _ _ _ S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
 
 
     by_cases T : Monoid.IsTorsionFree (𝓞 K)ˣ
     obtain ⟨a, i, ha⟩ := torsion_free_lin_system p T N
-    have C := fundamentalSystemOfUnits.corollary p (Additive G ⧸ tors (k := k) (K := K) p σ) σ
+    have C := fundamentalSystemOfUnits.corollary p (Additive G ⧸ tors (k := k) (K := K) p)
       (NumberField.Units.rank k + 1) S hS a ⟨i, ha.1⟩
     let J := Additive.toMul (∑ i in ⊤, a i • H i)
     use J
