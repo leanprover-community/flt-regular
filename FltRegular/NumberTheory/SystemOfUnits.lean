@@ -61,21 +61,26 @@ lemma spanA_eq_spanA [Module A G] {R : ℕ} (f : Fin R → G) :
       apply Submodule.subset_span (R := A)
       use a
 
-lemma mem_spanZ [Module A G] {R : ℕ} (n : Fin R) (m : Fin (p - 1)) (f : Fin R → G) :
-    (zeta p) ^ m.1 • f n ∈ Submodule.span ℤ
-    (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p)^e.2.1 • f e.1)) := by
-  exact Submodule.subset_span ⟨⟨n, m⟩, rfl⟩
-  -- have hσmon : ∀ x, x ∈ Submonoid.powers σ := fun τ ↦ by
-  --   have : τ ∈ Subgroup.zpowers σ := by simp [hσ]
-  --   exact mem_powers_iff_mem_zpowers.2 this
-  -- obtain ⟨k, hk⟩ := (Submonoid.mem_powers_iff _ _).1 (hσmon h)
-  -- rw [← hk, map_pow, map_pow (Ideal.Quotient.mk (Ideal.span
-  --   {∑ i in Finset.range p, (MonoidAlgebra.of ℤ H σ) ^ i})), smul_smul (M := A),
-  --   ← pow_add]
-  -- rw [← Ideal.Quotient.mk_eq_mk, ← Submodule.Quotient.quot_mk_eq_mk]
-  -- sorry
+def _root_.Submodule.stabilizer {R M} (S)
+    [CommSemiring R] [Semiring S] [AddCommMonoid M] [Module R M] [Module S M]
+    [Algebra R S] [IsScalarTower R S M] (N : Submodule R M) : Subalgebra R S where
+  carrier := { x | ∀ n ∈ N, x • n ∈ N }
+  mul_mem' := fun {a} {b} ha hb n hn ↦ mul_smul a b n ▸ ha _ (hb n hn)
+  add_mem' := fun {a} {b} ha hb n hn ↦ add_smul a b n ▸ add_mem (ha n hn) (hb n hn)
+  algebraMap_mem' := fun r n hn ↦ algebraMap_smul S r n ▸ N.smul_mem r hn
 
--- #exit
+lemma Submodule.mem_stabilizer_span {R M} (S)
+    [CommSemiring R] [Semiring S] [AddCommMonoid M] [Module R M] [Module S M]
+    [Algebra R S] [IsScalarTower R S M] (s : Set M) (x : S) :
+    x ∈ (Submodule.span R s).stabilizer S ↔ ∀ i ∈ s, x • i ∈ Submodule.span R s := by
+  constructor
+  · intro H i hi
+    exact H i (Submodule.subset_span hi)
+  · intro H m hm
+    refine Submodule.span_induction hm H ?_ ?_ ?_
+    · rw [smul_zero]; exact zero_mem _
+    · intros _ _ h₁ h₂; rw [smul_add]; exact add_mem h₁ h₂
+    · intros r m h; rw [smul_comm]; exact Submodule.smul_mem _ r h
 
 set_option synthInstance.maxHeartbeats 0 in
 lemma mem_spanS [Module A G] {R : ℕ} {g : G} (a : A) (f : Fin R → G)
@@ -83,41 +88,24 @@ lemma mem_spanS [Module A G] {R : ℕ} {g : G} (a : A) (f : Fin R → G)
     (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p)^e.2.1 • f e.1))) :
     a • g ∈ Submodule.span ℤ
     (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p)^e.2.1 • f e.1)) := by
-  rcases a with ⟨x⟩
-  revert hg
-  sorry
-  -- apply MonoidAlgebra.induction_on x
-  -- · intro h hg
-  --   refine Submodule.span_induction hg ?_ ?_ ?_ ?_
-  --   · intro g₁ ⟨⟨n, m⟩, key⟩
-  --     simp only at key
-  --     rw [← key]
-  --     apply mem_spanZ
-  --       --have : h ∈ Subgroup.zpowers σ := by simp [hσ]
-  --       --rw [Subgroup.mem_zpowers_iff] at this
-  --       --obtain ⟨k, hk⟩ := this
-  --       --rw [← key, ← hk]
-  --       --refine ⟨⟨?_, m⟩, ?_⟩
-  --   · rw [smul_zero]
-  --     apply Submodule.zero_mem
-  --   · intro g₁ g₂ hg₁ hg₂
-  --     rw [smul_add]
-  --     exact Submodule.add_mem _ hg₁ hg₂
-  --   · intro n g hg
-  --     rw [smul_algebra_smul_comm]
-  --     apply Submodule.smul_mem
-  --     exact hg
-  -- · intro f₁ f₂ hf₁ hf₂ hg
-  --   simp only [MonoidAlgebra.of_apply, Submodule.Quotient.quot_mk_eq_mk, Ideal.Quotient.mk_eq_mk,
-  --     map_add]
-  --   rw [add_smul (R := A)]
-  --   exact Submodule.add_mem _ (hf₁ hg) (hf₂ hg)
-  -- · intro n f₁ hf₁ hg
-  --   rw [Submodule.Quotient.quot_mk_eq_mk, ← intCast_smul (k := MonoidAlgebra ℤ H),
-  --     Submodule.Quotient.mk_smul, intCast_smul, smul_assoc]
-  --   apply Submodule.smul_mem
-  --   specialize hf₁ hg
-  -- rwa [Submodule.Quotient.quot_mk_eq_mk] at hf₁
+  revert hg g
+  suffices : ⊤ ≤ Submodule.stabilizer A
+    (Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p)^e.2.1 • f e.1)))
+  · exact @this a trivial
+  rw [← CyclotomicIntegers.adjoin_zeta, Algebra.adjoin_le_iff, Set.singleton_subset_iff,
+    SetLike.mem_coe, Submodule.mem_stabilizer_span]
+  rintro _ ⟨⟨i, j⟩, rfl⟩
+  simp only
+  rw [smul_smul, ← pow_succ]
+  by_cases hj : j + 1 < (p : ℕ) - 1
+  · exact Submodule.subset_span ⟨⟨i, ⟨_, hj⟩⟩, rfl⟩
+  replace hj : j + 1 = (p : ℕ) - 1
+  · linarith [j.prop]
+  rw [hj, CyclotomicIntegers.zeta_pow_sub_one, neg_smul, sum_smul]
+  apply neg_mem
+  apply sum_mem
+  intro _ _
+  exact Submodule.subset_span ⟨⟨i, _⟩, rfl⟩
 
 lemma spanA_eq_spanZ [Module A G] {R : ℕ} (f : Fin R → G) :
         (Submodule.span A (Set.range f) : Set G) =

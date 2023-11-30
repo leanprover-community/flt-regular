@@ -102,5 +102,20 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m 
   ext1
   exact FunLike.congr_arg (algebraMap ℚ _) (Algebra.coe_norm_int (equiv p n))
 
+lemma adjoin_zeta : Algebra.adjoin ℤ {zeta p} = ⊤ := AdjoinRoot.adjoinRoot_eq_top
+
+open BigOperators
+
+lemma sum_zeta_pow : ∑ i in Finset.range p, zeta p ^ (i : ℕ) = 0 := by
+  rw [← AdjoinRoot.aeval_root (Polynomial.cyclotomic p ℤ), ← zeta]
+  simp [Polynomial.cyclotomic_prime ℤ p]
+
+lemma zeta_pow_sub_one :
+    zeta p ^ (p - 1 : ℕ) = - ∑ i : Fin (p - 1), zeta p ^ (i : ℕ) := by
+  rw [eq_neg_iff_add_eq_zero]
+  convert CyclotomicIntegers.sum_zeta_pow p
+  conv_rhs => enter [1]; rw [← tsub_add_cancel_of_le hpri.out.one_lt.le]
+  rw [Finset.sum_range_succ, add_comm, Fin.sum_univ_eq_sum_range]
+
 end CyclotomicIntegers
 end
