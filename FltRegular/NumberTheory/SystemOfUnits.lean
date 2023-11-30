@@ -126,7 +126,7 @@ lemma spanA_eq_spanZ [Module A G] {R : ℕ} (f : Fin R → G) :
     · intro z w hz hw
       exact Submodule.add_mem _ hz hw
     · intro a _ hx
-      exact mem_spanS p G a f hx
+      exact mem_spanS p hp G _ f hx
 
 lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
         ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
