@@ -83,6 +83,7 @@ lemma Ideal.exists_ideal_over_prime {R S : Type*} [CommSemiring R] [CommRing S] 
     (Algebra.algebraMapSubmonoid S p.primeCompl) Sₚ M).mp hM.isPrime).2 ⟨_, hx', rfl⟩ hx
 
 -- Mathlib/Algebra/Algebra/Hom.lean
+@[simps]
 def algHomUnitsEquiv (R S : Type*) [CommSemiring R] [Semiring S] [Algebra R S] :
     (S →ₐ[R] S)ˣ ≃* (S ≃ₐ[R] S) where
   toFun := fun f ↦
