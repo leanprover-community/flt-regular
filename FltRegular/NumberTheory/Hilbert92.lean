@@ -431,9 +431,9 @@ lemma norm_map_inv (z : K) : Algebra.norm k z⁻¹ = (Algebra.norm k z)⁻¹ := 
 lemma torsion_free_lin_system [Algebra k K] (h : Monoid.IsTorsionFree (𝓞 K)ˣ)
   (ι : Fin (NumberField.Units.rank k + 1) → Additive (𝓞 k)ˣ) :
   ∃ (a : (Fin (NumberField.Units.rank k + 1) → ℤ)) (i : Fin (NumberField.Units.rank k + 1)),
-  ¬ ((p : ℤ) ∣ a i) ∧ ∑ i in ⊤, (a i) • (ι i) = 0 := by
+  ¬ ((p : ℤ) ∣ a i) ∧ ∑ i in ⊤, (a i) • (ι i) = 0 := by sorry
 
-  sorry
+
 
 lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zeta p : A) • (mkG v) := by
   rw [sub_smul, one_smul, relativeUnitsModule_zeta_smul, ← unit_to_U_div]
@@ -445,12 +445,78 @@ lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zet
   refine div_mul_cancel _ ?_
   simp only [ne_eq, map_eq_zero, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
+lemma lh_pow_free  [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (h : ℕ) (ζ : (𝓞 k)ˣ)
+  (hζ : IsPrimitiveRoot ζ (p^h)) (hk : ∀ ε : k, ¬ IsPrimitiveRoot ε (p^(h+1)))
+  ( η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ ) :
+  ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i : Fin (NumberField.Units.rank k + 2)),
+    ∑ i in ⊤, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by sorry
+
+
+
+lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
+  IsPrimitiveRoot ζ (p^h) ∧   ∀ ε : k, ¬ IsPrimitiveRoot ε (p^(h+1)) := by sorry
+
+
+
+--set_option maxHeartbeats 400000
+
 lemma Hilbert92ish
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
-    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
+    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hp : Nat.Prime p) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
+    obtain ⟨h, ζ, hζ⟩:= h_exists p (k := k)
+    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ) ≠ ε / (σ ε : K)
+    sorry
+    simp only [ne_eq, not_forall, not_not] at H
+    obtain ⟨ E, hE⟩:= H
+    let NE := Units.map (RingOfIntegers.norm k ) E
+    obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp
+    have NE_p_pow : ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) NE) = E^(p : ℕ) := by sorry
+    let H := unitlifts p (K:= K) (k:=k)  S
+    let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
+      fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
+    let η : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
+    obtain ⟨a, ι,i, ha⟩ := lh_pow_free p h ζ (k := k) (K:= K) hζ.1 hζ.2 η
+    let Ζ :=  ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) ζ)^(-a)
+    let H2 : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul (E))
+    let J := (Additive.toMul (∑ i : Fin (NumberField.Units.rank k + 1).succ, ι i • H2 i)) *
+                 ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) ζ)^(-a)
+    refine ⟨J, ?_⟩
+    constructor
 
-    have S := Hilbert91ish p (K := K) (k := k) hp
+    have JM : J = E^(ι (Fin.last (NumberField.Units.rank k + 1)))* Ζ *
+          ∏ i : (Fin (NumberField.Units.rank k + 1)), (Additive.toMul (H2 i))^(ι i) := by
+      simp only  [toMul_sum]
+      rw [Fin.prod_univ_castSucc]
+      simp only [Fin.snoc_castSucc, toMul_zsmul, Fin.snoc_last, toMul_ofMul,
+        RingHom.toMonoidHom_eq_coe, zpow_neg, Fin.coe_eq_castSucc]
+      sorry
+
+
+
+    rw [JM]
+    simp only [zpow_neg, RingHom.toMonoidHom_eq_coe, Fin.coe_eq_castSucc, Fin.snoc_castSucc,
+      Units.val_mul, Units.coe_prod, Submonoid.coe_mul, Subsemiring.coe_toSubmonoid,
+      Subalgebra.coe_toSubsemiring, coe_zpow', Submonoid.coe_finset_prod, map_mul, map_prod]
+
+
+
+
+    sorry
+    sorry
+/-
+
+
+    have S := @Hilbert91ish p K _ k _ _ _ _ σ
+    obtain ⟨S, hS⟩ := S
+    let H := @unitlifts p K _ k _ _ _ _ σ  S
+    let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
+      fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
+    let η : Fin (NumberField.Units.rank k + 2) →  Additive (𝓞 k)ˣ := Fin.cons (Additive.ofMul NE) N
+    obtain ⟨a, ι,i, ha⟩ := lh_pow_free p h ζ (k := k) (K:= K) hζ.1 hζ.2 η
+
+
+    have S := @Hilbert91ish p K _ k _ _ _ _ σ
     obtain ⟨S, hS⟩ := S
     let H := @unitlifts p K _ k _ _ _ S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
@@ -479,10 +545,12 @@ lemma Hilbert92ish
     simp only [toMul_ofMul, Units.coe_map, RingOfIntegers.norm_apply_coe]
     rw [map_zpow']
     apply norm_map_inv
+    by_contra h
+    simp at h
+
+-/
 
 
-    sorry
-    sorry
 
 lemma Hilbert92
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
