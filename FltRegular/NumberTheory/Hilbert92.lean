@@ -315,10 +315,13 @@ lemma lh_pow_free  [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (h : ℕ
     ∑ i in ⊤, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by sorry
 
 
+
 lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
   IsPrimitiveRoot ζ (p^h) ∧   ∀ ε : k, ¬ IsPrimitiveRoot ε (p^(h+1)) := by sorry
 
 
+
+set_option maxHeartbeats 400000
 
 lemma Hilbert92ish
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
@@ -327,17 +330,39 @@ lemma Hilbert92ish
     obtain ⟨h, ζ, hζ⟩:= h_exists p (k := k)
     by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ) ≠ ε / (σ ε : K)
     sorry
-    simp at H
+    simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨ E, hE⟩:= H
     let NE := Units.map (RingOfIntegers.norm k ) E
     obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp
-
+    have NE_p_pow : ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) NE) = E^(p : ℕ) := by sorry
     let H := unitlifts p (K:= K) (k:=k)  S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
-    let η : Fin (NumberField.Units.rank k + 2) →  Additive (𝓞 k)ˣ := Fin.cons (Additive.ofMul NE) N
+    let η : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
     obtain ⟨a, ι,i, ha⟩ := lh_pow_free p h ζ (k := k) (K:= K) hζ.1 hζ.2 η
+    let Ζ :=  ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) ζ)^(-a)
+    let H2 : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul (E))
+    let J := (Additive.toMul (∑ i : Fin (NumberField.Units.rank k + 1).succ, ι i • H2 i)) *
+                 ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) ζ)^(-a)
+    refine ⟨J, ?_⟩
+    constructor
 
+    have JM : J = E^(ι (Fin.last (NumberField.Units.rank k + 1)))* Ζ *
+          ∏ i : (Fin (NumberField.Units.rank k + 1)), (Additive.toMul (H2 i))^(ι i) := by
+      simp only  [toMul_sum]
+      rw [Fin.prod_univ_castSucc]
+      simp
+      sorry
+
+
+
+    rw [JM]
+    simp
+
+
+
+
+    sorry
     sorry
 /-
 
