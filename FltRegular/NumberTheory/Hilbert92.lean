@@ -315,26 +315,34 @@ lemma lh_pow_free  [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (h : ℕ
     ∑ i in ⊤, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by sorry
 
 lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
-IsPrimitiveRoot ζ (p^h) ∧   ∀ ε : k, ¬ IsPrimitiveRoot ε (p^(h+1)) := by sorry
+  IsPrimitiveRoot ζ (p^h) ∧   ∀ ε : k, ¬ IsPrimitiveRoot ε (p^(h+1)) := by sorry
 
 lemma Hilbert92ish
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
-    ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
+    ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by sorry
+
+
+
+
+    /-
     obtain ⟨h, ζ, hζ⟩:= h_exists p (k := k)
     by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ) ≠ ε / (σ ε : K)
     sorry
     simp at H
     obtain ⟨ E, hE⟩:= H
     let NE := Units.map (RingOfIntegers.norm k ) E
-    have S := @Hilbert91ish p K _ k _ _ _ _ σ
-    obtain ⟨S, hS⟩ := S
-    let H := @unitlifts p K _ k _ _ _ _ σ  S
+
+    obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) _
+    let H := unitlifts p (K:= K) (k:=k)  S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
     let η : Fin (NumberField.Units.rank k + 2) →  Additive (𝓞 k)ˣ := Fin.cons (Additive.ofMul NE) N
     obtain ⟨a, ι,i, ha⟩ := lh_pow_free p h ζ (k := k) (K:= K) hζ.1 hζ.2 η
-    /-
+
+    sorry
+
+
     have S := @Hilbert91ish p K _ k _ _ _ _ σ
     obtain ⟨S, hS⟩ := S
     let H := @unitlifts p K _ k _ _ _ _ σ  S
@@ -376,7 +384,7 @@ lemma Hilbert92ish
     simp at h
 
     -/
-    sorry
+
 
 
 lemma Hilbert92
