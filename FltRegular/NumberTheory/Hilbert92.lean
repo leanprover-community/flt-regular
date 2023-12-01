@@ -321,7 +321,7 @@ lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
 
 
 
-set_option maxHeartbeats 400000
+--set_option maxHeartbeats 400000
 
 lemma Hilbert92ish
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
@@ -351,13 +351,16 @@ lemma Hilbert92ish
           ∏ i : (Fin (NumberField.Units.rank k + 1)), (Additive.toMul (H2 i))^(ι i) := by
       simp only  [toMul_sum]
       rw [Fin.prod_univ_castSucc]
-      simp
+      simp only [Fin.snoc_castSucc, toMul_zsmul, Fin.snoc_last, toMul_ofMul,
+        RingHom.toMonoidHom_eq_coe, zpow_neg, Fin.coe_eq_castSucc]
       sorry
 
 
 
     rw [JM]
-    simp
+    simp only [zpow_neg, RingHom.toMonoidHom_eq_coe, Fin.coe_eq_castSucc, Fin.snoc_castSucc,
+      Units.val_mul, Units.coe_prod, Submonoid.coe_mul, Subsemiring.coe_toSubmonoid,
+      Subalgebra.coe_toSubsemiring, coe_zpow', Submonoid.coe_finset_prod, map_mul, map_prod]
 
 
 
