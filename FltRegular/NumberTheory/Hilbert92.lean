@@ -94,7 +94,7 @@ lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H�
 
 namespace fundamentalSystemOfUnits
 lemma existence [Module A G] : ∃ S : systemOfUnits p G r, S.IsFundamental := by
-  obtain ⟨S⟩ := systemOfUnits.existence p hp G r
+  obtain ⟨S⟩ := systemOfUnits.existence p hp G r hf
   have : { a | ∃ S : systemOfUnits p G r, a = S.index}.Nonempty := ⟨S.index, S, rfl⟩
   obtain ⟨S', ha⟩ := Nat.sInf_mem this
   use S'
@@ -255,11 +255,14 @@ def tors : Submodule A (Additive G) := sorry
 -- local instance : Module A (Additive G ⧸ tors) := by
 --   -- apply Submodule.Quotient.modue _
 --   sorry
-local instance : Module.Free ℤ (Additive <| G ⧸ torsion G) := sorry
+local instance : Module.Free ℤ (Additive G ⧸ tors (k := k) (K := K) p) := sorry
+
+lemma finrank_G : finrank ℤ (Additive G ⧸ tors p) = (Units.rank k + 1) * (↑p - 1) := sorry
+
 -- #exit
 lemma Hilbert91ish :
     ∃ S : systemOfUnits p (Additive G ⧸ tors (k := k) (K := K) p) (NumberField.Units.rank k + 1), S.IsFundamental :=
-  fundamentalSystemOfUnits.existence p hp (Additive G ⧸ tors (k := k) (K := K) p) (NumberField.Units.rank k + 1)
+  fundamentalSystemOfUnits.existence p hp (Additive G ⧸ tors (k := k) (K := K) p) (NumberField.Units.rank k + 1) sorry
 
 
 
