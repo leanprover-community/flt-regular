@@ -51,11 +51,11 @@ lemma spanA_eq_spanA [Module A G] {R : ℕ} (f : Fin R → G) :
       refine ⟨⟨a, ⟨0, hp.pred_pos⟩⟩, ?_⟩
       simp only [MonoidAlgebra.of_apply, pow_zero, ha]
       exact one_smul A _
-    · rw [Submodule.span_le (R := A)]
+    · rw [Submodule.span_le]
       intro x ⟨⟨a, b⟩, hx⟩
       simp only [← hx, MonoidAlgebra.of_apply, SetLike.mem_coe]
       refine Submodule.smul_mem _ _ ?_
-      apply Submodule.subset_span (R := A)
+      apply Submodule.subset_span
       use a
 
 def _root_.Submodule.stabilizer {R M} (S)
@@ -124,13 +124,57 @@ lemma spanA_eq_spanZ [Module A G] {R : ℕ} (f : Fin R → G) :
     · intro a _ hx
       exact mem_spanS p hp G _ f hx
 
-lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) (hr : r ≠ 0) :
-        ∃ g, ∀ (k : ℤ), ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
-    change ∃ g, ∀ (k : ℤ), ¬(k • g ∈ (Submodule.span A (Set.range S.units) : Set G))
+lemma finrank_lt [Module A G] {R : ℕ} (f : Fin R → G) (hR : R < r) :
+    finrank ℤ
+      (Submodule.span ℤ (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p) ^ e.2.1 • f e.1))) <
+      finrank ℤ G := by
+  by_cases hr : r = 0
+  · linarith
+  have : R * (p - 1) < finrank ℤ G := by
+    rw [hf]
+    exact Nat.mul_lt_mul hR rfl.le hp.pred_pos
+  refine lt_of_le_of_lt ?_ this
+  let M := Submodule.span ℤ
+      (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p) ^ e.2.1 • f e.1))
+  let I := Module.Free.ChooseBasisIndex ℤ G
+  have : Finite I := by
+    replace hf : finrank ℤ G ≠ 0 := fun h0 ↦ by
+      apply hr
+      simp only [h0, ge_iff_le, zero_eq_mul, tsub_eq_zero_iff_le] at hf
+      cases hf with
+        | inl h => exact h
+        | inr h => linarith [hp.one_lt]
+    rw [finrank, Module.Free.rank_eq_card_chooseBasisIndex, Cardinal.toNat_ne_zero] at hf
+    exact Cardinal.mk_lt_aleph0_iff.mp hf.2
+  let _ : Fintype I := Fintype.ofFinite I
+  let BG := Module.Free.chooseBasis ℤ G
+  let BM := Submodule.basisOfPid BG M
+  rw [FiniteDimensional.finrank_eq_card_basis BM.2]
+  have key : ∀ (e : Fin R × (Fin (p - 1))), (zeta p) ^ e.2.1 • f e.1 ∈ M := fun e ↦ by
+    refine Submodule.subset_span ⟨e, rfl⟩
+  let F : Fin R × (Fin (p - 1)) → M := fun (e : Fin R × (Fin (p - 1))) ↦ ⟨_, key e⟩
+  let T := Set.range F
+  let _ : Fintype T := Fintype.ofFinite _
+  have hT : Submodule.span ℤ T = ⊤ := by
+    refine Submodule.eq_top_iff'.2 (fun m ↦ ?_)
+    exact Submodule.span_induction' (R := ℤ) (M := G)
+      (s := (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p) ^ e.2.1 • f e.1)))
+      (p := fun g hg ↦ ⟨g, hg⟩ ∈ Submodule.span ℤ T) (fun _ ⟨_, he⟩ ↦ Submodule.subset_span
+      (by simp [← he])) (Submodule.zero_mem _) (fun g₁ hg₁ g₂ hg₂ H₁ H₂ ↦ Submodule.add_mem _ H₁ H₂)
+      (fun k g hg h ↦ Submodule.smul_mem _ _ h) _
+  refine le_trans (Basis.le_span'' BM.2 hT) (le_trans (Fintype.card_range_le _) ?_)
+  simp
+
+lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
+        ∃ g, ∀ (k : ℤ), k ≠ 0 → ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
+    by_cases hr : r = 0
+    · linarith
+    change ∃ g, ∀ (k : ℤ), k ≠ 0 → ¬(k • g ∈ (Submodule.span A (Set.range S.units) : Set G))
     rw [spanA_eq_spanZ p hp G S.units]
     let M := Submodule.span ℤ
       (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p) ^ e.2.1 • S.units e.1))
-    have : Finite (Module.Free.ChooseBasisIndex ℤ G) := by
+    let I := Module.Free.ChooseBasisIndex ℤ G
+    have : Finite I := by
       replace hf : finrank ℤ G ≠ 0 := fun h0 ↦ by
         apply hr
         simp only [h0, ge_iff_le, zero_eq_mul, tsub_eq_zero_iff_le] at hf
@@ -139,26 +183,44 @@ lemma ex_not_mem [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) (
         | inr h => linarith [hp.one_lt]
       rw [finrank, Module.Free.rank_eq_card_chooseBasisIndex, Cardinal.toNat_ne_zero] at hf
       exact Cardinal.mk_lt_aleph0_iff.mp hf.2
-    let BG := Module.Free.chooseBasis ℤ G
-    have : Module.Finite ℤ G := Module.Finite.of_basis BG
-    let BM := Submodule.basisOfPid BG M
-    sorry
+    let rankM := (Submodule.smithNormalForm (Module.Free.chooseBasis ℤ G) M).1
+    let snf := (Submodule.smithNormalForm (Module.Free.chooseBasis ℤ G) M).2
+    let ι := snf.f
+    have hlt : rankM < Nat.card I := by
+      let _ : Fintype I := Fintype.ofFinite I
+      rw [Nat.card_eq_fintype_card, ← FiniteDimensional.finrank_eq_card_basis snf.bM]
+      convert finrank_lt p hp G r hf S.units hR
+      rw [FiniteDimensional.finrank_eq_card_basis snf.bN]
+      simp
+    have key : ∃ (i : I), ¬(i ∈ Set.range ι) := by
+      suffices : Set.Nonempty (Set.univ \ (Set.range ι))
+      · obtain ⟨z, hz⟩ := this
+        exact ⟨z, hz.2⟩
+      apply Set.diff_nonempty_of_ncard_lt_ncard
+      convert hlt
+      · rw [← Set.image_univ, Set.ncard_image_of_injective _ (Function.Embedding.injective ι),
+          Set.ncard_univ]
+        simp only [Nat.card_eq_fintype_card, Fintype.card_fin]
+      · exact Set.ncard_univ (Module.Free.ChooseBasisIndex ℤ G)
+      · exact Set.finite_range _
+    obtain ⟨i, hi⟩ := key
+    refine ⟨snf.bM i, fun k h0 hk ↦ ?_⟩
+    have := Basis.SmithNormalForm.repr_eq_zero_of_nmem_range snf ⟨_, hk⟩ hi
+    simp [h0] at this
 
 lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
         Nonempty (systemOfUnits p G (R + 1)) := by
-    by_cases hr : r = 0
-    · linarith
-    obtain ⟨g, hg⟩ := ex_not_mem p hp G r hf S hR hr
+    obtain ⟨g, hg⟩ := ex_not_mem p hp G r hf S hR
     refine ⟨⟨Fin.cases g S.units, ?_⟩⟩
     refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
     by_contra' ha
     letI := Fact.mk hp
-    obtain ⟨n, _, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha
+    obtain ⟨n, h0, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha
     replace hy := congr_arg (f • ·) hy
     simp only at hy
     rw [smul_zero, smul_add, smul_smul, mul_comm f,
       ← Hf, ← eq_neg_iff_add_eq_zero, intCast_smul] at hy
-    apply hg n
+    apply hg _ h0
     rw [hy]
     exact Submodule.neg_mem _ (Submodule.smul_mem _ _ y.2)
 
