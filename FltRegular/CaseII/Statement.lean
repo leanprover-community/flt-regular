@@ -55,7 +55,7 @@ lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRe
     ℚ (B := (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)) (Set.mem_singleton (⟨p, hpri.out.pos⟩ : ℕ+))
   have hodd' : (⟨p, hpri.out.pos⟩ : ℕ+) ≠ (2 : ℕ+) := by
     rwa [← PNat.coe_injective.ne_iff]
-  have := λ n ↦ zeta_sub_one_dvd_Int_iff (K := CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) hζ hodd' (n := n)
+  have := fun n ↦ zeta_sub_one_dvd_Int_iff (K := CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) hζ (n := n)
   simp only [PNat.mk_coe] at this
   simp_rw [← this]
   rintro ⟨x, y, z, hy, hz, hz', e⟩
