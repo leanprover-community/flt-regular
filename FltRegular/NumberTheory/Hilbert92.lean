@@ -151,7 +151,7 @@ end fundamentalSystemOfUnits
 section application
 
 variable
-    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)] -- technically redundant but useful
+    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] -- [IsCyclic (K ≃ₐ[k] K)] -- technically redundant but useful
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
 -- local instance : CommGroup (K ≃ₐ[k] K) where
@@ -470,9 +470,9 @@ lemma Hilbert92ish
     simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨ E, hE⟩:= H
     let NE := Units.map (RingOfIntegers.norm k ) E
-    obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp
+    obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
     have NE_p_pow : ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) NE) = E^(p : ℕ) := by sorry
-    let H := unitlifts p (K:= K) (k:=k)  S
+    let H := unitlifts p hp hKL σ hσ S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
     let η : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
