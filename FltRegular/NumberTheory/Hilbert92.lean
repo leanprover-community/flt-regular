@@ -456,26 +456,56 @@ lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zet
   refine div_mul_cancel _ ?_
   simp only [ne_eq, map_eq_zero, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
-lemma lh_pow_free  [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (h : ℕ) (ζ : (𝓞 k)ˣ)
-  (hζ : IsPrimitiveRoot ζ (p^h)) (hk : ∀ ε : k, ¬ IsPrimitiveRoot ε (p^(h+1)))
+lemma lh_pow_free [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (h : ℕ) (ζ : (𝓞 k)ˣ)
+  (hζ : IsPrimitiveRoot (ζ : k) (p ^ h)) (hk : ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ (h + 1)))
   ( η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ ) :
   ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i : Fin (NumberField.Units.rank k + 2)),
     ∑ i in ⊤, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by sorry
 
+lemma IsPrimitiveRoot.totient_le_finrank {R} [CommRing R] [IsDomain R] [CharZero R]
+    [Module.Finite ℤ R] {ζ : R} {r}
+    (hζ : IsPrimitiveRoot ζ r) : r.totient ≤ finrank ℤ R := by
+  by_cases hr : r = 0
+  · rw [hr]; exact Nat.zero_le _
+  replace hr := Nat.pos_iff_ne_zero.mpr hr
+  calc
+    _ ≤ (minpoly ℤ ζ).natDegree :=
+      hζ.totient_le_degree_minpoly
+    _ = (Algebra.adjoin.powerBasis' (hζ.isIntegral hr)).dim :=
+      (Algebra.adjoin.powerBasis'_dim (hζ.isIntegral hr)).symm
+    _ = finrank ℤ ↥(Algebra.adjoin ℤ {ζ}) :=
+      (Algebra.adjoin.powerBasis' (hζ.isIntegral hr)).finrank'.symm
+    _ ≤ finrank ℤ R :=
+      Submodule.finrank_le (Subalgebra.toSubmodule (Algebra.adjoin ℤ {ζ}))
+
 
 
 lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
-  IsPrimitiveRoot ζ (p^h) ∧   ∀ ε : k, ¬ IsPrimitiveRoot ε (p^(h+1)) := by sorry
-
-
-
---set_option maxHeartbeats 400000
+    IsPrimitiveRoot (ζ : k) (p ^ h) ∧ ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ (h + 1)) := by
+  classical
+  have H : ∃ n, ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ n : ℕ+)
+  · use finrank ℤ (𝓞 k) + 1
+    intro ζ hζ
+    have := hζ.unit'_coe.totient_le_finrank
+    generalize finrank ℤ (𝓞 k) = n at this
+    rw [PNat.pow_coe, Nat.totient_prime_pow_succ hp] at this
+    have := (Nat.mul_le_mul_left _ (show (1 : ℕ) ≤ ↑p - 1 from
+      le_tsub_of_add_le_right hp.two_le)).trans_lt (this.trans_lt n.lt_two_pow)
+    simp only [mul_one] at this
+    exact (lt_of_pow_lt_pow _ (Nat.zero_le _) this).not_le hp.two_le
+  cases h : Nat.find H with
+  | zero => simp at h
+  | succ n =>
+    have := Nat.find_min H ((Nat.lt_succ.mpr le_rfl).trans_le h.ge)
+    simp only [not_forall, not_not] at this
+    obtain ⟨ζ, hζ⟩ := this
+    refine ⟨n, hζ.unit', hζ, by simpa only [h] using Nat.find_spec H⟩
 
 lemma Hilbert92ish
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hp : Nat.Prime p) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
-    obtain ⟨h, ζ, hζ⟩:= h_exists p (k := k)
+    obtain ⟨h, ζ, hζ⟩ := h_exists p (k := k) hp
     by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ) ≠ ε / (σ ε : K)
     sorry
     simp only [ne_eq, not_forall, not_not] at H
