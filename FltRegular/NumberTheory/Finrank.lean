@@ -135,10 +135,12 @@ instance torsion.module {R M} [Ring R] [AddCommGroup M] [Module R M] :
       Nat.isUnit_iff, smul_comm n] at hn' ⊢; simp only [hn', smul_zero] }⟩ }
   exact inferInstanceAs (Module R (M ⧸ this))
 
-instance (N : Submodule R M) : Module.Finite R (M ⧸ N) :=
-  Module.Finite.of_surjective _ N.mkQ_surjective
+instance {S} [Ring S] [Module S M] [SMul R S] [IsScalarTower R S M] (N : Submodule S M) :
+    Module.Finite R (M ⧸ N) :=
+  Module.Finite.of_surjective (N.mkQ.restrictScalars R) N.mkQ_surjective
 
-instance : Module.Finite R (⊤ : Submodule R M) :=
+instance {S} [Ring S] [Module S M] [SMul R S] [IsScalarTower R S M] :
+    Module.Finite R (⊤ : Submodule S M) :=
   Module.Finite.of_surjective _ Submodule.topEquiv.symm.surjective
 
 end
@@ -287,6 +289,12 @@ lemma FiniteDimensional.finrank_quotient [IsDomain R] [IsPrincipalIdealRing R]
     (N : Submodule R M) :
     finrank R (M ⧸ N) = finrank R M - finrank R N := by
   rw [← FiniteDimensional.finrank_add_finrank_quotient N, add_tsub_cancel_left]
+
+lemma FiniteDimensional.finrank_quotient' [IsDomain R] [IsPrincipalIdealRing R]
+    {S} [Ring S] [SMul R S] [Module S M] [IsScalarTower R S M]
+    (N : Submodule S M) :
+    finrank R (M ⧸ N) = finrank R M - finrank R N :=
+  FiniteDimensional.finrank_quotient (N.restrictScalars R)
 
 lemma FiniteDimensional.exists_of_finrank_lt [IsDomain R] [IsPrincipalIdealRing R]
     (N : Submodule R M) (h : finrank R N < finrank R M) :

@@ -24,27 +24,40 @@ section thm91
 variable
   (G : Type*) {H : Type*} [AddCommGroup G] [CommGroup H] [Fintype H] (hCard : Fintype.card H = p)
   (σ : H) (hσ : Subgroup.zpowers σ = ⊤) (r : ℕ)
-  [DistribMulAction H G] [Module.Free ℤ G] (hf : finrank ℤ G = r * (p - 1))
+  [DistribMulAction H G] [Module.Free ℤ G] [Module.Finite ℤ G] (hf : finrank ℤ G = r * (p - 1))
 
 -- TODO maybe abbrev
 local notation3 "A" => CyclotomicIntegers p
   -- MonoidAlgebra ℤ H ⧸ Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ H σ) ^ i}
 
-instance systemOfUnits.instFintype {r}
-  [Module A G] -- [IsScalarTower ℤ A G]
-  (sys : systemOfUnits (G := G) p r) : Fintype (G ⧸ Submodule.span A (Set.range sys.units)) := sorry
 
-def systemOfUnits.index [Module A G] (sys : systemOfUnits p G r) :=
+abbrev systemOfUnits.IsMaximal {r} {p : ℕ+} {G} [AddCommGroup G] [Module (CyclotomicIntegers p) G]
+    (sys : systemOfUnits (G := G) p r) :=
+  Fintype (G ⧸ Submodule.span (CyclotomicIntegers p) (Set.range sys.units))
+
+noncomputable
+def systemOfUnits.isMaximal {r} (hf : finrank ℤ G = r * (p - 1)) [Module A G]
+  (sys : systemOfUnits (G := G) p r) : sys.IsMaximal := by
+  apply Nonempty.some
+  apply (@nonempty_fintype _ ?_)
+  apply Module.finite_of_fg_torsion
+  rw [← FiniteDimensional.finrank_eq_zero_iff,  finrank_quotient',
+    finrank_spanA p hp _ _ sys.linearIndependent, hf, mul_comm, Nat.sub_self]
+
+noncomputable
+def systemOfUnits.index [Module A G] (sys : systemOfUnits p G r) [sys.IsMaximal] :=
   Fintype.card (G ⧸ Submodule.span A (Set.range sys.units))
 
+
 def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G r) :=
-  ∀ s : systemOfUnits p G r, h.index ≤ s.index
+  ∃ _ : h.IsMaximal, ∀ (s : systemOfUnits p G r) (_ : s.IsMaximal), h.index ≤ s.index
 
 lemma systemOfUnits.IsFundamental.maximal' [Module A G] (S : systemOfUnits p G r)
-    (hs : S.IsFundamental) (a : systemOfUnits p G r) :
+    (hs : S.IsFundamental) (a : systemOfUnits p G r) [a.IsMaximal] :
     (Submodule.span A (Set.range S.units)).toAddSubgroup.index ≤
       (Submodule.span A (Set.range a.units)).toAddSubgroup.index := by
-  convert hs a <;> symm <;> exact Nat.card_eq_fintype_card.symm
+  letI := hs.choose
+  convert hs.choose_spec a ‹_› <;> symm <;> exact Nat.card_eq_fintype_card.symm
 
 @[to_additive]
 theorem Finsupp.prod_congr' {α M N} [Zero M] [CommMonoid N] {f₁ f₂ : α →₀ M} {g1 g2 : α → M → N}
@@ -95,13 +108,15 @@ lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H�
 namespace fundamentalSystemOfUnits
 lemma existence [Module A G] : ∃ S : systemOfUnits p G r, S.IsFundamental := by
   obtain ⟨S⟩ := systemOfUnits.existence p hp G r hf
-  have : { a | ∃ S : systemOfUnits p G r, a = S.index}.Nonempty := ⟨S.index, S, rfl⟩
-  obtain ⟨S', ha⟩ := Nat.sInf_mem this
-  use S'
-  intro a'
+  letI := S.isMaximal hp hf
+  have : { a | ∃ (S : systemOfUnits p G r) (_ : S.IsMaximal), a = S.index p G r }.Nonempty :=
+    ⟨S.index, S, S.isMaximal hp hf, rfl⟩
+  obtain ⟨S', hS', ha⟩ := Nat.sInf_mem this
+  use S', hS'
+  intro a' ha'
   rw [← ha]
   apply csInf_le (OrderBot.bddBelow _)
-  use a'
+  use a', ha'
 
 lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : Fin r) :
     ∀ g : G, (1 - zeta p) • g ≠ S.units i := by
@@ -110,8 +125,9 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : 
   let S' : systemOfUnits p G r := ⟨Function.update S.units i g,
     LinearIndependent.update (hσ := CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
       (hg := hg) S.linearIndependent⟩
+  letI := S'.isMaximal hp hf
   suffices : Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units)
-  · exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.instFintype) this)
+  · exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.isMaximal hp hf) this)
   rw [SetLike.lt_iff_le_and_exists]
   constructor
   · rw [Submodule.span_le]
@@ -139,7 +155,7 @@ lemma lemma2' [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i :
   intro g hg
   letI := Fact.mk hp
   obtain ⟨x, y, e⟩ := CyclotomicIntegers.isCoprime_one_sub_zeta p a ha
-  apply lemma2 p hp G r S hs i (x • (S.units i) + y • g)
+  apply lemma2 p hp G r hf S hs i (x • (S.units i) + y • g)
   conv_rhs => rw [← one_smul A (S.units i), ← e, add_smul, ← smul_smul y, intCast_smul, ← hg]
   rw [smul_add, smul_smul, smul_smul, smul_smul, mul_comm x, mul_comm y]
 
@@ -154,86 +170,18 @@ variable
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] -- [IsCyclic (K ≃ₐ[k] K)] -- technically redundant but useful
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
--- local instance : CommGroup (K ≃ₐ[k] K) where
---   mul_comm := by
---     have : Fintype.card (K ≃ₐ[k] K) = p := by
---       rwa [IsGalois.card_aut_eq_finrank]
---     have : IsCyclic (K ≃ₐ[k] K) := isCyclic_of_prime_card (hp := ⟨hp⟩) this
---     use IsCyclic.commGroup.mul_comm
-
 def RelativeUnits (k K : Type*) [Field k] [Field K] [Algebra k K] :=
   ((𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))))
-
-
--- local notation "G" => RelativeUnits k K
 
 instance : CommGroup (RelativeUnits k K) := by delta RelativeUnits; infer_instance
 
 attribute [local instance] IsCyclic.commGroup
 
--- open CommGroup
--- instance : MulDistribMulAction (K ≃ₐ[k] K) (K) := inferInstance
--- -- instance : MulDistribMulAction (K ≃ₐ[k] K) (𝓞 K) := sorry
+attribute [local instance 2000] inst_ringOfIntegersAlgebra Algebra.toSMul Algebra.toModule
 
--- noncomputable
--- instance : MulAction (K ≃ₐ[k] K) (𝓞 K)ˣ where
---   smul a := Units.map (galRestrict _ _ _ _ a : 𝓞 K ≃ₐ[ℤ] 𝓞 K)
---   one_smul b := by
---     change Units.map (galRestrict _ _ _ _ 1 : 𝓞 K ≃ₐ[ℤ] 𝓞 K) b = b
---     rw [MonoidHom.map_one]
---     rfl
-
---   mul_smul a b c := by
---     change (Units.map _) c = (Units.map _) (Units.map _ c)
---     rw [MonoidHom.map_mul]
---     rw [← MonoidHom.comp_apply]
---     rw [← Units.map_comp]
---     rfl
-
--- noncomputable
--- instance : MulDistribMulAction (K ≃ₐ[k] K) (𝓞 K)ˣ where
---   smul_mul a b c := by
---     change (Units.map _) (_ * _) = (Units.map _) _ * (Units.map _) _
---     rw [MonoidHom.map_mul]
---   smul_one a := by
---     change (Units.map _) 1 = 1
---     rw [MonoidHom.map_one]
-
--- instance : MulDistribMulAction (K ≃ₐ[k] K) G := sorry
--- -- instance : DistribMulAction (K ≃ₐ[k] K) (Additive G) := inferInstance
--- def ρ : Representation ℤ (K ≃ₐ[k] K) (Additive G) := Representation.ofMulDistribMulAction _ _
--- noncomputable
--- instance foof : Module
---   (MonoidAlgebra ℤ (K ≃ₐ[k] K))
---   (Additive G) := Representation.asModuleModule (ρ (k := k) (K := K))
-
--- lemma tors1 (a : Additive G) :
---     (∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i) • a = 0 := by
---   rw [sum_smul]
---   simp only [MonoidAlgebra.of_apply]
---   sorry
-
--- lemma tors2 (a : Additive G) (t)
---     (ht : t ∈ Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i}) :
---     t • a = 0 := by
---   simp only [one_pow, Ideal.mem_span_singleton] at ht
---   obtain ⟨r, rfl⟩ := ht
---   let a': Module
---     (MonoidAlgebra ℤ (K ≃ₐ[k] K))
---     (Additive G) := foof
---   let a'': MulAction
---     (MonoidAlgebra ℤ (K ≃ₐ[k] K))
---     (Additive G) := inferInstance
---   rw [mul_comm, mul_smul]
---   let a''': MulActionWithZero
---     (MonoidAlgebra ℤ (K ≃ₐ[k] K))
---     (Additive G) := inferInstance
---   rw [tors1 p σ a, smul_zero] -- TODO this is the worst proof ever maybe because of sorries
-
-attribute [local instance 2000] inst_ringOfIntegersAlgebra Algebra.toSMul
-
-instance : IsScalarTower ↥(𝓞 k) ↥(𝓞 K) K := sorry
-instance : IsIntegralClosure ↥(𝓞 K) ↥(𝓞 k) K := sorry
+instance : IsScalarTower ↥(𝓞 k) ↥(𝓞 K) K := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
+instance : IsIntegralClosure ↥(𝓞 K) ↥(𝓞 k) K := isIntegralClosure_of_isIntegrallyClosed _ _ _
+  (fun x ↦ IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ K x))
 
 lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
     (galRestrictHom (𝓞 k) k (𝓞 K) K σ x : K) = σ x :=
@@ -275,22 +223,6 @@ def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) 
 def Monoid.EndAdditive {M} [Monoid M] : Monoid.End M ≃* AddMonoid.End (Additive M) where
   __ := MonoidHom.toAdditive
   map_mul' := fun _ _ ↦ rfl
-
-
--- lemma isTors : Module.IsTorsionBySet
---     (MonoidAlgebra ℤ (K ≃ₐ[k] K))
---     (Additive G)
---     (Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i} : Set _) := by
---   intro a s
---   rcases s with ⟨s, hs⟩
---   simp only [MonoidAlgebra.of_apply, one_pow, SetLike.mem_coe] at hs -- TODO ew why is MonoidAlgebra.single_pow simp matching here
---   have := tors2 p σ a s hs
---   simpa
--- noncomputable
--- local instance : Module
---   (MonoidAlgebra ℤ (K ≃ₐ[k] K) ⧸
---     Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ (K ≃ₐ[k] K) σ) ^ i}) (Additive G) :=
--- (isTors (k := k) (K := K) p σ).module
 
 def Group.forall_mem_zpowers_iff {H} [Group H] {x : H} :
     (∀ y, y ∈ Subgroup.zpowers x) ↔ Subgroup.zpowers x = ⊤ := by
