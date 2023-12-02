@@ -380,17 +380,22 @@ local instance : Module.Finite ℤ G := Module.Finite.of_surjective
 
 local instance : Module.Free ℤ G := Module.free_of_finite_type_torsion_free'
 
-lemma card_infinitePlace_of_isCyclic :
+lemma card_infinitePlace_eq_finrank_mul_of_odd {k K} [Field k] [Field K] [NumberField k]
+    [NumberField K] [Algebra k K] (h : Odd (finrank k K)) :
     Fintype.card (InfinitePlace K) = finrank k K * Fintype.card (InfinitePlace k) := sorry
 
-lemma rank_of_isCyclic : NumberField.Units.rank K = p * NumberField.Units.rank k + p - 1 := by
+lemma NumberField.Units.rank_of_odd (h : Odd (finrank k K)) :
+    NumberField.Units.rank K = (finrank k K) * NumberField.Units.rank k + (finrank k K) - 1 := by
   delta NumberField.Units.rank
-  rw [card_infinitePlace_of_isCyclic (k := k), hKL, mul_tsub, mul_one, tsub_add_cancel_of_le]
+  rw [card_infinitePlace_eq_finrank_mul_of_odd h,
+    mul_tsub, mul_one, tsub_add_cancel_of_le]
   refine (mul_one _).symm.trans_le (Nat.mul_le_mul_left _ ?_)
   rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, Fintype.card_pos_iff]
   infer_instance
 
-lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
+variable (hp2 : p ≠ 2)
+
+lemma finrank_G (hp2 : p ≠ 2) : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
   rw [← Submodule.torsion_int]
   refine (FiniteDimensional.finrank_quotient_of_le_torsion _ le_rfl).trans ?_
   show finrank ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
@@ -398,11 +403,14 @@ lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
   rw [FiniteDimensional.finrank_quotient]
   show _ - finrank ℤ (LinearMap.range <| AddMonoidHom.toIntLinearMap <|
     MonoidHom.toAdditive <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))) = _
+  have hodd : Odd (finrank k K)
+  · rw [hKL]; exact hp.odd_of_ne_two (PNat.coe_injective.ne hp2)
   rw [LinearMap.finrank_range_of_inj, NumberField.Units.finrank_eq, NumberField.Units.finrank_eq,
-    rank_of_isCyclic p hKL, add_mul, one_mul, mul_tsub, mul_one, mul_comm, add_tsub_assoc_of_le,
-    tsub_add_eq_add_tsub]
+    NumberField.Units.rank_of_odd hodd, add_mul, one_mul, mul_tsub, mul_one, mul_comm,
+      add_tsub_assoc_of_le,
+    tsub_add_eq_add_tsub, hKL]
   · exact (mul_one _).symm.trans_le (Nat.mul_le_mul_left _ hp.one_lt.le)
-  · exact hp.one_lt.le
+  · exact hKL ▸ hp.one_lt.le
   · intros i j e
     apply Additive.toMul.injective
     ext
@@ -411,7 +419,8 @@ lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
 
 lemma Hilbert91ish :
     ∃ S : systemOfUnits p G (NumberField.Units.rank k + 1), S.IsFundamental :=
-  fundamentalSystemOfUnits.existence p hp G (NumberField.Units.rank k + 1) (finrank_G p hp hKL σ hσ)
+  fundamentalSystemOfUnits.existence p hp G (NumberField.Units.rank k + 1)
+    (finrank_G p hp hKL σ hσ hp2)
 
 noncomputable
 
@@ -472,7 +481,7 @@ lemma Hilbert92ish
     simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨ E, hE⟩:= H
     let NE := Units.map (RingOfIntegers.norm k ) E
-    obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
+    obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ hp2
     have NE_p_pow : ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) NE) = E^(p : ℕ) := by sorry
     let H := unitlifts p hp hKL σ hσ S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
