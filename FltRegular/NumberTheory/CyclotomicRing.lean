@@ -104,6 +104,48 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m 
 
 lemma adjoin_zeta : Algebra.adjoin ℤ {zeta p} = ⊤ := AdjoinRoot.adjoinRoot_eq_top
 
+-- def _root_.RingEquiv.toIntAlgEquiv {R S} [Ring R] [Ring S] (e : R ≃+* S) : R ≃ₐ[ℤ] S where
+--   __ := e
+--   __ := e.toRingHom.toIntAlgHom
+
+-- @[simp]
+-- def _root_.RingEquiv.toIntAlgEquiv_apply {R S} [Ring R] [Ring S] (e : R ≃+* S) (x) :
+--   e.toIntAlgEquiv x = e x := rfl
+
+-- @[simp]
+-- def _root_.RingEquiv.toIntAlgEquiv_symm_apply {R S} [Ring R] [Ring S] (e : R ≃+* S) (x) :
+--   e.toIntAlgEquiv.symm x = e.symm x := rfl
+
+def powerBasis : PowerBasis ℤ (CyclotomicIntegers p) :=
+   AdjoinRoot.powerBasis' (cyclotomic.monic _ _)
+
+@[simp]
+lemma powerBasis_gen : (powerBasis p).gen = zeta p := rfl
+
+lemma powerBasis_dim : (powerBasis p).dim = p - 1 := by
+  simp [powerBasis, Nat.totient_prime hpri.out, natDegree_cyclotomic]
+
+instance : Module.Finite ℤ (CyclotomicIntegers p) :=
+  Module.Finite.of_fintype_basis (powerBasis p).basis
+
+instance : NoZeroSMulDivisors ℤ (CyclotomicIntegers p) := (powerBasis p).basis.noZeroSMulDivisors
+
+instance : Module.Free ℤ (CyclotomicIntegers p) := ⟨_, (powerBasis p).basis⟩
+
+lemma nontrivial {p} (hp : p ≠ 0) : Nontrivial (CyclotomicIntegers p) := by
+  apply Ideal.Quotient.nontrivial
+  simp only [ne_eq, Ideal.span_singleton_eq_top]
+  intro h
+  have := natDegree_eq_zero_of_isUnit h
+  rw [natDegree_cyclotomic] at this
+  exact this.not_gt (p.totient_pos (Nat.pos_iff_ne_zero.mpr hp))
+
+lemma charZero {p} (hp : p ≠ 0) : CharZero (CyclotomicIntegers p) :=
+  letI := nontrivial hp
+  ⟨(NoZeroSMulDivisors.algebraMap_injective _ _).comp (algebraMap ℕ ℤ).injective_nat⟩
+
+instance : CharZero (CyclotomicIntegers p) := charZero hpri.out.ne_zero
+
 open BigOperators
 
 lemma sum_zeta_pow : ∑ i in Finset.range p, zeta p ^ (i : ℕ) = 0 := by

@@ -347,14 +347,6 @@ def relativeUnitsWithGenerator (_hp : Nat.Prime p)
 instance : CommGroup (relativeUnitsWithGenerator p hp hKL σ hσ) := by
   delta relativeUnitsWithGenerator; infer_instance
 
-instance torsion.module {R M} [CommRing R] [AddCommGroup M] [Module R M] :
-    Module R (M ⧸ AddCommGroup.torsion M) := by
-  letI : Submodule R M := { AddCommGroup.torsion M with smul_mem' := fun r m ⟨n, hn, hn'⟩ ↦
-    ⟨n, hn, by { simp only [Function.IsPeriodicPt, Function.IsFixedPt, add_left_iterate, add_zero,
-      Nat.isUnit_iff, smul_comm n] at hn' ⊢; simp only [hn', smul_zero] }⟩ }
-  exact inferInstanceAs (Module R (M ⧸ this))
-
-
 local notation "G" =>
   Additive (relativeUnitsWithGenerator p hp hKL σ hσ) ⧸
     AddCommGroup.torsion (Additive (relativeUnitsWithGenerator p hp hKL σ hσ))
@@ -397,19 +389,97 @@ lemma relativeUnitsModule_zeta_smul (x) :
     MonoidHom.toAdditive_apply_apply, toMul_ofMul, relativeUnitsMap_mk, unit_to_U]
   rfl
 
-local instance : Module.Free ℤ G := sorry
+@[to_additive]
+lemma isOfFinOrder_iff_zpow_eq_one {M} [Group M] {x : M} :
+    IsOfFinOrder x ↔ ∃ (n : ℤ), n ≠ 0 ∧ x ^ n = 1 := by
+  rw [isOfFinOrder_iff_pow_eq_one]
+  refine ⟨fun ⟨n, hn, hn'⟩ ↦ ⟨n, Int.coe_nat_ne_zero_iff_pos.mpr hn, zpow_coe_nat x n ▸ hn'⟩,
+    fun ⟨n, hn, hn'⟩ ↦ ⟨n.natAbs, Int.natAbs_pos.mpr hn, ?_⟩⟩
+  cases' (Int.natAbs_eq_iff (a := n)).mp rfl with h h;
+  · rwa [h, zpow_coe_nat] at hn'
+  · rwa [h, zpow_neg, inv_eq_one, zpow_coe_nat] at hn'
 
-lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := sorry
+lemma Submodule.torsion_int {M} [AddCommGroup M] :
+    (Submodule.torsion ℤ M).toAddSubgroup = AddCommGroup.torsion M := by
+  ext x
+  refine ((isOfFinAddOrder_iff_zsmul_eq_zero (x := x)).trans ?_).symm
+  simp [mem_nonZeroDivisors_iff_ne_zero]
 
--- #exit
+local instance {M} [AddCommGroup M] : NoZeroSMulDivisors ℤ (M ⧸ AddCommGroup.torsion M) := by
+  rw [← Submodule.torsion_int]
+  show NoZeroSMulDivisors ℤ (M ⧸ Submodule.torsion ℤ M)
+  infer_instance
+
+lemma NumberField.Units.finrank_eq : finrank ℤ (Additive (𝓞 k)ˣ) = NumberField.Units.rank k := by
+  rw [← rank_modTorsion]
+  show _ = finrank ℤ (Additive (𝓞 k)ˣ ⧸ (AddCommGroup.torsion <| Additive (𝓞 k)ˣ))
+  rw [← Submodule.torsion_int]
+  exact (FiniteDimensional.finrank_quotient_of_le_torsion _ le_rfl).symm
+
+instance : Module.Finite ℤ (Additive <| (𝓞 K)ˣ) := by
+  constructor
+  apply Submodule.fg_of_fg_map_of_fg_inf_ker ((Submodule.torsion ℤ (Additive <| (𝓞 K)ˣ)).mkQ)
+  · simp only [Submodule.map_top, Submodule.range_mkQ]
+    have : Module.Finite ℤ (Additive <| (𝓞 K)ˣ ⧸ (NumberField.Units.torsion K)) := inferInstance
+    have : Module.Finite ℤ (Additive (𝓞 K)ˣ ⧸ (AddCommGroup.torsion <| Additive (𝓞 K)ˣ)) := this
+    rw [← Submodule.torsion_int] at this
+    exact this.1
+  · simp only [Submodule.ker_mkQ, ge_iff_le, top_le_iff, le_top, inf_of_le_right]
+    suffices : Module.Finite ℤ (AddCommGroup.torsion <| Additive <| (𝓞 K)ˣ)
+    · rw [← Submodule.torsion_int] at this
+      exact (Submodule.fg_top _).mp this.1
+    show Module.Finite ℤ (Additive <| NumberField.Units.torsion K)
+    rw [Module.Finite.iff_addGroup_fg, ← GroupFG.iff_add_fg]
+    infer_instance
+
+local instance : Module.Finite ℤ (Additive <| RelativeUnits k K) := by
+  delta RelativeUnits
+  show Module.Finite ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
+    (MonoidHom.range <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K)))))
+  infer_instance
+
+local instance : Module.Finite ℤ (Additive <| relativeUnitsWithGenerator p hp hKL σ hσ) := by
+  delta relativeUnitsWithGenerator
+  infer_instance
+
+local instance : Module.Finite ℤ G := Module.Finite.of_surjective
+  (M := Additive (relativeUnitsWithGenerator p hp hKL σ hσ))
+  (QuotientAddGroup.mk' _).toIntLinearMap (QuotientAddGroup.mk'_surjective _)
+
+local instance : Module.Free ℤ G := Module.free_of_finite_type_torsion_free'
+
+lemma card_infinitePlace_of_isCyclic :
+    Fintype.card (InfinitePlace K) = finrank k K * Fintype.card (InfinitePlace k) := sorry
+
+lemma rank_of_isCyclic : NumberField.Units.rank K = p * NumberField.Units.rank k + p - 1 := by
+  delta NumberField.Units.rank
+  rw [card_infinitePlace_of_isCyclic (k := k), hKL, mul_tsub, mul_one, tsub_add_cancel_of_le]
+  refine (mul_one _).symm.trans_le (Nat.mul_le_mul_left _ ?_)
+  rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, Fintype.card_pos_iff]
+  infer_instance
+
+lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
+  rw [← Submodule.torsion_int]
+  refine (FiniteDimensional.finrank_quotient_of_le_torsion _ le_rfl).trans ?_
+  show finrank ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
+    (MonoidHom.range <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))))) = _
+  rw [FiniteDimensional.finrank_quotient]
+  show _ - finrank ℤ (LinearMap.range <| AddMonoidHom.toIntLinearMap <|
+    MonoidHom.toAdditive <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))) = _
+  rw [LinearMap.finrank_range_of_inj, NumberField.Units.finrank_eq, NumberField.Units.finrank_eq,
+    rank_of_isCyclic p hKL, add_mul, one_mul, mul_tsub, mul_one, mul_comm, add_tsub_assoc_of_le,
+    tsub_add_eq_add_tsub]
+  · exact (mul_one _).symm.trans_le (Nat.mul_le_mul_left _ hp.one_lt.le)
+  · exact hp.one_lt.le
+  · intros i j e
+    apply Additive.toMul.injective
+    ext
+    apply (algebraMap k K).injective
+    exact congr_arg (fun i : Additive (𝓞 K)ˣ ↦ (↑(↑(Additive.toMul i) : 𝓞 K) : K)) e
+
 lemma Hilbert91ish :
     ∃ S : systemOfUnits p G (NumberField.Units.rank k + 1), S.IsFundamental :=
   fundamentalSystemOfUnits.existence p hp G (NumberField.Units.rank k + 1) (finrank_G p hp hKL σ hσ)
-
-
-
--- #exit
-
 
 noncomputable
 
