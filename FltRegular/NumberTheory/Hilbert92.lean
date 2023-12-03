@@ -439,10 +439,10 @@ lemma norm_map_inv (z : K) : Algebra.norm k z⁻¹ = (Algebra.norm k z)⁻¹ := 
     apply eq_inv_of_mul_eq_one_left
     rw [← map_mul, inv_mul_cancel h, map_one]
 
-lemma torsion_free_lin_system [Algebra k K] (h : Monoid.IsTorsionFree (𝓞 K)ˣ)
-  (ι : Fin (NumberField.Units.rank k + 1) → Additive (𝓞 k)ˣ) :
-  ∃ (a : (Fin (NumberField.Units.rank k + 1) → ℤ)) (i : Fin (NumberField.Units.rank k + 1)),
-  ¬ ((p : ℤ) ∣ a i) ∧ ∑ i in ⊤, (a i) • (ι i) = 0 := by sorry
+-- lemma torsion_free_lin_system [Algebra k K] (h : Monoid.IsTorsionFree (𝓞 K)ˣ)
+--   (ι : Fin (NumberField.Units.rank k + 1) → Additive (𝓞 k)ˣ) :
+--   ∃ (a : (Fin (NumberField.Units.rank k + 1) → ℤ)) (i : Fin (NumberField.Units.rank k + 1)),
+--   ¬ ((p : ℤ) ∣ a i) ∧ ∑ i in ⊤, (a i) • (ι i) = 0 := by sorry
 
 
 
@@ -456,23 +456,75 @@ lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zet
   refine div_mul_cancel _ ?_
   simp only [ne_eq, map_eq_zero, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
+open multiplicity in
+theorem padicValNat_dvd_iff_le' {p : ℕ} (hp : p ≠ 1) {a n : ℕ} (ha : a ≠ 0) :
+    p ^ n ∣ a ↔ n ≤ padicValNat p a := by
+  rw [pow_dvd_iff_le_multiplicity, ← padicValNat_def' hp ha.bot_lt, PartENat.coe_le_coe]
 
-lemma lh_pow_free_aux {M} [CommGroup M] (h : ℕ) (ζ : M)
-  (hζ : IsPrimitiveRoot ζ (p ^ h)) (hk : ∀ ε : M, ¬ IsPrimitiveRoot ε (p ^ (h + 1)))
-  (r) (hr : finrank ℤ (Additive M) < r) (η : Fin r → Additive M) :
-  ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
-    ∑ i, ι i • η i = a • (Additive.ofMul ζ) ∧ ¬ ↑p ∣ ι i := by sorry
+theorem padicValNat_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℕ) :
+    p ^ n ∣ a ↔ a = 0 ∨ n ≤ padicValNat p a := by
+  rcases eq_or_ne a 0 with (rfl | ha)
+  · exact iff_of_true (dvd_zero _) (Or.inl rfl)
+  · rw [padicValNat_dvd_iff_le' hp ha, or_iff_right ha]
 
-lemma lh_pow_free' {M} [CommGroup M] (h : ℕ) (ζ : M)
-  (hζ : IsPrimitiveRoot ζ (p ^ h)) (hk : ∀ ε : M, ¬ IsPrimitiveRoot ε (p ^ (h + 1)))
-  (r) (hr : finrank ℤ (Additive M) + 1 < r) (η : Fin r → Additive M) :
-  ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
-    ∑ i, ι i • (η i) = (a * p) • (Additive.ofMul ζ) ∧ ¬ ↑p ∣ ι i := by
+theorem padicValInt_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℤ) :
+    (p : ℤ) ^ n ∣ a ↔ a = 0 ∨ n ≤ padicValInt p a := by
+  rw [padicValInt, ← Int.natAbs_eq_zero, ← padicValNat_dvd_iff' hp, ← Int.coe_nat_dvd_left,
+    Int.coe_nat_pow]
+
+theorem padicValInt_dvd' {p : ℕ} (a : ℤ) : (p : ℤ) ^ padicValInt p a ∣ a := by
+  by_cases hp : p = 1
+  · rw [hp, Nat.cast_one, one_pow]; exact one_dvd _
+  rw [padicValInt_dvd_iff' hp]
+  exact Or.inr le_rfl
+
+open Finset in
+lemma exists_pow_smul_eq_and_not_dvd
+    {ι : Type*} [Finite ι] (f : ι → ℤ) (hf : f ≠ 0) (p : ℕ) (hp : p ≠ 1) :
+    ∃ (n : ℕ) (f' : ι → ℤ), (f = p ^ n • f') ∧ ∃ i, ¬ ↑p ∣ f' i := by
+  cases nonempty_fintype ι
+  have : (univ.filter (fun i ↦ f i ≠ 0)).Nonempty
+  · by_contra h
+    exact hf (funext <| by simpa [filter_eq_empty_iff] using h)
+  obtain ⟨i, hfi, hi⟩ := exists_min_image _ (padicValInt p ∘ f) this
+  replace hfi : f i ≠ 0 := by simpa using hfi
+  let n := padicValInt p (f i)
+  have : ∀ j, (p : ℤ) ^ n ∣ f j := fun j ↦ if h : f j = 0 then h ▸ dvd_zero _ else
+    (pow_dvd_pow _ (hi _ (mem_filter.mpr ⟨mem_univ j, h⟩))).trans (padicValInt_dvd' _)
+  simp_rw [← Nat.cast_pow] at this
+  choose f' hf' using this
+  use n, f', funext hf', i
+  intro hi
+  have : (p : ℤ) ^ (n + 1) ∣ f i
+  · rw [hf', pow_succ', Nat.cast_pow]
+    exact mul_dvd_mul_left _ hi
+  simp [hfi, padicValInt_dvd_iff' hp] at this
+
+lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (h : ℕ) (ζ : M)
+    (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ζ ^ i = ε)
+    (r) (hr : finrank ℤ (Additive M) < r) (η : Fin r → Additive M) :
+    ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
+      ∑ i, ι i • η i = a • (Additive.ofMul ζ) ∧ ¬ ↑p ∣ ι i := by
+  obtain ⟨f, hf, hf'⟩ := Fintype.not_linearIndependent_iff.mp
+    (mt (fintype_card_le_finrank_of_linearIndependent' (R := ℤ) (b := η))
+      ((hr.trans_eq (Fintype.card_fin r).symm).not_le))
+  obtain ⟨n, f', hf', i, hi⟩ := exists_pow_smul_eq_and_not_dvd f
+    (Function.ne_iff.mpr hf') p hp.ne_one
+  simp_rw [hf', Pi.smul_apply, smul_assoc, ← smul_sum] at hf
+  obtain ⟨a, ha⟩ := hk _ _ hf
+  rw [← zpow_ofNat] at ha
+  exact ⟨a, f', i, ha.symm, hi⟩
+
+lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (h : ℕ) (ζ : M)
+    (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ζ ^ i = ε)
+    (r) (hr : finrank ℤ (Additive M) + 1 < r) (η : Fin r → Additive M) :
+    ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
+      ∑ i, ι i • (η i) = (a * p) • (Additive.ofMul ζ) ∧ ¬ ↑p ∣ ι i := by
   cases' r with r
   · exact (not_lt_zero' hr).elim
   simp only [Nat.succ_eq_add_one, add_lt_add_iff_right] at hr
-  obtain ⟨a₁, ι₁, i₁, e₁, hi₁⟩ := lh_pow_free_aux p h ζ hζ hk r hr (η ∘ Fin.succ)
-  obtain ⟨a₂, ι₂, i₂, e₂, hi₂⟩ := lh_pow_free_aux p h ζ hζ hk r hr (η ∘ Fin.succAbove i₁.succ)
+  obtain ⟨a₁, ι₁, i₁, e₁, hi₁⟩ := lh_pow_free_aux p hp h ζ hk r hr (η ∘ Fin.succ)
+  obtain ⟨a₂, ι₂, i₂, e₂, hi₂⟩ := lh_pow_free_aux p hp h ζ hk r hr (η ∘ Fin.succAbove i₁.succ)
   by_cases ha₁ : ↑p ∣ a₁
   · obtain ⟨b, hb⟩ := ha₁
     refine ⟨b, Function.extend Fin.succ ι₁ 0, Fin.succ i₁, ?_,
@@ -511,59 +563,78 @@ lemma IsPrimitiveRoot.coe_coe_iff {ζ : (𝓞 k)ˣ} {n} :
     ((IsFractionRing.injective (𝓞 k) k).comp Units.ext)
 
 lemma lh_pow_free [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (h : ℕ) (ζ : (𝓞 k)ˣ)
-  (hζ : IsPrimitiveRoot (ζ : k) (p ^ h)) (hk : ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ (h + 1)))
-  (η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ) :
-  ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i : Fin (NumberField.Units.rank k + 2)),
-    ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by
-  refine lh_pow_free' p hp h ζ (IsPrimitiveRoot.coe_coe_iff.mp hζ)
-    (fun _ ↦ IsPrimitiveRoot.coe_coe_iff.not.mp (hk _)) _ ?_ η
+    (hk : ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ζ ^ i = ε)
+    (η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ) :
+    ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i : Fin (NumberField.Units.rank k + 2)),
+      ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by
+  refine lh_pow_free' p hp h ζ hk _ ?_ η
   rw [NumberField.Units.finrank_eq]
   exact Nat.lt.base _
 
-lemma IsPrimitiveRoot.totient_le_finrank {R} [CommRing R] [IsDomain R] [CharZero R]
-    [Module.Finite ℤ R] {ζ : R} {r}
-    (hζ : IsPrimitiveRoot ζ r) : r.totient ≤ finrank ℤ R := by
-  by_cases hr : r = 0
-  · rw [hr]; exact Nat.zero_le _
-  replace hr := Nat.pos_iff_ne_zero.mpr hr
-  calc
-    _ ≤ (minpoly ℤ ζ).natDegree :=
-      hζ.totient_le_degree_minpoly
-    _ = (Algebra.adjoin.powerBasis' (hζ.isIntegral hr)).dim :=
-      (Algebra.adjoin.powerBasis'_dim (hζ.isIntegral hr)).symm
-    _ = finrank ℤ ↥(Algebra.adjoin ℤ {ζ}) :=
-      (Algebra.adjoin.powerBasis' (hζ.isIntegral hr)).finrank'.symm
-    _ ≤ finrank ℤ R :=
-      Submodule.finrank_le (Subalgebra.toSubmodule (Algebra.adjoin ℤ {ζ}))
+-- lemma IsPrimitiveRoot.totient_le_finrank {R} [CommRing R] [IsDomain R] [CharZero R]
+--     [Module.Finite ℤ R] {ζ : R} {r}
+--     (hζ : IsPrimitiveRoot ζ r) : r.totient ≤ finrank ℤ R := by
+--   by_cases hr : r = 0
+--   · rw [hr]; exact Nat.zero_le _
+--   replace hr := Nat.pos_iff_ne_zero.mpr hr
+--   calc
+--     _ ≤ (minpoly ℤ ζ).natDegree :=
+--       hζ.totient_le_degree_minpoly
+--     _ = (Algebra.adjoin.powerBasis' (hζ.isIntegral hr)).dim :=
+--       (Algebra.adjoin.powerBasis'_dim (hζ.isIntegral hr)).symm
+--     _ = finrank ℤ ↥(Algebra.adjoin ℤ {ζ}) :=
+--       (Algebra.adjoin.powerBasis' (hζ.isIntegral hr)).finrank'.symm
+--     _ ≤ finrank ℤ R :=
+--       Submodule.finrank_le (Subalgebra.toSubmodule (Algebra.adjoin ℤ {ζ}))
 
+lemma Subgroup.isCyclic_of_le {M : Type*} [Group M] {H₁ H₂ : Subgroup M} [IsCyclic H₂]
+    (e : H₁ ≤ H₂) : IsCyclic H₁ :=
+  isCyclic_of_surjective _ (subgroupOfEquivOfLe e).surjective
 
-
-lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
-    IsPrimitiveRoot (ζ : k) (p ^ h) ∧ ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ (h + 1)) := by
+lemma h_exists' : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
+    IsPrimitiveRoot (ζ : k) (p ^ h) ∧
+    ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ζ ^ i = ε := by
   classical
-  have H : ∃ n, ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ n : ℕ+)
-  · use finrank ℤ (𝓞 k) + 1
-    intro ζ hζ
-    have := hζ.unit'_coe.totient_le_finrank
-    generalize finrank ℤ (𝓞 k) = n at this
-    rw [PNat.pow_coe, Nat.totient_prime_pow_succ hp] at this
-    have := (Nat.mul_le_mul_left _ (show (1 : ℕ) ≤ ↑p - 1 from
-      le_tsub_of_add_le_right hp.two_le)).trans_lt (this.trans_lt n.lt_two_pow)
-    simp only [mul_one] at this
-    exact (lt_of_pow_lt_pow _ (Nat.zero_le _) this).not_le hp.two_le
-  cases h : Nat.find H with
-  | zero => simp at h
-  | succ n =>
-    have := Nat.find_min H ((Nat.lt_succ.mpr le_rfl).trans_le h.ge)
-    simp only [not_forall, not_not] at this
-    obtain ⟨ζ, hζ⟩ := this
-    refine ⟨n, hζ.unit', hζ, by simpa only [h] using Nat.find_spec H⟩
+  let H := Subgroup.toAddSubgroup.symm
+    (Submodule.torsion' ℤ (Additive (𝓞 k)ˣ) (Submonoid.powers (p : ℕ))).toAddSubgroup
+  have : H ≤ NumberField.Units.torsion k
+  · rintro x ⟨⟨_, i, rfl⟩, hnx : x ^ (p ^ i : ℕ) = 1⟩
+    exact isOfFinOrder_iff_pow_eq_one.mpr ⟨p ^ i, Fin.size_pos', hnx⟩
+  obtain ⟨ζ, hζ⟩ := Subgroup.isCyclic_of_le this
+  obtain ⟨⟨_, i, rfl⟩, hiζ : (ζ : (𝓞 k)ˣ) ^ (p ^ i : ℕ) = 1⟩ := ζ.prop
+  obtain ⟨j, _, hj'⟩ := (Nat.dvd_prime_pow hp).mp (orderOf_dvd_of_pow_eq_one hiζ)
+  refine ⟨j, ζ, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ζ.1),
+    fun ε n hn ↦ ?_⟩
+  have : Fintype H := Set.fintypeSubset (NumberField.Units.torsion k) (by exact this)
+  obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hζ ⟨ε, ⟨_, n, rfl⟩, hn⟩)
+  exact ⟨i, congr_arg Subtype.val hi⟩
+
+-- lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
+--     IsPrimitiveRoot (ζ : k) (p ^ h) ∧ ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ (h + 1)) := by
+--   classical
+--   have H : ∃ n, ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ n : ℕ+)
+--   · use finrank ℤ (𝓞 k) + 1
+--     intro ζ hζ
+--     have := hζ.unit'_coe.totient_le_finrank
+--     generalize finrank ℤ (𝓞 k) = n at this
+--     rw [PNat.pow_coe, Nat.totient_prime_pow_succ hp] at this
+--     have := (Nat.mul_le_mul_left _ (show (1 : ℕ) ≤ ↑p - 1 from
+--       le_tsub_of_add_le_right hp.two_le)).trans_lt (this.trans_lt n.lt_two_pow)
+--     simp only [mul_one] at this
+--     exact (lt_of_pow_lt_pow _ (Nat.zero_le _) this).not_le hp.two_le
+--   cases h : Nat.find H with
+--   | zero => simp at h
+--   | succ n =>
+--     have := Nat.find_min H ((Nat.lt_succ.mpr le_rfl).trans_le h.ge)
+--     simp only [not_forall, not_not] at this
+--     obtain ⟨ζ, hζ⟩ := this
+--     refine ⟨n, hζ.unit', hζ, by simpa only [h] using Nat.find_spec H⟩
 
 lemma Hilbert92ish
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hp : Nat.Prime p) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
-    obtain ⟨h, ζ, hζ⟩ := h_exists p (k := k) hp
+    obtain ⟨h, ζ, hζ⟩ := h_exists' p (k := k) hp
     by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ) ≠ ε / (σ ε : K)
     sorry
     simp only [ne_eq, not_forall, not_not] at H
@@ -575,7 +646,7 @@ lemma Hilbert92ish
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
     let η : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
-    obtain ⟨a, ι,i, ha⟩ := lh_pow_free p hp h ζ (k := k) (K:= K) hζ.1 hζ.2 η
+    obtain ⟨a, ι,i, ha⟩ := lh_pow_free p hp h ζ (k := k) (K:= K) hζ.2 η
     let Ζ :=  ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) ζ)^(-a)
     let H2 : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul (E))
     let J := (Additive.toMul (∑ i : Fin (NumberField.Units.rank k + 1).succ, ι i • H2 i)) *
