@@ -500,7 +500,7 @@ lemma exists_pow_smul_eq_and_not_dvd
     exact mul_dvd_mul_left _ hi
   simp [hfi, padicValInt_dvd_iff' hp] at this
 
-lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (h : ℕ) (ζ : M)
+lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M)
     (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ζ ^ i = ε)
     (r) (hr : finrank ℤ (Additive M) < r) (η : Fin r → Additive M) :
     ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
@@ -515,7 +515,7 @@ lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (h : �
   rw [← zpow_ofNat] at ha
   exact ⟨a, f', i, ha.symm, hi⟩
 
-lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (h : ℕ) (ζ : M)
+lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M)
     (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ζ ^ i = ε)
     (r) (hr : finrank ℤ (Additive M) + 1 < r) (η : Fin r → Additive M) :
     ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
@@ -523,8 +523,8 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (h : ℕ) 
   cases' r with r
   · exact (not_lt_zero' hr).elim
   simp only [Nat.succ_eq_add_one, add_lt_add_iff_right] at hr
-  obtain ⟨a₁, ι₁, i₁, e₁, hi₁⟩ := lh_pow_free_aux p hp h ζ hk r hr (η ∘ Fin.succ)
-  obtain ⟨a₂, ι₂, i₂, e₂, hi₂⟩ := lh_pow_free_aux p hp h ζ hk r hr (η ∘ Fin.succAbove i₁.succ)
+  obtain ⟨a₁, ι₁, i₁, e₁, hi₁⟩ := lh_pow_free_aux p hp ζ hk r hr (η ∘ Fin.succ)
+  obtain ⟨a₂, ι₂, i₂, e₂, hi₂⟩ := lh_pow_free_aux p hp ζ hk r hr (η ∘ Fin.succAbove i₁.succ)
   by_cases ha₁ : ↑p ∣ a₁
   · obtain ⟨b, hb⟩ := ha₁
     refine ⟨b, Function.extend Fin.succ ι₁ 0, Fin.succ i₁, ?_,
@@ -562,12 +562,12 @@ lemma IsPrimitiveRoot.coe_coe_iff {ζ : (𝓞 k)ˣ} {n} :
     (f := (algebraMap (𝓞 k) k).toMonoidHom.comp (Units.coeHom (𝓞 k)))
     ((IsFractionRing.injective (𝓞 k) k).comp Units.ext)
 
-lemma lh_pow_free [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (h : ℕ) (ζ : (𝓞 k)ˣ)
+lemma lh_pow_free [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (ζ : (𝓞 k)ˣ)
     (hk : ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ζ ^ i = ε)
     (η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ) :
     ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i : Fin (NumberField.Units.rank k + 2)),
       ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by
-  refine lh_pow_free' p hp h ζ hk _ ?_ η
+  refine lh_pow_free' p hp ζ hk _ ?_ η
   rw [NumberField.Units.finrank_eq]
   exact Nat.lt.base _
 
@@ -646,7 +646,7 @@ lemma Hilbert92ish
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
     let η : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
-    obtain ⟨a, ι,i, ha⟩ := lh_pow_free p hp h ζ (k := k) (K:= K) hζ.2 η
+    obtain ⟨a, ι,i, ha⟩ := lh_pow_free p hp ζ (k := k) (K:= K) hζ.2 η
     let Ζ :=  ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) ζ)^(-a)
     let H2 : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul (E))
     let J := (Additive.toMul (∑ i : Fin (NumberField.Units.rank k + 1).succ, ι i • H2 i)) *
