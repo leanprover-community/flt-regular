@@ -456,11 +456,69 @@ lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zet
   refine div_mul_cancel _ ?_
   simp only [ne_eq, map_eq_zero, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
+
+lemma lh_pow_free_aux {M} [CommGroup M] (h : ℕ) (ζ : M)
+  (hζ : IsPrimitiveRoot ζ (p ^ h)) (hk : ∀ ε : M, ¬ IsPrimitiveRoot ε (p ^ (h + 1)))
+  (r) (hr : finrank ℤ (Additive M) < r) (η : Fin r → Additive M) :
+  ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
+    ∑ i, ι i • η i = a • (Additive.ofMul ζ) ∧ ¬ ↑p ∣ ι i := by sorry
+
+lemma lh_pow_free' {M} [CommGroup M] (h : ℕ) (ζ : M)
+  (hζ : IsPrimitiveRoot ζ (p ^ h)) (hk : ∀ ε : M, ¬ IsPrimitiveRoot ε (p ^ (h + 1)))
+  (r) (hr : finrank ℤ (Additive M) + 1 < r) (η : Fin r → Additive M) :
+  ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
+    ∑ i, ι i • (η i) = (a * p) • (Additive.ofMul ζ) ∧ ¬ ↑p ∣ ι i := by
+  cases' r with r
+  · exact (not_lt_zero' hr).elim
+  simp only [Nat.succ_eq_add_one, add_lt_add_iff_right] at hr
+  obtain ⟨a₁, ι₁, i₁, e₁, hi₁⟩ := lh_pow_free_aux p h ζ hζ hk r hr (η ∘ Fin.succ)
+  obtain ⟨a₂, ι₂, i₂, e₂, hi₂⟩ := lh_pow_free_aux p h ζ hζ hk r hr (η ∘ Fin.succAbove i₁.succ)
+  by_cases ha₁ : ↑p ∣ a₁
+  · obtain ⟨b, hb⟩ := ha₁
+    refine ⟨b, Function.extend Fin.succ ι₁ 0, Fin.succ i₁, ?_,
+      by rwa [(Fin.succ_injective r).extend_apply]⟩
+    rw [← hb.trans (mul_comm _ _), ← e₁]
+    simp [Fin.sum_univ_succ, (Fin.succ_injective r).extend_apply]
+  by_cases ha₂ : ↑p ∣ a₂
+  · obtain ⟨b, hb⟩ := ha₂
+    refine ⟨b, Function.extend (Fin.succAbove i₁.succ) ι₂ 0, Fin.succAbove i₁.succ i₂, ?_,
+      by rwa [Fin.succAbove_right_injective.extend_apply]⟩
+    rw [← hb.trans (mul_comm _ _), ← e₂]
+    simp [Fin.sum_univ_succAbove _ i₁.succ, Fin.succAbove_right_injective.extend_apply]
+  obtain ⟨α₁, β₁, h₁⟩ := (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd.mpr ha₁
+  obtain ⟨α₂, β₂, h₂⟩ := (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd.mpr ha₂
+  refine ⟨α₂ - α₁, β₁ • Function.extend Fin.succ ι₁ 0 -
+      β₂ • Function.extend (Fin.succAbove i₁.succ) ι₂ 0, i₁.succ, ?_, ?_⟩
+  · rw [sub_mul, eq_sub_iff_add_eq.mpr h₁, eq_sub_iff_add_eq.mpr h₂]
+    simp only [zsmul_eq_mul, Pi.coe_int, Int.cast_id, Pi.sub_apply, Pi.mul_apply,
+      Fin.exists_succ_eq_iff, ne_eq, not_not, not_exists, sub_sub_sub_cancel_left]
+    simp only [sub_smul, mul_smul, ← e₁, ← e₂, sum_sub_distrib]
+    rw [Fin.sum_univ_succ, Fin.sum_univ_succAbove _ i₁.succ]
+    simp [(Fin.succ_injective r).extend_apply, Fin.succAbove_right_injective.extend_apply,
+      (Fin.castSucc_lt_last _).ne, smul_sum]
+  · simp only [zsmul_eq_mul, Pi.coe_int, Int.cast_id, Pi.sub_apply, Pi.mul_apply, Fin.succ_inj,
+      exists_eq, not_true_eq_false, (Fin.succ_injective r).extend_apply, Fin.exists_succAbove_eq_iff,
+      ne_eq, not_false_eq_true, Function.extend_apply', Pi.zero_apply, mul_zero, sub_zero,
+      (Nat.prime_iff_prime_int.mp hp).dvd_mul, hi₁, not_or, and_true]
+    intro H
+    exact (Nat.prime_iff_prime_int.mp hp).not_dvd_one
+      (h₁ ▸ dvd_add (dvd_mul_left (p : ℤ) α₁) (dvd_mul_of_dvd_left H a₁))
+
+lemma IsPrimitiveRoot.coe_coe_iff {ζ : (𝓞 k)ˣ} {n} :
+    IsPrimitiveRoot (ζ : k) n ↔ IsPrimitiveRoot ζ n :=
+  IsPrimitiveRoot.map_iff_of_injective
+    (f := (algebraMap (𝓞 k) k).toMonoidHom.comp (Units.coeHom (𝓞 k)))
+    ((IsFractionRing.injective (𝓞 k) k).comp Units.ext)
+
 lemma lh_pow_free [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (h : ℕ) (ζ : (𝓞 k)ˣ)
   (hζ : IsPrimitiveRoot (ζ : k) (p ^ h)) (hk : ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ (h + 1)))
-  ( η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ ) :
+  (η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ) :
   ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i : Fin (NumberField.Units.rank k + 2)),
-    ∑ i in ⊤, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by sorry
+    ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ζ) ∧ ¬ ((p : ℤ) ∣ ι i) := by
+  refine lh_pow_free' p hp h ζ (IsPrimitiveRoot.coe_coe_iff.mp hζ)
+    (fun _ ↦ IsPrimitiveRoot.coe_coe_iff.not.mp (hk _)) _ ?_ η
+  rw [NumberField.Units.finrank_eq]
+  exact Nat.lt.base _
 
 lemma IsPrimitiveRoot.totient_le_finrank {R} [CommRing R] [IsDomain R] [CharZero R]
     [Module.Finite ℤ R] {ζ : R} {r}
@@ -517,7 +575,7 @@ lemma Hilbert92ish
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k )) (Additive.toMul (H e))
     let η : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
-    obtain ⟨a, ι,i, ha⟩ := lh_pow_free p h ζ (k := k) (K:= K) hζ.1 hζ.2 η
+    obtain ⟨a, ι,i, ha⟩ := lh_pow_free p hp h ζ (k := k) (K:= K) hζ.1 hζ.2 η
     let Ζ :=  ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) ζ)^(-a)
     let H2 : Fin (NumberField.Units.rank k + 1).succ →  Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul (E))
     let J := (Additive.toMul (∑ i : Fin (NumberField.Units.rank k + 1).succ, ι i • H2 i)) *
