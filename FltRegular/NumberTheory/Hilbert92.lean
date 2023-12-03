@@ -2,6 +2,7 @@
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.GaloisPrime
 import FltRegular.NumberTheory.SystemOfUnits
+import FltRegular.NumberTheory.InfinitePlace
 import Mathlib
 
 set_option autoImplicit false
@@ -380,15 +381,10 @@ local instance : Module.Finite ℤ G := Module.Finite.of_surjective
 
 local instance : Module.Free ℤ G := Module.free_of_finite_type_torsion_free'
 
-lemma card_infinitePlace_eq_finrank_mul_of_odd {k K} [Field k] [Field K] [NumberField k]
-    [NumberField K] [Algebra k K] (h : Odd (finrank k K)) :
-    Fintype.card (InfinitePlace K) = finrank k K * Fintype.card (InfinitePlace k) := sorry
-
 lemma NumberField.Units.rank_of_odd (h : Odd (finrank k K)) :
     NumberField.Units.rank K = (finrank k K) * NumberField.Units.rank k + (finrank k K) - 1 := by
   delta NumberField.Units.rank
-  rw [card_infinitePlace_eq_finrank_mul_of_odd h,
-    mul_tsub, mul_one, tsub_add_cancel_of_le]
+  rw [InfinitePlace.card_eq_of_odd_fintype h, mul_comm, mul_tsub, mul_one, tsub_add_cancel_of_le]
   refine (mul_one _).symm.trans_le (Nat.mul_le_mul_left _ ?_)
   rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, Fintype.card_pos_iff]
   infer_instance
