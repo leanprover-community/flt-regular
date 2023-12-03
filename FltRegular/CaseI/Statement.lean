@@ -45,7 +45,7 @@ theorem may_assume : SlightlyEasier → Statement := by
     intro h
     simp [h] at hI
   have hp5 : 5 ≤ p := by
-    by_contra' habs
+    by_contra! habs
     have : p ∈ Finset.Ioo 2 5 :=
      (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_of_ne hpri.out.two_le hodd.symm, by linarith⟩
     fin_cases this
@@ -73,7 +73,7 @@ end CaseI
 theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) : IsCoprime a b := by
   rw [← gcd_eq_one_iff_coprime]
-  by_contra' h
+  by_contra! h
   obtain ⟨q, hqpri, hq⟩ := exists_prime_and_dvd h
   replace hqpri : Prime (q : ℤ) := prime_iff_natAbs_prime.2 (by simp [hqpri])
   obtain ⟨n, hn⟩ := hq

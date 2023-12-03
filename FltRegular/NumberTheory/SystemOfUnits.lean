@@ -36,7 +36,7 @@ structure systemOfUnits (r : ℕ)
 namespace systemOfUnits
 
 lemma nontrivial (hr : r ≠ 0) : Nontrivial G := by
-    by_contra' h
+    by_contra! h
     rw [not_nontrivial_iff_subsingleton] at h
     rw [FiniteDimensional.finrank_zero_of_subsingleton] at hf
     simp only [ge_iff_le, zero_eq_mul, tsub_eq_zero_iff_le] at hf
@@ -92,7 +92,7 @@ lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
     obtain ⟨g, hg⟩ := ex_not_mem p hp G r hf S hR
     refine ⟨⟨Fin.cases g S.units, ?_⟩⟩
     refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
-    by_contra' ha
+    by_contra! ha
     letI := Fact.mk hp
     obtain ⟨n, h0, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha
     replace hy := congr_arg (f • ·) hy

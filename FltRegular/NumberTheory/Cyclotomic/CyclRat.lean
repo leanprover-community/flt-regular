@@ -388,7 +388,7 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
   by_cases H : i = ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩
   · simp [H.symm, Hi]
   have hi : ↑i < (p : ℕ).pred := by
-    by_contra' habs
+    by_contra! habs
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt i))] at H
   obtain ⟨y, hy⟩ := hdiv
   rw [← Equiv.sum_comp (Fin.castIso (succ_pred_prime hp.out)).toEquiv, Fin.sum_univ_castSucc] at hy
@@ -440,7 +440,7 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   by_cases H : j = ⟨(p : ℕ).pred, pred_lt hp.ne_zero⟩
   · simpa [H] using last_dvd
   have hj : ↑j < (p : ℕ).pred := by
-    by_contra' habs
+    by_contra! habs
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt j))] at H
   obtain ⟨y, hy⟩ := hdiv
   rw [← Equiv.sum_comp (Fin.castIso (succ_pred_prime hp)).toEquiv, Fin.sum_univ_castSucc] at hy
