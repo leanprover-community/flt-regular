@@ -10,7 +10,7 @@ open scoped NumberField nonZeroDivisors
 open FiniteDimensional
 open NumberField
 
-variable (p : ℕ+) {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
+variable (p : ℕ+) {K : Type*} [Field K] [NumberField K] -- [IsCyclotomicExtension {p} ℚ K]
 variable {k : Type*} [Field k] [NumberField k] (hp : Nat.Prime p)
 
 open FiniteDimensional BigOperators Finset
@@ -168,7 +168,7 @@ end fundamentalSystemOfUnits
 section application
 
 variable
-    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] -- [IsCyclic (K ≃ₐ[k] K)] -- technically redundant but useful
+    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [InfinitePlace.IsUnramified k K]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
 def RelativeUnits (k K : Type*) [Field k] [Field K] [Algebra k K] :=
@@ -381,17 +381,16 @@ local instance : Module.Finite ℤ G := Module.Finite.of_surjective
 
 local instance : Module.Free ℤ G := Module.free_of_finite_type_torsion_free'
 
-lemma NumberField.Units.rank_of_odd (h : Odd (finrank k K)) :
+lemma NumberField.Units.rank_of_isUnramified :
     NumberField.Units.rank K = (finrank k K) * NumberField.Units.rank k + (finrank k K) - 1 := by
   delta NumberField.Units.rank
-  rw [InfinitePlace.card_eq_of_odd_fintype h, mul_comm, mul_tsub, mul_one, tsub_add_cancel_of_le]
+  rw [InfinitePlace.card_eq_of_isUnramified (k := k),
+    mul_comm, mul_tsub, mul_one, tsub_add_cancel_of_le]
   refine (mul_one _).symm.trans_le (Nat.mul_le_mul_left _ ?_)
   rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, Fintype.card_pos_iff]
   infer_instance
 
-variable (hp2 : p ≠ 2)
-
-lemma finrank_G (hp2 : p ≠ 2) : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
+lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
   rw [← Submodule.torsion_int]
   refine (FiniteDimensional.finrank_quotient_of_le_torsion _ le_rfl).trans ?_
   show finrank ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
@@ -399,12 +398,9 @@ lemma finrank_G (hp2 : p ≠ 2) : finrank ℤ G = (Units.rank k + 1) * (↑p - 1
   rw [FiniteDimensional.finrank_quotient]
   show _ - finrank ℤ (LinearMap.range <| AddMonoidHom.toIntLinearMap <|
     MonoidHom.toAdditive <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))) = _
-  have hodd : Odd (finrank k K)
-  · rw [hKL]; exact hp.odd_of_ne_two (PNat.coe_injective.ne hp2)
   rw [LinearMap.finrank_range_of_inj, NumberField.Units.finrank_eq, NumberField.Units.finrank_eq,
-    NumberField.Units.rank_of_odd hodd, add_mul, one_mul, mul_tsub, mul_one, mul_comm,
-      add_tsub_assoc_of_le,
-    tsub_add_eq_add_tsub, hKL]
+    NumberField.Units.rank_of_isUnramified (k := k), add_mul, one_mul, mul_tsub, mul_one, mul_comm,
+      add_tsub_assoc_of_le, tsub_add_eq_add_tsub, hKL]
   · exact (mul_one _).symm.trans_le (Nat.mul_le_mul_left _ hp.one_lt.le)
   · exact hKL ▸ hp.one_lt.le
   · intros i j e
@@ -416,7 +412,7 @@ lemma finrank_G (hp2 : p ≠ 2) : finrank ℤ G = (Units.rank k + 1) * (↑p - 1
 lemma Hilbert91ish :
     ∃ S : systemOfUnits p G (NumberField.Units.rank k + 1), S.IsFundamental :=
   fundamentalSystemOfUnits.existence p hp G (NumberField.Units.rank k + 1)
-    (finrank_G p hp hKL σ hσ hp2)
+    (finrank_G p hp hKL σ hσ)
 
 noncomputable
 
@@ -626,9 +622,10 @@ lemma h_exists' : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
 --     obtain ⟨ζ, hζ⟩ := this
 --     refine ⟨n, hζ.unit', hζ, by simpa only [h] using Nat.find_spec H⟩
 
-lemma Hilbert92ish
-    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [IsCyclic (K ≃ₐ[k] K)]
-    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hp : Nat.Prime p) :
+lemma Hilbert92ish (hp : Nat.Prime p)
+    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [InfinitePlace.IsUnramified k K]
+    [IsCyclic (K ≃ₐ[k] K)]
+    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
     obtain ⟨h, ζ, hζ⟩ := h_exists' p (k := k) hp
     by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ) ≠ ε / (σ ε : K)
@@ -636,7 +633,7 @@ lemma Hilbert92ish
     simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨ E, hE⟩:= H
     let NE := Units.map (RingOfIntegers.norm k ) E
-    obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ hp2
+    obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
     have NE_p_pow : ((Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom  ) NE) = E^(p : ℕ) := by sorry
     let H := unitlifts p hp hKL σ hσ S
     let N : Fin (NumberField.Units.rank k + 1) →  Additive (𝓞 k)ˣ :=
@@ -719,9 +716,11 @@ lemma Hilbert92ish
 
 
 lemma Hilbert92
-    [Algebra k K] [IsGalois k K] [FiniteDimensional k K]
-    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
-    ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by sorry
+    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [InfinitePlace.IsUnramified k K]
+    (hKL : Nat.Prime (finrank k K)) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
+    ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) :=
+  letI : IsCyclic (K ≃ₐ[k] K) := ⟨σ, hσ⟩
+  Hilbert92ish ⟨finrank k K, finrank_pos⟩ hKL rfl σ hσ
 
 
 end application

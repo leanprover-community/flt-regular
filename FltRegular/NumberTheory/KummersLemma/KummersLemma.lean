@@ -1,7 +1,5 @@
 import FltRegular.NumberTheory.KummersLemma.Field
-import FltRegular.NumberTheory.Hilbert92
-import FltRegular.NumberTheory.Hilbert90
-import FltRegular.NumberTheory.IdealNorm
+import FltRegular.NumberTheory.Hilbert94
 
 open scoped NumberField
 
@@ -19,88 +17,6 @@ variable {L} [Field L] [Algebra K L] [FiniteDimensional K L]
 variable [IsSplittingField K L (X ^ (p : ℕ) - C (u : K))]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
-variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
-    [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
-    [IsIntegralClosure B A L]
-
-lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K B L σ) β = β)
-    (σ' : L ≃ₐ[K] L) :
-    (Ideal.span {β}).comap (galRestrict A K B L σ') = Ideal.span {β} := by
-  suffices : (Ideal.span {β}).map
-      (galRestrict A K B L σ'⁻¹).toRingEquiv.toRingHom = Ideal.span {β}
-  · rwa [RingEquiv.toRingHom_eq_coe, Ideal.map_comap_of_equiv, map_inv] at this
-  apply_fun (Ideal.span {·}) at hβ
-  rw [← Ideal.span_singleton_mul_span_singleton, Ideal.span_singleton_eq_top.mpr η.isUnit,
-    ← Ideal.one_eq_top, one_mul, ← Set.image_singleton, ← Ideal.map_span] at hβ
-  change Ideal.map (galRestrict A K B L σ : B →+* B) _ = _ at hβ
-  generalize σ'⁻¹ = σ'
-  obtain ⟨n, rfl : σ ^ n = σ'⟩ := mem_powers_iff_mem_zpowers.mpr (hσ σ')
-  rw [map_pow]
-  induction n with
-  | zero =>
-    simp only [Nat.zero_eq, pow_zero, AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe]
-    exact Ideal.map_id _
-  | succ n IH =>
-    simp only [AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe, pow_succ'] at IH ⊢
-    conv_lhs at IH => rw [← hβ, Ideal.map_map]
-    exact IH
-
-open FiniteDimensional in
-theorem exists_units_eq_div_root_of_isUnramified
-    [IsDedekindDomain A] [IsUnramified A B] [Fintype (ClassGroup A)]
-    (Hp : Nat.Coprime p <| Fintype.card <| ClassGroup A) (η : Bˣ)
-    (hη : Algebra.norm K (algebraMap B L η) = 1) :
-    ∃ α : Bˣ, algebraMap B L η = (algebraMap B L α) / σ (algebraMap B L α) := by
-  haveI := isGalois_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
-      (X_pow_sub_C_irreducible_of_prime hpri.out hu) L
-  obtain ⟨β, hβ_zero, hβ⟩ := Hilbert90_integral (A := A) (B := B) σ hσ η hη
-  haveI : IsDomain B :=
-    (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
-  haveI := IsIntegralClosure.isNoetherian A K L B
-  haveI := IsIntegralClosure.isDedekindDomain A K L B
-  haveI := IsIntegralClosure.isFractionRing_of_finite_extension A K L B
-  have hAB : Function.Injective (algebraMap A B)
-  · refine Function.Injective.of_comp (f := algebraMap B L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq A K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hAB
-  letI : Algebra (FractionRing A) (FractionRing B) := FractionRing.liftAlgebra _ _
-  have : IsScalarTower A (FractionRing A) (FractionRing B) :=
-    FractionRing.isScalarTower_liftAlgebra _ _
-  have H : RingHom.comp (algebraMap (FractionRing A) (FractionRing B))
-    ↑(FractionRing.algEquiv A K).symm.toRingEquiv =
-      RingHom.comp ↑(FractionRing.algEquiv B L).symm.toRingEquiv (algebraMap K L)
-  · apply IsLocalization.ringHom_ext (nonZeroDivisors A)
-    ext
-    simp only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_comp, RingHom.coe_coe,
-      AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
-      ← IsScalarTower.algebraMap_apply]
-    rw [IsScalarTower.algebraMap_apply A B L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-  have : IsSeparable (FractionRing A) (FractionRing B) := IsSeparable_of_equiv_equiv _ _ H
-  have hLK : finrank (FractionRing A) (FractionRing B) = finrank K L :=
-    (FiniteDimensional.finrank_of_equiv_equiv _ _ H).symm
-  have hβ' := comap_map_eq_of_isUnramified K L _
-    (comap_span_galRestrict_eq_of_cyclic σ hσ (A := A) (B := B) β η hβ)
-  obtain ⟨⟨γ, hγ : _ = Ideal.span _⟩⟩ : ((Ideal.span {β}).comap (algebraMap A B)).IsPrincipal
-  · apply_fun Ideal.spanIntNorm A at hβ'
-    rw [Ideal.spanIntNorm_map, Ideal.spanIntNorm_singleton, hLK] at hβ'
-    letI : Fact (Nat.Prime p) := hpri
-    apply IsPrincipal_of_IsPrincipal_pow_of_Coprime _ p Hp
-    rw [← finrank_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
-      (X_pow_sub_C_irreducible_of_prime hpri.out hu) L, hβ']
-    exact ⟨⟨_, rfl⟩⟩
-  rw [hγ, Ideal.map_span, Set.image_singleton, Ideal.span_singleton_eq_span_singleton] at hβ'
-  obtain ⟨a, rfl⟩ := hβ'
-  rw [map_mul, AlgEquiv.commutes, mul_left_comm, (mul_right_injective₀ _).eq_iff] at hβ
-  use a
-  conv_rhs => enter [1]; rw [← hβ]
-  rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K B L σ a]
-  refine (mul_div_cancel _ ?_).symm
-  · rw [ne_eq, (injective_iff_map_eq_zero' _).mp (IsFractionRing.injective B L),
-      (injective_iff_map_eq_zero' _).mp (galRestrict A K B L σ).injective]
-    exact a.isUnit.ne_zero
-  · exact (mul_ne_zero_iff.mp hβ_zero).1
-
 theorem false_of_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
     (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1)
     (hu : ∀ v : K, v ^ (p : ℕ) ≠ u) : False := by
@@ -112,15 +28,20 @@ theorem false_of_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
     (X_pow_sub_C_irreducible_of_prime hpri.out hu) L
   have := Polynomial.IsSplittingField.finiteDimensional L
     (Polynomial.X ^ (p : ℕ) - Polynomial.C (u : K))
-  obtain ⟨⟨σ, hσ⟩⟩ :=
-    isCyclic_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
+  have := isCyclic_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
       (X_pow_sub_C_irreducible_of_prime hpri.out hu) L
-  obtain ⟨η, hη, hη'⟩ := Hilbert92 p (finrank_of_isSplittingField_X_pow_sub_C
-    ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu) L) σ hσ
-  haveI := KummersLemma.isUnramified hp hζ u hcong hu L
-  obtain ⟨α, hα⟩ :=
-    exists_units_eq_div_root_of_isUnramified hζ u hu σ hσ (A := 𝓞 K) (B := 𝓞 L) hreg η hη
-  exact hη' α hα
+  have : CharZero L := charZero_of_injective_algebraMap (algebraMap K L).injective
+  have : FiniteDimensional ℚ L := Module.Finite.trans K L
+  have : NumberField L := ⟨⟩
+  have hKL : FiniteDimensional.finrank K L = p := (finrank_of_isSplittingField_X_pow_sub_C
+    ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu) L)
+  have := KummersLemma.isUnramified hp hζ u hcong hu L
+  have := NumberField.InfinitePlace.isUramified_of_odd_finrank (k := K) (K := L)
+    (hKL.symm ▸ Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp))
+  have := dvd_card_classGroup_of_isUnramified_isCyclic K L (hKL.symm ▸ hpri.out)
+  rw [hKL, ← Int.ofNat_dvd, (Nat.prime_iff_prime_int.mp hpri.out).irreducible.dvd_iff_not_coprime,
+    Nat.isCoprime_iff_coprime] at this
+  exact this (by convert hreg)
 
 -- Let 𝑝 be a regular prime (i.e. an odd prime which does not divide the class number off
 -- the 𝑝-th cyclotomic field) and 𝜉 a primitive 𝑝-th root of unity;

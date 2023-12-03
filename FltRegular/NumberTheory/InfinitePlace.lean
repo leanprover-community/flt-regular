@@ -329,16 +329,28 @@ lemma InfinitePlace.card_eq_card_isRamifiedIn [NumberField k] [IsGalois k K] :
       filter_eq_empty_iff, not_forall, not_not] at H
     rw [Nat.div_mul_cancel H.choose_spec.even_finrank.two_dvd]
 
-lemma InfinitePlace.card_eq_of_forall_not_isRamified [NumberField k] [IsGalois k K]
-    (h : ∀ w : InfinitePlace K, ¬ IsRamified k w) :
+class InfinitePlace.IsUnramified (k K) [Field k] [Field K] [Algebra k K] : Prop where
+  not_isRamified : ∀ w : InfinitePlace K, ¬ IsRamified k w
+
+lemma InfinitePlace.not_isRamified (k) {K} [Field k] [Field K] [Algebra k K] [IsUnramified k K]
+    (w : InfinitePlace K) : ¬ IsRamified k w := IsUnramified.not_isRamified w
+
+lemma InfinitePlace.not_isRamifiedIn {k} (K) [Field k] [Field K] [Algebra k K] [IsUnramified k K]
+  [IsGalois k K] (w : InfinitePlace k) : ¬ w.IsRamifiedIn K := IsUnramified.not_isRamified _
+
+lemma InfinitePlace.isUnramified_of_odd_card_aut (h : Odd (Fintype.card <| K ≃ₐ[k] K)) :
+    IsUnramified k K where
+  not_isRamified _ hw := Nat.odd_iff_not_even.mp h hw.even_card_aut
+
+lemma InfinitePlace.isUramified_of_odd_finrank [IsGalois k K] (h : Odd (finrank k K)) :
+    IsUnramified k K where
+  not_isRamified _ hw := Nat.odd_iff_not_even.mp h hw.even_finrank
+
+lemma InfinitePlace.card_eq_of_isUnramified [NumberField k] [IsGalois k K]
+    [IsUnramified k K] :
     Fintype.card (InfinitePlace K) = Fintype.card (InfinitePlace k) * finrank k K := by
   rw [card_eq_card_isRamifiedIn (k := k) (K := K), Finset.card_eq_zero.mpr, zero_mul, tsub_zero]
   simp only [Finset.mem_univ, forall_true_left, Finset.filter_eq_empty_iff]
-  exact fun x hx ↦ h _ hx
-
-lemma InfinitePlace.card_eq_of_odd_fintype [NumberField k] [IsGalois k K]
-    (h : Odd (finrank k K)) :
-    Fintype.card (InfinitePlace K) = Fintype.card (InfinitePlace k) * finrank k K :=
-  card_eq_of_forall_not_isRamified (fun _ hw ↦ Nat.odd_iff_not_even.mp h hw.even_finrank)
+  exact InfinitePlace.not_isRamifiedIn K
 
 end NumberField
