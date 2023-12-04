@@ -871,6 +871,7 @@ lemma Hilbert92ish :
     cases h <;> simp only [Nat.zero_eq, pow_zero, zero_le, tsub_eq_zero_of_le,
       zero_add, pow_one, one_dvd, Nat.succ_sub_succ_eq_sub,
       nonpos_iff_eq_zero, tsub_zero, dvd_refl]
+    sorry
   let H := unitlifts p hp hKL σ hσ S
   let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
     fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
