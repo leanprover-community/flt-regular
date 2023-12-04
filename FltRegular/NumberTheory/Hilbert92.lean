@@ -769,8 +769,23 @@ lemma Hilbert92ish (hp : Nat.Prime p)
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
     obtain ⟨h, ζ, hζ, hζ'⟩ := h_exists' p (k := k) hp
-    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ^((p : ℤ)^(h-1))) ≠ ε / (σ ε : K)
-    sorry
+    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ^((p : ℕ)^(h-1))) ≠ ε / (σ ε : K)
+    · let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ζ : (𝓞 K)ˣ)
+      use η ^ ((p : ℕ) ^ (h - 1))
+      constructor
+      · simp only [ge_iff_le, Units.val_pow_eq_pow_val, Units.coe_map,
+          MonoidHom.coe_coe, SubmonoidClass.coe_pow, map_pow]
+        show (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
+        rw [Algebra.norm_algebraMap, hKL, ← pow_mul]
+        nth_rewrite 1 [← pow_one (p : ℕ)]
+        rw [← pow_add]
+        apply (hζ.pow_eq_one_iff_dvd _).2
+        cases h <;> simp [add_comm]
+      · intro ε hε
+        apply H ε
+        rw [← hε]
+        simp
+        rfl
     simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨E, hE⟩ := H
     let NE := Units.map (RingOfIntegers.norm k) E
@@ -782,7 +797,7 @@ lemma Hilbert92ish (hp : Nat.Prime p)
       sorry
     let H := unitlifts p hp hKL σ hσ S
     let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
-      fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k)) (Additive.toMul (H e))
+      fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
     let η : Fin (r + 1).succ → Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
     obtain ⟨a, ι, i, ha, ha'⟩ := lh_pow_free p hp ζ (k := k) (K := K) hζ' η
     -- have : Π i : Fin (r + 1), (Algebra.norm k )
@@ -792,27 +807,29 @@ lemma Hilbert92ish (hp : Nat.Prime p)
                  (Units.map (algebraMap (𝓞 k) (𝓞 K) ).toMonoidHom ζ)^(-a)
     refine ⟨J, ?_⟩
     constructor
-
-    have JM : J = E ^ (ι (Fin.last (r + 1))) * Ζ *
-          ∏ i : (Fin (r + 1)), (Additive.toMul (H2 i)) ^ (ι i) := by
-      simp only [toMul_sum]
-      rw [Fin.prod_univ_castSucc]
-      simp only [Fin.snoc_castSucc, toMul_zsmul, Fin.snoc_last, toMul_ofMul,
-        RingHom.toMonoidHom_eq_coe, zpow_neg, Fin.coe_eq_castSucc]
-      conv_rhs => rw [mul_comm, ← mul_assoc]
-    rw [JM]
-    simp only [zpow_neg, RingHom.toMonoidHom_eq_coe, Fin.coe_eq_castSucc, Fin.snoc_castSucc,
-      Units.val_mul, Units.coe_prod, Submonoid.coe_mul, Subsemiring.coe_toSubmonoid,
-      Subalgebra.coe_toSubsemiring, coe_zpow', Submonoid.coe_finset_prod, map_mul, map_prod]
-    rw [← Units.coe_val_inv, norm_map_inv]
-    simp only [coe_zpow', Units.coe_map, MonoidHom.coe_coe]
-    rw [RingOfInteger.coe_algebraMap_apply, norm_map_zpow, norm_map_zpow,
-      Algebra.norm_algebraMap, hKL]
-    apply_fun Additive.toMul at ha
-    simp only [toMul_ofMul, toMul_sum, toMul_zsmul] at ha
-    sorry
-
-    sorry
+    · have JM : J = E ^ (ι (Fin.last (r + 1))) * Ζ *
+        ∏ i : (Fin (r + 1)), (Additive.toMul (H2 i)) ^ (ι i)
+      · simp only [toMul_sum]
+        rw [Fin.prod_univ_castSucc]
+        simp only [Fin.snoc_castSucc, toMul_zsmul, Fin.snoc_last, toMul_ofMul,
+          RingHom.toMonoidHom_eq_coe, zpow_neg, Fin.coe_eq_castSucc]
+        conv_rhs => rw [mul_comm, ← mul_assoc]
+      rw [JM]
+      simp only [zpow_neg, RingHom.toMonoidHom_eq_coe, Fin.coe_eq_castSucc, Fin.snoc_castSucc,
+        Units.val_mul, Units.coe_prod, Submonoid.coe_mul, Subsemiring.coe_toSubmonoid,
+        Subalgebra.coe_toSubsemiring, coe_zpow', Submonoid.coe_finset_prod, map_mul, map_prod]
+      rw [← Units.coe_val_inv, norm_map_inv]
+      simp only [coe_zpow', Units.coe_map, MonoidHom.coe_coe, norm_map_zpow]
+      rw [RingOfInteger.coe_algebraMap_apply, Algebra.norm_algebraMap, hKL]
+      apply_fun Additive.toMul at ha
+      apply_fun ((↑) : (𝓞 k)ˣ → k) at ha
+      simp only [toMul_sum, toMul_zsmul, Fin.prod_univ_castSucc (n := r + 1), Fin.snoc_castSucc,
+        toMul_ofMul, Fin.snoc_last, Units.val_mul, Units.coe_prod, Submonoid.coe_mul,
+        Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, Submonoid.coe_finset_prod,
+        coe_zpow', Units.coe_map, RingOfIntegers.norm_apply_coe, norm_map_zpow] at ha
+      rw [mul_comm, ← mul_assoc, ← zpow_ofNat, ← zpow_mul, mul_comm _ a, ha, mul_inv_eq_one₀]
+      apply zpow_ne_zero _ (hζ.ne_zero (pow_ne_zero _ p.pos.ne.symm))
+    · sorry
 /-
 
 
