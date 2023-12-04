@@ -30,6 +30,16 @@ lemma InfinitePlace.smul_apply (σ : K ≃ₐ[k] K) (w : InfinitePlace K) (x) :
 lemma InfinitePlace.smul_mk (σ : K ≃ₐ[k] K) (φ : K →+* ℂ) :
     σ • mk φ = mk (φ.comp σ.symm) := rfl
 
+lemma InfinitePlace.map_comp {F} [Field F] {w : InfinitePlace K} {f : F →+* K} {g : k →+* F} :
+    w.map (f.comp g) = (w.map f).map g := rfl
+
+lemma InfinitePlace.smul_eq_map {σ : K ≃ₐ[k] K} {w : InfinitePlace K} :
+    σ • w = w.map σ.symm := rfl
+
+lemma InfinitePlace.map_smul {F} [Field F]
+    {σ : K ≃ₐ[k] K} {w : InfinitePlace K} {f : F →+* K} :
+    (σ • w).map f = w.map (RingHom.comp σ.symm f) := rfl
+
 def ComplexEmbedding.IsConjGal (φ : K →+* ℂ) (σ : K ≃ₐ[k] K) : Prop :=
   ∀ x, φ (σ x) = star (φ x)
 
@@ -41,24 +51,17 @@ lemma ComplexEmbedding.IsConjGal.ext_iff {φ : K →+* ℂ} {σ₁ σ₂ : K ≃
     (h₁ : IsConjGal φ σ₁) : σ₁ = σ₂ ↔ IsConjGal φ σ₂ :=
   ⟨fun e ↦ e ▸ h₁, h₁.ext⟩
 
+lemma ComplexEmbedding.IsConjGal.isReal_comp {φ : K →+* ℂ} {σ : K ≃ₐ[k] K}
+    (h : IsConjGal φ σ) : IsReal (φ.comp (algebraMap k K)) := by
+  ext1 x
+  simp only [conjugate_coe_eq, RingHom.coe_comp, Function.comp_apply, ← h _,
+    starRingEnd_apply, AlgEquiv.commutes]
+
 lemma ComplexEmbedding.isConjGal_one_iff {φ : K →+* ℂ} :
     IsConjGal φ (1 : K ≃ₐ[k] K) ↔ IsReal φ :=
   RingHom.ext_iff.symm.trans (@eq_comm _ φ (star φ))
 
 alias ⟨_, ComplexEmbedding.IsReal.isConjGal_one⟩ := ComplexEmbedding.isConjGal_one_iff
-
-variable (k)
-
-def ComplexEmbedding.IsRamified (φ : K →+* ℂ) : Prop :=
-    ∃ (σ : K ≃ₐ[k] K), σ ≠ 1 ∧ IsConjGal φ σ
-
-def InfinitePlace.IsRamified (w : InfinitePlace K) : Prop :=
-  Stab w ≠ ⊥
-
-variable {k}
-
-lemma ComplexEmbedding.IsRamified.not_isReal {φ : K →+* ℂ} (hφ : IsRamified k φ) : ¬IsReal φ :=
-  fun H ↦ hφ.choose_spec.1 (H.isConjGal_one.ext hφ.choose_spec.2).symm
 
 lemma ComplexEmbedding.IsConjGal.symm {φ : K →+* ℂ} {σ : K ≃ₐ[k] K} (hσ : IsConjGal φ σ) :
     IsConjGal φ σ.symm := fun x ↦ by simpa using congr_arg star (hσ (σ.symm x)).symm
@@ -67,8 +70,56 @@ lemma ComplexEmbedding.isConjGal_symm {φ : K →+* ℂ} {σ : K ≃ₐ[k] K} :
     IsConjGal φ σ.symm ↔ IsConjGal φ σ :=
   ⟨IsConjGal.symm, IsConjGal.symm⟩
 
+lemma ComplexEmbedding.IsReal.comp (f : k →+* K) {φ : K →+* ℂ} (hφ : IsReal φ) :
+    IsReal (φ.comp f) := by ext1 x; simpa using RingHom.congr_fun hφ (f x)
+
+lemma ComplexEmbedding.isReal_comp_iff {f : k ≃+* K} {φ : K →+* ℂ} :
+    IsReal (φ.comp (f : k →+* K)) ↔ IsReal φ :=
+  ⟨fun H ↦ by convert H.comp f.symm.toRingHom; ext1; simp, IsReal.comp _⟩
+
+lemma InfinitePlace.isReal_mk_iff {φ : K →+* ℂ} :
+    IsReal (mk φ) ↔ ComplexEmbedding.IsReal φ :=
+  ⟨isReal_of_mk_isReal, fun H ↦ ⟨_, H, rfl⟩⟩
+
+lemma InfinitePlace.IsReal.map (f : k →+* K) {w : InfinitePlace K} (hφ : IsReal w) :
+    IsReal (w.map f) := by
+  rw [← mk_embedding w, map_mk, isReal_mk_iff]
+  rw [← mk_embedding w, isReal_mk_iff] at hφ
+  exact hφ.comp f
+
+lemma InfinitePlace.isReal_map_iff {f : k ≃+* K} {w : InfinitePlace K} :
+    IsReal (w.map (f : k →+* K)) ↔ IsReal w := by
+  rw [← mk_embedding w, map_mk, isReal_mk_iff, isReal_mk_iff, ComplexEmbedding.isReal_comp_iff]
+
+lemma InfinitePlace.isReal_smul_iff {σ : K ≃ₐ[k] K} {w : InfinitePlace K} :
+    IsReal (σ • w) ↔ IsReal w :=
+  InfinitePlace.isReal_map_iff (f := σ.symm.toRingEquiv)
+
+variable (k)
+
+def ComplexEmbedding.IsRamified (φ : K →+* ℂ) : Prop :=
+  ¬IsReal φ ∧ IsReal (φ.comp (algebraMap k K))
+
+def InfinitePlace.IsRamified (w : InfinitePlace K) : Prop :=
+  ¬IsReal w ∧ IsReal (w.map (algebraMap k K))
+
+variable {k}
+
+lemma ComplexEmbedding.IsConjGal.isRamified {φ : K →+* ℂ} {σ : K ≃ₐ[k] K} (hφ : IsConjGal φ σ)
+  (h' : σ ≠ 1) :
+    IsRamified k φ :=
+  ⟨fun H ↦ h' (hφ.ext H.isConjGal_one), hφ.isReal_comp⟩
+
+lemma InfinitePlace.isRamified_iff_mult {w : InfinitePlace K} :
+    w.IsRamified k ↔ mult (w.map (algebraMap k K)) ≠ mult w := by
+  delta mult IsRamified
+  split_ifs with h₁ h₂ h₂ <;>
+    simp only [h₂, not_true_eq_false, h₁, and_self, ne_eq, OfNat.ofNat_ne_one, not_false_eq_true,
+      iff_true, and_false, and_true, true_iff, OfNat.one_ne_ofNat]
+  exact h₁ (h₂.map _)
+
 lemma InfinitePlace.mem_stabilizer_mk_iff (φ : K →+* ℂ) (σ : K ≃ₐ[k] K) :
-    σ ∈ Stab (mk φ) ↔ σ = AlgEquiv.refl ∨ ComplexEmbedding.IsConjGal φ σ := by
+    σ ∈ Stab (mk φ) ↔ σ = 1 ∨ ComplexEmbedding.IsConjGal φ σ := by
   simp only [MulAction.mem_stabilizer_iff, smul_mk, mk_eq_iff]
   apply or_congr <;> constructor <;> intro H
   · exact congr_arg AlgEquiv.symm
@@ -83,7 +134,6 @@ lemma InfinitePlace.stabilizer_mk_of_isConjGal
   ext x
   rw [SetLike.mem_coe, mem_stabilizer_mk_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
     ← hσ.ext_iff, @eq_comm _ σ]
-  rfl
 
 lemma InfinitePlace.stabilizer_mk_of_isReal {φ : K →+* ℂ} (hσ : ComplexEmbedding.IsReal φ) :
     Stab (mk φ) = ⊥ := Subgroup.ext fun x => by
@@ -100,14 +150,34 @@ lemma InfinitePlace.stabilizer_mk_of_not_isConjGal
     Stab (mk φ) = ⊥ := by
   ext x
   simp only [mem_stabilizer_mk_iff, hφ, or_false, Subgroup.mem_bot]
-  rfl
 
 open scoped Classical
 
-lemma InfinitePlace.stabilizer_mk_of_isRamified {φ : K →+* ℂ}
+lemma ComplexEmbedding.IsRamified.not_isConjGal_one
+    {φ : K →+* ℂ} (hφ : IsRamified k φ) : ¬ IsConjGal φ (1 : K ≃ₐ[k] K) :=
+  isConjGal_one_iff.not.mpr hφ.1
+
+lemma ComplexEmbedding.IsRamified.exists_isConjGal [IsGalois k K]
+    {φ : K →+* ℂ} (hφ : IsRamified k φ) : ∃ σ : K ≃ₐ[k] K, IsConjGal φ σ := by
+  letI := (φ.comp (algebraMap k K)).toAlgebra
+  letI := φ.toAlgebra
+  have : IsScalarTower k K ℂ := IsScalarTower.of_algebraMap_eq' rfl
+  let φ' : K →ₐ[k] ℂ := { star φ with commutes' := fun r ↦ by simpa using RingHom.congr_fun hφ.2 r }
+  exact ⟨AlgHom.restrictNormal' φ' K, AlgHom.restrictNormal_commutes φ' K⟩
+
+lemma ComplexEmbedding.isRamified_iff_exists_isConjGal [IsGalois k K] {φ : K →+* ℂ} :
+    IsRamified k φ ↔ ∃ σ : K ≃ₐ[k] K, σ ≠ 1 ∧ IsConjGal φ σ :=
+  ⟨fun H ↦ ⟨H.exists_isConjGal.choose, fun h ↦ H.not_isConjGal_one
+    (h ▸ H.exists_isConjGal.choose_spec), H.exists_isConjGal.choose_spec⟩,
+    fun ⟨_, hσ, hσ'⟩ ↦ hσ'.isRamified hσ⟩
+
+alias ⟨ComplexEmbedding.IsRamified.exists_ne_one_and_isConjGal, _⟩ :=
+  ComplexEmbedding.isRamified_iff_exists_isConjGal
+
+lemma InfinitePlace.stabilizer_mk_of_isRamified [IsGalois k K] {φ : K →+* ℂ}
     (hφ : ComplexEmbedding.IsRamified k φ) :
     Fintype.card (Stab (mk φ)) = 2 := by
-  obtain ⟨σ, hσ, hσ'⟩ := hφ
+  obtain ⟨σ, hσ, hσ'⟩ := hφ.exists_ne_one_and_isConjGal
   show Fintype.card (Stab (mk φ) : Set (K ≃ₐ[k] K)) = 2
   simp [stabilizer_mk_of_isConjGal hσ', hσ.symm]
 
@@ -120,53 +190,56 @@ lemma InfinitePlace.stabilizer_mk_of_not_isRamified {φ : K →+* ℂ}
   · show Fintype.card (Stab (mk φ) : Set (K ≃ₐ[k] K)) = 1
     simp [stabilizer_mk_of_isConjGal H]
   · have : ∀ σ : K ≃ₐ[k] K, ¬ComplexEmbedding.IsConjGal φ σ :=
-      fun σ hσ ↦ if e : σ = 1 then H (e ▸ hσ) else hφ ⟨σ, e, hσ⟩
+      fun σ hσ ↦ if e : σ = 1 then H (e ▸ hσ) else hφ (hσ.isRamified e)
     simp [stabilizer_mk_of_not_isConjGal this]
 
-lemma ComplexEmbedding.isRamified_iff_stabilizer_mk {φ : K →+* ℂ} :
+lemma ComplexEmbedding.isRamified_iff_stabilizer_mk [IsGalois k K] {φ : K →+* ℂ} :
     IsRamified k φ ↔ Fintype.card (Stab (InfinitePlace.mk φ)) = 2 :=
   ⟨InfinitePlace.stabilizer_mk_of_isRamified, not_imp_not.mp <| fun H ↦
     InfinitePlace.stabilizer_mk_of_not_isRamified H ▸ Nat.ne_of_beq_eq_false rfl⟩
 
-lemma ComplexEmbedding.not_isRamified_iff_stabilizer_mk {φ : K →+* ℂ} :
+lemma ComplexEmbedding.not_isRamified_iff_stabilizer_mk [IsGalois k K] {φ : K →+* ℂ} :
     ¬IsRamified k φ ↔ Fintype.card (Stab (InfinitePlace.mk φ)) = 1 :=
   ⟨InfinitePlace.stabilizer_mk_of_not_isRamified, not_imp_not.mp <| fun H ↦
     InfinitePlace.stabilizer_mk_of_isRamified (not_not.mp H) ▸ Nat.ne_of_beq_eq_false rfl⟩
 
-lemma ComplexEmbedding.isRamified_iff_stabilizer_mk' {φ : K →+* ℂ} :
+lemma ComplexEmbedding.isRamified_iff_stabilizer_mk' [IsGalois k K] {φ : K →+* ℂ} :
     IsRamified k φ ↔ Fintype.card (Stab (InfinitePlace.mk φ)) ≠ 1 :=
   (not_iff_comm.mp not_isRamified_iff_stabilizer_mk).symm
 
-lemma ComplexEmbedding.not_isRamified_iff_stabilizer_mk' {φ : K →+* ℂ} :
+lemma ComplexEmbedding.not_isRamified_iff_stabilizer_mk' [IsGalois k K] {φ : K →+* ℂ} :
     ¬IsRamified k φ ↔ Fintype.card (Stab (InfinitePlace.mk φ)) ≠ 2 :=
   not_iff_not.mpr isRamified_iff_stabilizer_mk
 
 lemma InfinitePlace.isRamified_mk_iff {φ : K →+* ℂ} :
-    IsRamified k (mk φ) ↔ ComplexEmbedding.IsRamified k φ := by
-  rw [ComplexEmbedding.isRamified_iff_stabilizer_mk', IsRamified, not_iff_not,
-     Subgroup.eq_bot_iff_card]
+    IsRamified k (mk φ) ↔ ComplexEmbedding.IsRamified k φ :=
+  and_congr (Iff.not isReal_mk_iff) (isReal_mk_iff (φ := φ.comp (algebraMap k K)))
 
-lemma InfinitePlace.card_stabilizer_mk (φ : K →+* ℂ) :
+lemma InfinitePlace.card_stabilizer_mk [IsGalois k K] (φ : K →+* ℂ) :
     Fintype.card (Stab (mk φ)) = if ComplexEmbedding.IsRamified k φ then 2 else 1 := by
   split
   · rwa [← ComplexEmbedding.isRamified_iff_stabilizer_mk]
   · rwa [← ComplexEmbedding.not_isRamified_iff_stabilizer_mk]
 
-lemma InfinitePlace.card_stabilizer (w : InfinitePlace K) :
+lemma InfinitePlace.card_stabilizer [IsGalois k K] (w : InfinitePlace K) :
     Fintype.card (Stab w) = if w.IsRamified k then 2 else 1 := by
   rw [← mk_embedding w, card_stabilizer_mk, isRamified_mk_iff]
 
-lemma InfinitePlace.card_stabilizer_of_isRamified {w : InfinitePlace K} (hw : w.IsRamified k) :
+lemma InfinitePlace.card_stabilizer_of_isRamified
+  [IsGalois k K] {w : InfinitePlace K} (hw : w.IsRamified k) :
     Fintype.card (Stab w) = 2 := by
   rw [card_stabilizer, if_pos hw]
 
 lemma InfinitePlace.card_stabilizer_of_not_isRamified {w : InfinitePlace K} (hw : ¬w.IsRamified k) :
     Fintype.card (Stab w) = 1 := by
-  rw [card_stabilizer, if_neg hw]
+  rw [← mk_embedding w]
+  apply stabilizer_mk_of_not_isRamified
+  rwa [← isRamified_mk_iff, mk_embedding]
 
 open FiniteDimensional (finrank)
 
-lemma InfinitePlace.IsRamified.even_card_aut {w : InfinitePlace K} (hw : w.IsRamified k) :
+lemma InfinitePlace.IsRamified.even_card_aut [IsGalois k K]
+    {w : InfinitePlace K} (hw : w.IsRamified k) :
     Even (Fintype.card <| K ≃ₐ[k] K) := by
   rw [even_iff_two_dvd, ← card_stabilizer_of_isRamified hw]
   exact Subgroup.card_subgroup_dvd_card (Stab w)
@@ -236,10 +309,11 @@ lemma InfinitePlace.orbitRelEquiv_apply_mk'' [IsGalois k K] (x : InfinitePlace K
 
 lemma InfinitePlace.isRamified_smul {σ : K ≃ₐ[k] K} {w : InfinitePlace K} :
     IsRamified k (σ • w) ↔ IsRamified k w := by
-  rw [IsRamified, IsRamified, MulAction.stabilizer_smul_eq_stabilizer_map_conj, not_iff_not,
-    Subgroup.eq_bot_iff_card, Subgroup.eq_bot_iff_card, iff_iff_eq]
-  congr 1
-  exact Fintype.card_congr ((MulAut.conj σ).subgroupMap _).symm.toEquiv
+  rw [IsRamified, IsRamified, isReal_smul_iff, map_smul]
+  congr
+  simp only [not_isReal_iff_isComplex, and_congr_right_iff, iff_iff_eq]
+  congr 3
+  exact σ.symm.toAlgHom.comp_algebraMap
 
 variable (K)
 
@@ -338,7 +412,8 @@ lemma InfinitePlace.not_isRamified (k) {K} [Field k] [Field K] [Algebra k K] [Is
 lemma InfinitePlace.not_isRamifiedIn {k} (K) [Field k] [Field K] [Algebra k K] [IsUnramified k K]
   [IsGalois k K] (w : InfinitePlace k) : ¬ w.IsRamifiedIn K := IsUnramified.not_isRamified _
 
-lemma InfinitePlace.isUnramified_of_odd_card_aut (h : Odd (Fintype.card <| K ≃ₐ[k] K)) :
+lemma InfinitePlace.isUnramified_of_odd_card_aut [IsGalois k K]
+  (h : Odd (Fintype.card <| K ≃ₐ[k] K)) :
     IsUnramified k K where
   not_isRamified _ hw := Nat.odd_iff_not_even.mp h hw.even_card_aut
 
