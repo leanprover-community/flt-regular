@@ -769,14 +769,17 @@ lemma Hilbert92ish (hp : Nat.Prime p)
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
     obtain ⟨h, ζ, hζ, hζ'⟩ := h_exists' p (k := k) hp
-    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ) ≠ ε / (σ ε : K)
+    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ^((p : ℤ)^(h-1))) ≠ ε / (σ ε : K)
     sorry
     simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨E, hE⟩ := H
     let NE := Units.map (RingOfIntegers.norm k) E
     have hNE : (NE : k) = Algebra.norm k (E : K) := rfl
     obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
-    have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ) := by sorry
+    have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ) := by
+      have Hp: E^(p : ℕ) = σ E^(p: ℕ) := by sorry
+
+      sorry
     let H := unitlifts p hp hKL σ hσ S
     let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k)) (Additive.toMul (H e))
@@ -808,6 +811,7 @@ lemma Hilbert92ish (hp : Nat.Prime p)
     apply_fun Additive.toMul at ha
     simp only [toMul_ofMul, toMul_sum, toMul_zsmul] at ha
     sorry
+
     sorry
 /-
 
