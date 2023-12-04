@@ -754,7 +754,7 @@ lemma Hilbert92ish (hp : Nat.Prime p)
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
     obtain ⟨h, ζ, hζ⟩ := h_exists' p (k := k) hp
-    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ^((p : ℤ)^(h-1))) ≠ ε / (σ ε : K)
+    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ^((p : ℕ)^(h-1))) ≠ ε / (σ ε : K)
 
 
     sorry
