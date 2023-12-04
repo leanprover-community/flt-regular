@@ -823,10 +823,7 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
 attribute [-instance] instDecidableEq Fintype.decidableForallFintype
 attribute [local instance 2000] MulHomClass.toFunLike Classical.propDecidable
 
-lemma Hilbert92ish (hp : Nat.Prime p)
-    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [InfinitePlace.IsUnramified k K]
-    [IsCyclic (K ≃ₐ[k] K)]
-    (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
+lemma Hilbert92ish :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   classical
   obtain ⟨h, ζ, hζ, hζ'⟩ := h_exists' p (k := k) hp
