@@ -93,6 +93,44 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
   · exact hij ▸ this
   · exact hσ (l j) ((mul_comm _ _).trans this)
 
+@[simps]
+noncomputable
+def Finsupp.ltotal (α M R) [CommSemiring R] [AddCommMonoid M] [Module R M] :
+    (α → M) →ₗ[R] (α →₀ R) →ₗ[R] M where
+  toFun := Finsupp.total α M R
+  map_add' := fun u v ↦ by ext f; simp
+  map_smul' := fun r v ↦ by ext f; simp
+
+lemma Finsupp.total_pi_single {α M R} [CommSemiring R] [AddCommMonoid M] [Module R M]
+    [DecidableEq α] (i : α) (m : M) (f : α →₀ R) :
+    Finsupp.total α M R (Pi.single i m) f = f i • m := by
+  simp only [Finsupp.total, ne_eq, Pi.single_apply, coe_lsum, LinearMap.coe_smulRight,
+    LinearMap.id_coe, id_eq, smul_ite, smul_zero, sum_ite_eq', mem_support_iff, ite_eq_left_iff,
+    not_not]
+  exact fun e ↦ e ▸ (zero_smul R m).symm
+
+lemma LinearIndependent.update' {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
+    (f : ι → G) (l : ι →₀ R) (i : ι) (g : G) (σ : R)
+    (hσ : σ ∈ nonZeroDivisors R) (hg : σ • g = Finsupp.total _ _ R f l)
+    (hl : l i ∈ nonZeroDivisors R) (hf : LinearIndependent R f) :
+    LinearIndependent R (Function.update f i g) := by
+  classical
+  rw [linearIndependent_iff] at hf ⊢
+  intros l' hl'
+  apply_fun (σ • ·) at hl'
+  rw [Pi.update_eq_sub_add_single, ← Finsupp.ltotal_apply, map_add, map_sub] at hl'
+  simp only [Finsupp.ltotal_apply, LinearMap.add_apply, LinearMap.sub_apply,
+    Finsupp.total_pi_single, smul_add, smul_sub, smul_zero] at hl'
+  rw [smul_comm σ (l' i) g, hg, ← LinearMap.map_smul, ← LinearMap.map_smul, smul_smul,
+    ← Finsupp.total_single, ← (Finsupp.total ι G R f).map_sub, ← map_add] at hl'
+  replace hl' : ∀ j, (σ * l' j - (fun₀ | i => σ * l' i) j) + l' i * l j = 0 :=
+    fun j ↦ FunLike.congr_fun (hf _ hl') j
+  simp only [Finsupp.single_apply] at hl'
+  have : l' i = 0 := hl _ (by simpa using hl' i)
+  simp only [this, zero_mul, add_zero, mul_zero, ite_self, sub_zero] at hl'
+  ext j
+  exact hσ _ ((mul_comm _ _).trans (hl' j))
+
 @[to_additive]
 lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H₁ < H₂)
   [h₁ : Fintype (G ⧸ H₁)] :
@@ -150,6 +188,62 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : 
     simp only [Finsupp.coe_sub, Pi.sub_apply, Finsupp.single_eq_same] at this
     exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
       (isUnit_of_mul_eq_one _ _ (sub_eq_zero.mp this))
+
+lemma lemma2'' [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : Fin r)
+    (a : Fin r →₀ A) (ha : a i = 1) :
+    ∀ g : G, (1 - zeta p) • g ≠ Finsupp.total _ G A S.units a := by
+  cases' r with r
+  · exact isEmptyElim i
+  intro g hg
+  letI := Fact.mk hp
+  let S' : systemOfUnits p G (r + 1) := ⟨Function.update S.units i g,
+    LinearIndependent.update' _ _ _ _ _ _ (CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
+    hg (ha ▸ one_mem A⁰) S.linearIndependent⟩
+  let a' := a.comapDomain (Fin.succAbove i) (Fin.succAbove_right_injective.injOn _)
+  have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i
+  · ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
+      Function.update_noteq]
+  have ha' : Finsupp.total _ G A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g
+  · rw [hS', Finsupp.total_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
+      ← one_smul A (S.units i), hg, ← ha, ← Finsupp.total_single, ← map_add]
+    congr 1
+    ext j
+    rw [Finsupp.coe_add, Pi.add_apply, Finsupp.single_apply]
+    have : i = j ↔ j ∉ Set.range (Fin.succAbove i) := by simp [@eq_comm _ i]
+    split_ifs with hij
+    · rw [Finsupp.mapDomain_notin_range, zero_add, hij]
+      rwa [← this]
+    · obtain ⟨j, rfl⟩ := not_imp_comm.mp this.mpr hij
+      rw [Finsupp.mapDomain_apply Fin.succAbove_right_injective, add_zero,
+        Finsupp.comapDomain_apply]
+  letI := S'.isMaximal hp hf
+  suffices : Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units)
+  · exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.isMaximal hp hf) this)
+  rw [SetLike.lt_iff_le_and_exists]
+  constructor
+  · rw [Submodule.span_le]
+    rintro _ ⟨j, rfl⟩
+    by_cases hij : i = j
+    · rw [add_comm, ← eq_sub_iff_add_eq] at ha'
+      rw [← hij, ha']
+      apply sub_mem
+      · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, Function.update_same _ _ _⟩)
+      · rw [← Finsupp.range_total, Finsupp.total_comp, LinearMap.comp_apply]
+        exact ⟨_, rfl⟩
+    · exact Submodule.subset_span ⟨j, Function.update_noteq (Ne.symm hij) _ _⟩
+  · refine ⟨g, Submodule.subset_span ⟨i, Function.update_same _ _ _⟩, ?_⟩
+    rw [← Finsupp.range_total]
+    rintro ⟨l, rfl⟩
+    letI := (Algebra.id A).toModule
+    letI : SMulZeroClass A A := SMulWithZero.toSMulZeroClass
+    letI : Module A (Fin r →₀ A) := Finsupp.module (Fin r) A
+    rw [← LinearMap.map_smul, ← sub_eq_zero,
+      ← (Finsupp.total (Fin _) G A S.units).map_sub] at hg
+    have := FunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
+    simp only [algebraMap_int_eq, Int.coe_castRingHom, Finsupp.coe_sub, Finsupp.coe_smul, ha,
+      Pi.sub_apply, Finsupp.mapRange_apply, Finsupp.coe_zero, Pi.zero_apply, sub_eq_zero] at this
+    exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
+      (isUnit_of_mul_eq_one _ _ this)
 
 lemma lemma2' [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : Fin r) (a : ℤ)
     (ha : ¬ (p : ℤ) ∣ a) : ∀ g : G, (1 - zeta p) • g ≠ a • (S.units i) := by
