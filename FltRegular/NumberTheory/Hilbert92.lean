@@ -799,11 +799,13 @@ lemma Hilbert92ish (hp : Nat.Prime p)
     obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
     have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ) := by
 
-      have h1 : ∀ (i : ℕ), (σ ^ (i+1)) E = ((σ ^ (i+1))  (algebraMap k K ζ^((p : ℕ)^(h-1)))) * E :=
+      have h1 : ∀ (i : ℕ), (σ ^ (i+1)) E = ((σ ^ (i+1))  (algebraMap k K ζ^((p : ℕ)^(h-1)))⁻¹) * E :=
         by
         intro i
         induction i
         simp
+        rw [hE]
+
         sorry
         sorry
 
