@@ -143,27 +143,6 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]
   simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
 
-lemma mul_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R]
-    {η₁ : R} (hη₁ : η₁ ∈ nthRootsFinset n R) {η₂ : R} (hη₂ : η₂ ∈ nthRootsFinset n R) :
-    η₁ * η₂ ∈ nthRootsFinset n R := by
-  cases n with
-  | zero =>
-    simp only [Nat.zero_eq, nthRootsFinset_zero, Finset.not_mem_empty] at hη₁
-  | succ n =>
-    rw [mem_nthRootsFinset n.succ_pos] at hη₁ hη₂ ⊢
-    rw [mul_pow, hη₁, hη₂, one_mul]
-
-lemma ne_zero_of_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R]
-    {η : R} (hη : η ∈ nthRootsFinset n R) : η ≠ 0 := by
-  nontriviality R
-  rintro rfl
-  cases n with
-  | zero =>
-    simp only [Nat.zero_eq, nthRootsFinset_zero, Finset.not_mem_empty] at hη
-  | succ n =>
-    rw [mem_nthRootsFinset n.succ_pos, zero_pow n.succ_pos] at hη
-    exact zero_ne_one hη
-
 variable (hp : p ≠ 2)
 
 open FractionalIdeal in

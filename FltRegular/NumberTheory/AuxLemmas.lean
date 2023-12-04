@@ -973,10 +973,6 @@ lemma RingHom.toIntAlgHom_injective {R₁ R₂} [Ring R₁] [Ring R₂] [Algebra
     Function.Injective (RingHom.toIntAlgHom : (R₁ →+* R₂) → _) :=
   fun _ _ e ↦ FunLike.ext _ _ (fun x ↦ FunLike.congr_fun e x)
 
--- Mathlib/Data/Polynomial/RingDivision.lean
-lemma one_mem_nthRootsFinset {R : Type*} {n : ℕ} [CommRing R] [IsDomain R] (hn : 0 < n) :
-    1 ∈ nthRootsFinset n R := by rw [mem_nthRootsFinset hn, one_pow]
-
 -- Mathlib/LinearAlgebra/FiniteDimensional.lean
 lemma FiniteDimensional.finrank_eq_one_of_linearEquiv {R V} [Field R]
     [AddCommGroup V] [Module R V] (e : R ≃ₗ[R] V) : finrank R V = 1 :=

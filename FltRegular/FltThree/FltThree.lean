@@ -268,7 +268,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     apply basic _ hdprime <;> apply dvd_trans hddvdg <;> rw [hg']
     exacts[Int.gcd_dvd_left _ _, Int.gcd_dvd_right _ _]
   refine' ⟨k, hg, _⟩
-  by_contra' H
+  by_contra! H
   rw [← pow_mul_pow_sub _ H] at hg
   have : ¬IsUnit (3 : ℤ) := by
     rw [Int.isUnit_iff_natAbs_eq]

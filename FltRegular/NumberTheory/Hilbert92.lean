@@ -363,7 +363,8 @@ instance : Module.Finite ℤ (Additive <| (𝓞 K)ˣ) := by
       exact (Submodule.fg_top _).mp this.1
     show Module.Finite ℤ (Additive <| NumberField.Units.torsion K)
     rw [Module.Finite.iff_addGroup_fg, ← GroupFG.iff_add_fg]
-    infer_instance
+    -- Note: `infer_instance` timed out as of `v4.4.0-rc1`
+    exact Group.fg_of_finite
 
 local instance : Module.Finite ℤ (Additive <| RelativeUnits k K) := by
   delta RelativeUnits
@@ -598,6 +599,7 @@ lemma h_exists' : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
   refine ⟨j, ζ, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ζ.1),
     fun ε n hn ↦ ?_⟩
   have : Fintype H := Set.fintypeSubset (NumberField.Units.torsion k) (by exact this)
+  have := Finite.of_fintype H -- Note: added to avoid timeout as of `v4.4.0-rc1`
   obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hζ ⟨ε, ⟨_, n, rfl⟩, hn⟩)
   exact ⟨i, congr_arg Subtype.val hi⟩
 
