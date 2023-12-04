@@ -745,6 +745,28 @@ lemma Units.coe_val_inv {M S} [DivisionMonoid M]
   rw [mul_inv_self]
   rfl
 
+lemma norm_eq_prod_pow_gen
+    [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [InfinitePlace.IsUnramified k K]
+    [IsCyclic (K ≃ₐ[k] K)]
+    (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (η : K) :
+    algebraMap k K (Algebra.norm k η ) = (∏ i in Finset.range (orderOf σ), (σ ^ i) η)   := by
+    have := Algebra.norm_eq_prod_automorphisms k η
+    convert this
+    refine prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp) (fun _ _ ↦ by rfl)
+      (fun a b ha hb hab ↦ ?_) (fun τ _ ↦ ?_)
+    · rwa [pow_inj_mod, Nat.mod_eq_of_lt (Finset.mem_range.1 ha),
+        Nat.mod_eq_of_lt (Finset.mem_range.1 hb)] at hab
+    · refine ⟨(finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
+      have := Equiv.symm_apply_apply (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
+      simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
+      rw [← this]
+      simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
+      rfl
+
+
+
+
+
 -- lemma Units.coe_val_inv' {M} [Field M] {s : Subalgebra ℤ M} (v : (↥s)ˣ) :
 --     ((v⁻¹ : _) : M) = (v : M)⁻¹ := Units.coe_val_inv v
 set_option maxHeartbeats 10000000 in
@@ -755,15 +777,33 @@ lemma Hilbert92ish (hp : Nat.Prime p)
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
     obtain ⟨h, ζ, hζ⟩ := h_exists' p (k := k) hp
     by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ^((p : ℕ)^(h-1))) ≠ ε / (σ ε : K)
-
-
-    sorry
+    · let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ζ : (𝓞 K)ˣ)
+      use η ^ ((p : ℕ) ^ (h - 1))
+      constructor
+      · simp only [ge_iff_le, Units.val_pow_eq_pow_val, Units.coe_map,
+          MonoidHom.coe_coe, SubmonoidClass.coe_pow, map_pow]
+        show (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
+        rw [Algebra.norm_algebraMap, hKL, ← pow_mul]
+        nth_rewrite 1 [← pow_one (p : ℕ)]
+        rw [← pow_add]
+        apply (hζ.1.pow_eq_one_iff_dvd _).2
+        cases h <;> simp [add_comm]
+      · intro ε hε
+        apply H ε
+        rw [← hε]
+        simp
+        rfl
     simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨E, hE⟩ := H
     let NE := Units.map (RingOfIntegers.norm k) E
     obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
     have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ) := by
-      have Hp: E^(p : ℕ) = σ E^(p: ℕ) := by sorry
+
+      have h1 : ∀ (i : ℕ), (σ ^ i) E = ((σ ^ i)  (algebraMap k K ζ^((p : ℕ)^(h-1)))) * E :=
+        by sorry
+
+
+
 
       sorry
     let H := unitlifts p hp hKL σ hσ S
