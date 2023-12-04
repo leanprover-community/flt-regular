@@ -256,7 +256,24 @@ lemma lemma2' [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i :
 
 lemma corollary [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (a : Fin r → ℤ)
     (ha : ∃ i , ¬ (p : ℤ) ∣ a i) :
-  ∀ g : G, (1 - zeta p) • g ≠ ∑ i, a i • S.units i := sorry
+    ∀ g : G, (1 - zeta p) • g ≠ ∑ i, a i • S.units i := by
+  intro g hg
+  obtain ⟨i, hi⟩ := ha
+  letI := Fact.mk hp
+  obtain ⟨x, y, e⟩ := CyclotomicIntegers.isCoprime_one_sub_zeta p (a i) hi
+  let b' : Fin r → A := fun j ↦ x * (1 - zeta ↑p) + y * (a j)
+  let b := Finsupp.ofSupportFinite b' (Set.toFinite (Function.support _))
+  have hb : b i = 1 := by rw [← e]; rfl
+  apply lemma2'' p hp G r hf S hs i b hb (x • ∑ i, S.units i + y • g)
+  rw [smul_add, smul_smul _ y, mul_comm, ← smul_smul, hg, smul_sum, smul_sum, smul_sum,
+    ← sum_add_distrib, Finsupp.total_apply, Finsupp.sum_fintype]
+  congr
+  · ext j
+    simp only [smul_smul, Finsupp.ofSupportFinite_coe, add_smul]
+    congr 1
+    · rw [mul_comm]
+    · rw [← intCast_smul (k := A), smul_smul]
+  · simp
 
 end fundamentalSystemOfUnits
 section application
