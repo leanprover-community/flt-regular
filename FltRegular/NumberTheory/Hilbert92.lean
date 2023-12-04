@@ -754,10 +754,23 @@ lemma Hilbert92ish (hp : Nat.Prime p)
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
     obtain ⟨h, ζ, hζ⟩ := h_exists' p (k := k) hp
-    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ^((p : ℤ)^(h-1))) ≠ ε / (σ ε : K)
-
-
-    sorry
+    by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ^((p : ℕ)^(h-1))) ≠ ε / (σ ε : K)
+    · let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ζ : (𝓞 K)ˣ)
+      use η ^ ((p : ℕ) ^ (h - 1))
+      constructor
+      · simp only [ge_iff_le, Units.val_pow_eq_pow_val, Units.coe_map,
+          MonoidHom.coe_coe, SubmonoidClass.coe_pow, map_pow]
+        show (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
+        rw [Algebra.norm_algebraMap, hKL, ← pow_mul]
+        nth_rewrite 1 [← pow_one (p : ℕ)]
+        rw [← pow_add]
+        apply (hζ.1.pow_eq_one_iff_dvd _).2
+        cases h <;> simp [add_comm]
+      · intro ε hε
+        apply H ε
+        rw [← hε]
+        simp
+        rfl
     simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨E, hE⟩ := H
     let NE := Units.map (RingOfIntegers.norm k) E
