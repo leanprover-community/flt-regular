@@ -714,6 +714,18 @@ lemma h_exists' : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
   obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hζ ⟨ε, ⟨_, n, rfl⟩, hn⟩)
   exact ⟨i, congr_arg Subtype.val hi⟩
 
+noncomputable
+def Algebra.normZeroHom (R S) [CommRing R] [Ring S] [Nontrivial S] [Algebra R S]
+    [Module.Free R S] [Module.Finite R S] :
+    S →*₀ R where
+  __ := Algebra.norm R
+  map_zero' := Algebra.norm_zero
+
+
+lemma norm_map_zpow {R S} [Field R] [DivisionRing S] [Nontrivial S] [Algebra R S]
+    [Module.Free R S] [Module.Finite R S] (s : S) (n : ℤ) :
+    Algebra.norm R (s ^ n) = (Algebra.norm R s) ^ n := map_zpow₀ (Algebra.normZeroHom R S) s n
+
 -- lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
 --     IsPrimitiveRoot (ζ : k) (p ^ h) ∧ ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ (h + 1)) := by
 --   classical
@@ -745,6 +757,9 @@ lemma Units.coe_val_inv {M S} [DivisionMonoid M]
   rw [mul_inv_self]
   rfl
 
+lemma RingOfInteger.coe_algebraMap_apply {x : 𝓞 k} :
+  (algebraMap (𝓞 k) (𝓞 K) x : K) = algebraMap k K x := rfl
+
 -- lemma Units.coe_val_inv' {M} [Field M] {s : Subalgebra ℤ M} (v : (↥s)ˣ) :
 --     ((v⁻¹ : _) : M) = (v : M)⁻¹ := Units.coe_val_inv v
 set_option maxHeartbeats 10000000 in
@@ -753,19 +768,21 @@ lemma Hilbert92ish (hp : Nat.Prime p)
     [IsCyclic (K ≃ₐ[k] K)]
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
-    obtain ⟨h, ζ, hζ⟩ := h_exists' p (k := k) hp
+    obtain ⟨h, ζ, hζ, hζ'⟩ := h_exists' p (k := k) hp
     by_cases H : ∀ ε : (𝓞 K)ˣ, (algebraMap k K ζ) ≠ ε / (σ ε : K)
     sorry
     simp only [ne_eq, not_forall, not_not] at H
     obtain ⟨E, hE⟩ := H
     let NE := Units.map (RingOfIntegers.norm k) E
+    have hNE : (NE : k) = Algebra.norm k (E : K) := rfl
     obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
     have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ) := by sorry
     let H := unitlifts p hp hKL σ hσ S
     let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
       fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k)) (Additive.toMul (H e))
     let η : Fin (r + 1).succ → Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
-    obtain ⟨a, ι, i, ha, ha'⟩ := lh_pow_free p hp ζ (k := k) (K := K) hζ.2 η
+    obtain ⟨a, ι, i, ha, ha'⟩ := lh_pow_free p hp ζ (k := k) (K := K) hζ' η
+    -- have : Π i : Fin (r + 1), (Algebra.norm k )
     let Ζ := (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ζ) ^ (-a)
     let H2 : Fin (r + 1).succ → Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul E)
     let J := (Additive.toMul (∑ i : Fin (r + 1).succ, ι i • H2 i)) *
@@ -786,6 +803,10 @@ lemma Hilbert92ish (hp : Nat.Prime p)
       Subalgebra.coe_toSubsemiring, coe_zpow', Submonoid.coe_finset_prod, map_mul, map_prod]
     rw [← Units.coe_val_inv, norm_map_inv]
     simp only [coe_zpow', Units.coe_map, MonoidHom.coe_coe]
+    rw [RingOfInteger.coe_algebraMap_apply, norm_map_zpow, norm_map_zpow,
+      Algebra.norm_algebraMap, hKL]
+    apply_fun Additive.toMul at ha
+    simp only [toMul_ofMul, toMul_sum, toMul_zsmul] at ha
     sorry
     sorry
 /-
