@@ -803,11 +803,14 @@ lemma Hilbert92ish (hp : Nat.Prime p)
         by
         intro i
         induction i
+        · simp
+          rw [hE]
+          field_simp
         simp
-        rw [hE]
+        sorry
 
-        sorry
-        sorry
+
+
 
 
 
