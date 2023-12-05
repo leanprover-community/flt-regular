@@ -416,6 +416,8 @@ In this section we prove Theorem \ref{thm:Kummers_lemma}. The proof follows \cit
 \end{proof}
 
 \begin{theorem}[Hilbert 90]\label{Hilbert90}
+	\leanok
+	\lean{Hilbert90_integral}
 Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ is cyclic with generator $\sigma$. If $\a \in K$ is such that $N_{K/F}(\a)=1$, then \[ \a =\beta/ \sigma(\beta)\] for some $\beta \in \OO_K$.
 
 \uses{lem:exists_alg_int}
@@ -431,6 +433,8 @@ Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ 
 
 
 \begin{theorem}[Hilbert 92]\label{lem:Hilbert92}
+	\leanok
+	\lean{Hilbert92}
 	Let $K/F$ be a Galois extension of $F=\QQ(\zeta_p)$ with  Galois group $\Gal(K/F)$ cyclic with generator $\sigma$. Then there exists a unit $\eta \in \OO_K$ such that $N_{K/F}(\eta)=1$ but does not have the form $\epsilon/\sigma(\epsilon)$ for any unit $\e \in \OO_K$.
 
 \end{theorem}
@@ -448,7 +452,7 @@ This is Hilbert theorem 92 (\cite{Hilbert}), also Lemma 33 of Swinnerton-Dyer's 
 We will need several results about ramification in degree $p$ extensions of $\QQ(\zeta_p)$. Following \cite{SD} we do this by using the relative different ideal of the extension.
 
 \begin{definition}\label{def:rel_different}
-
+		\leanok
     Let $K, F$ be number fields with $F \subseteq K$. Let  $A$ be an additive subgroup of $K$. Let \[A^{-1}=\{ \a \in K | \a A \in \OO_K\}\] and
     \[A^* = \{ \a \in K | \Tr_{K/F} (\a A) \in \OO_F\}.\] The relative different $\gothd_{K/F}$ of $K/F$ is then defined as $((\OO_K)^*)^{-1}$ which one checks is an integral ideal in $\OO_K$. This is also the annihilator of $\Omega^1_{\OO_K/\OO_F}$ if we want to be fancy.
 \end{definition}
@@ -456,6 +460,7 @@ We will need several results about ramification in degree $p$ extensions of $\QQ
 
 \begin{lemma}\label{lem:diff_ideal_eqn}
 	\uses{def:rel_different}
+	\leanok
     Let $K/F$ be an extension of number fields and let $S$ denote the set of $\a \in \OO_K$ be such that $K=F(\a)$. Then \[ \gothd_{K/F} = \left (m_{\a}'(\a) : \a \in S \right )\] where $m_\a$ is denotes the minimal polynomial of $\a$.
 
 \end{lemma}
@@ -502,6 +507,7 @@ Using the above we have the following lemma (from which Kummer's lemma is immedi
 
 \begin{lemma}\label{Kummer_alt}
 	\uses{lem:ramification_lem, lem:Hilbert92,Hilbert90  }
+	\leanok
 Let $u \in F$ with $F=\QQ(\zeta_p)$ be a unit such that \[u \equiv a^p \mod \lam_p^p\] for some $a \in \OO_F$. The either $u = \epsilon^p$ for some $\epsilon \in \OO_F^\times$ or $p$ divides the class number of $F$.
 
 \end{lemma}
