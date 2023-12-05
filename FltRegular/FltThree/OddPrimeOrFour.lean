@@ -56,26 +56,14 @@ theorem OddPrimeOrFour.abs {z : ℤ} (h : OddPrimeOrFour z) : OddPrimeOrFour (ab
     exact ⟨hp.abs, odd_abs.mpr ho⟩
 #align odd_prime_or_four.abs OddPrimeOrFour.abs
 
-theorem OddPrimeOrFour.exists_and_dvd {n : ℤ} (n2 : 2 < n) : ∃ p, p ∣ n ∧ OddPrimeOrFour p :=
-  by
+theorem OddPrimeOrFour.exists_and_dvd {n : ℤ} (n2 : 2 < n) : ∃ p, p ∣ n ∧ OddPrimeOrFour p := by
   lift n to ℕ using (zero_lt_two.trans n2).le
-  norm_cast  at n2
-  obtain ⟨k, rfl⟩ | ⟨p, hp, hdvd, hodd⟩ := n.eq_two_pow_or_exists_odd_prime_and_dvd
-  · refine' ⟨4, ⟨2 ^ (k - 2), _⟩, Or.inl rfl⟩
+  norm_cast at n2
+  obtain h4 | ⟨p, hpprime, hpdvd, hpodd⟩ := Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt n2
+  · refine ⟨4, ?_, Or.inl rfl⟩
     norm_cast
-    calc
-      2 ^ k = 2 ^ 2 * 2 ^ (k - 2) := (pow_mul_pow_sub _ ?_).symm
-      _ = 4 * 2 ^ (k - 2) := by norm_num
-
-    rcases k with (_ | _ | _)
-    · exfalso
-      norm_num at n2
-    · exfalso
-      exact lt_irrefl _ n2
-    · exact le_add_self
-  · rw [Nat.prime_iff_prime_int] at hp
-    rw [← Int.odd_coe_nat] at hodd
-    exact ⟨p, Int.coe_nat_dvd.mpr hdvd, Or.inr ⟨hp, hodd⟩⟩
+  · exact ⟨p, Int.ofNat_dvd.mpr hpdvd, Or.inr ⟨Nat.prime_iff_prime_int.mp hpprime,
+      (Int.odd_coe_nat p).mpr hpodd⟩⟩
 #align odd_prime_or_four.exists_and_dvd OddPrimeOrFour.exists_and_dvd
 
 theorem associated_of_dvd {a p : ℤ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFour p) (h : p ∣ a) :
