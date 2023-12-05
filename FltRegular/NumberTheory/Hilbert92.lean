@@ -870,7 +870,8 @@ lemma Algebra.norm_of_finrank_eq_two (hKL : finrank k K = 2) (x : K) :
     IsGalois.card_aut_eq_finrank, hKL, prod_range_succ, prod_range_one, pow_zero, pow_one]
   rfl
 
-lemma Hilbert92ish :
+-- TODO : remove `p ≠ 2`. The offending case is when `K = k[i]`.
+lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   classical
   obtain ⟨h, ζ, hζ, hζ'⟩ := h_exists' p (k := k) hp
@@ -887,13 +888,12 @@ lemma Hilbert92ish :
       RingOfInteger.coe_algebraMap_apply, RingOfIntegers.norm_apply_coe, Units.val_pow_eq_pow_val,
       SubmonoidClass.coe_pow, Units.val_neg, AddSubgroupClass.coe_neg]
     rw [← map_pow] at hE
-    apply Hilbert92ish_aux2 p hp hKL σ hσ E _ hE
+    refine Hilbert92ish_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
     rw [← pow_mul, ← pow_succ']
     apply (hζ.pow_eq_one_iff_dvd _).2
     cases h <;> simp only [Nat.zero_eq, pow_zero, zero_le, tsub_eq_zero_of_le,
       zero_add, pow_one, one_dvd, Nat.succ_sub_succ_eq_sub,
       nonpos_iff_eq_zero, tsub_zero, dvd_refl]
-    sorry
   let H := unitlifts p hp hKL σ hσ S
   let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
     fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
@@ -904,7 +904,7 @@ lemma Hilbert92ish :
                 (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ζ) ^ (-a)
   refine ⟨J, ?_⟩
   constructor
-  · apply Hilbert92ish_aux1 p hKL (r +2) H2 ζ a ι η ha
+  · apply Hilbert92ish_aux1 p hKL (r + 2) H2 ζ a ι η ha
     intro i
     induction i using Fin.lastCases with
     | last =>
@@ -968,10 +968,11 @@ lemma Hilbert92ish :
 
 lemma Hilbert92
     [Algebra k K] [IsGalois k K] [FiniteDimensional k K] [InfinitePlace.IsUnramified k K]
-    (hKL : Nat.Prime (finrank k K)) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
+    (hKL : Nat.Prime (finrank k K)) (hpodd : finrank k K ≠ 2)
+    (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) :=
   letI : IsCyclic (K ≃ₐ[k] K) := ⟨σ, hσ⟩
-  Hilbert92ish ⟨finrank k K, finrank_pos⟩ hKL rfl σ hσ
+  Hilbert92ish ⟨finrank k K, finrank_pos⟩ hKL rfl σ hσ hpodd
 
 
 end application
