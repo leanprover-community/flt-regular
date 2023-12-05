@@ -355,6 +355,10 @@ We recall basic facts about the discriminant.
 	\lean{eq_pow_prime_of_unit_of_congruent}
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
 \end{theorem}
+\begin{proof}
+\leanok
+See the Lean proof.
+\end{proof}
 
 In these next few lemmas we are following \cite{Borevich_Shafarevich}.
 
@@ -391,6 +395,10 @@ In these next few lemmas we are following \cite{Borevich_Shafarevich}.
 	\uses{lemma:defn:is_regular_number,thm:Kummers_lemma, thm:gen_flt_eqn}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
 \end{theorem}
+\begin{proof}
+\leanok
+See the Lean proof.
+\end{proof}
 
 
 \begin{theorem}\label{FLT_regular}
@@ -416,12 +424,15 @@ In this section we prove Theorem \ref{thm:Kummers_lemma}. The proof follows \cit
 \end{proof}
 
 \begin{theorem}[Hilbert 90]\label{Hilbert90}
+	\lean{Hilbert90}
+	\leanok
 Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ is cyclic with generator $\sigma$. If $\a \in K$ is such that $N_{K/F}(\a)=1$, then \[ \a =\beta/ \sigma(\beta)\] for some $\beta \in \OO_K$.
 
 \uses{lem:exists_alg_int}
 \end{theorem}
 
 \begin{proof}
+	\leanok
   Pick some $\gamma \in K$ and consider \[\beta=\gamma \a+ \sigma(\gamma)\a \sigma(\a)+\cdots+\sigma^{n-1}(\gamma)\a \sigma(\a)\cdots \sigma^{n-1}(\a),\] where $[K/F]=n$. Since the norm $\a$ is $1$ then we have $\a \sigma(\a)\cdots \sigma^{n-1}(\a)=1$ from which one verifies that $\a \sigma(\beta)=\beta$. This also uses that since we know that Galois group is cyclic, all the embeddings are given by $\sigma^i$. Note that $ \a+ \sigma\a \sigma(\a)+\cdots+\sigma^{n-1}\a \sigma(\a)\cdots \sigma^{n-1}(\a)$ is a linear combination of the embeddings $\sigma^i$. Now, using \ref{lem:lin_indep_iff_disc_ne_zero} we can check that they must be linearly independent. Therefore, it is possible to find a $\gamma$ such that $\beta \neq 0$. Putting everything together we have found $\a=\beta/\sigma(\beta)$. Using \ref{lem:exists_alg_int} we see that its possible to make sure $\beta \in \OO_K$ as required.
 
 
@@ -431,11 +442,14 @@ Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ 
 
 
 \begin{theorem}[Hilbert 92]\label{lem:Hilbert92}
+	\lean{Hilbert92}
+	\leanok
 	Let $K/F$ be a Galois extension of $F=\QQ(\zeta_p)$ with  Galois group $\Gal(K/F)$ cyclic with generator $\sigma$. Then there exists a unit $\eta \in \OO_K$ such that $N_{K/F}(\eta)=1$ but does not have the form $\epsilon/\sigma(\epsilon)$ for any unit $\e \in \OO_K$.
 
 \end{theorem}
 
 \begin{proof}
+	\leanok
 This is Hilbert theorem 92 (\cite{Hilbert}), also Lemma 33 of Swinnerton-Dyer's book (\cite{SD}).
 
 
@@ -486,7 +500,7 @@ Let $K$ be a number field, $p$ be a rational prime below $\gothp$ and let $\a_0,
 	Let $F=\QQ(\zeta_p)$ with $\zeta_p$ a primitive $p$-th root of unity. If $\xi \in \OO_F$ and coprime to $\lam_p:=1-\zeta_p$ and if \[\xi \equiv \a_0^p \mod \lam_p^p  \] for some $\a_0 \in \OO_{F_\gothp}^\times$ (the ring of integers of the completion of $F$ at $\lam_p$), then the ideal $(\lam_p)$ is unramified in $K/F$ where $K=F(\sqrt[p]{\xi})$.
 \end{lemma}
 \begin{proof}
-    Suppose that we have $\xi = \a_0^p \mod \lam_p^{p+1}$. The using \ref{lem:loc_ramification} with $m=p-1,r=2$ gives an $\a$ such that $\a^p=\xi$ in $\OO_{F_\gothp}^\times$. Meaning that $(\lam_p)$ is split in the local extension and hence split in $K/F$ (note: add this lemma explictly somewhere).
+    Suppose that we have $\xi = \a_0^p \mod \lam_p^{p+1}$. The using \ref{lem:loc_ramification} with $m=p-1,r=2$ gives an $\a$ such that $\a^p=\xi$ in $\OO_{F_\gothp}^\times$. Meaning that $(\lam_p)$ is split in the local extension and hence split in $K/F$ (note: add this lemma explicitly somewhere).
 
     If we instead have $\lam_p^p \parallel (\xi-\a_0^p)$, then pick some element in $ K$ which agrees with $\a_0$ up to $\lam_p^{p+1}$, which we again call $\a_0$ and consider \[\eta= (\sqrt[p]{\xi}-\a_0)/\lam_p\] so that $K=F(\eta)$. Now, if $m_\eta$ is the minimal monic polynomial for $\eta$ then by definition it follows that \[m_\eta(x) \equiv x^p+\left (\a_0^{p-1}p/\lam_p^{p-1} \right )x+ (\a_0^p-\xi)/\lam_p^p \mod \lam_p\]
 
