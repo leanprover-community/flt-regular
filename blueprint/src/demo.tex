@@ -355,8 +355,12 @@ We recall basic facts about the discriminant.
 	\lean{eq_pow_prime_of_unit_of_congruent}
 	Let $p$ be a regular prime and let $u \in \ZZ[\zeta_p]^\times$. If $u \equiv a \mod p$ for some $a \in \ZZ$, then there exists $v \in \ZZ[\zeta_p]^\times$ such that $u=v^p$.
 \end{theorem}
+\begin{proof}
+\leanok
+See the Lean proof.
+\end{proof}
 
-In these next few lemmas we are following \cite{Borevich_Shafarevich}.
+In these next few lemmas we are following \cite{Borevich_Shafarevich, SD, Hilbert}.
 
 \begin{lemma}\label{lem:gen_dvd_by_frak_p}
 		Let $p$ be a regular odd prime, $x,y,z,\epsilon \in \ZZ[\zeta_p]$, $\epsilon$ a unit, and $n \in \ZZ_{\geq 1}$. Assume $x,y,z$ are coprime to $(1-\zeta_p)$ and that $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$. Then each of $(x+\zeta_p^i y)$ is divisible by $(1-\zeta_p)$ and there is a unique $i_0$ such that $(x+\zeta_p^{i_0})$ is divisible by $(1-\zeta_p)^2$.
@@ -391,6 +395,10 @@ In these next few lemmas we are following \cite{Borevich_Shafarevich}.
 	\uses{lemma:defn:is_regular_number,thm:Kummers_lemma, thm:gen_flt_eqn}
 	Let $p$ be an odd regular prime. Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $p | xyz$.
 \end{theorem}
+\begin{proof}
+\leanok
+See the Lean proof.
+\end{proof}
 
 
 \begin{theorem}\label{FLT_regular}
@@ -399,7 +407,10 @@ In these next few lemmas we are following \cite{Borevich_Shafarevich}.
 	\uses{theorem:FLT_case_one,theorem:FLT_case_two}
 	Let $p$ be an odd regular prime.  Then \[x^p+y^p=z^p\] has no solutions with $x,y,z \in \ZZ$ and $xyz \ne 0$.
 \end{theorem}
-
+\begin{proof}
+	\leanok
+	See the Lean proof.
+\end{proof}
 \section{Kummer's Lemma}
 
 In this section we prove Theorem \ref{thm:Kummers_lemma}. The proof follows \cite{SD}. We begin with some lemmas that will be needed in the proof.
@@ -416,14 +427,15 @@ In this section we prove Theorem \ref{thm:Kummers_lemma}. The proof follows \cit
 \end{proof}
 
 \begin{theorem}[Hilbert 90]\label{Hilbert90}
+	\lean{Hilbert90}
 	\leanok
-	\lean{Hilbert90_integral}
 Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ is cyclic with generator $\sigma$. If $\a \in K$ is such that $N_{K/F}(\a)=1$, then \[ \a =\beta/ \sigma(\beta)\] for some $\beta \in \OO_K$.
 
 \uses{lem:exists_alg_int}
 \end{theorem}
 
 \begin{proof}
+	\leanok
   Pick some $\gamma \in K$ and consider \[\beta=\gamma \a+ \sigma(\gamma)\a \sigma(\a)+\cdots+\sigma^{n-1}(\gamma)\a \sigma(\a)\cdots \sigma^{n-1}(\a),\] where $[K/F]=n$. Since the norm $\a$ is $1$ then we have $\a \sigma(\a)\cdots \sigma^{n-1}(\a)=1$ from which one verifies that $\a \sigma(\beta)=\beta$. This also uses that since we know that Galois group is cyclic, all the embeddings are given by $\sigma^i$. Note that $ \a+ \sigma\a \sigma(\a)+\cdots+\sigma^{n-1}\a \sigma(\a)\cdots \sigma^{n-1}(\a)$ is a linear combination of the embeddings $\sigma^i$. Now, using \ref{lem:lin_indep_iff_disc_ne_zero} we can check that they must be linearly independent. Therefore, it is possible to find a $\gamma$ such that $\beta \neq 0$. Putting everything together we have found $\a=\beta/\sigma(\beta)$. Using \ref{lem:exists_alg_int} we see that its possible to make sure $\beta \in \OO_K$ as required.
 
 
@@ -433,13 +445,14 @@ Let $K/F$ be a Galois extension of number fields whose Galois group $\Gal(K/F)$ 
 
 
 \begin{theorem}[Hilbert 92]\label{lem:Hilbert92}
-	\leanok
 	\lean{Hilbert92}
+	\leanok
 	Let $K/F$ be a Galois extension of $F=\QQ(\zeta_p)$ with  Galois group $\Gal(K/F)$ cyclic with generator $\sigma$. Then there exists a unit $\eta \in \OO_K$ such that $N_{K/F}(\eta)=1$ but does not have the form $\epsilon/\sigma(\epsilon)$ for any unit $\e \in \OO_K$.
 
 \end{theorem}
 
 \begin{proof}
+	\leanok
 This is Hilbert theorem 92 (\cite{Hilbert}), also Lemma 33 of Swinnerton-Dyer's book (\cite{SD}).
 
 
@@ -466,14 +479,18 @@ We will need several results about ramification in degree $p$ extensions of $\QQ
 \end{lemma}
 
 \begin{proof}
+	\leanok
     This is \cite[Theorem 20]{SD}
 \end{proof}
 
 \begin{lemma}\label{lem:diff_ram}
+	\leanok
     Let $K/F$ be an extension of number fields with $\gothp_F, \gothp_K$ prime ideas in $K,F$ respectively, with $\gothp_K^e \parallel \gothp_F$ for $e >0$. Then $\gothp_K^{e-1} \mid \gothd_{K/F}$ and $\gothp_K^{e} \mid \gothd_{K/F}$ iff $\gothp_F \mid e$.
-\end{lemma}
+
+	\end{lemma}
 
 \begin{proof}
+	\leanok
     \cite[Theorem 21]{SD}
 \end{proof}
 
@@ -491,7 +508,7 @@ Let $K$ be a number field, $p$ be a rational prime below $\gothp$ and let $\a_0,
 	Let $F=\QQ(\zeta_p)$ with $\zeta_p$ a primitive $p$-th root of unity. If $\xi \in \OO_F$ and coprime to $\lam_p:=1-\zeta_p$ and if \[\xi \equiv \a_0^p \mod \lam_p^p  \] for some $\a_0 \in \OO_{F_\gothp}^\times$ (the ring of integers of the completion of $F$ at $\lam_p$), then the ideal $(\lam_p)$ is unramified in $K/F$ where $K=F(\sqrt[p]{\xi})$.
 \end{lemma}
 \begin{proof}
-    Suppose that we have $\xi = \a_0^p \mod \lam_p^{p+1}$. The using \ref{lem:loc_ramification} with $m=p-1,r=2$ gives an $\a$ such that $\a^p=\xi$ in $\OO_{F_\gothp}^\times$. Meaning that $(\lam_p)$ is split in the local extension and hence split in $K/F$ (note: add this lemma explictly somewhere).
+    Suppose that we have $\xi = \a_0^p \mod \lam_p^{p+1}$. The using \ref{lem:loc_ramification} with $m=p-1,r=2$ gives an $\a$ such that $\a^p=\xi$ in $\OO_{F_\gothp}^\times$. Meaning that $(\lam_p)$ is split in the local extension and hence split in $K/F$ (note: add this lemma explicitly somewhere).
 
     If we instead have $\lam_p^p \parallel (\xi-\a_0^p)$, then pick some element in $ K$ which agrees with $\a_0$ up to $\lam_p^{p+1}$, which we again call $\a_0$ and consider \[\eta= (\sqrt[p]{\xi}-\a_0)/\lam_p\] so that $K=F(\eta)$. Now, if $m_\eta$ is the minimal monic polynomial for $\eta$ then by definition it follows that \[m_\eta(x) \equiv x^p+\left (\a_0^{p-1}p/\lam_p^{p-1} \right )x+ (\a_0^p-\xi)/\lam_p^p \mod \lam_p\]
 
@@ -513,6 +530,7 @@ Let $u \in F$ with $F=\QQ(\zeta_p)$ be a unit such that \[u \equiv a^p \mod \lam
 \end{lemma}
 
 \begin{proof}
+	\leanok
 	Assume $u$ is not a $p$-th power. Then let $K=F(\sqrt[p]{u})$  and $\eta \in K$ be as in \ref{lem:Hilbert92}. Then $K/F$ is Galois and cyclic of degree $p$. Now by Hilbert 90 (\ref{Hilbert90})  we can find $\beta \in \OO_K$ such that \[\eta = \beta/\sigma(\beta)\] (but note that by our assumption $\beta$ is not a unit). Note that the ideal $(\eta)$ is invariant under $\Gal(K/F)$ by construction and by \ref{lem:ramification_lem} it cannot be ramified, therefore $(\beta)$ is the extension of scalars of some ideal $\gothb$ in $\OO_F$. Now if $\gothb$ is principal generated by some $\gamma$ then $\beta=v \gamma$  for some $v \in \OO_K^\times$.
 	But this means that \[\eta = \beta/\sigma(\beta)= v/(\sigma(v)) \cdot \gamma / \sigma(\gamma)=v/\sigma(v)  \] contradicting our assumption coming from \ref{lem:Hilbert92}. On the other hand, $\gothb^p= N_{K/F}(\beta)$ is principal, meaning $p$ divides the class group of $F$ as required.
 

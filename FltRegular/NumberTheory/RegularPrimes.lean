@@ -31,7 +31,6 @@ but sadly its implementation is so unsafe that using it here creates a lot of di
 We instead put some safe specialised instances here, and we can maybe look at generalising them
 later, when this is needed. Most results from here on genuinely only work for ℚ, so this is
 very fine for the moment. -/
--- todo: now the diamond is fixed, `open_locale cyclotomic` may be fine.
 instance safe {p : ℕ+} : NumberField (CyclotomicField p ℚ) :=
   IsCyclotomicExtension.numberField {p} ℚ <| CyclotomicField p ℚ
 
@@ -49,7 +48,6 @@ variable (n p : ℕ) [Fact p.Prime]
 instance {p : ℕ} [hp : Fact p.Prime] : Fact (0 < p) :=
   ⟨hp.out.pos⟩
 
--- note that this definition can be annoying to work with whilst #14984 isn't merged.
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
 def IsRegularNumber [hn : Fact (0 < n)] : Prop :=
   n.Coprime <| Fintype.card <| ClassGroup (𝓞 <| CyclotomicField ⟨n, hn.out⟩ ℚ)
