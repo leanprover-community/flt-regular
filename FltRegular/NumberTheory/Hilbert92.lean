@@ -800,11 +800,36 @@ lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (�
   simp only [ne_eq, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
 lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / σ E)
-  (hζ : (ζ : k) ^ (p : ℕ) = 1) :
+  (hζ : (ζ : k) ^ (p : ℕ) = 1) (hpodd : (p : ℕ) ≠ 2) :
     algebraMap k K (Algebra.norm k (S := K) E) = E ^ (p : ℕ) := by
+  have h1 : ∀ (i : ℕ), (σ ^ i) E = ((algebraMap k K ζ)⁻¹)^i * E := by
+    intro i
+    induction i with
+    | zero =>
+      simp only [Nat.zero_eq, zero_add, pow_one, map_inv₀, AlgEquiv.commutes]
+      rw [hE]
+      simp
+    | succ n ih =>
+      rw [pow_succ, AlgEquiv.mul_apply, ih, pow_succ]
+      simp only [inv_pow, map_mul, map_inv₀, map_pow, AlgEquiv.commutes]
+      have h0 : (algebraMap k K) ζ ≠ 0 := fun h ↦ by simp [(map_eq_zero _).1 h] at hζ
+      field_simp [h0]
+      rw [← mul_assoc]
+      congr
+      rw [hE]
+      field_simp
+      rw [mul_comm]
   rw [norm_eq_prod_pow_gen σ hσ, orderOf_eq_card_of_forall_mem_zpowers hσ,
     IsGalois.card_aut_eq_finrank, hKL]
-  sorry
+  conv =>
+    enter [1, 2, i]
+    rw [h1 i, mul_comm]
+  rw [prod_mul_distrib, prod_const, card_range, prod_pow_eq_pow_sum]
+  simp only [inv_pow, ne_eq, PNat.pos, pow_eq_zero_iff, ZeroMemClass.coe_eq_zero, Units.ne_zero,
+    not_false_eq_true, mul_eq_left₀, inv_eq_one]
+  rw [sum_range_id, Nat.mul_div_assoc, pow_mul, ← map_pow, hζ, map_one, one_pow]
+  exact even_iff_two_dvd.1 (hp.even_sub_one hpodd)
+
 
 attribute [-instance] instDecidableEq Fintype.decidableForallFintype
 attribute [local instance 2000] MulHomClass.toFunLike Classical.propDecidable
@@ -862,12 +887,13 @@ lemma Hilbert92ish :
       RingOfInteger.coe_algebraMap_apply, RingOfIntegers.norm_apply_coe, Units.val_pow_eq_pow_val,
       SubmonoidClass.coe_pow, Units.val_neg, AddSubgroupClass.coe_neg]
     rw [← map_pow] at hE
-    apply Hilbert92ish_aux2 p hKL σ hσ E _ hE
+    apply Hilbert92ish_aux2 p hp hKL σ hσ E _ hE
     rw [← pow_mul, ← pow_succ']
     apply (hζ.pow_eq_one_iff_dvd _).2
     cases h <;> simp only [Nat.zero_eq, pow_zero, zero_le, tsub_eq_zero_of_le,
       zero_add, pow_one, one_dvd, Nat.succ_sub_succ_eq_sub,
       nonpos_iff_eq_zero, tsub_zero, dvd_refl]
+    sorry
   let H := unitlifts p hp hKL σ hσ S
   let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
     fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
