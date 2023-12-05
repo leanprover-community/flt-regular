@@ -6,11 +6,12 @@ open FltRegular
 
 /-- Statement of Fermat's last theorem for regular primes. -/
 def FltRegular.Statement : Prop :=
-  ∀ ⦃p : ℕ⦄ [Fact p.Prime], IsRegularPrime p → p ≠ 2 → FermatLastTheoremWith ℤ p
+  ∀ ⦃p : ℕ⦄ [Fact p.Prime], IsRegularPrime p → p ≠ 2 → FermatLastTheoremFor p
 
 /-- Fermat's last theorem for regular primes. -/
 theorem flt_regular {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) (hodd : p ≠ 2) :
-    FermatLastTheoremWith ℤ p := by
+    FermatLastTheoremFor p := by
+  apply fermatLastTheoremFor_iff_int.mpr
   intro a b c ha hb hc e
   have hprod := mul_ne_zero (mul_ne_zero ha hb) hc
   obtain ⟨e', hgcd, hprod'⟩ := MayAssume.coprime e hprod
