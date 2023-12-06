@@ -13,7 +13,6 @@ theorem Zsqrtd.associated_norm_of_associated {d : ℤ} {f g : ℤ√d} (h : Asso
   have := (Zsqrtd.isUnit_iff_norm_isUnit u).mp u.isUnit
   rw [Zsqrtd.norm_mul]
   exact associated_mul_unit_right (Zsqrtd.norm f) _ this
-#align zsqrtd.associated_norm_of_associated Zsqrtd.associated_norm_of_associated
 
 theorem OddPrimeOrFour.im_ne_zero {p : ℤ√(-3)} (h : OddPrimeOrFour p.norm.natAbs)
     (hcoprime : IsCoprime p.re p.im) : p.im ≠ 0 :=
@@ -26,7 +25,6 @@ theorem OddPrimeOrFour.im_ne_zero {p : ℤ√(-3)} (h : OddPrimeOrFour p.norm.na
     norm_num at h
   · rw [Int.natAbs_pow] at hp
     exact hp.not_prime_pow le_rfl
-#align odd_prime_or_four.im_ne_zero OddPrimeOrFour.im_ne_zero
 
 theorem Zsqrt3.isUnit_iff {z : ℤ√(-3)} : IsUnit z ↔ abs z.re = 1 ∧ z.im = 0 :=
   by
@@ -34,7 +32,6 @@ theorem Zsqrt3.isUnit_iff {z : ℤ√(-3)} : IsUnit z ↔ abs z.re = 1 ∧ z.im 
     Int.natAbs_of_nonneg (Zsqrtd.norm_nonneg (by norm_num) z)]
   refine' ⟨Spts.eq_one, fun h => _⟩
   rw [Zsqrtd.norm_def, h.2, MulZeroClass.mul_zero, sub_zero, ← sq, ← sq_abs, h.1, one_pow]
-#align zsqrt3.is_unit_iff Zsqrt3.isUnit_iff
 
 theorem Zsqrt3.coe_of_isUnit {z : ℤ√(-3)} (h : IsUnit z) : ∃ u : Units ℤ, z = u :=
   by
@@ -43,7 +40,6 @@ theorem Zsqrt3.coe_of_isUnit {z : ℤ√(-3)} (h : IsUnit z) : ∃ u : Units ℤ
   use v
   rw [Zsqrtd.ext, hu, ← hv]
   simp only [Zsqrtd.coe_int_re, and_true_iff, eq_self_iff_true, Zsqrtd.coe_int_im]
-#align zsqrt3.coe_of_is_unit Zsqrt3.coe_of_isUnit
 
 theorem Zsqrt3.coe_of_isUnit' {z : ℤ√(-3)} (h : IsUnit z) : ∃ u : ℤ, z = u ∧ abs u = 1 :=
   by
@@ -51,7 +47,6 @@ theorem Zsqrt3.coe_of_isUnit' {z : ℤ√(-3)} (h : IsUnit z) : ∃ u : ℤ, z =
   refine' ⟨u, _, _⟩
   · rw [hu]
   · exact Int.isUnit_iff_abs_eq.mp u.isUnit
-#align zsqrt3.coe_of_is_unit' Zsqrt3.coe_of_isUnit'
 
 theorem Zsqrt3.norm_natAbs (a : ℤ√(-3)) : a.norm.natAbs = a.norm := by
   rw [Int.natAbs_of_nonneg (Zsqrtd.norm_nonneg (by norm_num) a)]
@@ -73,7 +68,6 @@ theorem OddPrimeOrFour.factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime 
       at hc
     rw [Nat.prime_iff_prime_int, ← hc] at hprime
     exact not_prime_pow one_lt_two.ne' hprime
-#align odd_prime_or_four.factors OddPrimeOrFour.factors
 
 theorem step1a {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a.norm) :
     Odd a.re ∧ Odd a.im :=
@@ -88,7 +82,6 @@ theorem step1a {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a
   have := hcoprime.isUnit_of_dvd' hre him
   rw [isUnit_iff_dvd_one] at this
   norm_num at this
-#align step1a step1a
 
 theorem step1 {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a.norm) :
     ∃ u : ℤ√(-3), a = ⟨1, 1⟩ * u ∨ a = ⟨1, -1⟩ * u :=
@@ -109,7 +102,6 @@ theorem step1 {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a.
     rw [Zsqrtd.ext, hv, Zsqrtd.mul_re, Zsqrtd.mul_im]
     dsimp only
     constructor <;> ring
-#align step1 step1
 
 theorem step1' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a.norm) :
     ∃ u : ℤ√(-3), IsCoprime u.re u.im ∧ a.norm = 4 * u.norm :=
@@ -121,7 +113,6 @@ theorem step1' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a
   · cases' hu' with hu' hu' <;>
       · rw [hu', Zsqrtd.norm_mul]
         congr
-#align step1' step1'
 
 theorem step1'' {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hp : p.norm = 4) (hq : p.im ≠ 0)
     (heven : Even a.norm) :
@@ -158,7 +149,6 @@ theorem step1'' {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hp : p.norm
     cases' h2 with h2 h2 <;>
       · rw [h2, Zsqrtd.norm_mul]
         congr
-#align step1'' step1''
 
 theorem step2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.norm ∣ a.norm)
     (hpprime : Prime p.norm) :
@@ -168,7 +158,6 @@ theorem step2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.norm
   refine' ⟨u', _, h, h'⟩
   apply Zsqrtd.coprime_of_dvd_coprime hcoprime
   obtain rfl | rfl := h <;> apply dvd_mul_left
-#align step2 step2
 
 theorem step1_2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.norm ∣ a.norm)
     (hp : OddPrimeOrFour p.norm.natAbs) (hq : p.im ≠ 0) :
@@ -186,7 +175,6 @@ theorem step1_2 {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hdvd : p.no
     exact step1'' hcoprime hp hq heven
   · rw [← Int.prime_iff_natAbs_prime] at hpprime
     apply step2 hcoprime hdvd hpprime
-#align step1_2 step1_2
 
 theorem OddPrimeOrFour.factors' {a : ℤ√(-3)} (h2 : a.norm ≠ 1) (hcoprime : IsCoprime a.re a.im) :
     ∃ u q : ℤ√(-3),
@@ -215,7 +203,6 @@ theorem OddPrimeOrFour.factors' {a : ℤ√(-3)} (h2 : a.norm ≠ 1) (hcoprime :
     · rw [huvdvd, lt_mul_iff_one_lt_left (Spts.pos_of_coprime' huvcoprime), ← Zsqrt3.norm_natAbs,
         Nat.one_lt_cast]
       exact hp.one_lt
-#align odd_prime_or_four.factors' OddPrimeOrFour.factors'
 
 theorem step3 {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     ∃ f : Multiset (ℤ√(-3)),
@@ -250,7 +237,6 @@ theorem step3 {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
       obtain rfl | ind := hpq
       · exact ⟨hc, hd, hp⟩
       · exact hgfactors pq ind
-#align step3 step3
 
 theorem step4_3 {p p' : ℤ√(-3)} (hcoprime : IsCoprime p.re p.im) (hcoprime' : IsCoprime p'.re p'.im)
     (h : OddPrimeOrFour p.norm.natAbs) (heq : p.norm = p'.norm) :
@@ -269,12 +255,10 @@ theorem step4_3 {p p' : ℤ√(-3)} (hcoprime : IsCoprime p.re p.im) (hcoprime' 
       rw [H.1, H.2, abs_mul, abs_mul, ha, mul_one, mul_one]
       try rw [zsqrtd.conj_re, zsqrtd.conj_im, abs_neg]
       simp
-#align step4_3 step4_3
 
 theorem prod_map_norm {d : ℤ} {s : Multiset (ℤ√d)} :
     (s.map Zsqrtd.norm).prod = Zsqrtd.norm s.prod :=
   Multiset.prod_hom s (Zsqrtd.normMonoidHom : ℤ√d →* ℤ)
-#align prod_map_norm prod_map_norm
 
 theorem prod_map_natAbs {s : Multiset ℤ} :
     (s.map Int.natAbs).prod = Int.natAbs s.prod :=
@@ -302,20 +286,17 @@ theorem factors_unique_prod :
     exact hg y hy
   · simp_rw [← Multiset.map_map, prod_map_natAbs, prod_map_norm, ← Int.associated_iff_natAbs]
     exact hassoc
-#align factors_unique_prod factors_unique_prod
 
 /-- The multiset of factors. -/
 noncomputable def factorization' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     Multiset (ℤ√(-3)) :=
   Classical.choose (step3 hcoprime)
-#align factorization' factorization'
 
 theorem factorization'_prop {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     (a = (factorization' hcoprime).prod ∨ a = -(factorization' hcoprime).prod) ∧
       ∀ pq : ℤ√(-3),
         pq ∈ factorization' hcoprime → 0 ≤ pq.re ∧ pq.im ≠ 0 ∧ OddPrimeOrFour pq.norm.natAbs :=
   Classical.choose_spec (step3 hcoprime)
-#align factorization'_prop factorization'_prop
 
 theorem factorization'.coprime_of_mem {a b : ℤ√(-3)} (h : IsCoprime a.re a.im)
     (hmem : b ∈ factorization' h) : IsCoprime b.re b.im :=
@@ -327,7 +308,6 @@ theorem factorization'.coprime_of_mem {a b : ℤ√(-3)} (h : IsCoprime a.re a.i
   cases' h1 with h1 h1 <;> rw [h1]
   simp only [dvd_neg]
   rfl
-#align factorization'.coprime_of_mem factorization'.coprime_of_mem
 
 theorem no_conj (s : Multiset (ℤ√(-3))) {p : ℤ√(-3)} (hp : ¬IsUnit p)
     (hcoprime : IsCoprime s.prod.re s.prod.im) : ¬(p ∈ s ∧ star p ∈ s) :=
@@ -359,21 +339,17 @@ theorem no_conj (s : Multiset (ℤ√(-3))) {p : ℤ√(-3)} (hp : ¬IsUnit p)
     apply IsCoprime.isUnit_of_dvd' hcoprime <;>
       simp only [add_zero, Zsqrtd.coe_int_re, MulZeroClass.zero_mul, dvd_mul_right, Zsqrtd.mul_re,
         MulZeroClass.mul_zero, Zsqrtd.mul_im, Zsqrtd.coe_int_im]
-#align no_conj no_conj
 
 /-- Associated elements in `ℤ√-3`. -/
 def Associated' (x y : ℤ√(-3)) : Prop :=
   Associated x y ∨ Associated x (star y)
-#align associated' Associated'
 
 @[refl]
 theorem Associated'.refl (x : ℤ√(-3)) : Associated' x x :=
   Or.inl (by rfl)
-#align associated'.refl Associated'.refl
 
 theorem Associated'.norm_eq {x y : ℤ√(-3)} (h : Associated' x y) : x.norm = y.norm := by
   cases' h with h h <;> simp only [Zsqrtd.norm_eq_of_associated (by norm_num) h, Zsqrtd.norm_conj]
-#align associated'.norm_eq Associated'.norm_eq
 
 theorem associated'_of_abs_eq {x y : ℤ√(-3)} (hre : abs x.re = abs y.re)
     (him : abs x.im = abs y.im) : Associated' x y :=
@@ -387,7 +363,6 @@ theorem associated'_of_abs_eq {x y : ℤ√(-3)} (hre : abs x.re = abs y.re)
       (left; use -1)
     ] <;>
     simp [Zsqrtd.ext, h1, h2]
-#align associated'_of_abs_eq associated'_of_abs_eq
 
 theorem associated'_of_associated_norm {x y : ℤ√(-3)}
     (h : Associated (Zsqrtd.norm x) (Zsqrtd.norm y)) (hx : IsCoprime x.re x.im)
@@ -398,7 +373,6 @@ theorem associated'_of_associated_norm {x y : ℤ√(-3)}
     Int.eq_of_associated_of_nonneg h (Zsqrtd.norm_nonneg hd _) (Zsqrtd.norm_nonneg hd _)
   obtain ⟨hre, him⟩ := step4_3 hx hy h' heq
   exact associated'_of_abs_eq hre him
-#align associated'_of_associated_norm associated'_of_associated_norm
 
 theorem factorization'.associated'_of_norm_associated {a b c : ℤ√(-3)} (h : IsCoprime a.re a.im)
     (hbmem : b ∈ factorization' h) (hcmem : c ∈ factorization' h)
@@ -408,7 +382,6 @@ theorem factorization'.associated'_of_norm_associated {a b c : ℤ√(-3)} (h : 
   · exact factorization'.coprime_of_mem h hbmem
   · exact factorization'.coprime_of_mem h hcmem
   · exact ((factorization'_prop h).2 b hbmem).2.2
-#align factorization'.associated'_of_norm_eq factorization'.associated'_of_norm_associated
 
 theorem factors_unique {f g : Multiset (ℤ√(-3))} (hf : ∀ x ∈ f, OddPrimeOrFour (Zsqrtd.norm x).natAbs)
     (hf' : ∀ x ∈ f, IsCoprime (Zsqrtd.re x) (Zsqrtd.im x))
@@ -429,7 +402,6 @@ theorem factors_unique {f g : Multiset (ℤ√(-3))} (hf : ∀ x ∈ f, OddPrime
   refine' Multiset.Rel.mono _ p
   rw [← Multiset.rel_map, factors_unique_prod hf hg <| Zsqrtd.associated_norm_of_associated h,
     Multiset.rel_eq]
-#align factors_unique factors_unique
 
 theorem factors_2_even' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     Even (evenFactorExp a.norm.natAbs) :=
@@ -449,7 +421,6 @@ theorem factors_2_even' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     contrapose! hparity with hfactor
     rw [hn, even_iff_two_dvd]
     exact UniqueFactorizationMonoid.dvd_of_mem_normalizedFactors hfactor
-#align factors_2_even' factors_2_even'
 
 theorem factorsOddPrimeOrFour.unique {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) {f : Multiset ℕ}
     (hf : ∀ x ∈ f, OddPrimeOrFour x) (hassoc : f.prod = a.norm.natAbs) :
@@ -460,7 +431,6 @@ theorem factorsOddPrimeOrFour.unique {a : ℤ√(-3)} (hcoprime : IsCoprime a.re
     exact Spts.ne_zero_of_coprime' _ hcoprime
   · rw [hassoc]
     exact factors_2_even' hcoprime
-#align factors_odd_prime_or_four.unique factorsOddPrimeOrFour.unique
 
 theorem eq_or_eq_conj_of_associated_of_re_zero {x A : ℤ√(-3)} (hx : x.re = 0) (h : Associated x A) :
     x = A ∨ x = star A := by
@@ -476,7 +446,6 @@ theorem eq_or_eq_conj_of_associated_of_re_zero {x A : ℤ√(-3)} (hx : x.re = 0
   · right
     simp only [hv1, hv2, mul_one, Int.cast_one, mul_neg, Int.cast_neg] at hu
     simp [← hu, hx, Zsqrtd.ext]
-#align eq_or_eq_conj_of_associated_of_re_zero eq_or_eq_conj_of_associated_of_re_zero
 
 theorem eq_or_eq_conj_iff_associated'_of_nonneg {x A : ℤ√(-3)} (hx : 0 ≤ x.re) (hA : 0 ≤ A.re) :
     Associated' x A ↔ x = A ∨ x = star A := by
@@ -526,7 +495,6 @@ theorem eq_or_eq_conj_iff_associated'_of_nonneg {x A : ℤ√(-3)} (hx : 0 ≤ x
     · rfl
     · right
       rfl
-#align eq_or_eq_conj_iff_associated'_of_nonneg eq_or_eq_conj_iff_associated'_of_nonneg
 
 theorem step5'
     -- lemma page 54
@@ -589,7 +557,6 @@ theorem step5'
       · rwa [← IsCoprime.neg_neg_iff, ← Zsqrtd.neg_im, ← Zsqrtd.neg_re]
     · refine' ⟨hx, _⟩
       rwa [H, star_star]
-#align step5' step5'
 
 theorem step5
     -- lemma page 54
@@ -606,7 +573,6 @@ theorem step5
     use -f.prod
     rw [h1, hf, Multiset.prod_nsmul, Odd.neg_pow]
     norm_num; decide
-#align step5 step5
 
 theorem step6 (a b r : ℤ) (hcoprime : IsCoprime a b) (hcube : r ^ 3 = a ^ 2 + 3 * b ^ 2) :
     ∃ p q, a = p ^ 3 - 9 * p * q ^ 2 ∧ b = 3 * p ^ 2 * q - 3 * q ^ 3 :=
@@ -622,4 +588,3 @@ theorem step6 (a b r : ℤ) (hcoprime : IsCoprime a b) (hcube : r ^ 3 = a ^ 2 + 
   use p.re, p.im
   simp only [Zsqrtd.ext, pow_succ', pow_two, Zsqrtd.mul_re, Zsqrtd.mul_im] at hp
   convert hp using 2 <;> simp <;> ring
-#align step6 step6

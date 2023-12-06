@@ -1,29 +1,24 @@
 /-
 Copyright (c) 2020 Ruben Van de Velde. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-
-! This file was ported from Lean 3 source module main
 -/
 import Mathlib.RingTheory.Int.Basic
 
 /-- Being equal to `4` or odd. -/
 def OddPrimeOrFour (z : ℕ) : Prop :=
   z = 4 ∨ Nat.Prime z ∧ Odd z
-#align odd_prime_or_four OddPrimeOrFour
 
 theorem OddPrimeOrFour.ne_zero {z : ℕ} (h : OddPrimeOrFour z) : z ≠ 0 :=
   by
   obtain rfl | ⟨h, -⟩ := h
   · norm_num
   · exact h.ne_zero
-#align odd_prime_or_four.ne_zero OddPrimeOrFour.ne_zero
 
 theorem OddPrimeOrFour.ne_one {z : ℕ} (h : OddPrimeOrFour z) : z ≠ 1 :=
   by
   obtain rfl | ⟨h, -⟩ := h
   · norm_num
   · exact h.ne_one
-#align odd_prime_or_four.ne_one OddPrimeOrFour.ne_one
 
 theorem OddPrimeOrFour.one_lt {z : ℕ} (h : OddPrimeOrFour z) : 1 < z :=
   by
@@ -37,13 +32,11 @@ theorem OddPrimeOrFour.not_unit {z : ℕ} (h : OddPrimeOrFour z) : ¬IsUnit z :=
   · rw [isUnit_iff_dvd_one]
     norm_num
   · exact h.not_unit
-#align odd_prime_or_four.not_unit OddPrimeOrFour.not_unit
 
 theorem OddPrimeOrFour.exists_and_dvd {n : ℕ} (n2 : 2 < n) : ∃ p, p ∣ n ∧ OddPrimeOrFour p := by
   obtain h4 | ⟨p, hpprime, hpdvd, hpodd⟩ := Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt n2
   · exact ⟨4, h4, Or.inl rfl⟩
   · exact ⟨p, hpdvd, Or.inr ⟨hpprime, hpodd⟩⟩
-#align odd_prime_or_four.exists_and_dvd OddPrimeOrFour.exists_and_dvd
 
 theorem eq_of_dvd {a p : ℕ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFour p) (h : p ∣ a) :
     p = a :=
@@ -75,7 +68,6 @@ theorem dvd_or_dvd {a p x : ℕ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFour p)
       apply Nat.prime_two.prime.pow_dvd_of_dvd_mul_left _ _ hdvd
       rwa [← even_iff_two_dvd, ← Nat.odd_iff_not_even]
   · exact pp.dvd_mul.mp hdvd
-#align dvd_or_dvd dvd_or_dvd
 
 theorem mem_of_dvd_prod {p : ℕ} (hp : OddPrimeOrFour p) {s : Multiset ℕ}
     (hs : ∀ r ∈ s, OddPrimeOrFour r) (hdvd : p ∣ s.prod) : p ∈ s :=
@@ -120,46 +112,37 @@ theorem factors_unique_prod' :
     · exact fun q hq => hg q (Multiset.mem_of_mem_erase hq)
     · apply mul_left_cancel₀ hp.ne_zero
       rwa [Multiset.prod_erase hbg, ← Multiset.prod_cons]
-#align factors_unique_prod' factors_unique_prod'
 
 /-- The odd factors. -/
 noncomputable def oddFactors (x : ℕ) :=
   Multiset.filter Odd (UniqueFactorizationMonoid.normalizedFactors x)
-#align odd_factors oddFactors
 
 theorem oddFactors.zero : oddFactors 0 = 0 :=
   rfl
-#align odd_factors.zero oddFactors.zero
 
 theorem oddFactors.not_two_mem (x : ℕ) : 2 ∉ oddFactors x := by
   simp [oddFactors]
-#align odd_factors.not_two_mem oddFactors.not_two_mem
 
 theorem oddFactors.pow (z : ℕ) (n : ℕ) : oddFactors (z ^ n) = n • oddFactors z :=
   by
   simp only [oddFactors]
   rw [UniqueFactorizationMonoid.normalizedFactors_pow, Multiset.filter_nsmul]
-#align odd_factors.pow oddFactors.pow
 
 /-- The exponent of `2` in the factorization. -/
 noncomputable def evenFactorExp (x : ℕ) :=
   Multiset.count 2 (UniqueFactorizationMonoid.normalizedFactors x)
-#align even_factor_exp evenFactorExp
 
 theorem evenFactorExp.def (x : ℕ) :
     evenFactorExp x = Multiset.count 2 (UniqueFactorizationMonoid.normalizedFactors x) :=
   rfl
-#align even_factor_exp.def evenFactorExp.def
 
 theorem evenFactorExp.zero : evenFactorExp 0 = 0 :=
   rfl
-#align even_factor_exp.zero evenFactorExp.zero
 
 theorem evenFactorExp.pow (z : ℕ) (n : ℕ) : evenFactorExp (z ^ n) = n * evenFactorExp z :=
   by
   simp only [evenFactorExp]
   rw [UniqueFactorizationMonoid.normalizedFactors_pow, Multiset.count_nsmul]
-#align even_factor_exp.pow evenFactorExp.pow
 
 theorem even_and_odd_factors'' (x : ℕ) :
     UniqueFactorizationMonoid.normalizedFactors x =
@@ -182,7 +165,6 @@ theorem even_and_odd_factors'' (x : ℕ) :
   · rw [Multiset.filter_eq_nil]
     rintro a ha ⟨rfl, hodd⟩
     norm_num at hodd
-#align even_and_odd_factors'' even_and_odd_factors''
 
 theorem even_and_odd_factors' (x : ℕ) :
     UniqueFactorizationMonoid.normalizedFactors x =
@@ -190,7 +172,6 @@ theorem even_and_odd_factors' (x : ℕ) :
   by
   convert even_and_odd_factors'' x
   simp [evenFactorExp, ← Multiset.filter_eq]
-#align even_and_odd_factors' even_and_odd_factors'
 
 theorem even_and_oddFactors (x : ℕ) (hx : x ≠ 0) :
     Associated x (2 ^ evenFactorExp x * (oddFactors x).prod) :=
@@ -198,7 +179,6 @@ theorem even_and_oddFactors (x : ℕ) (hx : x ≠ 0) :
   convert(UniqueFactorizationMonoid.normalizedFactors_prod hx).symm
   simp [evenFactorExp]
   rw [Multiset.pow_count, ← Multiset.prod_add, ← even_and_odd_factors'' x]
-#align even_and_odd_factors even_and_oddFactors
 
 theorem factors_2_even {z : ℕ} (hz : z ≠ 0) : evenFactorExp (4 * z) = 2 + evenFactorExp z :=
   by
@@ -209,13 +189,11 @@ theorem factors_2_even {z : ℕ} (hz : z ≠ 0) : evenFactorExp (4 * z) = 2 + ev
     UniqueFactorizationMonoid.normalizedFactors_pow, Multiset.count_nsmul,
     UniqueFactorizationMonoid.normalizedFactors_irreducible Nat.prime_two,
     normalize_eq, Multiset.count_singleton_self, mul_one]
-#align factors_2_even factors_2_even
 
 -- most useful with  (hz : even (even_factor_exp z))
 /-- Odd factors or `4`. -/
 noncomputable def factorsOddPrimeOrFour (z : ℕ) : Multiset ℕ :=
   Multiset.replicate (evenFactorExp z / 2) 4 + oddFactors z
-#align factors_odd_prime_or_four factorsOddPrimeOrFour
 
 theorem factorsOddPrimeOrFour.prod' {a : ℕ} (ha : 0 < a) (heven : Even (evenFactorExp a)) :
     (factorsOddPrimeOrFour a).prod = a :=
@@ -227,7 +205,6 @@ theorem factorsOddPrimeOrFour.prod' {a : ℕ} (ha : 0 < a) (heven : Even (evenFa
   obtain ⟨m, hm⟩ := even_iff_two_dvd.mp heven
   rw [even_and_odd_factors' _, Multiset.prod_add, factorsOddPrimeOrFour, Multiset.prod_add, hm,
     Nat.mul_div_right _ zero_lt_two, Multiset.prod_replicate, Multiset.prod_replicate, pow_mul, h₁]
-#align factors_odd_prime_or_four.prod' factorsOddPrimeOrFour.prod'
 
 theorem factorsOddPrimeOrFour.unique' {f : Multiset ℕ} (hf : ∀ x ∈ f, OddPrimeOrFour x)
     (ha : 0 < f.prod) (heven : Even (evenFactorExp f.prod)) :
@@ -240,11 +217,8 @@ theorem factorsOddPrimeOrFour.unique' {f : Multiset ℕ} (hf : ∀ x ∈ f, OddP
   · exact Multiset.eq_of_mem_replicate
   · simp only [oddFactors, Multiset.mem_filter]
     exact And.imp_left <| Prime.nat_prime ∘ (UniqueFactorizationMonoid.prime_of_normalized_factor _)
-#align factors_odd_prime_or_four.associated' factorsOddPrimeOrFour.unique'
-#align factors_odd_prime_or_four.unique' factorsOddPrimeOrFour.unique'
 
 theorem factorsOddPrimeOrFour.pow (z : ℕ) (n : ℕ) (hz : Even (evenFactorExp z)) :
     factorsOddPrimeOrFour (z ^ n) = n • factorsOddPrimeOrFour z := by
   simp only [factorsOddPrimeOrFour, nsmul_add, Multiset.nsmul_replicate, evenFactorExp.pow,
     Nat.mul_div_assoc _ (even_iff_two_dvd.mp hz), oddFactors.pow]
-#align factors_odd_prime_or_four.pow factorsOddPrimeOrFour.pow

@@ -16,7 +16,6 @@ theorem Zsqrtd.exists {d : ℤ} (a : ℤ√d) (him : a.im ≠ 0) :
       and_self_iff, neg_nonneg, Ne.def, not_false_iff, neg_eq_zero]
   · use a
     simp only [hre.le, him, eq_self_iff_true, and_self_iff, Ne.def, not_false_iff]
-#align zsqrtd.exists Zsqrtd.exists
 
 -- Edwards p49 step (2')
 theorem factors2 {a : ℤ√(-3)} (heven : Even a.norm) : ∃ b : ℤ√(-3), a.norm = 4 * b.norm :=
@@ -40,7 +39,6 @@ theorem factors2 {a : ℤ√(-3)} (heven : Even a.norm) : ∃ b : ℤ√(-3), a.
       rw [sub_eq_iff_eq_add] at hv
       simp only [Zsqrtd.norm_def, hv]
       ring
-#align factors2 factors2
 
 theorem Spts.mul_of_dvd' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime : Prime p.norm) :
     ∃ u : ℤ√(-3), a = p * u ∨ a = star p * u :=
@@ -101,7 +99,6 @@ theorem Spts.mul_of_dvd' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime 
       Zsqrtd.mul_im, Zsqrtd.mul_re, neg_neg, MulZeroClass.mul_zero, neg_zero, Zsqrtd.coe_int_im,
       this]
     constructor <;> ring
-#align spts.mul_of_dvd' Spts.mul_of_dvd'
 
 -- Edwards p49 step (3')
 theorem Spts.mul_of_dvd'' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime : Prime p.norm) :
@@ -112,7 +109,6 @@ theorem Spts.mul_of_dvd'' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime
   obtain rfl | rfl := hu
   · rw [Zsqrtd.norm_mul]
   · rw [Zsqrtd.norm_mul, Zsqrtd.norm_conj]
-#align spts.mul_of_dvd'' Spts.mul_of_dvd''
 
 -- Edwards p49 step (4'), contraposed
 theorem factors' (a : ℤ√(-3)) (f : ℤ) (g : ℤ) (hodd : Odd f) (hgpos : g ≠ 0)
@@ -185,7 +181,6 @@ theorem factors' (a : ℤ√(-3)) (f : ℤ) (g : ℤ) (hodd : Odd f) (hgpos : g 
         refine' hnotform f' _ hf'odd
         rw [← Int.dvd_natAbs, this, Int.dvd_natAbs] at hf'dvd
         exact hf'dvd.mul_left _
-#align factors' factors'
 
 theorem Zqrtd.factor_div (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) :
     ∃ c m : ℤ√(-3), a = c + m * x ∧ c.norm < x ^ 2 :=
@@ -214,7 +209,6 @@ theorem Zqrtd.factor_div (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) :
         mul_lt_mul_left (by norm_num : (0 : ℤ) < 3)]
       norm_cast
       exact Nat.pow_lt_pow_of_lt_left hd zero_lt_two
-#align zqrtd.factor_div Zqrtd.factor_div
 
 theorem Zqrtd.factor_div' (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) (h : 1 < |x|)
     (hcoprime : IsCoprime a.re a.im) (hfactor : x ∣ a.norm) :
@@ -244,7 +238,6 @@ theorem Zqrtd.factor_div' (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) (h : 1 < |x|
     zify
     rwa [← Int.coe_natAbs x, Int.natAbs_pow_two x, ← Int.coe_natAbs,
       Int.natAbs_of_nonneg (Zsqrtd.norm_nonneg (by norm_num) c)]
-#align zqrtd.factor_div' Zqrtd.factor_div'
 
 -- Edwards p50 step (5')
 theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hodd : Odd x)
@@ -316,7 +309,6 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
 
   · rw [← h6]
     exact dvd_mul_of_dvd_right hwdvd x
-#align factors factors
 
 theorem Spts.eq_one {a : ℤ√(-3)} (h : a.norm = 1) : abs a.re = 1 ∧ a.im = 0 :=
   by
@@ -343,19 +335,16 @@ theorem Spts.eq_one {a : ℤ√(-3)} (h : a.norm = 1) : abs a.re = 1 ∧ a.im = 
       exact pow_lt_pow_of_lt_left H zero_le_one zero_lt_two
     · rw [mul_assoc]
       exact mul_nonneg zero_lt_three.le (mul_self_nonneg _)
-#align spts.eq_one Spts.eq_one
 
 theorem Spts.eq_one' {a : ℤ√(-3)} (h : a.norm = 1) : a = 1 ∨ a = -1 := by
   simp only [Zsqrtd.ext, Zsqrtd.one_re, Zsqrtd.one_im, Zsqrtd.neg_im, Zsqrtd.neg_re, neg_zero, ←
     or_and_right, ← abs_eq (zero_le_one' ℤ), Spts.eq_one h, eq_self_iff_true, and_self_iff]
-#align spts.eq_one' Spts.eq_one'
 
 theorem Spts.ne_zero_of_coprime' (a : ℤ√(-3)) (hcoprime : IsCoprime a.re a.im) : a.norm ≠ 0 :=
   by
   contrapose! hcoprime with H
   obtain ⟨rfl, rfl⟩ := (Zsqrtd.norm_eq_zero_iff (by norm_num) _).mp H
   exact not_isCoprime_zero_zero
-#align spts.ne_zero_of_coprime' Spts.ne_zero_of_coprime'
 
 theorem Spts.pos_of_coprime' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) : 0 < a.norm :=
   by
@@ -364,7 +353,6 @@ theorem Spts.pos_of_coprime' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     norm_num
   · apply Ne.symm -- Porting note: `symm` fails
     exact Spts.ne_zero_of_coprime' _ hcoprime
-#align spts.pos_of_coprime' Spts.pos_of_coprime'
 
 theorem Spts.one_lt_of_im_ne_zero (a : ℤ√(-3)) (hb : a.im ≠ 0) : 1 < a.norm :=
   by
@@ -376,7 +364,6 @@ theorem Spts.one_lt_of_im_ne_zero (a : ℤ√(-3)) (hb : a.im ≠ 0) : 1 < a.nor
     rw [hb, Zsqrtd.zero_im]
   · intro H
     exact hb (Spts.eq_one H.symm).2
-#align spts.one_lt_of_im_ne_zero Spts.one_lt_of_im_ne_zero
 
 theorem Spts.not_two (a : ℤ√(-3)) : a.norm ≠ 2 :=
   by
@@ -391,7 +378,6 @@ theorem Spts.not_two (a : ℤ√(-3)) : a.norm ≠ 2 :=
     rw [mul_assoc, neg_mul_eq_neg_mul, neg_neg]
     refine' le_mul_of_one_le_right zero_lt_three.le _
     rwa [← Int.sub_one_lt_iff, sub_self, mul_self_pos]
-#align spts.not_two Spts.not_two
 
 theorem Spts.four {p : ℤ√(-3)} (hfour : p.norm = 4) (hq : p.im ≠ 0) : abs p.re = 1 ∧ abs p.im = 1 :=
   by
@@ -424,7 +410,6 @@ theorem Spts.four {p : ℤ√(-3)} (hfour : p.norm = 4) (hq : p.im ≠ 0) : abs 
       rw [hfour]
       norm_num
 
-#align spts.four Spts.four
 
 theorem Spts.four_of_coprime {p : ℤ√(-3)} (hcoprime : IsCoprime p.re p.im) (hfour : p.norm = 4) :
     abs p.re = 1 ∧ abs p.im = 1 := by
@@ -433,4 +418,3 @@ theorem Spts.four_of_coprime {p : ℤ√(-3)} (hcoprime : IsCoprime p.re p.im) (
   rw [him, isCoprime_zero_right, Int.isUnit_iff_abs_eq] at hcoprime
   rw [Zsqrtd.norm_def, him, MulZeroClass.mul_zero, sub_zero, ← sq, ← sq_abs, hcoprime] at hfour
   norm_num at hfour
-#align spts.four_of_coprime Spts.four_of_coprime

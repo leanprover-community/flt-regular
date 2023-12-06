@@ -12,12 +12,10 @@ import Mathlib.Tactic.IntervalCases
 /-- solutions to Fermat's last theorem for the exponent `3`. -/
 def FltSolution (n : ℕ) (a b c : ℤ) :=
   a ≠ 0 ∧ b ≠ 0 ∧ c ≠ 0 ∧ a ^ n + b ^ n = c ^ n
-#align flt_solution FltSolution
 
 /-- Coprime solutions to Fermat's last theorem for the exponent `3`. -/
 def FltCoprime (n : ℕ) (a b c : ℤ) :=
   FltSolution n a b c ∧ IsCoprime a b ∧ IsCoprime a c ∧ IsCoprime b c
-#align flt_coprime FltCoprime
 
 theorem exists_coprime {n : ℕ} (hn : 0 < n) {a b c : ℤ} (ha' : a ≠ 0) (hb' : b ≠ 0) (hc' : c ≠ 0)
     (h : a ^ n + b ^ n = c ^ n) :
@@ -61,7 +59,6 @@ theorem exists_coprime {n : ℕ} (hn : 0 < n) {a b c : ℤ} (ha' : a ≠ 0) (hb'
         right_ne_zero_of_mul (by rwa [HC] at hc'), hsoln⟩,
       hcoprime, coprime_add_self_pow hn hsoln hcoprime,
       coprime_add_self_pow hn hsoln' hcoprime.symm⟩
-#align exists_coprime exists_coprime
 
 theorem descent1a {a b c : ℤ} (h : a ^ 3 + b ^ 3 = c ^ 3) (habcoprime : IsCoprime a b)
     (haccoprime : IsCoprime a c) (hbccoprime : IsCoprime b c) :
@@ -85,7 +82,6 @@ theorem descent1a {a b c : ℤ} (h : a ^ 3 + b ^ 3 = c ^ 3) (habcoprime : IsCopr
     apply hcparity
     rw [← Int.even_pow' three_ne_zero, ← h]
     simp [haparity, hbparity, three_ne_zero, parity_simps]
-#align descent1a descent1a
 
 theorem flt_not_add_self {a b c : ℤ} (ha : a ≠ 0) (h : a ^ 3 + b ^ 3 = c ^ 3) : a ≠ b :=
   by
@@ -97,7 +93,6 @@ theorem flt_not_add_self {a b c : ℤ} (ha : a ≠ 0) (h : a ^ 3 + b ^ 3 = c ^ 3
     apply dvd_mul_right
   apply Int.two_not_cube d
   rwa [mul_pow, mul_right_inj' (pow_ne_zero 3 ha), eq_comm] at h
-#align flt_not_add_self flt_not_add_self
 
 theorem descent1left {a b c : ℤ} (hapos : a ≠ 0) (h : a ^ 3 + b ^ 3 = c ^ 3)
     (hbccoprime : IsCoprime b c) (hb : ¬Even b) (hc : ¬Even c) :
@@ -132,7 +127,6 @@ theorem descent1left {a b c : ℤ} (hapos : a ≠ 0) (h : a ^ 3 + b ^ 3 = c ^ 3)
   · constructor <;> intro H <;> simpa [H, parity_simps] using hc
   · rw [eq_sub_of_add_eq h]
     ring
-#align descent1left descent1left
 
 theorem descent1 (a b c : ℤ) (h : FltCoprime 3 a b c) :
     ∃ p q : ℤ,
@@ -157,7 +151,6 @@ theorem descent1 (a b c : ℤ) (h : FltCoprime 3 a b c) :
     · rw [← h]
       ring
     · simp [ha, parity_simps]
-#align descent1 descent1
 
 theorem descent11 {a b c d : ℤ} (h : d = a ∨ d = b ∨ d = c) : d ∣ a * b * c :=
   by
@@ -165,7 +158,6 @@ theorem descent11 {a b c d : ℤ} (h : d = a ∨ d = b ∨ d = c) : d ∣ a * b 
   · exact (dvd_mul_right _ _).mul_right _
   · exact (dvd_mul_left _ _).mul_right _
   · exact dvd_mul_left _ _
-#align descent11 descent11
 
 theorem descent2 (a b c : ℤ) (h : FltCoprime 3 a b c) :
     ∃ p q : ℤ,
@@ -199,7 +191,6 @@ theorem descent2 (a b c : ℤ) (h : FltCoprime 3 a b c) :
       rw [Zsqrtd.norm]
       ring
 
-#align descent2 descent2
 
 theorem Nat.cast_three [AddMonoidWithOne R] : ((3 : ℕ) : R) = (3 : R) := rfl
 
@@ -291,7 +282,6 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     refine' dvd_trans _ (Int.gcd_dvd_right (2 * p) (p ^ 2 + 3 * q ^ 2))
     rw [← hg', hg, Int.ofNat_mul]
     apply dvd_mul_right
-#align gcd1or3 gcd1or3
 
 theorem obscure' (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity : Even p ↔ ¬Even q)
     (hcube : ∃ r, p ^ 2 + 3 * q ^ 2 = r ^ 3) :
@@ -333,7 +323,6 @@ theorem obscure' (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity 
           rw [hq']
           simp [haparity, hbparity, three_ne_zero, parity_simps]
         tauto
-#align obscure' obscure'
 
 theorem Int.eq_pow_of_mul_eq_pow_odd {a b c : ℤ} (hab : IsCoprime a b) {k : ℕ} (hk : Odd k)
     (h : a * b = c ^ k) : (∃ d, a = d ^ k) ∧ ∃ e, b = e ^ k := by
@@ -352,7 +341,6 @@ theorem Int.cube_of_coprime (a b c s : ℤ) (ha : a ≠ 0) (hb : b ≠ 0) (hc : 
   · rwa [← HA]
   · rwa [← HB]
   · rwa [← HC]
-#align int.cube_of_coprime Int.cube_of_coprime
 
 theorem Int.gcd1_coprime12 (u v : ℤ) (huvcoprime : IsCoprime u v) (notdvd_2_2 : ¬2 ∣ u - 3 * v)
     (not_3_dvd_2 : ¬3 ∣ u - 3 * v) : IsCoprime (2 * u) (u - 3 * v) :=
@@ -369,7 +357,6 @@ theorem Int.gcd1_coprime12 (u v : ℤ) (huvcoprime : IsCoprime u v) (notdvd_2_2 
     apply Int.dvd_mul_cancel_prime' notdvd_2_2 hkdvdright Int.prime_two
     convert dvd_sub hkdvdleft (hkdvdright.mul_left 2) using 1
     ring
-#align int.gcd1_coprime12 Int.gcd1_coprime12
 
 theorem Int.gcd1_coprime13 (u v : ℤ) (huvcoprime : IsCoprime u v) (this' : ¬Even (u + 3 * v))
     (notdvd_3_3 : ¬3 ∣ u + 3 * v) : IsCoprime (2 * u) (u + 3 * v) :=
@@ -387,7 +374,6 @@ theorem Int.gcd1_coprime13 (u v : ℤ) (huvcoprime : IsCoprime u v) (this' : ¬E
     apply Int.dvd_mul_cancel_prime' this' hkdvdright Int.prime_two
     convert dvd_sub (hkdvdright.mul_left 2) hkdvdleft using 1
     ring
-#align int.gcd1_coprime13 Int.gcd1_coprime13
 
 theorem Int.gcd1_coprime23 (u v : ℤ) (huvcoprime : IsCoprime u v) (notdvd_2_2 : ¬2 ∣ u - 3 * v)
     (notdvd_3_3 : ¬3 ∣ u + 3 * v) : IsCoprime (u - 3 * v) (u + 3 * v) :=
@@ -406,7 +392,6 @@ theorem Int.gcd1_coprime23 (u v : ℤ) (huvcoprime : IsCoprime u v) (notdvd_2_2 
     apply Int.dvd_mul_cancel_prime' notdvd_2_2 hkdvdleft Int.prime_two
     convert dvd_sub hkdvdright hkdvdleft using 1
     ring
-#align int.gcd1_coprime23 Int.gcd1_coprime23
 
 theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
     (hodd : Even p ↔ ¬Even q)
@@ -483,7 +468,6 @@ theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
   · rw [mul_comm, ← mul_assoc (C ^ 3), ← HA, ← HB, ← HC, ← haaa]
   · rw [← HA, ← HB, ← HC]
     ring
-#align descent_gcd1 descent_gcd1
 
 theorem gcd3_coprime {u v : ℤ} (huvcoprime : IsCoprime u v) (huvodd : Even u ↔ ¬Even v) :
     IsCoprime (2 * v) (u + v) ∧ IsCoprime (2 * v) (u - v) ∧ IsCoprime (u - v) (u + v) :=
@@ -534,7 +518,6 @@ theorem gcd3_coprime {u v : ℤ} (huvcoprime : IsCoprime u v) (huvodd : Even u �
     · convert dvd_sub hkdvdleft hkdvdright using 1
       ring
   exact ⟨haddcoprime.symm, hsubcoprime.symm, haddsubcoprime.symm⟩
-#align gcd3_coprime gcd3_coprime
 
 theorem descent_gcd3_coprime {q s : ℤ} (h3_ndvd_q : ¬3 ∣ q) (hspos : s ≠ 0)
     (hcoprime' : IsCoprime s q) (hodd' : Even q ↔ ¬Even s) :
@@ -566,7 +549,6 @@ theorem descent_gcd3_coprime {q s : ℤ} (h3_ndvd_q : ¬3 ∣ q) (hspos : s ≠ 
   apply hkprime.dvd_of_dvd_pow
   rw [← dvd_add_left ((this.pow two_ne_zero).mul_left _)]
   exact hkdvdright
-#align descent_gcd3_coprime descent_gcd3_coprime
 
 theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime : IsCoprime p q)
     (hodd : Even p ↔ ¬Even q)
@@ -687,7 +669,6 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
 
   · rw [← HA, ← HB, ← HC]
     ring
-#align descent_gcd3 descent_gcd3
 
 theorem descent (a b c : ℤ) (h : FltCoprime 3 a b c) :
     ∃ a' b' c' : ℤ,
@@ -713,7 +694,6 @@ theorem descent (a b c : ℤ) (h : FltCoprime 3 a b c) :
   · rw [Int.gcd_eq_one_iff_coprime] at hgcd
     apply descent_gcd1 a b c p q hp hcoprime hodd hcube hgcd
   · apply descent_gcd3 a b c p q hp hq hcoprime hodd hcube hgcd
-#align descent descent
 
 theorem flt_three : FermatLastTheoremWith ℤ 3 := by
   intros a b c ha hb hc
@@ -726,4 +706,3 @@ theorem flt_three : FermatLastTheoremWith ℤ 3 := by
   rw [← h]
   simp only [Int.natAbs_mul]
   exact Nat.mul_le_mul (Nat.mul_le_mul hxle hyle) hzle
-#align flt_three flt_three

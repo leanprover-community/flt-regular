@@ -1,8 +1,6 @@
 /-
 Copyright (c) 2020 Ruben Van de Velde. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-
-! This file was ported from Lean 3 source module flt_three.primes
 -/
 import Mathlib.Data.Int.Parity
 import Mathlib.RingTheory.Int.Basic
@@ -15,7 +13,6 @@ theorem coprime_add_self_pow {n : ℕ} (hn : 0 < n) (hsoln : x ^ n + y ^ n = z ^
     (hxx : IsCoprime x y) : IsCoprime x z := by
   have := IsCoprime.mul_add_left_right (hxx.pow (n := n) (m := n)) 1
   rwa [mul_one, hsoln, IsCoprime.pow_iff hn hn] at this
-#align coprime_add_self_pow coprime_add_self_pow
 
 end
 
@@ -57,7 +54,6 @@ nonrec theorem Int.two_not_cube (r : ℤ) : r ^ 3 ≠ 2 :=by
   apply two_not_cube r.natAbs
   rw [← Int.natAbs_pow, H]
   norm_num; decide
-#align int.two_not_cube Int.two_not_cube
 
 -- todo square neg_square and neg_pow_bit0
 section
@@ -77,4 +73,3 @@ end
 theorem Int.dvd_mul_cancel_prime' {p k m n : ℤ} (hdvd1 : ¬p ∣ m) (hdvd2 : k ∣ m) (hp : Prime p)
     (h : k ∣ p * n) : k ∣ n :=
   Irreducible.dvd_of_dvd_mul_left hdvd1 hdvd2 hp.irreducible h
-#align int.dvd_mul_cancel_prime' Int.dvd_mul_cancel_prime'
