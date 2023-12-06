@@ -263,7 +263,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
   rw [← pow_mul_pow_sub _ H] at hg
   have : ¬IsUnit (3 : ℤ) := by
     rw [Int.isUnit_iff_natAbs_eq]
-    norm_num; decide
+    norm_num
   apply this
   have hdvdp : 3 ∣ p :=
     by
@@ -573,7 +573,7 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
     intro H
     have := hcoprime.isUnit_of_dvd' h3_dvd_p H
     rw [Int.isUnit_iff_natAbs_eq] at this
-    norm_num at this; contradiction
+    norm_num at this
   -- 2.
   obtain ⟨s, rfl⟩ := h3_dvd_p
   have hspos : s ≠ 0 := right_ne_zero_of_mul hp

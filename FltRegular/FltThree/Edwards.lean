@@ -410,12 +410,12 @@ theorem factors_2_even' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
   by_cases hparity : Even a.norm.natAbs
   · obtain ⟨u, huvcoprime, huvprod⟩ := step1' hcoprime (Int.natAbs_even.mp hparity)
     have huv := Spts.ne_zero_of_coprime' _ huvcoprime
-    have h₄ : Int.natAbs 4 = 4 := by norm_num; decide
+    have h₄ : Int.natAbs 4 = 4 := by norm_num
     rw [← hn, huvprod, Int.natAbs_mul, h₄, factors_2_even (by simpa using huv), Nat.even_add]
     apply iff_of_true even_two
     apply ih _ _ huvcoprime rfl
     rw [← hn, huvprod, Int.natAbs_mul, lt_mul_iff_one_lt_left (Int.natAbs_pos.mpr huv)]
-    norm_num; decide
+    norm_num
   · convert even_zero (α := ℕ)
     simp only [evenFactorExp, Multiset.count_eq_zero, hn]
     contrapose! hparity with hfactor

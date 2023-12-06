@@ -49,11 +49,31 @@ theorem two_not_cube (r : ℕ) : r ^ 3 ≠ 2 :=by
   have : 1 ≤ 3 := by norm_num
   apply Monotone.ne_of_lt_of_lt_nat (Nat.pow_left_strictMono this).monotone 1 <;> norm_num
 
+namespace Mathlib
+open Lean hiding Rat mkRat
+open Meta
+
+namespace Meta.NormNum
+open Qq
+
+theorem isNat_natAbs : {n n' : ℤ} → {a : ℕ} → IsInt n' n → n.natAbs = a → IsNat n.natAbs a
+  | _, _, _, ⟨rfl⟩, rfl => ⟨rfl⟩
+
+@[norm_num Int.natAbs (_ : ℤ)] def evalIntOfNatNatAbs : NormNumExt where eval {u α} e := do
+  let .app (.const ``Int.natAbs _) (x : Q(ℤ)) ← whnfR e | failure
+  let ⟨ex, p⟩ ← deriveInt x _
+  haveI' : u =QL 0 := ⟨⟩; haveI' : $α =Q ℕ := ⟨⟩
+  haveI' : $e =Q Int.natAbs «$ex» := ⟨⟩
+  let ⟨ed, pf⟩ := rawIntLitNatAbs ex
+  return .isNat _ ed q(isNat_natAbs $p $pf)
+
+end Mathlib.Meta.NormNum
+
 nonrec theorem Int.two_not_cube (r : ℤ) : r ^ 3 ≠ 2 :=by
   intro H
   apply two_not_cube r.natAbs
   rw [← Int.natAbs_pow, H]
-  norm_num; decide
+  norm_num
 
 -- todo square neg_square and neg_pow_bit0
 section

@@ -135,7 +135,7 @@ theorem factors' (a : ℤ√(-3)) (f : ℤ) (g : ℤ) (hodd : Odd f) (hgpos : g 
     refine' IH g'.natAbs _ c g' hg'pos _ _ rfl
     · rw [Int.natAbs_mul]
       apply lt_mul_of_one_lt_left (Int.natAbs_pos.mpr hg'pos)
-      norm_num; decide
+      norm_num
     · rw [← mul_right_inj' (four_ne_zero' ℤ), ← hc, ← hfactor, mul_left_comm]
     · intro f' hf'dvd hf'odd
       refine' hnotform f' _ hf'odd
