@@ -73,6 +73,7 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
   rw [Ne.def, ← Subtype.ext_iff.not]
   exact hη
 
+set_option synthInstance.maxHeartbeats 40000 in
 lemma div_zeta_sub_one_Injective :
   Function.Injective (λ η ↦ Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η)) := by
   letI : AddGroup (𝓞 K ⧸ 𝔭) := inferInstance
@@ -149,11 +150,13 @@ lemma m_mul_c_mul_p : 𝔪 * 𝔠 η * 𝔭 = 𝔦 η := by
   rw [div_zeta_sub_one_dvd_gcd_spec, Ideal.span_singleton_mul_span_singleton,
     div_zeta_sub_one_mul_zeta_sub_one]
 
+set_option synthInstance.maxHeartbeats 40000 in
 lemma m_ne_zero : 𝔪 ≠ 0 := by
   simp_rw [Ne.def, gcd_eq_zero_iff, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
   rintro ⟨rfl, rfl⟩
   exact hy (dvd_zero _)
 
+set_option synthInstance.maxHeartbeats 40000 in
 lemma p_ne_zero : 𝔭 ≠ 0 := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [Ne.def, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]

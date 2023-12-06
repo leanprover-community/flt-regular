@@ -37,11 +37,6 @@ lemma Ideal.mem_normalizedFactors_iff {R} [CommRing R] [IsDedekindDomain R] [Dec
 lemma Ideal.comap_coe {R S F : Type*} [Semiring R] [Semiring S] [RingHomClass F R S]
   (f : F) (I : Ideal S) : I.comap (f : R →+* S) = I.comap f := rfl
 
--- Mathlib/Algebra/Algebra/Hom.lean
-lemma AlgEquiv.toAlgHom_toRingHom {R A₁ A₂} [CommSemiring R] [Semiring A₁] [Semiring A₂]
-    [Algebra R A₁] [Algebra R A₂] (e : A₁ ≃ₐ[R] A₂) : ((e : A₁ →ₐ[R] A₂) : A₁ →+* A₂) = e :=
-  rfl
-
 -- Mathlib/RingTheory/IntegralClosure.lean
 lemma isIntegralClosure_self {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
     (hRS : Algebra.IsIntegral R S) : IsIntegralClosure S R S where
@@ -223,14 +218,6 @@ lemma rootsOfUnity_equiv_of_primitiveRoots_symm_apply {K L} [Field K] [Field L]
   rw [MulEquiv.symm_apply_apply, rootsOfUnity_equiv_of_primitiveRoots_apply]
 
 -- Mathlib/Algebra/Algebra/Hom.lean
-@[simps]
-def AlgEquiv.toLinearMapHom (K L) [CommSemiring K] [Semiring L] [Algebra K L] :
-    (L ≃ₐ[K] L) →* L →ₗ[K] L where
-  toFun := AlgEquiv.toLinearMap
-  map_one' := rfl
-  map_mul' := fun _ _ ↦ rfl
-
--- Mathlib/Algebra/Algebra/Hom.lean
 lemma AlgEquiv.toMulEquiv_injective {R A B} [CommSemiring R] [Semiring A] [Semiring B]
     [Algebra R A] [Algebra R B] :
     Function.Injective (AlgEquiv.toMulEquiv (R := R) (A := A) (B := B)) :=
@@ -251,24 +238,11 @@ lemma linearIndependent_algEquiv_toLinearMap
   simp_rw [Algebra.smul_def, mul_one]
   exact (algebraMap K L).injective
 
--- Mathlib/Algebra/Algebra/Hom.lean (near `AlgEquiv.aut`)
-lemma AlgEquiv.pow_toLinearMap {K L} [CommSemiring K] [Semiring L] [Algebra K L]
-    (σ : L ≃ₐ[K] L) (n : ℕ) : (σ ^ n).toLinearMap = σ.toLinearMap ^ n :=
-  (AlgEquiv.toLinearMapHom K L).map_pow σ n
-
--- Mathlib/Algebra/Algebra/Hom.lean
-lemma AlgEquiv.one_toLinearMap {K L} [CommSemiring K] [Semiring L] [Algebra K L] :
-    (1 : L ≃ₐ[K] L).toLinearMap = 1 := rfl
-
 -- Mathlib/LinearAlgebra/Eigenspace/Basic.lean
 lemma Module.End.HasEigenvector.pow_apply {R} [CommRing R] {M} [AddCommGroup M] [Module R M]
     {f : Module.End R M} {μ : R} {v : M}
     (hv : f.HasEigenvector μ v) (n : ℕ) : (f ^ n) v = μ ^ n • v := by
   induction n <;> simp [*, pow_succ f, hv.apply_eq_smul, smul_smul, pow_succ' μ]
-
--- Mathlib/Logic/Equiv/Defs.lean
-lemma EquivLike.coe_coe {E α β : Sort*} [EquivLike E α β] (e : E) :
-  ((e : α ≃ β) : α → β) = e := rfl
 
 -- Mathlib/RingTheory/Finiteness.lean
 theorem Module.Finite.of_fintype_basis {R M} [CommSemiring R] [AddCommMonoid M] [Module R M] {ι : Type w}
@@ -967,11 +941,6 @@ lemma Algebra.norm_one_add_smul {A B} [CommRing A] [CommRing B] [Algebra A B]
   simp_rw [Algebra.norm_eq_matrix_det b, Algebra.trace_eq_matrix_trace b]
   simp only [map_add, map_one, map_smul, Matrix.det_one_add_smul a]
   exact ⟨_, rfl⟩
-
--- Mathlib/Algebra/Algebra/Hom.lean
-lemma RingHom.toIntAlgHom_injective {R₁ R₂} [Ring R₁] [Ring R₂] [Algebra ℤ R₁] [Algebra ℤ R₂] :
-    Function.Injective (RingHom.toIntAlgHom : (R₁ →+* R₂) → _) :=
-  fun _ _ e ↦ FunLike.ext _ _ (fun x ↦ FunLike.congr_fun e x)
 
 -- Mathlib/LinearAlgebra/FiniteDimensional.lean
 lemma FiniteDimensional.finrank_eq_one_of_linearEquiv {R V} [Field R]
