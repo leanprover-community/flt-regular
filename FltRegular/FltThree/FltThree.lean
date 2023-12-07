@@ -8,79 +8,140 @@ import FltRegular.FltThree.Edwards
 import Mathlib.Data.Int.GCD
 import Mathlib.NumberTheory.FLT.Basic
 import Mathlib.Tactic.IntervalCases
+import Mathlib.Algebra.GCDMonoid.Finset
+import Mathlib.Algebra.GCDMonoid.Div
 
-/-- solutions to Fermat's last theorem for the exponent `3`. -/
-def FltSolution (n : ℕ) (a b c : ℤ) :=
-  a ≠ 0 ∧ b ≠ 0 ∧ c ≠ 0 ∧ a ^ n + b ^ n = c ^ n
+set_option autoImplicit false
 
-/-- Coprime solutions to Fermat's last theorem for the exponent `3`. -/
-def FltCoprime (n : ℕ) (a b c : ℤ) :=
-  FltSolution n a b c ∧ IsCoprime a b ∧ IsCoprime a c ∧ IsCoprime b c
+open Finset
 
-theorem exists_coprime {n : ℕ} (hn : 0 < n) {a b c : ℤ} (ha' : a ≠ 0) (hb' : b ≠ 0) (hc' : c ≠ 0)
-    (h : a ^ n + b ^ n = c ^ n) :
-    ∃ a' b' c' : ℤ,
-      a'.natAbs ≤ a.natAbs ∧ b'.natAbs ≤ b.natAbs ∧ c'.natAbs ≤ c.natAbs ∧ FltCoprime n a' b' c' :=
-  by
-  set d := Int.gcd a b with hd'
-  obtain ⟨A, HA⟩ : ↑d ∣ a := Int.gcd_dvd_left a b
-  obtain ⟨B, HB⟩ : ↑d ∣ b := Int.gcd_dvd_right a b
-  obtain ⟨C, HC⟩ : ↑d ∣ c :=
-    by
-    rw [← Int.pow_dvd_pow_iff hn, ← h, HA, HB, mul_pow, mul_pow, ← mul_add]
-    exact dvd_mul_right _ _
-  have hdpos : 0 < d := Int.gcd_pos_of_ne_zero_left _ ha'
-  have hd := Int.coe_nat_ne_zero_iff_pos.mpr hdpos
-  have hsoln : A ^ n + B ^ n = C ^ n :=
-    by
-    apply Int.eq_of_mul_eq_mul_left (pow_ne_zero n hd)
-    simp only [mul_add, ← mul_pow, ← HA, ← HB, ← HC, h]
-  have hsoln' : B ^ n + A ^ n = C ^ n := by rwa [add_comm] at hsoln
-  have hcoprime : IsCoprime A B :=
-    by
-    rw [← Int.gcd_eq_one_iff_coprime]
-    apply Nat.eq_of_mul_eq_mul_left hdpos
-    rw [← Int.natAbs_ofNat d, ← Int.gcd_mul_left, ← HA, ← HB, hd', Int.natAbs_ofNat, mul_one]
-  have HA' : A.natAbs ≤ a.natAbs := by
-    rw [HA]
-    simp only [Int.natAbs_ofNat, Int.natAbs_mul]
-    exact le_mul_of_one_le_left' (Nat.succ_le_iff.mpr hdpos)
-  have HB' : B.natAbs ≤ b.natAbs := by
-    rw [HB]
-    simp only [Int.natAbs_ofNat, Int.natAbs_mul]
-    exact le_mul_of_one_le_left' (Nat.succ_le_iff.mpr hdpos)
-  have HC' : C.natAbs ≤ c.natAbs := by
-    rw [HC]
-    simp only [Int.natAbs_ofNat, Int.natAbs_mul]
-    exact le_mul_of_one_le_left' (Nat.succ_le_iff.mpr hdpos)
-  exact
-    ⟨A, B, C, HA', HB', HC',
-      ⟨right_ne_zero_of_mul (by rwa [HA] at ha'), right_ne_zero_of_mul (by rwa [HB] at hb'),
-        right_ne_zero_of_mul (by rwa [HC] at hc'), hsoln⟩,
-      hcoprime, coprime_add_self_pow hn hsoln hcoprime,
-      coprime_add_self_pow hn hsoln' hcoprime.symm⟩
+/-- A solution to Fermat's last theorem for the exponent `n`. -/
+structure FltSolution (n : ℕ) :=
+  a : ℤ
+  b : ℤ
+  c : ℤ
+  ha : a ≠ 0
+  hb : b ≠ 0
+  hc : c ≠ 0
+  hsol : a ^ n + b ^ n = c ^ n
 
-theorem descent1a {a b c : ℤ} (h : a ^ 3 + b ^ 3 = c ^ 3) (habcoprime : IsCoprime a b)
-    (haccoprime : IsCoprime a c) (hbccoprime : IsCoprime b c) :
-    (Even a ∧ ¬Even b ∧ ¬Even c ∨ ¬Even a ∧ Even b ∧ ¬Even c) ∨ ¬Even a ∧ ¬Even b ∧ Even c :=
-  by
-  have contra : ∀ {x y : ℤ}, IsCoprime x y → Even x → Even y → False :=
-    by
+theorem Int.ediv_ne_zero {a b : ℤ} (hdvd : b ∣ a) (ha : a ≠ 0): a / b ≠ 0 :=
+  fun H => ha <| Int.eq_zero_of_ediv_eq_zero hdvd H
+
+variable {n : ℕ}
+
+def FltSolution.gcd (h : FltSolution n) : ℤ := ({h.a, h.b, h.c} : Finset ℤ).gcd id
+
+theorem FltSolution.gcd_ne_zero (h : FltSolution n) : h.gcd ≠ 0 := fun hdzero => by
+  simpa [ha] using gcd_eq_zero_iff.1 hdzero h.a (by simp)
+
+theorem FltSolution.one_le_natAbs_gcd (h : FltSolution n) : 1 ≤ h.gcd.natAbs :=
+  Nat.succ_le_iff.mpr <| Int.natAbs_pos.mpr h.gcd_ne_zero
+
+theorem FltSolution.gcd_dvd_a (h : FltSolution n) : h.gcd ∣ h.a := gcd_dvd (by simp)
+theorem FltSolution.gcd_dvd_b (h : FltSolution n) : h.gcd ∣ h.b := gcd_dvd (by simp)
+theorem FltSolution.gcd_dvd_c (h : FltSolution n) : h.gcd ∣ h.c := gcd_dvd (by simp)
+
+def FltSolution.coprime (h : FltSolution n) : FltSolution n :=
+  { a := h.a / h.gcd
+    b := h.b / h.gcd
+    c := h.c / h.gcd
+    ha := Int.ediv_ne_zero h.gcd_dvd_a h.ha
+    hb := Int.ediv_ne_zero h.gcd_dvd_b h.hb
+    hc := Int.ediv_ne_zero h.gcd_dvd_c h.hc
+    hsol := by
+      apply Int.eq_of_mul_eq_mul_left (pow_ne_zero n h.gcd_ne_zero)
+      simp_rw (config := ({zeta := False})) [mul_add, ← mul_pow]
+      rw [Int.mul_ediv_cancel' h.gcd_dvd_a]
+      rw [Int.mul_ediv_cancel' h.gcd_dvd_b]
+      rw [Int.mul_ediv_cancel' h.gcd_dvd_c]
+      exact h.hsol }
+
+theorem FltSolution.coprime_le_a (h : FltSolution n) : h.coprime.a.natAbs ≤ h.a.natAbs := by
+  simp only [coprime]
+  obtain ⟨A, HA⟩ := h.gcd_dvd_a
+  rw [HA, Int.mul_ediv_cancel_left A h.gcd_ne_zero, Int.natAbs_mul]
+  exact le_mul_of_one_le_left' h.one_le_natAbs_gcd
+
+theorem FltSolution.coprime_le_b (h : FltSolution n) : h.coprime.b.natAbs ≤ h.b.natAbs := by
+  simp only [coprime]
+  obtain ⟨B, HB⟩ := h.gcd_dvd_b
+  rw [HB, Int.mul_ediv_cancel_left B h.gcd_ne_zero, Int.natAbs_mul]
+  exact le_mul_of_one_le_left' h.one_le_natAbs_gcd
+
+theorem FltSolution.coprime_le_c (h : FltSolution n) : h.coprime.c.natAbs ≤ h.c.natAbs := by
+  simp only [coprime]
+  obtain ⟨C, HC⟩ := h.gcd_dvd_c
+  rw [HC, Int.mul_ediv_cancel_left C h.gcd_ne_zero, Int.natAbs_mul]
+  exact le_mul_of_one_le_left' h.one_le_natAbs_gcd
+
+theorem FltSolution.coprime_gcd_eq_one (h : FltSolution n) : h.coprime.gcd = 1 := by
+  simpa [coprime, gcd, gcd_eq_gcd_image] using
+    Finset.Int.gcd_div_id_eq_one (show h.a ∈ ({h.a, h.b, h.c} : Finset ℤ) by simp) h.ha
+
+theorem Finset.dvd_gcd' (s : Finset ℤ) (q : ℤ) (h : ∀ x ∈ s, q ∣ x) : q ∣ Finset.gcd s id := by
+  exact dvd_gcd h
+
+structure FltCoprime (n : ℕ) :=
+  flt : FltSolution n
+  hn : n ≠ 0
+  coprime : flt.gcd = 1
+
+def FltCoprime.a (h : FltCoprime n) := h.flt.a
+def FltCoprime.b (h : FltCoprime n) := h.flt.b
+def FltCoprime.c (h : FltCoprime n) := h.flt.c
+def FltCoprime.hsol (h : FltCoprime n) : h.a ^ n + h.b ^ n = h.c ^ n := h.flt.hsol
+
+theorem FltCoprime.isCoprime_a_b (h : FltCoprime n) : IsCoprime h.a h.b := by
+  rw [← Int.gcd_eq_one_iff_coprime]
+  by_contra! H
+  have : ∀ q : ℤ, Prime q → q ∣ h.a → q ∣ h.b → q ∣ h.c := by
+    intros q hq ha hb
+    apply hq.dvd_of_dvd_pow
+    simp only [a, b, c]
+    rw [← h.flt.hsol]
+    refine dvd_add (dvd_pow ha h.hn) (dvd_pow hb h.hn)
+  obtain ⟨q, hqpri, hq⟩ := Nat.exists_prime_and_dvd H
+  have ha := dvd_trans (Int.ofNat_dvd.mpr hq) (Int.gcd_dvd_left ..)
+  have hb := dvd_trans (Int.ofNat_dvd.mpr hq) (Int.gcd_dvd_right ..)
+  have hc := this q (by exact Nat.prime_iff_prime_int.mp hqpri) ha hb
+  simp only [a, b, c] at ha hb hc
+  have : (q : ℤ) ∣ h.flt.gcd := by
+    simp only [FltSolution.gcd]
+    apply Finset.dvd_gcd
+    simp [ha, hb, hc]
+  rw [coprime] at this
+  rw [@Int.ofNat_dvd_left] at this
+  norm_num at this
+  apply hqpri.ne_one
+  exact this
+
+theorem FltCoprime.isCoprime_a_c (h : FltCoprime n) : IsCoprime h.a h.c := by
+  sorry
+theorem FltCoprime.isCoprime_b_c (h : FltCoprime n) : IsCoprime h.b h.c := by
+  sorry
+
+theorem descent1a
+    (h : FltCoprime 3) :
+    (Even h.a ∧ ¬Even h.b ∧ ¬Even h.c) ∨
+    (¬Even h.a ∧ Even h.b ∧ ¬Even h.c) ∨
+    (¬Even h.a ∧ ¬Even h.b ∧ Even h.c) := by
+  have contra : ∀ {x y : ℤ}, IsCoprime x y → Even x → Even y → False := by
     intro x y hcoprime hx hy
     rw [even_iff_two_dvd] at hx hy
     have := Int.isUnit_eq_one_or (hcoprime.isUnit_of_dvd' hx hy)
     norm_num at this
-  by_cases haparity : Even a <;> by_cases hbparity : Even b <;> by_cases hcparity : Even c
-  · exact False.elim (contra habcoprime ‹_› ‹_›)
-  · exact False.elim (contra habcoprime ‹_› ‹_›)
-  · exact False.elim (contra haccoprime ‹_› ‹_›)
+  by_cases haparity : Even h.a <;> by_cases hbparity : Even h.b <;> by_cases hcparity : Even h.c
+  · exact False.elim (contra h.isCoprime_a_b ‹_› ‹_›)
+  · exact False.elim (contra h.isCoprime_a_b ‹_› ‹_›)
+  · exact False.elim (contra h.isCoprime_a_c ‹_› ‹_›)
   · tauto
-  · exact False.elim (contra hbccoprime ‹_› ‹_›)
+  · exact False.elim (contra h.isCoprime_b_c ‹_› ‹_›)
   · tauto
   · tauto
   · exfalso
     apply hcparity
-    rw [← Int.even_pow' three_ne_zero, ← h]
+    rw [← Int.even_pow' three_ne_zero, ← h.hsol]
     simp [haparity, hbparity, three_ne_zero, parity_simps]
 
 theorem flt_not_add_self {a b c : ℤ} (ha : a ≠ 0) (h : a ^ 3 + b ^ 3 = c ^ 3) : a ≠ b :=
@@ -128,16 +189,15 @@ theorem descent1left {a b c : ℤ} (hapos : a ≠ 0) (h : a ^ 3 + b ^ 3 = c ^ 3)
   · rw [eq_sub_of_add_eq h]
     ring
 
-theorem descent1 (a b c : ℤ) (h : FltCoprime 3 a b c) :
+theorem descent1 (h : FltCoprime 3) :
     ∃ p q : ℤ,
       p ≠ 0 ∧
         q ≠ 0 ∧
           IsCoprime p q ∧
             (Even p ↔ ¬Even q) ∧
-              (2 * p * (p ^ 2 + 3 * q ^ 2) = a ^ 3 ∨
-                2 * p * (p ^ 2 + 3 * q ^ 2) = b ^ 3 ∨ 2 * p * (p ^ 2 + 3 * q ^ 2) = c ^ 3) :=
+              (2 * p * (p ^ 2 + 3 * q ^ 2) = h.a ^ 3 ∨
+                2 * p * (p ^ 2 + 3 * q ^ 2) = h.b ^ 3 ∨ 2 * p * (p ^ 2 + 3 * q ^ 2) = h.c ^ 3) :=
   by
-  obtain ⟨⟨hapos, hbpos, hcpos, h⟩, habcoprime, haccoprime, hbccoprime⟩ := h
   obtain (⟨-, hb, hc⟩ | ⟨ha, hb, hc⟩) | ⟨ha, hb, -⟩ :=
     descent1a h habcoprime haccoprime hbccoprime
   · obtain ⟨p, q, hp, hq, hcoprime, hodd, hcube⟩ := descent1left hapos h hbccoprime hb hc
@@ -159,17 +219,21 @@ theorem descent11 {a b c d : ℤ} (h : d = a ∨ d = b ∨ d = c) : d ∣ a * b 
   · exact (dvd_mul_left _ _).mul_right _
   · exact dvd_mul_left _ _
 
-theorem descent2 (a b c : ℤ) (h : FltCoprime 3 a b c) :
+theorem descent2
+    (h : FltCoprime 3) :
+--  (a b c : ℤ) (h : FltCoprime 3 a b c) :
+    -- (h : FltSolution 3) (hcoprime : h.gcd = 1) :
     ∃ p q : ℤ,
       p ≠ 0 ∧
         q ≠ 0 ∧
           IsCoprime p q ∧
             (Even p ↔ ¬Even q) ∧
-              (2 * p * (p ^ 2 + 3 * q ^ 2) = a ^ 3 ∨
-                  2 * p * (p ^ 2 + 3 * q ^ 2) = b ^ 3 ∨ 2 * p * (p ^ 2 + 3 * q ^ 2) = c ^ 3) ∧
-                (2 * p).natAbs < (a ^ 3 * b ^ 3 * c ^ 3).natAbs :=
+              (2 * p * (p ^ 2 + 3 * q ^ 2) = h.a ^ 3 ∨
+                  2 * p * (p ^ 2 + 3 * q ^ 2) = h.b ^ 3 ∨
+                  2 * p * (p ^ 2 + 3 * q ^ 2) = h.c ^ 3) ∧
+                (2 * p).natAbs < (h.a ^ 3 * h.b ^ 3 * h.c ^ 3).natAbs :=
   by
-  obtain ⟨p, q, hp, hq, hcoprime, hodd, hcube⟩ := descent1 a b c h
+  obtain ⟨p, q, hp, hq, hcoprime, hodd, hcube⟩ := descent1 h
   refine' ⟨p, q, hp, hq, hcoprime, hodd, hcube, _⟩
   obtain ⟨⟨hapos, hbpos, hcpos, -⟩, -⟩ := h
   set P : ℤ√(-3) := ⟨p, q⟩
@@ -670,13 +734,13 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
   · rw [← HA, ← HB, ← HC]
     ring
 
-theorem descent (a b c : ℤ) (h : FltCoprime 3 a b c) :
+theorem descent (h : FltSolution 3) (hcoprime : h.gcd = 1) :
     ∃ a' b' c' : ℤ,
-      a' ≠ 0 ∧
-        b' ≠ 0 ∧ c' ≠ 0 ∧ (a' * b' * c').natAbs < (a * b * c).natAbs ∧ a' ^ 3 + b' ^ 3 = c' ^ 3 :=
+      a' ≠ 0 ∧ b' ≠ 0 ∧ c' ≠ 0 ∧
+      (a' * b' * c').natAbs < (h.a * h.b * h.c).natAbs ∧ a' ^ 3 + b' ^ 3 = c' ^ 3 :=
   by
   -- 3.
-  have := descent2 a b c h
+  have := descent2 h.a h.b h.c h
   obtain ⟨p, q, hp, hq, hcoprime, hodd, hcube, haaa⟩ := this
   suffices
     ∃ a' b' c' : ℤ,
@@ -692,15 +756,21 @@ theorem descent (a b c : ℤ) (h : FltCoprime 3 a b c) :
   cases' gcd1or3 p q hp hcoprime hodd with hgcd hgcd
   -- 5.
   · rw [Int.gcd_eq_one_iff_coprime] at hgcd
-    apply descent_gcd1 a b c p q hp hcoprime hodd hcube hgcd
-  · apply descent_gcd3 a b c p q hp hq hcoprime hodd hcube hgcd
+    apply descent_gcd1 h.a h.b h.c p q hp hcoprime hodd hcube hgcd
+  · apply descent_gcd3 h.a h.b h.c p q hp hq hcoprime hodd hcube hgcd
 
 theorem flt_three : FermatLastTheoremWith ℤ 3 := by
   intros a b c ha hb hc
   induction' h : (a * b * c).natAbs using Nat.strong_induction_on with k' IH generalizing a b c
   intro H
-  obtain ⟨x'', y'', z'', hxle, hyle, hzle, hcoprime⟩ := exists_coprime zero_lt_three ha hb hc H
-  obtain ⟨x', y', z', hx'pos, hy'pos, hz'pos, hsmaller, hsolution⟩ := descent x'' y'' z'' hcoprime
+  let sol : FltSolution 3 := ⟨a, b, c, ha, hb, hc, H⟩
+  let coprime := sol.coprime
+  have hxle := sol.coprime_le_a
+  have hyle := sol.coprime_le_b
+  have hzle := sol.coprime_le_c
+  have := sol.isCoprime_a_b three_ne_zero
+  obtain ⟨x', y', z', hx'pos, hy'pos, hz'pos, hsmaller, hsolution⟩ :=
+    descent coprime.a coprime.b coprime.c sorry
   refine' IH (x' * y' * z').natAbs _ _ _ _ hx'pos hy'pos hz'pos rfl hsolution
   apply lt_of_lt_of_le hsmaller
   rw [← h]
