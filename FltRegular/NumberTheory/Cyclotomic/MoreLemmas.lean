@@ -4,6 +4,7 @@ import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import Mathlib.RingTheory.Ideal.Norm
 import Mathlib.RingTheory.ClassGroup
+import Mathlib.RingTheory.NormTrace
 import FltRegular.ReadyForMathlib.PowerBasis
 import FltRegular.NumberTheory.AuxLemmas
 
