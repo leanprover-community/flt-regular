@@ -19,14 +19,12 @@ namespace CaseI
 
 /-- Statement of case I with additional assumptions. -/
 def SlightlyEasier : Prop :=
-  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : Fact p.Prime] (_ : @IsRegularPrime p hpri) (_ : 5 ≤ p)
-    (_ : ({a, b, c} : Finset ℤ).gcd id = 1) (_ : ¬a ≡ b [ZMOD p]) (_ : ¬↑p ∣ a * b * c),
-    a ^ p + b ^ p ≠ c ^ p
+  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [Fact p.Prime], IsRegularPrime p → 5 ≤ p →
+    ({a, b, c} : Finset ℤ).gcd id = 1 → ¬a ≡ b [ZMOD p] → ¬↑p ∣ a * b * c → a ^ p + b ^ p ≠ c ^ p
 
 /-- Statement of case I. -/
 def Statement : Prop :=
-  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [hpri : Fact p.Prime] (_ : @IsRegularPrime p hpri)
-    (_ : ¬↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
+  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [Fact p.Prime], IsRegularPrime p → ¬↑p ∣ a * b * c → a ^ p + b ^ p ≠ c ^ p
 
 theorem may_assume : SlightlyEasier → Statement := by
   intro Heasy
@@ -47,7 +45,7 @@ theorem may_assume : SlightlyEasier → Statement := by
   have hp5 : 5 ≤ p := by
     by_contra! habs
     have : p ∈ Finset.Ioo 2 5 :=
-     (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_of_ne hpri.out.two_le hodd.symm, by linarith⟩
+      (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_of_ne hpri.out.two_le hodd.symm, by linarith⟩
     fin_cases this
     · exact MayAssume.p_ne_three hprod H rfl
     · rw [show 2 + 1 + 1 = 2 * 2 from rfl] at hpri
