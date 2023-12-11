@@ -387,13 +387,13 @@ instance relativeUnitsModule : Module A G := by
 
 noncomputable
 abbrev CyclotomicIntegers.mk : Polynomial ℤ →+* CyclotomicIntegers p := AdjoinRoot.mk _
-z
+
 lemma relativeUnitsModule_zeta_smul (x) :
     (zeta p) • mkG x = mkG (Units.map (galRestrictHom (𝓞 k) k (𝓞 K) K σ) x) := by
   let φ := (addMonoidEndRingEquivInt _
       (Monoid.EndAdditive <| relativeUnitsMap <| ((algHomUnitsEquiv _ _).symm σ).val))
   show QuotientAddGroup.mk ((Module.AEval'.of φ).symm <|
-    Polynomial.X • Module.AEval'.of φ (Additive.ofMul (QuotientGroup.mk x))) = _
+    (Polynomial.X : Polynomial ℤ) • Module.AEval'.of φ (Additive.ofMul (QuotientGroup.mk x))) = _
   simp only [val_algHomUnitsEquiv_symm_apply, Monoid.EndAdditive_apply, Equiv.toFun_as_coe,
     addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
     LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, Module.AEval.of_symm_smul, Polynomial.aeval_X,
