@@ -387,7 +387,7 @@ instance relativeUnitsModule : Module A G := by
 
 noncomputable
 abbrev CyclotomicIntegers.mk : Polynomial ℤ →+* CyclotomicIntegers p := AdjoinRoot.mk _
-
+z
 lemma relativeUnitsModule_zeta_smul (x) :
     (zeta p) • mkG x = mkG (Units.map (galRestrictHom (𝓞 k) k (𝓞 K) K σ) x) := by
   let φ := (addMonoidEndRingEquivInt _
