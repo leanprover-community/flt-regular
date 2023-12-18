@@ -16,10 +16,62 @@ theorem coprime_add_self_pow {n : ℕ} (hn : 0 < n) (hsoln : x ^ n + y ^ n = z ^
 
 end
 
+/-
+Balanced mod, taking values in the range [- m/2, (m - 1)/2].
+-/
+#check Int.bmod
+
+lemma Int.bmod_eq_zero (x : ℤ) (m : ℕ) : Int.bmod x m = 0 → (m : ℤ) ∣ x ∨ m = 0 := by
+  simp [Int.bmod]
+  split_ifs with h
+  · simp [Or.inl]
+    exact Or.inl
+
+
+
+  rw [@Int.sub_eq_zero]
+  have := mt <| emod_lt x (b := m)
+  intro H
+  · rw [H] at this
+    simp at this
+    rw [this]
+    simp
+
 -- Edwards p49 introduction
 theorem Int.factor_div (a x : ℤ) (hodd : Odd x) :
     ∃ m c : ℤ, c + m * x = a ∧ 2 * c.natAbs < x.natAbs :=
   by
+  have hx : 0 < x.natAbs := by
+    rw [@natAbs_pos]
+    rintro rfl
+    rw [Int.odd_iff_not_even] at hodd
+    apply hodd even_zero
+  let r := Int.bmod a x.natAbs
+  have : r < _ := bmod_lt (x := a) hx
+
+  have : _ ≤ r := le_bmod hx
+  have := dvd_bmod_sub_self (x := a) (m := x.natAbs)
+  obtain ⟨c, hc⟩ := this
+  change r - _ = _ at hc
+  rw [@sub_eq_iff_eq_add] at hc
+  rw [← @sub_eq_iff_eq_add'] at hc
+  rw [mul_comm] at hc
+  cases natAbs_eq x with
+  | inl h =>
+    rw [← h, sub_eq_add_neg, ← neg_mul] at hc
+    refine ⟨_, _, hc, ?_⟩
+    zify
+    apply Int.mul_lt_of_lt_ediv
+
+    simp
+    intro H
+    have := Int.bmod_eq_zero _ _ H
+
+    simp only [hx.ne'] at this
+    simp at this
+
+  | inr h => sorry
+  stop
   have h0' : x ≠ 0 := by
     rintro rfl
     contradiction
