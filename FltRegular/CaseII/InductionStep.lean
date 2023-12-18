@@ -30,10 +30,13 @@ lemma zeta_sub_one_dvd : (hζ.unit' : 𝓞 K) - 1 ∣ x ^ (p : ℕ) + y ^ (p : �
   apply dvd_pow_self
   simp
 
+set_option maxHeartbeats 3000000 in
 lemma one_sub_zeta_dvd_zeta_pow_sub :
   (hζ.unit' : 𝓞 K) - 1 ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
+  letI : Add (𝓞 K ⧸ 𝔭) := inferInstance
+  letI : Mul (𝓞 K ⧸ 𝔭) := inferInstance
   have h := zeta_sub_one_dvd hζ e
   replace h : ∏ _η in nthRootsFinset p (𝓞 K),
     Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0
@@ -522,10 +525,13 @@ lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ (hζ.unit' : 𝓞
   rw [neg_mul, (Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp)).neg_pow,
     sub_neg_eq_add, mul_sub, mul_one, mul_comm x b, add_sub_sub_cancel, add_comm]
 
+set_option maxHeartbeats 400000 in
 lemma exists_solution' :
   ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
     ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
     x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (((hζ.unit' : 𝓞 K) - 1) ^ m * z') ^ (p : ℕ) := by
+  letI : MulZeroClass (𝓞 K ⧸ (Ideal.span <| singleton (p : 𝓞 K))) := inferInstance
+  letI : Mul (𝓞 K ⧸ (Ideal.span <| singleton (p : 𝓞 K))) := inferInstance
   obtain ⟨x', y', z', ε₁, ε₂, ε₃, hx', hy', hz', e'⟩ := exists_solution hp hreg hζ e hy hz
   obtain ⟨ε', hε'⟩ : ∃ ε', ε₁ / ε₂ = ε' ^ (p : ℕ) := by
     apply eq_pow_prime_of_unit_of_congruent hp hreg
