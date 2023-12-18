@@ -17,12 +17,12 @@ noncomputable
 def ηu : Lˣ := (Ne.isUnit (fun h ↦ by simp [h] at hη) : IsUnit η).unit
 
 noncomputable
-def φ := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm
+def φ := (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm
 
 variable {σ}
 
 lemma hφ : ∀ (n : ℕ), φ σ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n ↦ by
-  simpa [Fin.ext_iff] using finEquivZpowers_symm_apply _ (isOfFinOrder_of_finite σ) n
+  simpa [Fin.ext_iff] using finEquivZPowers_symm_apply _ (isOfFinOrder_of_finite σ) n
 
 noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ, hσ τ⟩), Units.map (σ ^ i) (ηu hη)
@@ -45,8 +45,8 @@ lemma foo {a: ℕ} (h : a % orderOf σ = 0) :
       (fun a b ha hb hab ↦ ?_) (fun τ _ ↦ ?_)
     · rwa [pow_inj_mod, Nat.mod_eq_of_lt (Finset.mem_range.1 ha),
         Nat.mod_eq_of_lt (Finset.mem_range.1 hb)] at hab
-    · refine ⟨(finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
-      have := Equiv.symm_apply_apply (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
+    · refine ⟨(finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
+      have := Equiv.symm_apply_apply (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
       simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
       rw [← this]
       simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]

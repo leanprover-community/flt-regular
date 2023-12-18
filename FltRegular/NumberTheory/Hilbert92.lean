@@ -301,9 +301,10 @@ def Group.forall_mem_zpowers_iff {H} [Group H] {x : H} :
   rw [SetLike.ext_iff]
   simp only [Subgroup.mem_top, iff_true]
 
-lemma pow_finEquivZpowers_symm_apply {M} [Group M] (x : M) (hx) (a) :
-    x ^ ((finEquivZpowers x hx).symm a : ℕ) = a :=
-  congr_arg Subtype.val ((finEquivZpowers x hx).apply_symm_apply a)
+-- TODO move
+lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a) :
+    x ^ ((finEquivZPowers x hx).symm a : ℕ) = a :=
+  congr_arg Subtype.val ((finEquivZPowers x hx).apply_symm_apply a)
 
 open Polynomial in
 lemma isTors' : Module.IsTorsionBySet ℤ[X]
@@ -336,8 +337,8 @@ lemma isTors' : Module.IsTorsionBySet ℤ[X]
     Units.coe_prod, Submonoid.coe_finset_prod, Subsemiring.coe_toSubmonoid,
     Subalgebra.coe_toSubsemiring, Algebra.norm_eq_prod_automorphisms]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank, ← orderOf_eq_card_of_forall_mem_zpowers hσ,
-    ← Fin.prod_univ_eq_prod_range, ← (finEquivZpowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
-  simp only [pow_finEquivZpowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe]
+    ← Fin.prod_univ_eq_prod_range, ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
+  simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe]
   rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i ↑x) (Subgroup.zpowers σ)]
   congr
   ext x
@@ -751,8 +752,8 @@ lemma norm_eq_prod_pow_gen
     (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (η : K) :
     algebraMap k K (Algebra.norm k η) = (∏ i in Finset.range (orderOf σ), (σ ^ i) η)   := by
   rw [Algebra.norm_eq_prod_automorphisms, ← Fin.prod_univ_eq_prod_range,
-    ← (finEquivZpowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
-  simp only [pow_finEquivZpowers_symm_apply]
+    ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
+  simp only [pow_finEquivZPowers_symm_apply]
   rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i η) (Subgroup.zpowers σ)]
   congr; ext; simp [hσ]
 

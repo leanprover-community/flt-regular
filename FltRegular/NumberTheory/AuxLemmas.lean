@@ -567,27 +567,6 @@ theorem span_range_natDegree_eq_adjoin {R A} [CommRing R] [CommRing A] [Algebra 
   rw [Finset.mem_range]
   exact (le_natDegree_of_mem_supp _ hkq).trans_lt this
 
--- Mathlib/Data/Polynomial/RingDivision.lean
-open Polynomial BigOperators in
-lemma Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero {R} [CommRing R] [IsDomain R]
-    (p : R[X]) {ι} [Fintype ι] {f : ι → R} (hf : Function.Injective f)
-    (heval : ∀ i, p.eval (f i) = 0) (hcard : natDegree p < Fintype.card ι) : p = 0 := by
-  classical
-  by_contra hp
-  apply not_lt_of_le (le_refl (Finset.card p.roots.toFinset))
-  calc
-    Finset.card p.roots.toFinset ≤ Multiset.card p.roots := Multiset.toFinset_card_le _
-    _ ≤ natDegree p := Polynomial.card_roots' p
-    _ < Fintype.card ι := hcard
-    _ = Fintype.card (Set.range f) := (Set.card_range_of_injective hf).symm
-    _ = Finset.card (Finset.univ.image f) := by rw [← Set.toFinset_card, Set.toFinset_range]
-    _ ≤ Finset.card p.roots.toFinset := Finset.card_mono ?_
-  intro _
-  simp only [Finset.mem_image, Finset.mem_univ, true_and, Multiset.mem_toFinset, mem_roots', ne_eq,
-    IsRoot.def, forall_exists_index, hp, not_false_eq_true]
-  rintro x rfl
-  exact heval _
-
 -- Dunno. Somewhere near Mathlib/FieldTheory/Minpoly/Basic.lean.
 lemma aeval_derivative_minpoly_ne_zero {K L} [CommRing K] [CommRing L] [Algebra K L] (x : L)
     (hx : (minpoly K x).Separable) [Nontrivial L] :

@@ -204,11 +204,11 @@ theorem Zqrtd.factor_div (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) :
 
     · rw [mul_pow, ← Int.natAbs_pow_two c, ← Int.natAbs_pow_two x, ← mul_pow]
       norm_cast
-      exact Nat.pow_lt_pow_of_lt_left hc zero_lt_two
+      exact Nat.pow_lt_pow_left hc two_ne_zero
     · rw [mul_pow, ← Int.natAbs_pow_two d, ← Int.natAbs_pow_two x, ← mul_pow,
         mul_lt_mul_left (by norm_num : (0 : ℤ) < 3)]
       norm_cast
-      exact Nat.pow_lt_pow_of_lt_left hd zero_lt_two
+      exact Nat.pow_lt_pow_left hd two_ne_zero
 
 theorem Zqrtd.factor_div' (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) (h : 1 < |x|)
     (hcoprime : IsCoprime a.re a.im) (hfactor : x ∣ a.norm) :
@@ -326,13 +326,13 @@ theorem Spts.eq_one {a : ℤ√(-3)} (h : a.norm = 1) : abs a.re = 1 ∧ a.im = 
     · have : 1 ≤ abs a.im := by rwa [← Int.abs_lt_one_iff, not_lt] at hb
       have : 1 ≤ a.im ^ 2 := by
         rw [← sq_abs]
-        exact pow_le_pow_of_le_left zero_le_one this 2
+        exact pow_le_pow_left zero_le_one this 2
       linarith
   · apply ne_of_gt
     rw [Zsqrtd.norm_def, neg_mul, neg_mul, sub_neg_eq_add]
     apply lt_add_of_lt_of_nonneg
     · rw [← sq, ← sq_abs]
-      exact pow_lt_pow_of_lt_left H zero_le_one zero_lt_two
+      exact pow_lt_pow_left H zero_le_one two_ne_zero
     · rw [mul_assoc]
       exact mul_nonneg zero_lt_three.le (mul_self_nonneg _)
 
@@ -371,7 +371,7 @@ theorem Spts.not_two (a : ℤ√(-3)) : a.norm ≠ 2 :=
   obtain him | him := eq_or_ne a.im 0
   · rw [him, MulZeroClass.mul_zero, sub_zero, ← Int.natAbs_mul_self, ← sq]
     norm_cast
-    apply (Nat.pow_left_strictMono one_le_two).monotone.ne_of_lt_of_lt_nat 1 <;> norm_num
+    apply (Nat.pow_left_strictMono two_ne_zero).monotone.ne_of_lt_of_lt_nat 1 <;> norm_num
   · apply ne_of_gt
     apply lt_add_of_nonneg_of_lt (mul_self_nonneg a.re)
     rw [← Int.add_one_le_iff]

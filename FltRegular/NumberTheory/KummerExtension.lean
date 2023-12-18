@@ -388,7 +388,7 @@ def autEquivZmod {ζ : K} (hζ : IsPrimitiveRoot ζ n) :
   (autEquivRootsOfUnity ⟨ζ, (mem_primitiveRoots hn).mpr hζ⟩ H L hn).trans
     ((MulEquiv.subgroupCongr (IsPrimitiveRoot.zpowers_eq (k := ⟨n, hn⟩)
       (hζ.isUnit_unit' hn)).symm).trans (AddEquiv.toMultiplicative'
-        (hζ.isUnit_unit' hn).zmodEquivZpowers.symm))
+        (hζ.isUnit_unit' hn).zmodEquivZPowers.symm))
 
 lemma MulEquiv.subgroupCongr_apply {G} [Group G] {H₁ H₂ : Subgroup G} (e : H₁ = H₂) (x) :
   (MulEquiv.subgroupCongr e x : G) = x := rfl
