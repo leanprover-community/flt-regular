@@ -20,16 +20,16 @@ variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A 
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
     [IsIntegralClosure B A L]
 
-lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K B L σ) β = β)
+lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K L B σ) β = β)
     (σ' : L ≃ₐ[K] L) :
-    (Ideal.span {β}).comap (galRestrict A K B L σ') = Ideal.span {β} := by
+    (Ideal.span {β}).comap (galRestrict A K L B σ') = Ideal.span {β} := by
   suffices : (Ideal.span {β}).map
-      (galRestrict A K B L σ'⁻¹).toRingEquiv.toRingHom = Ideal.span {β}
+      (galRestrict A K L B σ'⁻¹).toRingEquiv.toRingHom = Ideal.span {β}
   · rwa [RingEquiv.toRingHom_eq_coe, Ideal.map_comap_of_equiv, map_inv] at this
   apply_fun (Ideal.span {·}) at hβ
   rw [← Ideal.span_singleton_mul_span_singleton, Ideal.span_singleton_eq_top.mpr η.isUnit,
     ← Ideal.one_eq_top, one_mul, ← Set.image_singleton, ← Ideal.map_span] at hβ
-  change Ideal.map (galRestrict A K B L σ : B →+* B) _ = _ at hβ
+  change Ideal.map (galRestrict A K L B σ : B →+* B) _ = _ at hβ
   generalize σ'⁻¹ = σ'
   obtain ⟨n, rfl : σ ^ n = σ'⟩ := mem_powers_iff_mem_zpowers.mpr (hσ σ')
   rw [map_pow]
@@ -61,10 +61,10 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     apply hη'
     use a
     conv_rhs => enter [1]; rw [← hβ]
-    rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K B L σ a]
+    rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K L B σ a]
     refine (mul_div_cancel _ ?_).symm
     · rw [ne_eq, (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
-        (injective_iff_map_eq_zero' _).mp (galRestrict A K B L σ).injective]
+        (injective_iff_map_eq_zero' _).mp (galRestrict A K L B σ).injective]
       exact a.isUnit.ne_zero
     · exact (mul_ne_zero_iff.mp hβ_zero).1
   · rw [hβ']

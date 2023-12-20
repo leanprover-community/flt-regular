@@ -264,22 +264,6 @@ lemma Matrix.mulVec_injective {n R} [CommRing R] [Fintype n] [DecidableEq n]
     (M : Matrix n n R) (hM : IsUnit M.det) : Function.Injective (mulVec M) :=
   (M.mulVec_bijective hM).injective
 
--- Mathlib/RingTheory/FractionalIdeal.lean
-namespace FractionalIdeal
-
-open nonZeroDivisors
-
-variable {R K} [CommRing R] [Field K] [Algebra R K] [IsFractionRing R K] [IsDedekindDomain R]
-variable {I J : FractionalIdeal R⁰ K}
-
-lemma le_inv_comm (hI : I ≠ 0) (hJ : J ≠ 0) : I ≤ J⁻¹ ↔ J ≤ I⁻¹ := by
-  rw [inv_eq_one_div, inv_eq_one_div, le_div_iff_mul_le hI, le_div_iff_mul_le hJ, mul_comm]
-
-lemma inv_le_comm (hI : I ≠ 0) (hJ : J ≠ 0) : I⁻¹ ≤ J ↔ J⁻¹ ≤ I := by
-  simpa using le_inv_comm (inv_ne_zero hI) (inv_ne_zero hJ)
-
-end FractionalIdeal
-
 -- -- Mathlib/RingTheory/Localization/FractionRing.lean
 -- noncomputable
 -- instance {A B} [CommRing A] [CommRing B] [Algebra A B] [IsDomain A] [IsDomain B]

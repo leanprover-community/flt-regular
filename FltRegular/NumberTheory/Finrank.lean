@@ -160,8 +160,9 @@ lemma Module.finite_iff_rank_lt_aleph0 [Module R M] [Module.Free R M] :
       Set.finite_coe_iff.mpr ((Module.Free.chooseBasis R M).finite_index_of_rank_lt_aleph0 H)
     exact Module.Finite.of_basis (Module.Free.chooseBasis R M)
 
-lemma Module.finite_of_finrank_pos [Module.Free R M] (hf : 0 < FiniteDimensional.finrank R M) :
-    Module.Finite R M := Module.finite_iff_rank_lt_aleph0.mpr (Cardinal.toNat_pos.mp hf).2
+@[deprecated Module.finite_of_finrank_pos]
+lemma Module.finite_of_finrank_pos' [Module.Free R M] (hf : 0 < FiniteDimensional.finrank R M) :
+    Module.Finite R M := finite_of_finrank_pos hf
 
 lemma FiniteDimensional.finrank_quotient_of_le_torsion (hN : N ≤ Submodule.torsion R M) :
     finrank R (M ⧸ N) = finrank R M := by
@@ -211,21 +212,10 @@ lemma FiniteDimensional.finrank_of_surjective_of_le_torsion {M'} [AddCommGroup M
   rw [← LinearMap.range_eq_map l, LinearMap.range_eq_top.mpr hl] at this
   simpa only [finrank_top] using this
 
-lemma FiniteDimensional.finrank_eq_zero_iff [IsDomain R] :
-    finrank R M = 0 ↔ Module.IsTorsion R M := by
-  constructor
-  · delta Module.IsTorsion
-    contrapose!
-    rintro ⟨x, hx⟩
-    rw [← Nat.one_le_iff_ne_zero]
-    have : LinearIndependent R (fun _ : Unit ↦ x)
-    · exact linearIndependent_iff.mpr (fun l hl ↦ Finsupp.unique_ext <| not_not.mp fun H ↦
-        hx ⟨_, mem_nonZeroDivisors_of_ne_zero H⟩ ((Finsupp.total_unique _ _ _).symm.trans hl))
-    exact FiniteDimensional.fintype_card_le_finrank_of_linearIndependent' this
-  · intro h
-    rw [← FiniteDimensional.finrank_quotient_of_le_torsion _
-      ((Submodule.isTorsion'_iff_torsion'_eq_top (R := R) _).mp h).ge]
-    exact finrank_zero_of_subsingleton
+@[deprecated FiniteDimensional.finrank_eq_zero_iff_isTorsion]
+lemma FiniteDimensional.finrank_eq_zero_iff' [IsDomain R] :
+    finrank R M = 0 ↔ Module.IsTorsion R M :=
+  FiniteDimensional.finrank_eq_zero_iff_isTorsion
 
 lemma FiniteDimensional.finrank_add_finrank_quotient_of_free [IsDomain R] [IsPrincipalIdealRing R]
     [Module.Free R M]

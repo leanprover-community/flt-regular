@@ -42,7 +42,7 @@ def systemOfUnits.isMaximal {r} (hf : finrank ℤ G = r * (p - 1)) [Module A G]
   apply Nonempty.some
   apply (@nonempty_fintype _ ?_)
   apply Module.finite_of_fg_torsion
-  rw [← FiniteDimensional.finrank_eq_zero_iff,  finrank_quotient',
+  rw [← FiniteDimensional.finrank_eq_zero_iff_isTorsion,  finrank_quotient',
     finrank_spanA p hp _ _ sys.linearIndependent, hf, mul_comm, Nat.sub_self]
 
 noncomputable
@@ -256,13 +256,13 @@ instance : IsIntegralClosure ↥(𝓞 K) ↥(𝓞 k) K := isIntegralClosure_of_i
   (fun x ↦ IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ K x))
 
 lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
-    (galRestrictHom (𝓞 k) k (𝓞 K) K σ x : K) = σ x :=
-  algebraMap_galRestrictHom_apply (𝓞 k) k (𝓞 K) K σ x
+    (galRestrictHom (𝓞 k) k K (𝓞 K) σ x : K) = σ x :=
+  algebraMap_galRestrictHom_apply (𝓞 k) k K (𝓞 K) σ x
 
 noncomputable
 def relativeUnitsMap (σ : K →ₐ[k] K) : RelativeUnits k K →* RelativeUnits k K := by
   apply QuotientGroup.lift _
-    ((QuotientGroup.mk' _).comp (Units.map (galRestrictHom (𝓞 k) k (𝓞 K) K σ)))
+    ((QuotientGroup.mk' _).comp (Units.map (galRestrictHom (𝓞 k) k K (𝓞 K) σ)))
   rintro _ ⟨i, rfl⟩
   simp only [MonoidHom.mem_ker, MonoidHom.coe_comp, QuotientGroup.coe_mk', Function.comp_apply,
     QuotientGroup.eq_one_iff, MonoidHom.mem_range, Units.ext_iff, Units.coe_map, MonoidHom.coe_coe,
@@ -270,7 +270,7 @@ def relativeUnitsMap (σ : K →ₐ[k] K) : RelativeUnits k K →* RelativeUnits
 
 lemma relativeUnitsMap_mk (σ : K →ₐ[k] K) (x : (𝓞 K)ˣ) :
     relativeUnitsMap σ (QuotientGroup.mk x) =
-      QuotientGroup.mk (Units.map (galRestrictHom (𝓞 k) k (𝓞 K) K σ) x) := rfl
+      QuotientGroup.mk (Units.map (galRestrictHom (𝓞 k) k K (𝓞 K) σ) x) := rfl
 
 @[simps]
 noncomputable
@@ -390,7 +390,7 @@ noncomputable
 abbrev CyclotomicIntegers.mk : Polynomial ℤ →+* CyclotomicIntegers p := AdjoinRoot.mk _
 
 lemma relativeUnitsModule_zeta_smul (x) :
-    (zeta p) • mkG x = mkG (Units.map (galRestrictHom (𝓞 k) k (𝓞 K) K σ) x) := by
+    (zeta p) • mkG x = mkG (Units.map (galRestrictHom (𝓞 k) k K (𝓞 K) σ) x) := by
   let φ := (addMonoidEndRingEquivInt _
       (Monoid.EndAdditive <| relativeUnitsMap <| ((algHomUnitsEquiv _ _).symm σ).val))
   show QuotientAddGroup.mk ((Module.AEval'.of φ).symm <|

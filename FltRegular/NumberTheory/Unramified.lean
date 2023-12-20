@@ -52,7 +52,7 @@ lemma prod_primesOverFinset_of_isUnramified [IsUnramified R S] [IsDedekindDomain
   exact IsUnramified.isUnramifiedAt _ hp _ hP
 
 lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal S)
-    (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K S L σ) = I) :
+    (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
     (I.comap (algebraMap R S)).map (algebraMap R S) = I := by
   classical
   have : IsDomain S :=

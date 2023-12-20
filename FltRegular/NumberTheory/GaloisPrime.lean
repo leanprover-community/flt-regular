@@ -1,4 +1,5 @@
 import FltRegular.NumberTheory.AuxLemmas
+import Mathlib.RingTheory.IntegralRestrict
 
 /-!
 # Galois action on primes
@@ -110,37 +111,8 @@ variable (R K S L : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Fi
     [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L] -- [IsNoetherian R S]
     [IsIntegralClosure S R L] [FiniteDimensional K L]
 
-noncomputable
-def galRestrictHom : (L →ₐ[K] L) →* (S →ₐ[R] S) where
-  toFun := fun f ↦ (IsIntegralClosure.equiv R (integralClosure R L) L S).toAlgHom.comp
-      (((f.restrictScalars R).comp (IsScalarTower.toAlgHom R S L)).codRestrict
-        (integralClosure R L) (fun x ↦ IsIntegral.map _ (IsIntegralClosure.isIntegral R L x)))
-  map_one' := by
-    ext x
-    apply (IsIntegralClosure.equiv R (integralClosure R L) L S).symm.injective
-    ext
-    dsimp
-    simp only [AlgEquiv.symm_apply_apply, AlgHom.coe_codRestrict, AlgHom.coe_comp,
-      AlgHom.coe_restrictScalars', IsScalarTower.coe_toAlgHom', Function.comp_apply,
-      AlgHom.one_apply]
-    exact (IsIntegralClosure.algebraMap_equiv R S L (integralClosure R L) x).symm
-  map_mul' := by
-    intros σ₁ σ₂
-    ext x
-    apply (IsIntegralClosure.equiv R (integralClosure R L) L S).symm.injective
-    ext
-    dsimp
-    simp only [AlgEquiv.symm_apply_apply, AlgHom.coe_codRestrict, AlgHom.coe_comp,
-      AlgHom.coe_restrictScalars', IsScalarTower.coe_toAlgHom', Function.comp_apply,
-      AlgHom.mul_apply, IsIntegralClosure.algebraMap_equiv, Subalgebra.algebraMap_eq]
-    dsimp
-
-lemma algebraMap_galRestrictHom_apply (σ : L →ₐ[K] L) (x : S) :
-    algebraMap S L (galRestrictHom R K S L σ x) = σ (algebraMap S L x) := by
-  simp [galRestrictHom, Subalgebra.algebraMap_eq]
-
 lemma prod_galRestrictHom_eq_norm [IsGalois K L] (x) :
-    (∏ σ : L ≃ₐ[K] L, galRestrictHom R K S L σ x) =
+    (∏ σ : L ≃ₐ[K] L, galRestrictHom R K L S σ x) =
     algebraMap R S (IsIntegralClosure.mk' (R := R) R (Algebra.norm K <| algebraMap S L x)
       (Algebra.isIntegral_norm K (IsIntegralClosure.isIntegral R L x).algebraMap)) := by
   apply IsIntegralClosure.algebraMap_injective S R L
@@ -149,15 +121,10 @@ lemma prod_galRestrictHom_eq_norm [IsGalois K L] (x) :
     Algebra.norm_eq_prod_automorphisms, AlgHom.coe_coe, RingHom.coe_comp, Function.comp_apply]
 
 noncomputable
-def galRestrict : (L ≃ₐ[K] L) →* (S ≃ₐ[R] S) :=
-  MonoidHom.comp (algHomUnitsEquiv R S)
-    ((Units.map <| galRestrictHom R K S L).comp (algHomUnitsEquiv K L).symm)
-
-noncomputable
 instance (p : Ideal R) : MulAction (L ≃ₐ[K] L) (primesOver S p) where
-  smul := fun σ P ↦ ⟨Ideal.comap (galRestrict R K S L σ⁻¹) P, P.2.1.comap _, by
+  smul := fun σ P ↦ ⟨Ideal.comap (galRestrict R K L S σ⁻¹) P, P.2.1.comap _, by
     refine Eq.trans ?_ P.2.2
-    rw [← Ideal.comap_coe (galRestrict R K S L _), Ideal.comap_comap,
+    rw [← Ideal.comap_coe (galRestrict R K L S _), Ideal.comap_comap,
       ← AlgEquiv.toAlgHom_toRingHom, AlgHom.comp_algebraMap]⟩
   one_smul := by
     intro p
@@ -169,12 +136,12 @@ instance (p : Ideal R) : MulAction (L ≃ₐ[K] L) (primesOver S p) where
     intro σ₁ σ₂ p
     ext1
     show Ideal.comap _ _ = Ideal.comap _ (Ideal.comap _ _)
-    rw [← Ideal.comap_coe (galRestrict R K S L _), ← Ideal.comap_coe (galRestrict R K S L _),
-      ← Ideal.comap_coe (galRestrict R K S L _), Ideal.comap_comap, mul_inv_rev, map_mul]
+    rw [← Ideal.comap_coe (galRestrict R K L S _), ← Ideal.comap_coe (galRestrict R K L S _),
+      ← Ideal.comap_coe (galRestrict R K L S _), Ideal.comap_comap, mul_inv_rev, map_mul]
     rfl
 
 lemma coe_smul_primesOver {p : Ideal R} (σ : L ≃ₐ[K] L) (P : primesOver S p) :
-  (↑(σ • P) : Ideal S) = Ideal.comap (galRestrict R K S L σ⁻¹) P := rfl
+  (↑(σ • P) : Ideal S) = Ideal.comap (galRestrict R K L S σ⁻¹) P := rfl
 
 open BigOperators
 
@@ -221,7 +188,7 @@ instance [IsGalois K L] (p : Ideal R) :
   have hQ := Q.prop.1
   -- Then `σ y ∉ Q` for all `σ`, or else `1 = x + y ∈ σ⁻¹ • Q`.
   -- This implies that `∏ σ y ∉ Q`.
-  have : ∏ σ : L ≃ₐ[K] L, galRestrictHom R K S L σ y ∉ (Q : Ideal S)
+  have : ∏ σ : L ≃ₐ[K] L, galRestrictHom R K L S σ y ∉ (Q : Ideal S)
   · apply prod_mem (S := (Q : Ideal S).primeCompl)
     intro σ _ hσ
     apply (isMaximal_of_mem_primesOver hp (σ⁻¹ • Q).prop).ne_top
@@ -229,7 +196,7 @@ instance [IsGalois K L] (p : Ideal R) :
     apply add_mem
     · suffices ↑(σ⁻¹ • Q) ∣ I from (Ideal.dvd_iff_le.mp this) hx
       exact Finset.dvd_prod_of_mem _ (Finset.mem_univ _)
-    · show galRestrictHom R K S L ↑(σ⁻¹⁻¹) y ∈ (Q : Ideal S)
+    · show galRestrictHom R K L S ↑(σ⁻¹⁻¹) y ∈ (Q : Ideal S)
       rwa [inv_inv]
   -- OTOH we show that `∏ σ y ∈ Q`.
   -- Since `∏ σ y` is the norm of `y ∈ P`, it falls in `R ∩ Q = p = R ∩ P` as desired.
@@ -240,14 +207,14 @@ instance [IsGalois K L] (p : Ideal R) :
   apply hy
   rw [Ideal.mem_span_singleton]
   refine dvd_trans ?_ (Finset.dvd_prod_of_mem _ (Finset.mem_univ 1))
-  show y ∣ galRestrictHom R K S L 1 y
+  show y ∣ galRestrictHom R K L S 1 y
   rw [map_one]
   exact dvd_rfl
   -- Which gives a contradiction and hence there is some `σ` such that `σ • P = Q`.
 
 lemma exists_comap_galRestrict_eq [IsGalois K L] {p : Ideal R} {P₁ P₂ : Ideal S}
     (hP₁ : P₁ ∈ primesOver S p) (hP₂ : P₂ ∈ primesOver S p) :
-    ∃ σ, P₁.comap (galRestrict R K S L σ) = P₂ :=
+    ∃ σ, P₁.comap (galRestrict R K L S σ) = P₂ :=
 ⟨_, congr_arg Subtype.val (MulAction.exists_smul_eq (L ≃ₐ[K] L)
   (⟨P₁, hP₁⟩ : primesOver S p) ⟨P₂, hP₂⟩).choose_spec⟩
 
@@ -298,7 +265,7 @@ lemma Ideal.ramificationIdxIn_eq_ramificationIdx [IsGalois K L] (p : Ideal R) (P
   rw [dif_pos this]
   have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K S L hP this.choose_spec
   rw [← hσ]
-  exact Ideal.ramificationIdx_comap_eq (galRestrict R K S L σ) p P
+  exact Ideal.ramificationIdx_comap_eq (galRestrict R K L S σ) p P
 
 lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S)
     (hP : P ∈ primesOver S p) [p.IsMaximal] :
@@ -308,7 +275,7 @@ lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S
   rw [dif_pos this]
   have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K S L hP this.choose_spec
   rw [← hσ]
-  exact Ideal.inertiaDeg_comap_eq (galRestrict R K S L σ) p P
+  exact Ideal.inertiaDeg_comap_eq (galRestrict R K L S σ) p P
 
 open FiniteDimensional
 
@@ -393,7 +360,7 @@ lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.
     simp_rw [primesOver_bot (S := S) (IsIntegralClosure.isIntegral_algebra R L),
       Set.mem_singleton_iff] at this
     simp_rw [coe_smul_primesOver, this,
-      Ideal.comap_bot_of_injective _ (galRestrict R K S L _).injective, Finset.prod_const,
+      Ideal.comap_bot_of_injective _ (galRestrict R K L S _).injective, Finset.prod_const,
       Ideal.map_bot, Ideal.inertiaDegIn_bot R S (IsIntegralClosure.isIntegral_algebra R L)]
     refine (zero_pow ?_).trans (zero_pow ?_).symm
     · rw [pos_iff_ne_zero, Finset.card_univ, Ne.def, Fintype.card_eq_zero_iff]

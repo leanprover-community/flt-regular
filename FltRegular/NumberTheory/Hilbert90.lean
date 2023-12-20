@@ -131,7 +131,7 @@ variable [IsIntegralClosure B A L] [IsDomain B]
 
 lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
     (η : B) (hη : Algebra.norm K (algebraMap B L η) = 1) :
-    ∃ ε : B, ε ≠ 0 ∧ η * galRestrict A K B L σ ε = ε := by
+    ∃ ε : B, ε ≠ 0 ∧ η * galRestrict A K L B σ ε = ε := by
   haveI : NoZeroSMulDivisors A L := by
     rw [NoZeroSMulDivisors.iff_algebraMap_injective, IsScalarTower.algebraMap_eq A K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective A K)
@@ -157,7 +157,7 @@ lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowe
     apply IsIntegralClosure.algebraMap_injective B A L
     rw [map_mul, ← hε]
     congr 1
-    exact algebraMap_galRestrictHom_apply A K B L σ x
+    exact algebraMap_galRestrictHom_apply A K L B σ x
     · intro e
       rw [(map_eq_zero _).mp e, zero_div] at hε
       rw [hε, Algebra.norm_zero] at hη
