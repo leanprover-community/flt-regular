@@ -31,6 +31,7 @@ lemma zeta_sub_one_dvd : (hζ.unit' : 𝓞 K) - 1 ∣ x ^ (p : ℕ) + y ^ (p : �
   simp
 
 set_option maxHeartbeats 3000000 in
+set_option synthInstance.maxHeartbeats 40000 in
 lemma one_sub_zeta_dvd_zeta_pow_sub :
   (hζ.unit' : 𝓞 K) - 1 ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
@@ -106,6 +107,7 @@ lemma div_zeta_sub_one_Bijective :
     Ideal.absNorm_span_singleton, norm_Int_zeta_sub_one hζ hp]
   rfl
 
+set_option synthInstance.maxHeartbeats 40000 in
 lemma div_zeta_sub_one_eq_zero_iff (η) :
   Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η) = 0 ↔
     ((hζ.unit' : 𝓞 K) - 1) ^ 2 ∣ x + y * η := by
@@ -273,12 +275,14 @@ lemma a_div_principal (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
     root_div_zeta_sub_one_dvd_gcd_spec, root_div_zeta_sub_one_dvd_gcd_spec]
   exact c_div_principal hp hζ e hy η₁ η₂
 
+set_option synthInstance.maxHeartbeats 40000 in
 noncomputable
 def zeta_sub_one_dvd_root : nthRootsFinset p (𝓞 K) :=
 (Equiv.ofBijective _ (div_zeta_sub_one_Bijective hp hζ e hy)).symm 0
 
 local notation "η₀" => zeta_sub_one_dvd_root hp hζ e hy
 
+set_option synthInstance.maxHeartbeats 40000 in
 lemma zeta_sub_one_dvd_root_spec : Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η₀) = 0 :=
 Equiv.ofBijective_apply_symm_apply _ (div_zeta_sub_one_Bijective hp hζ e hy) 0
 

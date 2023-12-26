@@ -22,14 +22,6 @@ instance : MulAction (K ≃ₐ[k] K) (InfinitePlace K) where
 
 local notation "Stab" => MulAction.stabilizer (K ≃ₐ[k] K)
 
-@[simp]
-lemma InfinitePlace.smul_apply (σ : K ≃ₐ[k] K) (w : InfinitePlace K) (x) :
-    (σ • w) x = w (σ.symm x) := rfl
-
-@[simp]
-lemma InfinitePlace.smul_mk (σ : K ≃ₐ[k] K) (φ : K →+* ℂ) :
-    σ • mk φ = mk (φ.comp σ.symm) := rfl
-
 lemma InfinitePlace.map_comp {F} [Field F] {w : InfinitePlace K} {f : F →+* K} {g : k →+* F} :
     w.map (f.comp g) = (w.map f).map g := rfl
 
@@ -70,17 +62,6 @@ lemma ComplexEmbedding.isConjGal_symm {φ : K →+* ℂ} {σ : K ≃ₐ[k] K} :
     IsConjGal φ σ.symm ↔ IsConjGal φ σ :=
   ⟨IsConjGal.symm, IsConjGal.symm⟩
 
-lemma ComplexEmbedding.IsReal.comp (f : k →+* K) {φ : K →+* ℂ} (hφ : IsReal φ) :
-    IsReal (φ.comp f) := by ext1 x; simpa using RingHom.congr_fun hφ (f x)
-
-lemma ComplexEmbedding.isReal_comp_iff {f : k ≃+* K} {φ : K →+* ℂ} :
-    IsReal (φ.comp (f : k →+* K)) ↔ IsReal φ :=
-  ⟨fun H ↦ by convert H.comp f.symm.toRingHom; ext1; simp, IsReal.comp _⟩
-
-lemma InfinitePlace.isReal_mk_iff {φ : K →+* ℂ} :
-    IsReal (mk φ) ↔ ComplexEmbedding.IsReal φ :=
-  ⟨isReal_of_mk_isReal, fun H ↦ ⟨_, H, rfl⟩⟩
-
 lemma InfinitePlace.IsReal.map (f : k →+* K) {w : InfinitePlace K} (hφ : IsReal w) :
     IsReal (w.map f) := by
   rw [← mk_embedding w, map_mk, isReal_mk_iff]
@@ -90,10 +71,6 @@ lemma InfinitePlace.IsReal.map (f : k →+* K) {w : InfinitePlace K} (hφ : IsRe
 lemma InfinitePlace.isReal_map_iff {f : k ≃+* K} {w : InfinitePlace K} :
     IsReal (w.map (f : k →+* K)) ↔ IsReal w := by
   rw [← mk_embedding w, map_mk, isReal_mk_iff, isReal_mk_iff, ComplexEmbedding.isReal_comp_iff]
-
-lemma InfinitePlace.isReal_smul_iff {σ : K ≃ₐ[k] K} {w : InfinitePlace K} :
-    IsReal (σ • w) ↔ IsReal w :=
-  InfinitePlace.isReal_map_iff (f := σ.symm.toRingEquiv)
 
 variable (k)
 
@@ -249,18 +226,6 @@ lemma InfinitePlace.IsRamified.even_finrank [IsGalois k K]
     Even (finrank k K) :=
   IsGalois.card_aut_eq_finrank k K ▸ hw.even_card_aut
 
-
-lemma ComplexEmbedding.exists_comp_symm_eq_of_comp_eq [IsGalois k K] (φ ψ : K →+* ℂ)
-    (h : φ.comp (algebraMap k K) = ψ.comp (algebraMap k K)) :
-    ∃ σ : K ≃ₐ[k] K, φ.comp σ.symm = ψ := by
-  letI := (φ.comp (algebraMap k K)).toAlgebra
-  letI := φ.toAlgebra
-  have : IsScalarTower k K ℂ := IsScalarTower.of_algebraMap_eq' rfl
-  let ψ' : K →ₐ[k] ℂ := { ψ with commutes' := fun r ↦ (RingHom.congr_fun h r).symm }
-  use (AlgHom.restrictNormal' ψ' K).symm
-  ext1 x
-  exact AlgHom.restrictNormal_commutes ψ' K x
-
 lemma ComplexEmbedding.exists_comp_eq (h : Algebra.IsAlgebraic k K) (φ : k →+* ℂ) :
     ∃ ψ : K →+* ℂ, ψ.comp (algebraMap k K) = φ :=
   letI := φ.toAlgebra
@@ -281,31 +246,10 @@ lemma InfinitePlace.exists_smul_eq_of_map_eq [IsGalois k K] (w w' : InfinitePlac
     rw [← mk_embedding w, ← mk_embedding w', smul_mk, mk_eq_iff]
     exact Or.inr hσ
 
-lemma InfinitePlace.mem_orbit_iff [IsGalois k K] {w w' : InfinitePlace K} :
-    w' ∈ MulAction.orbit (K ≃ₐ[k] K) w ↔ w.map (algebraMap k K) = w'.map (algebraMap k K) := by
-  refine ⟨?_, InfinitePlace.exists_smul_eq_of_map_eq w w'⟩
-  rintro ⟨σ, rfl : σ • w = w'⟩
-  rw [← mk_embedding w, map_mk, smul_mk, map_mk]
-  congr 1; ext1; simp
-
 lemma InfinitePlace.map_surjective (h : Algebra.IsAlgebraic k K) :
     Function.Surjective (map · (algebraMap k K)) := fun w ↦
   have ⟨ψ, hψ⟩ := ComplexEmbedding.exists_comp_eq h w.embedding
   ⟨mk ψ, by simp [map_mk, hψ]⟩
-
-noncomputable
-def InfinitePlace.orbitRelEquiv [IsGalois k K] :
-    Quotient (MulAction.orbitRel (K ≃ₐ[k] K) (InfinitePlace K)) ≃ InfinitePlace k := by
-  refine Equiv.ofBijective (Quotient.lift (map · (algebraMap k K))
-    <| fun _ _ e ↦ (mem_orbit_iff.mp e).symm) ⟨?_, ?_⟩
-  · rintro ⟨w⟩ ⟨w'⟩ e
-    exact Quotient.sound (mem_orbit_iff.mpr e.symm)
-  · intro w
-    obtain ⟨w', hw⟩ := map_surjective (Normal.isAlgebraic' (K := K)) w
-    exact ⟨⟦w'⟧, hw⟩
-
-lemma InfinitePlace.orbitRelEquiv_apply_mk'' [IsGalois k K] (x : InfinitePlace K) :
-    orbitRelEquiv (Quotient.mk'' x) = map x (algebraMap k K) := rfl
 
 lemma InfinitePlace.isRamified_smul {σ : K ≃ₐ[k] K} {w : InfinitePlace K} :
     IsRamified k (σ • w) ↔ IsRamified k w := by
@@ -355,7 +299,15 @@ lemma InfinitePlace.card_isRamified [NumberField k] [IsGalois k K] :
   · congr; ext w'
     simp only [mem_univ, forall_true_left, filter_congr_decidable, mem_filter, true_and,
       Set.mem_toFinset, mem_orbit_iff, @eq_comm _ (map w' _), and_iff_right_iff_imp]
-    intro e; rwa [← isRamifiedIn_map, ← e]
+    constructor
+    · intro e
+      exact e.2
+    · intro e
+      constructor
+      · rw [← isRamifiedIn_map]
+        convert hw using 1
+        exact e.symm
+      · exact e
   · rw [← MulAction.card_orbit_mul_card_stabilizer_eq_card_group _ w,
       InfinitePlace.card_stabilizer, if_pos, Nat.mul_div_cancel _ zero_lt_two, Set.toFinset_card]
     rwa [← isRamifiedIn_map]
@@ -375,7 +327,21 @@ lemma InfinitePlace.card_isRamified_compl [NumberField k] [IsGalois k K] :
   · congr; ext w'
     simp only [compl_filter, filter_congr_decidable, mem_filter, mem_univ, true_and,
       @eq_comm _ (map w' _), Set.mem_toFinset, mem_orbit_iff, and_iff_right_iff_imp]
-    intro e; rwa [← isRamifiedIn_map, ← e]
+    constructor
+    · intro e
+      exact e.2
+    · intro e
+      constructor
+      · convert hw
+        constructor
+        · intro H
+          rw [← isRamifiedIn_map] at H
+          convert H using 1
+        · intro H
+          rw [← isRamifiedIn_map]
+          convert H using 1
+          exact e.symm
+      · exact e
   · rw [← MulAction.card_orbit_mul_card_stabilizer_eq_card_group _ w,
       InfinitePlace.card_stabilizer, if_neg, mul_one, Set.toFinset_card]
     rwa [← isRamifiedIn_map]
