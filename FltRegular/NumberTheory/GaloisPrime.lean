@@ -1,5 +1,6 @@
 import FltRegular.NumberTheory.AuxLemmas
 import Mathlib.RingTheory.IntegralRestrict
+import Mathlib.Data.Set.Card
 
 /-!
 # Galois action on primes
@@ -106,7 +107,7 @@ lemma prime_of_mem_primesOver [IsDedekindDomain S] [NoZeroSMulDivisors R S] {p :
 
 end primesOver
 
-variable (R K S L : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
+variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
     [IsDedekindDomain R] [Algebra R K] [IsFractionRing R K] [Algebra S L] -- [IsFractionRing S L]
     [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L] -- [IsNoetherian R S]
     [IsIntegralClosure S R L] [FiniteDimensional K L]
@@ -263,7 +264,7 @@ lemma Ideal.ramificationIdxIn_eq_ramificationIdx [IsGalois K L] (p : Ideal R) (P
   delta ramificationIdxIn
   have : (primesOver S p).Nonempty := ⟨P, hP⟩
   rw [dif_pos this]
-  have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K S L hP this.choose_spec
+  have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
   rw [← hσ]
   exact Ideal.ramificationIdx_comap_eq (galRestrict R K L S σ) p P
 
@@ -273,7 +274,7 @@ lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S
   delta inertiaDegIn
   have : (primesOver S p).Nonempty := ⟨P, hP⟩
   rw [dif_pos this]
-  have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K S L hP this.choose_spec
+  have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
   rw [← hσ]
   exact Ideal.inertiaDeg_comap_eq (galRestrict R K L S σ) p P
 

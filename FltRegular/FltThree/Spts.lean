@@ -95,7 +95,7 @@ theorem Spts.mul_of_dvd' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime 
       rw [Zsqrtd.norm_def, HAsq]
       ring
     rw [mul_comm _ U, ← mul_assoc, ← HU, HX]
-    simp only [Zsqrtd.ext, neg_mul, add_zero, Zsqrtd.coe_int_re, MulZeroClass.zero_mul, mul_neg,
+    simp only [Zsqrtd.ext_iff, neg_mul, add_zero, Zsqrtd.coe_int_re, MulZeroClass.zero_mul, mul_neg,
       Zsqrtd.mul_im, Zsqrtd.mul_re, neg_neg, MulZeroClass.mul_zero, neg_zero, Zsqrtd.coe_int_im,
       this]
     constructor <;> ring
@@ -190,7 +190,7 @@ theorem Zqrtd.factor_div (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) :
   set c' : ℤ√(-3) := ⟨c, d⟩
   refine' ⟨c', ⟨m, n⟩, _, _⟩
   ·
-    simp only [Zsqrtd.ext, ha, hb, add_zero, Zsqrtd.coe_int_re, eq_self_iff_true, Zsqrtd.mul_im,
+    simp only [Zsqrtd.ext_iff, ha, hb, add_zero, Zsqrtd.coe_int_re, eq_self_iff_true, Zsqrtd.mul_im,
       zero_add, Zsqrtd.add_im, and_self_iff, Zsqrtd.mul_re, MulZeroClass.mul_zero, Zsqrtd.add_re,
       Zsqrtd.coe_int_im]
   · rw [← mul_lt_mul_left (by norm_num : (0 : ℤ) < 4)]
@@ -337,8 +337,8 @@ theorem Spts.eq_one {a : ℤ√(-3)} (h : a.norm = 1) : abs a.re = 1 ∧ a.im = 
       exact mul_nonneg zero_lt_three.le (mul_self_nonneg _)
 
 theorem Spts.eq_one' {a : ℤ√(-3)} (h : a.norm = 1) : a = 1 ∨ a = -1 := by
-  simp only [Zsqrtd.ext, Zsqrtd.one_re, Zsqrtd.one_im, Zsqrtd.neg_im, Zsqrtd.neg_re, neg_zero, ←
-    or_and_right, ← abs_eq (zero_le_one' ℤ), Spts.eq_one h, eq_self_iff_true, and_self_iff]
+  simp only [Zsqrtd.ext_iff, Zsqrtd.one_re, Zsqrtd.one_im, Zsqrtd.neg_im, Zsqrtd.neg_re, neg_zero,
+    ← or_and_right, ← abs_eq (zero_le_one' ℤ), Spts.eq_one h, eq_self_iff_true, and_self_iff]
 
 theorem Spts.ne_zero_of_coprime' (a : ℤ√(-3)) (hcoprime : IsCoprime a.re a.im) : a.norm ≠ 0 :=
   by

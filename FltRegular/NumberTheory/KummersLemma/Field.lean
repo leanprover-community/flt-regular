@@ -1,6 +1,6 @@
 import FltRegular.NumberTheory.RegularPrimes
 import Mathlib.NumberTheory.Cyclotomic.Rat
-import FltRegular.NumberTheory.KummerExtension
+import Mathlib.FieldTheory.KummerExtension
 import FltRegular.NumberTheory.Unramified
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import Mathlib.Data.Polynomial.Taylor
@@ -25,17 +25,6 @@ lemma zeta_sub_one_pow_dvd_poly :
   refine dvd_C_mul_X_sub_one_pow_add_one hpri.out (PNat.coe_injective.ne hp) _ _ dvd_rfl ?_
   conv_lhs => rw [← tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le, pow_succ']
   exact mul_dvd_mul_right (associated_zeta_sub_one_pow_prime hζ).dvd _
-
-lemma injOn_pow_of_isPrimitiveRoot {R} [CommRing R] {n : ℕ} (hn : 0 < n) {ζ : R}
-    (hζ : IsPrimitiveRoot ζ n) :
-    Set.InjOn (fun x => ζ ^ x) (Finset.range n) := by
-  intros i hi j hj e
-  rw [Finset.coe_range, Set.mem_Iio] at hi hj
-  simp only [mul_eq_mul_right_iff] at e
-  have : (hζ.isUnit hn).unit ^ i = (hζ.isUnit hn).unit ^ j := Units.ext (by simpa using e)
-  rw [pow_inj_mod, ← orderOf_injective ⟨⟨Units.val, Units.val_one⟩, Units.val_mul⟩
-    Units.ext (hζ.isUnit hn).unit] at this
-  simpa [← hζ.eq_orderOf, Nat.mod_eq_of_lt, hi, hj] using this
 
 namespace KummersLemma
 
@@ -155,8 +144,7 @@ theorem roots_poly {L : Type*} [Field L] [Algebra K L] (α : L)
       rw [mem_roots, IsRoot.def, eval_map, ← aeval_def, aeval_poly hp hζ u hcong α e]
       exact ((monic_poly hp hζ u hcong).map (algebraMap (𝓞 K) L)).ne_zero
     · intros i hi j hj e
-      apply injOn_pow_mul_of_isPrimitiveRoot p.pos (hζ.map_of_injective (algebraMap K L).injective)
-        hα hi hj
+      apply (hζ.map_of_injective (algebraMap K L).injective).injOn_pow_mul hα hi hj
       apply_fun (1 - · * (algebraMap K L ζ - 1)) at e
       dsimp only at e
       simpa only [Nat.cast_one, map_sub, map_one, Algebra.smul_def, map_pow,
@@ -200,11 +188,10 @@ lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [
 instance {K L} [Field K] [Field L] [Algebra K L] :
     IsIntegralClosure (𝓞 L) (𝓞 K) L := isIntegralClosure_of_isScalarTower ℤ _ K _ _
 
+attribute [local instance 2000] Algebra.toModule Module.toDistribMulAction
+  DistribMulAction.toMulAction MulAction.toSMul NumberField.inst_ringOfIntegersAlgebra
+
 instance {K L} [Field K] [Field L] [Algebra K L] :
-    letI := NumberField.inst_ringOfIntegersAlgebra K L
-    letI : Module (𝓞 K) (𝓞 L) := Algebra.toModule
-    letI : MulAction (𝓞 K) (𝓞 L) := DistribMulAction.toMulAction
-    letI : SMul (𝓞 K) (𝓞 L) := MulAction.toSMul
     IsScalarTower (𝓞 K) (𝓞 L) L := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
 
 lemma minpoly_polyRoot'' {L : Type*} [Field L] [Algebra K L] (α : L)
@@ -248,7 +235,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   · refine hζ.unit'_coe.associated_sub_one hpri.out ?_ ?_ ?_
     · rw [mem_nthRootsFinset p.pos, ← pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one, one_pow]
     · rw [mem_nthRootsFinset p.pos, ← pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one, one_pow]
-    · exact mt (injOn_pow_of_isPrimitiveRoot p.pos hζ.unit'_coe hj hi) hij.symm
+    · exact mt (hζ.unit'_coe.injOn_pow hj hi) hij.symm
   apply_fun Subtype.val at hv
   simp only [Submonoid.coe_mul, Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring,
     AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one,
@@ -268,6 +255,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     mul_div_cancel_left _ hζ']
   rfl
 
+open scoped KummerExtension in
 attribute [local instance] Ideal.Quotient.field in
 lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     Separable ((poly hp hζ u hcong).map (Ideal.Quotient.mk I)) := by
@@ -308,12 +296,12 @@ lemma mem_adjoin_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
 attribute [local instance] Ideal.Quotient.field in
 lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ (p : ℕ) - C (u : K))] :
     IsUnramified (𝓞 K) (𝓞 L) := by
-  let α := polyRoot hp hζ u hcong _ (rootOfSplitsXPowSubC_pow _ _ L p.pos) 0
+  let α := polyRoot hp hζ u hcong _ (rootOfSplitsXPowSubC_pow p.pos _ L) 0
   haveI := Polynomial.IsSplittingField.finiteDimensional L (X ^ (p : ℕ) - C (u : K))
   have hα : Algebra.adjoin K {(α : L)} = ⊤
-  · rw [eq_top_iff, ← adjoin_root_eq_top_of_isSplittingField ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
-      (X_pow_sub_C_irreducible_of_prime hpri.out hu) _ (rootOfSplitsXPowSubC_pow
-        (p : ℕ) (u : K) L p.pos), Algebra.adjoin_le_iff, Set.singleton_subset_iff]
+  · rw [eq_top_iff, ← Algebra.adjoin_root_eq_top_of_isSplittingField
+      ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu)
+      (rootOfSplitsXPowSubC_pow p.pos (u : K) L), Algebra.adjoin_le_iff, Set.singleton_subset_iff]
     exact mem_adjoin_polyRoot hp hζ u hcong _ _ 0
   constructor
   intros I hI hIbot

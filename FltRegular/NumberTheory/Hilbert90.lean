@@ -2,6 +2,7 @@
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.AuxLemmas
 import FltRegular.NumberTheory.GaloisPrime
+import Mathlib.GroupTheory.OrderOfElement
 import Mathlib.Tactic.Widget.Conv
 import Mathlib.RepresentationTheory.GroupCohomology.Hilbert90
 
@@ -41,8 +42,8 @@ lemma foo {a: ℕ} (h : a % orderOf σ = 0) :
     have := Algebra.norm_eq_prod_automorphisms K η
     simp only [hη, map_one] at this
     convert this.symm
-    refine prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp) (fun _ _ ↦ by rfl)
-      (fun a b ha hb hab ↦ ?_) (fun τ _ ↦ ?_)
+    refine prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp)
+      (fun a ha b hb hab ↦ ?_) (fun τ _ ↦ ?_) (fun _ _ ↦ by rfl)
     · rwa [pow_inj_mod, Nat.mod_eq_of_lt (Finset.mem_range.1 ha),
         Nat.mod_eq_of_lt (Finset.mem_range.1 hb)] at hab
     · refine ⟨(finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩

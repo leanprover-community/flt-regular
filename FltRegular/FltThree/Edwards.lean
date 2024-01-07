@@ -38,7 +38,7 @@ theorem Zsqrt3.coe_of_isUnit {z : ℤ√(-3)} (h : IsUnit z) : ∃ u : Units ℤ
   obtain ⟨u, hu⟩ := Zsqrt3.isUnit_iff.mp h
   obtain ⟨v, hv⟩ : IsUnit z.re := by rwa [Int.isUnit_iff_abs_eq]
   use v
-  rw [Zsqrtd.ext, hu, ← hv]
+  rw [Zsqrtd.ext_iff, hu, ← hv]
   simp only [Zsqrtd.coe_int_re, and_true_iff, eq_self_iff_true, Zsqrtd.coe_int_im]
 
 theorem Zsqrt3.coe_of_isUnit' {z : ℤ√(-3)} (h : IsUnit z) : ∃ u : ℤ, z = u ∧ abs u = 1 :=
@@ -92,14 +92,14 @@ theorem step1 {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (heven : Even a.
     rw [← eq_sub_iff_add_eq] at hv
     use ⟨v - a.im, v⟩
     right
-    rw [Zsqrtd.ext, hv, Zsqrtd.mul_re, Zsqrtd.mul_im]
+    rw [Zsqrtd.ext_iff, hv, Zsqrtd.mul_re, Zsqrtd.mul_im]
     dsimp only
     constructor <;> ring
   · obtain ⟨v, hv⟩ := hdvd
     rw [sub_eq_iff_eq_add] at hv
     use ⟨a.im + v, -v⟩
     left
-    rw [Zsqrtd.ext, hv, Zsqrtd.mul_re, Zsqrtd.mul_im]
+    rw [Zsqrtd.ext_iff, hv, Zsqrtd.mul_re, Zsqrtd.mul_im]
     dsimp only
     constructor <;> ring
 
@@ -133,16 +133,16 @@ theorem step1'' {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hp : p.norm
       have h4 : p = q ∨ p = star q := by
         apply Or.imp _ _ hq' <;>
           · intro h5
-            simp [Zsqrtd.ext, hp', h5]
+            simp [Zsqrtd.ext_iff, hp', h5]
       simp only [hp', one_mul, Int.cast_one]
       cases h4 <;> cases h2 <;> simp [*, or_comm]
     | inr hp' =>
       have h4 : p = -q ∨ p = -star q := by
         apply Or.imp _ _ hq'.symm
         · intro h5
-          simp [Zsqrtd.ext, hp', h5]
+          simp [Zsqrtd.ext_iff, hp', h5]
         · intro h5
-          simp [Zsqrtd.ext, hp', h5]
+          simp [Zsqrtd.ext_iff, hp', h5]
       simp only [hp', one_mul, Zsqrtd.norm_neg, Int.cast_one, Int.cast_neg, neg_one_mul]
       cases h4 <;> cases h2 <;> simp [*]
   · rw [Zsqrtd.norm_mul, Zsqrtd.norm_int_cast, ← sq, ← sq_abs, hp', one_pow, one_mul]
@@ -250,7 +250,7 @@ theorem step4_3 {p p' : ℤ√(-3)} (hcoprime : IsCoprime p.re p.im) (hcoprime' 
     · rw [heq] at h1
       have := Int.eq_one_of_mul_eq_self_right (Spts.ne_zero_of_coprime' _ hcoprime') h1.symm
       obtain ⟨ha, hb⟩ := Spts.eq_one this
-      simp only [hb, Zsqrtd.ext, Zsqrtd.mul_re, Zsqrtd.mul_im, add_zero, zero_add,
+      simp only [hb, Zsqrtd.ext_iff, Zsqrtd.mul_re, Zsqrtd.mul_im, add_zero, zero_add,
         MulZeroClass.mul_zero] at H
       rw [H.1, H.2, abs_mul, abs_mul, ha, mul_one, mul_one]
       try rw [zsqrtd.conj_re, zsqrtd.conj_im, abs_neg]
@@ -324,7 +324,7 @@ theorem no_conj (s : Multiset (ℤ√(-3))) {p : ℤ√(-3)} (hp : ¬IsUnit p)
     rw [← Int.isUnit_iff_abs_eq]
     apply IsCoprime.isUnit_of_dvd' hcoprime <;> apply dvd_mul_right
   · have : star p ≠ p := by
-      rw [Ne.def, Zsqrtd.ext]
+      rw [Ne.def, Zsqrtd.ext_iff]
       rintro ⟨-, H⟩
       apply him
       apply eq_zero_of_neg_eq
@@ -362,7 +362,7 @@ theorem associated'_of_abs_eq {x y : ℤ√(-3)} (hre : abs x.re = abs y.re)
       (right; use -1);
       (left; use -1)
     ] <;>
-    simp [Zsqrtd.ext, h1, h2]
+    simp [Zsqrtd.ext_iff, h1, h2]
 
 theorem associated'_of_associated_norm {x y : ℤ√(-3)}
     (h : Associated (Zsqrtd.norm x) (Zsqrtd.norm y)) (hx : IsCoprime x.re x.im)
@@ -445,7 +445,7 @@ theorem eq_or_eq_conj_of_associated_of_re_zero {x A : ℤ√(-3)} (hx : x.re = 0
     simpa only [hv1, hv2, mul_one, Int.cast_one] using hu
   · right
     simp only [hv1, hv2, mul_one, Int.cast_one, mul_neg, Int.cast_neg] at hu
-    simp [← hu, hx, Zsqrtd.ext]
+    simp [← hu, hx, Zsqrtd.ext_iff]
 
 theorem eq_or_eq_conj_iff_associated'_of_nonneg {x A : ℤ√(-3)} (hx : 0 ≤ x.re) (hA : 0 ≤ A.re) :
     Associated' x A ↔ x = A ∨ x = star A := by
@@ -586,5 +586,5 @@ theorem step6 (a b r : ℤ) (hcoprime : IsCoprime a b) (hcube : r ^ 3 = a ^ 2 + 
     ring
   obtain ⟨p, hp⟩ := step5 A r.natAbs hcoprime hcube'
   use p.re, p.im
-  simp only [Zsqrtd.ext, pow_succ', pow_two, Zsqrtd.mul_re, Zsqrtd.mul_im] at hp
+  simp only [Zsqrtd.ext_iff, pow_succ', pow_two, Zsqrtd.mul_re, Zsqrtd.mul_im] at hp
   convert hp using 2 <;> simp <;> ring

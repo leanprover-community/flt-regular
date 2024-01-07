@@ -23,7 +23,7 @@ lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
   · exact hpri.out.pos
   · exact IsIntegralClosure.isIntegral _ (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) _
 
-def AdjoinRoot.aeval_root {R} [CommRing R] (P : R[X]) : aeval (root P) P = 0 := by simp
+lemma AdjoinRoot.aeval_root {R} [CommRing R] (P : R[X]) : aeval (root P) P = 0 := by simp
 
 @[simps!]
 def AdjoinRoot.equivOfMinpolyEq {R S} [CommRing R] [CommRing S] [Algebra R S]
@@ -121,7 +121,7 @@ lemma powerBasis_dim : (powerBasis p).dim = p - 1 := by
   simp [powerBasis, Nat.totient_prime hpri.out, natDegree_cyclotomic]
 
 instance : Module.Finite ℤ (CyclotomicIntegers p) :=
-  Module.Finite.of_fintype_basis (powerBasis p).basis
+  Module.Finite.of_basis (powerBasis p).basis
 
 instance : NoZeroSMulDivisors ℤ (CyclotomicIntegers p) := (powerBasis p).basis.noZeroSMulDivisors
 

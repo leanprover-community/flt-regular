@@ -62,6 +62,15 @@ theorem _root_.PowerBasis.finrank' {R S} [CommRing R] [Nontrivial R] [CommRing S
     (pb : PowerBasis R S) : FiniteDimensional.finrank R S = pb.dim := by
   rw [FiniteDimensional.finrank_eq_card_basis pb.basis, Fintype.card_fin]
 
+open Cardinal Submodule in
+theorem _root_.finrank_span_set_eq_card' {R M} [CommRing R] [AddCommGroup M] [Module R M]
+    [Nontrivial R] (s : Set M) [Fintype s] (hs : LinearIndependent R ((↑) : s → M)) :
+    finrank R (span R s) = s.toFinset.card :=
+  finrank_eq_of_rank_eq
+    (by
+      have : Module.rank R (span R s) = #s := rank_span_set hs
+      rwa [Cardinal.mk_fintype, ← Set.toFinset_card] at this)
+
 lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
     finrank ℤ (Submodule.span A (Set.range f)) = (p - 1) * R := by
   classical
@@ -72,7 +81,7 @@ lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
   rw [← CyclotomicIntegers.powerBasis_dim, ← PowerBasis.finrank']
   conv_rhs => rw [← this]
   have := Module.Free.of_basis (Basis.span hf)
-  have := Module.Finite.of_fintype_basis (Basis.span hf)
+  have := Module.Finite.of_basis (Basis.span hf)
   rw [finrank_mul_finrank']
 
 

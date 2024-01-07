@@ -183,7 +183,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     contradiction
   haveI := (⟨hpri.out⟩ : Fact (P : ℕ).Prime)
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ
-  rw [h, mul_comm _ (↑b : 𝓞 K), ← pow_one hζ'.unit'] at hu
+  rw [h, mul_comm _ (↑b : R), ← pow_one hζ'.unit'] at hu
   obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' hP hpri.out a b 1 hu.symm
   simp only [zpow_one, zpow_neg, PNat.mk_coe, mem_span_singleton, ← h] at hk
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.out.ne_zero]
@@ -197,8 +197,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
       ZMod.int_cast_mod, Int.cast_sub, Int.cast_mul, int_cast_ofNat, Int.cast_one]
   simp only [add_sub_assoc, sub_sub] at hk ⊢
   convert hk using 3
-  rw [mul_add, mul_comm (↑a : 𝓞 K), ← mul_assoc _ (↑b : 𝓞 K), mul_comm _ (↑b : 𝓞 K),
-    mul_assoc (↑b : 𝓞 K)]
+  rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R), mul_assoc (↑b : R)]
   congr 2
   · rw [← Subtype.coe_inj]
     simp only [Fin.val_mk, SubsemiringClass.coe_pow, _root_.coe_zpow',

@@ -1,19 +1,7 @@
 import Mathlib.NumberTheory.RamificationInertia
-import Mathlib.FieldTheory.Galois
-import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-import Mathlib.RingTheory.DedekindDomain.Dvr
-import Mathlib.RingTheory.Norm
-import Mathlib.Data.Set.Card
-import Mathlib.RingTheory.RootsOfUnity.Basic
-import Mathlib.LinearAlgebra.Eigenspace.Minpoly
-import Mathlib.RingTheory.DedekindDomain.Ideal
-import Mathlib.RingTheory.Discriminant
-import Mathlib.RingTheory.Localization.FractionRing
-import Mathlib.NumberTheory.RamificationInertia
-import Mathlib.NumberTheory.KummerDedekind
+import Mathlib.RingTheory.Trace
 import Mathlib.Data.Polynomial.Taylor
-import Mathlib.RingTheory.Localization.NormTrace
-import Mathlib.NumberTheory.NumberField.Norm
+import Mathlib.RingTheory.Valuation.ValuationRing
 
 /-!
 
@@ -46,51 +34,6 @@ lemma isIntegralClosure_self {R S : Type*} [CommRing R] [CommRing S] [Algebra R 
 -- Mathlib/Algebra/Group/Units.lean
 lemma isUnit_iff_eq_one {M : Type*} [Monoid M] [Unique Mˣ] {x : M} : IsUnit x ↔ x = 1 :=
   ⟨fun h ↦ congr_arg Units.val (Subsingleton.elim (h.unit) 1), fun h ↦ h ▸ isUnit_one⟩
-
--- Mathlib/RingTheory/Ideal/Over.lean
-lemma Ideal.exists_ideal_over_prime {R S : Type*} [CommSemiring R] [CommRing S] [Algebra R S]
-  [NoZeroSMulDivisors R S]
-  (I : Ideal S) (p : Ideal R) [p.IsPrime] (hI : I.comap (algebraMap R S) ≤ p) :
-    ∃ P ≥ I, P.IsPrime ∧ P.comap (algebraMap R S) ≤ p := by
-  let Sₚ := Localization (Algebra.algebraMapSubmonoid S p.primeCompl)
-  let Iₚ := I.map (algebraMap S Sₚ)
-  have H : Function.Injective (algebraMap S Sₚ)
-  · apply IsLocalization.injective (M := Algebra.algebraMapSubmonoid S p.primeCompl)
-    rintro _ ⟨x, hx : x ∉ p, rfl⟩ s hs
-    rw [mul_comm, ← Algebra.smul_def] at hs
-    refine (NoZeroSMulDivisors.eq_zero_or_eq_zero_of_smul_eq_zero hs).resolve_left ?_
-    rintro rfl
-    exact hx p.zero_mem
-  have hI' : Disjoint (Algebra.algebraMapSubmonoid S p.primeCompl : Set S) I
-  · rw [Set.disjoint_iff]
-    rintro _ ⟨⟨x, hx : x ∉ p, rfl⟩, hx'⟩
-    exact (hx (hI hx')).elim
-  have : Iₚ ≠ ⊤
-  · rw [Ne.def, Ideal.eq_top_iff_one, IsLocalization.mem_map_algebraMap_iff
-      (Algebra.algebraMapSubmonoid S p.primeCompl) Sₚ, not_exists]
-    simp only [one_mul, H.eq_iff]
-    exact fun H ↦ hI'.ne_of_mem H.2.2 H.1.2
-  obtain ⟨M, hM, hM'⟩ := Ideal.exists_le_maximal _ this
-  refine ⟨_, Ideal.map_le_iff_le_comap.mp hM', hM.isPrime.comap _, ?_⟩
-  intro x hx
-  by_contra hx'
-  exact Set.disjoint_left.mp ((IsLocalization.isPrime_iff_isPrime_disjoint
-    (Algebra.algebraMapSubmonoid S p.primeCompl) Sₚ M).mp hM.isPrime).2 ⟨_, hx', rfl⟩ hx
-
--- Mathlib/Algebra/Algebra/Hom.lean
-@[simps]
-def algHomUnitsEquiv (R S : Type*) [CommSemiring R] [Semiring S] [Algebra R S] :
-    (S →ₐ[R] S)ˣ ≃* (S ≃ₐ[R] S) where
-  toFun := fun f ↦
-    { (f : S →ₐ[R] S) with
-      invFun := ↑(f⁻¹)
-      left_inv := (fun x ↦ show (↑(f⁻¹ * f) : S →ₐ[R] S) x = x by rw [inv_mul_self]; rfl)
-      right_inv := (fun x ↦ show (↑(f * f⁻¹) : S →ₐ[R] S) x = x by rw [mul_inv_self]; rfl) }
-  invFun := fun f ↦ ⟨f, f.symm, f.comp_symm, f.symm_comp⟩
-  left_inv := fun _ ↦ rfl
-  right_inv := fun _ ↦ rfl
-  map_mul' := fun _ _ ↦ rfl
-
 
 -- Mathlib/NumberTheory/RamificationInertia.lean
 section RamificationInertia
@@ -138,142 +81,6 @@ lemma Ideal.inertiaDeg_comap_eq (e : S₁ ≃ₐ[R] S₂) (p : Ideal R) (P : Ide
 end RamificationInertia
 
 open Polynomial IntermediateField
-
--- Mathlib/FieldTheory/Adjoin.lean
-theorem IntermediateField.adjoin_adjoinRoot_root_eq_top {K : Type*} [Field K]
-    (p : K[X]) [Fact (Irreducible p)] : K⟮AdjoinRoot.root p⟯ = ⊤ :=
-  (IntermediateField.eq_adjoin_of_eq_algebra_adjoin K _ ⊤
-    (AdjoinRoot.adjoinRoot_eq_top (f := p)).symm).symm
-
--- Mathlib/Data/Polynomial/Degree/Lemmas.lean
--- maybe generalize to `of_natDegree_le`?
-theorem Polynomial.associated_of_dvd_of_natDegree_eq {K : Type*} [Field K]
-    {P₁ P₂ : K[X]} (h₁ : P₁ ∣ P₂) (h₂ : P₁.natDegree = P₂.natDegree) (hP₂ : P₂ ≠ 0) :
-    Associated P₁ P₂ := by
-  obtain ⟨u, rfl⟩ := h₁
-  rw [mul_ne_zero_iff] at hP₂
-  rw [natDegree_mul hP₂.1 hP₂.2, self_eq_add_right, natDegree_eq_zero_iff_degree_le_zero,
-    le_iff_eq_or_lt, ← not_le, zero_le_degree_iff, not_ne_iff, or_iff_left hP₂.2,
-    ← isUnit_iff_degree_eq_zero] at h₂
-  exact associated_mul_unit_right P₁ u h₂
-
--- Mathlib/Data/Polynomial/Degree/Lemmas.lean
--- maybe generalize to `of_degree_le`?
-theorem Polynomial.associated_of_dvd_of_degree_eq {K : Type*} [Field K]
-    {P₁ P₂ : K[X]} (h₁ : P₁ ∣ P₂) (h₂ : P₁.degree = P₂.degree) :
-    Associated P₁ P₂ := by
-  by_cases h : P₂ = 0
-  · subst h
-    rw [degree_zero, degree_eq_bot] at h₂
-    exact h₂ ▸ Associated.refl _
-  · exact Polynomial.associated_of_dvd_of_natDegree_eq h₁ (natDegree_eq_of_degree_eq h₂) h
-
--- Mathlib/Algebra/GroupWithZero/Power.lean
-theorem mem_range_pow_of_coprime_of_pow_mem_range_pow {G₀} [CommGroupWithZero G₀] {m n : ℕ}
-    (hmn : m.Coprime n) (a : G₀) (ha : a ^ m ∈ Set.range (· ^ n : G₀ → G₀)) :
-    a ∈ Set.range (· ^ n : G₀ → G₀) := by
-  obtain ⟨k, l, e⟩ := Nat.isCoprime_iff_coprime.mpr hmn
-  by_cases hn : n = 0
-  · simp only [hn, Nat.coprime_zero_right] at hmn
-    rwa [hmn, pow_one] at ha
-  by_cases ha' : a = 0
-  · exact ⟨0, by simpa only [ha', zero_pow_eq_zero, pos_iff_ne_zero]⟩
-  obtain ⟨x, hx⟩ := ha
-  use x ^ k * a ^ l
-  conv_rhs => rw [← zpow_one a, ← e]
-  simp only [← zpow_ofNat, mul_zpow, zpow_add₀ ha', ← zpow_mul, mul_comm k]
-  rw [zpow_mul, zpow_ofNat, zpow_mul a m, zpow_ofNat, ← hx]
-
--- Mathlib/Algebra/Hom/Units.lean
-lemma Units.map_injective {M N} [Monoid M] [Monoid N] {f : M →* N} (hf : Function.Injective f) :
-    Function.Injective (Units.map f) := fun _ _ e => ext (hf (congr_arg val e))
-
--- Mathlib/RingTheory/RootsOfUnity/Basic.lean
-lemma IsPrimitiveRoot.isUnit_unit' {K} [Field K] {ζ : K} {n} (hn) (hζ : IsPrimitiveRoot ζ n) :
-    IsPrimitiveRoot (hζ.isUnit hn).unit' n := coe_units_iff.mp hζ
-
--- Mathlib/RingTheory/RootsOfUnity/Basic.lean
-noncomputable
-def rootsOfUnity_equiv_of_primitiveRoots {K L} [Field K] [Field L]
-    (f : K →+* L) (n : ℕ+) (hζ : (primitiveRoots n K).Nonempty) :
-    (rootsOfUnity n K) ≃* rootsOfUnity n L := by
-  haveI H : Function.Injective (Units.map f : Kˣ →* Lˣ) := Units.map_injective f.injective
-  refine (Subgroup.equivMapOfInjective _ _ H).trans (MulEquiv.subgroupCongr ?_)
-  letI : CommMonoid Lˣ := inferInstance
-  have ⟨_, hζ⟩ := hζ
-  rw [mem_primitiveRoots (k := n) n.2] at hζ
-  replace hζ := hζ.isUnit_unit' n.2
-  rw [← hζ.zpowers_eq, ← (hζ.map_of_injective H).zpowers_eq, MonoidHom.map_zpowers]
-
--- Mathlib/RingTheory/RootsOfUnity/Basic.lean
-lemma rootsOfUnity_equiv_of_primitiveRoots_apply {K L} [Field K] [Field L]
-    (f : K →+* L) (n : ℕ+) (hζ : (primitiveRoots n K).Nonempty) (η) :
-    (rootsOfUnity_equiv_of_primitiveRoots f n hζ η : Lˣ) = f (η : Kˣ) := rfl
-
--- Mathlib/RingTheory/RootsOfUnity/Basic.lean
-lemma rootsOfUnity_equiv_of_primitiveRoots_symm_apply {K L} [Field K] [Field L]
-    (f : K →+* L) (n : ℕ+) (hζ : (primitiveRoots n K).Nonempty) (η) :
-    f ((rootsOfUnity_equiv_of_primitiveRoots f n hζ).symm η : Kˣ) = (η : Lˣ) := by
-  obtain ⟨ε, rfl⟩ := (rootsOfUnity_equiv_of_primitiveRoots f n hζ).surjective η
-  rw [MulEquiv.symm_apply_apply, rootsOfUnity_equiv_of_primitiveRoots_apply]
-
--- Mathlib/Algebra/Algebra/Hom.lean
-lemma AlgEquiv.toMulEquiv_injective {R A B} [CommSemiring R] [Semiring A] [Semiring B]
-    [Algebra R A] [Algebra R B] :
-    Function.Injective (AlgEquiv.toMulEquiv (R := R) (A := A) (B := B)) :=
-  fun _ _ e ↦ ext fun a ↦ FunLike.congr_fun e a
-
-lemma linearIndependent_algEquiv_toLinearMap'
-    (K L) [CommSemiring K] [CommRing L] [IsDomain L] [Algebra K L] :
-    LinearIndependent L (AlgEquiv.toLinearMap : (L ≃ₐ[K] L) → L →ₗ[K] L) := by
-  apply LinearIndependent.of_comp (LinearMap.ltoFun K L L)
-  exact (linearIndependent_monoidHom L L).comp
-    (MulEquiv.toMonoidHom ∘ AlgEquiv.toMulEquiv : (L ≃ₐ[K] L) → _)
-    (MulEquiv.toMonoidHom_injective.comp AlgEquiv.toMulEquiv_injective)
-
-lemma linearIndependent_algEquiv_toLinearMap
-    (K L) [Field K] [CommRing L] [IsDomain L] [Algebra K L] :
-    LinearIndependent K (AlgEquiv.toLinearMap : (L ≃ₐ[K] L) → L →ₗ[K] L) := by
-  apply (linearIndependent_algEquiv_toLinearMap' K L).restrict_scalars
-  simp_rw [Algebra.smul_def, mul_one]
-  exact (algebraMap K L).injective
-
--- Mathlib/LinearAlgebra/Eigenspace/Basic.lean
-lemma Module.End.HasEigenvector.pow_apply {R} [CommRing R] {M} [AddCommGroup M] [Module R M]
-    {f : Module.End R M} {μ : R} {v : M}
-    (hv : f.HasEigenvector μ v) (n : ℕ) : (f ^ n) v = μ ^ n • v := by
-  induction n <;> simp [*, pow_succ f, hv.apply_eq_smul, smul_smul, pow_succ' μ]
-
--- Mathlib/RingTheory/Finiteness.lean
-theorem Module.Finite.of_fintype_basis {R M} [CommSemiring R] [AddCommMonoid M] [Module R M] {ι : Type w}
-  [_root_.Finite ι] (h : Basis ι R M) : Finite R M := by
-  classical
-  cases nonempty_fintype ι
-  exact ⟨⟨Finset.univ.image h, by
-    convert h.span_eq
-    simp⟩⟩
-
--- Mathlib/LinearAlgebra/Matrix/NonsingularInverse.lean
-lemma Matrix.mulVec_bijective {n R} [CommRing R] [Fintype n] [DecidableEq n]
-    (M : Matrix n n R) (hM : IsUnit M.det) : Function.Bijective (mulVec M) := by
-  rw [Function.bijective_iff_has_inverse]
-  use mulVec M⁻¹
-  simp [Function.LeftInverse, Function.RightInverse, nonsing_inv_mul _ hM, mul_nonsing_inv _ hM]
-
-lemma Matrix.mulVec_injective {n R} [CommRing R] [Fintype n] [DecidableEq n]
-    (M : Matrix n n R) (hM : IsUnit M.det) : Function.Injective (mulVec M) :=
-  (M.mulVec_bijective hM).injective
-
--- -- Mathlib/RingTheory/Localization/FractionRing.lean
--- noncomputable
--- instance {A B} [CommRing A] [CommRing B] [Algebra A B] [IsDomain A] [IsDomain B]
---     [NoZeroSMulDivisors A B] : Algebra (FractionRing A) (FractionRing B) :=
---   FractionRing.liftAlgebra A _
-
--- -- Mathlib/RingTheory/Localization/FractionRing.lean
--- instance {A B} [CommRing A] [CommRing B] [Algebra A B] [IsDomain A] [IsDomain B]
---     [NoZeroSMulDivisors A B] : IsScalarTower A (FractionRing A) (FractionRing B) :=
---   FractionRing.isScalarTower_liftAlgebra _ _
 
 open nonZeroDivisors
 section
@@ -405,8 +212,6 @@ lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Co
     convert isIntegral_algebraMap (x := IsLocalization.mk' Rₚ 1 ⟨t, ht⟩)
     rw [this, IsLocalization.map_mk', _root_.map_one]
 
-
-
 -- Mathlib/RingTheory/Polynomial/ScaleRoots.lean (this section is not needed anymore)
 section scaleRoots
 
@@ -511,128 +316,11 @@ lemma Algebra.isNilpotent_trace_of_isNilpotent {R : Type u} {S : Type v} [CommRi
   classical
   by_cases hS : ∃ s : Finset S, Nonempty (Basis s R S)
   · obtain ⟨s, ⟨b⟩⟩ := hS
-    have := Module.Finite.of_fintype_basis b
+    have := Module.Finite.of_basis b
     have := (Module.free_def.{u, v, v} R S).mpr ⟨s, ⟨b⟩⟩
     apply LinearMap.isNilpotent_trace_of_isNilpotent (hx.map (lmul R S))
   · rw [trace_eq_zero_of_not_exists_basis _ hS, LinearMap.zero_apply]
     exact IsNilpotent.zero
-
--- Mathlib/RingTheory/IntegralClosure.lean
--- From `FG_adjoin_singleton_of_integral`
-open Polynomial Submodule Algebra in
-theorem span_range_natDegree_eq_adjoin {R A} [CommRing R] [CommRing A] [Algebra R A]
-    (x : A) (hx : IsIntegral R x) [DecidableEq A] :
-    span R (Finset.image (x ^ ·) (Finset.range (natDegree (minpoly R x)))) =
-    Subalgebra.toSubmodule (adjoin R {x}) := by
-  nontriviality R
-  nontriviality A
-  classical
-  let f := minpoly R x
-  let hfm := minpoly.monic hx
-  apply le_antisymm
-  · rw [span_le]
-    intro s hs
-    rw [Finset.mem_coe] at hs
-    rcases Finset.mem_image.1 hs with ⟨k, hk, rfl⟩
-    clear hk
-    exact (Algebra.adjoin R {x}).pow_mem (Algebra.subset_adjoin (Set.mem_singleton _)) k
-  intro r hr; change r ∈ Algebra.adjoin R ({x} : Set A) at hr
-  rw [Algebra.adjoin_singleton_eq_range_aeval] at hr
-  rcases (aeval x).mem_range.mp hr with ⟨p, rfl⟩
-  rw [← modByMonic_add_div p hfm]
-  rw [AlgHom.map_add, AlgHom.map_mul, minpoly.aeval R x, zero_mul, add_zero]
-  have : natDegree (p %ₘ f) < natDegree f := natDegree_modByMonic_lt p hfm (minpoly.ne_one _ _)
-  generalize p %ₘ f = q at this ⊢
-  rw [← sum_C_mul_X_pow_eq q, aeval_def, eval₂_sum, sum_def]
-  refine' sum_mem fun k hkq => _
-  rw [eval₂_mul, eval₂_C, eval₂_pow, eval₂_X, ← Algebra.smul_def]
-  refine' smul_mem _ _ (subset_span _)
-  rw [Finset.mem_coe]; refine' Finset.mem_image.2 ⟨_, _, rfl⟩
-  rw [Finset.mem_range]
-  exact (le_natDegree_of_mem_supp _ hkq).trans_lt this
-
--- Dunno. Somewhere near Mathlib/FieldTheory/Minpoly/Basic.lean.
-lemma aeval_derivative_minpoly_ne_zero {K L} [CommRing K] [CommRing L] [Algebra K L] (x : L)
-    (hx : (minpoly K x).Separable) [Nontrivial L] :
-    Polynomial.aeval x (Polynomial.derivative (minpoly K x)) ≠ 0 := by
-  intro h
-  obtain ⟨a, b, e⟩ := hx
-  apply_fun (Polynomial.aeval x ·) at e
-  simp only [map_add, _root_.map_mul, minpoly.aeval, mul_zero, h, add_zero, _root_.map_one] at e
-  exact zero_ne_one e
-
--- Mathlib/FieldTheory/Separable.lean
-lemma IsSeparable_of_equiv_equiv {A₁ B₁ A₂ B₂ : Type*} [Field A₁] [Field B₁]
-    [Field A₂] [Field B₂] [Algebra A₁ B₁] [Algebra A₂ B₂] (e₁ : A₁ ≃+* A₂) (e₂ : B₁ ≃+* B₂)
-    (he : RingHom.comp (algebraMap A₂ B₂) ↑e₁ = RingHom.comp ↑e₂ (algebraMap A₁ B₁))
-    [IsSeparable A₁ B₁] : IsSeparable A₂ B₂ := by
-  letI := e₁.toRingHom.toAlgebra
-  letI := ((algebraMap A₁ B₁).comp e₁.symm.toRingHom).toAlgebra
-  haveI : IsScalarTower A₁ A₂ B₁ := IsScalarTower.of_algebraMap_eq
-    (fun x ↦ by simp [RingHom.algebraMap_toAlgebra])
-  let e : B₁ ≃ₐ[A₂] B₂ := { e₂ with commutes' := fun r ↦ by simpa [RingHom.algebraMap_toAlgebra]
-                                                  using FunLike.congr_fun he.symm (e₁.symm r) }
-  haveI := isSeparable_tower_top_of_isSeparable A₁ A₂ B₁
-  exact IsSeparable.of_algHom _ _ e.symm.toAlgHom
-
--- Mathlib/RingTheory/Finiteness.lean
-lemma Module.Finite_of_equiv_equiv {A₁ B₁ A₂ B₂ : Type*} [CommRing A₁] [CommRing B₁]
-    [CommRing A₂] [CommRing B₂] [Algebra A₁ B₁] [Algebra A₂ B₂] (e₁ : A₁ ≃+* A₂) (e₂ : B₁ ≃+* B₂)
-    (he : RingHom.comp (algebraMap A₂ B₂) ↑e₁ = RingHom.comp ↑e₂ (algebraMap A₁ B₁))
-    [Module.Finite A₁ B₁] : Module.Finite A₂ B₂ := by
-  letI := e₁.toRingHom.toAlgebra
-  letI := ((algebraMap A₁ B₁).comp e₁.symm.toRingHom).toAlgebra
-  haveI : IsScalarTower A₁ A₂ B₁ := IsScalarTower.of_algebraMap_eq
-    (fun x ↦ by simp [RingHom.algebraMap_toAlgebra])
-  let e : B₁ ≃ₐ[A₂] B₂ := { e₂ with commutes' := fun r ↦ by simpa [RingHom.algebraMap_toAlgebra]
-                                                  using FunLike.congr_fun he.symm (e₁.symm r) }
-  haveI := Module.Finite.of_restrictScalars_finite A₁ A₂ B₁
-  exact Module.Finite.equiv e.toLinearEquiv
-
--- Mathlib/Algebra/Module/Submodule/Pointwise.lean
-open Pointwise in
-lemma Submodule.mem_smul_iff_inv {R S} [CommRing R] [Field S] [Algebra R S]
-    {x : S} {p : Submodule R S} {y : S} (hx : x ≠ 0) : y ∈ x • p ↔ x⁻¹ * y ∈ p := by
-  constructor
-  · rintro ⟨a, ha : a ∈ p, rfl⟩; simpa [inv_mul_cancel_left₀ hx]
-  · exact fun h ↦ ⟨_, h, by simp [mul_inv_cancel_left₀ hx]⟩
-
--- Mathlib/RingTheory/Adjoin/Basic.lean
-lemma Algebra.map_adjoin_singleton {R A B} [CommRing R] [CommRing A] [CommRing B] [Algebra R A]
-    [Algebra R B] (x : A) (e : A →ₐ[R] B) :
-    (Algebra.adjoin R {x}).map e = Algebra.adjoin R {e x} := by
-  rw [AlgHom.map_adjoin, Set.image_singleton]
-
--- Mathlib/NumberTheory/KummerDedekind.lean
-open IsLocalization in
-lemma mem_coeIdeal_conductor {A B L} [CommRing A] [CommRing B] [CommRing L] [Algebra A B]
-    [Algebra B L] [Algebra A L] [IsScalarTower A B L] [NoZeroSMulDivisors B L]
-    (x : B) (y : L) :
-    y ∈ coeSubmodule L (conductor A x) ↔ ∀ z : B,
-      y * (algebraMap B L) z ∈ Algebra.adjoin A {algebraMap B L x} := by
-  cases subsingleton_or_nontrivial L
-  · rw [Subsingleton.elim (coeSubmodule L _) ⊤, Subsingleton.elim (Algebra.adjoin A _) ⊤]; simp
-  trans ∀ z, y * (algebraMap B L) z ∈ (Algebra.adjoin A {x}).map (IsScalarTower.toAlgHom A B L)
-  · simp only [coeSubmodule, Submodule.mem_map, Algebra.linearMap_apply, Subalgebra.mem_map,
-      IsScalarTower.coe_toAlgHom']
-    constructor
-    · rintro ⟨y, hy, rfl⟩ z
-      exact ⟨_, hy z, map_mul _ _ _⟩
-    · intro H
-      obtain ⟨y, _, e⟩ := H 1
-      rw [_root_.map_one, mul_one] at e
-      subst e
-      simp only [← _root_.map_mul, (NoZeroSMulDivisors.algebraMap_injective B L).eq_iff,
-        exists_eq_right] at H
-      exact ⟨_, H, rfl⟩
-  · rw [AlgHom.map_adjoin, Set.image_singleton]; rfl
-
--- -- Mathlib/Data/Polynomial/AlgebraMap
--- open Polynomial in
--- theorem aeval_algebraMap {R A B} [CommSemiring R] [CommSemiring A] [Semiring B]
---   [Algebra R A] [Algebra A B] [Algebra R B] [IsScalarTower R A B]
---   (x : A) (p : R[X]) : aeval (algebraMap A B x) p = algebraMap A B (aeval x p) := by
---   rw [aeval_def, aeval_def, hom_eval₂, IsScalarTower.algebraMap_eq R A B]
 
 -- Mathlib/LinearAlgebra/Dimension.lean
 lemma FiniteDimensional.finrank_le_of_span_eq_top
@@ -683,24 +371,3 @@ lemma Polynomial.dvd_C_mul_X_sub_one_pow_add_one
   rw [map_mul, map_natCast]
   exact mul_dvd_mul_left _ (Finset.dvd_sum (fun x hx ↦ dvd_mul_of_dvd_left
     (dvd_mul_of_dvd_left (dvd_pow (dvd_mul_right _ _) (Finset.mem_Ioo.mp hx).1.ne.symm) _) _))
-
--- Mathlib/LinearAlgebra/FiniteDimensional.lean
-lemma FiniteDimensional.finrank_eq_one_of_linearEquiv {R V} [Field R]
-    [AddCommGroup V] [Module R V] (e : R ≃ₗ[R] V) : finrank R V = 1 :=
-  finrank_eq_one_iff'.mpr ⟨e 1, by simp, fun w ↦ ⟨e.symm w, by simp [← e.map_smul]⟩⟩
-
--- Mathlib/LinearAlgebra/FiniteDimensional.lean
-lemma FiniteDimensional.finrank_of_equiv_equiv {A₁ B₁ A₂ B₂ : Type*} [Field A₁] [Field B₁]
-    [Field A₂] [Field B₂] [Algebra A₁ B₁] [Algebra A₂ B₂] (e₁ : A₁ ≃+* A₂) (e₂ : B₁ ≃+* B₂)
-    (he : RingHom.comp (algebraMap A₂ B₂) ↑e₁ = RingHom.comp ↑e₂ (algebraMap A₁ B₁)) :
-    finrank A₁ B₁ = finrank A₂ B₂ := by
-  letI := e₁.toRingHom.toAlgebra
-  letI := ((algebraMap A₁ B₁).comp e₁.symm.toRingHom).toAlgebra
-  haveI : IsScalarTower A₁ A₂ B₁ := IsScalarTower.of_algebraMap_eq
-    (fun x ↦ by simp [RingHom.algebraMap_toAlgebra])
-  let e : B₁ ≃ₐ[A₂] B₂ := { e₂ with commutes' := fun r ↦ by simpa [RingHom.algebraMap_toAlgebra]
-                                                  using FunLike.congr_fun he.symm (e₁.symm r) }
-  have H : finrank A₁ A₂ = 1 := finrank_eq_one_of_linearEquiv
-    { e₁ with map_smul' := (IsScalarTower.toAlgHom A₁ A₁ A₂).toLinearMap.map_smul }
-  have := finiteDimensional_of_finrank_eq_succ H
-  rw [← e.toLinearEquiv.finrank_eq, ← finrank_mul_finrank A₁ A₂ B₁, H, one_mul]

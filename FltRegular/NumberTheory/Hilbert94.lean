@@ -100,9 +100,11 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I
       AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
       ← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply A B L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-  have : IsSeparable (FractionRing A) (FractionRing B) := IsSeparable_of_equiv_equiv _ _ H
-  have hLK : finrank (FractionRing A) (FractionRing B) = finrank K L :=
-    (FiniteDimensional.finrank_of_equiv_equiv _ _ H).symm
+  have : IsSeparable (FractionRing A) (FractionRing B) := IsSeparable.of_equiv_equiv _ _ H
+  have hLK : finrank (FractionRing A) (FractionRing B) = finrank K L := by
+    simpa only [Cardinal.toNat_lift] using congr_arg Cardinal.toNat
+      (Algebra.lift_rank_eq_of_equiv_equiv (FractionRing.algEquiv A K).symm.toRingEquiv
+        (FractionRing.algEquiv B L).symm.toRingEquiv H).symm
   rw [← hLK, ← Ideal.spanIntNorm_map, ← (I.map (algebraMap A B)).span_singleton_generator,
     Ideal.spanIntNorm_singleton]
   exact ⟨⟨_, rfl⟩⟩
@@ -113,7 +115,7 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I
 theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type*)
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [IsUnramified ↥(𝓞 K) ↥(𝓞 L)] [IsCyclic (L ≃ₐ[K] L)]
-    [NumberField.InfinitePlace.IsUnramified K L] (hKL : Nat.Prime (finrank K L))
+    (hKL : Nat.Prime (finrank K L))
     (hKL' : finrank K L ≠ 2) :
     ∃ I : Ideal (𝓞 K), ¬I.IsPrincipal ∧ (I.map (algebraMap ↥(𝓞 K) ↥(𝓞 L))).IsPrincipal := by
   obtain ⟨⟨σ, hσ⟩⟩ := ‹IsCyclic (L ≃ₐ[K] L)›
@@ -126,7 +128,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type*)
 theorem dvd_card_classGroup_of_isUnramified_isCyclic (K L : Type*)
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [IsUnramified ↥(𝓞 K) ↥(𝓞 L)] [IsCyclic (L ≃ₐ[K] L)]
-    [NumberField.InfinitePlace.IsUnramified K L] (hKL : Nat.Prime (finrank K L))
+    (hKL : Nat.Prime (finrank K L))
     (hKL' : finrank K L ≠ 2) :
     finrank K L ∣ Fintype.card (ClassGroup ↥(𝓞 K)) := by
   obtain ⟨I, hI, hI'⟩ := exists_not_isPrincipal_and_isPrincipal_map K L hKL hKL'
