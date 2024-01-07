@@ -8,34 +8,6 @@ section
 
 variable {R : Type u} {M : Type v} [Ring R] [AddCommGroup M] [Module R M]
 
-lemma exists_of_iSup_eq_succ {ι α} [ConditionallyCompleteLattice α] [SuccOrder α]
-    [NoMaxOrder α] [Nonempty ι]
-    (f : ι → α) (hf : BddAbove (Set.range f)) (x : α)
-    (h : ⨆ i : ι, f i = Order.succ x) : ∃ i, f i = Order.succ x := by
-  by_contra h'
-  rw [not_exists] at h'
-  have : ∀ i, f i ≤ x := fun i ↦ Order.lt_succ_iff.mp (lt_of_le_of_ne (h ▸ le_ciSup hf i) (h' i))
-  exact (Order.lt_succ x).not_le (h ▸ ciSup_le this)
-
-nonrec lemma Cardinal.exists_of_iSup_eq_succ {ι : Type u} (f : ι → Cardinal.{u}) (ω : Cardinal.{u})
-    (h : ⨆ i : ι, f i = Order.succ ω) : ∃ i, f i = Order.succ ω := by
-  cases isEmpty_or_nonempty ι
-  · simp only [Order.succ_ne_bot, ciSup_of_empty, @eq_comm _ ⊥] at h
-  · exact exists_of_iSup_eq_succ f (Cardinal.bddAbove_range.{u, u} f) _ h
-
-lemma Cardinal.exists_of_iSup_eq_natCast {ι : Type u} [hι : Nonempty ι] (f : ι → Cardinal.{u})
-    (n : ℕ) (h : ⨆ i : ι, f i = n) : ∃ i, f i = n := by
-  cases n
-  · use hι.some
-    rw [Nat.zero_eq, Nat.cast_zero, ← bot_eq_zero'] at h ⊢
-    rw [eq_bot_iff, ← h]
-    exact le_ciSup (Cardinal.bddAbove_range.{u, u} f) hι.some
-  · simp only [nat_succ] at h ⊢
-    exact Cardinal.exists_of_iSup_eq_succ _ _ h
-
-instance : Nonempty ({ s : Set M // LinearIndependent R ((↑) : s → M) }) :=
-  ⟨⟨∅, linearIndependent_iff.mpr (fun l _ ↦ Subsingleton.elim l 0)⟩⟩
-
 variable (R M)
 
 open Cardinal in
@@ -44,9 +16,11 @@ lemma FiniteDimensional.exists_finset_card_eq_finrank_and_linearIndependent :
   by_cases H : finrank R M = 0
   · use ∅
     simp only [Finset.card_empty, H, linearIndependent_empty_type, and_self]
+  haveI := nonempty_linearIndependent_set R M
   have := (Cardinal.toNat_eq_iff H).mp rfl
   rw [Module.rank_def] at this
-  obtain ⟨⟨s, hs⟩, hι : #s = _⟩ := Cardinal.exists_of_iSup_eq_natCast _ _ this
+  obtain ⟨⟨s, hs⟩, hι : #s = _⟩ :=
+    Cardinal.exists_eq_natCast_of_iSup_eq _ (Cardinal.bddAbove_range.{v, v} _) _ this
   have : Finite s := Cardinal.lt_aleph0_iff_finite.mp (hι ▸ nat_lt_aleph0 (finrank R M))
   cases nonempty_fintype s
   exact ⟨s.toFinset,
@@ -110,51 +84,11 @@ instance {S} [Ring S] [Module S M] [SMul R S] [IsScalarTower R S M] :
 
 end
 
-
 variable {R : Type u} {M : Type v} [CommRing R] [Nontrivial R] [AddCommGroup M]
 variable [Module R M] [Module.Finite R M] (N : Submodule R M)
 
-lemma Module.finite_iff_rank_lt_aleph0 [Module R M] [Module.Free R M] :
-    Module.Finite R M ↔ Module.rank R M < Cardinal.aleph0 := by
-  constructor
-  · intro H
-    rw [← FiniteDimensional.finrank_eq_rank]
-    exact Cardinal.nat_lt_aleph0 _
-  · intro H
-    have : _root_.Finite (Module.Free.ChooseBasisIndex R M) :=
-      Set.finite_coe_iff.mpr ((Module.Free.chooseBasis R M).finite_index_of_rank_lt_aleph0 H)
-    exact Module.Finite.of_basis (Module.Free.chooseBasis R M)
-
 lemma FiniteDimensional.finrank_quotient_of_le_torsion (hN : N ≤ Submodule.torsion R M) :
-    finrank R (M ⧸ N) = finrank R M := by
-  classical
-  apply N.finrank_quotient_le.antisymm
-  obtain ⟨s, hs, hs'⟩ := exists_finset_card_eq_finrank_and_linearIndependent R M
-  rw [← hs]
-  have Hs : Set.InjOn N.mkQ ↑s
-  · intros i hi j hj e
-    by_contra h
-    have h' : (⟨i, hi⟩ : s) ≠ ⟨j, hj⟩ := by exact Subtype.ne_of_val_ne h
-    rw [← sub_eq_zero, ← map_sub, N.mkQ_apply, Submodule.Quotient.mk_eq_zero] at e
-    obtain ⟨⟨r, hr⟩, e⟩ := hN e
-    simp only [Submonoid.mk_smul, smul_sub] at e
-    have := linearIndependent_iff.mp hs' (Finsupp.single ⟨i, hi⟩ r - Finsupp.single ⟨j, hj⟩ r)
-      (by simp only [map_sub, Finsupp.total_single, e])
-    have := FunLike.congr_fun this ⟨j, hj⟩
-    simp only [Finsupp.coe_sub, Pi.sub_apply, Finsupp.single_eq_same, ne_eq, Subtype.mk.injEq,
-      Finsupp.coe_zero, Pi.zero_apply, Finsupp.single_eq_of_ne h', zero_sub, neg_eq_zero] at this
-    exact nonZeroDivisors.ne_zero hr this
-  rw [← Finset.card_image_iff.mpr Hs]
-  apply LinearIndependent.finset_card_le_finrank
-  rw [← LinearIndependent.finset_toSet, Finset.coe_image, ← linearIndependent_image Hs]
-  show LinearIndependent R (N.mkQ ∘ Subtype.val)
-  rw [linearIndependent_iff]
-  intro l hl
-  rw [← Finsupp.apply_total, N.mkQ_apply, Submodule.Quotient.mk_eq_zero] at hl
-  obtain ⟨⟨r, hr⟩, e⟩ := hN hl
-  simp only [Submonoid.smul_def, ← LinearMap.map_smul] at e
-  ext i
-  exact hr _ ((mul_comm _ _).trans (FunLike.congr_fun (linearIndependent_iff.mp hs' _ e) i))
+    finrank R (M ⧸ N) = finrank R M := congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion hN)
 
 lemma FiniteDimensional.finrank_map_of_le_torsion {M'} [AddCommGroup M'] [Module R M']
     (l : M →ₗ[R] M') [Module.Finite R N]

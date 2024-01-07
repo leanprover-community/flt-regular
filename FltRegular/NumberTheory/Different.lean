@@ -1,3 +1,4 @@
+import Mathlib.RingTheory.DedekindDomain.Different
 import Mathlib.RingTheory.DedekindDomain.Ideal
 import Mathlib.RingTheory.DedekindDomain.Different
 import Mathlib.RingTheory.Localization.FractionRing
@@ -5,11 +6,6 @@ import FltRegular.NumberTheory.QuotientTrace
 import Mathlib.NumberTheory.KummerDedekind
 /-!
 # The different ideal
-
-## Main definition
-- `traceFormDualSubmodule`: The dual `B`-submodule of `L` under the trace form.
-- `FractionalIdeal.dual`: The dual fractional ideal under the trace form.
-- `differentIdeal`: The different ideal.
 
 ## Main result
 - `pow_sub_one_dvd_differentIdeal`:
@@ -32,6 +28,7 @@ variable [IsScalarTower A K L] [IsScalarTower A B L]
 variable [IsDomain A] [IsDomain B]
 variable [IsFractionRing A K] [IsIntegralClosure B A L] [IsFractionRing B L]
 variable [FiniteDimensional K L] [IsSeparable K L]
+variable [IsIntegrallyClosed A] [IsDedekindDomain B] [IsFractionRing B L]
 
 open nonZeroDivisors IsLocalization Matrix Algebra
 

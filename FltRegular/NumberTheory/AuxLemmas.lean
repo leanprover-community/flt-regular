@@ -82,51 +82,6 @@ end RamificationInertia
 
 open Polynomial IntermediateField
 
--- Mathlib/FieldTheory/Adjoin.lean
-theorem IntermediateField.adjoin_adjoinRoot_root_eq_top {K : Type*} [Field K]
-    (p : K[X]) [Fact (Irreducible p)] : K⟮AdjoinRoot.root p⟯ = ⊤ :=
-  (IntermediateField.eq_adjoin_of_eq_algebra_adjoin K _ ⊤
-    (AdjoinRoot.adjoinRoot_eq_top (f := p)).symm).symm
-
--- Mathlib/Data/Polynomial/Degree/Lemmas.lean
--- maybe generalize to `of_natDegree_le`?
-theorem Polynomial.associated_of_dvd_of_natDegree_eq {K : Type*} [Field K]
-    {P₁ P₂ : K[X]} (h₁ : P₁ ∣ P₂) (h₂ : P₁.natDegree = P₂.natDegree) (hP₂ : P₂ ≠ 0) :
-    Associated P₁ P₂ := by
-  obtain ⟨u, rfl⟩ := h₁
-  rw [mul_ne_zero_iff] at hP₂
-  rw [natDegree_mul hP₂.1 hP₂.2, self_eq_add_right, natDegree_eq_zero_iff_degree_le_zero,
-    le_iff_eq_or_lt, ← not_le, zero_le_degree_iff, not_ne_iff, or_iff_left hP₂.2,
-    ← isUnit_iff_degree_eq_zero] at h₂
-  exact associated_mul_unit_right P₁ u h₂
-
--- Mathlib/Data/Polynomial/Degree/Lemmas.lean
--- maybe generalize to `of_degree_le`?
-theorem Polynomial.associated_of_dvd_of_degree_eq {K : Type*} [Field K]
-    {P₁ P₂ : K[X]} (h₁ : P₁ ∣ P₂) (h₂ : P₁.degree = P₂.degree) :
-    Associated P₁ P₂ := by
-  by_cases h : P₂ = 0
-  · subst h
-    rw [degree_zero, degree_eq_bot] at h₂
-    exact h₂ ▸ Associated.refl _
-  · exact Polynomial.associated_of_dvd_of_natDegree_eq h₁ (natDegree_eq_of_degree_eq h₂) h
-
--- Mathlib/Algebra/GroupWithZero/Power.lean
-theorem mem_range_pow_of_coprime_of_pow_mem_range_pow {G₀} [CommGroupWithZero G₀] {m n : ℕ}
-    (hmn : m.Coprime n) (a : G₀) (ha : a ^ m ∈ Set.range (· ^ n : G₀ → G₀)) :
-    a ∈ Set.range (· ^ n : G₀ → G₀) := by
-  obtain ⟨k, l, e⟩ := Nat.isCoprime_iff_coprime.mpr hmn
-  by_cases hn : n = 0
-  · simp only [hn, Nat.coprime_zero_right] at hmn
-    rwa [hmn, pow_one] at ha
-  by_cases ha' : a = 0
-  · exact ⟨0, by simpa only [ha', zero_pow_eq_zero, pos_iff_ne_zero]⟩
-  obtain ⟨x, hx⟩ := ha
-  use x ^ k * a ^ l
-  conv_rhs => rw [← zpow_one a, ← e]
-  simp only [← zpow_ofNat, mul_zpow, zpow_add₀ ha', ← zpow_mul, mul_comm k]
-  rw [zpow_mul, zpow_ofNat, zpow_mul a m, zpow_ofNat, ← hx]
-
 open nonZeroDivisors
 section
 
@@ -256,8 +211,6 @@ lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Co
   · show IsIntegral _ _
     convert isIntegral_algebraMap (x := IsLocalization.mk' Rₚ 1 ⟨t, ht⟩)
     rw [this, IsLocalization.map_mk', _root_.map_one]
-
-
 
 -- Mathlib/RingTheory/Polynomial/ScaleRoots.lean (this section is not needed anymore)
 section scaleRoots

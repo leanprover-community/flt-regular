@@ -1,6 +1,6 @@
 import FltRegular.NumberTheory.RegularPrimes
 import Mathlib.NumberTheory.Cyclotomic.Rat
-import FltRegular.NumberTheory.KummerExtension
+import Mathlib.FieldTheory.KummerExtension
 import FltRegular.NumberTheory.Unramified
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import Mathlib.Data.Polynomial.Taylor
