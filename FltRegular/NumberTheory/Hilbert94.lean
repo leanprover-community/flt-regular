@@ -20,16 +20,16 @@ variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A 
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
     [IsIntegralClosure B A L]
 
-lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K B L σ) β = β)
+lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K L B σ) β = β)
     (σ' : L ≃ₐ[K] L) :
-    (Ideal.span {β}).comap (galRestrict A K B L σ') = Ideal.span {β} := by
+    (Ideal.span {β}).comap (galRestrict A K L B σ') = Ideal.span {β} := by
   suffices : (Ideal.span {β}).map
-      (galRestrict A K B L σ'⁻¹).toRingEquiv.toRingHom = Ideal.span {β}
+      (galRestrict A K L B σ'⁻¹).toRingEquiv.toRingHom = Ideal.span {β}
   · rwa [RingEquiv.toRingHom_eq_coe, Ideal.map_comap_of_equiv, map_inv] at this
   apply_fun (Ideal.span {·}) at hβ
   rw [← Ideal.span_singleton_mul_span_singleton, Ideal.span_singleton_eq_top.mpr η.isUnit,
     ← Ideal.one_eq_top, one_mul, ← Set.image_singleton, ← Ideal.map_span] at hβ
-  change Ideal.map (galRestrict A K B L σ : B →+* B) _ = _ at hβ
+  change Ideal.map (galRestrict A K L B σ : B →+* B) _ = _ at hβ
   generalize σ'⁻¹ = σ'
   obtain ⟨n, rfl : σ ^ n = σ'⟩ := mem_powers_iff_mem_zpowers.mpr (hσ σ')
   rw [map_pow]
@@ -61,10 +61,10 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     apply hη'
     use a
     conv_rhs => enter [1]; rw [← hβ]
-    rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K B L σ a]
+    rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K L B σ a]
     refine (mul_div_cancel _ ?_).symm
     · rw [ne_eq, (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
-        (injective_iff_map_eq_zero' _).mp (galRestrict A K B L σ).injective]
+        (injective_iff_map_eq_zero' _).mp (galRestrict A K L B σ).injective]
       exact a.isUnit.ne_zero
     · exact (mul_ne_zero_iff.mp hβ_zero).1
   · rw [hβ']
@@ -100,9 +100,11 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I
       AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
       ← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply A B L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-  have : IsSeparable (FractionRing A) (FractionRing B) := IsSeparable_of_equiv_equiv _ _ H
-  have hLK : finrank (FractionRing A) (FractionRing B) = finrank K L :=
-    (FiniteDimensional.finrank_of_equiv_equiv _ _ H).symm
+  have : IsSeparable (FractionRing A) (FractionRing B) := IsSeparable.of_equiv_equiv _ _ H
+  have hLK : finrank (FractionRing A) (FractionRing B) = finrank K L := by
+    simpa only [Cardinal.toNat_lift] using congr_arg Cardinal.toNat
+      (Algebra.lift_rank_eq_of_equiv_equiv (FractionRing.algEquiv A K).symm.toRingEquiv
+        (FractionRing.algEquiv B L).symm.toRingEquiv H).symm
   rw [← hLK, ← Ideal.spanIntNorm_map, ← (I.map (algebraMap A B)).span_singleton_generator,
     Ideal.spanIntNorm_singleton]
   exact ⟨⟨_, rfl⟩⟩
@@ -113,7 +115,7 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I
 theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type*)
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [IsUnramified ↥(𝓞 K) ↥(𝓞 L)] [IsCyclic (L ≃ₐ[K] L)]
-    [NumberField.InfinitePlace.IsUnramified K L] (hKL : Nat.Prime (finrank K L))
+    (hKL : Nat.Prime (finrank K L))
     (hKL' : finrank K L ≠ 2) :
     ∃ I : Ideal (𝓞 K), ¬I.IsPrincipal ∧ (I.map (algebraMap ↥(𝓞 K) ↥(𝓞 L))).IsPrincipal := by
   obtain ⟨⟨σ, hσ⟩⟩ := ‹IsCyclic (L ≃ₐ[K] L)›
@@ -126,7 +128,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type*)
 theorem dvd_card_classGroup_of_isUnramified_isCyclic (K L : Type*)
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [IsUnramified ↥(𝓞 K) ↥(𝓞 L)] [IsCyclic (L ≃ₐ[K] L)]
-    [NumberField.InfinitePlace.IsUnramified K L] (hKL : Nat.Prime (finrank K L))
+    (hKL : Nat.Prime (finrank K L))
     (hKL' : finrank K L ≠ 2) :
     finrank K L ∣ Fintype.card (ClassGroup ↥(𝓞 K)) := by
   obtain ⟨I, hI, hI'⟩ := exists_not_isPrincipal_and_isPrincipal_map K L hKL hKL'

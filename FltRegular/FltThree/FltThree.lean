@@ -686,7 +686,7 @@ theorem descent (a b c : ℤ) (h : FltCoprime 3 a b c) :
     by
     obtain ⟨a', b', c', ha', hb', hc', hsmaller, hsolution⟩ := this
     refine' ⟨a', b', c', ha', hb', hc', _, hsolution⟩
-    rw [← Nat.pow_lt_iff_lt_left (by norm_num : 1 ≤ 3)]
+    rw [← Nat.pow_lt_pow_iff_left (by norm_num : 3 ≠ 0)]
     convert lt_of_le_of_lt hsmaller haaa <;> simp [mul_pow, Int.natAbs_mul, Int.natAbs_pow]
   -- 4.
   cases' gcd1or3 p q hp hcoprime hodd with hgcd hgcd

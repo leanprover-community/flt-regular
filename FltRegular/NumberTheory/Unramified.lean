@@ -21,7 +21,7 @@ open BigOperators UniqueFactorizationMonoid
 
 attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
 
-variable (R K S L : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
+variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
     [IsDedekindDomain R] [Algebra R K] [IsFractionRing R K] [Algebra S L] -- [IsFractionRing S L]
     [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L] -- [IsNoetherian R S]
     [IsIntegralClosure S R L] [FiniteDimensional K L]
@@ -52,7 +52,7 @@ lemma prod_primesOverFinset_of_isUnramified [IsUnramified R S] [IsDedekindDomain
   exact IsUnramified.isUnramifiedAt _ hp _ hP
 
 lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal S)
-    (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K S L σ) = I) :
+    (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
     (I.comap (algebraMap R S)).map (algebraMap R S) = I := by
   classical
   have : IsDomain S :=
@@ -94,7 +94,7 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
       Ideal.mem_normalizedFactors_iff hIbot, and_imp, Finset.mem_filter]
     rw [← Finset.mem_coe, coe_primesOverFinset S p hpbot]
     refine ⟨fun H ↦ ⟨H.1.1, H.2⟩, fun H ↦ ⟨⟨H.1, ?_⟩, H.2⟩⟩
-    have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K S L (h𝔓' _ hp) H
+    have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) H
     rw [← hσ, ← hI σ]
     exact Ideal.comap_mono (h𝔓 _ hp)
   · intro P hP
@@ -109,7 +109,7 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
         (prime_of_mem_primesOver hpbot <| h𝔓' p hp).irreducible hIbot,
       multiplicity.multiplicity_eq_multiplicity_iff]
     intro n
-    have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K S L (h𝔓' _ hp) hP
+    have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) hP
     rw [Ideal.dvd_iff_le, Ideal.dvd_iff_le]
     conv_lhs => rw [← hI σ, ← hσ,
       Ideal.comap_le_iff_le_map _ (AlgEquiv.bijective _), Ideal.map_pow,
@@ -181,7 +181,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
   have := IsIntegralClosure.isNoetherian R K L S
   have := IsIntegralClosure.isDedekindDomain R K L S
   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  have := aeval_derivative_mem_differentIdeal R K S L x hx'
+  have := aeval_derivative_mem_differentIdeal R K L x hx'
   have H : RingHom.comp (algebraMap (FractionRing R) (FractionRing S))
     ↑(FractionRing.algEquiv R K).symm.toRingEquiv =
       RingHom.comp ↑(FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L)
@@ -191,7 +191,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
       AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
       ← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply R S L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-  have : IsSeparable (FractionRing R) (FractionRing S) := IsSeparable_of_equiv_equiv _ _ H
+  have : IsSeparable (FractionRing R) (FractionRing S) := IsSeparable.of_equiv_equiv _ _ H
   have := hp.isMaximal hpbot
 
   intro P hP
@@ -204,7 +204,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
       · rw [← Ideal.dvd_iff_le]
         exact (dvd_pow_self _ H).trans (pow_sub_one_dvd_differentIdeal R S P _ hpbot
         (Ideal.dvd_iff_le.mpr <| Ideal.le_pow_ramificationIdx (p := p) (f := algebraMap R S)))
-      exact this (aeval_derivative_mem_differentIdeal R K S L _ hx')
+      exact this (aeval_derivative_mem_differentIdeal R K L _ hx')
     rw [← Ideal.Quotient.eq_zero_iff_mem, ← Ideal.Quotient.algebraMap_eq] at hxP
 
     have := (separable_map (Ideal.quotientMap P (algebraMap R S) hP.2.ge)).mpr h

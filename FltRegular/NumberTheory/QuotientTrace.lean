@@ -5,6 +5,7 @@ import Mathlib.RingTheory.Localization.LocalizationLocalization
 import Mathlib.RingTheory.Nakayama
 import Mathlib.RingTheory.LocalProperties
 import Mathlib.NumberTheory.RamificationInertia
+import Mathlib.LinearAlgebra.FreeModule.PID
 import FltRegular.NumberTheory.AuxLemmas
 /-!
 
@@ -42,7 +43,7 @@ theorem quotient_span_eq_top_iff_span_eq_top_of_localRing (s : Set S) :
     apply Submodule.le_of_le_smul_of_le_jacobson_bot
     · exact Module.finite_def.mp ‹_›
     · exact (jacobson_eq_maximalIdeal ⊥ bot_ne_top).ge
-    · rw [sup_of_le_right le_top, Ideal.smul_top_eq_map]
+    · rw [Ideal.smul_top_eq_map]
       rintro x -
       have : LinearMap.ker (IsScalarTower.toAlgHom R S (S ⧸ pS)) =
         Submodule.restrictScalars R pS

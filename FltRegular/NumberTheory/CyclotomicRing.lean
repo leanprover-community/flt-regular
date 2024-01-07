@@ -23,17 +23,12 @@ lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
   · exact hpri.out.pos
   · exact IsIntegralClosure.isIntegral _ (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) _
 
-def AdjoinRoot.aeval_root {R} [CommRing R] (P : R[X]) : aeval (root P) P = 0 := by simp
+lemma AdjoinRoot.aeval_root {R} [CommRing R] (P : R[X]) : aeval (root P) P = 0 := by simp
 
 @[simps!]
 def AdjoinRoot.equivOfMinpolyEq {R S} [CommRing R] [CommRing S] [Algebra R S]
     (P : R[X]) (pb : PowerBasis R S) (hpb : minpoly R pb.gen = P) :
     AdjoinRoot P ≃ₐ[R] S := AdjoinRoot.equiv' P pb (hpb ▸ aeval_root _) (hpb ▸ minpoly.aeval _ _)
-
-theorem map_dvd_iff {M N} [Monoid M] [Monoid N] {F : Type*} [MulEquivClass F M N] (f : F) {a b} :
-    f a ∣ f b ↔ a ∣ b := by
-  refine ⟨?_, map_dvd f⟩
-  convert _root_.map_dvd (f : M ≃* N).symm <;> exact ((f : M ≃* N).symm_apply_apply _).symm
 
 namespace CyclotomicIntegers
 
@@ -126,7 +121,7 @@ lemma powerBasis_dim : (powerBasis p).dim = p - 1 := by
   simp [powerBasis, Nat.totient_prime hpri.out, natDegree_cyclotomic]
 
 instance : Module.Finite ℤ (CyclotomicIntegers p) :=
-  Module.Finite.of_fintype_basis (powerBasis p).basis
+  Module.Finite.of_basis (powerBasis p).basis
 
 instance : NoZeroSMulDivisors ℤ (CyclotomicIntegers p) := (powerBasis p).basis.noZeroSMulDivisors
 

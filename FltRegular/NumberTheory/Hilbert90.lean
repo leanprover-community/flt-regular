@@ -2,6 +2,7 @@
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.AuxLemmas
 import FltRegular.NumberTheory.GaloisPrime
+import Mathlib.GroupTheory.OrderOfElement
 import Mathlib.Tactic.Widget.Conv
 import Mathlib.RepresentationTheory.GroupCohomology.Hilbert90
 
@@ -17,12 +18,12 @@ noncomputable
 def ηu : Lˣ := (Ne.isUnit (fun h ↦ by simp [h] at hη) : IsUnit η).unit
 
 noncomputable
-def φ := (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm
+def φ := (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm
 
 variable {σ}
 
 lemma hφ : ∀ (n : ℕ), φ σ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n ↦ by
-  simpa [Fin.ext_iff] using finEquivZpowers_symm_apply _ (isOfFinOrder_of_finite σ) n
+  simpa [Fin.ext_iff] using finEquivZPowers_symm_apply _ (isOfFinOrder_of_finite σ) n
 
 noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ, hσ τ⟩), Units.map (σ ^ i) (ηu hη)
@@ -41,12 +42,12 @@ lemma foo {a: ℕ} (h : a % orderOf σ = 0) :
     have := Algebra.norm_eq_prod_automorphisms K η
     simp only [hη, map_one] at this
     convert this.symm
-    refine prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp) (fun _ _ ↦ by rfl)
-      (fun a b ha hb hab ↦ ?_) (fun τ _ ↦ ?_)
+    refine prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp)
+      (fun a ha b hb hab ↦ ?_) (fun τ _ ↦ ?_) (fun _ _ ↦ by rfl)
     · rwa [pow_inj_mod, Nat.mod_eq_of_lt (Finset.mem_range.1 ha),
         Nat.mod_eq_of_lt (Finset.mem_range.1 hb)] at hab
-    · refine ⟨(finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
-      have := Equiv.symm_apply_apply (finEquivZpowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
+    · refine ⟨(finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
+      have := Equiv.symm_apply_apply (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
       simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
       rw [← this]
       simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
@@ -131,7 +132,7 @@ variable [IsIntegralClosure B A L] [IsDomain B]
 
 lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
     (η : B) (hη : Algebra.norm K (algebraMap B L η) = 1) :
-    ∃ ε : B, ε ≠ 0 ∧ η * galRestrict A K B L σ ε = ε := by
+    ∃ ε : B, ε ≠ 0 ∧ η * galRestrict A K L B σ ε = ε := by
   haveI : NoZeroSMulDivisors A L := by
     rw [NoZeroSMulDivisors.iff_algebraMap_injective, IsScalarTower.algebraMap_eq A K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective A K)
@@ -157,7 +158,7 @@ lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowe
     apply IsIntegralClosure.algebraMap_injective B A L
     rw [map_mul, ← hε]
     congr 1
-    exact algebraMap_galRestrictHom_apply A K B L σ x
+    exact algebraMap_galRestrictHom_apply A K L B σ x
     · intro e
       rw [(map_eq_zero _).mp e, zero_div] at hε
       rw [hε, Algebra.norm_zero] at hη

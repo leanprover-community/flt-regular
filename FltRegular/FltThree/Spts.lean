@@ -95,7 +95,7 @@ theorem Spts.mul_of_dvd' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime 
       rw [Zsqrtd.norm_def, HAsq]
       ring
     rw [mul_comm _ U, ← mul_assoc, ← HU, HX]
-    simp only [Zsqrtd.ext, neg_mul, add_zero, Zsqrtd.coe_int_re, MulZeroClass.zero_mul, mul_neg,
+    simp only [Zsqrtd.ext_iff, neg_mul, add_zero, Zsqrtd.coe_int_re, MulZeroClass.zero_mul, mul_neg,
       Zsqrtd.mul_im, Zsqrtd.mul_re, neg_neg, MulZeroClass.mul_zero, neg_zero, Zsqrtd.coe_int_im,
       this]
     constructor <;> ring
@@ -190,7 +190,7 @@ theorem Zqrtd.factor_div (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) :
   set c' : ℤ√(-3) := ⟨c, d⟩
   refine' ⟨c', ⟨m, n⟩, _, _⟩
   ·
-    simp only [Zsqrtd.ext, ha, hb, add_zero, Zsqrtd.coe_int_re, eq_self_iff_true, Zsqrtd.mul_im,
+    simp only [Zsqrtd.ext_iff, ha, hb, add_zero, Zsqrtd.coe_int_re, eq_self_iff_true, Zsqrtd.mul_im,
       zero_add, Zsqrtd.add_im, and_self_iff, Zsqrtd.mul_re, MulZeroClass.mul_zero, Zsqrtd.add_re,
       Zsqrtd.coe_int_im]
   · rw [← mul_lt_mul_left (by norm_num : (0 : ℤ) < 4)]
@@ -204,11 +204,11 @@ theorem Zqrtd.factor_div (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) :
 
     · rw [mul_pow, ← Int.natAbs_pow_two c, ← Int.natAbs_pow_two x, ← mul_pow]
       norm_cast
-      exact Nat.pow_lt_pow_of_lt_left hc zero_lt_two
+      exact Nat.pow_lt_pow_left hc zero_lt_two.ne'
     · rw [mul_pow, ← Int.natAbs_pow_two d, ← Int.natAbs_pow_two x, ← mul_pow,
         mul_lt_mul_left (by norm_num : (0 : ℤ) < 3)]
       norm_cast
-      exact Nat.pow_lt_pow_of_lt_left hd zero_lt_two
+      exact Nat.pow_lt_pow_left hd zero_lt_two.ne'
 
 theorem Zqrtd.factor_div' (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) (h : 1 < |x|)
     (hcoprime : IsCoprime a.re a.im) (hfactor : x ∣ a.norm) :
@@ -326,19 +326,19 @@ theorem Spts.eq_one {a : ℤ√(-3)} (h : a.norm = 1) : abs a.re = 1 ∧ a.im = 
     · have : 1 ≤ abs a.im := by rwa [← Int.abs_lt_one_iff, not_lt] at hb
       have : 1 ≤ a.im ^ 2 := by
         rw [← sq_abs]
-        exact pow_le_pow_of_le_left zero_le_one this 2
+        exact pow_le_pow_left zero_le_one this 2
       linarith
   · apply ne_of_gt
     rw [Zsqrtd.norm_def, neg_mul, neg_mul, sub_neg_eq_add]
     apply lt_add_of_lt_of_nonneg
     · rw [← sq, ← sq_abs]
-      exact pow_lt_pow_of_lt_left H zero_le_one zero_lt_two
+      exact pow_lt_pow_left H zero_le_one zero_lt_two.ne'
     · rw [mul_assoc]
       exact mul_nonneg zero_lt_three.le (mul_self_nonneg _)
 
 theorem Spts.eq_one' {a : ℤ√(-3)} (h : a.norm = 1) : a = 1 ∨ a = -1 := by
-  simp only [Zsqrtd.ext, Zsqrtd.one_re, Zsqrtd.one_im, Zsqrtd.neg_im, Zsqrtd.neg_re, neg_zero, ←
-    or_and_right, ← abs_eq (zero_le_one' ℤ), Spts.eq_one h, eq_self_iff_true, and_self_iff]
+  simp only [Zsqrtd.ext_iff, Zsqrtd.one_re, Zsqrtd.one_im, Zsqrtd.neg_im, Zsqrtd.neg_re, neg_zero,
+    ← or_and_right, ← abs_eq (zero_le_one' ℤ), Spts.eq_one h, eq_self_iff_true, and_self_iff]
 
 theorem Spts.ne_zero_of_coprime' (a : ℤ√(-3)) (hcoprime : IsCoprime a.re a.im) : a.norm ≠ 0 :=
   by
@@ -371,7 +371,7 @@ theorem Spts.not_two (a : ℤ√(-3)) : a.norm ≠ 2 :=
   obtain him | him := eq_or_ne a.im 0
   · rw [him, MulZeroClass.mul_zero, sub_zero, ← Int.natAbs_mul_self, ← sq]
     norm_cast
-    apply (Nat.pow_left_strictMono one_le_two).monotone.ne_of_lt_of_lt_nat 1 <;> norm_num
+    apply (Nat.pow_left_strictMono zero_lt_two.ne').monotone.ne_of_lt_of_lt_nat 1 <;> norm_num
   · apply ne_of_gt
     apply lt_add_of_nonneg_of_lt (mul_self_nonneg a.re)
     rw [← Int.add_one_le_iff]

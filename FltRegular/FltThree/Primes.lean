@@ -46,7 +46,7 @@ theorem Int.factor_div (a x : ℤ) (hodd : Odd x) :
       exact ⟨_, heqtwomul⟩
 
 theorem two_not_cube (r : ℕ) : r ^ 3 ≠ 2 :=by
-  have : 1 ≤ 3 := by norm_num
+  have : 3 ≠ 0 := by norm_num
   apply Monotone.ne_of_lt_of_lt_nat (Nat.pow_left_strictMono this).monotone 1 <;> norm_num
 
 namespace Mathlib

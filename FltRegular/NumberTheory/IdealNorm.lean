@@ -7,6 +7,7 @@ import Mathlib.RingTheory.Nakayama
 import Mathlib.RingTheory.LocalProperties
 import Mathlib.NumberTheory.RamificationInertia
 import FltRegular.NumberTheory.AuxLemmas
+import Mathlib.LinearAlgebra.FreeModule.PID
 /-!
 
 Generalizes `Ideal.spanNorm` in `Mathlib/RingTheory/Ideal/Norm.lean` to non-free extensions.
@@ -321,7 +322,7 @@ theorem spanIntNorm_mul_spanIntNorm_le (I J : Ideal S) :
     spanIntNorm R I * spanIntNorm R J ≤ spanIntNorm R (I * J) := by
   rw [spanIntNorm, spanIntNorm, spanIntNorm, Ideal.span_mul_span', ← Set.image_mul]
   refine Ideal.span_mono (Set.monotone_image ?_)
-  rintro _ ⟨x, y, hxI, hyJ, rfl⟩
+  rintro _ ⟨x, hxI, y, hyJ, rfl⟩
   exact Ideal.mul_mem_mul hxI hyJ
 
 /-- This condition `eq_bot_or_top` is equivalent to being a field.
@@ -431,7 +432,7 @@ theorem spanIntNorm_mul (I J : Ideal S) :
       (by rw [RingHom.algebraMap_toAlgebra, IsLocalization.lift_comp])
     letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization
       P.primeCompl Rₚ (FractionRing R)
-    apply IsSeparable_of_equiv_equiv (FractionRing.algEquiv Rₚ (FractionRing R)).symm.toRingEquiv
+    apply IsSeparable.of_equiv_equiv (FractionRing.algEquiv Rₚ (FractionRing R)).symm.toRingEquiv
       (FractionRing.algEquiv Sₚ (FractionRing S)).symm.toRingEquiv
     apply IsLocalization.ringHom_ext R⁰
     ext
@@ -499,7 +500,7 @@ theorem spanIntNorm_map (I : Ideal R) :
   haveI : IsIntegralClosure Sₚ Rₚ L :=
     isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₚ) (B := Sₚ))
   haveI : IsSeparable (FractionRing Rₚ) (FractionRing Sₚ) := by
-    apply IsSeparable_of_equiv_equiv (FractionRing.algEquiv Rₚ (FractionRing R)).symm.toRingEquiv
+    apply IsSeparable.of_equiv_equiv (FractionRing.algEquiv Rₚ (FractionRing R)).symm.toRingEquiv
       (FractionRing.algEquiv Sₚ (FractionRing S)).symm.toRingEquiv
     apply IsLocalization.ringHom_ext R⁰
     ext
