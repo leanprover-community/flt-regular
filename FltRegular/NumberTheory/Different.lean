@@ -73,7 +73,7 @@ lemma pow_sub_one_dvd_differentIdeal_aux
     obtain ⟨y, hy, rfl : algebraMap A K _ = _⟩ := (FractionalIdeal.mem_coeIdeal _).mp hy'
     obtain ⟨z, hz, hz'⟩ := hx _ (Ideal.mem_map_of_mem _ hy)
     have : Algebra.trace K L (algebraMap B L z) ∈ (p : FractionalIdeal A⁰ K)
-    · rw [← Algebra.algebraMap_intTrace (R := A)]
+    · rw [← Algebra.algebraMap_intTrace (A := A)]
       exact Submodule.mem_map_of_mem (this z hz)
     rwa [mul_comm, ← smul_eq_mul, ← LinearMap.map_smul, Algebra.smul_def, mul_comm,
       ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply A B L, ← hz']
@@ -92,9 +92,9 @@ lemma pow_sub_one_dvd_differentIdeal
     {p : Ideal A} [p.IsMaximal] (P : Ideal B) (e : ℕ) (hp : p ≠ ⊥)
     (hP : P ^ e ∣ p.map (algebraMap A B)) : P ^ (e - 1) ∣ differentIdeal A B := by
   have : IsIntegralClosure B A (FractionRing B) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := A) (B := B))
+    IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := A) (B := B))
   have : IsLocalization (algebraMapSubmonoid B A⁰) (FractionRing B) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing A) _ _
+    IsIntegralClosure.isLocalization _ (FractionRing A) _ _
       (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := A) (B := B)))
   have : FiniteDimensional (FractionRing A) (FractionRing B) :=
     Module.Finite_of_isLocalization A B _ _ A⁰

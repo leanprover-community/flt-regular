@@ -82,7 +82,7 @@ lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
   conv_rhs => rw [← this]
   have := Module.Free.of_basis (Basis.span hf)
   have := Module.Finite.of_basis (Basis.span hf)
-  rw [finrank_mul_finrank']
+  rw [finrank_mul_finrank]
 
 
 lemma ex_not_mem {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :

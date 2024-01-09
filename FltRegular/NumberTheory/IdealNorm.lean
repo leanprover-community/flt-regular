@@ -5,9 +5,12 @@ import Mathlib.RingTheory.Localization.NormTrace
 import Mathlib.RingTheory.Localization.LocalizationLocalization
 import Mathlib.RingTheory.Nakayama
 import Mathlib.RingTheory.LocalProperties
+import Mathlib.RingTheory.IntegralRestrict
+import Mathlib.RingTheory.IntegrallyClosed
 import Mathlib.NumberTheory.RamificationInertia
 import FltRegular.NumberTheory.AuxLemmas
 import Mathlib.LinearAlgebra.FreeModule.PID
+import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 /-!
 
 Generalizes `Ideal.spanNorm` in `Mathlib/RingTheory/Ideal/Norm.lean` to non-free extensions.
@@ -29,32 +32,12 @@ variable (R S K L) [CommRing R] [CommRing S] [Field K] [Field L]
     [IsIntegrallyClosed S] [IsSeparable (FractionRing R) (FractionRing S)]
 
 instance : IsIntegralClosure S R (FractionRing S) :=
-  isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
+  IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
 instance : IsLocalization (Algebra.algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
+    IsIntegralClosure.isLocalization _ (FractionRing R) _ _
       (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
 instance : FiniteDimensional (FractionRing R) (FractionRing S) :=
     Module.Finite_of_isLocalization R S _ _ R⁰
-
-noncomputable
-def Algebra.intNormAux (R S K L) [CommRing R] [CommRing S] [Field K] [Field L]
-    [IsIntegrallyClosed R] [Algebra R S] [Algebra R K] [Algebra S L] [Algebra K L]
-    [Algebra R L] [IsScalarTower R K L] [IsScalarTower R S L] [IsIntegralClosure S R L]
-    [IsFractionRing R K] [FiniteDimensional K L] [IsSeparable K L] :
-    S →* R where
-  toFun := fun s ↦ IsIntegralClosure.mk' (R := R) R (Algebra.norm K (algebraMap S L s))
-    (isIntegral_norm K <| IsIntegral.map (IsScalarTower.toAlgHom R S L)
-      (IsIntegralClosure.isIntegral R L s))
-  map_one' := by simp
-  map_mul' := fun x y ↦ by simpa using IsIntegralClosure.mk'_mul _ _ _ _ _
-
-lemma Algebra.map_intNormAux {R S K L} [CommRing R] [CommRing S] [Field K] [Field L]
-    [IsDomain S] [IsIntegrallyClosed R] [Algebra R S] [Algebra R K] [Algebra S L] [Algebra K L]
-    [Algebra R L] [IsScalarTower R K L] [IsScalarTower R S L] [IsIntegralClosure S R L]
-    [IsFractionRing R K] [FiniteDimensional K L] [IsSeparable K L] (x : S) :
-    algebraMap R K (Algebra.intNormAux R S K L x) = Algebra.norm K (algebraMap S L x) := by
-  dsimp [Algebra.intNormAux]
-  exact IsIntegralClosure.algebraMap_mk' _ _ _
 
 open nonZeroDivisors
 
@@ -62,133 +45,6 @@ example (R S) [CommRing R] [CommRing S] [IsIntegrallyClosed R] [CharZero R]
     [Algebra R S] [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [Module.Finite R S]
     [IsIntegrallyClosed S] : IsSeparable (FractionRing R) (FractionRing S) :=
   inferInstance
-
-noncomputable
-def Algebra.intNorm (R S) [CommRing R] [CommRing S] [IsIntegrallyClosed R]
-    [Algebra R S] [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [hRS : Module.Finite R S]
-    [IsIntegrallyClosed S] [IsSeparable (FractionRing R) (FractionRing S)] : S →* R := by
-  haveI : IsIntegralClosure S R (FractionRing S) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  haveI : FiniteDimensional (FractionRing R) (FractionRing S) :=
-    Module.Finite_of_isLocalization R S _ _ R⁰
-  exact Algebra.intNormAux R S (FractionRing R) (FractionRing S)
-
-lemma Algebra.algebraMap_intNorm {R S K L} [CommRing R] [CommRing S] [Field K] [Field L]
-    [IsDomain R] [IsDomain S] [IsIntegrallyClosed R] [Algebra R S] [Algebra R K] [Algebra S L]
-    [Algebra K L] [Algebra R L] [IsScalarTower R K L] [IsScalarTower R S L]
-    [IsIntegralClosure S R L] [IsIntegrallyClosed S] [IsFractionRing R K] [FiniteDimensional K L]
-    [NoZeroSMulDivisors R S] [hRS : Module.Finite R S]
-    [IsSeparable (FractionRing R) (FractionRing S)] (x : S) :
-    algebraMap R K (Algebra.intNorm R S x) = Algebra.norm K (algebraMap S L x) := by
-  haveI : IsIntegralClosure S R (FractionRing S) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  haveI : FiniteDimensional (FractionRing R) (FractionRing S) :=
-    Module.Finite_of_isLocalization R S _ _ R⁰
-  haveI := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  apply (FractionRing.algEquiv R K).symm.injective
-  rw [AlgEquiv.commutes, Algebra.intNorm, Algebra.map_intNormAux,
-    ← AlgEquiv.commutes (FractionRing.algEquiv S L)]
-  apply Algebra.norm_eq_of_equiv_equiv (FractionRing.algEquiv R K).toRingEquiv
-    (FractionRing.algEquiv S L).toRingEquiv
-  apply IsLocalization.ringHom_ext R⁰
-  simp only [AlgEquiv.toRingEquiv_eq_coe, ← AlgEquiv.coe_ringHom_commutes, RingHom.comp_assoc,
-    AlgHom.comp_algebraMap_of_tower, ← IsScalarTower.algebraMap_eq, RingHom.comp_assoc]
-
-@[simp]
-lemma Algebra.algebraMap_intNorm_fractionRing {R S} [CommRing R] [CommRing S]
-    [IsIntegrallyClosed R] [Algebra R S]
-    [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [hRS : Module.Finite R S]
-    [IsIntegrallyClosed S] [IsSeparable (FractionRing R) (FractionRing S)] (x : S) :
-    algebraMap R (FractionRing R) (Algebra.intNorm R S x) =
-      Algebra.norm (FractionRing R) (algebraMap S (FractionRing S)  x) := by
-  haveI : IsIntegralClosure S R (FractionRing S) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  haveI : FiniteDimensional (FractionRing R) (FractionRing S) :=
-    Module.Finite_of_isLocalization R S _ _ R⁰
-  exact Algebra.map_intNormAux x
-
-lemma Algebra.intNorm_eq_norm (R S) [CommRing R] [CommRing S] [IsIntegrallyClosed R] [Algebra R S]
-    [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [hRS : Module.Finite R S]
-    [IsIntegrallyClosed S] [Module.Free R S]
-    [IsSeparable (FractionRing R) (FractionRing S)] : Algebra.intNorm R S = Algebra.norm R := by
-  ext x
-  haveI : IsIntegralClosure S R (FractionRing S) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  apply IsFractionRing.injective R (FractionRing R)
-  rw [Algebra.algebraMap_intNorm_fractionRing, Algebra.norm_localization R R⁰]
-
-variable {R S}
-
-@[simp]
-lemma Algebra.intNorm_zero : Algebra.intNorm R S 0 = 0 := by
-  apply (IsFractionRing.injective R (FractionRing R))
-  simp only [algebraMap_intNorm_fractionRing, map_zero, norm_zero]
-
-@[simp]
-lemma Algebra.intNorm_eq_zero : Algebra.intNorm R S x = 0 ↔ x = 0 := by
-  rw [← (IsFractionRing.injective R (FractionRing R)).eq_iff,
-    ← (IsFractionRing.injective S (FractionRing S)).eq_iff]
-  simp only [algebraMap_intNorm_fractionRing, map_zero, norm_eq_zero_iff]
-
-lemma Algebra.intNorm_ne_zero : Algebra.intNorm R S x ≠ 0 ↔ x ≠ 0 := by simp
-
-lemma Algebra.intNorm_eq_of_isLocalization (M : Submonoid R) (hM : M ≤ R⁰)
-    {Rₘ Sₘ} [CommRing Rₘ] [CommRing Sₘ] [Algebra Rₘ Sₘ] [Algebra R Sₘ]
-    [Algebra R Rₘ] [Algebra S Sₘ] [IsScalarTower R Rₘ Sₘ] [IsScalarTower R S Sₘ]
-    [IsLocalization M Rₘ] [IsLocalization (algebraMapSubmonoid S M) Sₘ]
-    [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [Module.Finite R S] [IsIntegrallyClosed S]
-    [IsDomain Rₘ] [IsDomain Sₘ] [NoZeroSMulDivisors Rₘ Sₘ] [Module.Finite Rₘ Sₘ]
-    [IsIntegrallyClosed R] [IsIntegrallyClosed Rₘ] [IsIntegrallyClosed Sₘ]
-    [IsSeparable (FractionRing Rₘ) (FractionRing Sₘ)] (x : S) :
-    algebraMap R Rₘ (Algebra.intNorm R S x) = Algebra.intNorm Rₘ Sₘ (algebraMap S Sₘ x) := by
-  let K := FractionRing R
-  let f : Rₘ →+* K := IsLocalization.map _ (T := R⁰) (RingHom.id R) hM
-  letI := f.toAlgebra
-  have : IsScalarTower R Rₘ K := IsScalarTower.of_algebraMap_eq'
-    (by rw [RingHom.algebraMap_toAlgebra, IsLocalization.map_comp, RingHomCompTriple.comp_eq])
-  letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization M Rₘ K
-  let L := FractionRing S
-  let g : Sₘ →+* L := IsLocalization.map _ (M := algebraMapSubmonoid S M) (T := S⁰)
-      (RingHom.id S) (Submonoid.map_le_of_le_comap _ <| hM.trans
-      (nonZeroDivisors_le_comap_nonZeroDivisors_of_injective _
-        (NoZeroSMulDivisors.algebraMap_injective _ _)))
-  letI := g.toAlgebra
-  have : IsScalarTower S Sₘ L := IsScalarTower.of_algebraMap_eq'
-    (by rw [RingHom.algebraMap_toAlgebra, IsLocalization.map_comp, RingHomCompTriple.comp_eq])
-  letI := ((algebraMap K L).comp f).toAlgebra
-  haveI : IsScalarTower Rₘ K L := IsScalarTower.of_algebraMap_eq' rfl
-  haveI : IsScalarTower Rₘ Sₘ L := by
-    apply IsScalarTower.of_algebraMap_eq'
-    apply IsLocalization.ringHom_ext M
-    rw [RingHom.algebraMap_toAlgebra, RingHom.algebraMap_toAlgebra (R := Sₘ), RingHom.comp_assoc,
-      RingHom.comp_assoc, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R S Sₘ,
-      IsLocalization.map_comp, RingHom.comp_id, ← RingHom.comp_assoc, IsLocalization.map_comp,
-      RingHom.comp_id, ← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
-  letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization
-    (algebraMapSubmonoid S M) Sₘ L
-  haveI : IsIntegralClosure S R L :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) L :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  haveI : FiniteDimensional K L := Module.Finite_of_isLocalization R S _ _ R⁰
-  haveI : IsIntegralClosure Sₘ Rₘ L :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₘ) (B := Sₘ))
-  apply IsFractionRing.injective Rₘ K
-  rw [← IsScalarTower.algebraMap_apply, Algebra.algebraMap_intNorm_fractionRing,
-    Algebra.algebraMap_intNorm (L := L), ← IsScalarTower.algebraMap_apply]
 
 end intNorm
 
@@ -288,7 +144,7 @@ theorem spanIntNorm_localization (I : Ideal S) (M : Submonoid R) (hM : M ≤ R�
   letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization
     (Algebra.algebraMapSubmonoid S M) Sₘ L
   haveI : IsIntegralClosure Sₘ Rₘ L :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₘ) (B := Sₘ))
+    IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₘ) (B := Sₘ))
   cases h : subsingleton_or_nontrivial R
   · haveI := IsLocalization.unique R Rₘ M
     simp only [eq_iff_true_of_subsingleton]
@@ -315,7 +171,7 @@ theorem spanIntNorm_localization (I : Ideal S) (M : Submonoid R) (hM : M ≤ R�
       ← IsScalarTower.algebraMap_apply, Algebra.algebraMap_intNorm (L := L)]
   · intro a ha
     rw [Set.mem_preimage, Function.comp_apply, Algebra.intNorm_eq_of_isLocalization
-      (R := R) (S := S) M hM (Rₘ := Rₘ) (Sₘ := Sₘ)]
+      (A := R) (B := S) M (Aₘ := Rₘ) (Bₘ := Sₘ)]
     exact subset_span (Set.mem_image_of_mem _ (mem_map_of_mem _ ha))
 
 theorem spanIntNorm_mul_spanIntNorm_le (I J : Ideal S) :
@@ -377,15 +233,11 @@ theorem IsLocalization.AtPrime.PID_of_dedekind_domain {A} [CommRing A]
     [IsDedekindDomain A]
     (P : Ideal A) [pP : P.IsPrime] (Aₘ : Type*) [CommRing Aₘ] [IsDomain Aₘ]
     [Algebra A Aₘ] [IsLocalization.AtPrime Aₘ P] : IsPrincipalIdealRing Aₘ := by
-  classical
   letI : IsNoetherianRing Aₘ :=
     IsLocalization.isNoetherianRing P.primeCompl _ IsDedekindRing.toIsNoetherian
   letI : LocalRing Aₘ := IsLocalization.AtPrime.localRing Aₘ P
-  by_cases h : IsField Aₘ
-  · letI := h.toField; infer_instance
-  · haveI := ((DiscreteValuationRing.TFAE Aₘ ‹_›).out 0 2).mpr
-        (IsLocalization.AtPrime.isDedekindDomain A P _)
-    exact this.toIsPrincipalIdealRing
+  exact ((tfae_of_isNoetherianRing_of_localRing_of_isDomain Aₘ).out 2 0).mp
+    (IsLocalization.AtPrime.isDedekindDomain A P _)
 
 /-- Multiplicativity of `Ideal.spanIntNorm`. simp-normal form is `map_mul (Ideal.relNorm R)`. -/
 theorem spanIntNorm_mul (I J : Ideal S) :
@@ -498,7 +350,7 @@ theorem spanIntNorm_map (I : Ideal R) :
       IsLocalization.map_comp, RingHom.comp_id, ← RingHom.comp_assoc, IsLocalization.map_comp,
       RingHom.comp_id, ← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
   haveI : IsIntegralClosure Sₚ Rₚ L :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₚ) (B := Sₚ))
+    IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₚ) (B := Sₚ))
   haveI : IsSeparable (FractionRing Rₚ) (FractionRing Sₚ) := by
     apply IsSeparable.of_equiv_equiv (FractionRing.algEquiv Rₚ (FractionRing R)).symm.toRingEquiv
       (FractionRing.algEquiv Sₚ (FractionRing S)).symm.toRingEquiv

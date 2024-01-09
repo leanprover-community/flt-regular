@@ -62,7 +62,7 @@ lemma Ideal.inertiaDeg_comap_eq (e : S₁ ≃ₐ[R] S₂) (p : Ideal R) (P : Ide
   swap
   · rw [dif_neg]; rwa [← this]
   rw [dif_pos (this.mp ‹_›)]
-  apply (config := {allowSynthFailures := true }) LinearEquiv.finrank_eq
+  apply (config := { allowSynthFailures := true }) LinearEquiv.finrank_eq
   have E := quotientEquivAlg (R₁ := R) (P.comap e) P e
     (Ideal.map_comap_of_surjective _ e.surjective P).symm
   apply (config := {allowSynthFailures := true }) LinearEquiv.mk
@@ -83,92 +83,6 @@ end RamificationInertia
 open Polynomial IntermediateField
 
 open nonZeroDivisors
-section
-
-variable (R A K : Type*) [CommRing R] [CommRing A] [Field K] [Algebra A K] [IsFractionRing A K]
-variable [IsDomain A]
-variable (L : Type*) [Field L] (C : Type*) [CommRing C]
-variable [Algebra K L] [Algebra A L] [IsScalarTower A K L]
-variable [Algebra C L] [IsIntegralClosure C A L] [Algebra A C] [IsScalarTower A C L]
-
--- Mathlib/RingTheory/DedekindDomain/IntegralClosure.lean
--- generalized from `IsIntegralClosure.isLocalization`
-open Algebra nonZeroDivisors Polynomial
-theorem IsIntegralClosure.isLocalization' (ha : Algebra.IsAlgebraic K L) [NoZeroSMulDivisors A L] :
-    IsLocalization (Algebra.algebraMapSubmonoid C A⁰) L := by
-  haveI : IsDomain C :=
-    (IsIntegralClosure.equiv A C L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
-  haveI : NoZeroSMulDivisors A C := IsIntegralClosure.noZeroSMulDivisors A L
-  refine' ⟨_, fun z => _, fun {x y} => fun h => ⟨1, _⟩⟩
-  · rintro ⟨_, x, hx, rfl⟩
-    rw [isUnit_iff_ne_zero, map_ne_zero_iff _ (IsIntegralClosure.algebraMap_injective C A L),
-      Subtype.coe_mk, map_ne_zero_iff _ (NoZeroSMulDivisors.algebraMap_injective A C)]
-    exact mem_nonZeroDivisors_iff_ne_zero.mp hx
-  · obtain ⟨m, hm⟩ :=
-      IsIntegral.exists_multiple_integral_of_isLocalization A⁰ z
-        (isAlgebraic_iff_isIntegral.mp <| ha z)
-    obtain ⟨x, hx⟩ : ∃ x, algebraMap C L x = m • z := IsIntegralClosure.isIntegral_iff.mp hm
-    refine' ⟨⟨x, algebraMap A C m, m, SetLike.coe_mem m, rfl⟩, _⟩
-    rw [Subtype.coe_mk, ← IsScalarTower.algebraMap_apply, hx, mul_comm, Submonoid.smul_def,
-      smul_def]
-  · simp only [IsIntegralClosure.algebraMap_injective C A L h]
-end
-
--- Mathlib/RingTheory/Algebraic.lean
--- or Mathlib/RingTheory/LocalProperties.lean
-open Polynomial in
-lemma isAlgebraic_of_isLocalization {R} [CommRing R] (M : Submonoid R) (S) [CommRing S]
-    [Nontrivial R] [Algebra R S] [IsLocalization M S] : Algebra.IsAlgebraic R S := by
-  intro x
-  obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective M x
-  by_cases hs : (s : R) = 0
-  · have := IsLocalization.mk'_spec S x s
-    rw [hs, map_zero, mul_zero] at this
-    exact ⟨X, X_ne_zero, by simp [IsLocalization.mk'_eq_mul_mk'_one x, ← this]⟩
-  refine ⟨s • X - C x, ?_, ?_⟩
-  · intro e; apply hs
-    simpa only [coeff_sub, coeff_smul, coeff_X_one, coeff_C_succ, sub_zero, coeff_zero,
-      ← Algebra.algebraMap_eq_smul_one, Submonoid.smul_def,
-      Algebra.id.map_eq_id, RingHom.id_apply] using congr_arg (Polynomial.coeff · 1) e
-  · simp only [map_sub, Algebra.smul_def, Submonoid.smul_def,
-      map_mul, AlgHom.commutes, aeval_X, IsLocalization.mk'_spec', aeval_C, sub_self]
-
--- Mathlib/RingTheory/Localization/Basic.lean
-instance {R} [CommRing R] (M : Submonoid R) (S) [CommRing S] [Algebra R S] [IsLocalization M S]
-    (s : M) : Invertible (IsLocalization.mk' S (1 : R) s) where
-  invOf := algebraMap R S s
-  invOf_mul_self := by simp
-  mul_invOf_self := by simp
-
--- Mathlib/RingTheory/Algebraic.lean
--- or Mathlib/RingTheory/LocalProperties.lean
-open Polynomial nonZeroDivisors in
-lemma isAlgebraic_of_isFractionRing {R S} (K L) [CommRing R] [CommRing S] [Field K] [Field L]
-  [Algebra R S] [Algebra R K] [Algebra R L] [Algebra S L] [Algebra K L] [IsScalarTower R S L]
-  [IsScalarTower R K L] [IsFractionRing R K] [IsFractionRing S L]
-    (h : Algebra.IsIntegral R S) : Algebra.IsAlgebraic K L := by
-  intro x
-  obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective S⁰ x
-  rw [isAlgebraic_iff_isIntegral, IsLocalization.mk'_eq_mul_mk'_one]
-  apply RingHom.IsIntegralElem.mul
-  · apply IsIntegral.tower_top (R := R)
-    apply IsIntegral.map (IsScalarTower.toAlgHom R S L)
-    exact h x
-  · show IsIntegral _ _
-    rw [← isAlgebraic_iff_isIntegral, ← IsAlgebraic.invOf_iff, isAlgebraic_iff_isIntegral]
-    apply IsIntegral.tower_top (R := R)
-    apply IsIntegral.map (IsScalarTower.toAlgHom R S L)
-    exact h s
-
--- Mathlib/RingTheory/IntegralClosure.lean
-lemma isIntegralClosure_of_isIntegrallyClosed (R S K) [CommRing R] [CommRing S] [CommRing K]
-    [Algebra R S] [Algebra S K] [Algebra R K] [IsScalarTower R S K] [IsFractionRing S K]
-    [Nontrivial K] [IsIntegrallyClosed S] (hRS : Algebra.IsIntegral R S) :
-    IsIntegralClosure S R K := by
-  refine ⟨IsLocalization.injective _ le_rfl, fun {x} ↦
-    ⟨fun hx ↦ IsIntegralClosure.isIntegral_iff.mp (IsIntegral.tower_top (A := S) hx), ?_⟩⟩
-  rintro ⟨y, rfl⟩
-  exact IsIntegral.map (IsScalarTower.toAlgHom R S K) (hRS y)
 
 -- Mathlib/RingTheory/IntegralClosure.lean
 -- or Mathlib/RingTheory/LocalProperties.lean
@@ -273,42 +187,6 @@ lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [F
 
 end scaleRoots
 
--- Mathlib/RingTheory/LocalProperties.lean
--- Generalized universe from `localization_finite`
-open Polynomial nonZeroDivisors in
-lemma Module.Finite_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [CommRing Rₚ]
-    [CommRing Sₚ] [Algebra R S] [Algebra R Rₚ] [Algebra R Sₚ] [Algebra S Sₚ] [Algebra Rₚ Sₚ]
-    [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ] (M : Submonoid R) [IsLocalization M Rₚ]
-    [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] [hRS : Module.Finite R S] :
-    Module.Finite Rₚ Sₚ := by
-  classical
-  have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
-    (algebraMap R S) (Submonoid.le_comap_map M)
-  · apply IsLocalization.ringHom_ext M
-    simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
-  -- We claim that if `S` is generated by `T` as an `R`-module,
-  -- then `S'` is generated by `T` as an `R'`-module.
-  obtain ⟨T, hT⟩ := hRS
-  use T.image (algebraMap S Sₚ)
-  rw [eq_top_iff]
-  rintro x -
-  -- By the hypotheses, for each `x : S'`, we have `x = y / (f r)` for some `y : S` and `r : M`.
-  -- Since `S` is generated by `T`, the image of `y` should fall in the span of the image of `T`.
-  obtain ⟨y, ⟨_, ⟨r, hr, rfl⟩⟩, rfl⟩ :=
-    IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid S M) x
-  rw [IsLocalization.mk'_eq_mul_mk'_one, mul_comm, Finset.coe_image]
-  have hy : y ∈ Submodule.span R ↑T := by rw [hT]; trivial
-  replace hy : algebraMap S Sₚ y ∈ Submodule.map (IsScalarTower.toAlgHom R S Sₚ).toLinearMap
-    (Submodule.span R (T : Set S)) := Submodule.mem_map_of_mem hy
-  rw [Submodule.map_span (IsScalarTower.toAlgHom R S Sₚ).toLinearMap T] at hy
-  have H : Submodule.span R (algebraMap S Sₚ '' T) ≤
-      (Submodule.span Rₚ (algebraMap S Sₚ '' T)).restrictScalars R := by
-    rw [Submodule.span_le]; exact Submodule.subset_span
-  -- Now, since `y ∈ span T`, and `(f r)⁻¹ ∈ R'`, `x / (f r)` is in `span T` as well.
-  convert (Submodule.span Rₚ (algebraMap S Sₚ '' T)).smul_mem
-    (IsLocalization.mk' Rₚ (1 : R) ⟨r, hr⟩) (H hy) using 1
-  rw [Algebra.smul_def, this, IsLocalization.map_mk', map_one]
-
 -- Mathlib/RingTheory/Trace.lean
 universe u v in
 lemma Algebra.isNilpotent_trace_of_isNilpotent {R : Type u} {S : Type v} [CommRing R] [CommRing S]
@@ -328,10 +206,8 @@ lemma FiniteDimensional.finrank_le_of_span_eq_top
     [Module.Free R M] {ι} [Fintype ι] (v : ι → M) (hv : Submodule.span R (Set.range v) = ⊤) :
     finrank R M ≤ Fintype.card ι := by
   classical
-  apply finrank_le_of_rank_le
-  rw [Module.Free.rank_eq_card_chooseBasisIndex]
-  exact (linearIndependent_le_span _ (Module.Free.chooseBasis R M).linearIndependent _ hv).trans
-    (Cardinal.natCast_le.mpr <| Fintype.card_range_le _)
+  rw [← finrank_top, ← hv]
+  exact (finrank_span_le_card _).trans (by convert Fintype.card_range_le v; rw [Set.toFinset_card])
 
 -- Mathlib/Data/Polynomial/Taylor.lean
 @[simps] noncomputable

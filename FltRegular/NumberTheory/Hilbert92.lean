@@ -251,7 +251,7 @@ attribute [local instance] IsCyclic.commGroup
 attribute [local instance 2000] inst_ringOfIntegersAlgebra Algebra.toSMul Algebra.toModule
 
 instance : IsScalarTower ↥(𝓞 k) ↥(𝓞 K) K := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
-instance : IsIntegralClosure ↥(𝓞 K) ↥(𝓞 k) K := isIntegralClosure_of_isIntegrallyClosed _ _ _
+instance : IsIntegralClosure ↥(𝓞 K) ↥(𝓞 k) K := IsIntegralClosure.of_isIntegrallyClosed _ _ _
   (fun x ↦ IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ K x))
 
 lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :

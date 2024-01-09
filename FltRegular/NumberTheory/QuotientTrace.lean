@@ -1,12 +1,6 @@
-import Mathlib.RingTheory.DedekindDomain.Ideal
-import Mathlib.RingTheory.DedekindDomain.Dvr
-import Mathlib.RingTheory.Localization.NormTrace
-import Mathlib.RingTheory.Localization.LocalizationLocalization
-import Mathlib.RingTheory.Nakayama
-import Mathlib.RingTheory.LocalProperties
-import Mathlib.NumberTheory.RamificationInertia
-import Mathlib.LinearAlgebra.FreeModule.PID
 import FltRegular.NumberTheory.AuxLemmas
+import Mathlib.RingTheory.IntegralRestrict
+import Mathlib.RingTheory.DedekindDomain.Dvr
 /-!
 
 ## Main Definition & Result
@@ -118,142 +112,6 @@ lemma Algebra.trace_quotient_mk (x : S) :
     basisQuotientOfLocalRing_repr]
 
 end LocalRing
-
-section intTrace
-
-noncomputable
-def Algebra.intTraceAux (R S K L) [CommRing R] [CommRing S] [Field K] [Field L]
-    [IsIntegrallyClosed R] [Algebra R S] [Algebra R K] [Algebra S L] [Algebra K L]
-    [Algebra R L] [IsScalarTower R K L] [IsScalarTower R S L] [IsIntegralClosure S R L]
-    [IsFractionRing R K] [FiniteDimensional K L] :
-    S →ₗ[R] R :=
-  (IsIntegralClosure.equiv R (integralClosure R K) K R).toLinearMap.comp
-    ((((Algebra.trace K L).restrictScalars R).comp
-      (IsScalarTower.toAlgHom R S L).toLinearMap).codRestrict
-        (Subalgebra.toSubmodule <| integralClosure R K) (fun x ↦ isIntegral_trace
-          (IsIntegral.algebraMap (IsIntegralClosure.isIntegral R L x))))
-
-lemma Algebra.map_intTraceAux {R S K L} [CommRing R] [CommRing S] [Field K] [Field L]
-    [IsDomain S] [IsIntegrallyClosed R] [Algebra R S] [Algebra R K] [Algebra S L] [Algebra K L]
-    [Algebra R L] [IsScalarTower R K L] [IsScalarTower R S L] [IsIntegralClosure S R L]
-    [IsFractionRing R K] [FiniteDimensional K L] (x : S) :
-    algebraMap R K (Algebra.intTraceAux R S K L x) = Algebra.trace K L (algebraMap S L x) :=
-  IsIntegralClosure.algebraMap_equiv R (integralClosure R K) K R _
-
-open nonZeroDivisors
-
-noncomputable
-def Algebra.intTrace (R S) [CommRing R] [CommRing S] [IsIntegrallyClosed R]
-    [Algebra R S] [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [hRS : Module.Finite R S]
-    [IsIntegrallyClosed S] : S →ₗ[R] R := by
-  haveI : IsIntegralClosure S R (FractionRing S) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite _ _)
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  haveI : FiniteDimensional (FractionRing R) (FractionRing S) :=
-    Module.Finite_of_isLocalization R S _ _ R⁰
-  exact Algebra.intTraceAux R S (FractionRing R) (FractionRing S)
-
-lemma Algebra.algebraMap_intTrace {R S K L} [CommRing R] [CommRing S] [Field K] [Field L]
-    [IsDomain R] [IsDomain S] [IsIntegrallyClosed R] [Algebra R S] [Algebra R K] [Algebra S L]
-    [Algebra K L] [Algebra R L] [IsScalarTower R K L] [IsScalarTower R S L]
-    [IsIntegralClosure S R L] [IsIntegrallyClosed S] [IsFractionRing R K] [FiniteDimensional K L]
-    [NoZeroSMulDivisors R S] [hRS : Module.Finite R S] (x : S) :
-    algebraMap R K (Algebra.intTrace R S x) = Algebra.trace K L (algebraMap S L x) := by
-  haveI : IsIntegralClosure S R (FractionRing S) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  haveI : FiniteDimensional (FractionRing R) (FractionRing S) :=
-    Module.Finite_of_isLocalization R S _ _ R⁰
-  haveI := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  apply (FractionRing.algEquiv R K).symm.injective
-  rw [AlgEquiv.commutes, Algebra.intTrace, Algebra.map_intTraceAux,
-    ← AlgEquiv.commutes (FractionRing.algEquiv S L)]
-  apply Algebra.trace_eq_of_equiv_equiv (FractionRing.algEquiv R K).toRingEquiv
-    (FractionRing.algEquiv S L).toRingEquiv
-  apply IsLocalization.ringHom_ext R⁰
-  simp only [AlgEquiv.toRingEquiv_eq_coe, ← AlgEquiv.coe_ringHom_commutes, RingHom.comp_assoc,
-    AlgHom.comp_algebraMap_of_tower, ← IsScalarTower.algebraMap_eq, RingHom.comp_assoc]
-
-lemma Algebra.algebraMap_intTrace_fractionRing {R S} [CommRing R] [CommRing S]
-    [IsIntegrallyClosed R] [Algebra R S]
-    [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [hRS : Module.Finite R S]
-    [IsIntegrallyClosed S] (x : S) :
-    algebraMap R (FractionRing R) (Algebra.intTrace R S x) =
-      Algebra.trace (FractionRing R) (FractionRing S) (algebraMap S _ x) := by
-  haveI : IsIntegralClosure S R (FractionRing S) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  haveI : FiniteDimensional (FractionRing R) (FractionRing S) :=
-    Module.Finite_of_isLocalization R S _ _ R⁰
-  exact Algebra.map_intTraceAux x
-
-lemma Algebra.intTrace_eq_trace (R S) [CommRing R] [CommRing S] [IsIntegrallyClosed R] [Algebra R S]
-    [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [hRS : Module.Finite R S]
-    [IsIntegrallyClosed S] [Module.Free R S] : Algebra.intTrace R S = Algebra.trace R S := by
-  ext x
-  haveI : IsIntegralClosure S R (FractionRing S) :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) (FractionRing S) :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  apply IsFractionRing.injective R (FractionRing R)
-  rw [Algebra.algebraMap_intTrace_fractionRing, Algebra.trace_localization R R⁰]
-
-open nonZeroDivisors
-
-lemma Algebra.intTrace_eq_of_isLocalization {R S} [CommRing R] [CommRing S] [Algebra R S]
-    {p : Ideal R} [p.IsMaximal] {Rₚ Sₚ} [CommRing Rₚ] [CommRing Sₚ] [Algebra R Rₚ]
-    [IsLocalization.AtPrime Rₚ p] [CommRing Sₚ] [Algebra S Sₚ] [Algebra R Sₚ] [Algebra Rₚ Sₚ]
-    [IsDomain R] [IsDomain S] [NoZeroSMulDivisors R S] [Module.Finite R S] [IsIntegrallyClosed S]
-    [IsLocalization (Algebra.algebraMapSubmonoid S p.primeCompl) Sₚ]
-    [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ]
-    [IsDomain Rₚ] [IsDomain Sₚ] [NoZeroSMulDivisors Rₚ Sₚ] [Module.Finite Rₚ Sₚ]
-    [IsIntegrallyClosed R] [IsIntegrallyClosed Rₚ] [IsIntegrallyClosed Sₚ] (x : S) :
-    algebraMap R Rₚ (Algebra.intTrace R S x) = Algebra.intTrace Rₚ Sₚ (algebraMap S Sₚ x) := by
-  let K := FractionRing R
-  let f : Rₚ →+* K := IsLocalization.map _ (T := R⁰) (RingHom.id R) p.primeCompl_le_nonZeroDivisors
-  letI := f.toAlgebra
-  have : IsScalarTower R Rₚ K := IsScalarTower.of_algebraMap_eq'
-    (by rw [RingHom.algebraMap_toAlgebra, IsLocalization.map_comp, RingHomCompTriple.comp_eq])
-  letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization p.primeCompl Rₚ K
-  let L := FractionRing S
-  let g : Sₚ →+* L := IsLocalization.map _ (M := algebraMapSubmonoid S p.primeCompl) (T := S⁰)
-      (RingHom.id S) (Submonoid.map_le_of_le_comap _ <| p.primeCompl_le_nonZeroDivisors.trans
-      (nonZeroDivisors_le_comap_nonZeroDivisors_of_injective _
-        (NoZeroSMulDivisors.algebraMap_injective _ _)))
-  letI := g.toAlgebra
-  have : IsScalarTower S Sₚ L := IsScalarTower.of_algebraMap_eq'
-    (by rw [RingHom.algebraMap_toAlgebra, IsLocalization.map_comp, RingHomCompTriple.comp_eq])
-  letI := ((algebraMap K L).comp f).toAlgebra
-  haveI : IsScalarTower Rₚ K L := IsScalarTower.of_algebraMap_eq' rfl
-  haveI : IsScalarTower Rₚ Sₚ L := by
-    apply IsScalarTower.of_algebraMap_eq'
-    apply IsLocalization.ringHom_ext p.primeCompl
-    rw [RingHom.algebraMap_toAlgebra, RingHom.algebraMap_toAlgebra (R := Sₚ), RingHom.comp_assoc,
-      RingHom.comp_assoc, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R S Sₚ,
-      IsLocalization.map_comp, RingHom.comp_id, ← RingHom.comp_assoc, IsLocalization.map_comp,
-      RingHom.comp_id, ← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
-  letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization
-    (algebraMapSubmonoid S p.primeCompl) Sₚ L
-  haveI : IsIntegralClosure S R L :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
-  haveI : IsLocalization (algebraMapSubmonoid S R⁰) L :=
-    IsIntegralClosure.isLocalization' _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
-  haveI : FiniteDimensional K L := Module.Finite_of_isLocalization R S _ _ R⁰
-  haveI : IsIntegralClosure Sₚ Rₚ L :=
-    isIntegralClosure_of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₚ) (B := Sₚ))
-  apply IsFractionRing.injective Rₚ K
-  rw [← IsScalarTower.algebraMap_apply, Algebra.algebraMap_intTrace_fractionRing,
-    Algebra.algebraMap_intTrace (L := L), ← IsScalarTower.algebraMap_apply]
-
-end intTrace
 
 section IsDedekindDomain
 
@@ -437,7 +295,7 @@ lemma Algebra.trace_quotient_eq_of_isDedekindDomain
   rw [trace_quotient_eq_trace_localization_quotient S p Rₚ Sₚ, IsScalarTower.algebraMap_eq S Sₚ,
     RingHom.comp_apply, Ideal.Quotient.algebraMap_eq, Algebra.trace_quotient_mk,
     RingEquiv.apply_symm_apply, ← Algebra.intTrace_eq_trace,
-    ← Algebra.intTrace_eq_of_isLocalization (S := S) (p := p) (Rₚ := Rₚ) (Sₚ := Sₚ) x,
+    ← Algebra.intTrace_eq_of_isLocalization R S p.primeCompl (Aₘ := Rₚ) (Bₘ := Sₚ) x,
     ← Ideal.Quotient.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
   simp only [equivQuotMaximalIdealOfIsLocalization, RingHom.quotientKerEquivOfSurjective,
     RingEquiv.coe_trans, Function.comp_apply, Ideal.quotEquivOfEq_mk,
