@@ -23,7 +23,7 @@ theorem absdiscr_odd_prime {p : ℕ+} {K : Type u} [Field K] [NumberField K]
     simp only [powerBasis_dim, finCongr_symm, Function.comp_apply,
       Basis.localizationLocalization_apply, PowerBasis.coe_basis, integralPowerBasis'_gen, map_pow]
     convert ← ((IsPrimitiveRoot.powerBasis ℚ hζ).basis_eq_pow i).symm using 1
-  · sorry --boring
+  · simp
 
 
 set_option maxHeartbeats 0 in
