@@ -5,8 +5,7 @@ package «flt-regular» {
   -- add any package configuration options here
 }
 
-require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git"
+require mathlib from git "https://github.com/leanprover-community/mathlib4.git" @ "xfr-classgroup_bound"
 
 require «doc-gen4» from git
   "https://github.com/leanprover/doc-gen4" @ "main"
