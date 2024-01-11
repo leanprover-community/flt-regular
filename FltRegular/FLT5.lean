@@ -44,7 +44,8 @@ theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
   rw [IsCyclotomicExtension.finrank (n := 5) K (cyclotomic.irreducible_rat five_pos),
     absdiscr_odd_prime (hp := hp) (Subtype.ne_of_val_ne hodd)]
   suffices InfinitePlace.NrComplexPlaces K = 2 by
-    · rw [this, show ((5 : ℕ+) : ℕ) = 5 by rfl, hφ, show ((4! : ℕ) : ℝ) = 24 by rfl]
+    · rw [this, show ((5 : ℕ+) : ℕ) = 5 by rfl, hφ, show ((4! : ℕ) : ℝ) = 24 by rfl,
+        abs_of_pos (by norm_num)]
       norm_num
       sorry
   sorry
