@@ -692,7 +692,7 @@ theorem homogenization_mul {S : Type _} [CommRing S] [IsDomain S] (i : ι) (p q 
   · simp [hq]
   rw [homogenization, homogenization, homogenization, totalDegree_mul_eq hp hq, ←
     Finsupp.sum_single p, ← Finsupp.sum_single q, Finsupp.mapDomain_sum, Finsupp.mapDomain_sum]
-  erw [Finset.sum_mul_sum, Finset.sum_mul_sum]
+  erw [Finset.sum_mul_sum, Finset.sum_mul_sum, ← Finset.sum_product', ← Finset.sum_product']
   simp only [Finsupp.single_add, Finsupp.sum_single, monomial_mul]
   rw [Finsupp.mapDomain_finset_sum]
   apply Finset.sum_congr rfl
@@ -822,10 +822,10 @@ theorem support_mul' [DecidableEq ι] (p q : MvPolynomial ι R) :
     (p * q).support ⊆ p.support + q.support :=
   by
   -- TODO this was really hard to find, maybe needs a docstring or alias?
-  rw [p.as_sum, q.as_sum, Finset.sum_mul_sum]
+  rw [p.as_sum, q.as_sum, Finset.sum_mul_sum, ← Finset.sum_product']
   simp_rw [monomial_mul]
   rw [support_sum_monomial_coeff, support_sum_monomial_coeff]
-  exact Finset.Subset.trans (support_sum_monomial_subset' _ _ _) (Finset.Subset.refl _)
+  convert Finset.Subset.trans (support_sum_monomial_subset' _ _ _) (Finset.Subset.refl _)
 
 section
 
