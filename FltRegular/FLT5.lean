@@ -1,8 +1,8 @@
 import Mathlib
 import FltRegular
 
-open Nat NumberField Polynomial IsPrimitiveRoot IsCyclotomicExtension
-open scoped nonZeroDivisors Real
+open Nat NumberField Polynomial IsPrimitiveRoot IsCyclotomicExtension Real
+open scoped nonZeroDivisors
 
 example (n m : ℕ) (h : n = m) : Fin n ≃ Fin m := by
   exact finCongr h
@@ -47,5 +47,9 @@ theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
     · rw [this, show ((5 : ℕ+) : ℕ) = 5 by rfl, hφ, show ((4! : ℕ) : ℝ) = 24 by rfl,
         abs_of_pos (by norm_num)]
       norm_num
-      sorry
+      suffices (2 * (3 ^ 2 / 16) * (32 / 3)) ^ 2 < (2 * ((π : ℝ) ^ 2 / 16) * (32 / 3)) ^ 2 by
+        · refine lt_trans ?_ this
+          norm_num
+      gcongr
+      exact pi_gt_three
   sorry
