@@ -1,7 +1,7 @@
 import Mathlib
 import FltRegular
 
-open Nat NumberField Polynomial IsPrimitiveRoot IsCyclotomicExtension Real
+open Nat NumberField Polynomial IsPrimitiveRoot IsCyclotomicExtension Real Complex
 open scoped nonZeroDivisors
 
 example (n m : ℕ) (h : n = m) : Fin n ≃ Fin m := by
@@ -25,10 +25,8 @@ theorem absdiscr_odd_prime {p : ℕ+} {K : Type u} [Field K] [NumberField K]
     convert ← ((IsPrimitiveRoot.powerBasis ℚ hζ).basis_eq_pow i).symm using 1
   · simp
 
-
-set_option maxHeartbeats 0 in
-set_option synthInstance.maxHeartbeats 0 in
 theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
+  classical
   have five_pos : 0 < 5 := by norm_num
   let p := (⟨5, five_pos⟩ : ℕ+)
   have hφ : φ 5 = 4 := rfl
@@ -52,4 +50,43 @@ theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
           norm_num
       gcongr
       exact pi_gt_three
-  sorry
+  have key := InfinitePlace.card_add_two_mul_card_eq_rank K
+  rw [IsCyclotomicExtension.finrank (n := 5) K (cyclotomic.irreducible_rat five_pos),
+    show ((5 : ℕ+) : ℕ) = 5 by rfl, hφ] at key
+  suffices InfinitePlace.NrRealPlaces K = 0 by
+    · rw [this, zero_add, show 4 = 2 * 2 by rfl] at key
+      simpa using key
+  rw [Fintype.card_eq_zero_iff]
+  constructor
+  intro ⟨w, hwreal⟩
+  let f := w.embedding
+  rw [InfinitePlace.isReal_iff] at hwreal
+  let ζ := IsCyclotomicExtension.zeta 5 ℚ K
+  have hζ := (IsCyclotomicExtension.zeta_spec 5 ℚ K)
+  have hζ' : IsPrimitiveRoot (f ζ) 5 := hζ.map_of_injective (RingHom.injective f)
+  have him : (f ζ).im = 0 := by
+    · rw [← conj_eq_iff_im, ← ComplexEmbedding.conjugate_coe_eq]
+      congr
+  have hre : (f ζ).re = 1 ∨ (f ζ).re = -1 := by
+    · rw [← abs_re_eq_abs] at him
+      have := Complex.norm_eq_one_of_pow_eq_one hζ'.pow_eq_one (by norm_num)
+      rw [Complex.norm_eq_abs, ← him] at this
+      by_cases hpos : 0 ≤ (f ζ).re
+      · rw [_root_.abs_of_nonneg hpos] at this
+        left
+        exact this
+      · rw [_root_.abs_of_neg (not_le.1 hpos)] at this
+        right
+        rw [← this]
+        simp
+  cases hre with
+  | inl hone =>
+    apply hζ'.ne_one (by norm_num)
+    apply Complex.ext
+    · simp [hone]
+    · simp [him]
+  | inr hnegone =>
+  replace hζ' := hζ'.pow_eq_one
+  rw [← re_add_im (f ζ), him, hnegone] at hζ'
+  simp only [ofReal_neg, ofReal_one, ofReal_zero, zero_mul, add_zero] at hζ'
+  norm_num at hζ'
