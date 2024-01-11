@@ -2,7 +2,7 @@ import Mathlib
 import FltRegular
 
 open Nat NumberField Polynomial IsPrimitiveRoot IsCyclotomicExtension
-open scoped nonZeroDivisors
+open scoped nonZeroDivisors Real
 
 example (n m : ℕ) (h : n = m) : Fin n ≃ Fin m := by
   exact finCongr h
