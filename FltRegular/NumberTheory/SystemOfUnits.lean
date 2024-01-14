@@ -94,7 +94,7 @@ lemma ex_not_mem {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
     ((Submodule.span A (Set.range S.units)).restrictScalars ℤ) ?_
   show finrank ℤ (Submodule.span A _) < _
   rw [finrank_spanA p hp G S.units S.linearIndependent, hf, mul_comm]
-  exact Nat.mul_lt_mul hR rfl.le hp.pred_pos
+  exact Nat.mul_lt_mul_of_lt_of_le hR rfl.le hp.pred_pos
 
 lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
         Nonempty (systemOfUnits p G (R + 1)) := by

@@ -31,10 +31,6 @@ lemma isIntegralClosure_self {R S : Type*} [CommRing R] [CommRing S] [Algebra R 
   algebraMap_injective' := Function.injective_id
   isIntegral_iff := fun {x} ↦ ⟨fun _ ↦ ⟨x, rfl⟩, fun _ ↦ hRS _⟩
 
--- Mathlib/Algebra/Group/Units.lean
-lemma isUnit_iff_eq_one {M : Type*} [Monoid M] [Unique Mˣ] {x : M} : IsUnit x ↔ x = 1 :=
-  ⟨fun h ↦ congr_arg Units.val (Subsingleton.elim (h.unit) 1), fun h ↦ h ▸ isUnit_one⟩
-
 -- Mathlib/NumberTheory/RamificationInertia.lean
 section RamificationInertia
 

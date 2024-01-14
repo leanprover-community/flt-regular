@@ -304,7 +304,7 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
         Nat.le_of_dvd (Int.natAbs_pos.mpr h8) (Int.natAbs_dvd_natAbs.mpr hwdvd)
       _ ≤ y.natAbs := by
         rw [hz, Int.natAbs_mul]
-        exact Nat.le_mul_of_pos_left (pow_pos hgpos 2)
+        exact Nat.le_mul_of_pos_left _ (pow_pos hgpos 2)
       _ < x.natAbs := h3
 
   · rw [← h6]

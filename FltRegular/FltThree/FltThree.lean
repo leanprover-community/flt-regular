@@ -662,7 +662,7 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
         rw [hx, hs]
         congr 1
         ring
-      _ ≤ 2 * 3 * s.natAbs := (Nat.le_mul_of_pos_left (by norm_num))
+      _ ≤ 2 * 3 * s.natAbs := (Nat.le_mul_of_pos_left _ (by norm_num))
       _ = (2 * 3 * s).natAbs := by
         rw [Int.natAbs_mul (2 * 3)]
         rfl
