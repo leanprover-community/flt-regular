@@ -76,10 +76,10 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   replace hqpri : Prime (q : ℤ) := prime_iff_natAbs_prime.2 (by simp [hqpri])
   obtain ⟨n, hn⟩ := hq
   have haq : ↑q ∣ a := by
-    obtain ⟨m, hm⟩ := Int.gcd_dvd_left a b
+    obtain ⟨m, hm⟩ := @Int.gcd_dvd_left a b
     exact ⟨n * m, by rw [hm, hn]; simp [mul_assoc]⟩
   have hbq : ↑q ∣ b := by
-    obtain ⟨m, hm⟩ := Int.gcd_dvd_right a b
+    obtain ⟨m, hm⟩ := @Int.gcd_dvd_right a b
     exact ⟨n * m, by rw [hm, hn]; simp [mul_assoc]⟩
   have hcq : ↑q ∣ c := by
     suffices ↑q ∣ c ^ p by exact hqpri.dvd_of_dvd_pow this
@@ -168,6 +168,7 @@ theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 �
   · rwa [IsRegularPrime, IsRegularNumber] at hreg
   · exact hI
 
+set_option maxHeartbeats 400000 in
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime p)
     (hζ : IsPrimitiveRoot ζ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
     (H : a ^ p + b ^ p = c ^ p) :

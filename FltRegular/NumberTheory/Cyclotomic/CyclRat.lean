@@ -223,12 +223,9 @@ theorem diff_of_roots2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R} (
   rw [Units.val_neg, neg_mul, ← hu]
   ring
 
-instance arg : IsDedekindDomain R :=
-  inferInstance
-
 instance : AddCommGroup R := AddCommGroupWithOne.toAddCommGroup
-instance : AddCommMonoid R := AddCommGroup.toAddCommMonoid
 
+set_option maxHeartbeats 300000 in
 lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
     (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)

@@ -159,7 +159,7 @@ theorem eq_one_mod_one_sub {A : Type _} [CommRing A] {t : A} :
 
 theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type _} [CommRing A] [IsDomain A] {ζ : A}
     (hζ : IsPrimitiveRoot ζ p) {μ : A} (hμ : μ ^ (p : ℕ) = 1) :
-    (@FunLike.coe _ A (fun _ => A ⧸ Ideal.span {ζ - 1}) _ (algebraMap A (A ⧸ Ideal.span {ζ - 1})) μ) = 1 := by
+    (@DFunLike.coe _ A (fun _ => A ⧸ Ideal.span {ζ - 1}) _ (algebraMap A (A ⧸ Ideal.span {ζ - 1})) μ) = 1 := by
   obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ p.pos
   rw [map_pow, eq_one_mod_one_sub, one_pow]
 
@@ -290,10 +290,10 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
     simp only [PNat.one_coe, pow_one, neg_mul, one_mul, neg_neg]
     rw [← Subtype.val_inj] at Hi
     simp only [SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe, Submonoid.coe_mul,
-      Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, AddSubgroupClass.coe_neg,
+      Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, InvMemClass.coe_inv,
       OneMemClass.coe_one, neg_mul, one_mul] at Hi
     simp only [IsPrimitiveRoot.unit'_val_coe]
-    exact Iff.mp neg_eq_iff_eq_neg (id (Eq.symm Hi))
+    exact Iff.mp neg_eq_iff_eq_neg (id (Eq.symm (by simpa using Hi)))
   obtain ⟨m, k, hmk⟩ := H
   refine' ⟨m, k, _⟩
   have eq : ((⟨x, hx⟩ : R) : K) = x := rfl

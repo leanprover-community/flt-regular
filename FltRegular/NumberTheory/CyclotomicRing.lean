@@ -95,7 +95,7 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m 
   rw [← map_dvd_iff (equiv p), map_intCast]
   convert RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
   ext1
-  exact FunLike.congr_arg (algebraMap ℚ _) (Algebra.coe_norm_int (equiv p n))
+  exact DFunLike.congr_arg (algebraMap ℚ _) (Algebra.coe_norm_int (equiv p n))
 
 lemma adjoin_zeta : Algebra.adjoin ℤ {zeta p} = ⊤ := AdjoinRoot.adjoinRoot_eq_top
 

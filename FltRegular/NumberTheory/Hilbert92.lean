@@ -9,16 +9,11 @@ open scoped NumberField nonZeroDivisors
 open FiniteDimensional
 open NumberField
 
-variable (p : ℕ+) {K : Type*} [Field K] [NumberField K] -- [IsCyclotomicExtension {p} ℚ K]
+variable (p : ℕ+) {K : Type*} [Field K] [NumberField K]
 variable {k : Type*} [Field k] [NumberField k] (hp : Nat.Prime p)
 
 open FiniteDimensional BigOperators Finset
 open CyclotomicIntegers (zeta)
--- Z[H] module M (rank L) submodule N (rank l) H-stable
--- H cyclic order p
--- M / N is free up to torsion rank r (as an ab group free rank r p)
--- r = r1 + r2 - 1 = NumberField.Units.rank
-
 
 section thm91
 variable
@@ -28,8 +23,6 @@ variable
 
 -- TODO maybe abbrev
 local notation3 "A" => CyclotomicIntegers p
-  -- MonoidAlgebra ℤ H ⧸ Ideal.span {∑ i in Finset.range p, (MonoidAlgebra.of ℤ H σ) ^ i}
-
 
 abbrev systemOfUnits.IsMaximal {r} {p : ℕ+} {G} [AddCommGroup G] [Module (CyclotomicIntegers p) G]
     (sys : systemOfUnits (G := G) p r) :=
@@ -85,7 +78,7 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
     · simp
     · simp
   ext j
-  have := FunLike.congr_fun (hf (Finsupp.update (σ • l) i (l i)) this) j
+  have := DFunLike.congr_fun (hf (Finsupp.update (σ • l) i (l i)) this) j
   simp only [Finsupp.coe_update, Finsupp.coe_smul, ne_eq, Function.update_apply, Finsupp.coe_zero,
     Pi.zero_apply] at this
   split_ifs at this with hij
@@ -123,7 +116,7 @@ lemma LinearIndependent.update' {ι} [DecidableEq ι] {R} [CommRing R] [Module R
   rw [smul_comm σ (l' i) g, hg, ← LinearMap.map_smul, ← LinearMap.map_smul, smul_smul,
     ← Finsupp.total_single, ← (Finsupp.total ι G R f).map_sub, ← map_add] at hl'
   replace hl' : ∀ j, (σ * l' j - (fun₀ | i => σ * l' i) j) + l' i * l j = 0 :=
-    fun j ↦ FunLike.congr_fun (hf _ hl') j
+    fun j ↦ DFunLike.congr_fun (hf _ hl') j
   simp only [Finsupp.single_apply] at hl'
   have : l' i = 0 := hl _ (by simpa using hl' i)
   simp only [this, zero_mul, add_zero, mul_zero, ite_self, sub_zero] at hl'
@@ -207,7 +200,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : 
     letI : Module A (Fin r →₀ A) := Finsupp.module (Fin r) A
     rw [← LinearMap.map_smul, ← sub_eq_zero,
       ← (Finsupp.total (Fin _) G A S.units).map_sub] at hg
-    have := FunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
+    have := DFunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
     simp only [algebraMap_int_eq, Int.coe_castRingHom, Finsupp.coe_sub, Finsupp.coe_smul, ha,
       Pi.sub_apply, Finsupp.mapRange_apply, Finsupp.coe_zero, Pi.zero_apply, sub_eq_zero] at this
     exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
@@ -276,7 +269,7 @@ noncomputable
 def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) where
   toFun := relativeUnitsMap
   map_one' := by
-    refine FunLike.ext _ _ (fun x ↦ ?_)
+    refine DFunLike.ext _ _ (fun x ↦ ?_)
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
     rw [relativeUnitsMap]
     erw [QuotientGroup.lift_mk'] -- why?
@@ -285,7 +278,7 @@ def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) 
     rfl
   map_mul' := by
     intros f g
-    refine FunLike.ext _ _ (fun x ↦ ?_)
+    refine DFunLike.ext _ _ (fun x ↦ ?_)
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
     simp only [relativeUnitsMap, map_mul, Monoid.coe_mul, Function.comp_apply]
     rfl
@@ -799,7 +792,7 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
 
 
 attribute [-instance] instDecidableEq Fintype.decidableForallFintype
-attribute [local instance 2000] MulHomClass.toFunLike Classical.propDecidable
+attribute [local instance 2000] MulHomClass.toDFunLike Classical.propDecidable
 
 lemma unit_to_U_pow (x) (n : ℕ) : mkG (x ^ n) = n • (mkG x) := by
   induction n with
@@ -822,7 +815,7 @@ lemma unit_to_U_neg (x) : mkG (-x) = mkG x := by
   rw [← one_mul x, ← neg_mul, unit_to_U_mul, one_mul, add_left_eq_self]
   convert unit_to_U_map p hp hKL σ hσ (-1)
   ext
-  simp only [Units.val_neg, Units.val_one, AddSubgroupClass.coe_neg, OneMemClass.coe_one,
+  simp only [Units.val_neg, Units.val_one, OneMemClass.coe_one,
     Units.coe_map, MonoidHom.coe_coe, map_neg, map_one]
 
 instance : CommGroup (↥(𝓞 k))ˣ := inferInstance
@@ -852,8 +845,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
   have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ)
   · ext
     simp only [RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
-      RingOfInteger.coe_algebraMap_apply, RingOfIntegers.norm_apply_coe, Units.val_pow_eq_pow_val,
-      SubmonoidClass.coe_pow, Units.val_neg, AddSubgroupClass.coe_neg]
+      RingOfInteger.coe_algebraMap_apply, RingOfIntegers.norm_apply_coe, Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, Units.val_neg]
     rw [← map_pow] at hE
     refine Hilbert92ish_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
     rw [← pow_mul, ← pow_succ']

@@ -12,8 +12,8 @@ theorem PowerBasis.rat_hom_ext {S S' : Type _} [CommRing S] [hS : Algebra ℚ S]
     [hS' : Algebra ℚ S'] (pb : PowerBasis ℚ S) ⦃f g : S →+* S'⦄ (h : f pb.gen = g pb.gen) : f = g :=
   let f' := f.toRatAlgHom
   let g' := g.toRatAlgHom
-  FunLike.ext f g <| by
-    convert FunLike.ext_iff.mp (pb.algHom_ext (show f' pb.gen = g' pb.gen from h))
+  DFunLike.ext f g <| by
+    convert DFunLike.ext_iff.mp (pb.algHom_ext (show f' pb.gen = g' pb.gen from h))
 
 variable (K : Type _) (p : ℕ+) [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 
@@ -72,7 +72,7 @@ theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K 
     by
     rw [← Function.funext_iff]
     congr
-    rw [FunLike.coe_fn_eq]
+    rw [DFunLike.coe_fn_eq]
     apply (hζ.powerBasis ℚ).rat_hom_ext
     exact this.symm
   rw [conj_norm_one, galConj_zeta_runity hζ, map_inv₀]

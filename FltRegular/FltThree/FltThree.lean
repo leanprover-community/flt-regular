@@ -23,8 +23,8 @@ theorem exists_coprime {n : ℕ} (hn : 0 < n) {a b c : ℤ} (ha' : a ≠ 0) (hb'
       a'.natAbs ≤ a.natAbs ∧ b'.natAbs ≤ b.natAbs ∧ c'.natAbs ≤ c.natAbs ∧ FltCoprime n a' b' c' :=
   by
   set d := Int.gcd a b with hd'
-  obtain ⟨A, HA⟩ : ↑d ∣ a := Int.gcd_dvd_left a b
-  obtain ⟨B, HB⟩ : ↑d ∣ b := Int.gcd_dvd_right a b
+  obtain ⟨A, HA⟩ : ↑d ∣ a := @Int.gcd_dvd_left a b
+  obtain ⟨B, HB⟩ : ↑d ∣ b := @Int.gcd_dvd_right a b
   obtain ⟨C, HC⟩ : ↑d ∣ c :=
     by
     rw [← Int.pow_dvd_pow_iff hn, ← h, HA, HB, mul_pow, mul_pow, ← mul_add]
@@ -257,7 +257,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     intro d hdprime hddvdg
     rw [← Int.coe_nat_dvd] at hddvdg
     apply basic _ hdprime <;> apply dvd_trans hddvdg <;> rw [hg']
-    exacts[Int.gcd_dvd_left _ _, Int.gcd_dvd_right _ _]
+    exacts[Int.gcd_dvd_left, Int.gcd_dvd_right]
   refine' ⟨k, hg, _⟩
   by_contra! H
   rw [← pow_mul_pow_sub _ H] at hg
@@ -274,12 +274,12 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     have : 3 ∣ (g : ℤ) := by
       rw [hg, pow_two, mul_assoc, Int.ofNat_mul]
       apply dvd_mul_right
-    exact dvd_trans this (Int.gcd_dvd_left _ _)
+    exact dvd_trans this Int.gcd_dvd_left
   apply IsCoprime.isUnit_of_dvd' hcoprime hdvdp
   · rw [← Int.pow_dvd_pow_iff zero_lt_two] at hdvdp
     apply Prime.dvd_of_dvd_pow Int.prime_three
     rw [← mul_dvd_mul_iff_left (three_ne_zero' ℤ), ← pow_two, ← dvd_add_right hdvdp]
-    refine' dvd_trans _ (Int.gcd_dvd_right (2 * p) (p ^ 2 + 3 * q ^ 2))
+    refine' dvd_trans _ Int.gcd_dvd_right
     rw [← hg', hg, Int.ofNat_mul]
     apply dvd_mul_right
 
@@ -567,7 +567,7 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
     apply Int.dvd_mul_cancel_prime' _ dvd_rfl Int.prime_two
     · zify  at hgcd
       rw [← hgcd]
-      exact Int.gcd_dvd_left _ _
+      exact Int.gcd_dvd_left
     · norm_num
   have h3_ndvd_q : ¬3 ∣ q := by
     intro H
