@@ -201,15 +201,15 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
   rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R), mul_assoc (↑b : R)]
   congr 2
   · rw [← Subtype.coe_inj]
-    simp only [Fin.val_mk, SubsemiringClass.coe_pow, _root_.coe_zpow',
+    simp only [Fin.val_mk, SubsemiringClass.coe_pow, NumberField.Units.coe_zpow,
       IsPrimitiveRoot.coe_unit'_coe]
     refine' eq_of_div_eq_one _
     rw [← zpow_ofNat, ← zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd,
       Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, int_cast_ofNat, sub_self]
   · rw [← Subtype.coe_inj]
-    simp only [Fin.val_mk, SubsemiringClass.coe_pow, MulMemClass.coe_mul, _root_.coe_zpow',
-      IsPrimitiveRoot.coe_unit'_coe, IsPrimitiveRoot.coe_inv_unit'_coe]
+    simp only [Fin.val_mk, SubsemiringClass.coe_pow, MulMemClass.coe_mul,
+      NumberField.Units.coe_zpow, IsPrimitiveRoot.coe_unit'_coe, IsPrimitiveRoot.coe_inv_unit'_coe]
     refine' eq_of_div_eq_one _
     rw [← zpow_ofNat, ← zpow_sub_one₀ (hζ'.ne_zero hpri.out.ne_zero), ←
       zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]

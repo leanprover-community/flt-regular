@@ -748,15 +748,15 @@ lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (�
     Algebra.norm k (S := K) ((J : (𝓞 K)ˣ) : K) = 1 := by
   simp only [toMul_sum, toMul_zsmul, RingHom.toMonoidHom_eq_coe, zpow_neg, Units.val_mul,
     Units.coe_prod, Submonoid.coe_mul, Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring,
-    Submonoid.coe_finset_prod, coe_zpow', map_mul, map_prod, ← Units.coe_val_inv,
+    Submonoid.coe_finset_prod, Units.coe_zpow, map_mul, map_prod, ← Units.coe_val_inv,
     norm_map_inv, norm_map_zpow, hKL, Units.coe_map, MonoidHom.coe_coe,
     RingOfInteger.coe_algebraMap_apply, Algebra.norm_algebraMap]
   apply_fun Additive.toMul at ha
   apply_fun ((↑) : (𝓞 k)ˣ → k) at ha
   simp only [toMul_sum, toMul_zsmul, Units.coe_prod, Submonoid.coe_finset_prod, hη,
-    Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, coe_zpow', toMul_ofMul] at ha
+    Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, Units.coe_zpow, toMul_ofMul] at ha
   rwa [← zpow_ofNat, ← zpow_mul, mul_comm _ a, mul_inv_eq_one₀]
-  rw [← coe_zpow']
+  rw [← Units.coe_zpow]
   simp only [ne_eq, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
 lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / σ E)

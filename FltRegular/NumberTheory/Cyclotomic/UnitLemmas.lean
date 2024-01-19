@@ -15,14 +15,6 @@ local notation "R" => 𝓞 K
 
 --The whole file is now for a generic primitive root ζ, quite a lot of names should be changed.
 
---generalize coe_zpow to allow group with zero
-@[simp, norm_cast]
-theorem coe_zpow' (u : Rˣ) (n : ℤ) : (((u ^ n : Rˣ) : R) : K) = (u : K) ^ n := by
-  induction' n with n hn
-  · simp
-  · rw [zpow_negSucc, ← zpow_neg_one, NumberField.Units.coe_zpow, zpow_neg_one]
-    simp
-
 theorem auxil (a b c d : Rˣ) (h : a * b⁻¹ = c * d) : a * d⁻¹ = b * c := by
   rw [mul_inv_eq_iff_eq_mul] at *
   rw [h]

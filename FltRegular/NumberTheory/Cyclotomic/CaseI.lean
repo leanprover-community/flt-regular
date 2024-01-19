@@ -34,6 +34,8 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) :
   ext1
   rw [intGal_apply_coe]
   push_cast
+  simp_rw [NumberField.Units.coe_zpow]
+  push_cast
   simp only [zpow_neg, _root_.map_add, map_intCast, _root_.map_mul, map_zpow₀, AlgHom.coe_coe,
     galConj_zeta_runity hζ, add_right_inj, mul_eq_mul_left_iff, Int.cast_eq_zero, inv_zpow]
 
