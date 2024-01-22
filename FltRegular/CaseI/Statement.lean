@@ -49,7 +49,7 @@ theorem may_assume : SlightlyEasier → Statement := by
     fin_cases this
     · exact MayAssume.p_ne_three hprod H rfl
     · rw [show 2 + 1 + 1 = 2 * 2 from rfl] at hpri
-      refine' Nat.not_prime_mul one_lt_two one_lt_two hpri.out
+      refine' Nat.not_prime_mul one_lt_two.ne' one_lt_two.ne' hpri.out
   rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
   let d := ({a, b, c} : Finset ℤ).gcd id
   have hdiv : ¬↑p ∣ a / d * (b / d) * (c / d) :=
