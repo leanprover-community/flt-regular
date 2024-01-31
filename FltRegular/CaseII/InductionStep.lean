@@ -224,8 +224,8 @@ lemma prod_c : ∏ η in Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (�
     Finset.prod_mul_distrib, Finset.prod_const, Finset.card_attach,
     hζ.unit'_coe.card_nthRootsFinset] at e'
   rw [← mul_right_inj'
-    ((pow_ne_zero_iff hpri.out.pos).mpr (m_ne_zero hζ e hy) : _),
-    ← mul_left_inj' ((pow_ne_zero_iff hpri.out.pos).mpr (p_ne_zero hζ) : _), e',
+    ((pow_ne_zero_iff hpri.out.ne_zero).mpr (m_ne_zero hζ e hy) : _),
+    ← mul_left_inj' ((pow_ne_zero_iff hpri.out.ne_zero).mpr (p_ne_zero hζ) : _), e',
     exists_ideal_pow_eq_c_aux]
 
 lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ (p : ℕ) := by
@@ -437,8 +437,8 @@ lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
     simp_rw [mul_comm _ y]
     exact Finset.dvd_prod_of_mem _ η.prop
   rw [hη, zero_dvd_iff, e] at this
-  simp only [mul_eq_zero, Units.ne_zero, PNat.pos,
-    pow_eq_zero_iff, add_pos_iff, or_true, false_or] at this
+  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff p.ne_zero, add_pos_iff, or_true, false_or]
+    at this
   rw [this.resolve_left (pow_ne_zero (m + 1) (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt))] at hz
   exact hz (dvd_zero _)
 

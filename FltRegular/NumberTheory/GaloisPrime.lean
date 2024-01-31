@@ -364,11 +364,11 @@ lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.
       Ideal.comap_bot_of_injective _ (galRestrict R K L S _).injective, Finset.prod_const,
       Ideal.map_bot, Ideal.inertiaDegIn_bot R S (IsIntegralClosure.isIntegral_algebra R L)]
     refine (zero_pow ?_).trans (zero_pow ?_).symm
-    · rw [pos_iff_ne_zero, Finset.card_univ, Ne.def, Fintype.card_eq_zero_iff]
+    · rw [Finset.card_univ, Ne.def, Fintype.card_eq_zero_iff]
       simp only [not_isEmpty_of_nonempty, not_false_eq_true]
     · have hR := not_imp_not.mp (Ring.ne_bot_of_isMaximal_of_not_isField ‹_›) rfl
       letI : Field R := hR.toField
-      exact finrank_pos
+      exact finrank_pos.ne'
   rw [← prod_primesOverFinset_pow_ramificationIdxIn K L p hp]
   delta Finset.prod
   rw [← pow_mul, ← Multiset.prod_nsmul, Multiset.map_id']

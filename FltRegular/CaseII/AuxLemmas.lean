@@ -117,9 +117,8 @@ lemma pow_dvd_pow_iff_dvd {M : Type*} [CancelCommMonoidWithZero M] [UniqueFactor
     {a b : M} {x : ℕ} (h' : x ≠ 0) : a ^ x ∣ b ^ x ↔ a ∣ b := by
   classical
   by_cases ha : a = 0
-  · rw [ha, zero_pow (Nat.pos_iff_ne_zero.mpr h'), zero_dvd_iff, zero_dvd_iff,
-      pow_eq_zero_iff (Nat.pos_iff_ne_zero.mpr h')]
-  have ha' : a ^ x ≠ 0 := (pow_eq_zero_iff (Nat.pos_iff_ne_zero.mpr h')).not.mpr ha
+  · rw [ha, zero_pow h', zero_dvd_iff, zero_dvd_iff, pow_eq_zero_iff h']
+  have ha' : a ^ x ≠ 0 := (pow_ne_zero_iff h').mpr ha
   rw [dvd_iff_multiplicity_le ha, dvd_iff_multiplicity_le ha']
   refine forall₂_congr (fun p hp ↦ ?_)
   simp_rw [multiplicity.pow hp, ← PartENat.withTopEquiv_le]

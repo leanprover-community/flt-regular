@@ -36,7 +36,7 @@ variable [IsDedekindDomain A] [IsDedekindDomain B] [IsFractionRing B L]
 
 lemma pow_sub_one_dvd_differentIdeal_aux
     [NoZeroSMulDivisors A B] [Module.Finite A B]
-    {p : Ideal A} [p.IsMaximal] (P : Ideal B) (e : ℕ) (he : 0 < e) (hp : p ≠ ⊥)
+    {p : Ideal A} [p.IsMaximal] (P : Ideal B) (e : ℕ) (he : e ≠ 0) (hp : p ≠ ⊥)
     (hP : P ^ e ∣ p.map (algebraMap A B)) : P ^ (e - 1) ∣ differentIdeal A B := by
   obtain ⟨a, ha⟩ := (pow_dvd_pow _ (Nat.sub_le e 1)).trans hP
   have hp' := (Ideal.map_eq_bot_iff_of_injective
@@ -50,7 +50,7 @@ lemma pow_sub_one_dvd_differentIdeal_aux
     apply_fun (· ^ e : Ideal B → _) at ha
     apply_fun (· ^ (e - 1) : Ideal B → _) at hb
     simp only [mul_pow, ← pow_mul, mul_comm e] at ha hb
-    conv_lhs at ha => rw [← Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr he.ne.symm)]
+    conv_lhs at ha => rw [← Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr he)]
     rw [pow_add, hb, mul_assoc, mul_right_inj' (pow_ne_zero _ hPbot), pow_one, mul_comm] at ha
     exact ⟨_, ha.symm⟩
   suffices : ∀ x ∈ a, Algebra.intTrace A B x ∈ p
@@ -100,5 +100,4 @@ lemma pow_sub_one_dvd_differentIdeal
     Module.Finite_of_isLocalization A B _ _ A⁰
   by_cases he : e = 0
   · rw [he, pow_zero]; exact one_dvd _
-  rw [← Ne.def, ← Nat.pos_iff_ne_zero] at he
   exact pow_sub_one_dvd_differentIdeal_aux A (FractionRing A) (FractionRing B) B P e he hp hP

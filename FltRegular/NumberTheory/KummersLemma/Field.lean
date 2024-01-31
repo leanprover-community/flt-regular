@@ -108,15 +108,16 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
     aeval (((1 : L) - ζ ^ m • α) / (algebraMap K L (ζ - 1))) (poly hp hζ u hcong) = 0 := by
   have hζ' : algebraMap K L ζ - 1 ≠ 0
   · simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
+  rw [map_sub, map_one]
   have := congr_arg (aeval ((1 - ζ ^ m • α) / (algebraMap K L (ζ - 1))))
     (poly_spec hp hζ u hcong)
   simp only [map_sub, map_one, map_pow, map_mul, aeval_C, Subalgebra.algebraMap_eq, smul_pow,
     RingHom.coe_comp, RingHom.coe_coe, Subalgebra.coe_val, Function.comp_apply, e,
     IsPrimitiveRoot.val_unit'_coe, map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left _ hζ',
     sub_sub_cancel_left, (hpri.out.odd_of_ne_two (PNat.coe_injective.ne hp)).neg_pow] at this
-  rw [← pow_mul, mul_comm m, pow_mul, hζ.pow_eq_one, one_pow, one_smul] at this
-  simp only [add_left_neg, mul_eq_zero, PNat.pos, pow_eq_zero_iff, hζ', false_or] at this
-  simpa only [map_sub, map_one] using this
+  rw [← pow_mul, mul_comm m, pow_mul, hζ.pow_eq_one, one_pow, one_smul, add_left_neg,
+    mul_eq_zero] at this
+  exact this.resolve_left (pow_ne_zero _ hζ')
 
 def polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (m : ℕ) : 𝓞 L :=
@@ -130,7 +131,7 @@ theorem roots_poly {L : Type*} [Field L] [Algebra K L] (α : L)
       (Finset.range (p : ℕ)).val.map
         (fun i ↦ ((1 : L) - ζ ^ i • α) / (algebraMap K L (ζ - 1))) := by
   by_cases hα : α = 0
-  · rw [hα, zero_pow p.pos] at e
+  · rw [hα, zero_pow p.ne_zero] at e
     exact (((algebraMap (𝓞 K) L).isUnit_map u.isUnit).ne_zero e.symm).elim
   have hζ' : algebraMap K L ζ - 1 ≠ 0
   · simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)

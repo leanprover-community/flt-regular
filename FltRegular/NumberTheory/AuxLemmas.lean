@@ -10,17 +10,6 @@ This file contains lemmas that should go somewhere in a file in mathlib.
 -/
 open BigOperators UniqueFactorizationMonoid
 
--- Mathlib/RingTheory/DedekindDomain/Ideal.lean
-lemma Ideal.mem_normalizedFactors_iff {R} [CommRing R] [IsDedekindDomain R] [DecidableEq (Ideal R)]
-      {p I : Ideal R} (hI : I ≠ ⊥) :
-    p ∈ normalizedFactors I ↔ p.IsPrime ∧ I ≤ p := by
-  rw [← Ideal.dvd_iff_le]
-  by_cases hp : p = 0
-  · simp only [hp, zero_not_mem_normalizedFactors, isUnit_zero_iff, one_eq_top, zero_dvd_iff,
-      false_iff, not_and]
-    exact fun _ ↦ hI
-  · rwa [UniqueFactorizationMonoid.mem_normalizedFactors_iff hI, prime_iff_isPrime]
-
 -- Mathlib/RingTheory/Ideal/Operations.lean
 lemma Ideal.comap_coe {R S F : Type*} [Semiring R] [Semiring S] [RingHomClass F R S]
   (f : F) (I : Ideal S) : I.comap (f : R →+* S) = I.comap f := rfl

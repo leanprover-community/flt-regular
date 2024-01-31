@@ -784,11 +784,10 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
   conv =>
     enter [1, 2, i]
     rw [h1 i, mul_comm]
-  rw [prod_mul_distrib, prod_const, card_range, prod_pow_eq_pow_sum]
-  simp only [inv_pow, ne_eq, PNat.pos, pow_eq_zero_iff, ZeroMemClass.coe_eq_zero, Units.ne_zero,
-    not_false_eq_true, mul_eq_left₀, inv_eq_one]
-  rw [sum_range_id, Nat.mul_div_assoc, pow_mul, ← map_pow, hζ, map_one, one_pow]
-  exact even_iff_two_dvd.1 (hp.even_sub_one hpodd)
+  rw [prod_mul_distrib, prod_const, card_range, prod_pow_eq_pow_sum, inv_pow, mul_eq_left₀,
+    inv_eq_one, sum_range_id, Nat.mul_div_assoc, pow_mul, ← map_pow, hζ, map_one, one_pow]
+  · exact even_iff_two_dvd.1 (hp.even_sub_one hpodd)
+  · simp
 
 
 attribute [-instance] instDecidableEq Fintype.decidableForallFintype
