@@ -140,21 +140,6 @@ theorem prime_mul_isUnit {a b : α} (h : IsUnit a) : Prime (b * a) ↔ Prime b :
 theorem prime_neg_iff {α} [CommRing α] {a : α} : Prime (-a) ↔ Prime a := by
   rw [← prime_isUnit_mul isUnit_one.neg, neg_mul, one_mul, neg_neg]
 
-theorem prime_mul_iff {α} [CancelCommMonoidWithZero α] {a b : α} :
-    Prime (a * b) ↔ Prime a ∧ IsUnit b ∨ Prime b ∧ IsUnit a := by
-  constructor
-  · intro h
-    have ha : a ≠ 0 := fun ha ↦ by simp [ha] at h
-    have hb : b ≠ 0 := fun hb ↦ by simp [hb] at h
-    have : a * b ∣ a * 1 ∨ a * b ∣ 1 * b := by simpa using h.2.2 _ _ dvd_rfl
-    rw [mul_dvd_mul_iff_left ha, mul_dvd_mul_iff_right hb,
-      ← isUnit_iff_dvd_one, ← isUnit_iff_dvd_one] at this
-    refine this.imp (fun h' => ⟨?_, h'⟩) (fun h' => ⟨?_, h'⟩)
-    · rwa [prime_mul_isUnit h'] at h
-    · rwa [prime_isUnit_mul h'] at h
-  · rintro (⟨ha, hb⟩ | ⟨hb, ha⟩)
-    · rwa [prime_mul_isUnit hb]
-    · rwa [prime_isUnit_mul ha]
 end
 
 lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by

@@ -283,7 +283,7 @@ def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) 
     simp only [relativeUnitsMap, map_mul, Monoid.coe_mul, Function.comp_apply]
     rfl
 
-@[simps]
+@[simps! apply]
 def Monoid.EndAdditive {M} [Monoid M] : Monoid.End M ≃* AddMonoid.End (Additive M) where
   __ := MonoidHom.toAdditive
   map_mul' := fun _ _ ↦ rfl
@@ -315,10 +315,10 @@ lemma isTors' : Module.IsTorsionBySet ℤ[X]
   simp_rw [LinearMap.smul_def, Polynomial.cyclotomic_prime ℤ p, AddEquivClass.map_eq_zero_iff,
     map_sum, map_pow, aeval_X, LinearMap.coeFn_sum, sum_apply, ← relativeUnitsMapHom_apply,
     ← map_pow, ← Units.val_pow_eq_pow_val, ← map_pow, AlgEquiv.val_algHomUnitsEquiv_symm_apply,
-    relativeUnitsMapHom_apply, Monoid.EndAdditive_apply, Equiv.toFun_as_coe,
+    relativeUnitsMapHom_apply, Monoid.EndAdditive_apply,
     addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
     LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, AddMonoidHom.coe_toIntLinearMap,
-    MonoidHom.toAdditive_apply_apply, toMul_ofMul, relativeUnitsMap_mk]
+    AddMonoidHom.coe_mk, ZeroHom.coe_mk, toMul_ofMul, relativeUnitsMap_mk]
   rw [← ofMul_prod, ← QuotientGroup.mk_prod, ofMul_eq_zero, QuotientGroup.eq_one_iff]
   use Units.map (RingOfIntegers.norm k) x
   ext

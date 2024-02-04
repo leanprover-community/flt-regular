@@ -48,26 +48,6 @@ theorem Int.factor_div (a x : ℤ) (hodd : Odd x) :
 theorem two_not_cube (r : ℕ) : r ^ 3 ≠ 2 :=by
   apply Monotone.ne_of_lt_of_lt_nat (Nat.pow_left_strictMono three_ne_zero).monotone 1 <;> norm_num
 
-namespace Mathlib
-open Lean hiding Rat mkRat
-open Meta
-
-namespace Meta.NormNum
-open Qq
-
-theorem isNat_natAbs : {n n' : ℤ} → {a : ℕ} → IsInt n' n → n.natAbs = a → IsNat n.natAbs a
-  | _, _, _, ⟨rfl⟩, rfl => ⟨rfl⟩
-
-@[norm_num Int.natAbs (_ : ℤ)] def evalIntOfNatNatAbs : NormNumExt where eval {u α} e := do
-  let .app (.const ``Int.natAbs _) (x : Q(ℤ)) ← whnfR e | failure
-  let ⟨ex, p⟩ ← deriveInt x _
-  haveI' : u =QL 0 := ⟨⟩; haveI' : $α =Q ℕ := ⟨⟩
-  haveI' : $e =Q Int.natAbs «$ex» := ⟨⟩
-  let ⟨ed, pf⟩ := rawIntLitNatAbs ex
-  return .isNat _ ed q(isNat_natAbs $p $pf)
-
-end Mathlib.Meta.NormNum
-
 nonrec theorem Int.two_not_cube (r : ℤ) : r ^ 3 ≠ 2 :=by
   intro H
   apply two_not_cube r.natAbs
