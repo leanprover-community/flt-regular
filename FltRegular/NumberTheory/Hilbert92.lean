@@ -312,17 +312,13 @@ lemma isTors' : Module.IsTorsionBySet ℤ[X]
   obtain ⟨x, rfl⟩ := Additive.ofMul.surjective x
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
   rw [← Module.AEval.of_aeval_smul]
-  simp only [AlgEquiv.toAlgHom_eq_coe, addMonoidHomLequivInt_apply, LinearMap.smul_def,
-    AddEquivClass.map_eq_zero_iff, Polynomial.cyclotomic_prime ℤ p]
-  simp only [map_sum, aeval_X, LinearMap.coeFn_sum, sum_apply, map_pow]
-  simp only [← relativeUnitsMapHom_apply, ← map_pow, ← Units.val_pow_eq_pow_val]
-  simp only [AlgEquiv.algHomUnitsEquiv, AlgHom.toRingHom_eq_coe, RingHom.toMonoidHom_eq_coe,
-    OneHom.toFun_eq_coe, MonoidHom.toOneHom_coe, MonoidHom.coe_coe, RingHom.coe_coe,
-    MulEquiv.symm_mk, MulEquiv.coe_mk, Equiv.coe_fn_symm_mk, relativeUnitsMapHom_apply,
-    Monoid.EndAdditive_apply, Equiv.toFun_as_coe, addMonoidEndRingEquivInt_apply,
-    AddHom.toFun_eq_coe, LinearMap.coe_toAddHom, LinearEquiv.coe_coe, addMonoidHomLequivInt_apply,
-    AddMonoidHom.coe_toIntLinearMap, MonoidHom.toAdditive_apply_apply, toMul_ofMul,
-    relativeUnitsMap_mk]
+  simp_rw [LinearMap.smul_def, Polynomial.cyclotomic_prime ℤ p, AddEquivClass.map_eq_zero_iff,
+    map_sum, map_pow, aeval_X, LinearMap.coeFn_sum, sum_apply, ← relativeUnitsMapHom_apply,
+    ← map_pow, ← Units.val_pow_eq_pow_val, ← map_pow, AlgEquiv.val_algHomUnitsEquiv_symm_apply,
+    relativeUnitsMapHom_apply, Monoid.EndAdditive_apply, Equiv.toFun_as_coe,
+    addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
+    LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, AddMonoidHom.coe_toIntLinearMap,
+    MonoidHom.toAdditive_apply_apply, toMul_ofMul, relativeUnitsMap_mk]
   rw [← ofMul_prod, ← QuotientGroup.mk_prod, ofMul_eq_zero, QuotientGroup.eq_one_iff]
   use Units.map (RingOfIntegers.norm k) x
   ext
