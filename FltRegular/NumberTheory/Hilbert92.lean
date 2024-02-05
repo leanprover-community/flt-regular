@@ -288,12 +288,13 @@ def Monoid.EndAdditive {M} [Monoid M] : Monoid.End M ≃* AddMonoid.End (Additiv
   __ := MonoidHom.toAdditive
   map_mul' := fun _ _ ↦ rfl
 
+-- TODO move Mathlib.GroupTheory.Subgroup.ZPowers
 def Group.forall_mem_zpowers_iff {H} [Group H] {x : H} :
     (∀ y, y ∈ Subgroup.zpowers x) ↔ Subgroup.zpowers x = ⊤ := by
   rw [SetLike.ext_iff]
   simp only [Subgroup.mem_top, iff_true]
 
--- TODO move
+-- TODO move Mathlib.GroupTheory.OrderOfElement
 lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a) :
     x ^ ((finEquivZPowers x hx).symm a : ℕ) = a :=
   congr_arg Subtype.val ((finEquivZPowers x hx).apply_symm_apply a)
