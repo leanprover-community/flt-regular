@@ -11,7 +11,7 @@ This file contains lemmas that should go somewhere in a file in mathlib.
 open BigOperators UniqueFactorizationMonoid
 
 -- Mathlib/RingTheory/Ideal/Operations.lean
-lemma Ideal.comap_coe {R S F : Type*} [Semiring R] [Semiring S] [RingHomClass F R S]
+lemma Ideal.comap_coe {R S F : Type*} [Semiring R] [Semiring S] [FunLike F R S] [RingHomClass F R S]
   (f : F) (I : Ideal S) : I.comap (f : R →+* S) = I.comap f := rfl
 
 -- Mathlib/RingTheory/IntegralClosure.lean

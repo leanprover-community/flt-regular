@@ -145,9 +145,6 @@ theorem spanIntNorm_localization (I : Ideal S) (M : Submonoid R) (hM : M ≤ R�
     (Algebra.algebraMapSubmonoid S M) Sₘ L
   haveI : IsIntegralClosure Sₘ Rₘ L :=
     IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₘ) (B := Sₘ))
-  cases h : subsingleton_or_nontrivial R
-  · haveI := IsLocalization.unique R Rₘ M
-    simp only [eq_iff_true_of_subsingleton]
   rw [map_spanIntNorm]
   refine span_eq_span (Set.image_subset_iff.mpr ?_) (Set.image_subset_iff.mpr ?_)
   · rintro a' ha'

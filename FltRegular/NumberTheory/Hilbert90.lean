@@ -7,7 +7,7 @@ import Mathlib.Tactic.Widget.Conv
 import Mathlib.RepresentationTheory.GroupCohomology.Hilbert90
 
 open scoped NumberField nonZeroDivisors
-open FiniteDimensional Finset BigOperators Submodule
+open FiniteDimensional Finset BigOperators Submodule groupCohomology
 
 variable {K L : Type*} [Field K] [Field L] [NumberField K] [Algebra K L]
 variable [IsGalois K L] [FiniteDimensional K L]
@@ -84,7 +84,7 @@ lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ hη) σ = (ηu hη) 
   simp only [cocycle, SetLike.coe_sort_coe, horder, this, range_one, prod_singleton, pow_zero]
   rfl
 
-lemma is_cocycle : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
+lemma is_cocycle_aux : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
     α ((cocycle hσ hη) β) * (cocycle hσ hη) α := by
   intro α β
   have hσmon : ∀ x, x ∈ Submonoid.powers σ := by
@@ -106,6 +106,10 @@ lemma is_cocycle : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
   rw [← prod_range_add (fun (n : ℕ) ↦ (σ ^ n) (ηu hη)) (a % orderOf σ) (b % orderOf σ)]
   simpa using bar hσ hη (by simp)
 
+lemma is_cocycle : IsMulOneCocycle (cocycle hσ hη) := by
+  intro α β
+  simp [← Units.eq_iff, is_cocycle_aux hσ hη α β]
+
 lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
   by_cases hone : orderOf σ = 1
   · suffices finrank K L = 1 by
@@ -118,13 +122,17 @@ lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
     refine ⟨σ, fun τ ↦ ?_⟩
     simp only [orderOf_eq_one_iff.1 hone, Subgroup.zpowers_one_eq_bot, Subgroup.mem_bot] at hσ
     rw [orderOf_eq_one_iff.1 hone, hσ τ]
-  obtain ⟨ε, hε⟩ := hilbert90 _ (is_cocycle hσ hη)
-  use ε
+  obtain ⟨ε, hε⟩ := isMulOneCoboundary_of_isMulOneCocycle_of_aut_to_units _ (is_cocycle hσ hη)
+  use ε⁻¹
+  simp only [map_inv₀, div_inv_eq_mul]
   specialize hε σ
-  rw [cocycle_spec hσ hη hone] at hε
-  nth_rewrite 1 [← hε]
-  simp
+  nth_rewrite 2 [← inv_inv ε] at hε
+  rw [div_inv_eq_mul, cocycle_spec hσ hη hone, mul_inv_eq_iff_eq_mul, mul_comm, ← Units.eq_iff] at hε
+  simp only [AlgEquiv.smul_units_def, Units.coe_map, MonoidHom.coe_coe, Units.val_mul] at hε
+  symm
+  rw [inv_mul_eq_iff_eq_mul₀ ε.ne_zero, hε]
   rfl
+
 
 variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
 variable [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K] [IsDomain A]
@@ -153,8 +161,9 @@ lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowe
   · rw [eq_div_iff_mul_eq] at hε
     replace hε := congr_arg (t • ·) hε
     simp only at hε
-    rw [Algebra.smul_def, mul_left_comm, ← Algebra.smul_def t, ← AlgHom.coe_coe,
-      ← AlgHom.map_smul_of_tower, this] at hε
+    rw [Algebra.smul_def, mul_left_comm, ← Algebra.smul_def t] at hε
+    change (algebraMap B L) η * t • σ.toAlgHom _ = _ at hε
+    rw [← AlgHom.map_smul_of_tower, this] at hε
     apply IsIntegralClosure.algebraMap_injective B A L
     rw [map_mul, ← hε]
     congr 1

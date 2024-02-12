@@ -321,7 +321,7 @@ lemma IsUnit.eq_mul_left_iff {S : Type*} [CommRing S] {x : S} (hx : IsUnit x) (y
   nth_rw 1 [← one_mul x]
   rw [eq_comm, hx.mul_left_injective.eq_iff]
 
-lemma map_two {S T F: Type*} [NonAssocSemiring S] [NonAssocSemiring T]
+lemma map_two {S T F: Type*} [NonAssocSemiring S] [NonAssocSemiring T] [FunLike F S T]
   [RingHomClass F S T] (f : F) : f 2 = 2 := by
   rw [← one_add_one_eq_two, map_add, map_one]
   exact one_add_one_eq_two
@@ -329,8 +329,9 @@ lemma map_two {S T F: Type*} [NonAssocSemiring S] [NonAssocSemiring T]
 lemma neg_one_eq_one_iff_two_eq_zero {M : Type*} [AddGroupWithOne M] : (-1 : M) = 1 ↔ (2 : M) = 0 := by
   rw [neg_eq_iff_add_eq_zero, one_add_one_eq_two]
 
-lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [MonoidHomClass F M N]
-  (f : F) (m : Mˣ) : ↑((Units.map (f : M →* N) m)⁻¹) = f ↑(m⁻¹ : Mˣ) :=
+lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [FunLike F M N]
+    [MonoidHomClass F M N] (f : F) (m : Mˣ) :
+    ↑((Units.map (f : M →* N) m)⁻¹) = f ↑(m⁻¹ : Mˣ) :=
   m.coe_map_inv (f : M →* N)
 
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
@@ -366,6 +367,7 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
     rw [this a]
   exact (aux hζ hζ hu).trans (aux hζ hζ.inv hu').symm
 
+set_option synthInstance.maxHeartbeats 40000 in
 theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp : (p : ℕ).Prime) :
     u * (unitGalConj K p u)⁻¹ ≠ -hζ.unit' ^ n := by
   by_contra H

@@ -45,7 +45,9 @@ theorem quotient_span_eq_top_iff_span_eq_top_of_localRing (s : Set S) :
       rw [← this, ← Submodule.comap_map_eq, Submodule.mem_comap, ← H, hs]
       trivial
   · intro hs
-    rwa [hs, Submodule.map_top, LinearMap.range_eq_top.mpr Ideal.Quotient.mk_surjective,
+    rw [hs, Submodule.map_top] at H
+    change _ = LinearMap.range (Ideal.Quotient.mkₐ _ _) at H
+    rwa [LinearMap.range_eq_top.mpr (Ideal.Quotient.mkₐ_surjective _ _),
       Submodule.restrictScalars_eq_top_iff] at H
 
 theorem finrank_quotient_map_of_localRing :

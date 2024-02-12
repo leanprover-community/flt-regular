@@ -73,6 +73,7 @@ lemma one_sub_zeta_mem_nonZeroDivisors :
 lemma not_isUnit_one_sub_zeta :
     ¬ IsUnit (1 - zeta p) := (prime_one_sub_zeta p).irreducible.1
 
+set_option synthInstance.maxHeartbeats 40000 in
 lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
   letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
   letI : Fact (PNat.Prime p') := hpri
@@ -90,6 +91,7 @@ lemma isCoprime_one_sub_zeta (n : ℤ) (hn : ¬ (p : ℤ) ∣ n) : IsCoprime (1 
     (algebraMap ℤ <| CyclotomicIntegers p)).of_isCoprime_of_dvd_left
   exact one_sub_zeta_dvd p
 
+set_option synthInstance.maxHeartbeats 80000 in
 lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m ≠ 0 ∧ n ∣ m := by
   refine ⟨Algebra.norm ℤ ((equiv p) n), by simpa, ?_⟩
   rw [← map_dvd_iff (equiv p), map_intCast]

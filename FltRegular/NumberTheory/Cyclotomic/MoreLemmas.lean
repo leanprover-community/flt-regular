@@ -91,7 +91,7 @@ lemma isCoprime_of_not_zeta_sub_one_dvd (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x)
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
-set_option synthInstance.maxHeartbeats 40000 in
+set_option synthInstance.maxHeartbeats 80000 in
 lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1: 𝓞 K) ∣ a - b := by
   letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.unit' - 1: 𝓞 K))) := inferInstance
   letI : Fact (Nat.Prime p) := hpri
@@ -162,7 +162,7 @@ lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
   · rw [h, sub_self]; exact dvd_zero _
   · exact (hζ.associated_sub_one hp hη₁ hη₂ h).dvd
 
-set_option synthInstance.maxHeartbeats 40000 in
+set_option synthInstance.maxHeartbeats 80000 in
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.unit' : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
   have : Fact (Nat.Prime p) := hpri

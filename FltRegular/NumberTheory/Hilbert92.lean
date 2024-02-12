@@ -251,6 +251,8 @@ lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
     (galRestrictHom (𝓞 k) k K (𝓞 K) σ x : K) = σ x :=
   algebraMap_galRestrictHom_apply (𝓞 k) k K (𝓞 K) σ x
 
+set_option synthInstance.maxHeartbeats 160000 in
+set_option maxHeartbeats 400000 in
 noncomputable
 def relativeUnitsMap (σ : K →ₐ[k] K) : RelativeUnits k K →* RelativeUnits k K := by
   apply QuotientGroup.lift _
@@ -299,6 +301,8 @@ lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a) :
     x ^ ((finEquivZPowers x hx).symm a : ℕ) = a :=
   congr_arg Subtype.val ((finEquivZPowers x hx).apply_symm_apply a)
 
+set_option synthInstance.maxHeartbeats 160000 in
+set_option maxHeartbeats 400000 in
 open Polynomial in
 lemma isTors' : Module.IsTorsionBySet ℤ[X]
     (Module.AEval' (addMonoidEndRingEquivInt _
@@ -474,6 +478,7 @@ lemma unitlifts_spec (S : systemOfUnits p G (NumberField.Units.rank k + 1)) (i) 
   simp only [toMul_ofMul, Quotient.out_eq', ofMul_toMul]
   exact Quotient.out_eq' _
 
+set_option synthInstance.maxHeartbeats 80000 in
 lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zeta p : A) • (mkG v) := by
   rw [sub_smul, one_smul, relativeUnitsModule_zeta_smul, ← unit_to_U_div]
   congr
@@ -587,7 +592,7 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M)
       (Fin.succAbove i₁.castSucc) ι₂ 0, i₁.castSucc, ?_, ?_, fun H ↦ (hζ' H).elim⟩
   · rw [sub_mul, eq_sub_iff_add_eq.mpr h₁, eq_sub_iff_add_eq.mpr h₂]
     simp only [zsmul_eq_mul, Pi.coe_int, Int.cast_id, Pi.sub_apply, Pi.mul_apply,
-      Fin.exists_succ_eq_iff, ne_eq, not_not, not_exists, sub_sub_sub_cancel_left]
+      Fin.succAbove_of_le_castSucc, ne_eq, not_not, not_exists, sub_sub_sub_cancel_left]
     simp only [sub_smul, mul_smul, ← e₁, ← e₂, sum_sub_distrib]
     rw [Fin.sum_univ_castSucc, Fin.sum_univ_succAbove _ i₁.castSucc]
     simp [(Fin.castSucc_injective r).extend_apply, Fin.succAbove_right_injective.extend_apply,
@@ -715,6 +720,7 @@ lemma norm_eq_prod_pow_gen
 
 attribute [-instance] instCoeOut
 
+set_option synthInstance.maxHeartbeats 160000 in
 lemma Hilbert92ish_aux0 (h : ℕ) (ζ : (𝓞 k)ˣ) (hζ : IsPrimitiveRoot (ζ : k) (p ^ h))
   (H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ζ ^ ((p : ℕ) ^ (h - 1)) ≠ ε / (σ ε : K)) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
@@ -736,6 +742,7 @@ lemma Hilbert92ish_aux0 (h : ℕ) (ζ : (𝓞 k)ˣ) (hζ : IsPrimitiveRoot (ζ :
       SubmonoidClass.coe_pow]
     rfl
 
+set_option synthInstance.maxHeartbeats 160000 in
 lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (𝓞 k)ˣ)
     (a : ℤ) (ι : Fin n → ℤ) (η : Fin n → Additive (𝓞 k)ˣ)
     (ha : ∑ i : Fin n, ι i • η i = (a * ↑↑p) • Additive.ofMul ζ)
@@ -788,8 +795,6 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
 
 
 attribute [-instance] instDecidableEq Fintype.decidableForallFintype
-attribute [local instance 2000] MulHomClass.toDFunLike Classical.propDecidable
-
 lemma unit_to_U_pow (x) (n : ℕ) : mkG (x ^ n) = n • (mkG x) := by
   induction n with
   | zero => simp [unit_to_U_one]
@@ -807,6 +812,7 @@ lemma unit_to_U_map (x : (𝓞 k)ˣ) : mkG (Units.map (algebraMap (𝓞 k) (𝓞
   rw [ofMul_eq_zero, QuotientGroup.eq_one_iff]
   exact ⟨_, rfl⟩
 
+set_option synthInstance.maxHeartbeats 160000 in
 lemma unit_to_U_neg (x) : mkG (-x) = mkG x := by
   rw [← one_mul x, ← neg_mul, unit_to_U_mul, one_mul, add_left_eq_self]
   convert unit_to_U_map p hp hKL σ hσ (-1)
@@ -827,6 +833,8 @@ lemma Algebra.norm_of_finrank_eq_two (hKL : finrank k K = 2) (x : K) :
   rfl
 
 -- TODO : remove `p ≠ 2`. The offending case is when `K = k[i]`.
+set_option synthInstance.maxHeartbeats 160000 in
+set_option maxHeartbeats 400000 in
 lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   classical

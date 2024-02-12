@@ -226,6 +226,7 @@ theorem diff_of_roots2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R} (
 instance : AddCommGroup R := AddCommGroupWithOne.toAddCommGroup
 
 set_option maxHeartbeats 300000 in
+set_option synthInstance.maxHeartbeats 80000 in
 lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
     (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
@@ -296,7 +297,7 @@ lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ}
         rw [span_singleton_le_span_singleton]
         apply zeta_sub_one_dvb_p ph hη₁ hwlog
       have H2 : IsPrime (P.comap (Int.castRingHom R)) := by
-        apply @IsPrime.comap _ _ _ _ _ _ _ _ hPrime
+        exact IsPrime.comap _
       have H4 : Ideal.span ({(p : ℤ)} : Set ℤ) ≠ ⊥ := by simp
       apply ((@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ _ _ _ H5 H2 H4).1 H1).symm
     have hxyinP : (x + y : R) ∈ P := by

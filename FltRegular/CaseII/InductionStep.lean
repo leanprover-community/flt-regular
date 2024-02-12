@@ -40,6 +40,8 @@ lemma zeta_sub_one_dvd : π ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
   apply dvd_pow_self
   simp
 
+set_option synthInstance.maxHeartbeats 160000 in
+set_option maxHeartbeats 400000 in
 lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -522,6 +524,8 @@ lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
   rw [neg_mul, (Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp)).neg_pow,
     sub_neg_eq_add, mul_sub, mul_one, mul_comm x b, add_sub_sub_cancel, add_comm]
 
+set_option synthInstance.maxHeartbeats 160000 in
+set_option maxHeartbeats 400000 in
 lemma exists_solution' :
     ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
       ¬ π ∣ y' ∧ ¬ π ∣ z' ∧ x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by

@@ -74,7 +74,7 @@ lemma pow_sub_one_dvd_differentIdeal_aux
     obtain ⟨z, hz, hz'⟩ := hx _ (Ideal.mem_map_of_mem _ hy)
     have : Algebra.trace K L (algebraMap B L z) ∈ (p : FractionalIdeal A⁰ K)
     · rw [← Algebra.algebraMap_intTrace (A := A)]
-      exact Submodule.mem_map_of_mem (this z hz)
+      exact ⟨intTrace A B z, this z hz, rfl⟩
     rwa [mul_comm, ← smul_eq_mul, ← LinearMap.map_smul, Algebra.smul_def, mul_comm,
       ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply A B L, ← hz']
   intros x hx
