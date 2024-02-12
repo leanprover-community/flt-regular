@@ -16,7 +16,6 @@ open scoped nonZeroDivisors
 example (n m : ℕ) (h : n = m) : Fin n ≃ Fin m := by
   exact finCongr h
 
-set_option synthInstance.maxHeartbeats 80000 in
 theorem absdiscr_odd_prime {p : ℕ+} {K : Type u} [Field K] [NumberField K]
     [IsCyclotomicExtension {p} ℚ K] [hp : Fact (p : ℕ).Prime] (hodd : p ≠ 2) :
     discr K = (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) := by
@@ -26,14 +25,15 @@ theorem absdiscr_odd_prime {p : ℕ+} {K : Type u} [Field K] [NumberField K]
   rw [← discr_eq_discr _ pB₁.basis, ← Algebra.discr_localizationLocalization ℤ ℤ⁰ K]
   convert IsCyclotomicExtension.discr_odd_prime hζ (cyclotomic.irreducible_rat p.2) hodd using 1
   · have : pB₁.dim = (IsPrimitiveRoot.powerBasis ℚ hζ).dim := by
-      simp [← finrank K (cyclotomic.irreducible_rat p.2), ← PowerBasis.finrank]
+      simp only [power_basis_int'_dim, ← finrank K (cyclotomic.irreducible_rat p.2), ←
+        PowerBasis.finrank]
     rw [← Algebra.discr_reindex _ _ (finCongr this)]
     congr 1
     ext i
-    simp only [powerBasis_dim, finCongr_symm, Function.comp_apply,
-      Basis.localizationLocalization_apply, PowerBasis.coe_basis, integralPowerBasis'_gen, map_pow]
+    simp_rw [Function.comp_apply, Basis.localizationLocalization_apply, powerBasis_dim,
+      PowerBasis.coe_basis,integralPowerBasis'_gen]
     convert ← ((IsPrimitiveRoot.powerBasis ℚ hζ).basis_eq_pow i).symm using 1
-  · simp
+  · simp_rw [algebraMap_int_eq, map_mul, map_pow, map_neg, map_one, map_natCast]
 
 theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
   classical
