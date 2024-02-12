@@ -1,12 +1,22 @@
 import Mathlib
 import FltRegular
 
+open NumberField InfinitePlace Polynomial IsPrimitiveRoot Real Complex FiniteDimensional in
+theorem classNumber_eq_one_of_abs_discr_lt
+    {K} [Field K] [NumberField K]
+    (h : |discr K| < (2 * (π / 4) ^ NrComplexPlaces K *
+      ((finrank ℚ K) ^ (finrank ℚ K) / (finrank ℚ K).factorial)) ^ 2) :
+    classNumber K = 1 := by
+  have := RingOfIntegers.isPrincipalIdealRing_of_abs_discr_lt h
+  exact classNumber_eq_one_iff.mpr this
+
 open Nat NumberField Polynomial IsPrimitiveRoot IsCyclotomicExtension Real Complex
 open scoped nonZeroDivisors
 
 example (n m : ℕ) (h : n = m) : Fin n ≃ Fin m := by
   exact finCongr h
 
+set_option synthInstance.maxHeartbeats 80000 in
 theorem absdiscr_odd_prime {p : ℕ+} {K : Type u} [Field K] [NumberField K]
     [IsCyclotomicExtension {p} ℚ K] [hp : Fact (p : ℕ).Prime] (hodd : p ≠ 2) :
     discr K = (-1) ^ (((p : ℕ) - 1) / 2) * p ^ ((p : ℕ) - 2) := by
@@ -55,7 +65,7 @@ theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
     show ((5 : ℕ+) : ℕ) = 5 by rfl, hφ] at key
   suffices InfinitePlace.NrRealPlaces K = 0 by
     · rw [this, zero_add, show 4 = 2 * 2 by rfl] at key
-      simpa using key
+      simpa only [mul_eq_mul_left_iff, OfNat.ofNat_ne_zero, or_false] using key
   rw [Fintype.card_eq_zero_iff]
   constructor
   intro ⟨w, hwreal⟩
