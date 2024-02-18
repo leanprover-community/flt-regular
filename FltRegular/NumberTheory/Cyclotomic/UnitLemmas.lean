@@ -14,14 +14,6 @@ open IsCyclotomicExtension NumberField Polynomial
 local notation "R" => 𝓞 K
 
 --The whole file is now for a generic primitive root ζ, quite a lot of names should be changed.
-
-theorem auxil (a b c d : Rˣ) (h : a * b⁻¹ = c * d) : a * d⁻¹ = b * c := by
-  rw [mul_inv_eq_iff_eq_mul] at *
-  rw [h]
-  apply symm
-  rw [mul_assoc]
-  rw [mul_comm]
-
 universe u
 
 noncomputable section
