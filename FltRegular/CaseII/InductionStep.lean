@@ -125,7 +125,7 @@ lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by
   rw [gcd_assoc]
   convert gcd_one_right 𝔵 using 2
   rwa [gcd_comm, Irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton, Ideal.mem_span_singleton]
-  · rw [GCDMonoid.irreducible_iff_prime]
+  · rw [irreducible_iff_prime]
     exact hζ.prime_span_sub_one
 
 lemma gcd_div_div_zeta_sub_one (η) : 𝔪 ∣ Ideal.span {div_zeta_sub_one hp hζ e η} := by

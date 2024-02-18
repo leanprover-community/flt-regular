@@ -178,7 +178,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
         have hb' : x ∣ b := by
           have : gcd (Ideal.span <| singleton x) I = 1 := by
             rwa [Irreducible.gcd_eq_one_iff]
-            · rwa [GCDMonoid.irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
+            · rwa [irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
               · exact hx.ne_zero
               · rw [Ne.def, Ideal.span_singleton_eq_bot]
                 exact hx.ne_zero
@@ -200,7 +200,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
         have : gcd (Ideal.span <| singleton <| x ^ n') J = 1 := by
           rwa [← Ideal.isCoprime_iff_gcd, ← Ideal.span_singleton_pow,
             IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd, Irreducible.gcd_eq_one_iff]
-          · rwa [GCDMonoid.irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
+          · rwa [irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
             · exact hx.ne_zero
             · rw [Ne.def, Ideal.span_singleton_eq_bot]
               exact hx.ne_zero

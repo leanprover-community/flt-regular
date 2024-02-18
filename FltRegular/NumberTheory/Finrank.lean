@@ -50,7 +50,7 @@ lemma FiniteDimensional.finrank_add_finrank_quotient_le (N : Submodule R M) :
     rw [linearIndependent_iff.mp ht' l h, map_zero]
     exact zero_mem _
   rw [← hs, ← ht, ← t.card_image_of_injective hf.injective,
-    ← s.card_image_of_injective Subtype.val_injective, ← Finset.card_union_eq]
+    ← s.card_image_of_injective Subtype.val_injective, ← Finset.card_union_of_disjoint]
   apply LinearIndependent.finset_card_le_finrank
   · rw [← LinearIndependent.finset_toSet, Finset.coe_union, Finset.coe_image, Finset.coe_image]
     refine LinearIndependent.union ?_ ?_ H
