@@ -338,8 +338,8 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
   have hu' := congr_arg (intGal ↑(galConj K p)) hu
   replace hu' :
       ∑ x : Fin φn, (a u) x • (intGal ↑(galConj K p)) (⟨ζ, hζ.isIntegral p.pos⟩ ^ (x : ℕ)) =
-      unitGalConj K p u
-  · refine' Eq.trans _ hu'
+      unitGalConj K p u := by
+    refine' Eq.trans _ hu'
     rw [map_sum]
     congr 1
     ext x

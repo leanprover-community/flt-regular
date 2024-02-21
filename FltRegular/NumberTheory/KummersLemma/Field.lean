@@ -106,8 +106,8 @@ lemma irreducible_map_poly :
 theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (m : ℕ) :
     aeval (((1 : L) - ζ ^ m • α) / (algebraMap K L (ζ - 1))) (poly hp hζ u hcong) = 0 := by
-  have hζ' : algebraMap K L ζ - 1 ≠ 0
-  · simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
+  have hζ' : algebraMap K L ζ - 1 ≠ 0 := by
+    simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
   rw [map_sub, map_one]
   have := congr_arg (aeval ((1 - ζ ^ m • α) / (algebraMap K L (ζ - 1))))
     (poly_spec hp hζ u hcong)
@@ -133,8 +133,8 @@ theorem roots_poly {L : Type*} [Field L] [Algebra K L] (α : L)
   by_cases hα : α = 0
   · rw [hα, zero_pow p.ne_zero] at e
     exact (((algebraMap (𝓞 K) L).isUnit_map u.isUnit).ne_zero e.symm).elim
-  have hζ' : algebraMap K L ζ - 1 ≠ 0
-  · simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
+  have hζ' : algebraMap K L ζ - 1 ≠ 0 := by
+    simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
   classical
   symm; apply Multiset.eq_of_le_of_card_le
   · rw [← Finset.image_val_of_injOn, Finset.val_le_iff_val_subset]
@@ -166,8 +166,8 @@ theorem map_poly_eq_prod {L : Type*} [Field L] [Algebra K L] (α : L)
     (poly hp hζ u hcong).map (algebraMap (𝓞 K) (𝓞 L)) =
       ∏ i in Finset.range (p : ℕ), (X - C (polyRoot hp hζ u hcong α e i)) := by
   apply map_injective (algebraMap (𝓞 L) L) Subtype.coe_injective
-  have : (algebraMap (𝓞 L) L).comp (algebraMap (𝓞 K) (𝓞 L)) = algebraMap (𝓞 K) L
-  · ext; rfl
+  have : (algebraMap (𝓞 L) L).comp (algebraMap (𝓞 K) (𝓞 L)) = algebraMap (𝓞 K) L := by
+    ext; rfl
   rw [← coe_mapRingHom, map_prod, coe_mapRingHom, map_map, this]
   rw [eq_prod_roots_of_monic_of_splits_id ((monic_poly hp hζ u hcong).map _)
     ((splits_id_iff_splits _).mpr (splits_poly hp hζ u hcong α e)), roots_poly hp hζ u hcong α e,
@@ -226,8 +226,8 @@ lemma minpoly_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
 lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) : Separable ((poly hp hζ u hcong).map
     (algebraMap (𝓞 K) (𝓞 L))) := by
-  have hζ' : algebraMap K L ζ - 1 ≠ 0
-  · simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
+  have hζ' : algebraMap K L ζ - 1 ≠ 0 := by
+    simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
   rw [map_poly_eq_prod (e := e)]
   refine separable_prod' ?_ (fun _ _ => separable_X_sub_C)
   intros i hi j hj hij
@@ -241,10 +241,10 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   simp only [Submonoid.coe_mul, Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring,
     AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one,
     SubmonoidClass.coe_pow] at hv
-  have hα : IsIntegral (𝓞 K) α
-  · apply IsIntegral.of_pow p.pos; rw [e]; exact isIntegral_algebraMap
-  have : IsUnit (⟨α, isIntegral_trans (IsIntegralClosure.isIntegral_algebra ℤ K) _ hα⟩ : 𝓞 L)
-  · rw [← isUnit_pow_iff p.pos.ne.symm]
+  have hα : IsIntegral (𝓞 K) α := by
+    apply IsIntegral.of_pow p.pos; rw [e]; exact isIntegral_algebraMap
+  have : IsUnit (⟨α, isIntegral_trans (IsIntegralClosure.isIntegral_algebra ℤ K) _ hα⟩ : 𝓞 L) := by
+    rw [← isUnit_pow_iff p.pos.ne.symm]
     convert (algebraMap (𝓞 K) (𝓞 L)).isUnit_map u.isUnit
     ext; simp only [SubmonoidClass.coe_pow, e]; rfl
   convert ((algebraMap (𝓞 K) (𝓞 L)).isUnit_map v.isUnit).mul this using 1
@@ -299,8 +299,8 @@ lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ (p : �
     IsUnramified (𝓞 K) (𝓞 L) := by
   let α := polyRoot hp hζ u hcong _ (rootOfSplitsXPowSubC_pow p.pos _ L) 0
   haveI := Polynomial.IsSplittingField.finiteDimensional L (X ^ (p : ℕ) - C (u : K))
-  have hα : Algebra.adjoin K {(α : L)} = ⊤
-  · rw [eq_top_iff, ← Algebra.adjoin_root_eq_top_of_isSplittingField
+  have hα : Algebra.adjoin K {(α : L)} = ⊤ := by
+    rw [eq_top_iff, ← Algebra.adjoin_root_eq_top_of_isSplittingField
       ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu)
       (rootOfSplitsXPowSubC_pow p.pos (u : K) L), Algebra.adjoin_le_iff, Set.singleton_subset_iff]
     exact mem_adjoin_polyRoot hp hζ u hcong _ _ 0

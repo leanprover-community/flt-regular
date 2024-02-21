@@ -28,8 +28,8 @@ theorem quotient_span_eq_top_iff_span_eq_top_of_localRing (s : Set S) :
     Submodule.span (R ⧸ p) ((Ideal.Quotient.mk (I := pS)) '' s) = ⊤ ↔
     Submodule.span R s = ⊤ := by
   have H : (Submodule.span (R ⧸ p) ((Ideal.Quotient.mk (I := pS)) '' s)).restrictScalars R =
-    (Submodule.span R s).map (IsScalarTower.toAlgHom R S (S ⧸ pS))
-  · rw [Submodule.map_span, ← Submodule.restrictScalars_span R (R ⧸ p) Ideal.Quotient.mk_surjective]
+      (Submodule.span R s).map (IsScalarTower.toAlgHom R S (S ⧸ pS)) := by
+    rw [Submodule.map_span, ← Submodule.restrictScalars_span R (R ⧸ p) Ideal.Quotient.mk_surjective]
     rfl
   constructor
   · intro hs
@@ -40,8 +40,8 @@ theorem quotient_span_eq_top_iff_span_eq_top_of_localRing (s : Set S) :
     · rw [Ideal.smul_top_eq_map]
       rintro x -
       have : LinearMap.ker (IsScalarTower.toAlgHom R S (S ⧸ pS)) =
-        Submodule.restrictScalars R pS
-      · ext; simp [Ideal.Quotient.eq_zero_iff_mem]
+          Submodule.restrictScalars R pS := by
+        ext; simp [Ideal.Quotient.eq_zero_iff_mem]
       rw [← this, ← Submodule.comap_map_eq, Submodule.mem_comap, ← H, hs]
       trivial
   · intro hs
@@ -143,8 +143,8 @@ def equivQuotMaximalIdealOfIsLocalization : R ⧸ p ≃+* Rₚ ⧸ maximalIdeal 
       Ideal.Quotient.algebraMap_eq, RingHom.comp_apply]
     use x * s'
     rw [← sub_eq_zero, ← map_sub, Ideal.Quotient.eq_zero_iff_mem]
-    have : algebraMap R Rₚ s ∉ maximalIdeal Rₚ
-    · rw [← Ideal.mem_comap, IsLocalization.AtPrime.comap_maximalIdeal Rₚ p]
+    have : algebraMap R Rₚ s ∉ maximalIdeal Rₚ := by
+      rw [← Ideal.mem_comap, IsLocalization.AtPrime.comap_maximalIdeal Rₚ p]
       exact s.prop
     refine ((inferInstanceAs <| (maximalIdeal Rₚ).IsPrime).mem_or_mem ?_).resolve_left this
     rw [mul_sub, IsLocalization.mul_mk'_eq_mk'_of_mul, IsLocalization.mk'_mul_cancel_left,
@@ -235,8 +235,8 @@ lemma trace_quotient_eq_trace_localization_quotient (x) :
     Algebra.trace (R ⧸ p) (S ⧸ pS) (Ideal.Quotient.mk pS x) =
       (equivQuotMaximalIdealOfIsLocalization p Rₚ).symm
         (Algebra.trace (Rₚ ⧸ maximalIdeal Rₚ) (Sₚ ⧸ pSₚ) (algebraMap S _ x)) := by
-  have : IsScalarTower R (Rₚ ⧸ maximalIdeal Rₚ) (Sₚ ⧸ pSₚ)
-  · apply IsScalarTower.of_algebraMap_eq'
+  have : IsScalarTower R (Rₚ ⧸ maximalIdeal Rₚ) (Sₚ ⧸ pSₚ) := by
+    apply IsScalarTower.of_algebraMap_eq'
     rw [IsScalarTower.algebraMap_eq R Rₚ (Rₚ ⧸ _), IsScalarTower.algebraMap_eq R Rₚ (Sₚ ⧸ _),
       ← RingHom.comp_assoc, ← IsScalarTower.algebraMap_eq Rₚ]
   rw [Algebra.trace_eq_of_equiv_equiv (equivQuotMaximalIdealOfIsLocalization p Rₚ)
@@ -283,8 +283,8 @@ lemma Algebra.trace_quotient_eq_of_isDedekindDomain
   haveI : IsIntegrallyClosed Sₚ := isIntegrallyClosed_of_isLocalization _ e _
   have : IsPrincipalIdealRing Rₚ := by
     by_cases hp : p = ⊥
-    · have : IsFractionRing R Rₚ
-      · delta IsFractionRing
+    · have : IsFractionRing R Rₚ := by
+        delta IsFractionRing
         convert inferInstanceAs (IsLocalization p.primeCompl Rₚ)
         ext; simp [hp, Ideal.primeCompl, mem_nonZeroDivisors_iff_ne_zero]
       letI : Field Rₚ := IsFractionRing.toField R

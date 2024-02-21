@@ -40,8 +40,8 @@ lemma FiniteDimensional.finrank_add_finrank_quotient_le (N : Submodule R M) :
   obtain ⟨s, hs, hs'⟩ := exists_finset_card_eq_finrank_and_linearIndependent R N
   obtain ⟨t, ht, ht'⟩ := exists_finset_card_eq_finrank_and_linearIndependent R (M ⧸ N)
   obtain ⟨f, hf⟩ := N.mkQ_surjective.hasRightInverse
-  have H : Disjoint (Submodule.span R (Subtype.val '' (s : Set N))) (Submodule.span R (f '' t))
-  · apply Disjoint.mono_left (Submodule.span_le.mpr Set.image_val_subset)
+  have H : Disjoint (Submodule.span R (Subtype.val '' (s : Set N))) (Submodule.span R (f '' t)) := by
+    apply Disjoint.mono_left (Submodule.span_le.mpr Set.image_val_subset)
     rw [disjoint_iff, eq_bot_iff, ← @Subtype.range_val (M ⧸ N) t, ← Set.range_comp,
       ← Finsupp.range_total]
     rintro _ ⟨h, l, rfl⟩
@@ -114,8 +114,8 @@ lemma FiniteDimensional.finrank_add_finrank_quotient_of_free [IsDomain R] [IsPri
   apply (finrank_add_finrank_quotient_le N).antisymm
   let B := Submodule.smithNormalForm (Module.Free.chooseBasis R M) N
   rw [← tsub_le_iff_left]
-  have : LinearIndependent R (N.mkQ ∘ B.2.bM ∘ Subtype.val : ((Set.range B.2.f)ᶜ : _) → _)
-  · rw [linearIndependent_iff]
+  have : LinearIndependent R (N.mkQ ∘ B.2.bM ∘ Subtype.val : ((Set.range B.2.f)ᶜ : _) → _) := by
+    rw [linearIndependent_iff]
     intros l hl
     ext i
     rw [← Finsupp.apply_total, N.mkQ_apply, Submodule.Quotient.mk_eq_zero, Finsupp.total_apply,

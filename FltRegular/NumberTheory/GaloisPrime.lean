@@ -152,8 +152,8 @@ instance [IsGalois K L] (p : Ideal R) :
   have : IsDomain S :=
     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
   have := IsIntegralClosure.isDedekindDomain R K L S
-  have hRS : Function.Injective (algebraMap R S)
-  · refine Function.Injective.of_comp (f := algebraMap S L) ?_
+  have hRS : Function.Injective (algebraMap R S) := by
+    refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
@@ -163,8 +163,8 @@ instance [IsGalois K L] (p : Ideal R) :
   -- We first rule out the trivial case where `p = ⊥`.
   by_cases hp : p = ⊥
   · subst hp
-    have : Subsingleton (primesOver S (⊥ : Ideal R))
-    · rw [primesOver_bot (IsIntegralClosure.isIntegral_algebra R L)]; infer_instance
+    have : Subsingleton (primesOver S (⊥ : Ideal R)) := by
+      rw [primesOver_bot (IsIntegralClosure.isIntegral_algebra R L)]; infer_instance
     exact ⟨1, Subsingleton.elim _ _⟩
   have hP := isMaximal_of_mem_primesOver hp P.prop
   -- Suppose the contrary that `σ • P ≠ Q` for all `σ`.
@@ -172,8 +172,8 @@ instance [IsGalois K L] (p : Ideal R) :
   push_neg at H
   -- Then `I := ∏ σ • Q` is coprime to `P`.
   let I := ∏ σ : L ≃ₐ[K] L, (↑(σ • Q) : Ideal S)
-  have : I ⊔ ↑P = ⊤
-  · by_contra h
+  have : I ⊔ ↑P = ⊤ := by
+    by_contra h
     have := hP.eq_of_le h le_sup_right
     rw [right_eq_sup, ← Ideal.dvd_iff_le,
       (prime_of_mem_primesOver hp P.prop).dvd_finset_prod_iff] at this
@@ -189,8 +189,8 @@ instance [IsGalois K L] (p : Ideal R) :
   have hQ := Q.prop.1
   -- Then `σ y ∉ Q` for all `σ`, or else `1 = x + y ∈ σ⁻¹ • Q`.
   -- This implies that `∏ σ y ∉ Q`.
-  have : ∏ σ : L ≃ₐ[K] L, galRestrictHom R K L S σ y ∉ (Q : Ideal S)
-  · apply prod_mem (S := (Q : Ideal S).primeCompl)
+  have : ∏ σ : L ≃ₐ[K] L, galRestrictHom R K L S σ y ∉ (Q : Ideal S) := by
+    apply prod_mem (S := (Q : Ideal S).primeCompl)
     intro σ _ hσ
     apply (isMaximal_of_mem_primesOver hp (σ⁻¹ • Q).prop).ne_top
     rw [Ideal.eq_top_iff_one, ← hxy]
@@ -289,8 +289,8 @@ lemma Ideal.ramificationIdxIn_mul_inertiaDegIn_mul_ncard_primesOver
   have := IsIntegralClosure.isDedekindDomain R K L S
   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
   have := IsIntegralClosure.isNoetherian R K L S
-  have hRS : Function.Injective (algebraMap R S)
-  · refine Function.Injective.of_comp (f := algebraMap S L) ?_
+  have hRS : Function.Injective (algebraMap R S) := by
+    refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
@@ -306,8 +306,8 @@ open scoped Classical in
 lemma ramificationIdxIn_smul_primesOverFinset [IsDedekindDomain S]
     [IsGalois K L] (p : Ideal R) [p.IsPrime] :
     (p.ramificationIdxIn S) • (primesOverFinset S p).val = factors (p.map (algebraMap R S)) := by
-  have hRS : Function.Injective (algebraMap R S)
-  · refine Function.Injective.of_comp (f := algebraMap S L) ?_
+  have hRS : Function.Injective (algebraMap R S) := by
+    refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
@@ -333,8 +333,8 @@ lemma prod_primesOverFinset_pow_ramificationIdxIn [IsDedekindDomain S] [IsGalois
     (hp : p ≠ ⊥) [p.IsMaximal] :
     (∏ P in primesOverFinset S p, P) ^ p.ramificationIdxIn S = p.map (algebraMap R S) := by
   classical
-  have hRS : Function.Injective (algebraMap R S)
-  · refine Function.Injective.of_comp (f := algebraMap S L) ?_
+  have hRS : Function.Injective (algebraMap R S) := by
+    refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   delta Finset.prod
@@ -349,8 +349,8 @@ lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.
   have : IsDomain S :=
     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
   have := IsIntegralClosure.isDedekindDomain R K L S
-  have hRS : Function.Injective (algebraMap R S)
-  · refine Function.Injective.of_comp (f := algebraMap S L) ?_
+  have hRS : Function.Injective (algebraMap R S) := by
+    refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS

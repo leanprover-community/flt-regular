@@ -199,8 +199,8 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     Int.gcd (2 * p) (p ^ 2 + 3 * q ^ 2) = 1 ∨ Int.gcd (2 * p) (p ^ 2 + 3 * q ^ 2) = 3 :=
   by
   set g := Int.gcd (2 * p) (p ^ 2 + 3 * q ^ 2) with hg'
-  suffices H : ∃ k, g = 3 ^ k ∧ k < 2
-  · obtain ⟨k, hg, hk⟩ := H
+  suffices H : ∃ k, g = 3 ^ k ∧ k < 2 by
+    obtain ⟨k, hg, hk⟩ := H
     interval_cases k
     · left
       rw [pow_zero] at hg

@@ -212,8 +212,8 @@ lemma NoZeroSMulDivisors_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRin
         (NoZeroSMulDivisors.algebraMap_injective _ _))
   haveI : IsDomain Sₚ := IsLocalization.isDomain_of_le_nonZeroDivisors S e
   have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
-    (algebraMap R S) (Submonoid.le_comap_map M)
-  · apply IsLocalization.ringHom_ext M
+    (algebraMap R S) (Submonoid.le_comap_map M) := by
+    apply IsLocalization.ringHom_ext M
     simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
   rw [NoZeroSMulDivisors.iff_algebraMap_injective, RingHom.injective_iff_ker_eq_bot,
     RingHom.ker_eq_bot_iff_eq_zero]

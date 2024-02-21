@@ -151,8 +151,8 @@ lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowe
   obtain ⟨ε, hε⟩ := Hilbert90 hσ hη
   obtain ⟨x, y, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid B A⁰) ε
   obtain ⟨t, ht, ht'⟩ := y.prop
-  have : t • IsLocalization.mk' L x y = algebraMap _ _ x
-  · rw [Algebra.smul_def, IsScalarTower.algebraMap_apply A B L, ht', IsLocalization.mk'_spec']
+  have : t • IsLocalization.mk' L x y = algebraMap _ _ x := by
+    rw [Algebra.smul_def, IsScalarTower.algebraMap_apply A B L, ht', IsLocalization.mk'_spec']
   refine ⟨x, ?_, ?_⟩
   · rintro rfl
     simp only [IsLocalization.mk'_zero, _root_.map_zero, ne_eq, not_true, div_zero] at hε

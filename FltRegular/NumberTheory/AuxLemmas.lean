@@ -41,8 +41,8 @@ lemma Ideal.inertiaDeg_comap_eq (e : S₁ ≃ₐ[R] S₂) (p : Ideal R) (P : Ide
     Ideal.inertiaDeg (algebraMap R S₁) p (P.comap e) =
       Ideal.inertiaDeg (algebraMap R S₂) p P := by
   delta Ideal.inertiaDeg
-  have : (P.comap e).comap (algebraMap R S₁) = p ↔ P.comap (algebraMap R S₂) = p
-  · rw [← Ideal.comap_coe e, Ideal.comap_comap, ← e.toAlgHom_toRingHom, AlgHom.comp_algebraMap]
+  have : (P.comap e).comap (algebraMap R S₁) = p ↔ P.comap (algebraMap R S₂) = p := by
+    rw [← Ideal.comap_coe e, Ideal.comap_comap, ← e.toAlgHom_toRingHom, AlgHom.comp_algebraMap]
   split
   swap
   · rw [dif_neg]; rwa [← this]
@@ -98,8 +98,8 @@ lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Co
     Algebra.IsIntegral Rₚ Sₚ := by
   classical
   have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
-    (algebraMap R S) (Submonoid.le_comap_map M)
-  · apply IsLocalization.ringHom_ext M
+    (algebraMap R S) (Submonoid.le_comap_map M) := by
+    apply IsLocalization.ringHom_ext M
     simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
   intros x
   obtain ⟨x, ⟨_, t, ht, rfl⟩, rfl⟩ := IsLocalization.mk'_surjective
@@ -152,8 +152,8 @@ lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [F
     [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] [hRS : IsSeparable R S] :
     IsSeparable Rₚ Sₚ := by
   have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
-    (algebraMap R S) (Submonoid.le_comap_map M)
-  · apply IsLocalization.ringHom_ext M
+    (algebraMap R S) (Submonoid.le_comap_map M) := by
+    apply IsLocalization.ringHom_ext M
     simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
   refine ⟨fun x ↦ ?_⟩
   obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid S M) x

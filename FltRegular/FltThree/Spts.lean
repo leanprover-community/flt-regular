@@ -310,10 +310,9 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
   · rw [← h6]
     exact dvd_mul_of_dvd_right hwdvd x
 
-theorem Spts.eq_one {a : ℤ√(-3)} (h : a.norm = 1) : abs a.re = 1 ∧ a.im = 0 :=
-  by
-  suffices H : abs a.re = 1
-  · refine' ⟨H, _⟩
+theorem Spts.eq_one {a : ℤ√(-3)} (h : a.norm = 1) : abs a.re = 1 ∧ a.im = 0 := by
+  suffices H : abs a.re = 1 by
+    refine' ⟨H, _⟩
     rw [Zsqrtd.norm_def, mul_assoc, ← Int.natAbs_mul_self' a.re, ← Int.abs_eq_natAbs, H, one_mul,
       neg_mul, sub_neg_eq_add, add_right_eq_self, mul_eq_zero, mul_self_eq_zero] at h
     exact h.resolve_left three_ne_zero

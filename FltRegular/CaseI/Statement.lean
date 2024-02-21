@@ -233,8 +233,8 @@ theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
     ⟨mem_range.2 h1, insert_subset_iff.2 ⟨mem_range.2 (Fin.is_lt _),
     singleton_subset_iff.2 (mem_range.2 (Fin.is_lt _))⟩⟩⟩
   have hcard := card_sdiff hs
-  replace hcard : (range p \ s).Nonempty
-  · rw [← Finset.card_pos, hcard, card_range]
+  replace hcard : (range p \ s).Nonempty := by
+    rw [← Finset.card_pos, hcard, card_range]
     exact Nat.sub_pos_of_lt (lt_of_lt_of_le this hp5)
   obtain ⟨i, hi⟩ := hcard
   refine' ⟨i, sdiff_subset _ _ hi, _⟩

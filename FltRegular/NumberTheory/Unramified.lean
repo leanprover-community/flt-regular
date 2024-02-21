@@ -58,8 +58,8 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
   have : IsDomain S :=
     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
   have := IsIntegralClosure.isDedekindDomain R K L S
-  have hRS : Function.Injective (algebraMap R S)
-  · refine Function.Injective.of_comp (f := algebraMap S L) ?_
+  have hRS : Function.Injective (algebraMap R S) := by
+    refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   have := NoZeroSMulDivisors.iff_algebraMap_injective.mpr hRS
@@ -67,8 +67,8 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
   · rw [hIbot, Ideal.comap_bot_of_injective _ hRS, Ideal.map_bot]
   have hIbot' : I.comap (algebraMap R S) ≠ ⊥ := mt (Ideal.eq_bot_of_comap_eq_bot
     (IsIntegralClosure.isIntegral_algebra R L)) hIbot
-  have : ∀ p, (p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) → ∃ P ≥ I, P ∈ primesOver S p
-  · intro p ⟨hp₁, hp₂⟩
+  have : ∀ p, (p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) → ∃ P ≥ I, P ∈ primesOver S p := by
+    intro p ⟨hp₁, hp₂⟩
     exact Ideal.exists_ideal_over_prime_of_isIntegral
       (IsIntegralClosure.isIntegral_algebra R L) _ _ hp₂
   choose 𝔓 h𝔓 h𝔓' using this
@@ -173,8 +173,8 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
   classical
   have : IsDomain S :=
     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
-  have hRS : Function.Injective (algebraMap R S)
-  · refine Function.Injective.of_comp (f := algebraMap S L) ?_
+  have hRS : Function.Injective (algebraMap R S) := by
+    refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   have := NoZeroSMulDivisors.iff_algebraMap_injective.mpr hRS
@@ -184,8 +184,8 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
   have := aeval_derivative_mem_differentIdeal R K L x hx'
   have H : RingHom.comp (algebraMap (FractionRing R) (FractionRing S))
     ↑(FractionRing.algEquiv R K).symm.toRingEquiv =
-      RingHom.comp ↑(FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L)
-  · apply IsLocalization.ringHom_ext R⁰
+      RingHom.comp ↑(FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L) := by
+    apply IsLocalization.ringHom_ext R⁰
     ext
     simp only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_comp, RingHom.coe_coe,
       AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
@@ -199,9 +199,9 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
   apply le_antisymm
   · rw [← tsub_eq_zero_iff_le]
     by_contra H
-    have hxP : aeval x (derivative (minpoly R x)) ∈ P
-    · have : differentIdeal R S ≤ P
-      · rw [← Ideal.dvd_iff_le]
+    have hxP : aeval x (derivative (minpoly R x)) ∈ P := by
+      have : differentIdeal R S ≤ P := by
+        rw [← Ideal.dvd_iff_le]
         exact (dvd_pow_self _ H).trans (pow_sub_one_dvd_differentIdeal R S P _ hpbot
         (Ideal.dvd_iff_le.mpr <| Ideal.le_pow_ramificationIdx (p := p) (f := algebraMap R S)))
       exact this (aeval_derivative_mem_differentIdeal R K L _ hx')

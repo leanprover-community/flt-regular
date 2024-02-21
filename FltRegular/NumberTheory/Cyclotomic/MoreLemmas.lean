@@ -42,8 +42,8 @@ lemma surjective_of_isCyclotomicExtension_two (R S) [CommRing R] [CommRing S]
   intro x
   have := IsCyclotomicExtension.adjoin_roots (S := {2}) (A := R) (B := S) x
   simp only [Set.mem_singleton_iff, exists_eq_left, sq_eq_one_iff, PNat.coe_two] at this
-  have H : Algebra.adjoin R {b : S | b = 1 ∨ b = -1} ≤ ⊥
-  · rw [Algebra.adjoin_le_iff]
+  have H : Algebra.adjoin R {b : S | b = 1 ∨ b = -1} ≤ ⊥ := by
+    rw [Algebra.adjoin_le_iff]
     rintro _ (rfl|rfl)
     · exact one_mem _
     · exact neg_mem (one_mem _)
@@ -53,8 +53,8 @@ theorem IsPrimitiveRoot.sub_one_norm_two' {K L} [Field K] [Field L] [Algebra K L
     (hζ : IsPrimitiveRoot ζ 2)
     [IsCyclotomicExtension {2} K L] : Algebra.norm K (ζ - 1) = -2 := by
   rw [hζ.eq_neg_one_of_two_right]
-  suffices : Algebra.norm K (algebraMap K L (-2)) = -2
-  · simpa only [sub_eq_add_neg, ← one_add_one_eq_two,
+  suffices Algebra.norm K (algebraMap K L (-2)) = -2 by
+    simpa only [sub_eq_add_neg, ← one_add_one_eq_two,
       neg_add_rev, map_add, map_neg, map_one] using this
   rw [Algebra.norm_algebraMap, finrank_eq_one_iff'.mpr, pow_one]
   refine ⟨1, one_ne_zero, fun w ↦ ?_⟩
@@ -183,8 +183,8 @@ lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1 : ℕ) • x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   letI := IsCyclotomicExtension.isGalois p ℚ K
-  have : (Algebra.trace ℤ _ x : 𝓞 K) = ∑ σ : K ≃ₐ[ℚ] K, (intGal σ).toRingHom x
-  · apply (show Function.Injective (algebraMap (𝓞 K) K) from Subtype.val_injective)
+  have : (Algebra.trace ℤ _ x : 𝓞 K) = ∑ σ : K ≃ₐ[ℚ] K, (intGal σ).toRingHom x := by
+    apply (show Function.Injective (algebraMap (𝓞 K) K) from Subtype.val_injective)
     rw [← eq_intCast (algebraMap ℤ (𝓞 K)), ← IsScalarTower.algebraMap_apply,
       IsScalarTower.algebraMap_apply ℤ ℚ K, eq_intCast, Algebra.coe_trace_int,
       trace_eq_sum_automorphisms, map_sum]
@@ -207,8 +207,8 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
   simp only [nsmul_eq_mul, hr, Int.cast_add, Int.cast_one, Int.cast_mul, hs, ge_iff_le, PNat.pos,
     Nat.cast_pred, Int.cast_ofNat, Int.cast_pow, Nat.cast_mul, ne_eq, PNat.ne_zero,
     not_false_eq_true, isUnit_pow_iff]
-  suffices : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (hζ.unit' - 1) * p * s + (p : 𝓞 K) ^ 2 * (r + x)
-  · convert this using 1; ring
+  suffices (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (hζ.unit' - 1) * p * s + (p : 𝓞 K) ^ 2 * (r + x) by
+    convert this using 1; ring
   apply dvd_add
   · apply dvd_mul_of_dvd_left
     rw [ht, ← mul_assoc, ← pow_succ, tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le]
@@ -222,16 +222,16 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
 lemma norm_add_one_smul_of_isUnit {K} [Field K] [NumberField K] {p : ℕ} (hpri : p.Prime)
     (hp : p ≠ 2) (x : 𝓞 K)
     (hx : IsUnit (1 + (p : ℕ) • x)) : Algebra.norm ℤ (1 + (p : ℕ) • x) = 1 := by
-  have H : Algebra.norm ℤ (1 + (p : ℕ) • x) = 1 ∨ Algebra.norm ℤ (1 + (p : ℕ) • x) = -1
-  · apply Int.natAbs_eq_iff.mp
+  have H : Algebra.norm ℤ (1 + (p : ℕ) • x) = 1 ∨ Algebra.norm ℤ (1 + (p : ℕ) • x) = -1 := by
+    apply Int.natAbs_eq_iff.mp
     apply (Int.cast_injective (α := ℚ)).comp Nat.cast_injective
     simp only [Int.cast_abs, Function.comp_apply, Nat.cast_one, Int.cast_one, ← Int.abs_eq_natAbs,
       Algebra.coe_norm_int, ← NumberField.isUnit_iff_norm.mp hx, RingOfIntegers.norm_apply_coe]
-  have : Algebra.norm ℤ (1 + (p : ℕ) • x) ≠ -1
-  · intro e; apply hp
+  have : Algebra.norm ℤ (1 + (p : ℕ) • x) ≠ -1 := by
+    intro e; apply hp
     obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
-    have : (p : ℤ) * (- Algebra.trace ℤ _ x - r * p) = 2
-    · rw [zsmul_eq_mul, Int.cast_ofNat, ← nsmul_eq_mul, e, eq_comm, ← sub_eq_zero] at hr
+    have : (p : ℤ) * (- Algebra.trace ℤ _ x - r * p) = 2 := by
+      rw [zsmul_eq_mul, Int.cast_ofNat, ← nsmul_eq_mul, e, eq_comm, ← sub_eq_zero] at hr
       rw [eq_comm, ← sub_eq_zero, ← hr]
       ring
     exact (Nat.prime_two.eq_one_or_self_of_dvd _
