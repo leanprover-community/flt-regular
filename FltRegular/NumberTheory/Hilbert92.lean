@@ -545,7 +545,7 @@ lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M
     (Function.ne_iff.mpr hf') p hp.ne_one
   simp_rw [hf', Pi.smul_apply, smul_assoc, ← smul_sum] at hf
   obtain ⟨a, ha⟩ := hk _ _ hf
-  rw [← zpow_ofNat] at ha
+  rw [← zpow_coe_nat] at ha
   exact ⟨a, f', i, ha.symm, hi⟩
 
 lemma Fin.castSucc_ne_last {r : ℕ} (x : Fin r) : Fin.castSucc x ≠ Fin.last r := by
@@ -759,7 +759,7 @@ lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (�
   apply_fun ((↑) : (𝓞 k)ˣ → k) at ha
   simp only [toMul_sum, toMul_zsmul, Units.coe_prod, Submonoid.coe_finset_prod, hη,
     Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, Units.coe_zpow, toMul_ofMul] at ha
-  rwa [← zpow_ofNat, ← zpow_mul, mul_comm _ a, mul_inv_eq_one₀]
+  rwa [← zpow_coe_nat, ← zpow_mul, mul_comm _ a, mul_inv_eq_one₀]
   rw [← Units.coe_zpow]
   simp only [ne_eq, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
@@ -894,7 +894,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
         rw [← smul_sum, add_comm, ← eq_sub_iff_add_eq, smul_comm, ← smul_sub] at ha
         apply_fun ((p : ℤ) • (α • Additive.ofMul NE) + β • ·) at ha
         conv_rhs at ha => rw [smul_comm β, ← smul_add]
-        rw [smul_smul, smul_smul, ← add_smul, mul_comm _ α, hαβ, one_smul, ofNat_zsmul] at ha
+        rw [smul_smul, smul_smul, ← add_smul, mul_comm _ α, hαβ, one_smul] at ha
         exact ⟨_, ha.symm⟩
       have hζ'' := (hζ.pow (p ^ h.succ).pos (pow_succ' _ _)).map_of_injective
         (algebraMap k K).injective
@@ -925,7 +925,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
       apply_fun mkG at NE_p_pow
       simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map,
         unit_to_U_neg, unit_to_U_pow] at NE_p_pow
-      rw [eq_comm, ← ofNat_zsmul, smul_eq_zero] at NE_p_pow
+      rw [eq_comm, smul_eq_zero] at NE_p_pow
       simp only [Nat.cast_eq_zero, PNat.ne_zero, false_or] at NE_p_pow
       rw [NE_p_pow, smul_zero]
 
