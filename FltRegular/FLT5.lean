@@ -1,8 +1,7 @@
 import Mathlib
 import FltRegular
 
-open Nat NumberField Polynomial IsPrimitiveRoot IsCyclotomicExtension Real Complex
-open scoped nonZeroDivisors
+open Nat NumberField IsCyclotomicExtension
 
 theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
   have : Fact (Nat.Prime 5) := ⟨by norm_num⟩
