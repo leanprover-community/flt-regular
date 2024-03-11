@@ -27,24 +27,24 @@ theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a *
   have hc : c ≠ 0 := fun hc => by simp [hc] at hprod
   let s : Finset ℤ := {a, b, c}
   set d : ℤ := s.gcd id
-  have hadiv : d ∣ a := gcd_dvd (by simp)
-  have hbdiv : d ∣ b := gcd_dvd (by simp)
-  have hcdiv : d ∣ c := gcd_dvd (by simp)
+  have hadiv : d ∣ a := gcd_dvd (by simp [s])
+  have hbdiv : d ∣ b := gcd_dvd (by simp [s])
+  have hcdiv : d ∣ c := gcd_dvd (by simp [s])
   have hdzero : d ≠ 0 := fun hdzero => by
-    simpa [ha] using Finset.gcd_eq_zero_iff.1 hdzero a (by simp)
+    simpa [ha] using Finset.gcd_eq_zero_iff.1 hdzero a (by simp [s])
   have hdp : d ^ n ≠ 0 := fun hdn => hdzero (pow_eq_zero hdn)
   refine' ⟨_, _, fun habs => _⟩
   · obtain ⟨na, hna⟩ := hadiv; obtain ⟨nb, hnb⟩ := hbdiv; obtain ⟨nc, hnc⟩ := hcdiv
     rwa [← mul_left_inj' hdp, add_mul, ← mul_pow, ← mul_pow, ← mul_pow, hna, hnb, hnc,
       Int.mul_ediv_cancel_left _ hdzero, Int.mul_ediv_cancel_left _ hdzero,
       Int.mul_ediv_cancel_left _ hdzero, mul_comm, ← hna, mul_comm, ← hnb, mul_comm, ← hnc]
-  · simpa [gcd_eq_gcd_image] using
+  · simpa [gcd_eq_gcd_image, d] using
       Finset.Int.gcd_div_id_eq_one (show a ∈ ({a, b, c} : Finset ℤ) by simp) ha
   · simp only [mul_eq_zero] at habs
     rcases habs with ((Ha | Hb) | Hc)
-    · exact ha (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp)) Ha)
-    · exact hb (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp)) Hb)
-    · exact hc (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp)) Hc)
+    · exact ha (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp [s])) Ha)
+    · exact hb (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp [s])) Hb)
+    · exact hc (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp [s])) Hc)
 
 end MayAssume
 

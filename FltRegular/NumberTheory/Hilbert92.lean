@@ -221,7 +221,7 @@ lemma corollary [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (a
     ← sum_add_distrib, Finsupp.total_apply, Finsupp.sum_fintype]
   congr
   · ext j
-    simp only [smul_smul, Finsupp.ofSupportFinite_coe, add_smul]
+    simp only [smul_smul, Finsupp.ofSupportFinite_coe, add_smul, b', b]
     congr 1
     · rw [mul_comm]
     · rw [← intCast_smul (k := A), smul_smul]
@@ -871,9 +871,10 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
     intro i
     induction i using Fin.lastCases with
     | last =>
-      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, RingOfIntegers.norm_apply_coe]
+      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, RingOfIntegers.norm_apply_coe, NE, η, H2]
     | cast i =>
-      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.norm_apply_coe]
+      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.norm_apply_coe, NE,
+        η, H2, J, N, H]
   · intro ε hε
     refine hS.corollary p hp _ _ (finrank_G p hp hKL σ hσ) _ (ι ∘ Fin.castSucc) ?_ (mkG ε) ?_
     · by_contra hε'
@@ -921,7 +922,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
         Fin.sum_univ_castSucc]
       simp only [Fin.snoc_castSucc, toMul_zsmul, unit_to_U_zpow, unitlifts_spec, Fin.snoc_last,
         toMul_ofMul, RingHom.toMonoidHom_eq_coe, zpow_neg, unit_to_U_inv, Function.comp_apply,
-        unit_to_U_map, smul_zero, neg_zero, add_zero, add_right_eq_self]
+        unit_to_U_map, smul_zero, neg_zero, add_zero, add_right_eq_self, NE, η, H2, J, N, H]
       apply_fun mkG at NE_p_pow
       simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map,
         unit_to_U_neg, unit_to_U_pow] at NE_p_pow
