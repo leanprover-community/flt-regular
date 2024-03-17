@@ -117,8 +117,8 @@ theorem factors_unique_prod' :
 noncomputable def oddFactors (x : ℕ) :=
   Multiset.filter Odd (UniqueFactorizationMonoid.normalizedFactors x)
 
-theorem oddFactors.zero : oddFactors 0 = 0 :=
-  rfl
+theorem oddFactors.zero : oddFactors 0 = 0 := by
+  simp [oddFactors]
 
 theorem oddFactors.not_two_mem (x : ℕ) : 2 ∉ oddFactors x := by
   simp [oddFactors]
@@ -136,8 +136,8 @@ theorem evenFactorExp.def (x : ℕ) :
     evenFactorExp x = Multiset.count 2 (UniqueFactorizationMonoid.normalizedFactors x) :=
   rfl
 
-theorem evenFactorExp.zero : evenFactorExp 0 = 0 :=
-  rfl
+theorem evenFactorExp.zero : evenFactorExp 0 = 0 := by
+  simp [evenFactorExp]
 
 theorem evenFactorExp.pow (z : ℕ) (n : ℕ) : evenFactorExp (z ^ n) = n * evenFactorExp z :=
   by
