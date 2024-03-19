@@ -266,7 +266,7 @@ We recall basic facts about the discriminant.
 \section{Fermat's Last Theorem for regular primes}
 
 \begin{lemma}\label{lem:flt_ideals_coprime}
-	\lean{flt_ideals_coprime}
+	\lean{fltIdeals_coprime}
 	\uses{lemma:zeta_pow_sub_eq_unit_zeta_sub_one}
 	\leanok
 	Let $p \geq 5$ be an prime number, $\zeta_p$ a $p$-th root of unity and $x, y \in \ZZ$ coprime.
@@ -299,7 +299,7 @@ We recall basic facts about the discriminant.
 \end{proof}
 
 \begin{lemma}\label{lem:exists_int_sum_eq_zero}
-	\lean{exists_int_sum_eq_zero}
+	\lean{FltRegular.CaseI.exists_int_sum_eq_zero}
 	\leanok
 	Let $p \geq 3$ be an prime number, $\zeta_p$ a $p$-th root of unity and $ \a \in \ZZ[\zeta_p]$. Let $x$ and $y$ be integers such that $x+y\zeta_p^i=u \a^p$ with $u \in \ZZ[\zeta_p]^\times$ and $\a \in \ZZ[\zeta_p]$. Then there is an integer $k$ such that \[x+y\zeta_p^i-\zeta_p^{2k}x-\zeta_p^{2k-i}y \equiv 0 \pmod p.\]
 \end{lemma}
@@ -380,13 +380,14 @@ In these next few lemmas we are following \cite{Borevich_Shafarevich, SD, Hilber
 			\item We can write 	\[(x+y)=\mathfrak{p}^{p(m-1)+1}\mathfrak{m}\mathfrak{c}_0\] and \[ (x+\zeta_p^k y)=\mathfrak{p}\mathfrak{m}\mathfrak{c}_k \] (for $0 < k \leq p-1$) where $m=n(p-1)$ and with $\mathfrak{c}_i$ pairwise coprime.
 			\item Each $\mathfrak{c}_k=\mathfrak{a}_k^p$ and $\mathfrak{a}_k\mathfrak{a}_0^{-1}$ is principal (as a fractional ideal).
 		\end{enumerate}
-
+		\leanok
 \end{lemma}
 
 
 \begin{theorem}\label{thm:gen_flt_eqn}
 	\uses{lem:gen_dvd_by_frak_p,lem:gen_ideal_coprimality}
 	Let $p$ be a regular odd prime, $\epsilon \in \ZZ[\zeta_p]^\times$ and $n \in \ZZ_{\geq 1}$. Then the equation $x^p+y^p+\epsilon(1-\zeta_p)^{pn}z^p=0$ has no solutions with $x,y,z \in \ZZ[\zeta_p]$, all non-zero and $xyz$ coprime to $(1-\zeta_p)$.
+	\leanok
 \end{theorem}
 
 \begin{theorem}\label{theorem:FLT_case_two}
@@ -496,7 +497,7 @@ We will need several results about ramification in degree $p$ extensions of $\QQ
 
 \begin{lemma}\label{lem:loc_ramification}
 Let $K$ be a number field, $p$ be a rational prime below $\gothp$ and let $\a_0, \xi$ be in $\OO_\gothp^\times$ (the units of the ring of integers of the completion of $K$ at $\gothp$) be such that \[\a_0^p \equiv \xi \mod \gothp^{m+r}\] where $\gothp^m \parallel p$ and $r(p-1)>m$. Then there exists an $\a \in \OO_{\gothp}^\times$ such that $\a^p =\xi$.
-
+\leanok
 \end{lemma}
 
 \begin{proof}
@@ -506,6 +507,7 @@ Let $K$ be a number field, $p$ be a rational prime below $\gothp$ and let $\a_0,
 \begin{lemma}\label{lem:ramification_lem}
 \uses{lem:loc_ramification,lem:diff_ideal_eqn,lem:diff_ram}
 	Let $F=\QQ(\zeta_p)$ with $\zeta_p$ a primitive $p$-th root of unity. If $\xi \in \OO_F$ and coprime to $\lam_p:=1-\zeta_p$ and if \[\xi \equiv \a_0^p \mod \lam_p^p  \] for some $\a_0 \in \OO_{F_\gothp}^\times$ (the ring of integers of the completion of $F$ at $\lam_p$), then the ideal $(\lam_p)$ is unramified in $K/F$ where $K=F(\sqrt[p]{\xi})$.
+\leanok
 \end{lemma}
 \begin{proof}
     Suppose that we have $\xi = \a_0^p \mod \lam_p^{p+1}$. The using \ref{lem:loc_ramification} with $m=p-1,r=2$ gives an $\a$ such that $\a^p=\xi$ in $\OO_{F_\gothp}^\times$. Meaning that $(\lam_p)$ is split in the local extension and hence split in $K/F$ (note: add this lemma explicitly somewhere).
@@ -513,7 +515,7 @@ Let $K$ be a number field, $p$ be a rational prime below $\gothp$ and let $\a_0,
     If we instead have $\lam_p^p \parallel (\xi-\a_0^p)$, then pick some element in $ K$ which agrees with $\a_0$ up to $\lam_p^{p+1}$, which we again call $\a_0$ and consider \[\eta= (\sqrt[p]{\xi}-\a_0)/\lam_p\] so that $K=F(\eta)$. Now, if $m_\eta$ is the minimal monic polynomial for $\eta$ then by definition it follows that \[m_\eta(x) \equiv x^p+\left (\a_0^{p-1}p/\lam_p^{p-1} \right )x+ (\a_0^p-\xi)/\lam_p^p \mod \lam_p\]
 
     So in fact $\eta \in \OO_K$. Now, if we look at $m_\eta'$ we see that $m_\eta'(\eta)$ is coprime to $\lam_p$  and therefore coprime to $\gothd_{K/F}$ (by \ref{lem:diff_ideal_eqn})  and therefore $\lam_p$ is unramified (by \ref{lem:diff_ram}).
-
+\leanok
 \end{proof}
 
 
