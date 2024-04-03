@@ -185,7 +185,7 @@ lemma comap_map_eq_map_of_isLocalization_algebraMapSubmonoid :
     · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one,
         map_mul, hβ, inv_mul_cancel, sub_self]
       rwa [Ne.def, Ideal.Quotient.eq_zero_iff_mem]
-    · rw [add_sub_cancel'_right]
+    · rw [add_sub_cancel]
   have := Ideal.mul_mem_left _ (algebraMap _ _ β) hαx
   rw [← Algebra.smul_def, smul_smul, hβ, add_smul, one_smul] at this
   refine (Submodule.add_mem_iff_left _ ?_).mp this
@@ -216,7 +216,7 @@ def quotMapEquivQuotMapMaximalIdealOfIsLocalization : S ⧸ pS ≃+* Sₚ ⧸ pS
       · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one,
           map_mul, hβ, mul_inv_cancel, sub_self]
         rwa [Ne.def, Ideal.Quotient.eq_zero_iff_mem]
-      · rw [add_sub_cancel'_right]
+      · rw [add_sub_cancel]
     use β • x
     rw [IsScalarTower.algebraMap_eq S Sₚ (Sₚ ⧸ pSₚ), Ideal.Quotient.algebraMap_eq,
       RingHom.comp_apply, ← sub_eq_zero, ← map_sub, Ideal.Quotient.eq_zero_iff_mem]
@@ -229,7 +229,7 @@ def quotMapEquivQuotMapMaximalIdealOfIsLocalization : S ⧸ pS ≃+* Sₚ ⧸ pS
     simp only
     rw [mul_comm, mul_sub, IsLocalization.mul_mk'_eq_mk'_of_mul,
       IsLocalization.mk'_mul_cancel_left, ← map_mul, ← e, ← Algebra.smul_def, smul_smul,
-      hβ, ← map_sub, add_smul, one_smul, add_comm x, add_sub_cancel]
+      hβ, ← map_sub, add_smul, one_smul, add_comm x, add_sub_cancel_right]
 
 lemma trace_quotient_eq_trace_localization_quotient (x) :
     Algebra.trace (R ⧸ p) (S ⧸ pS) (Ideal.Quotient.mk pS x) =

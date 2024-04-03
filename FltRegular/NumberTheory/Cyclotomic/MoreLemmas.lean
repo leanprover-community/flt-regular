@@ -110,9 +110,9 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : �
   rw [(Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp)).neg_pow, ← sub_eq_add_neg, e,
     mul_pow, ← sub_eq_add_neg] at hr
   nth_rw 1 [← Nat.sub_add_cancel (n := p) (m := 1) hpri.out.one_lt.le] at hr
-  rw [pow_succ', ← hu, mul_assoc, mul_assoc] at hr
+  rw [pow_succ, ← hu, mul_assoc, mul_assoc] at hr
   use b, ↑u * ((hζ.unit' - 1 : 𝓞 K) * k ^ (p : ℕ)) - r
-  rw [mul_sub, hr, add_sub_cancel]
+  rw [mul_sub, hr, add_sub_cancel_right]
 
 lemma norm_dvd_iff {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
     [Infinite R] [Module.Free ℤ R] [Module.Finite ℤ R] (x : R) (hx : Prime (Algebra.norm ℤ x)) {y : ℤ} :
@@ -211,7 +211,7 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
     convert this using 1; ring
   apply dvd_add
   · apply dvd_mul_of_dvd_left
-    rw [ht, ← mul_assoc, ← pow_succ, tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le]
+    rw [ht, ← mul_assoc, ← pow_succ', tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le]
     exact dvd_mul_right _ _
   · rw [ht, mul_pow, ← pow_mul, mul_assoc]
     apply dvd_mul_of_dvd_left

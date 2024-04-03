@@ -35,10 +35,10 @@ theorem exists_int_sModEq (x : 𝓞 K) :
       congr
       rfl
       ext i
-      rw [this i, _root_.pow_succ, ← mul_assoc, mul_comm _ pb.gen, mul_assoc]
+      rw [this i, _root_.pow_succ, ← mul_assoc, mul_comm _ pb.gen]
     rw [← mul_sum] at H
     nth_rw 1 [← H]
-    rw [SModEq.sub_mem, mul_one, add_sub_cancel', mul_comm, mem_span_singleton']
+    rw [SModEq.sub_mem, mul_one, add_sub_cancel_left, mul_comm, mem_span_singleton']
     exact ⟨_, rfl⟩
   · exact not_mem_erase (⟨0, pb.dim_pos⟩ : Fin pb.dim) univ
 

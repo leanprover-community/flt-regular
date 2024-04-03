@@ -401,7 +401,7 @@ theorem Spts.four {p : ℤ√(-3)} (hfour : p.norm = 4) (hq : p.im ≠ 0) : abs 
       exact sq_pos_of_ne_zero _ hq
   refine' ⟨_, hq⟩
   calc
-    p.re ^ 2 = p.re ^ 2 + 3 * p.im ^ 2 - 3 := by rw [hq, mul_one, add_sub_cancel]
+    p.re ^ 2 = p.re ^ 2 + 3 * p.im ^ 2 - 3 := by simp [hq]
     _ = p.norm - 3 := by
       rw [Zsqrtd.norm_def]
       ring

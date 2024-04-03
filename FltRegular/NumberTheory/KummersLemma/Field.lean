@@ -23,7 +23,7 @@ lemma zeta_sub_one_pow_dvd_poly :
   rw [← dvd_sub_left (_root_.map_dvd C hcong), add_sub_assoc, C.map_sub (u : 𝓞 K), ← sub_add,
     sub_self, map_one, zero_add]
   refine dvd_C_mul_X_sub_one_pow_add_one hpri.out (PNat.coe_injective.ne hp) _ _ dvd_rfl ?_
-  conv_lhs => rw [← tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le, pow_succ']
+  conv_lhs => rw [← tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le, pow_succ]
   exact mul_dvd_mul_right (associated_zeta_sub_one_pow_prime hζ).dvd _
 
 namespace KummersLemma
@@ -86,7 +86,7 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
     RingHom.coe_coe, Subalgebra.coe_val, one_div, map_sub, map_one, coeff_add, coeff_sub,
     PNat.pos, pow_eq_zero_iff, this, mul_add, IsPrimitiveRoot.val_unit'_coe]
   simp_rw [← smul_eq_mul K, ← coeff_smul]
-  rw [smul_C, smul_eq_mul, ← smul_pow, ← mul_div_assoc, mul_div_cancel_left, smul_sub, smul_C,
+  rw [smul_C, smul_eq_mul, ← smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub, smul_C,
     smul_eq_mul, mul_inv_cancel, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub, map_one]
   exact hζ.sub_one_ne_zero hpri.out.one_lt
   exact pow_ne_zero _ (hζ.sub_one_ne_zero hpri.out.one_lt)
@@ -95,13 +95,13 @@ lemma irreducible_map_poly :
     Irreducible ((poly hp hζ u hcong).map (algebraMap (𝓞 K) K)) := by
   rw [map_poly, ← irreducible_taylor_iff (r := 1 / (ζ - 1))]
   simp only [taylor, one_div, map_add, LinearMap.coe_mk, AddHom.coe_mk, pow_comp, sub_comp,
-    X_comp, C_comp, add_sub_cancel]
+    X_comp, C_comp, add_sub_cancel_right]
   rw [← sub_neg_eq_add, ← (C : K →+* _).map_neg]
   apply X_pow_sub_C_irreducible_of_prime hpri.out
   intro b hb
   apply hu (- b * (ζ - 1))
   rw [mul_pow, (hpri.out.odd_of_ne_two (PNat.coe_injective.ne hp)).neg_pow, hb, neg_neg,
-    div_mul_cancel _ (pow_ne_zero _ (hζ.sub_one_ne_zero hpri.out.one_lt))]
+    div_mul_cancel₀ _ (pow_ne_zero _ (hζ.sub_one_ne_zero hpri.out.one_lt))]
 
 theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (m : ℕ) :
@@ -113,7 +113,7 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
     (poly_spec hp hζ u hcong)
   simp only [map_sub, map_one, map_pow, map_mul, aeval_C, Subalgebra.algebraMap_eq, smul_pow,
     RingHom.coe_comp, RingHom.coe_coe, Subalgebra.coe_val, Function.comp_apply, e,
-    IsPrimitiveRoot.val_unit'_coe, map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left _ hζ',
+    IsPrimitiveRoot.val_unit'_coe, map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ',
     sub_sub_cancel_left, (hpri.out.odd_of_ne_two (PNat.coe_injective.ne hp)).neg_pow] at this
   rw [← pow_mul, mul_comm m, pow_mul, hζ.pow_eq_one, one_pow, one_smul, add_left_neg,
     mul_eq_zero] at this
@@ -142,14 +142,14 @@ theorem roots_poly {L : Type*} [Field L] [Algebra K L] (α : L)
       simp only [Finset.image_val, Finset.range_val, Multiset.mem_dedup, Multiset.mem_map,
         Multiset.mem_range] at hx
       obtain ⟨m, _, rfl⟩ := hx
-      rw [mem_roots, IsRoot.def, eval_map, ← aeval_def, aeval_poly hp hζ u hcong α e]
+      rw [mem_roots, IsRoot.definition, eval_map, ← aeval_def, aeval_poly hp hζ u hcong α e]
       exact ((monic_poly hp hζ u hcong).map (algebraMap (𝓞 K) L)).ne_zero
     · intros i hi j hj e
       apply (hζ.map_of_injective (algebraMap K L).injective).injOn_pow_mul hα hi hj
       apply_fun (1 - · * (algebraMap K L ζ - 1)) at e
       dsimp only at e
       simpa only [Nat.cast_one, map_sub, map_one, Algebra.smul_def, map_pow,
-        div_mul_cancel _ hζ', sub_sub_cancel] using e
+        div_mul_cancel₀ _ hζ', sub_sub_cancel] using e
   · simp only [Finset.range_val, Multiset.card_map, Multiset.card_range]
     refine (Polynomial.card_roots' _).trans ?_
     rw [(monic_poly hp hζ u hcong).natDegree_map, natDegree_poly hp hζ]
@@ -253,7 +253,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     sub_sub_sub_cancel_left, Submonoid.coe_mul, Subsemiring.coe_toSubmonoid,
     Subalgebra.coe_toSubsemiring]
   rw [← sub_div, ← sub_smul, ← hv, Algebra.smul_def, map_mul, map_sub, map_one, mul_assoc,
-    mul_div_cancel_left _ hζ']
+    mul_div_cancel_left₀ _ hζ']
   rfl
 
 open scoped KummerExtension in
@@ -283,7 +283,7 @@ lemma polyRoot_spec {L : Type*} [Field L] [Algebra K L] (α : L)
     α = (ζ ^ i)⁻¹ • (1 - (ζ - 1) • (polyRoot hp hζ u hcong α e i : L)) := by
   apply smul_right_injective (M := L) (c := ζ ^ i) (pow_ne_zero _ <| hζ.ne_zero p.pos.ne.symm)
   simp only [polyRoot, map_sub, map_one, Algebra.smul_def (ζ - 1), ← mul_div_assoc,
-    mul_div_cancel_left _
+    mul_div_cancel_left₀ _
       ((hζ.map_of_injective (algebraMap K L).injective).sub_one_ne_zero hpri.out.one_lt),
     sub_sub_cancel, smul_smul, inv_mul_cancel (pow_ne_zero _ <| hζ.ne_zero p.pos.ne.symm), one_smul]
 

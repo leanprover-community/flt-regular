@@ -38,7 +38,7 @@ lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRe
     simp only [Nat.zero_eq, pow_zero, AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe]
     exact Ideal.map_id _
   | succ n IH =>
-    simp only [AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe, pow_succ'] at IH ⊢
+    simp only [AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe, pow_succ] at IH ⊢
     conv_lhs at IH => rw [← hβ, Ideal.map_map]
     exact IH
 
@@ -62,7 +62,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     use a
     conv_rhs => enter [1]; rw [← hβ]
     rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K L B σ a]
-    refine (mul_div_cancel _ ?_).symm
+    refine (mul_div_cancel_right₀ _ ?_).symm
     · rw [ne_eq, (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
         (injective_iff_map_eq_zero' _).mp (galRestrict A K L B σ).injective]
       exact a.isUnit.ne_zero

@@ -60,7 +60,7 @@ lemma div_one_sub_zeta_mem : (x + y * η : 𝓞 K) / (ζ - 1) ∈ 𝓞 K := by
   rw [e, mul_comm]
   simp only [Submonoid.coe_mul, Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring,
     AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one, ne_eq]
-  rwa [mul_div_cancel _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
+  rwa [mul_div_cancel_right₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
 
 def div_zeta_sub_one : nthRootsFinset p (𝓞 K) → 𝓞 K :=
 fun η ↦ ⟨(x + y * η) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
@@ -68,7 +68,7 @@ fun η ↦ ⟨(x + y * η) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
 lemma div_zeta_sub_one_mul_zeta_sub_one (η) :
     div_zeta_sub_one hp hζ e η * (π) = x + y * η := by
   ext
-  simp [div_zeta_sub_one, div_mul_cancel _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
+  simp [div_zeta_sub_one, div_mul_cancel₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
 
 lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
     Associated y (div_zeta_sub_one hp hζ e η₁ - div_zeta_sub_one hp hζ e η₂) := by
@@ -231,8 +231,8 @@ lemma prod_c : ∏ η in Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (�
     exists_ideal_pow_eq_c_aux]
 
 lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ (p : ℕ) := by
-  letI inst1 : @IsDomain (Ideal (𝓞 K)) CommSemiring.toSemiring := @Ideal.isDomain (𝓞 K) _ _ _
-  letI inst2 := @Ideal.instNormalizedGCDMonoidIdealToSemiringToCommSemiringCancelCommMonoidWithZero (𝓞 K) _ _ _
+  letI inst1 : @IsDomain (Ideal (𝓞 K)) CommSemiring.toSemiring := @Ideal.isDomain (𝓞 K) _ _
+  letI inst2 := @Ideal.instNormalizedGCDMonoidIdealToSemiringToCommSemiringCancelCommMonoidWithZero (𝓞 K) _ _
   letI inst3 := @NormalizedGCDMonoid.toGCDMonoid _ _ inst2
   exact @Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (nthRootsFinset p (𝓞 K)) (Ideal (𝓞 K)) _
     (by convert inst1) (by convert inst3) _ _ _ _ _
@@ -547,5 +547,5 @@ lemma exists_solution' :
     exact ⟨b ^ (p : ℕ), this⟩
   refine ⟨ε' * x', y', z', ε₃ / ε₂, hy', hz', ?_⟩
   rwa [mul_pow, ← Units.val_pow_eq_pow_val, ← hε', ← mul_right_inj' ε₂.isUnit.ne_zero,
-    mul_add, ← mul_assoc, ← Units.val_mul, mul_div_cancel'_right,
-    ← mul_assoc, ← Units.val_mul, mul_div_cancel'_right]
+    mul_add, ← mul_assoc, ← Units.val_mul, mul_div_cancel,
+    ← mul_assoc, ← Units.val_mul, mul_div_cancel]

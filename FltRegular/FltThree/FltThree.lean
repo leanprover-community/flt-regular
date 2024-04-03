@@ -474,8 +474,7 @@ theorem gcd3_coprime {u v : ℤ} (huvcoprime : IsCoprime u v) (huvodd : Even u �
   by
   have haddodd : ¬Even (u + v) := by simp [huvodd, parity_simps]
   have hsubodd : ¬Even (u - v) := by simp [huvodd, parity_simps]
-  have haddcoprime : IsCoprime (u + v) (2 * v) :=
-    by
+  have haddcoprime : IsCoprime (u + v) (2 * v) := by
     apply isCoprime_of_prime_dvd
     · rintro ⟨h1, -⟩
       rw [h1] at haddodd
@@ -486,10 +485,8 @@ theorem gcd3_coprime {u v : ℤ} (huvcoprime : IsCoprime u v) (huvodd : Even u �
       rw [even_iff_two_dvd] at haddodd
       exact Int.dvd_mul_cancel_prime' haddodd hkdvdleft Int.prime_two hkdvdright
     apply huvcoprime.isUnit_of_dvd' _ hkdvdright'
-    rw [← add_sub_cancel u v]
-    apply dvd_sub hkdvdleft hkdvdright'
-  have hsubcoprime : IsCoprime (u - v) (2 * v) :=
-    by
+    simpa using dvd_sub hkdvdleft hkdvdright'
+  have hsubcoprime : IsCoprime (u - v) (2 * v) := by
     apply isCoprime_of_prime_dvd
     · rintro ⟨h1, -⟩
       rw [h1] at hsubodd
@@ -502,8 +499,7 @@ theorem gcd3_coprime {u v : ℤ} (huvcoprime : IsCoprime u v) (huvodd : Even u �
     apply huvcoprime.isUnit_of_dvd' _ hkdvdright'
     rw [← sub_add_cancel u v]
     exact dvd_add hkdvdleft hkdvdright'
-  have haddsubcoprime : IsCoprime (u + v) (u - v) :=
-    by
+  have haddsubcoprime : IsCoprime (u + v) (u - v) := by
     apply isCoprime_of_prime_dvd
     · rintro ⟨h1, -⟩
       rw [h1] at haddodd

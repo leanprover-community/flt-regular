@@ -486,7 +486,7 @@ lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zet
   ext
   simp only [Units.val_mul, Units.coe_map, MonoidHom.coe_coe, Submonoid.coe_mul,
     Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, coe_galRestrictHom_apply, hu]
-  refine div_mul_cancel _ ?_
+  refine div_mul_cancel₀ _ ?_
   simp only [ne_eq, map_eq_zero, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
 open multiplicity in
@@ -529,8 +529,8 @@ lemma exists_pow_smul_eq_and_not_dvd
   use n, f', funext hf', i
   intro hi
   have : (p : ℤ) ^ (n + 1) ∣ f i
-  · rw [hf', pow_succ', Nat.cast_pow]
-    exact mul_dvd_mul_left _ hi
+  · rw [hf', pow_succ, Nat.cast_pow]
+    exact _root_.mul_dvd_mul_left _ hi
   simp [hfi, padicValInt_dvd_iff' hp] at this
 
 lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M)
@@ -545,7 +545,7 @@ lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M
     (Function.ne_iff.mpr hf') p hp.ne_one
   simp_rw [hf', Pi.smul_apply, smul_assoc, ← smul_sum] at hf
   obtain ⟨a, ha⟩ := hk _ _ hf
-  rw [← zpow_coe_nat] at ha
+  rw [← zpow_natCast] at ha
   exact ⟨a, f', i, ha.symm, hi⟩
 
 lemma Fin.castSucc_ne_last {r : ℕ} (x : Fin r) : Fin.castSucc x ≠ Fin.last r := by
@@ -759,7 +759,7 @@ lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (�
   apply_fun ((↑) : (𝓞 k)ˣ → k) at ha
   simp only [toMul_sum, toMul_zsmul, Units.coe_prod, Submonoid.coe_finset_prod, hη,
     Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, Units.coe_zpow, toMul_ofMul] at ha
-  rwa [← zpow_coe_nat, ← zpow_mul, mul_comm _ a, mul_inv_eq_one₀]
+  rwa [← zpow_natCast, ← zpow_mul, mul_comm _ a, mul_inv_eq_one₀]
   rw [← Units.coe_zpow]
   simp only [ne_eq, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
 
@@ -774,7 +774,7 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
       rw [hE]
       simp
     | succ n ih =>
-      rw [pow_succ, AlgEquiv.mul_apply, ih, pow_succ]
+      rw [pow_succ', AlgEquiv.mul_apply, ih, pow_succ']
       simp only [inv_pow, map_mul, map_inv₀, map_pow, AlgEquiv.commutes]
       have h0 : (algebraMap k K) ζ ≠ 0 := fun h ↦ by simp [(map_eq_zero _).1 h] at hζ
       field_simp [h0]
@@ -852,7 +852,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
       RingOfInteger.coe_algebraMap_apply, RingOfIntegers.norm_apply_coe, Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, Units.val_neg]
     rw [← map_pow] at hE
     refine Hilbert92ish_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
-    rw [← pow_mul, ← pow_succ']
+    rw [← pow_mul, ← pow_succ]
     apply (hζ.pow_eq_one_iff_dvd _).2
     cases h <;> simp only [Nat.zero_eq, pow_zero, zero_le, tsub_eq_zero_of_le,
       zero_add, pow_one, one_dvd, Nat.succ_sub_succ_eq_sub,
@@ -897,7 +897,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
         conv_rhs at ha => rw [smul_comm β, ← smul_add]
         rw [smul_smul, smul_smul, ← add_smul, mul_comm _ α, hαβ, one_smul] at ha
         exact ⟨_, ha.symm⟩
-      have hζ'' := (hζ.pow (p ^ h.succ).pos (pow_succ' _ _)).map_of_injective
+      have hζ'' := (hζ.pow (p ^ h.succ).pos (pow_succ _ _)).map_of_injective
         (algebraMap k K).injective
       obtain ⟨ε'', hε''⟩ : ∃ ε'' : (𝓞 k)ˣ, E = Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ε''
       · rw [← hε', map_pow, eq_comm, ← mul_inv_eq_one, ← inv_pow, ← mul_pow] at NE_p_pow

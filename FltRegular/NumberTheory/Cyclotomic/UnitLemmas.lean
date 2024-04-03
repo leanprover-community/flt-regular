@@ -239,7 +239,6 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
   have H : ∃ (m : ℕ) (k : ℕ+), (⟨x, hx⟩ : R) = (-1) ^ (k : ℕ) * (hζ.unit' : K) ^ (m : ℕ) := by
     obtain ⟨l, hl, hhl⟩ := (_root_.isRoot_of_unity_iff hn0 _).1 hxu
     have hlp := roots_of_unity_in_cyclo_aux hl hx hhl hζ
-    simp only [IsRoot.def] at hhl
     have isPrimRoot : IsPrimitiveRoot (hζ.unit' : R) p := hζ.unit'_coe
     have hxl : (⟨x, hx⟩ : R) ^ l = 1 :=  by
       apply isRoot_of_unity_of_root_cyclotomic _ hhl

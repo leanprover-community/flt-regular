@@ -35,7 +35,7 @@ lemma WfDvdMonoid.multiplicity_finite {M : Type*} [CancelCommMonoidWithZero M] [
     rw [hf (n + 1), e, mul_zero]
   · refine ⟨x, hx, ?_⟩
     rw [mul_comm, ← (mul_right_injective₀ (a := x ^ (n + 1)) _).eq_iff]
-    · simp only [← mul_assoc, ← pow_succ', ← hf]
+    · simp only [← mul_assoc, ← pow_succ, ← hf]
     · intro e
       apply hy
       rw [hf n, e, zero_mul]
@@ -187,7 +187,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
           rwa [e, ← dvd_gcd_mul_iff_dvd_mul, this, one_mul] at h
         obtain ⟨a', rfl⟩ := ha'
         obtain ⟨b', rfl⟩ := hb'
-        rw [pow_succ, mul_dvd_mul_iff_left hx.ne_zero] at ha hb
+        rw [pow_succ', mul_dvd_mul_iff_left hx.ne_zero] at ha hb
         rw [_root_.map_mul, _root_.map_mul, mul_div_mul_left] at e₀
         · exact IH ⟨a', b', ha, hb, e₀⟩
         · rw [Ne.def, ← (algebraMap R K).map_zero, (IsFractionRing.injective R K).eq_iff]
