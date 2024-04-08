@@ -203,9 +203,9 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
   obtain ⟨s, hs⟩ := zeta_sub_one_dvd_trace_sub_smul hζ x
   obtain ⟨t, ht⟩ := (associated_zeta_sub_one_pow_prime hζ).dvd
   rw [sub_eq_iff_eq_add] at hs
-  simp only [zsmul_eq_mul, Int.cast_ofNat] at hr
+  simp only [zsmul_eq_mul, Int.cast_natCast] at hr
   simp only [nsmul_eq_mul, hr, Int.cast_add, Int.cast_one, Int.cast_mul, hs, ge_iff_le, PNat.pos,
-    Nat.cast_pred, Int.cast_ofNat, Int.cast_pow, Nat.cast_mul, ne_eq, PNat.ne_zero,
+    Nat.cast_pred, Int.cast_pow, Nat.cast_mul, ne_eq, PNat.ne_zero, Int.cast_natCast,
     not_false_eq_true, isUnit_pow_iff]
   suffices (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (hζ.unit' - 1) * p * s + (p : 𝓞 K) ^ 2 * (r + x) by
     convert this using 1; ring
@@ -231,9 +231,9 @@ lemma norm_add_one_smul_of_isUnit {K} [Field K] [NumberField K] {p : ℕ} (hpri 
     intro e; apply hp
     obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
     have : (p : ℤ) * (- Algebra.trace ℤ _ x - r * p) = 2 := by
-      rw [zsmul_eq_mul, Int.cast_ofNat, ← nsmul_eq_mul, e, eq_comm, ← sub_eq_zero] at hr
+      rw [zsmul_eq_mul, Int.cast_natCast, ← nsmul_eq_mul, e, eq_comm, ← sub_eq_zero] at hr
       rw [eq_comm, ← sub_eq_zero, ← hr]
       ring
     exact (Nat.prime_two.eq_one_or_self_of_dvd _
-      (Int.coe_nat_dvd.mp ⟨_, this.symm⟩)).resolve_left hpri.ne_one
+      (Int.natCast_dvd_natCast.mp ⟨_, this.symm⟩)).resolve_left hpri.ne_one
   exact H.resolve_right this

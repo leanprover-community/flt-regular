@@ -6,8 +6,7 @@ import Mathlib
 
 set_option autoImplicit false
 open scoped NumberField nonZeroDivisors
-open FiniteDimensional
-open NumberField
+open FiniteDimensional NumberField
 
 variable (p : ℕ+) {K : Type*} [Field K] [NumberField K]
 variable {k : Type*} [Field k] [NumberField k] (hp : Nat.Prime p)
@@ -251,8 +250,6 @@ lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
     (galRestrictHom (𝓞 k) k K (𝓞 K) σ x : K) = σ x :=
   algebraMap_galRestrictHom_apply (𝓞 k) k K (𝓞 K) σ x
 
-set_option synthInstance.maxHeartbeats 160000 in
-set_option maxHeartbeats 400000 in
 noncomputable
 def relativeUnitsMap (σ : K →ₐ[k] K) : RelativeUnits k K →* RelativeUnits k K := by
   apply QuotientGroup.lift _
@@ -467,11 +464,6 @@ lemma norm_map_inv (z : K) : Algebra.norm k z⁻¹ = (Algebra.norm k z)⁻¹ := 
     apply eq_inv_of_mul_eq_one_left
     rw [← map_mul, inv_mul_cancel h, map_one]
 
--- lemma torsion_free_lin_system [Algebra k K] (h : Monoid.IsTorsionFree (𝓞 K)ˣ)
---   (ι : Fin (NumberField.Units.rank k + 1) → Additive (𝓞 k)ˣ) :
---   ∃ (a : (Fin (NumberField.Units.rank k + 1) → ℤ)) (i : Fin (NumberField.Units.rank k + 1)),
---   ¬ ((p : ℤ) ∣ a i) ∧ ∑ i in ⊤, (a i) • (ι i) = 0 := by sorry
-
 lemma unitlifts_spec (S : systemOfUnits p G (NumberField.Units.rank k + 1)) (i) :
     mkG (Additive.toMul <| unitlifts p hp hKL σ hσ S i) = S.units i := by
   delta unit_to_U unitlifts
@@ -502,7 +494,7 @@ theorem padicValNat_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℕ) :
 
 theorem padicValInt_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℤ) :
     (p : ℤ) ^ n ∣ a ↔ a = 0 ∨ n ≤ padicValInt p a := by
-  rw [padicValInt, ← Int.natAbs_eq_zero, ← padicValNat_dvd_iff' hp, ← Int.coe_nat_dvd_left,
+  rw [padicValInt, ← Int.natAbs_eq_zero, ← padicValNat_dvd_iff' hp, ← Int.natCast_dvd,
     Int.coe_nat_pow]
 
 theorem padicValInt_dvd' {p : ℕ} (a : ℤ) : (p : ℤ) ^ padicValInt p a ∣ a := by
@@ -591,13 +583,13 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M)
   refine ⟨α₂ - α₁, β₁ • Function.extend Fin.castSucc ι₁ 0 - β₂ • Function.extend
       (Fin.succAbove i₁.castSucc) ι₂ 0, i₁.castSucc, ?_, ?_, fun H ↦ (hζ' H).elim⟩
   · rw [sub_mul, eq_sub_iff_add_eq.mpr h₁, eq_sub_iff_add_eq.mpr h₂]
-    simp only [zsmul_eq_mul, Pi.coe_int, Int.cast_id, Pi.sub_apply, Pi.mul_apply,
+    simp only [zsmul_eq_mul, Pi.intCast_def, Int.cast_id, Pi.sub_apply, Pi.mul_apply,
       Fin.succAbove_of_le_castSucc, ne_eq, not_not, not_exists, sub_sub_sub_cancel_left]
     simp only [sub_smul, mul_smul, ← e₁, ← e₂, sum_sub_distrib]
     rw [Fin.sum_univ_castSucc, Fin.sum_univ_succAbove _ i₁.castSucc]
     simp [(Fin.castSucc_injective r).extend_apply, Fin.succAbove_right_injective.extend_apply,
       (Fin.castSucc_lt_last _).ne, smul_sum]
-  · simp only [zsmul_eq_mul, Pi.coe_int, Int.cast_id, Pi.sub_apply, Pi.mul_apply,
+  · simp only [zsmul_eq_mul, Pi.intCast_def, Int.cast_id, Pi.sub_apply, Pi.mul_apply,
       exists_apply_eq_apply, not_true_eq_false, (Fin.castSucc_injective r).extend_apply,
       Fin.exists_succAbove_eq_iff, ne_eq, not_false_eq_true, Function.extend_apply', Pi.zero_apply,
       mul_zero, sub_zero, (Nat.prime_iff_prime_int.mp hp).dvd_mul, hi₁, not_or, and_true]
@@ -622,22 +614,6 @@ lemma lh_pow_free [Algebra k K] [IsGalois k K] [FiniteDimensional k K] (ζ : (�
       and_false, tsub_zero, Fin.ext_iff, Fin.val_last]
   · rw [NumberField.Units.finrank_eq]
     exact Nat.lt.base _
-
--- lemma IsPrimitiveRoot.totient_le_finrank {R} [CommRing R] [IsDomain R] [CharZero R]
---     [Module.Finite ℤ R] {ζ : R} {r}
---     (hζ : IsPrimitiveRoot ζ r) : r.totient ≤ finrank ℤ R := by
---   by_cases hr : r = 0
---   · rw [hr]; exact Nat.zero_le _
---   replace hr := Nat.pos_iff_ne_zero.mpr hr
---   calc
---     _ ≤ (minpoly ℤ ζ).natDegree :=
---       hζ.totient_le_degree_minpoly
---     _ = (Algebra.adjoin.powerBasis' (hζ.isIntegral hr)).dim :=
---       (Algebra.adjoin.powerBasis'_dim (hζ.isIntegral hr)).symm
---     _ = finrank ℤ ↥(Algebra.adjoin ℤ {ζ}) :=
---       (Algebra.adjoin.powerBasis' (hζ.isIntegral hr)).finrank'.symm
---     _ ≤ finrank ℤ R :=
---       Submodule.finrank_le (Subalgebra.toSubmodule (Algebra.adjoin ℤ {ζ}))
 
 lemma Subgroup.isCyclic_of_le {M : Type*} [Group M] {H₁ H₂ : Subgroup M} [IsCyclic H₂]
     (e : H₁ ≤ H₂) : IsCyclic H₁ :=
@@ -674,27 +650,6 @@ lemma norm_map_zpow {R S} [Field R] [DivisionRing S] [Nontrivial S] [Algebra R S
     [Module.Free R S] [Module.Finite R S] (s : S) (n : ℤ) :
     Algebra.norm R (s ^ n) = (Algebra.norm R s) ^ n := map_zpow₀ (Algebra.normZeroHom R S) s n
 
--- lemma h_exists : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
---     IsPrimitiveRoot (ζ : k) (p ^ h) ∧ ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ (h + 1)) := by
---   classical
---   have H : ∃ n, ∀ ε : k, ¬ IsPrimitiveRoot ε (p ^ n : ℕ+)
---   · use finrank ℤ (𝓞 k) + 1
---     intro ζ hζ
---     have := hζ.unit'_coe.totient_le_finrank
---     generalize finrank ℤ (𝓞 k) = n at this
---     rw [PNat.pow_coe, Nat.totient_prime_pow_succ hp] at this
---     have := (Nat.mul_le_mul_left _ (show (1 : ℕ) ≤ ↑p - 1 from
---       le_tsub_of_add_le_right hp.two_le)).trans_lt (this.trans_lt n.lt_two_pow)
---     simp only [mul_one] at this
---     exact (lt_of_pow_lt_pow _ (Nat.zero_le _) this).not_le hp.two_le
---   cases h : Nat.find H with
---   | zero => simp at h
---   | succ n =>
---     have := Nat.find_min H ((Nat.lt_succ.mpr le_rfl).trans_le h.ge)
---     simp only [not_forall, not_not] at this
---     obtain ⟨ζ, hζ⟩ := this
---     refine ⟨n, hζ.unit', hζ, by simpa only [h] using Nat.find_spec H⟩
-
 local notation "r" => NumberField.Units.rank k
 
 lemma Units.coe_val_inv {M S} [DivisionMonoid M]
@@ -718,9 +673,6 @@ lemma norm_eq_prod_pow_gen
   rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i η) (Subgroup.zpowers σ)]
   congr; ext; simp [hσ]
 
-attribute [-instance] instCoeOut
-
-set_option synthInstance.maxHeartbeats 160000 in
 lemma Hilbert92ish_aux0 (h : ℕ) (ζ : (𝓞 k)ˣ) (hζ : IsPrimitiveRoot (ζ : k) (p ^ h))
   (H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ζ ^ ((p : ℕ) ^ (h - 1)) ≠ ε / (σ ε : K)) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
@@ -742,7 +694,6 @@ lemma Hilbert92ish_aux0 (h : ℕ) (ζ : (𝓞 k)ˣ) (hζ : IsPrimitiveRoot (ζ :
       SubmonoidClass.coe_pow]
     rfl
 
-set_option synthInstance.maxHeartbeats 160000 in
 lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (𝓞 k)ˣ)
     (a : ℤ) (ι : Fin n → ℤ) (η : Fin n → Additive (𝓞 k)ˣ)
     (ha : ∑ i : Fin n, ι i • η i = (a * ↑↑p) • Additive.ofMul ζ)

@@ -1,6 +1,6 @@
 import Mathlib.NumberTheory.RamificationInertia
 import Mathlib.RingTheory.Trace
-import Mathlib.Data.Polynomial.Taylor
+import Mathlib.Algebra.Polynomial.Taylor
 import Mathlib.RingTheory.Valuation.ValuationRing
 
 /-!

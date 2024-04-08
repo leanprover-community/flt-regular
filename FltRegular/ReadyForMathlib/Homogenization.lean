@@ -5,7 +5,6 @@ Authors: Alex J. Best
 
 ! This file was ported from Lean 3 source module ready_for_mathlib.homogenization
 -/
-import Mathlib.Data.MvPolynomial.CommRing
 import Mathlib.Data.Set.Finite
 import Mathlib.RingTheory.MvPolynomial.Homogeneous
 import Mathlib.RingTheory.Polynomial.Basic

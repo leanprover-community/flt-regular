@@ -95,8 +95,8 @@ theorem Spts.mul_of_dvd' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime 
       rw [Zsqrtd.norm_def, HAsq]
       ring
     rw [mul_comm _ U, ← mul_assoc, ← HU, HX]
-    simp only [Zsqrtd.ext_iff, neg_mul, add_zero, Zsqrtd.coe_int_re, MulZeroClass.zero_mul, mul_neg,
-      Zsqrtd.mul_im, Zsqrtd.mul_re, neg_neg, MulZeroClass.mul_zero, neg_zero, Zsqrtd.coe_int_im,
+    simp only [Zsqrtd.ext_iff, neg_mul, add_zero, Zsqrtd.intCast_re, MulZeroClass.zero_mul, mul_neg,
+      Zsqrtd.mul_im, Zsqrtd.mul_re, neg_neg, MulZeroClass.mul_zero, neg_zero, Zsqrtd.intCast_im,
       this]
     constructor <;> ring
 
@@ -144,7 +144,7 @@ theorem factors' (a : ℤ√(-3)) (f : ℤ) (g : ℤ) (hodd : Odd f) (hgpos : g 
     · apply_fun abs  at hfactor
       rw [abs_mul, h, mul_one, abs_of_nonneg (Zsqrtd.norm_nonneg (by norm_num) a)] at hfactor
       exact ⟨_, hfactor⟩
-    · rw [Int.abs_eq_natAbs, ← Int.ofNat_one, Int.coe_nat_inj'] at h
+    · rw [Int.abs_eq_natAbs, ← Int.ofNat_one, Int.natCast_inj] at h
       obtain ⟨p, pprime, pdvd⟩ := Int.exists_prime_and_dvd h
       have : p ∣ a.norm := by
         rw [← hfactor]
@@ -190,9 +190,9 @@ theorem Zqrtd.factor_div (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) :
   set c' : ℤ√(-3) := ⟨c, d⟩
   refine' ⟨c', ⟨m, n⟩, _, _⟩
   ·
-    simp only [Zsqrtd.ext_iff, ha, hb, add_zero, Zsqrtd.coe_int_re, eq_self_iff_true, Zsqrtd.mul_im,
+    simp only [Zsqrtd.ext_iff, ha, hb, add_zero, Zsqrtd.intCast_re, eq_self_iff_true, Zsqrtd.mul_im,
       zero_add, Zsqrtd.add_im, and_self_iff, Zsqrtd.mul_re, MulZeroClass.mul_zero, Zsqrtd.add_re,
-      Zsqrtd.coe_int_im]
+      Zsqrtd.intCast_im]
   · rw [← mul_lt_mul_left (by norm_num : (0 : ℤ) < 4)]
     calc
       4 * c'.norm = (2 * c) ^ 2 + 3 * (2 * d) ^ 2 :=
@@ -227,8 +227,8 @@ theorem Zqrtd.factor_div' (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) (h : 1 < |x|
       set e : ℤ := m.re ^ 2 * x + 2 * m.re * c.re + 3 * m.im ^ 2 * x + 6 * m.im * c.im with he
       convert dvd_sub hfactor (dvd_mul_right x e)
       rw [he, Zsqrtd.norm_def, Zsqrtd.norm_def]
-      simp only [Zsqrtd.coe_int_re, Zsqrtd.mul_im, Zsqrtd.add_im, Zsqrtd.mul_re, Zsqrtd.add_re,
-        Zsqrtd.coe_int_im]
+      simp only [Zsqrtd.intCast_re, Zsqrtd.mul_im, Zsqrtd.add_im, Zsqrtd.mul_re, Zsqrtd.add_re,
+        Zsqrtd.intCast_im]
       ring
     refine' ⟨y, hy, _⟩
     have h0'' : 0 < x.natAbs := by
@@ -236,7 +236,7 @@ theorem Zqrtd.factor_div' (a : ℤ√(-3)) {x : ℤ} (hodd : Odd x) (h : 1 < |x|
       exact zero_lt_one.trans h
     rw [← mul_lt_mul_left h0'', ← pow_two, ← Int.natAbs_mul, ← hy]
     zify
-    rwa [← Int.coe_natAbs x, Int.natAbs_pow_two x, ← Int.coe_natAbs,
+    rwa [← Int.natCast_natAbs x, Int.natAbs_pow_two x, ← Int.natCast_natAbs,
       Int.natAbs_of_nonneg (Zsqrtd.norm_nonneg (by norm_num) c)]
 
 -- Edwards p50 step (5')
@@ -285,11 +285,9 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
             ((Zsqrtd.coe_int_dvd_coe_int _ _).mpr (hpprime.dvd_of_dvd_pow hpdvdleft)) _)
           (dvd_mul_of_dvd_right ((Zsqrtd.coe_int_dvd_coe_int _ _).mpr hpdvdright) _)
     have := Zsqrtd.coprime_of_dvd_coprime hcoprime this
-    simp only [Zsqrtd.coe_int_re, isCoprime_zero_right, Zsqrtd.coe_int_im, hpprime.not_unit] at this
-  have h6 : x * z = C'.norm :=
-    by
-    have hgnezero := Int.coe_nat_ne_zero_iff_pos.mpr hgpos
-    apply Int.eq_of_mul_eq_mul_left (pow_ne_zero 2 hgnezero)
+    simp only [Zsqrtd.intCast_re, isCoprime_zero_right, Zsqrtd.intCast_im, hpprime.not_unit] at this
+  have h6 : x * z = C'.norm := by
+    apply Int.eq_of_mul_eq_mul_left (pow_ne_zero 2 <| Int.natCast_ne_zero_iff_pos.mpr hgpos)
     rw [← h5, hz, mul_left_comm]
   have h8 : z ≠ 0 := by
     apply right_ne_zero_of_mul

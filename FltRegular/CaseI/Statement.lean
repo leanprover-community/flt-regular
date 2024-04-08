@@ -92,33 +92,6 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   rw [hgcd] at Hq
   exact hqpri.not_unit (isUnit_of_dvd_one Hq)
 
-variable (p)
-
-/-
-These instances are related to the problem described in
-https://leanprover.zulipchat.com/#narrow/stream/270676-lean4/topic/slowness.20in.20ring.20theory.20file
--/
-
-instance foo2 : IsDedekindDomain (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)) :=
-inferInstance
-
-instance foo3 : @IsDomain (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) CommSemiring.toSemiring := by
-  convert @Ideal.isDomain (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)) _ (foo2 p)
-
-noncomputable
-instance foo4 : @NormalizedGCDMonoid (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)))
-  (@IsDomain.toCancelCommMonoidWithZero _ (@IdemCommSemiring.toCommSemiring _
-    Submodule.instIdemCommSemiringSubmoduleToSemiringToAddCommMonoidToNonUnitalNonAssocSemiringToNonAssocSemiringToSemiringToModule) (foo3 p)) := by
-  convert @Ideal.instNormalizedGCDMonoidIdealToSemiringToCommSemiringCancelCommMonoidWithZero _ _ (foo2 p)
-
-noncomputable
-instance foo5 : @GCDMonoid (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)))
-  (@IsDomain.toCancelCommMonoidWithZero _ (@IdemCommSemiring.toCommSemiring _
-    Submodule.instIdemCommSemiringSubmoduleToSemiringToAddCommMonoidToNonUnitalNonAssocSemiringToNonAssocSemiringToSemiringToModule) (foo3 p)) := by
-  convert @NormalizedGCDMonoid.toGCDMonoid (Ideal (𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ))) _ (foo4 p)
-
-variable {p}
-
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1)
     (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p R) :
@@ -192,7 +165,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     rw [natAbs_ofNat]
     exact emod_lt_of_pos _ (by simp [hpri.out.pos])
   · simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_eq_int_cast_iff,
-      ZMod.int_cast_mod, Int.cast_sub, Int.cast_mul, int_cast_ofNat, Int.cast_one]
+      ZMod.int_cast_mod, Int.cast_sub, Int.cast_mul, Int.cast_natCast, Int.cast_one]
   simp only [add_sub_assoc, sub_sub] at hk ⊢
   convert hk using 3
   rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R), mul_assoc (↑b : R)]
@@ -203,7 +176,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     refine' eq_of_div_eq_one _
     rw [← zpow_natCast, ← zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd,
-      Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, int_cast_ofNat, sub_self]
+      Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, Int.cast_natCast, sub_self]
   · rw [← Subtype.coe_inj]
     simp only [Fin.val_mk, SubsemiringClass.coe_pow, MulMemClass.coe_mul,
       NumberField.Units.coe_zpow, IsPrimitiveRoot.coe_unit'_coe, IsPrimitiveRoot.coe_inv_unit'_coe]
@@ -211,7 +184,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     rw [← zpow_natCast, ← zpow_sub_one₀ (hζ'.ne_zero hpri.out.ne_zero), ←
       zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd,
-      Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, int_cast_ofNat, Int.cast_one, sub_self]
+      Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, Int.cast_natCast, Int.cast_one, sub_self]
 
 /-- Auxiliary function -/
 def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>

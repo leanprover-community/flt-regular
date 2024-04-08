@@ -28,7 +28,7 @@ theorem OddPrimeOrFour.im_ne_zero {p : ℤ√(-3)} (h : OddPrimeOrFour p.norm.na
 
 theorem Zsqrt3.isUnit_iff {z : ℤ√(-3)} : IsUnit z ↔ abs z.re = 1 ∧ z.im = 0 :=
   by
-  rw [← Zsqrtd.norm_eq_one_iff, ← Int.coe_nat_inj', Int.ofNat_one,
+  rw [← Zsqrtd.norm_eq_one_iff, ← Int.natCast_inj, Int.ofNat_one,
     Int.natAbs_of_nonneg (Zsqrtd.norm_nonneg (by norm_num) z)]
   refine' ⟨Spts.eq_one, fun h => _⟩
   rw [Zsqrtd.norm_def, h.2, MulZeroClass.mul_zero, sub_zero, ← sq, ← sq_abs, h.1, one_pow]
@@ -39,7 +39,7 @@ theorem Zsqrt3.coe_of_isUnit {z : ℤ√(-3)} (h : IsUnit z) : ∃ u : Units ℤ
   obtain ⟨v, hv⟩ : IsUnit z.re := by rwa [Int.isUnit_iff_abs_eq]
   use v
   rw [Zsqrtd.ext_iff, hu, ← hv]
-  simp only [Zsqrtd.coe_int_re, and_true_iff, eq_self_iff_true, Zsqrtd.coe_int_im]
+  simp only [Zsqrtd.intCast_re, and_true_iff, eq_self_iff_true, Zsqrtd.intCast_im]
 
 theorem Zsqrt3.coe_of_isUnit' {z : ℤ√(-3)} (h : IsUnit z) : ∃ u : ℤ, z = u ∧ abs u = 1 :=
   by
@@ -337,8 +337,8 @@ theorem no_conj (s : Multiset (ℤ√(-3))) {p : ℤ√(-3)} (hp : ¬IsUnit p)
     rw [Multiset.prod_cons, Multiset.prod_cons, ← mul_assoc, ← Zsqrtd.norm_eq_mul_conj] at hcoprime
     rw [Zsqrtd.isUnit_iff_norm_isUnit]
     apply IsCoprime.isUnit_of_dvd' hcoprime <;>
-      simp only [add_zero, Zsqrtd.coe_int_re, MulZeroClass.zero_mul, dvd_mul_right, Zsqrtd.mul_re,
-        MulZeroClass.mul_zero, Zsqrtd.mul_im, Zsqrtd.coe_int_im]
+      simp only [add_zero, Zsqrtd.intCast_re, MulZeroClass.zero_mul, dvd_mul_right, Zsqrtd.mul_re,
+        MulZeroClass.mul_zero, Zsqrtd.mul_im, Zsqrtd.intCast_im]
 
 /-- Associated elements in `ℤ√-3`. -/
 def Associated' (x y : ℤ√(-3)) : Prop :=
@@ -438,7 +438,7 @@ theorem eq_or_eq_conj_of_associated_of_re_zero {x A : ℤ√(-3)} (hx : x.re = 0
   obtain ⟨v, hv1, hv2⟩ := Zsqrt3.coe_of_isUnit' u.isUnit
   have hA : A.re = 0 := by
     simp only [← hu, hv1, hx, add_zero, MulZeroClass.zero_mul, Zsqrtd.mul_re, MulZeroClass.mul_zero,
-      Zsqrtd.coe_int_im]
+      Zsqrtd.intCast_im]
   rw [abs_eq <| zero_le_one' ℤ] at hv2
   cases' hv2 with hv2 hv2
   · left

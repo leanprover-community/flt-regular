@@ -3,7 +3,6 @@ import Mathlib.NumberTheory.Cyclotomic.Rat
 import Mathlib.FieldTheory.KummerExtension
 import FltRegular.NumberTheory.Unramified
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
-import Mathlib.Data.Polynomial.Taylor
 
 open scoped NumberField BigOperators
 
@@ -142,7 +141,7 @@ theorem roots_poly {L : Type*} [Field L] [Algebra K L] (α : L)
       simp only [Finset.image_val, Finset.range_val, Multiset.mem_dedup, Multiset.mem_map,
         Multiset.mem_range] at hx
       obtain ⟨m, _, rfl⟩ := hx
-      rw [mem_roots, IsRoot.definition, eval_map, ← aeval_def, aeval_poly hp hζ u hcong α e]
+      rw [mem_roots, IsRoot.def, eval_map, ← aeval_def, aeval_poly hp hζ u hcong α e]
       exact ((monic_poly hp hζ u hcong).map (algebraMap (𝓞 K) L)).ne_zero
     · intros i hi j hj e
       apply (hζ.map_of_injective (algebraMap K L).injective).injOn_pow_mul hα hi hj

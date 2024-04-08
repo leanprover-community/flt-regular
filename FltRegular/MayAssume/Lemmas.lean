@@ -61,7 +61,7 @@ theorem p_dvd_c_of_ab_of_anegc {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp : p 
     mul_eq_zero] at h
   rw [← ZMod.int_cast_zmod_eq_zero_iff_dvd]
   refine' Or.resolve_right h fun h3 => _
-  rw [show ↑(3 : ℤ) = ((3 : ℕ) : ZMod p) by simp, ZMod.nat_cast_zmod_eq_zero_iff_dvd,
+  rw [show (3 : ZMod p) = ((3 : ℕ) : ZMod p) by simp, ZMod.nat_cast_zmod_eq_zero_iff_dvd,
     Nat.dvd_prime Nat.prime_three] at h3
   cases' h3 with H₁ H₂
   · exact hpri.ne_one H₁

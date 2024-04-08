@@ -60,7 +60,7 @@ theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
   symm
   intro habs
   rw [show (k₁ : ℤ) = 0 by simpa using habs, zero_sub] at hcong
-  rw [habs, _root_.pow_zero, mul_one, add_sub_cancel', aux_cong0k₁ hpri hcong] at hdiv
+  rw [habs, _root_.pow_zero, mul_one, add_sub_cancel_left, aux_cong0k₁ hpri hcong] at hdiv
   nth_rw 1 [show ζ = ζ ^ ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) by simp] at hdiv
   have key : ↑(p : ℤ) ∣ ∑ j in range p, f0k₁ b p j • ζ ^ j := by
     convert hdiv using 1
@@ -192,7 +192,6 @@ theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
   rw [habs, pow_one, aux_cong1k₂ hpri hp5 hcong] at hdiv
   ring_nf at hdiv
   have key : ↑(p : ℤ) ∣ ∑ j in range p, f1k₂ a j • ζ ^ j := by
-    rw [Int.cast_ofNat]
     suffices ∑ j in range p, f1k₂ a j • ζ ^ j = ↑a - ↑a * ζ ^ 2 by
       rwa [this]
     simp_rw [f1k₂, ite_smul, sum_ite, filter_filter, ← Ne.def, ne_and_eq_iff_right

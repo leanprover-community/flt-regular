@@ -30,7 +30,7 @@ theorem exists_coprime {n : ℕ} (hn : 0 < n) {a b c : ℤ} (ha' : a ≠ 0) (hb'
     rw [← Int.pow_dvd_pow_iff hn, ← h, HA, HB, mul_pow, mul_pow, ← mul_add]
     exact dvd_mul_right _ _
   have hdpos : 0 < d := Int.gcd_pos_of_ne_zero_left _ ha'
-  have hd := Int.coe_nat_ne_zero_iff_pos.mpr hdpos
+  have hd := Int.natCast_ne_zero_iff_pos.mpr hdpos
   have hsoln : A ^ n + B ^ n = C ^ n :=
     by
     apply Int.eq_of_mul_eq_mul_left (pow_ne_zero n hd)
@@ -227,7 +227,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
       have H := dvd_mul_right 2 p
       rw [hP] at H
       apply (Prime.dvd_or_dvd Int.prime_two H).resolve_left
-      rw [Int.coe_nat_dvd_right]
+      rw [Int.dvd_natCast]
       change ¬2 ∣ d
       rw [Nat.prime_dvd_prime_iff_eq Nat.prime_two hdprime]
       exact hne2.symm
@@ -237,14 +237,14 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
       exact dvd_mul_right _ _
     · have h000 : d ∣ 3 * q.natAbs ^ 2 :=
         by
-        rw [← Int.coe_nat_dvd, Int.ofNat_mul, Int.coe_nat_pow, Int.natAbs_sq, Nat.cast_three]
+        rw [← Int.natCast_dvd_natCast, Int.ofNat_mul, Int.coe_nat_pow, Int.natAbs_sq, Nat.cast_three]
         use Q - d * H ^ 2
         rw [mul_sub, ← hQ, hp]
         ring
       cases' (Nat.Prime.dvd_mul hdprime).mp h000 with h000 h000
       · rw [Nat.prime_dvd_prime_iff_eq hdprime Nat.prime_three] at h000
         exact absurd h000 hne3
-      · rw [Int.coe_nat_dvd_left]
+      · rw [Int.natCast_dvd]
         exact Nat.Prime.dvd_of_dvd_pow hdprime h000
   set k := g.factors.length
   have hg : g = 3 ^ k := by
@@ -255,7 +255,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
       apply mul_pos zero_lt_two
       rwa [pos_iff_ne_zero, Int.natAbs_ne_zero]
     intro d hdprime hddvdg
-    rw [← Int.coe_nat_dvd] at hddvdg
+    rw [← Int.natCast_dvd_natCast] at hddvdg
     apply basic _ hdprime <;> apply dvd_trans hddvdg <;> rw [hg']
     exacts[Int.gcd_dvd_left, Int.gcd_dvd_right]
   refine' ⟨k, hg, _⟩
