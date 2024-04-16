@@ -223,7 +223,7 @@ theorem isHomogeneous_homogenization (i : ι) (p : MvPolynomial ι R) :
       ¬x + Finsupp.single i (p.totalDegree - x.sum fun (_x : ι) (m : ℕ) => m) = d := by
     intro x hx hh
     apply hd
-    rw [← hh]
+    rw [← hh, weightedDegree_one]
     change ((x + Finsupp.single i (p.totalDegree - x.sum fun _ m => m)).sum fun _ m => m) = _
     rw [aux hx]
   rw [← Finset.sum_coe_sort]
@@ -246,7 +246,7 @@ theorem homogenization_of_isHomogeneous (n : ℕ) (i : ι) (p : MvPolynomial ι 
     intro x hx
     simp only [add_right_eq_self, Finsupp.single_eq_same, tsub_eq_zero_iff_le, Finsupp.single_tsub,
       Finsupp.single_le_iff]
-    rw [← hp (mem_support_iff.mp hx)]
+    rw [← hp (mem_support_iff.mp hx), weightedDegree_one]
     exact le_refl _
   rw [Finsupp.mapDomain_congr this]
   -- simp,
@@ -340,13 +340,14 @@ theorem leadingTerms_apply (p : MvPolynomial ι R) :
 theorem leadingTerms_eq_self_iff_isHomogeneous (p : MvPolynomial ι R) :
     p.leadingTerms = p ↔ p.IsHomogeneous p.totalDegree := by
   constructor <;> intro h
-  · rw [IsHomogeneous]
+  · rw [IsHomogeneous, IsWeightedHomogeneous]
     contrapose! h
     rcases h with ⟨h_w, h_h₁, h_h₂⟩
     rw [leadingTerms, Ne.def, MvPolynomial.ext_iff]
     push_neg
     use h_w
     classical
+    rw [weightedDegree_one] at h_h₂
     change ¬(h_w.sum fun (_x : ι) (e : ℕ) => e) = p.totalDegree at h_h₂
     simp only [h_h₁.symm, coeff_homogeneousComponent, exists_prop, and_true_iff, Ne.def,
       not_false_iff, not_forall, ite_eq_left_iff]
@@ -359,7 +360,8 @@ theorem leadingTerms_eq_self_iff_isHomogeneous (p : MvPolynomial ι R) :
     · rw [Finset.filter_eq_self]
       intro s hs
       rw [mem_support_iff] at hs
-      rw [← h hs]
+      rw [← h hs, weightedDegree_one]
+      rfl
 
 @[simp]
 theorem leadingTerms_C (r : R) : (C r : MvPolynomial ι R).leadingTerms = C r := by
@@ -379,7 +381,7 @@ theorem leadingTerms_monomial (s : ι →₀ ℕ) (r : R) :
   by_cases hr : r = 0
   · simp [hr]
   rw [leadingTerms_eq_self_iff_isHomogeneous]
-  convert isHomogeneous_monomial (R := R) _ _ _ _
+  convert isHomogeneous_monomial (R := R) _ _
   simp [totalDegree_monomial _ hr]
   rfl
 
@@ -481,28 +483,25 @@ theorem leadingTerms_idempotent (p : MvPolynomial ι R) :
   rw [leadingTerms_eq_self_iff_isHomogeneous, totalDegree_leadingTerms]
   exact isHomogeneous_leadingTerms p
 
--- TODO lol this isn't true
--- lemma homogeneous_component_mul (m n : ℕ) (p q : mv_polynomial ι R) :
---   homogeneous_component (m + n) (p * q) = homogeneous_component m p * homogeneous_component n q :=
--- begin
---   admit,
--- end
 theorem coeff_leadingTerms (p : MvPolynomial ι R) (d : ι →₀ ℕ) :
     coeff d p.leadingTerms = if ∑ i in d.support, d i = p.totalDegree then coeff d p else 0 :=
   coeff_homogeneousComponent _ _ _
 
 theorem support_homogeneousComponent (n : ℕ) (p : MvPolynomial ι R) :
-    (homogeneousComponent n p).support = p.support.filter fun d => (d.sum fun _ m => m) = n :=
-  by
-  rw [homogeneousComponent]
-  simp only [Finsupp.restrictDom_apply, Submodule.subtype_apply, Function.comp_apply,
-    LinearMap.coe_comp, Set.mem_setOf_eq]
-  erw [← Finsupp.support_filter]
-  rfl
+    (homogeneousComponent n p).support = p.support.filter fun d => (d.sum fun _ m => m) = n := by
+  ext x
+  simp only [mem_support_iff, ne_eq, mem_filter]
+  refine ⟨fun hx ↦ ⟨fun h ↦ hx <| by simp [coeff_homogeneousComponent, h], ?_⟩,
+    fun ⟨h₁, h₂⟩ ↦ fun h ↦ h₁ ?_⟩
+  · simp only [coeff_homogeneousComponent, ite_eq_right_iff] at hx
+    contrapose! hx
+    intro h₁
+    contradiction
+  · simp only [coeff_homogeneousComponent, ite_eq_right_iff] at h
+    exact h h₂
 
 theorem support_homogeneousComponent_subset (n : ℕ) (p : MvPolynomial ι R) :
-    (homogeneousComponent n p).support ⊆ p.support :=
-  by
+    (homogeneousComponent n p).support ⊆ p.support := by
   rw [support_homogeneousComponent]
   exact Finset.filter_subset _ _
 
