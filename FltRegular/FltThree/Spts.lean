@@ -266,7 +266,7 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
   have hgpos : 0 < g := by rwa [hg, Zsqrtd.gcd_pos_iff]
   obtain ⟨C', HC', HCDcoprime⟩ := Zsqrtd.exists_coprime_of_gcd_pos hgpos
   have h5 : x * y = (g : ℤ) ^ 2 * C'.norm := by
-    rw [← hy, HC', Zsqrtd.norm_mul, Zsqrtd.norm_int_cast, ← pow_two]
+    rw [← hy, HC', Zsqrtd.norm_mul, Zsqrtd.norm_intCast, ← pow_two]
   obtain ⟨z, hz⟩ : (g : ℤ) ^ 2 ∣ y :=
     by
     have : (g : ℤ) ^ 2 ∣ x * y := by

@@ -145,7 +145,7 @@ theorem step1'' {a p : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) (hp : p.norm
           simp [Zsqrtd.ext_iff, hp', h5]
       simp only [hp', one_mul, Zsqrtd.norm_neg, Int.cast_one, Int.cast_neg, neg_one_mul]
       cases h4 <;> cases h2 <;> simp [*]
-  · rw [Zsqrtd.norm_mul, Zsqrtd.norm_int_cast, ← sq, ← sq_abs, hp', one_pow, one_mul]
+  · rw [Zsqrtd.norm_mul, Zsqrtd.norm_intCast, ← sq, ← sq_abs, hp', one_pow, one_mul]
     cases' h2 with h2 h2 <;>
       · rw [h2, Zsqrtd.norm_mul]
         congr

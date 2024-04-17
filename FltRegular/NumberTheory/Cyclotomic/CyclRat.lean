@@ -310,10 +310,10 @@ theorem aux_lem_flt [Fact (p : ℕ).Prime] {x y z : ℤ} (H : x ^ (p : ℕ) + y 
     (caseI : ¬↑p ∣ x * y * z) : ¬(p : ℤ) ∣ (x + y : ℤ) := by
   intro habs
   replace habs : ↑(p : ℕ) ∣ (x + y : ℤ) := by simpa using habs
-  rw [← ZMod.int_cast_zmod_eq_zero_iff_dvd, Int.cast_add] at habs
+  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd, Int.cast_add] at habs
   replace H := congr_arg (fun x : ℤ => (x : ZMod p)) H.symm
   simp only [Int.cast_add, Int.cast_pow, ZMod.pow_card, habs,
-    ZMod.int_cast_zmod_eq_zero_iff_dvd] at H
+    ZMod.intCast_zmod_eq_zero_iff_dvd] at H
   exact caseI (Dvd.dvd.mul_left H _)
 
 theorem fltIdeals_coprime (hpri : (p : ℕ).Prime) (p5 : 5 ≤ p) {x y z : ℤ}

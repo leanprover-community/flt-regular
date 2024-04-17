@@ -53,15 +53,15 @@ theorem p_dvd_c_of_ab_of_anegc {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp : p 
   letI : Fact p.Prime := ⟨hpri⟩
   replace h := congr_arg (fun n : ℤ => (n : ZMod p)) h
   simp only [Int.coe_nat_pow, Int.cast_add, Int.cast_pow, ZMod.pow_card] at h
-  simp only [← ZMod.int_cast_eq_int_cast_iff, Int.cast_neg] at hbc hab
+  simp only [← ZMod.intCast_eq_intCast_iff, Int.cast_neg] at hbc hab
   rw [hab, hbc, ← sub_eq_zero, ← sub_eq_add_neg, ← Int.cast_neg, ← Int.cast_sub,
     ← Int.cast_sub] at h
   ring_nf at h
   simp only [Int.cast_neg, Int.cast_mul, Int.cast_one, Int.cast_ofNat, neg_eq_zero,
     mul_eq_zero] at h
-  rw [← ZMod.int_cast_zmod_eq_zero_iff_dvd]
+  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
   refine' Or.resolve_right h fun h3 => _
-  rw [show (3 : ZMod p) = ((3 : ℕ) : ZMod p) by simp, ZMod.nat_cast_zmod_eq_zero_iff_dvd,
+  rw [show (3 : ZMod p) = ((3 : ℕ) : ZMod p) by simp, ZMod.natCast_zmod_eq_zero_iff_dvd,
     Nat.dvd_prime Nat.prime_three] at h3
   cases' h3 with H₁ H₂
   · exact hpri.ne_one H₁
@@ -100,9 +100,9 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p) (h
     · simp [H₂, H₃]
     · simp [H₂, H₄]
   · have hp3 : p ≠ 3 := by linarith
-    rw [← ZMod.int_cast_eq_int_cast_iff] at habs H
+    rw [← ZMod.intCast_eq_intCast_iff] at habs H
     rw [H] at habs
-    rw [ZMod.int_cast_eq_int_cast_iff] at habs H
+    rw [ZMod.intCast_eq_intCast_iff] at habs H
     obtain ⟨n, hn⟩ := p_dvd_c_of_ab_of_anegc hpri hp3 h H habs
     refine' caseI ⟨a * b * n, _⟩
     rw [hn]

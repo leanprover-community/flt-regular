@@ -164,8 +164,8 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     refine' natAbs_lt_natAbs_of_nonneg_of_lt (emod_nonneg _ hpcoe) _
     rw [natAbs_ofNat]
     exact emod_lt_of_pos _ (by simp [hpri.out.pos])
-  · simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_eq_int_cast_iff,
-      ZMod.int_cast_mod, Int.cast_sub, Int.cast_mul, Int.cast_natCast, Int.cast_one]
+  · simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_eq_intCast_iff,
+      ZMod.intCast_mod, Int.cast_sub, Int.cast_mul, Int.cast_natCast, Int.cast_one]
   simp only [add_sub_assoc, sub_sub] at hk ⊢
   convert hk using 3
   rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R), mul_assoc (↑b : R)]
@@ -175,16 +175,16 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
       IsPrimitiveRoot.coe_unit'_coe]
     refine' eq_of_div_eq_one _
     rw [← zpow_natCast, ← zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
-    simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd,
-      Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, Int.cast_natCast, sub_self]
+    simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,
+      Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, Int.cast_natCast, sub_self]
   · rw [← Subtype.coe_inj]
     simp only [Fin.val_mk, SubsemiringClass.coe_pow, MulMemClass.coe_mul,
       NumberField.Units.coe_zpow, IsPrimitiveRoot.coe_unit'_coe, IsPrimitiveRoot.coe_inv_unit'_coe]
     refine' eq_of_div_eq_one _
     rw [← zpow_natCast, ← zpow_sub_one₀ (hζ'.ne_zero hpri.out.ne_zero), ←
       zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
-    simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.int_cast_zmod_eq_zero_iff_dvd,
-      Int.cast_sub, ZMod.int_cast_mod, Int.cast_mul, Int.cast_natCast, Int.cast_one, sub_self]
+    simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,
+      Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, Int.cast_natCast, Int.cast_one, sub_self]
 
 /-- Auxiliary function -/
 def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>

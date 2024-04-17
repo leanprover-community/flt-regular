@@ -27,7 +27,7 @@ theorem exists_coprime {n : ℕ} (hn : 0 < n) {a b c : ℤ} (ha' : a ≠ 0) (hb'
   obtain ⟨B, HB⟩ : ↑d ∣ b := @Int.gcd_dvd_right a b
   obtain ⟨C, HC⟩ : ↑d ∣ c :=
     by
-    rw [← Int.pow_dvd_pow_iff hn, ← h, HA, HB, mul_pow, mul_pow, ← mul_add]
+    rw [← Int.pow_dvd_pow_iff hn.ne', ← h, HA, HB, mul_pow, mul_pow, ← mul_add]
     exact dvd_mul_right _ _
   have hdpos : 0 < d := Int.gcd_pos_of_ne_zero_left _ ha'
   have hd := Int.natCast_ne_zero_iff_pos.mpr hdpos
@@ -89,7 +89,7 @@ theorem flt_not_add_self {a b c : ℤ} (ha : a ≠ 0) (h : a ^ 3 + b ^ 3 = c ^ 3
   rw [← mul_two] at h
   obtain ⟨d, rfl⟩ : a ∣ c :=
     by
-    rw [← Int.pow_dvd_pow_iff (by norm_num : 0 < 3), ← h]
+    rw [← Int.pow_dvd_pow_iff (by norm_num : 3 ≠ 0), ← h]
     apply dvd_mul_right
   apply Int.two_not_cube d
   rwa [mul_pow, mul_right_inj' (pow_ne_zero 3 ha), eq_comm] at h
@@ -276,7 +276,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
       apply dvd_mul_right
     exact dvd_trans this Int.gcd_dvd_left
   apply IsCoprime.isUnit_of_dvd' hcoprime hdvdp
-  · rw [← Int.pow_dvd_pow_iff zero_lt_two] at hdvdp
+  · rw [← Int.pow_dvd_pow_iff two_ne_zero] at hdvdp
     apply Prime.dvd_of_dvd_pow Int.prime_three
     rw [← mul_dvd_mul_iff_left (three_ne_zero' ℤ), ← pow_two, ← dvd_add_right hdvdp]
     refine' dvd_trans _ Int.gcd_dvd_right
@@ -610,7 +610,7 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
   obtain ⟨e, he⟩ := hcubeleft
   have : 3 ∣ e :=
     by
-    rw [← Int.pow_dvd_pow_iff (by norm_num : 0 < 3), ← he, hs]
+    rw [← Int.pow_dvd_pow_iff (by norm_num : 3 ≠ 0), ← he, hs]
     convert dvd_mul_right _ (2 * v * (u - v) * (u + v)) using 1
     norm_num
     ring
