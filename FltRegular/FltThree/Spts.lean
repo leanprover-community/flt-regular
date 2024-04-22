@@ -396,7 +396,7 @@ theorem Spts.four {p : ℤ√(-3)} (hfour : p.norm = 4) (hq : p.im ≠ 0) : abs 
           ring
 
     · rw [← Int.sub_one_lt_iff, sub_self]
-      exact sq_pos_of_ne_zero _ hq
+      exact sq_pos_of_ne_zero hq
   refine' ⟨_, hq⟩
   calc
     p.re ^ 2 = p.re ^ 2 + 3 * p.im ^ 2 - 3 := by simp [hq]
