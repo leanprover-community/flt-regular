@@ -114,8 +114,6 @@ instance a3 : NumberField (CyclotomicField p ℚ) :=
 
 open IsPrimitiveRoot
 
-attribute [-instance] CharP.CharOne.subsingleton
-
 theorem nth_roots_prim [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R) (hne1 : η ≠ 1) :
     IsPrimitiveRoot η p := by
   have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe

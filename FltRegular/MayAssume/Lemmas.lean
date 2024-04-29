@@ -1,7 +1,6 @@
 import FltRegular.FltThree.FltThree
 import Mathlib.Algebra.GCDMonoid.Finset
 import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.Algebra.GCDMonoid.Div
 import FltRegular.NumberTheory.RegularPrimes
 
 open Int Finset
@@ -39,7 +38,7 @@ theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a *
       Int.mul_ediv_cancel_left _ hdzero, Int.mul_ediv_cancel_left _ hdzero,
       Int.mul_ediv_cancel_left _ hdzero, mul_comm, ← hna, mul_comm, ← hnb, mul_comm, ← hnc]
   · simpa [gcd_eq_gcd_image, d] using
-      Finset.Int.gcd_div_id_eq_one (show a ∈ ({a, b, c} : Finset ℤ) by simp) ha
+      Finset.gcd_div_id_eq_one (show a ∈ ({a, b, c} : Finset ℤ) by simp) ha
   · simp only [mul_eq_zero] at habs
     rcases habs with ((Ha | Hb) | Hc)
     · exact ha (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp [s])) Ha)

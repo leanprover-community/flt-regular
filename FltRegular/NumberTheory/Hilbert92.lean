@@ -733,7 +733,6 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
       congr
       rw [hE]
       field_simp
-      rw [mul_comm]
   rw [norm_eq_prod_pow_gen σ hσ, orderOf_eq_card_of_forall_mem_zpowers hσ,
     IsGalois.card_aut_eq_finrank, hKL]
   conv =>
