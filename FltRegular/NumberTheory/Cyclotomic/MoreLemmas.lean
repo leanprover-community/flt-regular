@@ -24,7 +24,7 @@ lemma IsPrimitiveRoot.prime_span_sub_one : Prime (Ideal.span <| singleton <| (h�
   rw [Ideal.prime_iff_isPrime,
     Ideal.span_singleton_prime (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)]
   exact hζ.zeta_sub_one_prime'
-  · rw [Ne.def, Ideal.span_singleton_eq_bot]
+  · rw [Ne, Ideal.span_singleton_eq_bot]
     exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
 lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) - 1 : 𝓞 K) = p := by

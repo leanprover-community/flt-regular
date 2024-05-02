@@ -152,7 +152,7 @@ def equivQuotMaximalIdealOfIsLocalization : R ⧸ p ≃+* Rₚ ⧸ maximalIdeal 
       mul_left_comm,
       ← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_mul, map_mul, hs, mul_inv_cancel, mul_one,
       sub_self]
-    rw [Ne.def, Ideal.Quotient.eq_zero_iff_mem]
+    rw [Ne, Ideal.Quotient.eq_zero_iff_mem]
     exact s.prop
 
 local notation "pS" => Ideal.map (algebraMap R S) p
@@ -184,7 +184,7 @@ lemma comap_map_eq_map_of_isLocalization_algebraMapSubmonoid :
     refine ⟨β, β * α - 1, ?_, ?_⟩
     · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one,
         map_mul, hβ, inv_mul_cancel, sub_self]
-      rwa [Ne.def, Ideal.Quotient.eq_zero_iff_mem]
+      rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
     · rw [add_sub_cancel]
   have := Ideal.mul_mem_left _ (algebraMap _ _ β) hαx
   rw [← Algebra.smul_def, smul_smul, hβ, add_smul, one_smul] at this
@@ -215,7 +215,7 @@ def quotMapEquivQuotMapMaximalIdealOfIsLocalization : S ⧸ pS ≃+* Sₚ ⧸ pS
       refine ⟨β, α * β - 1, ?_, ?_⟩
       · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one,
           map_mul, hβ, mul_inv_cancel, sub_self]
-        rwa [Ne.def, Ideal.Quotient.eq_zero_iff_mem]
+        rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
       · rw [add_sub_cancel]
     use β • x
     rw [IsScalarTower.algebraMap_eq S Sₚ (Sₚ ⧸ pSₚ), Ideal.Quotient.algebraMap_eq,

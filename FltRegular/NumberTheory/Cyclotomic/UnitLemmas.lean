@@ -155,6 +155,7 @@ theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot
     (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral p.pos⟩ : 𝓞 K) ^ (x : ℕ) = l) :
     algebraMap (𝓞 K) (𝓞 K ⧸ I) l = ∑ x : Fin t, (f x : 𝓞 K ⧸ I) := by
   apply_fun algebraMap (𝓞 K) (𝓞 K ⧸ I) at h
+  stop
   simp only [map_sum, map_zsmul] at h
   convert h.symm using 1
   congr
@@ -242,7 +243,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
     have isPrimRoot : IsPrimitiveRoot (hζ.unit' : R) p := hζ.unit'_coe
     have hxl : (⟨x, hx⟩ : R) ^ l = 1 :=  by
       apply isRoot_of_unity_of_root_cyclotomic _ hhl
-      simp only [Nat.mem_divisors, dvd_refl, Ne.def, true_and_iff]
+      simp only [Nat.mem_divisors, dvd_refl, Ne, true_and_iff]
       apply pos_iff_ne_zero.1 (Nat.pos_of_mem_divisors hl)
     have hxp' : (⟨x, hx⟩ : R) ^ (2 * p : ℕ) = 1 := by
       cases' hlp with hlp_w hlp_h
@@ -292,7 +293,7 @@ theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] :
   · exact hζ.zeta_sub_one_prime'
   apply_fun (fun x : 𝓞 K => (x : K))
   push_cast
-  rw [Ne.def, sub_eq_zero]
+  rw [Ne, sub_eq_zero]
   rintro rfl
   exact hp.1.ne_one (hζ.unique IsPrimitiveRoot.one)
 

@@ -57,7 +57,7 @@ lemma coe_primesOverFinset [Ring.DimensionLEOne R] [IsDedekindDomain S]
   classical
   ext P
   have : p.map (algebraMap R S) ≠ ⊥ := by
-    rwa [Ne.def, Ideal.map_eq_bot_iff_of_injective (NoZeroSMulDivisors.algebraMap_injective R S)]
+    rwa [Ne, Ideal.map_eq_bot_iff_of_injective (NoZeroSMulDivisors.algebraMap_injective R S)]
   simp only [Finset.mem_coe, Multiset.mem_toFinset, Ideal.mem_normalizedFactors_iff this,
     factors_eq_normalizedFactors, Ideal.map_le_iff_le_comap, primesOverFinset]
   exact ⟨fun H ↦ ⟨H.1, ((hp'.isMaximal hp).eq_of_le (H.1.comap _).ne_top H.2).symm⟩,
@@ -327,7 +327,7 @@ lemma ramificationIdxIn_smul_primesOverFinset [IsDedekindDomain S]
     Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count _ hP'.1
     (ne_bot_of_mem_primesOver hp hP'), primesOverFinset,
     Multiset.toFinset_val, Multiset.count_dedup, if_pos hP, mul_one]
-  rwa [Ne.def, Ideal.map_eq_bot_iff_of_injective (NoZeroSMulDivisors.algebraMap_injective _ _)]
+  rwa [Ne, Ideal.map_eq_bot_iff_of_injective (NoZeroSMulDivisors.algebraMap_injective _ _)]
 
 lemma prod_primesOverFinset_pow_ramificationIdxIn [IsDedekindDomain S] [IsGalois K L] (p : Ideal R)
     (hp : p ≠ ⊥) [p.IsMaximal] :
@@ -341,7 +341,7 @@ lemma prod_primesOverFinset_pow_ramificationIdxIn [IsDedekindDomain S] [IsGalois
   simp only [Multiset.toFinset_val, Multiset.map_id', ← Multiset.prod_nsmul,
     ramificationIdxIn_smul_primesOverFinset K L, ← associated_iff_eq]
   apply factors_prod
-  rwa [Ne.def, Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective hRS]
+  rwa [Ne, Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective hRS]
 
 lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.IsMaximal] :
     ∏ σ : L ≃ₐ[K] L, (↑(σ • P) : Ideal S) = (p.map (algebraMap R S)) ^ (p.inertiaDegIn S) := by
@@ -364,7 +364,7 @@ lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.
       Ideal.comap_bot_of_injective _ (galRestrict R K L S _).injective, Finset.prod_const,
       Ideal.map_bot, Ideal.inertiaDegIn_bot R S (IsIntegralClosure.isIntegral_algebra R L)]
     refine (zero_pow ?_).trans (zero_pow ?_).symm
-    · rw [Finset.card_univ, Ne.def, Fintype.card_eq_zero_iff]
+    · rw [Finset.card_univ, Ne, Fintype.card_eq_zero_iff]
       simp only [not_isEmpty_of_nonempty, not_false_eq_true]
     · have hR := not_imp_not.mp (Ring.ne_bot_of_isMaximal_of_not_isField ‹_›) rfl
       letI : Field R := hR.toField

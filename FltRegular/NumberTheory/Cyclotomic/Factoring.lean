@@ -36,7 +36,7 @@ theorem pow_sub_pow_eq_prod_sub_zeta_runity_mul {K : Type _} [CommRing K] [IsDom
   -- the homogenization of the identity is also true
   have := congr_arg (homogenization 1) this
   -- simplify to get the result we want
-  simpa [homogenization_prod, algebraMap_eq, hpos]
+  simpa [homogenization_prod, Polynomial.algebraMap_eq, hpos]
 
 /-- If there is a primitive `n`th root of unity in `K` and `n` is odd, then
 `X ^ n + Y ^ n = ∏ (X + μ Y)`, where `μ` varies over the `n`-th roots of unity. -/

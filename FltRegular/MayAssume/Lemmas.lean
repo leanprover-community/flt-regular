@@ -88,7 +88,7 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p) (h
         · simp only [mem_insert, mem_singleton] at hx
           rcases hx with (H | H | H) <;> simp [H]
     rw [this]
-    simp only [gcd_insert, id.def, gcd_singleton, normalize_apply, neg_mul]
+    simp only [gcd_insert, id, gcd_singleton, normalize_apply, neg_mul]
     congr 1
     rw [← coe_gcd, ← coe_gcd, Int.gcd_eq_natAbs, Int.gcd_eq_natAbs]
     simp only [natAbs_neg, Nat.cast_inj]

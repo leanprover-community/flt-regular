@@ -291,7 +291,7 @@ lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ}
   rw [← eq_top_iff_one] at hone
   have hcontra := IsPrime.ne_top hPrime
   rw [hone] at hcontra
-  simp only [Ne.def, eq_self_iff_true, not_true] at hcontra
+  simp only [Ne, eq_self_iff_true, not_true] at hcontra
   apply HC hprime3
   apply HC hprime2
 
@@ -349,9 +349,9 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
   set b := hζ'.integralPowerBasis' with hb
   have hdim : b.dim = (p : ℕ).pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp.out,
     pred_eq_sub_one]
-  by_cases H : i = ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩
+  by_cases H : i = ⟨(p : ℕ) - 1, pred_lt hp.out.ne_zero⟩
   · simp [H.symm, Hi]
-  have hi : ↑i < (p : ℕ).pred := by
+  have hi : ↑i < (p : ℕ) - 1 := by
     by_contra! habs
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt i))] at H
   obtain ⟨y, hy⟩ := hdiv
@@ -383,7 +383,8 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
   rw [hn] at hy
   simp only [Fin.castIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub,
     neg_eq_iff_eq_neg] at hy
-  simp [hy, dvd_neg]
+  erw [hy] -- pred vs - 1
+  simp [dvd_neg]
 
 theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRoot ζ p)
     {f : Fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
@@ -401,9 +402,9 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
     pred_eq_sub_one]
   have last_dvd := dvd_last_coeff_cycl_integer hζ hf hdiv
   intro j
-  by_cases H : j = ⟨(p : ℕ).pred, pred_lt hp.ne_zero⟩
+  by_cases H : j = ⟨(p : ℕ) - 1, pred_lt hp.ne_zero⟩
   · simpa [H] using last_dvd
-  have hj : ↑j < (p : ℕ).pred := by
+  have hj : ↑j < (p : ℕ) - 1 := by
     by_contra! habs
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt j))] at H
   obtain ⟨y, hy⟩ := hdiv
