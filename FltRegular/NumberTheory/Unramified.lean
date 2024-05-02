@@ -164,6 +164,7 @@ lemma isUnramifiedAt_iff_SquareFree_minpoly_powerBasis [NoZeroSMulDivisors R S] 
 
 open nonZeroDivisors Polynomial
 
+set_option synthInstance.maxHeartbeats 40000 in
 attribute [local instance] Ideal.Quotient.field in
 lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
     (p : Ideal R) [hp : p.IsPrime] (hpbot : p ≠ ⊥) (x : S)
@@ -195,6 +196,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
   have := hp.isMaximal hpbot
 
   intro P hP
+  letI : IsScalarTower S (S ⧸ P) (S ⧸ P) := IsScalarTower.right
   have := isMaximal_of_mem_primesOver hpbot hP
   apply le_antisymm
   · rw [← tsub_eq_zero_iff_le]
@@ -211,11 +213,9 @@ lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
     rw [map_map, Ideal.quotientMap_comp_mk] at this
     obtain ⟨a, b, e⟩ := this
     apply_fun (aeval (Ideal.Quotient.mk P x)) at e
-    simp only [← Ideal.Quotient.algebraMap_eq, ← map_map, derivative_map, map_add, map_mul,
-      aeval_map_algebraMap, aeval_algebraMap_apply, minpoly.aeval, map_zero, mul_zero, hxP,
-      zero_add, coe_aeval_eq_eval, eval_one] at e
-    stop
-    exact zero_ne_one e
+    simp_rw [← Ideal.Quotient.algebraMap_eq, ← map_map, derivative_map, map_add, map_mul,
+      aeval_map_algebraMap, aeval_algebraMap_apply, minpoly.aeval, hxP, map_zero, mul_zero,
+      zero_add, map_one, zero_ne_one] at e
   · rwa [Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count _
       (isMaximal_of_mem_primesOver hpbot hP).isPrime (ne_bot_of_mem_primesOver hpbot hP),
       Multiset.one_le_count_iff_mem, ← Multiset.mem_toFinset, ← primesOverFinset,
