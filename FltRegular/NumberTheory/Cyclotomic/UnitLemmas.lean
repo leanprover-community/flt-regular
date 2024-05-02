@@ -151,11 +151,11 @@ instance : Algebra (𝓞 K) (𝓞 K ⧸ I) := Ideal.Quotient.algebra _
 instance : AddCommMonoid (𝓞 K) := inferInstance
 instance : AddCommMonoid (𝓞 K ⧸ I) := inferInstance
 
+set_option synthInstance.maxHeartbeats 40000 in
 theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot μ p)
     (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral p.pos⟩ : 𝓞 K) ^ (x : ℕ) = l) :
     algebraMap (𝓞 K) (𝓞 K ⧸ I) l = ∑ x : Fin t, (f x : 𝓞 K ⧸ I) := by
   apply_fun algebraMap (𝓞 K) (𝓞 K ⧸ I) at h
-  stop
   simp only [map_sum, map_zsmul] at h
   convert h.symm using 1
   congr
