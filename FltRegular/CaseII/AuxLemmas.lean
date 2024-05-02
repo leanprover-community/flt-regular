@@ -44,7 +44,7 @@ lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero 
     {x y : M} :
   multiplicity.Finite x y ↔ ¬IsUnit x ∧ y ≠ 0 := by
   constructor
-  · rw [← not_imp_not, Ne.def, ← not_or, not_not]
+  · rw [← not_imp_not, Ne, ← not_or, not_not]
     rintro (hx|hy)
     · exact fun ⟨n, hn⟩ ↦ hn (hx.pow _).dvd
     · simp [hy]
@@ -135,7 +135,7 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   by_cases Izero : I = 0
   · rw [Izero, FractionalIdeal.coe_zero]
     exact bot_isPrincipal
-  rw [← Ne.def, ← isUnit_iff_ne_zero] at Izero
+  rw [← Ne, ← isUnit_iff_ne_zero] at Izero
   show Submodule.IsPrincipal (Izero.unit' : FractionalIdeal A⁰ K)
   rw [← ClassGroup.mk_eq_one_iff, ← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
   refine ⟨?_, orderOf_dvd_card⟩
@@ -153,9 +153,9 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
     ∃ a b : R, ¬(x ∣ a) ∧ ¬(x ∣ b) ∧ spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
   by_contra H1
   have hI' : (I : FractionalIdeal R⁰ K) ≠ 0 :=
-    by rw [← coeIdeal_bot, Ne.def, coeIdeal_inj]; rintro rfl; exact hI (dvd_zero _)
+    by rw [← coeIdeal_bot, Ne, coeIdeal_inj]; rintro rfl; exact hI (dvd_zero _)
   have hJ' : (J : FractionalIdeal R⁰ K) ≠ 0 :=
-    by rw [← coeIdeal_bot, Ne.def, coeIdeal_inj]; rintro rfl; exact hJ (dvd_zero _)
+    by rw [← coeIdeal_bot, Ne, coeIdeal_inj]; rintro rfl; exact hJ (dvd_zero _)
   have : ∀ n : ℕ, (1 ≤ n) → ¬∃ a b : R, ¬(x ^ n ∣ a) ∧ ¬(x ^ n ∣ b) ∧
     spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
     intro n hn
@@ -169,7 +169,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
         ← mul_div_right_comm, eq_div_iff hJ', ← coeIdeal_span_singleton, ← coeIdeal_span_singleton,
         ← coeIdeal_mul, ← coeIdeal_mul, coeIdeal_inj] at e
       on_goal 2 =>
-        rw [Ne.def, spanSingleton_eq_zero_iff, ← (algebraMap R K).map_zero,
+        rw [Ne, spanSingleton_eq_zero_iff, ← (algebraMap R K).map_zero,
           (IsFractionRing.injective R K).eq_iff]
         rintro rfl
         apply hb (dvd_zero _)
@@ -180,7 +180,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
             rwa [Irreducible.gcd_eq_one_iff]
             · rwa [irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
               · exact hx.ne_zero
-              · rw [Ne.def, Ideal.span_singleton_eq_bot]
+              · rw [Ne, Ideal.span_singleton_eq_bot]
                 exact hx.ne_zero
           rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton] at ha' ⊢
           replace h := ha'.trans (dvd_mul_right _ J)
@@ -190,7 +190,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
         rw [pow_succ', mul_dvd_mul_iff_left hx.ne_zero] at ha hb
         rw [_root_.map_mul, _root_.map_mul, mul_div_mul_left] at e₀
         · exact IH ⟨a', b', ha, hb, e₀⟩
-        · rw [Ne.def, ← (algebraMap R K).map_zero, (IsFractionRing.injective R K).eq_iff]
+        · rw [Ne, ← (algebraMap R K).map_zero, (IsFractionRing.injective R K).eq_iff]
           exact hx.ne_zero
       · refine IH ⟨a, b, h, ?_, e₀⟩
         intro hb
@@ -202,7 +202,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
             IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd, Irreducible.gcd_eq_one_iff]
           · rwa [irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
             · exact hx.ne_zero
-            · rw [Ne.def, Ideal.span_singleton_eq_bot]
+            · rw [Ne, Ideal.span_singleton_eq_bot]
               exact hx.ne_zero
           · rwa [Nat.pos_iff_ne_zero, ← Nat.one_le_iff_ne_zero]
         rwa [← e, mul_comm, ← dvd_gcd_mul_iff_dvd_mul, this, one_mul] at hb

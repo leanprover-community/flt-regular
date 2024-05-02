@@ -9,7 +9,7 @@ open scoped NumberField
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
 variable [Fintype (ClassGroup (𝓞 K))]
 
-attribute [-instance] instCoeOut
+-- attribute [-instance] instCoeOut
 
 open Polynomial
 
