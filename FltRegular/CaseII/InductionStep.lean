@@ -401,7 +401,7 @@ lemma a_mul_denom_eq_a_zero_mul_num (hη : η ≠ η₀) :
     apply not_p_div_a_zero hp hζ e hy hz
     rw [ha]
     exact dvd_zero _
-  · rw [Ne.def, FractionalIdeal.spanSingleton_eq_zero_iff, ← (algebraMap (𝓞 K) K).map_zero,
+  · rw [Ne, FractionalIdeal.spanSingleton_eq_zero_iff, ← (algebraMap (𝓞 K) K).map_zero,
       (IsFractionRing.injective (𝓞 K) K).eq_iff]
     intro hβ
     apply a_div_a_zero_denom_spec hp hreg hζ e hy hz η hη
@@ -469,20 +469,20 @@ lemma exists_solution :
   have hη₁ : η₁ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' : 𝓞 K) ≠ η₀
-    rw [Ne.def, mul_right_eq_self₀, not_or]
+    rw [Ne, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
       ne_zero_of_mem_nthRootsFinset (η₀ : _).prop⟩
   have hη₂ : η₂ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀
-    rw [Ne.def, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
+    rw [Ne, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.pow_ne_one_of_pos_of_lt zero_lt_two
       (hpri.out.two_le.lt_or_eq.resolve_right (PNat.coe_injective.ne hp.symm)),
       ne_zero_of_mem_nthRootsFinset (η₀ : _).prop⟩
   have hη : η₂ ≠ η₁ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀ * hζ.unit'
-    rw [Ne.def, mul_right_eq_self₀, not_or]
+    rw [Ne, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
       mul_ne_zero (ne_zero_of_mem_nthRootsFinset (η₀ : _).prop)
       (hζ.unit'_coe.ne_zero hpri.out.ne_zero)⟩
