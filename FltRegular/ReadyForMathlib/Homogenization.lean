@@ -89,7 +89,7 @@ theorem support_mapDomain {α β M : Type _} [AddCommMonoid M] (f : α ↪ β) (
   classical
   rw [Finsupp.mapDomain]
   refine' Finset.Subset.trans Finsupp.support_sum _
-  simp only [Finsupp.mem_support_iff, Finset.biUnion_subset_iff_forall_subset, Ne.def]
+  simp only [Finsupp.mem_support_iff, Finset.biUnion_subset_iff_forall_subset, Ne]
   intro x hx
   apply Finset.Subset.trans Finsupp.support_single_subset
   simp [hx]
@@ -343,13 +343,13 @@ theorem leadingTerms_eq_self_iff_isHomogeneous (p : MvPolynomial ι R) :
   · rw [IsHomogeneous, IsWeightedHomogeneous]
     contrapose! h
     rcases h with ⟨h_w, h_h₁, h_h₂⟩
-    rw [leadingTerms, Ne.def, MvPolynomial.ext_iff]
+    rw [leadingTerms, Ne, MvPolynomial.ext_iff]
     push_neg
     use h_w
     classical
     rw [weightedDegree_one] at h_h₂
     change ¬(h_w.sum fun (_x : ι) (e : ℕ) => e) = p.totalDegree at h_h₂
-    simp only [h_h₁.symm, coeff_homogeneousComponent, exists_prop, and_true_iff, Ne.def,
+    simp only [h_h₁.symm, coeff_homogeneousComponent, exists_prop, and_true_iff, Ne,
       not_false_iff, not_forall, ite_eq_left_iff]
     convert h_h₂
   · rw [leadingTerms_apply]
@@ -451,7 +451,7 @@ theorem support_sum_monomial_subset (S : Finset (ι →₀ ℕ)) (f : (ι →₀
 theorem sum_monomial_ne_zero_of_exists_mem_ne_zero (S : Finset (ι →₀ ℕ)) (f : (ι →₀ ℕ) → R)
     (h : ∃ (s : _) (_ : s ∈ S), f s ≠ 0) : ∑ s : ι →₀ ℕ in S, monomial s (f s) ≠ 0 := by
   classical
-  simp only [← support_eq_empty, support_sum_monomial_eq, Ne.def]
+  simp only [← support_eq_empty, support_sum_monomial_eq, Ne]
   rcases h with ⟨s, h_S, h_s⟩
   exact ne_empty_of_mem (mem_filter.mpr ⟨h_S, h_s⟩)
 
@@ -606,7 +606,7 @@ theorem eq_C_of_totalDegree_zero {p : MvPolynomial ι R} (hp : p.totalDegree = 0
   apply hm
   rw [Finsupp.sum] at hp
   -- TODO this and line below could be a lemma, finsupp.sum_eq_zero_iff?
-  simp only [not_imp_self, bot_eq_zero, Finsupp.mem_support_iff, Finset.sum_eq_zero_iff] at hp
+  simp only [_root_.not_imp_self, bot_eq_zero, Finsupp.mem_support_iff, Finset.sum_eq_zero_iff] at hp
   ext
   simp [hp]
 
@@ -845,7 +845,7 @@ theorem support_prod (P : Finset (MvPolynomial ι R)) : (P.prod id).support ⊆ 
   induction' P using Finset.induction with p S hS hSi
   · simp only [prod_empty, sum_empty]; exact support_one
   rw [Finset.prod_insert hS, Finset.sum_insert hS]
-  simp only [id.def]
+  simp only [id]
   refine' Finset.Subset.trans (support_mul' _ _) _
   convert Finset.add_subset_add (Finset.Subset.refl _) hSi
 
@@ -881,7 +881,7 @@ theorem prod_contains_no (i : ι) (P : Finset (MvPolynomial ι R))
     apply Nat.eq_zero_of_le_zero
     apply le_trans (degreeOf_mul_le _ _ _)
     rw [hs]
-    · simp only [id.def, add_zero, le_zero_iff]
+    · simp only [id, add_zero, le_zero_iff]
       exact (degreeOf_eq_zero_iff _ _).2 (hp a (mem_cons_self _ _))
     · intro p hps m hmp
       apply hp p _ m hmp
@@ -908,6 +908,6 @@ theorem homogenization_prod_id {S : Type _} [CommRing S] [IsDomain S] (i : ι)
   simp only [Finset.prod_insert hS]
   rw [homogenization_mul]
   rw [hSi]
-  rw [id.def]
+  rw [id]
 
 end MvPolynomial

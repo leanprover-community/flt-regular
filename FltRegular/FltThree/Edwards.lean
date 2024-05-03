@@ -198,7 +198,7 @@ theorem OddPrimeOrFour.factors' {a : ℤ√(-3)} (h2 : a.norm ≠ 1) (hcoprime :
   obtain ⟨u, huvcoprime, huv, huvdvd⟩ := step1_2 hcoprime hpdvd hp hd
   use u
   cases' huv with huv huv <;> [(use q'); (use star q')] <;>
-    simp only [IsCoprime, Zsqrtd.star_re, Zsqrtd.star_im, Ne.def, neg_eq_zero, Zsqrtd.norm_conj] <;>
+    simp only [IsCoprime, Zsqrtd.star_re, Zsqrtd.star_im, Ne, neg_eq_zero, Zsqrtd.norm_conj] <;>
     use hc, hd, hp, huv, huvcoprime <;>
     · rw [huvdvd, lt_mul_iff_one_lt_left (Spts.pos_of_coprime' huvcoprime), ← Zsqrt3.norm_natAbs,
         Nat.one_lt_cast]
@@ -324,7 +324,7 @@ theorem no_conj (s : Multiset (ℤ√(-3))) {p : ℤ√(-3)} (hp : ¬IsUnit p)
     rw [← Int.isUnit_iff_abs_eq]
     apply IsCoprime.isUnit_of_dvd' hcoprime <;> apply dvd_mul_right
   · have : star p ≠ p := by
-      rw [Ne.def, Zsqrtd.ext_iff]
+      rw [Ne, Zsqrtd.ext_iff]
       rintro ⟨-, H⟩
       apply him
       apply eq_zero_of_neg_eq

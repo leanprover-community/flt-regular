@@ -12,7 +12,7 @@ variable (hp : p ≠ 2)
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
   (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ (p : ℕ) ≠ u)
 
-attribute [-instance] instCoeOut
+-- attribute [-instance] instCoeOut
 
 open Polynomial
 

@@ -721,9 +721,7 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
     intro i
     induction i with
     | zero =>
-      simp only [Nat.zero_eq, zero_add, pow_one, map_inv₀, AlgEquiv.commutes]
-      rw [hE]
-      simp
+      simp only [pow_zero, AlgEquiv.one_apply, one_mul]
     | succ n ih =>
       rw [pow_succ', AlgEquiv.mul_apply, ih, pow_succ']
       simp only [inv_pow, map_mul, map_inv₀, map_pow, AlgEquiv.commutes]
@@ -744,7 +742,7 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
   · simp
 
 
-attribute [-instance] instDecidableEq Fintype.decidableForallFintype
+attribute [-instance] Fintype.decidableForallFintype
 lemma unit_to_U_pow (x) (n : ℕ) : mkG (x ^ n) = n • (mkG x) := by
   induction n with
   | zero => simp [unit_to_U_one]

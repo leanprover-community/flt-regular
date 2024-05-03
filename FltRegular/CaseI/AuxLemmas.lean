@@ -46,8 +46,8 @@ theorem auxf0k₁ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : Fin P, f0k₁ b p (i : ℕ
     intro h
     simp only [Fin.ext_iff, Fin.val_mk] at h
     replace h := h.symm
-    rw [Nat.pred_eq_succ_iff] at h
-    linarith
+    rw [Nat.pred_eq_sub_one] at h
+    omega
   simp only [f0k₁, OfNat.ofNat_ne_one, ite_false, ite_eq_right_iff, neg_eq_zero]
   intro h2
   exfalso
@@ -65,9 +65,9 @@ theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
   have key : ↑(p : ℤ) ∣ ∑ j in range p, f0k₁ b p j • ζ ^ j := by
     convert hdiv using 1
     have h : 1 ≠ p.pred := fun h => by linarith [pred_eq_succ_iff.1 h.symm]
-    simp_rw [f0k₁, ite_smul, sum_ite, filter_filter, ← Ne.def, ne_and_eq_iff_right h,
+    simp_rw [f0k₁, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right h,
       Finset.range_filter_eq]
-    simp [hpri.one_lt, pred_lt hpri.ne_zero, sub_eq_add_neg]
+    simp [hpri.one_lt, Nat.sub_lt hpri.pos, sub_eq_add_neg]
   rw [sum_range] at key
   refine' caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_left _ _) _)
   replace hpri : (P : ℕ).Prime := hpri
@@ -112,10 +112,10 @@ theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ 
     ← sub_mul, add_sub_right_comm, show ζ = ζ ^ ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) by simp] at hdiv
   have key : ↑(p : ℤ) ∣ ∑ j in range p, f0k₂ a b j • ζ ^ j := by
     convert hdiv using 1
-    simp_rw [f0k₂, ite_smul, sum_ite, filter_filter, ← Ne.def, ne_and_eq_iff_right zero_ne_one,
+    simp_rw [f0k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right zero_ne_one,
       Finset.range_filter_eq]
     simp only [hpri.pos, hpri.one_lt, if_true, zsmul_eq_mul, Int.cast_sub, sum_singleton,
-      _root_.pow_zero, mul_one, pow_one, Ne.def, zero_smul, sum_const_zero, add_zero, Fin.val_mk]
+      _root_.pow_zero, mul_one, pow_one, Ne, zero_smul, sum_const_zero, add_zero, Fin.val_mk]
   rw [sum_range] at key
   refine' hab _
   symm
@@ -194,7 +194,7 @@ theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
   have key : ↑(p : ℤ) ∣ ∑ j in range p, f1k₂ a j • ζ ^ j := by
     suffices ∑ j in range p, f1k₂ a j • ζ ^ j = ↑a - ↑a * ζ ^ 2 by
       rwa [this]
-    simp_rw [f1k₂, ite_smul, sum_ite, filter_filter, ← Ne.def, ne_and_eq_iff_right
+    simp_rw [f1k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right
       (show 0 ≠ 2 by norm_num), Finset.range_filter_eq]
     simp only [hpri.pos, ite_true, zsmul_eq_mul, sum_singleton, _root_.pow_zero, mul_one, two_lt hp5, neg_smul,
   sum_neg_distrib, ne_eq, mem_range, not_and, not_not, zero_smul, sum_const_zero, add_zero]

@@ -17,7 +17,7 @@ attribute [local instance 2000] Algebra.toModule Module.toDistribMulAction AddMo
   Semiring.toNonUnitalSemiring NonUnitalSemiring.toNonUnitalNonAssocSemiring
   NonUnitalNonAssocSemiring.toAddCommMonoid NonUnitalNonAssocSemiring.toMulZeroClass
   MulZeroClass.toMul Submodule.idemSemiring IdemSemiring.toSemiring
-  Submodule.instIdemCommSemiringSubmoduleToSemiringToAddCommMonoidToNonUnitalNonAssocSemiringToNonAssocSemiringToSemiringToModule
+  Submodule.instIdemCommSemiring
   IdemCommSemiring.toCommSemiring CommSemiring.toCommMonoid
 
 set_option quotPrecheck false
@@ -80,7 +80,7 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
     ring
   apply Associated.mul_left
   apply hζ.unit'_coe.associated_sub_one hpri.out η₁.prop η₂.prop
-  rw [Ne.def, ← Subtype.ext_iff.not]
+  rw [Ne, ← Subtype.ext_iff.not]
   exact hη
 
 set_option synthInstance.maxHeartbeats 40000 in
@@ -98,7 +98,7 @@ lemma div_zeta_sub_one_Injective :
 instance : Finite (𝓞 K ⧸ 𝔭) := by
   haveI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rw [← Ideal.absNorm_ne_zero_iff, Ne.def, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
+  rw [← Ideal.absNorm_ne_zero_iff, Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
   exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
 lemma div_zeta_sub_one_Bijective :
@@ -155,14 +155,14 @@ lemma m_mul_c_mul_p : 𝔪 * 𝔠 η * 𝔭 = 𝔦 η := by
 
 set_option synthInstance.maxHeartbeats 40000 in
 lemma m_ne_zero : 𝔪 ≠ 0 := by
-  simp_rw [Ne.def, gcd_eq_zero_iff, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
+  simp_rw [Ne, gcd_eq_zero_iff, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
   rintro ⟨rfl, rfl⟩
   exact hy (dvd_zero _)
 
 set_option synthInstance.maxHeartbeats 40000 in
 lemma p_ne_zero : 𝔭 ≠ 0 := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rw [Ne.def, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
+  rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
   exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
 lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ η₂) : (𝔦 η₁) ⊔ (𝔦 η₂) ∣ 𝔪 * 𝔭 := by
@@ -232,7 +232,7 @@ lemma prod_c : ∏ η in Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (�
 
 lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ (p : ℕ) := by
   letI inst1 : @IsDomain (Ideal (𝓞 K)) CommSemiring.toSemiring := @Ideal.isDomain (𝓞 K) _ _
-  letI inst2 := @Ideal.instNormalizedGCDMonoidIdealToSemiringToCommSemiringCancelCommMonoidWithZero (𝓞 K) _ _
+  letI inst2 := @Ideal.instNormalizedGCDMonoid (𝓞 K) _ _
   letI inst3 := @NormalizedGCDMonoid.toGCDMonoid _ _ inst2
   exact @Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (nthRootsFinset p (𝓞 K)) (Ideal (𝓞 K)) _
     (by convert inst1) (by convert inst3) _ _ _ _ _
@@ -401,7 +401,7 @@ lemma a_mul_denom_eq_a_zero_mul_num (hη : η ≠ η₀) :
     apply not_p_div_a_zero hp hζ e hy hz
     rw [ha]
     exact dvd_zero _
-  · rw [Ne.def, FractionalIdeal.spanSingleton_eq_zero_iff, ← (algebraMap (𝓞 K) K).map_zero,
+  · rw [Ne, FractionalIdeal.spanSingleton_eq_zero_iff, ← (algebraMap (𝓞 K) K).map_zero,
       (IsFractionRing.injective (𝓞 K) K).eq_iff]
     intro hβ
     apply a_div_a_zero_denom_spec hp hreg hζ e hy hz η hη
@@ -469,20 +469,20 @@ lemma exists_solution :
   have hη₁ : η₁ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' : 𝓞 K) ≠ η₀
-    rw [Ne.def, mul_right_eq_self₀, not_or]
+    rw [Ne, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
       ne_zero_of_mem_nthRootsFinset (η₀ : _).prop⟩
   have hη₂ : η₂ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀
-    rw [Ne.def, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
+    rw [Ne, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.pow_ne_one_of_pos_of_lt zero_lt_two
       (hpri.out.two_le.lt_or_eq.resolve_right (PNat.coe_injective.ne hp.symm)),
       ne_zero_of_mem_nthRootsFinset (η₀ : _).prop⟩
   have hη : η₂ ≠ η₁ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀ * hζ.unit'
-    rw [Ne.def, mul_right_eq_self₀, not_or]
+    rw [Ne, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
       mul_ne_zero (ne_zero_of_mem_nthRootsFinset (η₀ : _).prop)
       (hζ.unit'_coe.ne_zero hpri.out.ne_zero)⟩

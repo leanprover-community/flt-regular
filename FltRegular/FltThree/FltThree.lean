@@ -212,7 +212,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
     by
     intro d hdprime hdleft hdright
     by_contra hne3
-    rw [← Ne.def] at hne3
+    rw [← Ne] at hne3
     apply (Nat.prime_iff_prime_int.mp hdprime).not_unit
     have hne2 : d ≠ 2 := by
       rintro rfl
@@ -457,8 +457,7 @@ theorem descent_gcd1 (a b c p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q)
       simp only [‹¬ Even (3 : ℤ)›, false_or_iff, iff_not_self, parity_simps] at huvodd
     · intro H
       rw [add_eq_zero_iff_eq_neg] at H
-      apply iff_not_self
-      simpa [‹¬ Even (3 : ℤ)›, H, parity_simps] using huvodd
+      simp [‹¬ Even (3 : ℤ)›, H, parity_simps] at huvodd
     · apply Int.gcd1_coprime12 u v <;> assumption
     · apply Int.gcd1_coprime13 u v <;> assumption
     · apply Int.gcd1_coprime23 u v <;> assumption
@@ -627,12 +626,10 @@ theorem descent_gcd3 (a b c p q : ℤ) (hp : p ≠ 0) (hq : q ≠ 0) (hcoprime :
     · exact mul_ne_zero two_ne_zero hv
     · intro H
       rw [sub_eq_zero] at H
-      apply iff_not_self
-      simpa [H, parity_simps] using huvodd
+      simp [H, parity_simps] at huvodd
     · intro H
       rw [add_eq_zero_iff_eq_neg] at H
-      apply iff_not_self
-      simpa [H, parity_simps] using huvodd
+      simp [H, parity_simps] at huvodd
     · exact hsubcoprime
     · exact haddcoprime
     · exact haddsubcoprime

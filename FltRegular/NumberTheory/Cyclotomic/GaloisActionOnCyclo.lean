@@ -1,6 +1,6 @@
 import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import Mathlib.NumberTheory.Cyclotomic.Gal
-import Mathlib.NumberTheory.NumberField.Units
+import Mathlib.NumberTheory.NumberField.Units.Basic
 
 universe u
 

@@ -13,9 +13,9 @@ theorem Zsqrtd.exists {d : ℤ} (a : ℤ√d) (him : a.im ≠ 0) :
   cases' le_or_lt a.re 0 with hre hre
   · use -a
     simp only [hre, him, Zsqrtd.norm_neg, eq_self_iff_true, Zsqrtd.neg_im, Zsqrtd.neg_re,
-      and_self_iff, neg_nonneg, Ne.def, not_false_iff, neg_eq_zero]
+      and_self_iff, neg_nonneg, Ne, not_false_iff, neg_eq_zero]
   · use a
-    simp only [hre.le, him, eq_self_iff_true, and_self_iff, Ne.def, not_false_iff]
+    simp only [hre.le, him, eq_self_iff_true, and_self_iff, Ne, not_false_iff]
 
 -- Edwards p49 step (2')
 theorem factors2 {a : ℤ√(-3)} (heven : Even a.norm) : ∃ b : ℤ√(-3), a.norm = 4 * b.norm :=
@@ -248,7 +248,7 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
   have hneg1 : 1 ≤ a.norm := by
     rw [← Int.sub_one_lt_iff, sub_self]
     apply lt_of_le_of_ne (Zsqrtd.norm_nonneg (by norm_num) a)
-    rw [Ne.def, eq_comm, Zsqrtd.norm_eq_zero_iff (by norm_num : (-3 : ℤ) < 0)]
+    rw [Ne, eq_comm, Zsqrtd.norm_eq_zero_iff (by norm_num : (-3 : ℤ) < 0)]
     rintro rfl
     rw [Zsqrtd.zero_im, Zsqrtd.zero_re] at hcoprime
     exact not_isCoprime_zero_zero hcoprime
@@ -261,7 +261,7 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
     refine' ⟨⟨1, 0⟩, _⟩
     norm_num [Zsqrtd.norm_def]
   obtain ⟨c', m, rfl, -, h1, ⟨y, hy, h3⟩⟩ := Zqrtd.factor_div' a hodd h hcoprime hfactor
-  have h4 : c'.norm ≠ 0 := by rwa [Ne.def, Zsqrtd.norm_eq_zero_iff (by norm_num) c']
+  have h4 : c'.norm ≠ 0 := by rwa [Ne, Zsqrtd.norm_eq_zero_iff (by norm_num) c']
   set g := Int.gcd c'.re c'.im with hg
   have hgpos : 0 < g := by rwa [hg, Zsqrtd.gcd_pos_iff]
   obtain ⟨C', HC', HCDcoprime⟩ := Zsqrtd.exists_coprime_of_gcd_pos hgpos
