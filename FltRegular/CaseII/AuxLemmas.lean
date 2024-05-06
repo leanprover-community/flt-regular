@@ -13,8 +13,6 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
 
-instance : CharZero (𝓞 K) := SubsemiringClass.instCharZero (𝓞 K)
-
 instance foofoo [NumberField K] : IsDomain (Ideal (𝓞 K)) := by convert Ideal.isDomain (A := 𝓞 K)
 
 instance [NumberField K] : CancelMonoidWithZero (Ideal (𝓞 K)) :=

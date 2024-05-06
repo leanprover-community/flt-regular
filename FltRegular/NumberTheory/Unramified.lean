@@ -164,7 +164,6 @@ lemma isUnramifiedAt_iff_SquareFree_minpoly_powerBasis [NoZeroSMulDivisors R S] 
 
 open nonZeroDivisors Polynomial
 
-set_option synthInstance.maxHeartbeats 40000 in
 attribute [local instance] Ideal.Quotient.field in
 lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
     (p : Ideal R) [hp : p.IsPrime] (hpbot : p ≠ ⊥) (x : S)

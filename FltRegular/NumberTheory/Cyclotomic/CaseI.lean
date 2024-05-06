@@ -33,11 +33,12 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) :
   intGal (galConj K p) (x + y * ↑(hζ.unit' ^ i) : 𝓞 K) = x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ) := by
   ext1
   rw [intGal_apply_coe]
-  push_cast
+  simp only [_root_.map_add, map_intCast, _root_.map_mul, AlgHom.coe_coe, zpow_neg, map_units_inv,
+    add_right_inj, mul_eq_mul_left_iff, Int.cast_eq_zero]
   simp_rw [NumberField.Units.coe_zpow]
+  left
   push_cast
-  simp only [zpow_neg, _root_.map_add, map_intCast, _root_.map_mul, map_zpow₀, AlgHom.coe_coe,
-    galConj_zeta_runity hζ, add_right_inj, mul_eq_mul_left_iff, Int.cast_eq_zero, inv_zpow]
+  simp only [map_zpow₀, galConj_zeta_runity hζ, inv_zpow', zpow_neg]
 
 theorem exists_int_sum_eq_zero' (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i : ℤ) {u : (𝓞 K)ˣ}
     {α : 𝓞 K} (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ (p : ℕ)) :

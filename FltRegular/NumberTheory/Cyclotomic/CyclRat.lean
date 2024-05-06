@@ -154,9 +154,8 @@ theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη :
   have h2 := IsPrimitiveRoot.sub_one_norm_prime this (cyclotomic.irreducible_rat p.2) h0
   convert h
   ext
-  rw [RingOfIntegers.coe_algebraMap_norm]
-  norm_cast at h2
-  rw [h2]
+  rw [show (η : CyclotomicField p ℚ) - 1 = (η - 1 : _) by simp] at h2
+  rw [RingOfIntegers.coe_algebraMap_norm, h2]
   simp
 
 theorem one_sub_zeta_prime [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R)
@@ -191,8 +190,6 @@ theorem diff_of_roots2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R} (
 noncomputable
 instance : AddCommGroup R := AddCommGroupWithOne.toAddCommGroup
 
-set_option maxHeartbeats 300000 in
-set_option synthInstance.maxHeartbeats 80000 in
 lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
     (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
@@ -345,7 +342,7 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     ⟨x, lt_trans x.2 (pred_lt hp.out.ne_zero)⟩ := fun x => Fin.ext rfl
   let ζ' := (ζ : L)
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
-  have hcoe : ζ = ⟨ζ', hζ'.isIntegral p.pos⟩ := by simp
+  have hcoe : ζ = ⟨ζ', hζ'.isIntegral p.pos⟩ := by rfl
   set b := hζ'.integralPowerBasis' with hb
   have hdim : b.dim = (p : ℕ).pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp.out,
     pred_eq_sub_one]
@@ -371,8 +368,7 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     rw [hcoe, ← IsPrimitiveRoot.toInteger, ← hζ'.integralPowerBasis'_gen, ← hb]
   conv_lhs at hy =>
     congr; rfl; ext x
-    rw [← SubsemiringClass.coe_pow, ← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y,
-      ← sub_eq_add_neg]
+    rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
   norm_cast at hy
   rw [sum_sub_distrib] at hy
   replace hy := congr_arg (b.basis.coord ((Fin.castIso hdim.symm) ⟨i, hi⟩)) hy
@@ -392,7 +388,7 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   let ζ' := (ζ : L)
   have : Fact (p : ℕ).Prime := ⟨hp⟩
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
-  have hcoe : ζ = ⟨ζ', hζ'.isIntegral p.pos⟩ := by simp
+  have hcoe : ζ = ⟨ζ', hζ'.isIntegral p.pos⟩ := by rfl
   have hlast : (Fin.castIso (succ_pred_prime hp)) (Fin.last (p : ℕ).pred) =
       ⟨(p : ℕ).pred, pred_lt hp.ne_zero⟩ := Fin.ext rfl
   have h : ∀ x, (Fin.castIso (succ_pred_prime hp)) (Fin.castSuccEmb x) =
@@ -424,8 +420,7 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
     rw [hcoe, ← IsPrimitiveRoot.toInteger, ← hζ'.integralPowerBasis'_gen, ← hb]
   conv_lhs at hy =>
     congr; rfl; ext x
-    rw [← SubsemiringClass.coe_pow, ← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y,
-      ← sub_eq_add_neg]
+    rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
   norm_cast at hy
   rw [sum_sub_distrib] at hy
   replace hy := congr_arg (b.basis.coord ((Fin.castIso hdim.symm) ⟨j, hj⟩)) hy

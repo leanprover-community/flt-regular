@@ -179,6 +179,7 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
   · rw [mem_nthRootsFinset p.pos, ← map_pow, hζ.unit'_coe.pow_eq_one, map_one]
   · rw [mem_nthRootsFinset p.pos, hζ.unit'_coe.pow_eq_one]
 
+set_option synthInstance.maxHeartbeats 80000 in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1 : ℕ) • x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -226,7 +227,7 @@ lemma norm_add_one_smul_of_isUnit {K} [Field K] [NumberField K] {p : ℕ} (hpri 
     apply Int.natAbs_eq_iff.mp
     apply (Int.cast_injective (α := ℚ)).comp Nat.cast_injective
     simp only [Int.cast_abs, Function.comp_apply, Nat.cast_one, Int.cast_one, ← Int.abs_eq_natAbs,
-      Algebra.coe_norm_int, ← NumberField.isUnit_iff_norm.mp hx, RingOfIntegers.norm_apply_coe]
+      Algebra.coe_norm_int, ← NumberField.isUnit_iff_norm.mp hx, RingOfIntegers.coe_norm]
   have : Algebra.norm ℤ (1 + (p : ℕ) • x) ≠ -1 := by
     intro e; apply hp
     obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x

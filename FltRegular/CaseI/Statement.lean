@@ -138,7 +138,6 @@ theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 �
   · rwa [IsRegularPrime, IsRegularNumber] at hreg
   · exact hI
 
-set_option maxHeartbeats 400000 in
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime p)
     (hζ : IsPrimitiveRoot ζ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
     (H : a ^ p + b ^ p = c ^ p) :
@@ -146,7 +145,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
       k₂ ≡ k₁ - 1 [ZMOD p] ∧ ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) := by
   let ζ' := (ζ : K)
   have hζ' : IsPrimitiveRoot ζ' P := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
-  have h : ζ = (hζ'.unit' : R) := by simp only [IsPrimitiveRoot.unit', SetLike.eta, Units.val_mk]
+  have h : ζ = (hζ'.unit' : R) := by rfl
   have hP : P ≠ (2 : ℕ+) := by
     intro hP
     rw [← PNat.coe_inj, PNat.mk_coe] at hP
@@ -170,17 +169,16 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
   convert hk using 3
   rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R), mul_assoc (↑b : R)]
   congr 2
-  · rw [← Subtype.coe_inj]
-    simp only [Fin.val_mk, SubsemiringClass.coe_pow, NumberField.Units.coe_zpow,
-      IsPrimitiveRoot.coe_unit'_coe]
-    refine' eq_of_div_eq_one _
+  · ext
+    simp only [Fin.val_mk, map_pow, NumberField.Units.coe_zpow, IsPrimitiveRoot.coe_unit'_coe]
+    refine eq_of_div_eq_one ?_
     rw [← zpow_natCast, ← zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,
       Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, Int.cast_natCast, sub_self]
-  · rw [← Subtype.coe_inj]
-    simp only [Fin.val_mk, SubsemiringClass.coe_pow, MulMemClass.coe_mul,
-      NumberField.Units.coe_zpow, IsPrimitiveRoot.coe_unit'_coe, IsPrimitiveRoot.coe_inv_unit'_coe]
-    refine' eq_of_div_eq_one _
+  · ext
+    simp only [Fin.val_mk, map_pow, _root_.map_mul, NumberField.Units.coe_zpow,
+      IsPrimitiveRoot.coe_unit'_coe, IsPrimitiveRoot.coe_inv_unit'_coe]
+    refine eq_of_div_eq_one ?_
     rw [← zpow_natCast, ← zpow_sub_one₀ (hζ'.ne_zero hpri.out.ne_zero), ←
       zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,

@@ -47,13 +47,6 @@ variable [NumberField K] {pb}
 
 variable (hpr : Prime (norm ℚ pb.gen))
 
-theorem gen_ne_zero : pb.gen ≠ 0 := by
-  intro h
-  simp only [norm, MonoidHom.restrict_apply, MonoidHom.codRestrict_apply,
-    Algebra.norm_eq_zero_iff.2 (show (pb.gen : K) = 0 by exact_mod_cast h)] at hpr
-  apply Prime.ne_zero hpr
-  rfl
-
 theorem quotient_not_trivial : Nontrivial ((𝓞 K) ⧸ span ({pb.gen} : Set (𝓞 K))) :=
   Quotient.nontrivial fun h => hpr.not_unit ((isUnit_norm ℚ).2 (span_singleton_eq_top.1 h))
 

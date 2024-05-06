@@ -80,7 +80,8 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
   obtain ⟨v, hv⟩ := this
   have hv' : IsIntegral ℤ v
   · apply IsIntegral.of_pow p.pos; rw [hv]; exact NumberField.RingOfIntegers.isIntegral_coe _
-  have : IsUnit (⟨v, hv'⟩ : 𝓞 K)
+  set w : 𝓞 K := ⟨v, hv'⟩
+  have : IsUnit w
   · rw [← isUnit_pow_iff p.pos.ne.symm]; convert (u ^ (p - 1 : ℕ) : (𝓞 K)ˣ).isUnit; ext; exact hv
   have hv'' : this.unit ^ (p : ℕ) = u ^ (p - 1 : ℕ)
   · ext; simpa only [Units.val_pow_eq_pow_val, IsUnit.unit_spec, SubmonoidClass.coe_pow] using hv

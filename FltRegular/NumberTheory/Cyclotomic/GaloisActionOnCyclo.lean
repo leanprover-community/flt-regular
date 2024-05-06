@@ -88,14 +88,16 @@ theorem galConj_idempotent : (galConj K p).trans (galConj K p) = AlgEquiv.refl :
 variable (p)
 
 --generalize this
-theorem gal_map_mem {x : K} (hx : x ∈ RR) (σ : K →ₐ[ℚ] K) : σ x ∈ RR :=
+theorem gal_map_mem {x : K} (hx : IsIntegral ℤ x) (σ : K →ₐ[ℚ] K) : IsIntegral ℤ (σ x) :=
   map_isIntegral_int (σ.restrictScalars ℤ) hx
 
-theorem gal_map_mem_subtype (σ : K →ₐ[ℚ] K) (x : RR) : σ x ∈ RR := by simp [gal_map_mem]
+theorem gal_map_mem_subtype (σ : K →ₐ[ℚ] K) (x : RR) : IsIntegral ℤ (σ x) :=
+  gal_map_mem x.2 _
 
 /-- Restriction of `σ : K →ₐ[ℚ] K` to the ring of integers.  -/
 def intGal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
-  ((σ.restrictScalars ℤ).restrictDomain RR).codRestrict RR (gal_map_mem_subtype σ)
+  ((σ.restrictScalars ℤ).restrictDomain RR).codRestrict (integralClosure ℤ K)
+  (gal_map_mem_subtype σ)
 
 @[simp]
 theorem intGal_apply_coe (σ : K →ₐ[ℚ] K) (x : RR) : (intGal σ x : K) = σ x :=
@@ -111,7 +113,7 @@ variable (K)
 def unitGalConj : RRˣ →* RRˣ :=
   unitsGal (galConj K p)
 
-theorem unitGalConj_spec (u : RRˣ) : galConj K p (u : 𝓞 K) = ↑(unitGalConj K p u : 𝓞 K) := rfl
+theorem unitGalConj_spec (u : RRˣ) : galConj K p u = unitGalConj K p u := rfl
 
 variable {K}
 
@@ -123,6 +125,4 @@ theorem unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
   simp only [map_inv₀, Complex.abs_conj]
   rw [mul_inv_eq_one₀]
   intro h
-  simp only [_root_.map_eq_zero] at h
-  rw [← Subalgebra.coe_zero (𝓞 K), Subtype.coe_inj] at h
-  exact Units.ne_zero _ h
+  simp at h

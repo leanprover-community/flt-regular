@@ -234,7 +234,7 @@ variable
     (hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
 def RelativeUnits (k K : Type*) [Field k] [Field K] [Algebra k K] :=
-  ((𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))))
+  ((𝓞 K)ˣ ⧸ (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))))
 
 instance : CommGroup (RelativeUnits k K) := by delta RelativeUnits; infer_instance
 
@@ -242,8 +242,8 @@ attribute [local instance] IsCyclic.commGroup
 
 attribute [local instance 2000] inst_ringOfIntegersAlgebra Algebra.toSMul Algebra.toModule
 
-instance : IsScalarTower ↥(𝓞 k) ↥(𝓞 K) K := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
-instance : IsIntegralClosure ↥(𝓞 K) ↥(𝓞 k) K := IsIntegralClosure.of_isIntegrallyClosed _ _ _
+instance : IsScalarTower (𝓞 k) (𝓞 K) K := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
+instance : IsIntegralClosure (𝓞 K) (𝓞 k) K := IsIntegralClosure.of_isIntegrallyClosed _ _ _
   (fun x ↦ IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ K x))
 
 lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
@@ -298,8 +298,6 @@ lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a) :
     x ^ ((finEquivZPowers x hx).symm a : ℕ) = a :=
   congr_arg Subtype.val ((finEquivZPowers x hx).apply_symm_apply a)
 
-set_option synthInstance.maxHeartbeats 160000 in
-set_option maxHeartbeats 400000 in
 open Polynomial in
 lemma isTors' : Module.IsTorsionBySet ℤ[X]
     (Module.AEval' (addMonoidEndRingEquivInt _
@@ -328,7 +326,7 @@ lemma isTors' : Module.IsTorsionBySet ℤ[X]
     Subalgebra.coe_toSubsemiring, Algebra.norm_eq_prod_automorphisms]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank, ← orderOf_eq_card_of_forall_mem_zpowers hσ,
     ← Fin.prod_univ_eq_prod_range, ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
-  simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe]
+  simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe, map_prod]
   rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i ↑x) (Subgroup.zpowers σ)]
   congr
   ext x
@@ -406,7 +404,7 @@ lemma NumberField.Units.finrank_eq : finrank ℤ (Additive (𝓞 k)ˣ) = NumberF
 local instance : Module.Finite ℤ (Additive <| RelativeUnits k K) := by
   delta RelativeUnits
   show Module.Finite ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
-    (MonoidHom.range <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K)))))
+    (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K)))))
   infer_instance
 
 local instance : Module.Finite ℤ (Additive <| relativeUnitsWithGenerator p hp hKL σ hσ) := by
@@ -432,10 +430,10 @@ lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
   rw [← Submodule.torsion_int]
   refine (FiniteDimensional.finrank_quotient_of_le_torsion _ le_rfl).trans ?_
   show finrank ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
-    (MonoidHom.range <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))))) = _
+    (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))))) = _
   rw [FiniteDimensional.finrank_quotient]
   show _ - finrank ℤ (LinearMap.range <| AddMonoidHom.toIntLinearMap <|
-    MonoidHom.toAdditive <| Units.map (algebraMap ↥(𝓞 k) ↥(𝓞 K) : ↥(𝓞 k) →* ↥(𝓞 K))) = _
+    MonoidHom.toAdditive <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))) = _
   rw [LinearMap.finrank_range_of_inj, NumberField.Units.finrank_eq, NumberField.Units.finrank_eq,
     NumberField.Units.rank_of_isUnramified (k := k), add_mul, one_mul, mul_tsub, mul_one, mul_comm,
       add_tsub_assoc_of_le, tsub_add_eq_add_tsub, hKL]
@@ -470,16 +468,13 @@ lemma unitlifts_spec (S : systemOfUnits p G (NumberField.Units.rank k + 1)) (i) 
   simp only [toMul_ofMul, Quotient.out_eq', ofMul_toMul]
   exact Quotient.out_eq' _
 
-set_option synthInstance.maxHeartbeats 80000 in
 lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zeta p : A) • (mkG v) := by
   rw [sub_smul, one_smul, relativeUnitsModule_zeta_smul, ← unit_to_U_div]
   congr
   rw [eq_div_iff_mul_eq']
   ext
-  simp only [Units.val_mul, Units.coe_map, MonoidHom.coe_coe, Submonoid.coe_mul,
-    Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, coe_galRestrictHom_apply, hu]
-  refine div_mul_cancel₀ _ ?_
-  simp only [ne_eq, map_eq_zero, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
+  simp only [Units.val_mul, Units.coe_map, MonoidHom.coe_coe, map_mul, coe_galRestrictHom_apply, hu]
+  exact div_mul_cancel₀ _ (by simp)
 
 open multiplicity in
 theorem padicValNat_dvd_iff_le' {p : ℕ} (hp : p ≠ 1) {a n : ℕ} (ha : a ≠ 0) :
@@ -701,18 +696,26 @@ lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (�
     letI J : (𝓞 K)ˣ := (Additive.toMul (∑ i : Fin n, ι i • H i)) *
       (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ζ) ^ (-a)
     Algebra.norm k (S := K) ((J : (𝓞 K)ˣ) : K) = 1 := by
-  simp only [toMul_sum, toMul_zsmul, RingHom.toMonoidHom_eq_coe, zpow_neg, Units.val_mul,
-    Units.coe_prod, Submonoid.coe_mul, Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring,
-    Submonoid.coe_finset_prod, Units.coe_zpow, map_mul, map_prod, ← Units.coe_val_inv,
-    norm_map_inv, norm_map_zpow, hKL, Units.coe_map, MonoidHom.coe_coe,
-    RingOfInteger.coe_algebraMap_apply, Algebra.norm_algebraMap]
+  have hcoe : ((algebraMap (𝓞 K) K) ((algebraMap (𝓞 k) (𝓞 K)) ((ζ ^ a)⁻¹).1)) =
+    algebraMap (𝓞 k) (𝓞 K) ((ζ ^ a)⁻¹).1 := rfl
+  simp only [toMul_sum, toMul_zsmul, zpow_neg, Units.val_mul, Units.coe_prod, map_mul, map_prod,
+    Units.coe_zpow, map_mul, map_prod, ← Units.coe_val_inv, norm_map_inv, norm_map_zpow,
+    Units.coe_map]
+  rw [← map_zpow, Units.coe_map_inv]
+  simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe]
+  have hcoe1 :
+      algebraMap (𝓞 k) k (((ζ ^ (p : ℕ)) ^ a)⁻¹).1 = ((((ζ : 𝓞 k) : k) ^ (p : ℕ)) ^ a)⁻¹ := by
+    convert (Units.coe_map_inv ((algebraMap (𝓞 k) k) : (𝓞 k) →* k) ((ζ ^ (p : ℕ)) ^ a)).symm
+    simp
+  rw [hcoe, RingOfInteger.coe_algebraMap_apply, Algebra.norm_algebraMap, hKL, ← map_pow,
+    ← Units.val_pow_eq_pow_val, inv_pow, ← zpow_natCast, ← zpow_mul, mul_comm a, zpow_mul,
+      zpow_natCast, hcoe1]
   apply_fun Additive.toMul at ha
   apply_fun ((↑) : (𝓞 k)ˣ → k) at ha
-  simp only [toMul_sum, toMul_zsmul, Units.coe_prod, Submonoid.coe_finset_prod, hη,
-    Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, Units.coe_zpow, toMul_ofMul] at ha
+  simp only [toMul_sum, toMul_zsmul, Units.coe_prod, map_prod, hη,
+    Units.coe_zpow, toMul_ofMul] at ha
   rwa [← zpow_natCast, ← zpow_mul, mul_comm _ a, mul_inv_eq_one₀]
-  rw [← Units.coe_zpow]
-  simp only [ne_eq, ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true]
+  simp [← Units.coe_zpow]
 
 lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / σ E)
   (hζ : (ζ : k) ^ (p : ℕ) = 1) (hpodd : (p : ℕ) ≠ 2) :
@@ -760,7 +763,6 @@ lemma unit_to_U_map (x : (𝓞 k)ˣ) : mkG (Units.map (algebraMap (𝓞 k) (𝓞
   rw [ofMul_eq_zero, QuotientGroup.eq_one_iff]
   exact ⟨_, rfl⟩
 
-set_option synthInstance.maxHeartbeats 160000 in
 lemma unit_to_U_neg (x) : mkG (-x) = mkG x := by
   rw [← one_mul x, ← neg_mul, unit_to_U_mul, one_mul, add_left_eq_self]
   convert unit_to_U_map p hp hKL σ hσ (-1)
@@ -768,7 +770,7 @@ lemma unit_to_U_neg (x) : mkG (-x) = mkG x := by
   simp only [Units.val_neg, Units.val_one, OneMemClass.coe_one,
     Units.coe_map, MonoidHom.coe_coe, map_neg, map_one]
 
-instance : CommGroup (↥(𝓞 k))ˣ := inferInstance
+instance : CommGroup ((𝓞 k))ˣ := inferInstance
 
 lemma IsPrimitiveRoot.one_left_iff {M} [CommMonoid M] {n : ℕ} :
     IsPrimitiveRoot (1 : M) n ↔ n = 1 :=
@@ -781,8 +783,6 @@ lemma Algebra.norm_of_finrank_eq_two (hKL : finrank k K = 2) (x : K) :
   rfl
 
 -- TODO : remove `p ≠ 2`. The offending case is when `K = k[i]`.
-set_option synthInstance.maxHeartbeats 160000 in
-set_option maxHeartbeats 400000 in
 lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   classical
@@ -797,7 +797,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
   have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ)
   · ext
     simp only [RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
-      RingOfInteger.coe_algebraMap_apply, RingOfIntegers.norm_apply_coe, Units.val_pow_eq_pow_val, SubmonoidClass.coe_pow, Units.val_neg]
+      RingOfInteger.coe_algebraMap_apply, Units.val_pow_eq_pow_val, map_pow]
     rw [← map_pow] at hE
     refine Hilbert92ish_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
     rw [← pow_mul, ← pow_succ]
@@ -819,9 +819,9 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
     intro i
     induction i using Fin.lastCases with
     | last =>
-      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, RingOfIntegers.norm_apply_coe, NE, η, H2]
+      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE, η, H2]
     | cast i =>
-      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.norm_apply_coe, NE,
+      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE,
         η, H2, J, N, H]
   · intro ε hε
     refine hS.corollary p hp _ _ (finrank_G p hp hKL σ hσ) _ (ι ∘ Fin.castSucc) ?_ (mkG ε) ?_
@@ -832,7 +832,9 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
         Set.mem_singleton_iff, not_not] at this
       rw [this] at ha'
       cases' h with h
-      · exact ha'' (by simpa using hζ) this
+      · refine ha'' ?_ this
+        ext
+        simpa using hζ
       obtain ⟨ε', hε'⟩ : ∃ ε' : (𝓞 k)ˣ, ε' ^ (p : ℕ) = NE
       · rw [← (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd] at ha'
         obtain ⟨α, β, hαβ⟩ := ha'
@@ -859,10 +861,11 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
         rw [map_mul, ← mul_inv_eq_iff_eq_mul]
         ext
         simpa using e.symm
-      simp only [ge_iff_le, Nat.succ_sub_succ_eq_sub, nonpos_iff_eq_zero, tsub_zero, hε'',
-        RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe, ← map_pow,
-        RingOfInteger.coe_algebraMap_apply, AlgEquiv.commutes, ne_eq, map_eq_zero,
-        ZeroMemClass.coe_eq_zero, Units.ne_zero, not_false_eq_true, div_self] at hE
+      simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, ← map_pow, hε'', RingHom.toMonoidHom_eq_coe,
+        Units.coe_map, MonoidHom.coe_coe, RingOfInteger.coe_algebraMap_apply,
+        AlgEquiv.commutes] at hE
+      replace hE : (algebraMap k K) (((ζ : 𝓞 k) : k) ^ (p : ℕ) ^ h) = 1 := by
+       rwa [div_self (by simp)] at hE
       erw [hE] at hζ'' --why?
       rw [IsPrimitiveRoot.one_left_iff] at hζ''
       exact hp.one_lt.ne.symm hζ''

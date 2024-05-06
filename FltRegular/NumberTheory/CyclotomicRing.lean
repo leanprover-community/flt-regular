@@ -73,7 +73,6 @@ lemma one_sub_zeta_mem_nonZeroDivisors :
 lemma not_isUnit_one_sub_zeta :
     ¬ IsUnit (1 - zeta p) := (prime_one_sub_zeta p).irreducible.1
 
-set_option synthInstance.maxHeartbeats 40000 in
 lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
   letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
   letI : Fact (PNat.Prime p') := hpri
@@ -91,7 +90,6 @@ lemma isCoprime_one_sub_zeta (n : ℤ) (hn : ¬ (p : ℤ) ∣ n) : IsCoprime (1 
     (algebraMap ℤ <| CyclotomicIntegers p)).of_isCoprime_of_dvd_left
   exact one_sub_zeta_dvd p
 
-set_option synthInstance.maxHeartbeats 80000 in
 lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m ≠ 0 ∧ n ∣ m := by
   refine ⟨Algebra.norm ℤ ((equiv p) n), by simpa, ?_⟩
   rw [← map_dvd_iff (equiv p), map_intCast]
@@ -135,7 +133,7 @@ lemma nontrivial {p} (hp : p ≠ 0) : Nontrivial (CyclotomicIntegers p) := by
   intro h
   have := natDegree_eq_zero_of_isUnit h
   rw [natDegree_cyclotomic] at this
-  exact this.not_gt (p.totient_pos (Nat.pos_iff_ne_zero.mpr hp))
+  exact this.not_gt (Nat.totient_pos.2 <| Nat.zero_lt_of_ne_zero hp)
 
 lemma charZero {p} (hp : p ≠ 0) : CharZero (CyclotomicIntegers p) :=
   letI := nontrivial hp

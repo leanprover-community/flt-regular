@@ -40,8 +40,6 @@ lemma zeta_sub_one_dvd : π ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
   apply dvd_pow_self
   simp
 
-set_option synthInstance.maxHeartbeats 160000 in
-set_option maxHeartbeats 400000 in
 lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -55,15 +53,15 @@ lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   rw [Finset.prod_const, ← map_pow, Ideal.Quotient.eq_zero_iff_dvd] at h
   exact hζ.zeta_sub_one_prime'.dvd_of_dvd_pow h
 
-lemma div_one_sub_zeta_mem : (x + y * η : 𝓞 K) / (ζ - 1) ∈ 𝓞 K := by
+lemma div_one_sub_zeta_mem : IsIntegral ℤ ((x + y * η : 𝓞 K) / (ζ - 1)) := by
   obtain ⟨⟨a, ha⟩, e⟩ := one_sub_zeta_dvd_zeta_pow_sub hp hζ e η
   rw [e, mul_comm]
-  simp only [Submonoid.coe_mul, Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring,
-    AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one, ne_eq]
+  simp only [map_mul, NumberField.RingOfIntegers.map_mk, map_sub, IsPrimitiveRoot.coe_unit'_coe,
+    map_one]
   rwa [mul_div_cancel_right₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
 
 def div_zeta_sub_one : nthRootsFinset p (𝓞 K) → 𝓞 K :=
-fun η ↦ ⟨(x + y * η) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
+fun η ↦ ⟨(x + y * η.1) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
 
 lemma div_zeta_sub_one_mul_zeta_sub_one (η) :
     div_zeta_sub_one hp hζ e η * (π) = x + y * η := by
@@ -83,7 +81,6 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
   rw [Ne, ← Subtype.ext_iff.not]
   exact hη
 
-set_option synthInstance.maxHeartbeats 40000 in
 lemma div_zeta_sub_one_Injective :
     Function.Injective (fun η ↦ Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η)) := by
   letI : AddGroup (𝓞 K ⧸ 𝔭) := inferInstance
@@ -153,13 +150,11 @@ lemma m_mul_c_mul_p : 𝔪 * 𝔠 η * 𝔭 = 𝔦 η := by
   rw [div_zeta_sub_one_dvd_gcd_spec, Ideal.span_singleton_mul_span_singleton,
     div_zeta_sub_one_mul_zeta_sub_one]
 
-set_option synthInstance.maxHeartbeats 40000 in
 lemma m_ne_zero : 𝔪 ≠ 0 := by
   simp_rw [Ne, gcd_eq_zero_iff, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
   rintro ⟨rfl, rfl⟩
   exact hy (dvd_zero _)
 
-set_option synthInstance.maxHeartbeats 40000 in
 lemma p_ne_zero : 𝔭 ≠ 0 := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
@@ -286,7 +281,7 @@ lemma p_dvd_c_iff : 𝔭 ∣ (𝔠 η) ↔ η = η₀ := by
     ← Ideal.dvd_span_singleton, ← div_zeta_sub_one_dvd_gcd_spec (hy := hy),
     ← dvd_gcd_mul_iff_dvd_mul, gcd_comm, gcd_zeta_sub_one_eq_one hζ hy, one_mul]
 
-lemma p_pow_dvd_c_eta_zero_aux [DecidableEq K] :
+lemma p_pow_dvd_c_eta_zero_aux [DecidableEq (𝓞 K)] :
   gcd (𝔭 ^ (m * p)) (∏ η in Finset.attach (nthRootsFinset p (𝓞 K)) \ {η₀}, 𝔠 η) = 1 := by
     rw [← Ideal.isCoprime_iff_gcd]
     apply IsCoprime.pow_left
@@ -395,7 +390,6 @@ lemma a_mul_denom_eq_a_zero_mul_num (hη : η ≠ η₀) :
   simp only [FractionalIdeal.coeIdeal_mul, FractionalIdeal.coeIdeal_span_singleton]
   rw [mul_comm (𝔞₀ : FractionalIdeal (𝓞 K)⁰ K), ← div_eq_div_iff,
     ← a_div_a_zero_eq hp hreg hζ e hy hz η hη, FractionalIdeal.spanSingleton_div_spanSingleton]
-  · rfl
   · intro ha
     rw [FractionalIdeal.coeIdeal_eq_zero] at ha
     apply not_p_div_a_zero hp hζ e hy hz
@@ -425,7 +419,6 @@ def associated_eta_zero_unit (hη : η ≠ η₀) : (𝓞 K)ˣ :=
 
 local notation "ε" => associated_eta_zero_unit hp hreg hζ e hy hz
 
-set_option synthInstance.maxHeartbeats 40000 in
 lemma associated_eta_zero_unit_spec (η) (hη : η ≠ η₀) :
     ε η hη * (x + y * η₀) * α η hη ^ (p : ℕ) = (x + y * η) * π ^ (m * p) * β η hη ^ (p : ℕ) := by
   rw [mul_assoc, mul_comm (ε η hη : 𝓞 K)]
@@ -457,7 +450,6 @@ lemma stuff (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η₀
   congr 1
   ring
 
-set_option maxHeartbeats 400000 in
 lemma exists_solution :
     ∃ (x' y' z' : 𝓞 K) (ε₁ ε₂ ε₃ : (𝓞 K)ˣ), ¬ π ∣ x' ∧ ¬ π ∣ y' ∧ ¬ π ∣ z' ∧
       ↑ε₁ * x' ^ (p : ℕ) + ε₂ * y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
@@ -524,8 +516,6 @@ lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
   rw [neg_mul, (Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp)).neg_pow,
     sub_neg_eq_add, mul_sub, mul_one, mul_comm x b, add_sub_sub_cancel, add_comm]
 
-set_option synthInstance.maxHeartbeats 160000 in
-set_option maxHeartbeats 400000 in
 lemma exists_solution' :
     ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
       ¬ π ∣ y' ∧ ¬ π ∣ z' ∧ x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
