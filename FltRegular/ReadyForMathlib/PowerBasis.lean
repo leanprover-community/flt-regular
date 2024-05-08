@@ -28,7 +28,7 @@ theorem exists_int_sModEq (x : 𝓞 K) :
       simp only [Subtype.coe_mk] at h
       simp only [mem_univ, not_true, mem_erase, ne_eq, Fin.mk.injEq, and_true] at hi
       exact hi h
-    simp only [Fin.val_mk, _root_.pow_zero, Int.smul_one_eq_coe, zsmul_eq_mul] at H
+    simp only [Fin.val_mk, _root_.pow_zero, zsmul_eq_mul] at H
     rw [← Finset.sum_finset_coe] at H
     conv_lhs at H =>
       congr

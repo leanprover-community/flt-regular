@@ -149,6 +149,7 @@ theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type _} [CommRing A] [IsDomai
   rw [map_pow, eq_one_mod_one_sub, one_pow]
 
 set_option synthInstance.maxHeartbeats 40000 in
+set_option maxHeartbeats 400000 in
 theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot μ p)
     (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral p.pos⟩ : 𝓞 K) ^ (x : ℕ) = l) :
     algebraMap (𝓞 K) (𝓞 K ⧸ I) l = ∑ x : Fin t, (f x : 𝓞 K ⧸ I) := by
@@ -324,6 +325,7 @@ lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [FunLike F M N]
     ↑((Units.map (f : M →* N) m)⁻¹) = f ↑(m⁻¹ : Mˣ) :=
   m.coe_map_inv (f : M →* N)
 
+set_option synthInstance.maxHeartbeats 40000 in
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
   algebraMap (𝓞 K) (𝓞 K ⧸ I) ((u * (unitGalConj K p u)⁻¹) : _) = 1 := by
   have := Units.coe_map_inv' (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitGalConj K p u)
@@ -370,16 +372,6 @@ theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp 
   haveI := Fact.mk hp
   apply hζ.two_not_mem_one_sub_zeta h
   rw [← Ideal.Quotient.eq_zero_iff_mem, map_two, ← neg_one_eq_one_iff_two_eq_zero, ← hμ', hμ]
-
--- Add to mathlib
-@[norm_cast]
-lemma NumberField.RingOfIntegers.eq_iff {K : Type*} [Field K] {x y : 𝓞 K} :
-    (x : K) = (y : K) ↔ x = y :=
-  NumberField.RingOfIntegers.ext_iff.symm
-instance {K L : Type*} [Field K] [Ring L] [Algebra K L] : Algebra (𝓞 K) L :=
-  inferInstanceAs (Algebra (integralClosure _ _) L)
-instance {K L : Type*} [Field K] [Ring L] [Algebra K L] :  IsScalarTower (𝓞 K) K L :=
-  inferInstanceAs (IsScalarTower (integralClosure _ _) K L)
 
 -- this proof has mild coe annoyances rn
 theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u : Rˣ) :
