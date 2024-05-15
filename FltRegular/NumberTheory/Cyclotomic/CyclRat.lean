@@ -151,7 +151,7 @@ theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη :
     rw [hP] at ph
     contradiction
   have h := RingOfIntegers.dvd_norm ℚ (η - 1 : R)
-  have h2 := IsPrimitiveRoot.sub_one_norm_prime this (cyclotomic.irreducible_rat p.2) h0
+  have h2 := IsPrimitiveRoot.norm_sub_one_of_prime_ne_two' this (cyclotomic.irreducible_rat p.2) h0
   convert h
   ext
   rw [show (η : CyclotomicField p ℚ) - 1 = (η - 1 : _) by simp] at h2
