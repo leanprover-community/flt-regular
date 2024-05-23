@@ -92,10 +92,9 @@ lemma pow_sub_one_dvd_differentIdeal
     {p : Ideal A} [p.IsMaximal] (P : Ideal B) (e : ℕ) (hp : p ≠ ⊥)
     (hP : P ^ e ∣ p.map (algebraMap A B)) : P ^ (e - 1) ∣ differentIdeal A B := by
   have : IsIntegralClosure B A (FractionRing B) :=
-    IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := A) (B := B))
+    IsIntegralClosure.of_isIntegrallyClosed _ _ _
   have : IsLocalization (algebraMapSubmonoid B A⁰) (FractionRing B) :=
     IsIntegralClosure.isLocalization _ (FractionRing A) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := A) (B := B)))
   have : FiniteDimensional (FractionRing A) (FractionRing B) :=
     Module.Finite_of_isLocalization A B _ _ A⁰
   by_cases he : e = 0

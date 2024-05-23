@@ -147,7 +147,6 @@ lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowe
   haveI := IsIntegralClosure.isFractionRing_of_finite_extension A K L B
   have : IsLocalization (Algebra.algebraMapSubmonoid B A⁰) L :=
     IsIntegralClosure.isLocalization A K L B
-      (Algebra.isAlgebraic_iff_isIntegral.mpr <| Algebra.IsIntegral.of_finite (R := K) (B := L))
   obtain ⟨ε, hε⟩ := Hilbert90 hσ hη
   obtain ⟨x, y, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid B A⁰) ε
   obtain ⟨t, ht, ht'⟩ := y.prop

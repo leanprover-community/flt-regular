@@ -32,10 +32,11 @@ variable (R S K L) [CommRing R] [CommRing S] [Field K] [Field L]
     [IsIntegrallyClosed S] [IsSeparable (FractionRing R) (FractionRing S)]
 
 instance : IsIntegralClosure S R (FractionRing S) :=
-  IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S))
+  IsIntegralClosure.of_isIntegrallyClosed _ _ _
+
 instance : IsLocalization (Algebra.algebraMapSubmonoid S R⁰) (FractionRing S) :=
     IsIntegralClosure.isLocalization _ (FractionRing R) _ _
-      (isAlgebraic_of_isFractionRing _ _ (Algebra.IsIntegral.of_finite (R := R) (B := S)))
+
 instance : FiniteDimensional (FractionRing R) (FractionRing S) :=
     Module.Finite_of_isLocalization R S _ _ R⁰
 
@@ -144,7 +145,7 @@ theorem spanIntNorm_localization (I : Ideal S) (M : Submonoid R) (hM : M ≤ R�
   letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization
     (Algebra.algebraMapSubmonoid S M) Sₘ L
   haveI : IsIntegralClosure Sₘ Rₘ L :=
-    IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₘ) (B := Sₘ))
+    IsIntegralClosure.of_isIntegrallyClosed _ _ _
   rw [map_spanIntNorm]
   refine span_eq_span (Set.image_subset_iff.mpr ?_) (Set.image_subset_iff.mpr ?_)
   · rintro a' ha'
@@ -346,8 +347,7 @@ theorem spanIntNorm_map (I : Ideal R) :
       RingHom.comp_assoc, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R S Sₚ,
       IsLocalization.map_comp, RingHom.comp_id, ← RingHom.comp_assoc, IsLocalization.map_comp,
       RingHom.comp_id, ← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
-  haveI : IsIntegralClosure Sₚ Rₚ L :=
-    IsIntegralClosure.of_isIntegrallyClosed _ _ _ (Algebra.IsIntegral.of_finite (R := Rₚ) (B := Sₚ))
+  haveI : IsIntegralClosure Sₚ Rₚ L := IsIntegralClosure.of_isIntegrallyClosed _ _ _
   haveI : IsSeparable (FractionRing Rₚ) (FractionRing Sₚ) := by
     apply IsSeparable.of_equiv_equiv (FractionRing.algEquiv Rₚ (FractionRing R)).symm.toRingEquiv
       (FractionRing.algEquiv Sₚ (FractionRing S)).symm.toRingEquiv

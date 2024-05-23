@@ -35,11 +35,11 @@ def primesOverFinset [IsDedekindDomain S] (p : Ideal R) :
 variable {S}
 
 lemma primesOver_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S]
-  (hRS : Algebra.IsIntegral R S) :
+  [Algebra.IsIntegral R S] :
     primesOver S (⊥ : Ideal R) = {⊥} := by
   ext p
   simp only [primesOver, Set.mem_setOf_eq, Set.mem_singleton_iff]
-  refine ⟨fun H ↦ Ideal.eq_bot_of_comap_eq_bot hRS H.2, ?_⟩
+  refine ⟨fun H ↦ Ideal.eq_bot_of_comap_eq_bot H.2, ?_⟩
   rintro rfl
   rw [← RingHom.ker_eq_comap_bot, ← RingHom.injective_iff_ker_eq_bot]
   exact ⟨Ideal.bot_prime, NoZeroSMulDivisors.algebraMap_injective _ _⟩
@@ -78,10 +78,10 @@ lemma primesOver_finite [Ring.DimensionLEOne R] [IsDedekindDomain S] [NoZeroSMul
   · rw [primesOver_eq_empty_of_not_isPrime S p h]
     exact Set.finite_empty
 
-lemma primesOver_nonempty [IsDomain S] [NoZeroSMulDivisors R S] (hRS : Algebra.IsIntegral R S)
+lemma primesOver_nonempty [IsDomain S] [NoZeroSMulDivisors R S] [Algebra.IsIntegral R S]
     (p : Ideal R) [p.IsPrime] : (primesOver S p).Nonempty := by
   have := Ideal.bot_prime (α := S)
-  obtain ⟨Q, _, hQ⟩ := Ideal.exists_ideal_over_prime_of_isIntegral hRS p ⊥
+  obtain ⟨Q, _, hQ⟩ := Ideal.exists_ideal_over_prime_of_isIntegral p ⊥
     (by rw [Ideal.comap_bot_of_injective _
       (NoZeroSMulDivisors.algebraMap_injective R S)]; exact bot_le)
   exact ⟨Q, hQ⟩
@@ -164,7 +164,8 @@ instance [IsGalois K L] (p : Ideal R) :
   by_cases hp : p = ⊥
   · subst hp
     have : Subsingleton (primesOver S (⊥ : Ideal R)) := by
-      rw [primesOver_bot (IsIntegralClosure.isIntegral_algebra R L)]; infer_instance
+      have : Algebra.IsIntegral R S := (IsIntegralClosure.isIntegral_algebra R L)
+      rw [primesOver_bot]; infer_instance
     exact ⟨1, Subsingleton.elim _ _⟩
   have hP := isMaximal_of_mem_primesOver hp P.prop
   -- Suppose the contrary that `σ • P ≠ Q` for all `σ`.
@@ -242,17 +243,17 @@ lemma Ideal.ramificationIdxIn_bot : (⊥ : Ideal R).ramificationIdxIn S = 0 := b
   · exact dif_neg h
 
 lemma Ideal.inertiaDegIn_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S] [IsNoetherian R S]
-    (hRS : Algebra.IsIntegral R S) [H : (⊥ : Ideal R).IsMaximal] :
+    [Algebra.IsIntegral R S] [H : (⊥ : Ideal R).IsMaximal] :
     (⊥ : Ideal R).inertiaDegIn S = FiniteDimensional.finrank R S := by
   delta inertiaDegIn
-  rw [primesOver_bot hRS]
+  rw [primesOver_bot]
   have : ({⊥} : Set (Ideal S)).Nonempty := by simp
   rw [dif_pos this, this.choose_spec]
   have hR := not_imp_not.mp (Ring.ne_bot_of_isMaximal_of_not_isField H) rfl
-  have hS := isField_of_isIntegral_of_isField' hRS hR
+  have hS := isField_of_isIntegral_of_isField' (S := S) hR
   letI : Field R := hR.toField
   letI : Field S := hS.toField
-  have : IsIntegralClosure S R S := isIntegralClosure_self hRS
+  have : IsIntegralClosure S R S := isIntegralClosure_self
   rw [← Ideal.map_bot (f := algebraMap R S), ← finrank_quotient_map (R := R) (S := S) ⊥ R S]
   exact inertiaDeg_algebraMap _ _
 
@@ -358,11 +359,12 @@ lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.
   by_cases hp : p = ⊥
   · subst hp
     have := P.prop
-    simp_rw [primesOver_bot (S := S) (IsIntegralClosure.isIntegral_algebra R L),
+    have hRS : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
+    simp_rw [primesOver_bot (S := S),
       Set.mem_singleton_iff] at this
     simp_rw [coe_smul_primesOver, this,
       Ideal.comap_bot_of_injective _ (galRestrict R K L S _).injective, Finset.prod_const,
-      Ideal.map_bot, Ideal.inertiaDegIn_bot R S (IsIntegralClosure.isIntegral_algebra R L)]
+      Ideal.map_bot, Ideal.inertiaDegIn_bot R S]
     refine (zero_pow ?_).trans (zero_pow ?_).symm
     · rw [Finset.card_univ, Ne, Fintype.card_eq_zero_iff]
       simp only [not_isEmpty_of_nonempty, not_false_eq_true]

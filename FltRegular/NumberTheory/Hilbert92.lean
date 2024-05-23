@@ -114,8 +114,9 @@ lemma LinearIndependent.update' {ι} [DecidableEq ι] {R} [CommRing R] [Module R
     Finsupp.total_pi_single, smul_add, smul_sub, smul_zero] at hl'
   rw [smul_comm σ (l' i) g, hg, ← LinearMap.map_smul, ← LinearMap.map_smul, smul_smul,
     ← Finsupp.total_single, ← (Finsupp.total ι G R f).map_sub, ← map_add] at hl'
-  replace hl' : ∀ j, (σ * l' j - (fun₀ | i => σ * l' i) j) + l' i * l j = 0 :=
-    fun j ↦ DFunLike.congr_fun (hf _ hl') j
+  replace hl' : ∀ j, (σ * l' j - (fun₀ | i => σ * l' i) j) + l' i * l j = 0 := by
+    intro j
+    exact DFunLike.congr_fun (hf _ hl') j
   simp only [Finsupp.single_apply] at hl'
   have : l' i = 0 := hl _ (by simpa using hl' i)
   simp only [this, zero_mul, add_zero, mul_zero, ite_self, sub_zero] at hl'
@@ -243,8 +244,10 @@ attribute [local instance] IsCyclic.commGroup
 attribute [local instance 2000] inst_ringOfIntegersAlgebra Algebra.toSMul Algebra.toModule
 
 instance : IsScalarTower (𝓞 k) (𝓞 K) K := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
-instance : IsIntegralClosure (𝓞 K) (𝓞 k) K := IsIntegralClosure.of_isIntegrallyClosed _ _ _
-  (fun x ↦ IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ K x))
+
+instance : IsIntegralClosure (𝓞 K) (𝓞 k) K := by
+  have : Algebra.IsIntegral (𝓞 k) (𝓞 K) := ⟨fun _ ↦ .tower_top (IsIntegralClosure.isIntegral ℤ K _)⟩
+  apply IsIntegralClosure.of_isIntegrallyClosed
 
 lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
     (galRestrictHom (𝓞 k) k K (𝓞 K) σ x : K) = σ x :=

@@ -129,8 +129,7 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
 
 def polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (m : ℕ) : 𝓞 L :=
-  ⟨((1 : L) - ζ ^ m • α) / (algebraMap K L (ζ - 1)), isIntegral_trans
-    (show Algebra.IsIntegral ℤ (𝓞 K) from IsIntegralClosure.isIntegral_algebra ℤ K) _
+  ⟨((1 : L) - ζ ^ m • α) / (algebraMap K L (ζ - 1)), isIntegral_trans _
       ⟨poly hp hζ u hcong, monic_poly hp hζ u hcong, aeval_poly hp hζ u hcong α e m⟩⟩
 
 theorem roots_poly {L : Type*} [Field L] [Algebra K L] (α : L)
@@ -191,8 +190,8 @@ lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [
   algebraMap_injective' := IsIntegralClosure.algebraMap_injective B R L
   isIntegral_iff := fun {x} ↦ by
     refine Iff.trans ?_ (IsIntegralClosure.isIntegral_iff (R := R) (A := B) (B := L))
-    exact ⟨isIntegral_trans (IsIntegralClosure.isIntegral_algebra R (A := A) K) x,
-      IsIntegral.tower_top⟩
+    have := (IsIntegralClosure.isIntegral_algebra R (A := A) K)
+    exact ⟨isIntegral_trans x, IsIntegral.tower_top⟩
 
 instance {K L} [Field K] [Field L] [Algebra K L] :
     IsIntegralClosure (𝓞 L) (𝓞 K) L := isIntegralClosure_of_isScalarTower ℤ _ K _ _
@@ -250,7 +249,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   simp only [map_mul, map_sub, IsPrimitiveRoot.val_unit'_coe, map_one, map_pow, hcoe] at hv
   have hα : IsIntegral (𝓞 K) α := by
     apply IsIntegral.of_pow p.pos; rw [e]; exact isIntegral_algebraMap
-  have : IsUnit (⟨α, isIntegral_trans (IsIntegralClosure.isIntegral_algebra ℤ K) _ hα⟩ : 𝓞 L) := by
+  have : IsUnit (⟨α, isIntegral_trans _ hα⟩ : 𝓞 L) := by
     rw [← isUnit_pow_iff p.pos.ne.symm]
     convert (algebraMap (𝓞 K) (𝓞 L)).isUnit_map u.isUnit
     ext; simp only [SubmonoidClass.coe_pow, e]; rfl

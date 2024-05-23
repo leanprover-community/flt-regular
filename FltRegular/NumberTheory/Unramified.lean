@@ -65,12 +65,11 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
   have := NoZeroSMulDivisors.iff_algebraMap_injective.mpr hRS
   by_cases hIbot : I = ⊥
   · rw [hIbot, Ideal.comap_bot_of_injective _ hRS, Ideal.map_bot]
-  have hIbot' : I.comap (algebraMap R S) ≠ ⊥ := mt (Ideal.eq_bot_of_comap_eq_bot
-    (IsIntegralClosure.isIntegral_algebra R L)) hIbot
+  have h1 : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
+  have hIbot' : I.comap (algebraMap R S) ≠ ⊥ := mt Ideal.eq_bot_of_comap_eq_bot hIbot
   have : ∀ p, (p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) → ∃ P ≥ I, P ∈ primesOver S p := by
     intro p ⟨hp₁, hp₂⟩
-    exact Ideal.exists_ideal_over_prime_of_isIntegral
-      (IsIntegralClosure.isIntegral_algebra R L) _ _ hp₂
+    exact Ideal.exists_ideal_over_prime_of_isIntegral _ _ hp₂
   choose 𝔓 h𝔓 h𝔓' using this
   suffices I = ∏ p in (factors (I.comap <| algebraMap R S)).toFinset,
     (p.map (algebraMap R S)) ^ (if h : _ then (factors I).count (𝔓 p h) else 0) by
@@ -156,11 +155,12 @@ lemma isUnramifiedAt_iff_SquareFree_minpoly [NoZeroSMulDivisors R S] [IsDedekind
       this hpbot hx hx').symm.injective
 
 lemma isUnramifiedAt_iff_SquareFree_minpoly_powerBasis [NoZeroSMulDivisors R S] [IsDedekindDomain S]
-    (hRS : Algebra.IsIntegral R S) (pb : PowerBasis R S)
+    [Algebra.IsIntegral R S] (pb : PowerBasis R S)
     (p : Ideal R) [p.IsPrime] (hpbot : p ≠ ⊥) :
     IsUnramifiedAt S p ↔ Squarefree ((minpoly R pb.gen).map (Ideal.Quotient.mk p)) := by
-  rw [isUnramifiedAt_iff_SquareFree_minpoly p hpbot pb.gen _ (hRS _)]
+  rw [isUnramifiedAt_iff_SquareFree_minpoly p hpbot pb.gen _ _]
   rw [conductor_eq_top_of_powerBasis, Ideal.comap_top, top_sup_eq]
+  exact PowerBasis.isIntegral_gen pb
 
 open nonZeroDivisors Polynomial
 

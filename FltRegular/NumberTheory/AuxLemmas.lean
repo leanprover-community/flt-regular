@@ -15,10 +15,9 @@ lemma Ideal.comap_coe {R S F : Type*} [Semiring R] [Semiring S] [FunLike F R S] 
   (f : F) (I : Ideal S) : I.comap (f : R →+* S) = I.comap f := rfl
 
 -- Mathlib/RingTheory/IntegralClosure.lean
-lemma isIntegralClosure_self {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
-    (hRS : Algebra.IsIntegral R S) : IsIntegralClosure S R S where
-  algebraMap_injective' := Function.injective_id
-  isIntegral_iff := fun {x} ↦ ⟨fun _ ↦ ⟨x, rfl⟩, fun _ ↦ hRS _⟩
+instance isIntegralClosure_self {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
+    [Algebra.IsIntegral R S] : IsIntegralClosure S R S :=
+  ⟨Function.injective_id, fun {x} ↦ ⟨fun _ ↦ ⟨x, rfl⟩, fun _ ↦ Algebra.IsIntegral.isIntegral x⟩⟩
 
 -- Mathlib/NumberTheory/RamificationInertia.lean
 section RamificationInertia
@@ -101,12 +100,13 @@ lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Co
     (algebraMap R S) (Submonoid.le_comap_map M) := by
     apply IsLocalization.ringHom_ext M
     simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
+  constructor
   intros x
   obtain ⟨x, ⟨_, t, ht, rfl⟩, rfl⟩ := IsLocalization.mk'_surjective
     (Algebra.algebraMapSubmonoid S M) x
   rw [IsLocalization.mk'_eq_mul_mk'_one]
   apply RingHom.IsIntegralElem.mul
-  · exact IsIntegral.tower_top (IsIntegral.map (IsScalarTower.toAlgHom R S Sₚ) (hRS x))
+  · exact IsIntegral.tower_top (IsIntegral.map (IsScalarTower.toAlgHom R S Sₚ) (hRS.1 x))
   · show IsIntegral _ _
     convert isIntegral_algebraMap (x := IsLocalization.mk' Rₚ 1 ⟨t, ht⟩)
     rw [this, IsLocalization.map_mk', _root_.map_one]
