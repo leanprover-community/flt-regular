@@ -493,7 +493,7 @@ theorem padicValNat_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℕ) :
 theorem padicValInt_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℤ) :
     (p : ℤ) ^ n ∣ a ↔ a = 0 ∨ n ≤ padicValInt p a := by
   rw [padicValInt, ← Int.natAbs_eq_zero, ← padicValNat_dvd_iff' hp, ← Int.natCast_dvd,
-    Int.coe_nat_pow]
+    Int.natCast_pow]
 
 theorem padicValInt_dvd' {p : ℕ} (a : ℤ) : (p : ℤ) ^ padicValInt p a ∣ a := by
   by_cases hp : p = 1

@@ -67,7 +67,7 @@ theorem Spts.mul_of_dvd' {a p : ℤ√(-3)} (hdvd : p.norm ∣ a.norm) (hpprime 
   · set X : ℤ√(-3) := ⟨p.re * a.re - A * 3 * p.im * a.im, p.re * a.im + A * a.re * p.im⟩ with HX
     obtain ⟨U, HU⟩ : (p.norm : ℤ√(-3)) ∣ X :=
       by
-      rw [Zsqrtd.coe_int_dvd_iff]
+      rw [Zsqrtd.intCast_dvd]
       refine' ⟨_, HA⟩
       apply @Prime.dvd_of_dvd_pow _ _ _ hpprime _ 2
       have : X.re ^ 2 = X.norm - 3 * X.im ^ 2 :=
@@ -282,8 +282,8 @@ theorem factors (a : ℤ√(-3)) (x : ℤ) (hcoprime : IsCoprime a.re a.im) (hod
       exact
         dvd_add
           (dvd_mul_of_dvd_left
-            ((Zsqrtd.coe_int_dvd_coe_int _ _).mpr (hpprime.dvd_of_dvd_pow hpdvdleft)) _)
-          (dvd_mul_of_dvd_right ((Zsqrtd.coe_int_dvd_coe_int _ _).mpr hpdvdright) _)
+            ((Zsqrtd.intCast_dvd_intCast _ _).mpr (hpprime.dvd_of_dvd_pow hpdvdleft)) _)
+          (dvd_mul_of_dvd_right ((Zsqrtd.intCast_dvd_intCast _ _).mpr hpdvdright) _)
     have := Zsqrtd.coprime_of_dvd_coprime hcoprime this
     simp only [Zsqrtd.intCast_re, isCoprime_zero_right, Zsqrtd.intCast_im, hpprime.not_unit] at this
   have h6 : x * z = C'.norm := by

@@ -237,7 +237,7 @@ theorem gcd1or3 (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity :
       exact dvd_mul_right _ _
     · have h000 : d ∣ 3 * q.natAbs ^ 2 :=
         by
-        rw [← Int.natCast_dvd_natCast, Int.ofNat_mul, Int.coe_nat_pow, Int.natAbs_sq, Nat.cast_three]
+        rw [← Int.natCast_dvd_natCast, Int.ofNat_mul, Int.natCast_pow, Int.natAbs_sq, Nat.cast_three]
         use Q - d * H ^ 2
         rw [mul_sub, ← hQ, hp]
         ring

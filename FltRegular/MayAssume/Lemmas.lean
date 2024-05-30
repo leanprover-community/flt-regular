@@ -51,7 +51,7 @@ theorem p_dvd_c_of_ab_of_anegc {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp : p 
     (h : a ^ p + b ^ p = c ^ p) (hab : a ≡ b [ZMOD p]) (hbc : b ≡ -c [ZMOD p]) : ↑p ∣ c := by
   letI : Fact p.Prime := ⟨hpri⟩
   replace h := congr_arg (fun n : ℤ => (n : ZMod p)) h
-  simp only [Int.coe_nat_pow, Int.cast_add, Int.cast_pow, ZMod.pow_card] at h
+  simp only [Int.natCast_pow, Int.cast_add, Int.cast_pow, ZMod.pow_card] at h
   simp only [← ZMod.intCast_eq_intCast_iff, Int.cast_neg] at hbc hab
   rw [hab, hbc, ← sub_eq_zero, ← sub_eq_add_neg, ← Int.cast_neg, ← Int.cast_sub,
     ← Int.cast_sub] at h

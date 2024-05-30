@@ -336,9 +336,9 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     m ∣ f ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ := by
   obtain ⟨i, Hi⟩ := hf
   have hlast :
-    (Fin.castIso (succ_pred_prime hp.out)) (Fin.last (p : ℕ).pred) =
+    (Fin.castOrderIso (succ_pred_prime hp.out)) (Fin.last (p : ℕ).pred) =
     ⟨(p : ℕ).pred, pred_lt hp.out.ne_zero⟩ := Fin.ext rfl
-  have h : ∀ x, (Fin.castIso (succ_pred_prime hp.out)) (Fin.castSuccEmb x) =
+  have h : ∀ x, (Fin.castOrderIso (succ_pred_prime hp.out)) (Fin.castSuccEmb x) =
     ⟨x, lt_trans x.2 (pred_lt hp.out.ne_zero)⟩ := fun x => Fin.ext rfl
   let ζ' := (ζ : L)
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
@@ -352,10 +352,10 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     by_contra! habs
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt i))] at H
   obtain ⟨y, hy⟩ := hdiv
-  rw [← Equiv.sum_comp (Fin.castIso (succ_pred_prime hp.out)).toEquiv, Fin.sum_univ_castSucc] at hy
+  rw [← Equiv.sum_comp (Fin.castOrderIso (succ_pred_prime hp.out)).toEquiv, Fin.sum_univ_castSucc] at hy
   simp only [hlast, h, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
-    ← (Fin.castIso hdim).toEquiv.sum_comp] at hy
+    ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
   simp only [RelIso.coe_fn_toEquiv, Fin.coe_cast, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
     Fin.coe_orderIso_apply] at hy
   push_cast at hy
@@ -371,13 +371,13 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
   norm_cast at hy
   rw [sum_sub_distrib] at hy
-  replace hy := congr_arg (b.basis.coord ((Fin.castIso hdim.symm) ⟨i, hi⟩)) hy
+  replace hy := congr_arg (b.basis.coord ((Fin.castOrderIso hdim.symm) ⟨i, hi⟩)) hy
   rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
     b.basis.coord_equivFun_symm, b.basis.coord_equivFun_symm, ← smul_eq_mul,
     ← zsmul_eq_smul_cast] at hy
-  obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.castIso hdim.symm) ⟨i, hi⟩) y m
+  obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.castOrderIso hdim.symm) ⟨i, hi⟩) y m
   rw [hn] at hy
-  simp only [Fin.castIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub,
+  simp only [Fin.castOrderIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub,
     neg_eq_iff_eq_neg] at hy
   erw [hy] -- pred vs - 1
   simp [dvd_neg]
@@ -389,9 +389,9 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   have : Fact (p : ℕ).Prime := ⟨hp⟩
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
   have hcoe : ζ = ⟨ζ', hζ'.isIntegral p.pos⟩ := by rfl
-  have hlast : (Fin.castIso (succ_pred_prime hp)) (Fin.last (p : ℕ).pred) =
+  have hlast : (Fin.castOrderIso (succ_pred_prime hp)) (Fin.last (p : ℕ).pred) =
       ⟨(p : ℕ).pred, pred_lt hp.ne_zero⟩ := Fin.ext rfl
-  have h : ∀ x, (Fin.castIso (succ_pred_prime hp)) (Fin.castSuccEmb x) =
+  have h : ∀ x, (Fin.castOrderIso (succ_pred_prime hp)) (Fin.castSuccEmb x) =
     ⟨x, lt_trans x.2 (pred_lt hp.ne_zero)⟩ := fun x => Fin.ext rfl
   set b := hζ'.integralPowerBasis' with hb
   have hdim : b.dim = (p : ℕ).pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp,
@@ -404,10 +404,10 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
     by_contra! habs
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt j))] at H
   obtain ⟨y, hy⟩ := hdiv
-  rw [← Equiv.sum_comp (Fin.castIso (succ_pred_prime hp)).toEquiv, Fin.sum_univ_castSucc] at hy
+  rw [← Equiv.sum_comp (Fin.castOrderIso (succ_pred_prime hp)).toEquiv, Fin.sum_univ_castSucc] at hy
   simp only [hlast, h, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
-    ← (Fin.castIso hdim).toEquiv.sum_comp] at hy
+    ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
   simp only [RelIso.coe_fn_toEquiv, Fin.coe_cast, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
     Fin.coe_orderIso_apply] at hy
   push_cast at hy
@@ -423,10 +423,10 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
     rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
   norm_cast at hy
   rw [sum_sub_distrib] at hy
-  replace hy := congr_arg (b.basis.coord ((Fin.castIso hdim.symm) ⟨j, hj⟩)) hy
+  replace hy := congr_arg (b.basis.coord ((Fin.castOrderIso hdim.symm) ⟨j, hj⟩)) hy
   rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
     b.basis.coord_equivFun_symm, b.basis.coord_equivFun_symm] at hy
-  simp only [Fin.castIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Basis.coord_apply,
+  simp only [Fin.castOrderIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Basis.coord_apply,
     sub_eq_iff_eq_add] at hy
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.cast hdim.symm) ⟨j, hj⟩) y m
   rw [hy, ← smul_eq_mul, ← zsmul_eq_smul_cast, ← b.basis.coord_apply, ← Fin.cast_mk, hn]
