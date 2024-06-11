@@ -31,7 +31,7 @@ lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) -
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   haveI : Fact (Nat.Prime p) := hpri
   apply RingHom.injective_int (algebraMap ℤ ℚ)
-  simp [Algebra.coe_norm_int, hζ.sub_one_norm_prime (cyclotomic.irreducible_rat p.2) hp]
+  simp [Algebra.coe_norm_int, hζ.norm_sub_one_of_prime_ne_two' (cyclotomic.irreducible_rat p.2) hp]
 
 @[simp]
 lemma PNat.coe_two : (2 : ℕ+) = (2 : ℕ) := rfl
@@ -179,6 +179,7 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
   · rw [mem_nthRootsFinset p.pos, ← map_pow, hζ.unit'_coe.pow_eq_one, map_one]
   · rw [mem_nthRootsFinset p.pos, hζ.unit'_coe.pow_eq_one]
 
+set_option maxHeartbeats 400000 in
 set_option synthInstance.maxHeartbeats 80000 in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1 : ℕ) • x := by

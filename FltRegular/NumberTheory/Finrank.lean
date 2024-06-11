@@ -54,9 +54,9 @@ lemma FiniteDimensional.finrank_add_finrank_quotient_le (N : Submodule R M) :
   apply LinearIndependent.finset_card_le_finrank
   · rw [← LinearIndependent.finset_toSet, Finset.coe_union, Finset.coe_image, Finset.coe_image]
     refine LinearIndependent.union ?_ ?_ H
-    · rw [← linearIndependent_image (Subtype.val_injective.injOn _)]
+    · rw [← linearIndependent_image Subtype.val_injective.injOn]
       exact hs'.map' N.subtype N.ker_subtype
-    · rw [← linearIndependent_image (hf.injective.injOn _)]
+    · rw [← linearIndependent_image hf.injective.injOn]
       apply LinearIndependent.of_comp N.mkQ
       convert ht'
       exact funext fun x => hf _

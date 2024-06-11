@@ -808,7 +808,7 @@ theorem support_sum_monomial_subset' [DecidableEq ι] {α : Type _} (S : Finset 
     apply Finset.union_subset
     · apply Finset.Subset.trans support_monomial_subset _
       rw [Finset.image_insert]
-      convert Finset.subset_union_left _ (Finset.image g S)
+      exact union_subset_left fun ⦃a⦄ a => a
     · apply Finset.Subset.trans hsi _
       rw [Finset.image_insert]
       exact Finset.subset_insert (g s) (Finset.image g S)

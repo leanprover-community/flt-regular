@@ -205,7 +205,7 @@ theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
     rw [← Finset.card_pos, hcard, card_range]
     exact Nat.sub_pos_of_lt (lt_of_lt_of_le this hp5)
   obtain ⟨i, hi⟩ := hcard
-  refine' ⟨i, sdiff_subset _ _ hi, _⟩
+  refine' ⟨i, sdiff_subset hi, _⟩
   have hi0 : i ≠ 0 := fun h => by simp [h, s] at hi
   have hi1 : i ≠ 1 := fun h => by simp [h, s] at hi
   have hik₁ : i ≠ k₁ := fun h => by simp [h, s] at hi

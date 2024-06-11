@@ -56,8 +56,8 @@ theorem Finsupp.prod_congr' {α M N} [Zero M] [CommMonoid N] {f₁ f₂ : α →
     (h : ∀ x, g1 x (f₁ x) = g2 x (f₂ x)) (hg1 : ∀ i, g1 i 0 = 1) (hg2 : ∀ i, g2 i 0 = 1) :
     f₁.prod g1 = f₂.prod g2 := by
   classical
-  rw [f₁.prod_of_support_subset (Finset.subset_union_left _ f₂.support) _ (fun i _ ↦ hg1 i),
-    f₂.prod_of_support_subset (Finset.subset_union_right f₁.support _) _ (fun i _ ↦ hg2 i)]
+  rw [f₁.prod_of_support_subset Finset.subset_union_left _ (fun i _ ↦ hg1 i),
+    f₂.prod_of_support_subset Finset.subset_union_right _ (fun i _ ↦ hg2 i)]
   exact Finset.prod_congr rfl (fun x _ ↦ h x)
 
 lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
@@ -160,7 +160,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : 
   let S' : systemOfUnits p G (r + 1) := ⟨Function.update S.units i g,
     LinearIndependent.update' _ _ _ _ _ _ (CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
     hg (ha ▸ one_mem A⁰) S.linearIndependent⟩
-  let a' := a.comapDomain (Fin.succAbove i) (Fin.succAbove_right_injective.injOn _)
+  let a' := a.comapDomain (Fin.succAbove i) Fin.succAbove_right_injective.injOn
   have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i
   · ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
       Function.update_noteq]

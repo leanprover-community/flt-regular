@@ -148,7 +148,7 @@ theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type _} [CommRing A] [IsDomai
   obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ p.pos
   rw [map_pow, eq_one_mod_one_sub, one_pow]
 
-set_option synthInstance.maxHeartbeats 40000 in
+set_option synthInstance.maxHeartbeats 80000 in
 set_option maxHeartbeats 400000 in
 theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot μ p)
     (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral p.pos⟩ : 𝓞 K) ^ (x : ℕ) = l) :
@@ -359,6 +359,7 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
     rw [this a]
   exact (aux hζ hζ hu).trans (aux hζ hζ.inv hu').symm
 
+set_option maxHeartbeats 400000 in
 set_option synthInstance.maxHeartbeats 80000 in
 theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp : (p : ℕ).Prime) :
     u * (unitGalConj K p u)⁻¹ ≠ -hζ.unit' ^ n := by
