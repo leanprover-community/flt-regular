@@ -239,8 +239,9 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   refine separable_prod' ?_ (fun _ _ => separable_X_sub_C)
   intros i hi j hj hij
   apply isCoprime_X_sub_C_of_isUnit_sub
-  obtain ⟨v, hv⟩ : Associated (hζ.unit' - 1 : 𝓞 K) ((hζ.unit' : 𝓞 K) ^ j - (hζ.unit' : 𝓞 K) ^ i)
-  · refine hζ.unit'_coe.associated_sub_one hpri.out ?_ ?_ ?_
+  obtain ⟨v, hv⟩ :
+      Associated (hζ.unit' - 1 : 𝓞 K) ((hζ.unit' : 𝓞 K) ^ j - (hζ.unit' : 𝓞 K) ^ i) := by
+    refine hζ.unit'_coe.associated_sub_one hpri.out ?_ ?_ ?_
     · rw [mem_nthRootsFinset p.pos, ← pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one, one_pow]
     · rw [mem_nthRootsFinset p.pos, ← pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one, one_pow]
     · exact mt (hζ.unit'_coe.injOn_pow hj hi) hij.symm

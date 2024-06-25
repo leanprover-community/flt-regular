@@ -169,8 +169,8 @@ lemma comap_map_eq_map_of_isLocalization_algebraMapSubmonoid :
   rw [IsScalarTower.algebraMap_eq R S Sₚ, ← Ideal.map_map, eq_comm]
   apply Ideal.le_comap_map.antisymm
   intro x hx
-  obtain ⟨α, hα, hαx⟩ : ∃ α ∉ p, α • x ∈ pS
-  · have ⟨⟨y, s⟩, hy⟩ := (IsLocalization.mem_map_algebraMap_iff
+  obtain ⟨α, hα, hαx⟩ : ∃ α ∉ p, α • x ∈ pS := by
+    have ⟨⟨y, s⟩, hy⟩ := (IsLocalization.mem_map_algebraMap_iff
       (Algebra.algebraMapSubmonoid S p.primeCompl) Sₚ).mp hx
     rw [← map_mul,
       IsLocalization.eq_iff_exists (Algebra.algebraMapSubmonoid S p.primeCompl)] at hy
@@ -179,8 +179,8 @@ lemma comap_map_eq_map_of_isLocalization_algebraMapSubmonoid :
     refine ⟨α, hα, ?_⟩
     rw [Algebra.smul_def, e, Submonoid.coe_mul, mul_assoc, mul_comm _ x, hc]
     exact Ideal.mul_mem_left _ _ y.prop
-  obtain ⟨β, γ, hγ, hβ⟩ : ∃ β γ, γ ∈ p ∧ β * α = 1 + γ
-  · obtain ⟨β, hβ⟩ := Ideal.Quotient.mk_surjective (I := p) (Ideal.Quotient.mk p α)⁻¹
+  obtain ⟨β, γ, hγ, hβ⟩ : ∃ β γ, γ ∈ p ∧ β * α = 1 + γ := by
+    obtain ⟨β, hβ⟩ := Ideal.Quotient.mk_surjective (I := p) (Ideal.Quotient.mk p α)⁻¹
     refine ⟨β, β * α - 1, ?_, ?_⟩
     · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one,
         map_mul, hβ, inv_mul_cancel, sub_self]
@@ -210,8 +210,8 @@ def quotMapEquivQuotMapMaximalIdealOfIsLocalization : S ⧸ pS ≃+* Sₚ ⧸ pS
     obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective
       (Algebra.algebraMapSubmonoid S p.primeCompl) x
     obtain ⟨α, hα : α ∉ p, e⟩ := s.prop
-    obtain ⟨β, γ, hγ, hβ⟩ : ∃ β γ, γ ∈ p ∧ α * β = 1 + γ
-    · obtain ⟨β, hβ⟩ := Ideal.Quotient.mk_surjective (I := p) (Ideal.Quotient.mk p α)⁻¹
+    obtain ⟨β, γ, hγ, hβ⟩ : ∃ β γ, γ ∈ p ∧ α * β = 1 + γ := by
+      obtain ⟨β, hβ⟩ := Ideal.Quotient.mk_surjective (I := p) (Ideal.Quotient.mk p α)⁻¹
       refine ⟨β, α * β - 1, ?_, ?_⟩
       · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one,
           map_mul, hβ, mul_inv_cancel, sub_self]

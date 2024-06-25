@@ -747,7 +747,6 @@ lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / 
   · exact even_iff_two_dvd.1 (hp.even_sub_one hpodd)
   · simp
 
-
 attribute [-instance] Fintype.decidableForallFintype
 lemma unit_to_U_pow (x) (n : ℕ) : mkG (x ^ n) = n • (mkG x) := by
   induction n with
@@ -838,8 +837,8 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
       · refine ha'' ?_ this
         ext
         simpa using hζ
-      obtain ⟨ε', hε'⟩ : ∃ ε' : (𝓞 k)ˣ, ε' ^ (p : ℕ) = NE
-      · rw [← (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd] at ha'
+      obtain ⟨ε', hε'⟩ : ∃ ε' : (𝓞 k)ˣ, ε' ^ (p : ℕ) = NE := by
+        rw [← (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd] at ha'
         obtain ⟨α, β, hαβ⟩ := ha'
         choose ι' hι' using hε'
         rw [Fin.sum_univ_castSucc] at ha
@@ -852,8 +851,9 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
         exact ⟨_, ha.symm⟩
       have hζ'' := (hζ.pow (p ^ h.succ).pos (pow_succ _ _)).map_of_injective
         (algebraMap k K).injective
-      obtain ⟨ε'', hε''⟩ : ∃ ε'' : (𝓞 k)ˣ, E = Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ε''
-      · rw [← hε', map_pow, eq_comm, ← mul_inv_eq_one, ← inv_pow, ← mul_pow] at NE_p_pow
+      obtain ⟨ε'', hε''⟩ :
+          ∃ ε'' : (𝓞 k)ˣ, E = Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ε'' := by
+        rw [← hε', map_pow, eq_comm, ← mul_inv_eq_one, ← inv_pow, ← mul_pow] at NE_p_pow
         apply_fun ((↑) : (𝓞 K)ˣ → K) at NE_p_pow
         simp only [RingHom.toMonoidHom_eq_coe, Units.val_pow_eq_pow_val, Units.val_mul,
           Units.coe_map_inv, MonoidHom.coe_coe, SubmonoidClass.coe_pow, Submonoid.coe_mul,

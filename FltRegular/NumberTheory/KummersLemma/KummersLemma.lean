@@ -50,8 +50,8 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     ∃ v, u = v ^ (p : ℕ) := by
   haveI : Fact (Nat.Prime p) := hpri
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root (S := {p}) ℚ (B := K) (n := p) rfl
-  obtain ⟨x, hx⟩ : (p : 𝓞 K) ∣ (↑(u ^ (p - 1 : ℕ)) : 𝓞 K) - 1
-  · obtain ⟨n, hn⟩ := hcong
+  obtain ⟨x, hx⟩ : (p : 𝓞 K) ∣ (↑(u ^ (p - 1 : ℕ)) : 𝓞 K) - 1 := by
+    obtain ⟨n, hn⟩ := hcong
     have hn' : (p : ℤ) ∣ n ^ (p - 1 : ℕ) - 1
     · refine Int.modEq_iff_dvd.mp (Int.ModEq.pow_card_sub_one_eq_one hpri.out (n := n) ?_).symm
       rw [isCoprime_comm, (Nat.prime_iff_prime_int.mp hpri.out).coprime_iff_not_dvd]
