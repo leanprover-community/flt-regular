@@ -358,7 +358,6 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
   simp only [RelIso.coe_fn_toEquiv, Fin.coe_cast, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
     Fin.coe_orderIso_apply] at hy
-  push_cast at hy
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [smul_neg]
@@ -369,7 +368,6 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
-  norm_cast at hy
   rw [sum_sub_distrib] at hy
   replace hy := congr_arg (b.basis.coord ((Fin.castOrderIso hdim.symm) ⟨i, hi⟩)) hy
   rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
@@ -410,7 +408,6 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
     ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
   simp only [RelIso.coe_fn_toEquiv, Fin.coe_cast, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
     Fin.coe_orderIso_apply] at hy
-  push_cast at hy
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [smul_neg]
@@ -421,7 +418,6 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
-  norm_cast at hy
   rw [sum_sub_distrib] at hy
   replace hy := congr_arg (b.basis.coord ((Fin.castOrderIso hdim.symm) ⟨j, hj⟩)) hy
   rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
