@@ -513,7 +513,7 @@ theorem step5'
         by
         rw [Nat.even_mul] at this
         apply this.resolve_left
-        norm_num; decide
+        decide
       rw [← evenFactorExp.pow r 3, hcube]
       exact factors_2_even' hcoprime
     calc

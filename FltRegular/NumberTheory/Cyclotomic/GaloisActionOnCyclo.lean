@@ -71,7 +71,6 @@ theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K 
   suffices φ (galConj K p ζ) = conj (φ ζ)
     by
     rw [← Function.funext_iff]
-    congr
     rw [DFunLike.coe_fn_eq]
     apply (hζ.powerBasis ℚ).rat_hom_ext
     exact this.symm
