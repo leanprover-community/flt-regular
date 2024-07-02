@@ -290,12 +290,6 @@ def Monoid.EndAdditive {M} [Monoid M] : Monoid.End M ≃* AddMonoid.End (Additiv
   __ := MonoidHom.toAdditive
   map_mul' := fun _ _ ↦ rfl
 
--- TODO move Mathlib.GroupTheory.Subgroup.ZPowers
-def Group.forall_mem_zpowers_iff {H} [Group H] {x : H} :
-    (∀ y, y ∈ Subgroup.zpowers x) ↔ Subgroup.zpowers x = ⊤ := by
-  rw [SetLike.ext_iff]
-  simp only [Subgroup.mem_top, iff_true]
-
 -- TODO move Mathlib.GroupTheory.OrderOfElement
 lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a) :
     x ^ ((finEquivZPowers x hx).symm a : ℕ) = a :=
@@ -376,9 +370,6 @@ instance relativeUnitsModule : Module A G := by
   letI : Module A (Additive (relativeUnitsWithGenerator p hp hKL σ hσ)) :=
     (isTors' p hp hKL σ hσ).module
   infer_instance
-
-noncomputable
-abbrev CyclotomicIntegers.mk : Polynomial ℤ →+* CyclotomicIntegers p := AdjoinRoot.mk _
 
 lemma relativeUnitsModule_zeta_smul (x) :
     (zeta p) • mkG x = mkG (Units.map (galRestrictHom (𝓞 k) k K (𝓞 K) σ) x) := by
@@ -537,12 +528,6 @@ lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M
   obtain ⟨a, ha⟩ := hk _ _ hf
   rw [← zpow_natCast] at ha
   exact ⟨a, f', i, ha.symm, hi⟩
-
-lemma Fin.castSucc_ne_last {r : ℕ} (x : Fin r) : Fin.castSucc x ≠ Fin.last r := by
-  intro e
-  apply_fun ((↑) : _ → ℕ) at e
-  simp only [coe_castSucc, val_last] at e
-  exact x.is_lt.ne e
 
 lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ζ : M)
     (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ζ ^ i = ε)
@@ -777,12 +762,6 @@ instance : CommGroup ((𝓞 k))ˣ := inferInstance
 lemma IsPrimitiveRoot.one_left_iff {M} [CommMonoid M] {n : ℕ} :
     IsPrimitiveRoot (1 : M) n ↔ n = 1 :=
   ⟨fun H ↦ Nat.dvd_one.mp (H.dvd_of_pow_eq_one 1 (one_pow _)), fun e ↦ e ▸ IsPrimitiveRoot.one⟩
-
-lemma Algebra.norm_of_finrank_eq_two (hKL : finrank k K = 2) (x : K) :
-    algebraMap k K (Algebra.norm k x) = x * σ x := by
-  rw [norm_eq_prod_pow_gen σ hσ, orderOf_eq_card_of_forall_mem_zpowers hσ,
-    IsGalois.card_aut_eq_finrank, hKL, prod_range_succ, prod_range_one, pow_zero, pow_one]
-  rfl
 
 -- TODO : remove `p ≠ 2`. The offending case is when `K = k[i]`.
 lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :

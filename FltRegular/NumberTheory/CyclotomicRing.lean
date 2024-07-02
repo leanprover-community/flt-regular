@@ -97,20 +97,6 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m 
   ext1
   exact DFunLike.congr_arg (algebraMap ℚ _) (Algebra.coe_norm_int (equiv p n))
 
-lemma adjoin_zeta : Algebra.adjoin ℤ {zeta p} = ⊤ := AdjoinRoot.adjoinRoot_eq_top
-
--- def _root_.RingEquiv.toIntAlgEquiv {R S} [Ring R] [Ring S] (e : R ≃+* S) : R ≃ₐ[ℤ] S where
---   __ := e
---   __ := e.toRingHom.toIntAlgHom
-
--- @[simp]
--- def _root_.RingEquiv.toIntAlgEquiv_apply {R S} [Ring R] [Ring S] (e : R ≃+* S) (x) :
---   e.toIntAlgEquiv x = e x := rfl
-
--- @[simp]
--- def _root_.RingEquiv.toIntAlgEquiv_symm_apply {R S} [Ring R] [Ring S] (e : R ≃+* S) (x) :
---   e.toIntAlgEquiv.symm x = e.symm x := rfl
-
 def powerBasis : PowerBasis ℤ (CyclotomicIntegers p) :=
    AdjoinRoot.powerBasis' (cyclotomic.monic _ _)
 
@@ -119,9 +105,6 @@ lemma powerBasis_gen : (powerBasis p).gen = zeta p := rfl
 
 lemma powerBasis_dim : (powerBasis p).dim = p - 1 := by
   simp [powerBasis, Nat.totient_prime hpri.out, natDegree_cyclotomic]
-
-instance : Module.Finite ℤ (CyclotomicIntegers p) :=
-  Module.Finite.of_basis (powerBasis p).basis
 
 instance : NoZeroSMulDivisors ℤ (CyclotomicIntegers p) := (powerBasis p).basis.noZeroSMulDivisors
 
@@ -146,13 +129,6 @@ open BigOperators
 lemma sum_zeta_pow : ∑ i in Finset.range p, zeta p ^ (i : ℕ) = 0 := by
   rw [← AdjoinRoot.aeval_root (Polynomial.cyclotomic p ℤ), ← zeta]
   simp [Polynomial.cyclotomic_prime ℤ p]
-
-lemma zeta_pow_sub_one :
-    zeta p ^ (p - 1 : ℕ) = - ∑ i : Fin (p - 1), zeta p ^ (i : ℕ) := by
-  rw [eq_neg_iff_add_eq_zero]
-  convert CyclotomicIntegers.sum_zeta_pow p
-  conv_rhs => enter [1]; rw [← tsub_add_cancel_of_le hpri.out.one_lt.le]
-  rw [Finset.sum_range_succ, add_comm, Fin.sum_univ_eq_sum_range]
 
 end CyclotomicIntegers
 end

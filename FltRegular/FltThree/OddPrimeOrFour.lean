@@ -120,9 +120,6 @@ noncomputable def oddFactors (x : ℕ) :=
 theorem oddFactors.zero : oddFactors 0 = 0 := by
   simp [oddFactors]
 
-theorem oddFactors.not_two_mem (x : ℕ) : 2 ∉ oddFactors x := by
-  simp [oddFactors]
-
 theorem oddFactors.pow (z : ℕ) (n : ℕ) : oddFactors (z ^ n) = n • oddFactors z :=
   by
   simp only [oddFactors]

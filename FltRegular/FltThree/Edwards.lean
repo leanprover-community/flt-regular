@@ -348,9 +348,6 @@ def Associated' (x y : ℤ√(-3)) : Prop :=
 theorem Associated'.refl (x : ℤ√(-3)) : Associated' x x :=
   Or.inl (by rfl)
 
-theorem Associated'.norm_eq {x y : ℤ√(-3)} (h : Associated' x y) : x.norm = y.norm := by
-  cases' h with h h <;> simp only [Zsqrtd.norm_eq_of_associated (by norm_num) h, Zsqrtd.norm_conj]
-
 theorem associated'_of_abs_eq {x y : ℤ√(-3)} (hre : abs x.re = abs y.re)
     (him : abs x.im = abs y.im) : Associated' x y :=
   by
