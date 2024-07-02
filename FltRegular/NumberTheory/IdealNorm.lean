@@ -97,19 +97,19 @@ theorem spanIntNorm_singleton {r : S} :
           exact map_dvd _ (mem_span_singleton.mp hx')))
     ((span_singleton_le_iff_mem _).mpr (intNorm_mem_spanIntNorm _ _ (mem_span_singleton_self _)))
 
-@[simp]
-theorem spanIntNorm_top : spanIntNorm R (⊤ : Ideal S) = ⊤ := by
-  rw [← Ideal.span_singleton_one, spanIntNorm_singleton]
-  simp
+-- @[simp]
+-- theorem spanIntNorm_top : spanIntNorm R (⊤ : Ideal S) = ⊤ := by
+--   rw [← Ideal.span_singleton_one, spanIntNorm_singleton]
+--   simp
 
 theorem map_spanIntNorm (I : Ideal S) {T : Type*} [CommRing T] (f : R →+* T) :
     map f (spanIntNorm R I) = span (f ∘ Algebra.intNorm R S '' (I : Set S)) := by
   rw [spanIntNorm, map_span, Set.image_image]
   rfl
 
-@[mono]
-theorem spanIntNorm_mono {I J : Ideal S} (h : I ≤ J) : spanIntNorm R I ≤ spanIntNorm R J :=
-  Ideal.span_mono (Set.monotone_image h)
+-- @[mono]
+-- theorem spanIntNorm_mono {I J : Ideal S} (h : I ≤ J) : spanIntNorm R I ≤ spanIntNorm R J :=
+--   Ideal.span_mono (Set.monotone_image h)
 
 theorem spanIntNorm_localization (I : Ideal S) (M : Submonoid R) (hM : M ≤ R⁰)
     {Rₘ : Type*} (Sₘ : Type*) [CommRing Rₘ] [Algebra R Rₘ] [CommRing Sₘ] [Algebra S Sₘ]
@@ -179,21 +179,21 @@ theorem spanIntNorm_mul_spanIntNorm_le (I J : Ideal S) :
   rintro _ ⟨x, hxI, y, hyJ, rfl⟩
   exact Ideal.mul_mem_mul hxI hyJ
 
-/-- This condition `eq_bot_or_top` is equivalent to being a field.
-However, `Ideal.spanIntNorm_mul_of_field` is harder to apply since we'd need to upgrade a `CommRing R`
-instance to a `Field R` instance. -/
-theorem spanIntNorm_mul_of_bot_or_top [IsDomain R] [IsDomain S] [Module.Free R S] [Module.Finite R S]
-    (eq_bot_or_top : ∀ I : Ideal R, I = ⊥ ∨ I = ⊤) (I J : Ideal S) :
-    spanIntNorm R (I * J) = spanIntNorm R I * spanIntNorm R J := by
-  refine le_antisymm ?_ (spanIntNorm_mul_spanIntNorm_le R _ _)
-  cases' eq_bot_or_top (spanIntNorm R I) with hI hI
-  · rw [hI, spanIntNorm_eq_bot_iff.mp hI, bot_mul, spanIntNorm_bot]
-    exact bot_le
-  rw [hI, Ideal.top_mul]
-  cases' eq_bot_or_top (spanIntNorm R J) with hJ hJ
-  · rw [hJ, spanIntNorm_eq_bot_iff.mp hJ, mul_bot, spanIntNorm_bot]
-  rw [hJ]
-  exact le_top
+-- /-- This condition `eq_bot_or_top` is equivalent to being a field.
+-- However, `Ideal.spanIntNorm_mul_of_field` is harder to apply since we'd need to upgrade a `CommRing R`
+-- instance to a `Field R` instance. -/
+-- theorem spanIntNorm_mul_of_bot_or_top [IsDomain R] [IsDomain S] [Module.Free R S] [Module.Finite R S]
+--     (eq_bot_or_top : ∀ I : Ideal R, I = ⊥ ∨ I = ⊤) (I J : Ideal S) :
+--     spanIntNorm R (I * J) = spanIntNorm R I * spanIntNorm R J := by
+--   refine le_antisymm ?_ (spanIntNorm_mul_spanIntNorm_le R _ _)
+--   cases' eq_bot_or_top (spanIntNorm R I) with hI hI
+--   · rw [hI, spanIntNorm_eq_bot_iff.mp hI, bot_mul, spanIntNorm_bot]
+--     exact bot_le
+--   rw [hI, Ideal.top_mul]
+--   cases' eq_bot_or_top (spanIntNorm R J) with hJ hJ
+--   · rw [hJ, spanIntNorm_eq_bot_iff.mp hJ, mul_bot, spanIntNorm_bot]
+--   rw [hJ]
+--   exact le_top
 
 variable [IsDomain R] [IsDomain S] [IsDedekindDomain R] [IsDedekindDomain S]
 

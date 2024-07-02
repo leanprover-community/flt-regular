@@ -124,11 +124,5 @@ lemma charZero {p} (hp : p ≠ 0) : CharZero (CyclotomicIntegers p) :=
 
 instance : CharZero (CyclotomicIntegers p) := charZero hpri.out.ne_zero
 
-open BigOperators
-
-lemma sum_zeta_pow : ∑ i in Finset.range p, zeta p ^ (i : ℕ) = 0 := by
-  rw [← AdjoinRoot.aeval_root (Polynomial.cyclotomic p ℤ), ← zeta]
-  simp [Polynomial.cyclotomic_prime ℤ p]
-
 end CyclotomicIntegers
 end

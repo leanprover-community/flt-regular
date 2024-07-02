@@ -380,26 +380,6 @@ theorem factorization'.associated'_of_norm_associated {a b c : ℤ√(-3)} (h : 
   · exact factorization'.coprime_of_mem h hcmem
   · exact ((factorization'_prop h).2 b hbmem).2.2
 
-theorem factors_unique {f g : Multiset (ℤ√(-3))} (hf : ∀ x ∈ f, OddPrimeOrFour (Zsqrtd.norm x).natAbs)
-    (hf' : ∀ x ∈ f, IsCoprime (Zsqrtd.re x) (Zsqrtd.im x))
-    (hg : ∀ x ∈ g, OddPrimeOrFour (Zsqrtd.norm x).natAbs)
-    (hg' : ∀ x ∈ g, IsCoprime (Zsqrtd.re x) (Zsqrtd.im x)) (h : Associated f.prod g.prod) :
-    Multiset.Rel Associated' f g :=
-  by
-  have p :
-    ∀ (x : ℤ√(-3)) (_ : x ∈ f) (y : ℤ√(-3)) (_ : y ∈ g),
-      (Int.natAbs ∘ Zsqrtd.norm) x = (Int.natAbs ∘ Zsqrtd.norm) y → Associated' x y :=
-    by
-    intro x hx y hy hxy
-    rw [Function.comp_apply, Function.comp_apply, ← Int.associated_iff_natAbs] at hxy
-    apply associated'_of_associated_norm hxy
-    · exact hf' x hx
-    · exact hg' y hy
-    · exact hf x hx
-  refine' Multiset.Rel.mono _ p
-  rw [← Multiset.rel_map, factors_unique_prod hf hg <| Zsqrtd.associated_norm_of_associated h,
-    Multiset.rel_eq]
-
 theorem factors_2_even' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     Even (evenFactorExp a.norm.natAbs) :=
   by

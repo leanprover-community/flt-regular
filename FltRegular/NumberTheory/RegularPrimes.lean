@@ -56,15 +56,6 @@ def IsRegularNumber [hn : Fact (0 < n)] : Prop :=
 def IsRegularPrime : Prop :=
   IsRegularNumber p
 
-/-- A prime number is Bernoulli regular if it does not divide the numerator of any of
-the first `p - 3` (non-zero) Bernoulli numbers-/
-def IsBernoulliRegular : Prop :=
-  ∀ i ∈ Finset.range ((p - 3) / 2), ((bernoulli 2 * i).num : ZMod p) ≠ 0
-
-/-- A prime is super regular if its regular and Bernoulli regular.-/
-def IsSuperRegular : Prop :=
-  IsRegularNumber p ∧ IsBernoulliRegular p
-
 section TwoRegular
 
 variable (A K : Type _) [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFractionRing A K]

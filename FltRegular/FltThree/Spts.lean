@@ -406,12 +406,3 @@ theorem Spts.four {p : ℤ√(-3)} (hfour : p.norm = 4) (hq : p.im ≠ 0) : abs 
     _ = 1 := by
       rw [hfour]
       norm_num
-
-
-theorem Spts.four_of_coprime {p : ℤ√(-3)} (hcoprime : IsCoprime p.re p.im) (hfour : p.norm = 4) :
-    abs p.re = 1 ∧ abs p.im = 1 := by
-  apply Spts.four hfour
-  rintro him
-  rw [him, isCoprime_zero_right, Int.isUnit_iff_abs_eq] at hcoprime
-  rw [Zsqrtd.norm_def, him, MulZeroClass.mul_zero, sub_zero, ← sq, ← sq_abs, hcoprime] at hfour
-  norm_num at hfour
