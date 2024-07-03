@@ -100,9 +100,6 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m 
 def powerBasis : PowerBasis ℤ (CyclotomicIntegers p) :=
    AdjoinRoot.powerBasis' (cyclotomic.monic _ _)
 
-@[simp]
-lemma powerBasis_gen : (powerBasis p).gen = zeta p := rfl
-
 lemma powerBasis_dim : (powerBasis p).dim = p - 1 := by
   simp [powerBasis, Nat.totient_prime hpri.out, natDegree_cyclotomic]
 
