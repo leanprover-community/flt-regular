@@ -7,13 +7,6 @@ import FltRegular.FltThree.Primes
 import FltRegular.FltThree.Spts
 import FltRegular.FltThree.OddPrimeOrFour
 
-theorem Zsqrtd.associated_norm_of_associated {d : ℤ} {f g : ℤ√d} (h : Associated f g) :
-    Associated f.norm g.norm := by
-  obtain ⟨u, rfl⟩ := h
-  have := (Zsqrtd.isUnit_iff_norm_isUnit u).mp u.isUnit
-  rw [Zsqrtd.norm_mul]
-  exact associated_mul_unit_right (Zsqrtd.norm f) _ this
-
 theorem OddPrimeOrFour.im_ne_zero {p : ℤ√(-3)} (h : OddPrimeOrFour p.norm.natAbs)
     (hcoprime : IsCoprime p.re p.im) : p.im ≠ 0 :=
   by

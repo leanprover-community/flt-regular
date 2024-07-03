@@ -635,14 +635,6 @@ lemma norm_map_zpow {R S} [Field R] [DivisionRing S] [Nontrivial S] [Algebra R S
 
 local notation "r" => NumberField.Units.rank k
 
-lemma Units.coe_val_inv {M S} [DivisionMonoid M]
-    [SetLike S M] [SubmonoidClass S M] {s : S} (v : sˣ) :
-    (v : M)⁻¹ = ((v⁻¹ : _) : M) := by
-  apply inv_eq_of_mul_eq_one_right
-  show ((v * v⁻¹ : _) : M) = 1
-  rw [mul_inv_self]
-  rfl
-
 lemma RingOfInteger.coe_algebraMap_apply {x : 𝓞 k} :
   (algebraMap (𝓞 k) (𝓞 K) x : K) = algebraMap k K x := rfl
 
@@ -687,7 +679,7 @@ lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (�
   have hcoe : ((algebraMap (𝓞 K) K) ((algebraMap (𝓞 k) (𝓞 K)) ((ζ ^ a)⁻¹).1)) =
     algebraMap (𝓞 k) (𝓞 K) ((ζ ^ a)⁻¹).1 := rfl
   simp only [toMul_sum, toMul_zsmul, zpow_neg, Units.val_mul, Units.coe_prod, map_mul, map_prod,
-    Units.coe_zpow, map_mul, map_prod, ← Units.coe_val_inv, norm_map_inv, norm_map_zpow,
+    Units.coe_zpow, map_mul, map_prod, norm_map_inv, norm_map_zpow,
     Units.coe_map]
   rw [← map_zpow, Units.coe_map_inv]
   simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe]
