@@ -127,8 +127,6 @@ theorem prime_isUnit_mul {a b : α} (h : IsUnit a) : Prime (a * b) ↔ Prime b :
   let ⟨a, ha⟩ := h
   ha ▸ prime_units_mul a b
 
-theorem prime_mul_units (a : αˣ) (b : α) : Prime (b * ↑a) ↔ Prime b := by simp [Prime]
-
 theorem prime_neg_iff {α} [CommRing α] {a : α} : Prime (-a) ↔ Prime a := by
   rw [← prime_isUnit_mul isUnit_one.neg, neg_mul, one_mul, neg_neg]
 

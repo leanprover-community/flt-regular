@@ -44,11 +44,6 @@ lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero 
   · intro ⟨hx, hy⟩
     exact WfDvdMonoid.multiplicity_finite hx hy
 
-lemma WfDvdMonoid.multiplicity_eq_top_iff {M : Type*} [CancelCommMonoidWithZero M] [WfDvdMonoid M]
-    [DecidableRel (fun a b : M ↦ a ∣ b)] {x y : M} :
-    multiplicity x y = ⊤ ↔ IsUnit x ∨ y = 0 := by
-  rw [multiplicity.eq_top_iff_not_finite, WfDvdMonoid.multiplicity_finite_iff, or_iff_not_and_not]
-
 lemma dvd_iff_multiplicity_le {M : Type*}
     [CancelCommMonoidWithZero M] [DecidableRel (fun a b : M ↦ a ∣ b)] [UniqueFactorizationMonoid M]
     {a b : M} (ha : a ≠ 0) : a ∣ b ↔ ∀ p : M, Prime p → multiplicity p a ≤ multiplicity p b := by

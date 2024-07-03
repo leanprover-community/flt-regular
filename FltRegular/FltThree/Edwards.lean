@@ -260,26 +260,6 @@ theorem prod_map_natAbs {s : Multiset ℤ} :
         map_one' := rfl
         map_mul' := fun x y => Int.natAbs_mul x y } : ℤ →* ℕ)
 
-theorem factors_unique_prod :
-    ∀ {f g : Multiset (ℤ√(-3))},
-      (∀ x ∈ f, OddPrimeOrFour (Zsqrtd.norm x).natAbs) →
-        (∀ x ∈ g, OddPrimeOrFour (Zsqrtd.norm x).natAbs) →
-          Associated f.prod.norm g.prod.norm →
-            (f.map (Int.natAbs ∘ Zsqrtd.norm)) = (g.map (Int.natAbs ∘ Zsqrtd.norm)) :=
-  by
-  intro f g hf hg hassoc
-  refine factors_unique_prod' ?_ ?_ ?_
-  · intro x hx
-    rw [Multiset.mem_map] at hx
-    obtain ⟨y, hy, rfl⟩ := hx
-    exact hf y hy
-  · intro x hx
-    rw [Multiset.mem_map] at hx
-    obtain ⟨y, hy, rfl⟩ := hx
-    exact hg y hy
-  · simp_rw [← Multiset.map_map, prod_map_natAbs, prod_map_norm, ← Int.associated_iff_natAbs]
-    exact hassoc
-
 /-- The multiset of factors. -/
 noncomputable def factorization' {a : ℤ√(-3)} (hcoprime : IsCoprime a.re a.im) :
     Multiset (ℤ√(-3)) :=

@@ -451,13 +451,6 @@ def unitlifts (S : systemOfUnits p G (NumberField.Units.rank k + 1))  :
     Fin (NumberField.Units.rank k + 1) → Additive (𝓞 K)ˣ :=
   fun i ↦ Additive.ofMul (Additive.toMul (S.units i).out').out'
 
-lemma norm_map_inv (z : K) : Algebra.norm k z⁻¹ = (Algebra.norm k z)⁻¹ := by
-    by_cases h : z = 0
-    rw [h]
-    simp
-    apply eq_inv_of_mul_eq_one_left
-    rw [← map_mul, inv_mul_cancel h, map_one]
-
 lemma unitlifts_spec (S : systemOfUnits p G (NumberField.Units.rank k + 1)) (i) :
     mkG (Additive.toMul <| unitlifts p hp hKL σ hσ S i) = S.units i := by
   delta unit_to_U unitlifts
@@ -680,8 +673,7 @@ lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (�
   have hcoe : ((algebraMap (𝓞 K) K) ((algebraMap (𝓞 k) (𝓞 K)) ((ζ ^ a)⁻¹).1)) =
     algebraMap (𝓞 k) (𝓞 K) ((ζ ^ a)⁻¹).1 := rfl
   simp only [toMul_sum, toMul_zsmul, zpow_neg, Units.val_mul, Units.coe_prod, map_mul, map_prod,
-    Units.coe_zpow, map_mul, map_prod, norm_map_inv, norm_map_zpow,
-    Units.coe_map]
+    Units.coe_zpow, map_mul, map_prod, norm_map_zpow, Units.coe_map]
   rw [← map_zpow, Units.coe_map_inv]
   simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe]
   have hcoe1 :
