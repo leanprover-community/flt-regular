@@ -1,7 +1,6 @@
 import FltRegular.FltThree.FltThree
 import Mathlib.Algebra.GCDMonoid.Finset
 import Mathlib.FieldTheory.Finite.Basic
-import FltRegular.NumberTheory.RegularPrimes
 
 open Int Finset
 

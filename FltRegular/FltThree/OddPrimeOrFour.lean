@@ -2,7 +2,8 @@
 Copyright (c) 2020 Ruben Van de Velde. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.RingTheory.Int.Basic
+import Mathlib.RingTheory.UniqueFactorizationDomain
+import Mathlib.Algebra.GCDMonoid.Nat
 
 /-- Being equal to `4` or odd. -/
 def OddPrimeOrFour (z : ℕ) : Prop :=

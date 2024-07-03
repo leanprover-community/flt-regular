@@ -1,11 +1,7 @@
-import Mathlib.NumberTheory.Cyclotomic.Rat
-import FltRegular.NumberTheory.Cyclotomic.Factoring
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import Mathlib.RingTheory.Ideal.Norm
 import Mathlib.RingTheory.ClassGroup
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+import Mathlib.NumberTheory.NumberField.Basic
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
+variable {K : Type*} {p : ℕ+} [Field K] [CharZero K]
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 

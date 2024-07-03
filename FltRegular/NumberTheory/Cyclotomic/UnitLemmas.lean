@@ -1,5 +1,4 @@
 import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
-import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import Mathlib.NumberTheory.Cyclotomic.Rat
 import Mathlib.NumberTheory.NumberField.Embeddings
 

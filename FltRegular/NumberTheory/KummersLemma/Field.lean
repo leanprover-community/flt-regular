@@ -1,4 +1,3 @@
-import FltRegular.NumberTheory.RegularPrimes
 import Mathlib.NumberTheory.Cyclotomic.Rat
 import Mathlib.FieldTheory.KummerExtension
 import FltRegular.NumberTheory.Unramified

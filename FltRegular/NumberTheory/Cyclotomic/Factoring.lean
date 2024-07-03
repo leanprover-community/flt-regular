@@ -5,10 +5,8 @@ Authors: Alex J. Best
 
 ! This file was ported from Lean 3 source module number_theory.cyclotomic.factoring
 -/
-import Mathlib.NumberTheory.Cyclotomic.Basic
+import  Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 import FltRegular.ReadyForMathlib.Homogenization
-
-open scoped BigOperators
 
 open Polynomial Finset MvPolynomial
 

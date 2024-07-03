@@ -1,4 +1,8 @@
+import FltRegular.MayAssume.Lemmas
+import FltRegular.NumberTheory.Cyclotomic.Factoring
+import FltRegular.NumberTheory.Cyclotomic.CaseI
 import FltRegular.CaseI.AuxLemmas
+import FltRegular.NumberTheory.RegularPrimes
 
 open Finset Nat IsCyclotomicExtension Ideal Polynomial Int Basis FltRegular.CaseI
 

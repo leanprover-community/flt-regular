@@ -1,10 +1,13 @@
-
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.GaloisPrime
 import FltRegular.NumberTheory.SystemOfUnits
-import Mathlib
+import Mathlib.RingTheory.IntegralRestrict
+import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.Data.Int.Star
+import Mathlib.GroupTheory.FiniteAbelian
+import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.RingTheory.Henselian
 
-set_option autoImplicit false
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional NumberField
 
@@ -40,7 +43,6 @@ noncomputable
 def systemOfUnits.index [Module A G] (sys : systemOfUnits p G r) [sys.IsMaximal] :=
   Fintype.card (G ⧸ Submodule.span A (Set.range sys.units))
 
-
 def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G r) :=
   ∃ _ : h.IsMaximal, ∀ (s : systemOfUnits p G r) (_ : s.IsMaximal), h.index ≤ s.index
 
@@ -67,8 +69,8 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
   classical
   rw [linearIndependent_iff] at hf ⊢
   intros l hl
-  have : (Finsupp.total ι G R f) (Finsupp.update (σ • l) i (l i)) = 0
-  · rw [← smul_zero σ, ← hl, Finsupp.total_apply, Finsupp.total_apply, Finsupp.smul_sum]
+  have : (Finsupp.total ι G R f) (Finsupp.update (σ • l) i (l i)) = 0 := by
+    rw [← smul_zero σ, ← hl, Finsupp.total_apply, Finsupp.total_apply, Finsupp.smul_sum]
     apply Finsupp.sum_congr'
     · intro x
       simp only [Finsupp.coe_update, Finsupp.coe_smul, Function.update_apply, ite_smul, smul_ite]
@@ -114,7 +116,7 @@ lemma LinearIndependent.update' {ι} [DecidableEq ι] {R} [CommRing R] [Module R
     Finsupp.total_pi_single, smul_add, smul_sub, smul_zero] at hl'
   rw [smul_comm σ (l' i) g, hg, ← LinearMap.map_smul, ← LinearMap.map_smul, smul_smul,
     ← Finsupp.total_single, ← (Finsupp.total ι G R f).map_sub, ← map_add] at hl'
-  replace hl' : ∀ j, (σ * l' j - (fun₀ | i => σ * l' i) j) + l' i * l j = 0 := by
+  replace hl' : ∀ j, (σ * l' j - (Finsupp.single i (σ * l' i)) j) + l' i * l j = 0 := by
     intro j
     exact DFunLike.congr_fun (hf _ hl') j
   simp only [Finsupp.single_apply] at hl'
@@ -161,11 +163,11 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : 
     LinearIndependent.update' _ _ _ _ _ _ (CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
     hg (ha ▸ one_mem A⁰) S.linearIndependent⟩
   let a' := a.comapDomain (Fin.succAbove i) Fin.succAbove_right_injective.injOn
-  have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i
-  · ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
+  have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i := by
+    ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
       Function.update_noteq]
-  have ha' : Finsupp.total _ G A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g
-  · rw [hS', Finsupp.total_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
+  have ha' : Finsupp.total _ G A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g := by
+    rw [hS', Finsupp.total_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
       ← one_smul A (S.units i), hg, ← ha, ← Finsupp.total_single, ← map_add]
     congr 1
     ext j
@@ -178,8 +180,8 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : 
       rw [Finsupp.mapDomain_apply Fin.succAbove_right_injective, add_zero,
         Finsupp.comapDomain_apply]
   letI := S'.isMaximal hp hf
-  suffices : Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units)
-  · exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.isMaximal hp hf) this)
+  suffices Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units) by
+    exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.isMaximal hp hf) this)
   rw [SetLike.lt_iff_le_and_exists]
   constructor
   · rw [Submodule.span_le]
@@ -497,8 +499,8 @@ lemma exists_pow_smul_eq_and_not_dvd
     {ι : Type*} [Finite ι] (f : ι → ℤ) (hf : f ≠ 0) (p : ℕ) (hp : p ≠ 1) :
     ∃ (n : ℕ) (f' : ι → ℤ), (f = p ^ n • f') ∧ ∃ i, ¬ ↑p ∣ f' i := by
   cases nonempty_fintype ι
-  have : (univ.filter (fun i ↦ f i ≠ 0)).Nonempty
-  · by_contra h
+  have : (univ.filter (fun i ↦ f i ≠ 0)).Nonempty := by
+    by_contra h
     exact hf (funext <| by simpa [filter_eq_empty_iff] using h)
   obtain ⟨i, hfi, hi⟩ := exists_min_image _ (padicValInt p ∘ f) this
   replace hfi : f i ≠ 0 := by simpa using hfi
@@ -509,8 +511,8 @@ lemma exists_pow_smul_eq_and_not_dvd
   choose f' hf' using this
   use n, f', funext hf', i
   intro hi
-  have : (p : ℤ) ^ (n + 1) ∣ f i
-  · rw [hf', pow_succ, Nat.cast_pow]
+  have : (p : ℤ) ^ (n + 1) ∣ f i := by
+    rw [hf', pow_succ, Nat.cast_pow]
     exact _root_.mul_dvd_mul_left _ hi
   simp [hfi, padicValInt_dvd_iff' hp] at this
 
@@ -608,8 +610,8 @@ lemma h_exists' : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
   classical
   let H := Subgroup.toAddSubgroup.symm
     (Submodule.torsion' ℤ (Additive (𝓞 k)ˣ) (Submonoid.powers (p : ℕ))).toAddSubgroup
-  have : H ≤ NumberField.Units.torsion k
-  · rintro x ⟨⟨_, i, rfl⟩, hnx : x ^ (p ^ i : ℕ) = 1⟩
+  have : H ≤ NumberField.Units.torsion k := by
+    rintro x ⟨⟨_, i, rfl⟩, hnx : x ^ (p ^ i : ℕ) = 1⟩
     exact isOfFinOrder_iff_pow_eq_one.mpr ⟨p ^ i, Fin.size_pos', hnx⟩
   obtain ⟨ζ, hζ⟩ := Subgroup.isCyclic_of_le this
   obtain ⟨⟨_, i, rfl⟩, hiζ : (ζ : (𝓞 k)ˣ) ^ (p ^ i : ℕ) = 1⟩ := ζ.prop
@@ -617,7 +619,6 @@ lemma h_exists' : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
   refine ⟨j, ζ, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ζ.1),
     fun ε n hn ↦ ?_⟩
   have : Fintype H := Set.fintypeSubset (NumberField.Units.torsion k) (by exact this)
-  have := Finite.of_fintype H -- Note: added to avoid timeout as of `v4.4.0-rc1`
   obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hζ ⟨ε, ⟨_, n, rfl⟩, hn⟩)
   exact ⟨i, congr_arg Subtype.val hi⟩
 
@@ -760,8 +761,8 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
   let NE := Units.map (RingOfIntegers.norm k) E
   have hNE : (NE : k) = Algebra.norm k (E : K) := rfl
   obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
-  have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ)
-  · ext
+  have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ) := by
+    ext
     simp only [RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
       RingOfInteger.coe_algebraMap_apply, Units.val_pow_eq_pow_val, map_pow]
     rw [← map_pow] at hE

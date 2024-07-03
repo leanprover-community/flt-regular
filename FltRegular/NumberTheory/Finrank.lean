@@ -1,4 +1,5 @@
-import Mathlib.LinearAlgebra.FiniteDimensional
+import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.LinearAlgebra.Dimension.Finite
 import Mathlib.Algebra.Module.Torsion
 import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
 import Mathlib.LinearAlgebra.FreeModule.PID

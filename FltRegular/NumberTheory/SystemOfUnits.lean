@@ -1,12 +1,8 @@
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.GaloisPrime
 import FltRegular.NumberTheory.CyclotomicRing
 import FltRegular.NumberTheory.Finrank
 import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
-import Mathlib
 
-set_option autoImplicit false
-open scoped NumberField nonZeroDivisors
 open FiniteDimensional
 open NumberField
 
@@ -17,13 +13,9 @@ open FiniteDimensional BigOperators Finset
 open CyclotomicIntegers(zeta)
 
 variable
-  (G : Type*) {H : Type*} [AddCommGroup G] -- [CommGroup H] [Fintype H] (hCard : Fintype.card H = p)
-  -- (σ : H) (hσ : Subgroup.zpowers σ = ⊤)
-  (r : ℕ)
-  -- [DistribMulAction H G]
-  [Module.Free ℤ G]  (hf : finrank ℤ G = r * (p - 1))
+  (G : Type*) {H : Type*} [AddCommGroup G] (r : ℕ) [Module.Free ℤ G]
+  (hf : finrank ℤ G = r * (p - 1))
 
--- TODO maybe abbrev
 local notation "A" => (CyclotomicIntegers (PNat.val p))
 
 variable [Module (CyclotomicIntegers p) G]

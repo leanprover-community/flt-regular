@@ -1,7 +1,5 @@
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import FltRegular.NumberTheory.RegularPrimes
-import FltRegular.NumberTheory.Cyclotomic.Factoring
 
 open scoped NumberField nonZeroDivisors
 

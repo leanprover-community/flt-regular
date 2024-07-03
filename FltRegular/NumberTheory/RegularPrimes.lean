@@ -1,5 +1,4 @@
 import Mathlib.FieldTheory.SplittingField.Construction
-import Mathlib.NumberTheory.Bernoulli
 import Mathlib.NumberTheory.ClassNumber.Finite
 import Mathlib.NumberTheory.ClassNumber.AdmissibleAbs
 import FltRegular.NumberTheory.Cyclotomic.CyclRat

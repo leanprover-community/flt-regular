@@ -1,12 +1,9 @@
 import Mathlib.NumberTheory.Cyclotomic.Rat
-import FltRegular.NumberTheory.Cyclotomic.Factoring
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import Mathlib.RingTheory.Ideal.Norm
-import Mathlib.RingTheory.ClassGroup
 import Mathlib.RingTheory.NormTrace
 import FltRegular.ReadyForMathlib.PowerBasis
-import FltRegular.NumberTheory.AuxLemmas
 import Mathlib.Algebra.CharZero.Infinite
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]

@@ -1,6 +1,5 @@
 import Mathlib.RingTheory.DedekindDomain.Ideal
 import Mathlib.RingTheory.DedekindDomain.Dvr
-import Mathlib.RingTheory.DedekindDomain.PID
 import Mathlib.RingTheory.Localization.NormTrace
 import Mathlib.RingTheory.Localization.LocalizationLocalization
 import Mathlib.RingTheory.Nakayama

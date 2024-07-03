@@ -1,5 +1,6 @@
 import FltRegular.CaseII.AuxLemmas
 import FltRegular.NumberTheory.KummersLemma.KummersLemma
+import FltRegular.NumberTheory.Cyclotomic.Factoring
 
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
@@ -48,8 +49,8 @@ lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   have h := zeta_sub_one_dvd hζ e
-  replace h : ∏ _η in nthRootsFinset p (𝓞 K), Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0
-  · rw [pow_add_pow_eq_prod_add_zeta_runity_mul (hpri.out.eq_two_or_odd.resolve_left
+  replace h : ∏ _η in nthRootsFinset p (𝓞 K), Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0 := by
+    rw [pow_add_pow_eq_prod_add_zeta_runity_mul (hpri.out.eq_two_or_odd.resolve_left
       (PNat.coe_injective.ne hp)) hζ.unit'_coe, ← Ideal.Quotient.eq_zero_iff_dvd, map_prod] at h
     convert h using 2 with η' hη'
     rw [map_add, map_add, map_mul, map_mul, IsPrimitiveRoot.eq_one_mod_one_sub' hζ.unit'_coe hη',
