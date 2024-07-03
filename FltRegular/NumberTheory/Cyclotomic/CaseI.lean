@@ -37,8 +37,10 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) :
     add_right_inj, mul_eq_mul_left_iff, Int.cast_eq_zero]
   simp_rw [NumberField.Units.coe_zpow]
   left
-  push_cast
-  simp only [map_zpow₀, galConj_zeta_runity hζ, inv_zpow', zpow_neg]
+  simp only [map_zpow₀]
+  rw [← inv_zpow]
+  congr
+  exact galConj_zeta_runity hζ
 
 theorem exists_int_sum_eq_zero' (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i : ℤ) {u : (𝓞 K)ˣ}
     {α : 𝓞 K} (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ (p : ℕ)) :

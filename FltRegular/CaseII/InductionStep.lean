@@ -61,8 +61,8 @@ lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
 lemma div_one_sub_zeta_mem : IsIntegral ℤ ((x + y * η : 𝓞 K) / (ζ - 1)) := by
   obtain ⟨⟨a, ha⟩, e⟩ := one_sub_zeta_dvd_zeta_pow_sub hp hζ e η
   rw [e, mul_comm]
-  simp only [map_mul, NumberField.RingOfIntegers.map_mk, map_sub, IsPrimitiveRoot.coe_unit'_coe,
-    map_one]
+  simp only [map_mul, NumberField.RingOfIntegers.map_mk, map_sub,
+    map_one, show hζ.unit'.1 = ζ from rfl]
   rwa [mul_div_cancel_right₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
 
 /- Make (x+yη)/(ζ-1) into an element of O_K -/
@@ -73,7 +73,8 @@ fun η ↦ ⟨(x + y * η.1) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
 lemma div_zeta_sub_one_mul_zeta_sub_one (η) :
     div_zeta_sub_one hp hζ e η * (π) = x + y * η := by
   ext
-  simp [div_zeta_sub_one, div_mul_cancel₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
+  simp [show hζ.unit'.1 = ζ from rfl,
+    div_zeta_sub_one, div_mul_cancel₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
 
 /- y is associated to (x+yη₁)/(ζ-1) - (x+yη₂)/(ζ-1) for η₁ ≠ η₂. -/
 lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :

@@ -31,7 +31,8 @@ lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) -
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   haveI : Fact (Nat.Prime p) := hpri
   apply RingHom.injective_int (algebraMap ℤ ℚ)
-  simp [Algebra.coe_norm_int, hζ.norm_sub_one_of_prime_ne_two' (cyclotomic.irreducible_rat p.2) hp]
+  simpa [Algebra.coe_norm_int]
+    using hζ.norm_sub_one_of_prime_ne_two' (cyclotomic.irreducible_rat p.2) hp
 
 lemma surjective_of_isCyclotomicExtension_two (R S) [CommRing R] [CommRing S]
     [IsDomain S] [Algebra R S] [IsCyclotomicExtension {2} R S] :
@@ -64,7 +65,7 @@ lemma norm_Int_zeta_sub_one' (hp : p = 2) :
   haveI : Fact (Nat.Prime p) := hpri
   apply RingHom.injective_int (algebraMap ℤ ℚ)
   subst hp
-  simp [Algebra.coe_norm_int, hζ.sub_one_norm_two']
+  simpa [Algebra.coe_norm_int] using hζ.sub_one_norm_two'
 
 lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^ (p - 1 : ℕ)) p := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K

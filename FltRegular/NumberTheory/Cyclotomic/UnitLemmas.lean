@@ -27,18 +27,6 @@ def IsPrimitiveRoot.unit' {p : ℕ+} {K : Type _} [Field K] {ζ : K} (hζ : IsPr
   val_inv := Subtype.ext <| mul_inv_cancel <| hζ.ne_zero p.ne_zero
   inv_val := Subtype.ext <| inv_mul_cancel <| hζ.ne_zero p.ne_zero
 
-@[simp, norm_cast]
-theorem IsPrimitiveRoot.coe_unit'_coe {p : ℕ+} {K : Type _} [Field K] {ζ : K}
-  (hζ : IsPrimitiveRoot ζ p) : ↑↑(hζ.unit') = ζ := rfl
-
-@[simp, norm_cast]
-theorem IsPrimitiveRoot.coe_inv_unit'_coe {p : ℕ+} {K : Type _} [Field K] {ζ : K}
-  (hζ : IsPrimitiveRoot ζ p) : ↑↑(hζ.unit'⁻¹) = ζ⁻¹ := rfl
-
-@[simp, norm_cast]
-theorem IsPrimitiveRoot.unit'_val_coe {p : ℕ+} {K : Type u_1} [Field K] {ζ : K}
-  (hζ : IsPrimitiveRoot ζ p) : ↑↑(IsPrimitiveRoot.unit' hζ) = ζ := rfl
-
 set_option quotPrecheck false
 local notation "ζ1" => (hζ.unit' - 1 : 𝓞 K)
 
@@ -249,11 +237,10 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
     cases' hxp'' with hxp'' hxp''
     · obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp'' p.prop
       refine' ⟨i, 2, _⟩
-      simp only [IsPrimitiveRoot.unit'_val_coe]
       rw [← Subtype.val_inj] at Hi
-      simp only [SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe] at Hi
-      rw [← Hi, show ((2 : ℕ+) : ℕ) = 2 by decide]
-      simp only [even_two, Even.neg_pow, one_pow, one_mul]
+      simp only [SubmonoidClass.coe_pow] at Hi
+      simp only [PNat.val_ofNat, even_two, Even.neg_pow, one_pow, one_mul]
+      rw [← Hi]
       rfl
     · have hone : (-1 : R) ^ (p : ℕ) = (-1 : R) := by apply Odd.neg_one_pow hpo
       have hxp3 : (-1 * ⟨x, hx⟩ : R) ^ (p : ℕ) = 1 := by
@@ -263,10 +250,9 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
       refine' ⟨i, 1, _⟩
       simp only [PNat.one_coe, pow_one, neg_mul, one_mul, neg_neg]
       rw [← Subtype.val_inj] at Hi
-      simp only [SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe, Submonoid.coe_mul,
+      simp only [SubmonoidClass.coe_pow, Submonoid.coe_mul,
         Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, InvMemClass.coe_inv,
         OneMemClass.coe_one, neg_mul, one_mul] at Hi
-      simp only [IsPrimitiveRoot.unit'_val_coe]
       exact Iff.mp neg_eq_iff_eq_neg (id (Eq.symm (by simpa using Hi)))
   obtain ⟨m, k, hmk⟩ := H
   refine' ⟨m, k, _⟩
@@ -284,9 +270,10 @@ theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] :
   apply_fun (fun x : 𝓞 K => (x : K))
   push_cast
   intro h
-  simp only [map_sub, coe_unit'_coe, map_one, map_zero, sub_eq_zero] at h
   refine hp.1.ne_one (hζ.unique ?_)
-  simp [h]
+  simp only [one_right_iff]
+  simp only [map_sub, map_one, map_zero, sub_eq_zero] at h
+  exact h
 
 theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h : p ≠ 2) :
     (2 : 𝓞 K) ∉ I := by

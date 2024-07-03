@@ -750,13 +750,6 @@ lemma unit_to_U_map (x : (𝓞 k)ˣ) : mkG (Units.map (algebraMap (𝓞 k) (𝓞
   rw [ofMul_eq_zero, QuotientGroup.eq_one_iff]
   exact ⟨_, rfl⟩
 
-lemma unit_to_U_neg (x) : mkG (-x) = mkG x := by
-  rw [← one_mul x, ← neg_mul, unit_to_U_mul, one_mul, add_left_eq_self]
-  convert unit_to_U_map p hp hKL σ hσ (-1)
-  ext
-  simp only [Units.val_neg, Units.val_one, OneMemClass.coe_one,
-    Units.coe_map, MonoidHom.coe_coe, map_neg, map_one]
-
 instance : CommGroup ((𝓞 k))ˣ := inferInstance
 
 lemma IsPrimitiveRoot.one_left_iff {M} [CommMonoid M] {n : ℕ} :
@@ -857,8 +850,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
         toMul_ofMul, RingHom.toMonoidHom_eq_coe, zpow_neg, unit_to_U_inv, Function.comp_apply,
         unit_to_U_map, smul_zero, neg_zero, add_zero, add_right_eq_self, NE, η, H2, J, N, H]
       apply_fun mkG at NE_p_pow
-      simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map,
-        unit_to_U_neg, unit_to_U_pow] at NE_p_pow
+      simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map, unit_to_U_pow] at NE_p_pow
       rw [eq_comm, smul_eq_zero] at NE_p_pow
       simp only [Nat.cast_eq_zero, PNat.ne_zero, false_or] at NE_p_pow
       rw [NE_p_pow, smul_zero]
