@@ -7,9 +7,6 @@ open RingOfIntegers Ideal Finset Nat FiniteDimensional
 
 variable {K : Type _} [Field K] (pb : PowerBasis ℤ (𝓞 K))
 
-instance instModuleSubtypeMemSubalgebraIntRingOfIntegers_fltRegular_bis :
-    Module (𝓞 K) (𝓞 K) := Semiring.toModule
-
 theorem exists_int_sModEq (x : 𝓞 K) :
     ∃ (n : ℤ), SModEq (span ({ pb.gen } : Set (𝓞 K))) x n := by
   refine' ⟨(pb.basis.repr x) ⟨0, pb.dim_pos⟩, _⟩
