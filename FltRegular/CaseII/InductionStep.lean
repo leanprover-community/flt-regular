@@ -121,14 +121,6 @@ lemma div_zeta_sub_one_Bijective :
     Ideal.absNorm_span_singleton, norm_Int_zeta_sub_one hζ hp]
   rfl
 
-/- if the image of one of the elements is zero then the corresponding x+yη is divisible by π^2-/
-lemma div_zeta_sub_one_eq_zero_iff (η) :
-    Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η) = 0 ↔ π ^ 2 ∣ x + y * η := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rw [Ideal.Quotient.eq_zero_iff_dvd, pow_two,
-    ← div_zeta_sub_one_mul_zeta_sub_one hp hζ e,
-      mul_dvd_mul_iff_right (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)]
-
 /- the gcd of x y called 𝔪 is coprime to 𝔭-/
 lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by
   have : Fact (Nat.Prime p) := hpri

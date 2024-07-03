@@ -78,12 +78,6 @@ theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K 
   refine' Complex.norm_eq_one_of_pow_eq_one _ p.ne_zero
   rw [← map_pow, hζ.pow_eq_one, map_one]
 
--- this proof makes me happy inside
-theorem galConj_idempotent : (galConj K p).trans (galConj K p) = AlgEquiv.refl :=
-  by
-  rw [← AlgEquiv.aut_mul, galConj, ← map_mul, neg_one_mul, neg_neg, map_one]
-  rfl
-
 variable (p)
 
 --generalize this

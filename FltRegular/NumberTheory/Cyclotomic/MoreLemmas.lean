@@ -33,15 +33,12 @@ lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) -
   apply RingHom.injective_int (algebraMap ℤ ℚ)
   simp [Algebra.coe_norm_int, hζ.norm_sub_one_of_prime_ne_two' (cyclotomic.irreducible_rat p.2) hp]
 
-@[simp]
-lemma PNat.coe_two : (2 : ℕ+) = (2 : ℕ) := rfl
-
 lemma surjective_of_isCyclotomicExtension_two (R S) [CommRing R] [CommRing S]
     [IsDomain S] [Algebra R S] [IsCyclotomicExtension {2} R S] :
     Function.Surjective (algebraMap R S) := by
   intro x
   have := IsCyclotomicExtension.adjoin_roots (S := {2}) (A := R) (B := S) x
-  simp only [Set.mem_singleton_iff, exists_eq_left, sq_eq_one_iff, PNat.coe_two] at this
+  simp only [Set.mem_singleton_iff, exists_eq_left, sq_eq_one_iff, PNat.val_ofNat] at this
   have H : Algebra.adjoin R {b : S | b = 1 ∨ b = -1} ≤ ⊥ := by
     rw [Algebra.adjoin_le_iff]
     rintro _ (rfl|rfl)
@@ -133,10 +130,6 @@ theorem prime_isUnit_mul {a b : α} (h : IsUnit a) : Prime (a * b) ↔ Prime b :
   ha ▸ prime_units_mul a b
 
 theorem prime_mul_units (a : αˣ) (b : α) : Prime (b * ↑a) ↔ Prime b := by simp [Prime]
-
-theorem prime_mul_isUnit {a b : α} (h : IsUnit a) : Prime (b * a) ↔ Prime b :=
-  let ⟨a, ha⟩ := h
-  ha ▸ prime_mul_units a b
 
 theorem prime_neg_iff {α} [CommRing α] {a : α} : Prime (-a) ↔ Prime a := by
   rw [← prime_isUnit_mul isUnit_one.neg, neg_mul, one_mul, neg_neg]

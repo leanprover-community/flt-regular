@@ -222,14 +222,6 @@ lemma minpoly_polyRoot' {L : Type*} [Field L] [Algebra K L] (α : L)
   exact minpoly_polyRoot'' hp hζ u hcong hu α e i
   exact IsIntegral.tower_top (polyRoot hp hζ u hcong α e i).prop
 
-lemma minpoly_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
-    (e : α ^ (p : ℕ) = algebraMap K L u) (i) :
-    minpoly (𝓞 K) (polyRoot hp hζ u hcong α e i) = (poly hp hζ u hcong) := by
-  apply map_injective (algebraMap (𝓞 K) K) Subtype.coe_injective
-  rw [← minpoly.isIntegrallyClosed_eq_field_fractions K L]
-  exact minpoly_polyRoot'' hp hζ u hcong hu α e i
-  exact IsIntegralClosure.isIntegral _ L (polyRoot hp hζ u hcong α e i)
-
 lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) : Separable ((poly hp hζ u hcong).map
     (algebraMap (𝓞 K) (𝓞 L))) := by

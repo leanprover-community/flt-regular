@@ -67,14 +67,6 @@ theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot (hζ.unit' : R) p := by
   rw [← this] at z1
   exact z1.of_map_of_injective (IsFractionRing.injective _ _)
 
-variable (p)
-
-/-- `is_gal_conj_real x` means that `x` is real. -/
-def IsGalConjReal (x : K) [IsCyclotomicExtension {p} ℚ K] : Prop :=
-  galConj K p x = x
-
-variable {p}
-
 theorem contains_two_primitive_roots {p q : ℕ} {x y : K} [FiniteDimensional ℚ K]
     (hx : IsPrimitiveRoot x p) (hy : IsPrimitiveRoot y q) :
     (lcm p q).totient ≤ FiniteDimensional.finrank ℚ K := by
@@ -307,11 +299,6 @@ theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h 
   rw [sub_eq_of_eq_add hk] at this
   exact hζ.isPrime_one_sub_zeta.ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
-lemma IsUnit.eq_mul_left_iff {S : Type*} [CommRing S] {x : S} (hx : IsUnit x) (y : S) :
-  x = y * x ↔ y = 1 := by
-  nth_rw 1 [← one_mul x]
-  rw [eq_comm, hx.mul_left_injective.eq_iff]
-
 lemma map_two {S T F: Type*} [NonAssocSemiring S] [NonAssocSemiring T] [FunLike F S T]
   [RingHomClass F S T] (f : F) : f 2 = 2 := by
   rw [← one_add_one_eq_two, map_add, map_one]
@@ -402,13 +389,6 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
     · exact NumberField.RingOfIntegers.isIntegral_coe _
     · exact NumberField.RingOfIntegers.isIntegral_coe _
   · exact unit_lemma_val_one p u
-
-lemma inv_coe_coe {K A : Type*} [Field K] [SetLike A K] [SubsemiringClass A K] {S : A} (s : Sˣ) :
-  (s : K)⁻¹ = ((s⁻¹ : Sˣ) : K) := by
-  apply inv_eq_of_mul_eq_one_right
-  change ((s * s⁻¹ : Sˣ) : K) = 1
-  rw [mul_inv_self]
-  rfl
 
 lemma IsPrimitiveRoot.eq_one_mod_one_sub' {A : Type*} [CommRing A] [IsDomain A]
     {n : ℕ+} {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n A) :

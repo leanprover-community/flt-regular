@@ -47,18 +47,9 @@ variable [NumberField K] {pb}
 
 variable (hpr : Prime (norm ℚ pb.gen))
 
-theorem quotient_not_trivial : Nontrivial ((𝓞 K) ⧸ span ({pb.gen} : Set (𝓞 K))) :=
-  Quotient.nontrivial fun h => hpr.not_unit ((isUnit_norm ℚ).2 (span_singleton_eq_top.1 h))
-
 lemma SModEq.Ideal_def {R : Type*} [CommRing R] (I : Ideal R) (x y : R) :
   x ≡ y [SMOD I] ↔ Ideal.Quotient.mk I x = Ideal.Quotient.mk I y :=
 Iff.rfl
-
-instance {K : Type*} [Field K] [NumberField K] :
-  Module (𝓞 ℚ) (𝓞 K) := Algebra.toModule
-
-instance {K : Type*} [Field K] [NumberField K] :
-  SMul (𝓞 ℚ) (𝓞 K) := Algebra.toSMul
 
 lemma norm_intCast {K : Type*} [Field K] [NumberField K] (n : ℤ) :
   norm ℚ (n : 𝓞 K) = n ^ (finrank ℚ K) := by
