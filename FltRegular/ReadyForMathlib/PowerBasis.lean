@@ -5,11 +5,11 @@ open scoped NumberField
 
 open RingOfIntegers Ideal Finset Nat FiniteDimensional
 
-variable {K : Type _} [Field K] (pb : PowerBasis ℤ (𝓞 K))
+variable {K : Type*} [Field K] (pb : PowerBasis ℤ (𝓞 K))
 
 theorem exists_int_sModEq (x : 𝓞 K) :
     ∃ (n : ℤ), SModEq (span ({ pb.gen } : Set (𝓞 K))) x n := by
-  refine' ⟨(pb.basis.repr x) ⟨0, pb.dim_pos⟩, _⟩
+  refine ⟨(pb.basis.repr x) ⟨0, pb.dim_pos⟩, ?_⟩
   have H := Basis.sum_repr pb.basis x
   rw [PowerBasis.coe_basis, ← insert_erase (mem_univ (⟨0, pb.dim_pos⟩ : Fin pb.dim)), sum_insert] at H
   · have :
@@ -47,8 +47,3 @@ variable (hpr : Prime (norm ℚ pb.gen))
 lemma SModEq.Ideal_def {R : Type*} [CommRing R] (I : Ideal R) (x y : R) :
   x ≡ y [SMOD I] ↔ Ideal.Quotient.mk I x = Ideal.Quotient.mk I y :=
 Iff.rfl
-
-lemma norm_intCast {K : Type*} [Field K] [NumberField K] (n : ℤ) :
-  norm ℚ (n : 𝓞 K) = n ^ (finrank ℚ K) := by
-  rw [← eq_intCast (algebraMap ℤ (𝓞 K)) n, IsScalarTower.algebraMap_apply ℤ (𝓞 ℚ) (𝓞 K)]
-  simp only [norm_algebraMap, algebraMap_int_eq, Int.coe_castRingHom, eq_intCast, Int.cast_pow]
