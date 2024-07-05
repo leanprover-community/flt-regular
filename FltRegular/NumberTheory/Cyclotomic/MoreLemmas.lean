@@ -108,14 +108,6 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : �
   use b, ↑u * ((hζ.unit' - 1 : 𝓞 K) * k ^ (p : ℕ)) - r
   rw [mul_sub, hr, add_sub_cancel_right]
 
-lemma norm_dvd_iff {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
-    [Infinite R] [Module.Free ℤ R] [Module.Finite ℤ R] (x : R) (hx : Prime (Algebra.norm ℤ x)) {y : ℤ} :
-    Algebra.norm ℤ x ∣ y ↔ x ∣ y := by
-  rw [← Ideal.mem_span_singleton (y := x), ← eq_intCast (algebraMap ℤ R), ← Ideal.mem_comap,
-    ← Ideal.span_singleton_absNorm, Ideal.mem_span_singleton, Ideal.absNorm_span_singleton,
-    Int.natAbs_dvd]
-  rwa [Ideal.absNorm_span_singleton, ← Int.prime_iff_natAbs_prime]
-
 section
 
 variable {α} [CommMonoidWithZero α]
@@ -136,10 +128,10 @@ lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ �
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   by_cases hp : p = 2
   · rw [← neg_dvd (a := (p : ℤ))]
-    rw [← norm_Int_zeta_sub_one' hζ hp, norm_dvd_iff]
+    rw [← norm_Int_zeta_sub_one' hζ hp, Ideal.norm_dvd_iff]
     rw [norm_Int_zeta_sub_one' hζ hp, prime_neg_iff, ← Nat.prime_iff_prime_int]
     exact hpri.out
-  rw [← norm_Int_zeta_sub_one hζ hp, norm_dvd_iff]
+  rw [← norm_Int_zeta_sub_one hζ hp, Ideal.norm_dvd_iff]
   rw [norm_Int_zeta_sub_one hζ hp, ← Nat.prime_iff_prime_int]
   exact hpri.out
 
