@@ -39,11 +39,3 @@ theorem exists_int_sModEq (x : 𝓞 K) :
     rw [SModEq.sub_mem, mul_one, add_sub_cancel_left, mul_comm, mem_span_singleton']
     exact ⟨_, rfl⟩
   · exact not_mem_erase (⟨0, pb.dim_pos⟩ : Fin pb.dim) univ
-
-variable [NumberField K] {pb}
-
-variable (hpr : Prime (norm ℚ pb.gen))
-
-lemma SModEq.Ideal_def {R : Type*} [CommRing R] (I : Ideal R) (x y : R) :
-  x ≡ y [SMOD I] ↔ Ideal.Quotient.mk I x = Ideal.Quotient.mk I y :=
-Iff.rfl

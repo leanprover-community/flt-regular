@@ -87,11 +87,10 @@ lemma isCoprime_of_not_zeta_sub_one_dvd (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x)
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
-set_option synthInstance.maxHeartbeats 80000 in
-lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1: 𝓞 K) ∣ a - b := by
-  letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.unit' - 1: 𝓞 K))) := inferInstance
+lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1 : 𝓞 K) ∣ a - b := by
   letI : Fact (Nat.Prime p) := hpri
-  simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, map_sub, sub_eq_zero, ← SModEq.Ideal_def]
+  simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.Quotient.mk_eq_mk, Submodule.Quotient.mk_sub,
+    sub_eq_zero, ← SModEq.def]
   convert exists_int_sModEq hζ.subOneIntegralPowerBasis' a
   rw [hζ.subOneIntegralPowerBasis'_gen]
   rw [Subtype.ext_iff, AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one]
