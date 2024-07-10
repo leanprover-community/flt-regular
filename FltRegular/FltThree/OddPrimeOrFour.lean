@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Mathlib.RingTheory.UniqueFactorizationDomain
 import Mathlib.Algebra.GCDMonoid.Nat
+import Mathlib.Data.Nat.Prime.Basic
 
 /-- Being equal to `4` or odd. -/
 def OddPrimeOrFour (z : ℕ) : Prop :=
@@ -49,7 +50,7 @@ theorem eq_of_dvd {a p : ℕ} (ha : OddPrimeOrFour a) (hp : OddPrimeOrFour p) (h
     rw [h0] at h
     refine' Nat.even_iff_not_odd.mp _ podd
     rw [even_iff_two_dvd]
-    exact pp.dvd_symm Nat.prime_two (pp.dvd_of_dvd_pow h)
+    refine pp.dvd_symm Nat.prime_two (pp.dvd_of_dvd_pow h)
   · exfalso
     rw [Nat.odd_iff_not_even] at aodd
     refine' aodd _

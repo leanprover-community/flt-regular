@@ -119,8 +119,8 @@ lemma div_zeta_sub_one_Bijective :
   rw [Fintype.bijective_iff_injective_and_card]
   use div_zeta_sub_one_Injective hp hζ e hy
   simp only [PNat.pos, mem_nthRootsFinset, Fintype.card_coe]
-  rw [hζ.unit'_coe.card_nthRootsFinset, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply,
-    Ideal.absNorm_span_singleton, norm_Int_zeta_sub_one hζ hp]
+  rw [hζ.unit'_coe.card_nthRootsFinset, ← Nat.card_eq_fintype_card, ← Submodule.cardQuot_apply,
+    ← Ideal.absNorm_apply, Ideal.absNorm_span_singleton, norm_Int_zeta_sub_one hζ hp]
   rfl
 
 /- the gcd of x y called 𝔪 is coprime to 𝔭-/

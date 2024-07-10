@@ -27,7 +27,7 @@ variable [Algebra A K] [Algebra B L] [Algebra A B] [Algebra K L] [Algebra A L]
 variable [IsScalarTower A K L] [IsScalarTower A B L]
 variable [IsDomain A] [IsDomain B]
 variable [IsFractionRing A K] [IsIntegralClosure B A L] [IsFractionRing B L]
-variable [FiniteDimensional K L] [IsSeparable K L]
+variable [FiniteDimensional K L] [Algebra.IsSeparable K L]
 variable [IsIntegrallyClosed A] [IsDedekindDomain B] [IsFractionRing B L]
 
 open nonZeroDivisors IsLocalization Matrix Algebra
@@ -88,7 +88,7 @@ lemma pow_sub_one_dvd_differentIdeal_aux
 
 lemma pow_sub_one_dvd_differentIdeal
     [IsDedekindDomain A] [NoZeroSMulDivisors A B] [Module.Finite A B]
-    [IsSeparable (FractionRing A) (FractionRing B)]
+    [Algebra.IsSeparable (FractionRing A) (FractionRing B)]
     {p : Ideal A} [p.IsMaximal] (P : Ideal B) (e : ℕ) (hp : p ≠ ⊥)
     (hP : P ^ e ∣ p.map (algebraMap A B)) : P ^ (e - 1) ∣ differentIdeal A B := by
   have : IsIntegralClosure B A (FractionRing B) :=
