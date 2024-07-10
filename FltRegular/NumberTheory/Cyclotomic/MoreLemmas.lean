@@ -4,7 +4,6 @@ import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import Mathlib.RingTheory.Ideal.Norm
 import Mathlib.RingTheory.NormTrace
 import FltRegular.ReadyForMathlib.PowerBasis
-import Mathlib.Algebra.CharZero.Infinite
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 

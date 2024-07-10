@@ -1,9 +1,9 @@
 import Mathlib.LinearAlgebra.SModEq
-import Mathlib.NumberTheory.NumberField.Norm
+import Mathlib.NumberTheory.NumberField.Basic
 
 open scoped NumberField
 
-open RingOfIntegers Ideal Finset Nat FiniteDimensional
+open Ideal Finset Nat FiniteDimensional
 
 variable {K : Type*} [Field K] (pb : PowerBasis ℤ (𝓞 K))
 

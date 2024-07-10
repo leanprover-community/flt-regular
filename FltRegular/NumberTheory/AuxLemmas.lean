@@ -1,7 +1,8 @@
 import Mathlib.NumberTheory.RamificationInertia
-import Mathlib.RingTheory.Trace.Basic
 import Mathlib.Algebra.Polynomial.Taylor
 import Mathlib.RingTheory.Valuation.ValuationRing
+import Mathlib.FieldTheory.Separable
+import Mathlib.RingTheory.Trace.Defs
 
 /-!
 
@@ -64,7 +65,7 @@ lemma Ideal.inertiaDeg_comap_eq (e : S₁ ≃ₐ[R] S₂) (p : Ideal R) (P : Ide
 
 end RamificationInertia
 
-open Polynomial IntermediateField
+open Polynomial
 
 open nonZeroDivisors
 
