@@ -324,11 +324,6 @@ theorem obscure' (p q : ℤ) (hp : p ≠ 0) (hcoprime : IsCoprime p q) (hparity 
           simp [haparity, hbparity, three_ne_zero, parity_simps]
         tauto
 
-theorem Int.eq_pow_of_mul_eq_pow_odd {a b c : ℤ} (hab : IsCoprime a b) {k : ℕ} (hk : Odd k)
-    (h : a * b = c ^ k) : (∃ d, a = d ^ k) ∧ ∃ e, b = e ^ k := by
-  obtain ⟨k, rfl⟩ := hk.exists_bit1
-  exact Int.eq_pow_of_mul_eq_pow_bit1 hab h
-
 theorem Int.cube_of_coprime (a b c s : ℤ) (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0)
     (hcoprimeab : IsCoprime a b) (hcoprimeac : IsCoprime a c) (hcoprimebc : IsCoprime b c)
     (hs : a * b * c = s ^ 3) : ∃ A B C, A ≠ 0 ∧ B ≠ 0 ∧ C ≠ 0 ∧ a = A ^ 3 ∧ b = B ^ 3 ∧ c = C ^ 3 :=

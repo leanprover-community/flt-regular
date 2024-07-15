@@ -30,7 +30,7 @@ theorem pow_sub_pow_eq_prod_sub_zeta_runity_mul {K : Type _} [CommRing K] [IsDom
   -- transfer this to a polynomial ring with two variables
   have := congr_arg (Polynomial.aeval (X 0 : MvPolynomial (Fin 2) K)) this
   simp only [map_prod, aeval_X_pow, Polynomial.aeval_X, aeval_one, Polynomial.aeval_C,
-    AlgHom.map_sub] at this
+    map_sub] at this
   -- the homogenization of the identity is also true
   have := congr_arg (homogenization 1) this
   -- simplify to get the result we want

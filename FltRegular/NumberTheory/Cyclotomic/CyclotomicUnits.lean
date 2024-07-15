@@ -152,3 +152,5 @@ lemma IsPrimitiveRoot.associated_sub_one {A : Type*} [CommRing A] [IsDomain A]
   rw [h, associated_isUnit_mul_right_iff u.isUnit, ← associated_isUnit_mul_right_iff isUnit_one.neg,
     neg_one_mul, neg_sub]
   rfl
+
+end CyclotomicUnit

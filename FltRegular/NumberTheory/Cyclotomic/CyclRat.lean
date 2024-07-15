@@ -427,3 +427,5 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.cast hdim.symm) ⟨j, hj⟩) y m
   rw [hy, ← smul_eq_mul, ← zsmul_eq_smul_cast, ← b.basis.coord_apply, ← Fin.cast_mk, hn]
   exact dvd_add (dvd_mul_right _ _) last_dvd
+
+end IntFacts
