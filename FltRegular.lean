@@ -5,11 +5,6 @@ import FltRegular.CaseII.InductionStep
 import FltRegular.CaseII.Statement
 import FltRegular.FLT5
 import FltRegular.FltRegular
-import FltRegular.FltThree.Edwards
-import FltRegular.FltThree.FltThree
-import FltRegular.FltThree.OddPrimeOrFour
-import FltRegular.FltThree.Primes
-import FltRegular.FltThree.Spts
 import FltRegular.MayAssume.Lemmas
 import FltRegular.NumberTheory.AuxLemmas
 import FltRegular.NumberTheory.Cyclotomic.CaseI

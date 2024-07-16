@@ -130,13 +130,14 @@ lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H�
   [h₁ : Fintype (G ⧸ H₁)] :
   H₂.index < H₁.index := by
   rcases eq_or_ne H₂.index 0 with hn | hn
-  · rw [hn, index_eq_card]
+  · rw [hn, index_eq_card, Nat.card_eq_fintype_card]
     exact Fintype.card_pos
   apply lt_of_le_of_ne
-  · refine Nat.le_of_dvd (by rw [index_eq_card]; apply Fintype.card_pos) <| Subgroup.index_dvd_of_le h.le
-  · have := fintypeOfIndexNeZero hn
-    rw [←mul_one H₂.index, ←relindex_mul_index h.le, mul_comm, Ne, eq_comm]
-    simp [-one_mul, -Nat.one_mul, hn, h.not_le]
+  refine Nat.le_of_dvd (by rw [index_eq_card, Nat.card_eq_fintype_card]; apply Fintype.card_pos)
+    <| Subgroup.index_dvd_of_le h.le
+  have := fintypeOfIndexNeZero hn
+  rw [←mul_one H₂.index, ←relindex_mul_index h.le, mul_comm, Ne, eq_comm]
+  simp [-one_mul, -Nat.one_mul, hn, h.not_le]
 
 namespace systemOfUnits.IsFundamental
 
