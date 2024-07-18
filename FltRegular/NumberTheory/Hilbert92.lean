@@ -1,6 +1,6 @@
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.SystemOfUnits
-import Mathlib.RingTheory.IntegralRestrict
+import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.Algebra.Lie.OfAssociative
 import Mathlib.Data.Int.Star
 import Mathlib.GroupTheory.FiniteAbelian

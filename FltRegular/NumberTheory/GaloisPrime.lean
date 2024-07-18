@@ -1,5 +1,5 @@
 import FltRegular.NumberTheory.AuxLemmas
-import Mathlib.RingTheory.IntegralRestrict
+import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.Data.Set.Card
 
 /-!

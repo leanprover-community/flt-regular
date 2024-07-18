@@ -1,7 +1,7 @@
 
 import Mathlib.RingTheory.SimpleModule
 import Mathlib.RingTheory.Valuation.ValuationRing
-import Mathlib.RingTheory.IntegralRestrict
+import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.GroupTheory.OrderOfElement
 import Mathlib.Tactic.Widget.Conv
 import Mathlib.RepresentationTheory.GroupCohomology.Hilbert90

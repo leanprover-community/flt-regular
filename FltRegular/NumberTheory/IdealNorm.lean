@@ -4,8 +4,8 @@ import Mathlib.RingTheory.Localization.NormTrace
 import Mathlib.RingTheory.Localization.LocalizationLocalization
 import Mathlib.RingTheory.Nakayama
 import Mathlib.RingTheory.LocalProperties
-import Mathlib.RingTheory.IntegralRestrict
-import Mathlib.RingTheory.IntegrallyClosed
+import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
+import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 import Mathlib.NumberTheory.RamificationInertia
 import FltRegular.NumberTheory.AuxLemmas
 import Mathlib.LinearAlgebra.FreeModule.PID
