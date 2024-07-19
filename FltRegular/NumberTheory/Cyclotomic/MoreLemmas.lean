@@ -3,7 +3,6 @@ import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import Mathlib.RingTheory.Ideal.Norm
 import Mathlib.RingTheory.NormTrace
-import FltRegular.ReadyForMathlib.PowerBasis
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 
@@ -90,10 +89,7 @@ lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1
   letI : Fact (Nat.Prime p) := hpri
   simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.Quotient.mk_eq_mk, Submodule.Quotient.mk_sub,
     sub_eq_zero, ← SModEq.def]
-  convert exists_int_sModEq hζ.subOneIntegralPowerBasis' a
-  rw [hζ.subOneIntegralPowerBasis'_gen]
-  rw [Subtype.ext_iff, AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one]
-  rfl
+  exact hζ.subOneIntegralPowerBasis'_gen ▸ hζ.subOneIntegralPowerBasis'.exists_smodEq a
 
 lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : ℕ) - (b : 𝓞 K) ^ (p : ℕ) := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root ℚ (B := K) (Set.mem_singleton p)

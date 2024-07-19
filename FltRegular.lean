@@ -29,4 +29,3 @@ import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.NumberTheory.SystemOfUnits
 import FltRegular.NumberTheory.Unramified
 import FltRegular.ReadyForMathlib.Homogenization
-import FltRegular.ReadyForMathlib.PowerBasis
