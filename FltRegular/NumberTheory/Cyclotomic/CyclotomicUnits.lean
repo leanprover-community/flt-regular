@@ -44,7 +44,7 @@ theorem associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
     exact (this hj).symm.trans (this hk)
   clear k j hk hj
   intro j hj
-  refine' associated_of_dvd_dvd ⟨∑ i in range j, ζ ^ i, by rw [← geom_sum_mul_neg, mul_comm]⟩ _
+  refine associated_of_dvd_dvd ⟨∑ i in range j, ζ ^ i, by rw [← geom_sum_mul_neg, mul_comm]⟩ ?_
   -- is there an easier way to do this?
   rcases eq_or_ne n 0 with (rfl | hn')
   · simp [j.coprime_zero_right.mp hj]

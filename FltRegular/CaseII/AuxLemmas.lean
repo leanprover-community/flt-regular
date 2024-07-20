@@ -59,7 +59,7 @@ lemma dvd_iff_multiplicity_le {M : Type*}
     · simp only [ne_eq, mul_eq_zero, not_or] at ha
       rw [UniqueFactorizationMonoid.irreducible_iff_prime] at hq
       obtain ⟨c, rfl⟩ : a ∣ b := by
-        refine' IH ha.2 (fun p hp ↦ (le_trans ?_ (H p hp)))
+        refine IH ha.2 (fun p hp ↦ (le_trans ?_ (H p hp)))
         rw [multiplicity.mul hp]
         exact le_add_self
       rw [mul_comm]

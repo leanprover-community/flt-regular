@@ -88,7 +88,7 @@ theorem support_mapDomain {α β M : Type _} [AddCommMonoid M] (f : α ↪ β) (
     (Finsupp.mapDomain f v).support ⊆ v.support.map f := by
   classical
   rw [Finsupp.mapDomain]
-  refine' Finset.Subset.trans Finsupp.support_sum _
+  refine Finset.Subset.trans Finsupp.support_sum ?_
   simp only [Finsupp.mem_support_iff, Finset.biUnion_subset_iff_forall_subset, Ne]
   intro x hx
   apply Finset.Subset.trans Finsupp.support_single_subset
@@ -281,20 +281,10 @@ theorem homogenization_ne_zero_of_ne_zero (i : ι) {p : MvPolynomial ι R} (hp :
     split_ifs at this  with hia
     · rw [← hia, ht, hy]
     · simpa
-  refine' Finsupp.mapDomain_injOn _ this _ _ h
-  · intro x hx
-    rw [Set.mem_setOf_eq, hjp x hx]
-  · simp only [Set.mem_setOf_eq]
-    intro x hx
-    simp only [mem_coe, Finsupp.mem_support_iff, ne_eq] at hx
-    change ¬ 0 = 0 at hx
-    simp only [not_true] at hx
+  refine Finsupp.mapDomain_injOn _ this (fun x hx ↦ by rw [Set.mem_setOf_eq, hjp _ hx])
+    (fun _ hx ↦ by simp at hx) h
 
--- refine finsupp.map_domain_injective _ h,
--- intros x y hxy,
--- simp at hxy,
 -- -- TODO something like this but this isnt exactly true
--- admit,
 -- TODO this can follow from previous
 theorem totalDegree_homogenization (i : ι) (p : MvPolynomial ι R)
     (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) :
@@ -303,23 +293,9 @@ theorem totalDegree_homogenization (i : ι) (p : MvPolynomial ι R)
   by_cases hp : p = 0
   · simp [hp]
   apply IsHomogeneous.totalDegree
-  refine' isHomogeneous_homogenization _ _
-  exact homogenization_ne_zero_of_ne_zero _ hp h
+  · exact isHomogeneous_homogenization _ _
+  · exact homogenization_ne_zero_of_ne_zero _ hp h
 
--- rw total_degree,
--- have : (homogenization i p).support.nonempty,
--- { simp [homogenization],
---   admit,
---    },
--- rw ← finset.sup'_eq_sup this,
--- rw finset.nonempty.sup'_eq_cSup_image,
--- suffices : (λ (s : ι →₀ ℕ), s.sum (λ (n : ι) (e : ℕ), e)) '' ↑((homogenization i p).support) =
---   {p.total_degree},
--- { simp [this], },
--- refine set.eq_singleton_iff_unique_mem.mpr _,
--- split,
--- { simp, admit, },
--- { simp, admit, },
 section LeadingTerms
 
 -- TODO is this the best def?
@@ -548,7 +524,7 @@ theorem eq_leadingTerms_add (p : MvPolynomial ι R) (hp : p.totalDegree ≠ 0) :
     simp only [Finset.mem_filter] at this
     cases' this with this_left this_right
     rw [totalDegree]
-    refine' lt_of_le_of_ne (by apply Finset.le_sup this_left) this_right
+    exact lt_of_le_of_ne (by apply Finset.le_sup this_left) this_right
     rw [bot_eq_zero]
     exact pos_iff_ne_zero.mpr hp
 
@@ -711,7 +687,7 @@ theorem homogenization_mul {S : Type _} [CommRing S] [IsDomain S] (i : ι) (p q 
     intros f s p q fs ss hP hQ
     zify [add_le_add hP hQ, hP, hQ]
     ring
-  refine' this _ _ <;> rw [Finsupp.single_apply] <;> split_ifs with h
+  refine this ?_ ?_ <;> rw [Finsupp.single_apply] <;> split_ifs with h
   · simp only [h, Finsupp.single_eq_same]
     convert Finset.le_sup (α := ℕ) ha.left
     rfl
@@ -846,14 +822,13 @@ theorem support_prod (P : Finset (MvPolynomial ι R)) : (P.prod id).support ⊆ 
   · simp only [prod_empty, sum_empty]; exact support_one
   rw [Finset.prod_insert hS, Finset.sum_insert hS]
   simp only [id]
-  refine' Finset.Subset.trans (support_mul' _ _) _
-  convert Finset.add_subset_add (Finset.Subset.refl _) hSi
+  refine Finset.Subset.trans (support_mul' _ _) ?_
+  exact Finset.add_subset_add (Finset.Subset.refl _) hSi
 
 end
 
 theorem degreeOf_eq_zero_iff (i : ι) (p : MvPolynomial ι R) :
-    degreeOf i p = 0 ↔ ∀ j : ι →₀ ℕ, j ∈ p.support → j i = 0 :=
-  by
+    degreeOf i p = 0 ↔ ∀ j : ι →₀ ℕ, j ∈ p.support → j i = 0 := by
   rw [degreeOf_eq_sup]
   apply Iff.intro
   · intro h j hj
@@ -868,11 +843,10 @@ theorem degreeOf_eq_zero_iff (i : ι) (p : MvPolynomial ι R) :
 
 theorem prod_contains_no (i : ι) (P : Finset (MvPolynomial ι R))
     (hp : ∀ (p : MvPolynomial ι R) (_ : p ∈ P) (j) (_ : j ∈ p.support), (j : ι → ℕ) i = 0) (j)
-    (hjp : j ∈ (P.prod id).support) : (j : ι → ℕ) i = 0 :=
-  by
+    (hjp : j ∈ (P.prod id).support) : (j : ι → ℕ) i = 0 := by
   apply (degreeOf_eq_zero_iff i (P.prod id)).1 _ j hjp
   revert hp
-  refine' Finset.cons_induction_on P _ _
+  refine Finset.cons_induction_on P ?_ ?_
   · intro _
     simp only [prod_empty, ← C_1, degreeOf_C]
   · intro a s has hs
