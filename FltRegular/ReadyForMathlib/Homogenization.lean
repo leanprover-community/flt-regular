@@ -42,7 +42,7 @@ import Mathlib.Order.SymmDiff
 
 variable {R ι : Type _} [CommSemiring R]
 
-open Polynomial Finset MvPolynomial
+open Polynomial Finset MvPolynomial Finsupp
 
 open scoped BigOperators
 
@@ -149,16 +149,9 @@ theorem mapDomain_injOn {α β M : Type _} [AddCommMonoid M] (S : Set α) {f : �
   · simp only [not_or, mem_union, Classical.not_not, Finsupp.mem_support_iff] at h
     simp [h]
 
--- rw [finsupp.map_domain_apply hf, finsupp.map_domain_apply hf] at this,
+
 end Finsupp
 
--- lemma support_homogenization [decidable_eq ι] (i : ι) (p : mv_polynomial ι R)
---   (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : (p.homogenization i).support = p.support.image
---     (λ (j : ι →₀ ℕ), j + finsupp.single i (p.total_degree - j.sum (λ (_x : ι) (m : ℕ), m))) :=
--- begin
---   rw homogenization,
---   apply finsupp.support_map_domain _ _ _,
--- end
 @[simp]
 theorem homogenization_zero (i : ι) : (0 : MvPolynomial ι R).homogenization i = 0 := by
   simp [homogenization]
@@ -169,12 +162,12 @@ theorem homogenization_zero (i : ι) : (0 : MvPolynomial ι R).homogenization i 
 --   finsupp.map_domain f (finsupp.single 0 1 : α →₀ M) = (finsupp.single 0 1 : β →₀ M) :=
 -- by simp [hf]
 -- TODO maybe instead prove this via is_homogeneous_one
+
 @[simp]
 theorem homogenization_one (i : ι) : (1 : MvPolynomial ι R).homogenization i = 1 :=
   by
   simp only [homogenization, totalDegree_one, zero_tsub, add_zero, Finsupp.single_zero]
   erw [Finsupp.mapDomain_single]
-  -- erw map_domain_one,
   rfl
 
 @[simp]
@@ -223,7 +216,7 @@ theorem isHomogeneous_homogenization (i : ι) (p : MvPolynomial ι R) :
       ¬x + Finsupp.single i (p.totalDegree - x.sum fun (_x : ι) (m : ℕ) => m) = d := by
     intro x hx hh
     apply hd
-    rw [← hh, weightedDegree_one]
+    rw [← hh, ← degree_eq_weight_one]
     change ((x + Finsupp.single i (p.totalDegree - x.sum fun _ m => m)).sum fun _ m => m) = _
     rw [aux hx]
   rw [← Finset.sum_coe_sort]
@@ -246,10 +239,9 @@ theorem homogenization_of_isHomogeneous (n : ℕ) (i : ι) (p : MvPolynomial ι 
     intro x hx
     simp only [add_right_eq_self, Finsupp.single_eq_same, tsub_eq_zero_iff_le, Finsupp.single_tsub,
       Finsupp.single_le_iff]
-    rw [← hp (mem_support_iff.mp hx), weightedDegree_one]
+    rw [← hp (mem_support_iff.mp hx), ← degree_eq_weight_one]
     exact le_refl _
   rw [Finsupp.mapDomain_congr this]
-  -- simp,
   erw [Finsupp.mapDomain_id]
 
 -- TODO there should be a simp lemma version of this for λ x, x so simp works
@@ -323,7 +315,7 @@ theorem leadingTerms_eq_self_iff_isHomogeneous (p : MvPolynomial ι R) :
     push_neg
     use h_w
     classical
-    rw [weightedDegree_one] at h_h₂
+    rw [← degree_eq_weight_one] at h_h₂
     change ¬(h_w.sum fun (_x : ι) (e : ℕ) => e) = p.totalDegree at h_h₂
     simp only [h_h₁.symm, coeff_homogeneousComponent, exists_prop, and_true_iff, Ne,
       not_false_iff, not_forall, ite_eq_left_iff]
@@ -336,7 +328,7 @@ theorem leadingTerms_eq_self_iff_isHomogeneous (p : MvPolynomial ι R) :
     · rw [Finset.filter_eq_self]
       intro s hs
       rw [mem_support_iff] at hs
-      rw [← h hs, weightedDegree_one]
+      rw [← h hs, ← degree_eq_weight_one]
       rfl
 
 @[simp]
