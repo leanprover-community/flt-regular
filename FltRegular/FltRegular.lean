@@ -4,10 +4,6 @@ import Mathlib.NumberTheory.FLT.Basic
 
 open FltRegular
 
-/-- Statement of Fermat's last theorem for regular primes. -/
-def FltRegular.Statement : Prop :=
-  ∀ ⦃p : ℕ⦄ [Fact p.Prime], IsRegularPrime p → p ≠ 2 → FermatLastTheoremFor p
-
 /-- Fermat's last theorem for regular primes. -/
 theorem flt_regular {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) (hodd : p ≠ 2) :
     FermatLastTheoremFor p := by

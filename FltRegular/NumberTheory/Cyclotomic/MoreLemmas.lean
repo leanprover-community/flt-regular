@@ -1,13 +1,8 @@
 import Mathlib.NumberTheory.Cyclotomic.Rat
-import FltRegular.NumberTheory.Cyclotomic.Factoring
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import Mathlib.RingTheory.Ideal.Norm
-import Mathlib.RingTheory.ClassGroup
 import Mathlib.RingTheory.NormTrace
-import FltRegular.ReadyForMathlib.PowerBasis
-import FltRegular.NumberTheory.AuxLemmas
-import Mathlib.Algebra.CharZero.Infinite
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 
@@ -31,17 +26,15 @@ lemma norm_Int_zeta_sub_one : Algebra.norm ℤ (↑(IsPrimitiveRoot.unit' hζ) -
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   haveI : Fact (Nat.Prime p) := hpri
   apply RingHom.injective_int (algebraMap ℤ ℚ)
-  simp [Algebra.coe_norm_int, hζ.norm_sub_one_of_prime_ne_two' (cyclotomic.irreducible_rat p.2) hp]
-
-@[simp]
-lemma PNat.coe_two : (2 : ℕ+) = (2 : ℕ) := rfl
+  simpa [Algebra.coe_norm_int]
+    using hζ.norm_sub_one_of_prime_ne_two' (cyclotomic.irreducible_rat p.2) hp
 
 lemma surjective_of_isCyclotomicExtension_two (R S) [CommRing R] [CommRing S]
     [IsDomain S] [Algebra R S] [IsCyclotomicExtension {2} R S] :
     Function.Surjective (algebraMap R S) := by
   intro x
   have := IsCyclotomicExtension.adjoin_roots (S := {2}) (A := R) (B := S) x
-  simp only [Set.mem_singleton_iff, exists_eq_left, sq_eq_one_iff, PNat.coe_two] at this
+  simp only [Set.mem_singleton_iff, exists_eq_left, sq_eq_one_iff, PNat.val_ofNat] at this
   have H : Algebra.adjoin R {b : S | b = 1 ∨ b = -1} ≤ ⊥ := by
     rw [Algebra.adjoin_le_iff]
     rintro _ (rfl|rfl)
@@ -67,7 +60,7 @@ lemma norm_Int_zeta_sub_one' (hp : p = 2) :
   haveI : Fact (Nat.Prime p) := hpri
   apply RingHom.injective_int (algebraMap ℤ ℚ)
   subst hp
-  simp [Algebra.coe_norm_int, hζ.sub_one_norm_two']
+  simpa [Algebra.coe_norm_int] using hζ.sub_one_norm_two'
 
 lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^ (p - 1 : ℕ)) p := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -92,15 +85,11 @@ lemma isCoprime_of_not_zeta_sub_one_dvd (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x)
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
-set_option synthInstance.maxHeartbeats 80000 in
-lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1: 𝓞 K) ∣ a - b := by
-  letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.unit' - 1: 𝓞 K))) := inferInstance
+lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1 : 𝓞 K) ∣ a - b := by
   letI : Fact (Nat.Prime p) := hpri
-  simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, map_sub, sub_eq_zero, ← SModEq.Ideal_def]
-  convert exists_int_sModEq hζ.subOneIntegralPowerBasis' a
-  rw [hζ.subOneIntegralPowerBasis'_gen]
-  rw [Subtype.ext_iff, AddSubgroupClass.coe_sub, IsPrimitiveRoot.val_unit'_coe, OneMemClass.coe_one]
-  rfl
+  simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.Quotient.mk_eq_mk, Submodule.Quotient.mk_sub,
+    sub_eq_zero, ← SModEq.def]
+  exact hζ.subOneIntegralPowerBasis'_gen ▸ hζ.subOneIntegralPowerBasis'.exists_smodEq a
 
 lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : ℕ) - (b : 𝓞 K) ^ (p : ℕ) := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root ℚ (B := K) (Set.mem_singleton p)
@@ -114,14 +103,6 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : �
   use b, ↑u * ((hζ.unit' - 1 : 𝓞 K) * k ^ (p : ℕ)) - r
   rw [mul_sub, hr, add_sub_cancel_right]
 
-lemma norm_dvd_iff {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
-    [Infinite R] [Module.Free ℤ R] [Module.Finite ℤ R] (x : R) (hx : Prime (Algebra.norm ℤ x)) {y : ℤ} :
-    Algebra.norm ℤ x ∣ y ↔ x ∣ y := by
-  rw [← Ideal.mem_span_singleton (y := x), ← eq_intCast (algebraMap ℤ R), ← Ideal.mem_comap,
-    ← Ideal.span_singleton_absNorm, Ideal.mem_span_singleton, Ideal.absNorm_span_singleton,
-    Int.natAbs_dvd]
-  rwa [Ideal.absNorm_span_singleton, ← Int.prime_iff_natAbs_prime]
-
 section
 
 variable {α} [CommMonoidWithZero α]
@@ -131,12 +112,6 @@ theorem prime_units_mul (a : αˣ) (b : α) : Prime (↑a * b) ↔ Prime b := by
 theorem prime_isUnit_mul {a b : α} (h : IsUnit a) : Prime (a * b) ↔ Prime b :=
   let ⟨a, ha⟩ := h
   ha ▸ prime_units_mul a b
-
-theorem prime_mul_units (a : αˣ) (b : α) : Prime (b * ↑a) ↔ Prime b := by simp [Prime]
-
-theorem prime_mul_isUnit {a b : α} (h : IsUnit a) : Prime (b * a) ↔ Prime b :=
-  let ⟨a, ha⟩ := h
-  ha ▸ prime_mul_units a b
 
 theorem prime_neg_iff {α} [CommRing α] {a : α} : Prime (-a) ↔ Prime a := by
   rw [← prime_isUnit_mul isUnit_one.neg, neg_mul, one_mul, neg_neg]
@@ -148,10 +123,10 @@ lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ �
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   by_cases hp : p = 2
   · rw [← neg_dvd (a := (p : ℤ))]
-    rw [← norm_Int_zeta_sub_one' hζ hp, norm_dvd_iff]
+    rw [← norm_Int_zeta_sub_one' hζ hp, Ideal.norm_dvd_iff]
     rw [norm_Int_zeta_sub_one' hζ hp, prime_neg_iff, ← Nat.prime_iff_prime_int]
     exact hpri.out
-  rw [← norm_Int_zeta_sub_one hζ hp, norm_dvd_iff]
+  rw [← norm_Int_zeta_sub_one hζ hp, Ideal.norm_dvd_iff]
   rw [norm_Int_zeta_sub_one hζ hp, ← Nat.prime_iff_prime_int]
   exact hpri.out
 

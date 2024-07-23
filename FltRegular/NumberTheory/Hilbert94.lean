@@ -3,13 +3,12 @@ import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.Hilbert90
 import FltRegular.NumberTheory.IdealNorm
 import FltRegular.NumberTheory.RegularPrimes
+import Mathlib.NumberTheory.NumberField.ClassNumber
 
 open scoped NumberField
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
 variable [Fintype (ClassGroup (𝓞 K))]
-
--- attribute [-instance] instCoeOut
 
 open Polynomial
 
@@ -23,9 +22,9 @@ variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A 
 lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K L B σ) β = β)
     (σ' : L ≃ₐ[K] L) :
     (Ideal.span {β}).comap (galRestrict A K L B σ') = Ideal.span {β} := by
-  suffices : (Ideal.span {β}).map
-      (galRestrict A K L B σ'⁻¹).toRingEquiv.toRingHom = Ideal.span {β}
-  · rwa [RingEquiv.toRingHom_eq_coe, Ideal.map_comap_of_equiv, map_inv] at this
+  suffices (Ideal.span {β}).map
+      (galRestrict A K L B σ'⁻¹).toRingEquiv.toRingHom = Ideal.span {β} by
+    rwa [RingEquiv.toRingHom_eq_coe, Ideal.map_comap_of_equiv, map_inv] at this
   apply_fun (Ideal.span {·}) at hβ
   rw [← Ideal.span_singleton_mul_span_singleton, Ideal.span_singleton_eq_top.mpr η.isUnit,
     ← Ideal.one_eq_top, one_mul, ← Set.image_singleton, ← Ideal.map_span] at hβ
@@ -83,8 +82,8 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I
   haveI := IsIntegralClosure.isNoetherian A K L B
   haveI := IsIntegralClosure.isDedekindDomain A K L B
   haveI := IsIntegralClosure.isFractionRing_of_finite_extension A K L B
-  have hAB : Function.Injective (algebraMap A B)
-  · refine Function.Injective.of_comp (f := algebraMap B L) ?_
+  have hAB : Function.Injective (algebraMap A B) := by
+    refine Function.Injective.of_comp (f := algebraMap B L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq A K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hAB
@@ -92,15 +91,16 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I
   have : IsScalarTower A (FractionRing A) (FractionRing B) :=
     FractionRing.isScalarTower_liftAlgebra _ _
   have H : RingHom.comp (algebraMap (FractionRing A) (FractionRing B))
-    ↑(FractionRing.algEquiv A K).symm.toRingEquiv =
-      RingHom.comp ↑(FractionRing.algEquiv B L).symm.toRingEquiv (algebraMap K L)
-  · apply IsLocalization.ringHom_ext (nonZeroDivisors A)
+    (FractionRing.algEquiv A K).symm.toRingEquiv =
+      RingHom.comp (FractionRing.algEquiv B L).symm.toRingEquiv (algebraMap K L) := by
+    apply IsLocalization.ringHom_ext (nonZeroDivisors A)
     ext
     simp only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_comp, RingHom.coe_coe,
       AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
       ← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply A B L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-  have : IsSeparable (FractionRing A) (FractionRing B) := IsSeparable.of_equiv_equiv _ _ H
+  have : Algebra.IsSeparable (FractionRing A) (FractionRing B) :=
+    Algebra.IsSeparable.of_equiv_equiv _ _ H
   have hLK : finrank (FractionRing A) (FractionRing B) = finrank K L := by
     simpa only [Cardinal.toNat_lift] using congr_arg Cardinal.toNat
       (Algebra.lift_rank_eq_of_equiv_equiv (FractionRing.algEquiv A K).symm.toRingEquiv

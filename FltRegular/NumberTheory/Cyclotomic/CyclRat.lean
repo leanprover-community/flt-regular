@@ -27,7 +27,7 @@ open Ideal IsCyclotomicExtension
 theorem exists_int_sub_pow_prime_dvd {A : Type _} [CommRing A] [IsCyclotomicExtension {p} ℤ A]
     [hp : Fact (p : ℕ).Prime] (a : A) : ∃ m : ℤ, a ^ (p : ℕ) - m ∈ span ({(p : A)} : Set A) := by
   have : a ∈ Algebra.adjoin ℤ _ := @adjoin_roots {p} ℤ A _ _ _ _ a
-  refine' Algebra.adjoin_induction this _ _ _ _
+  refine Algebra.adjoin_induction this ?_ ?_ ?_ ?_
   · intro x hx
     rcases hx with ⟨hx_w, hx_m, hx_p⟩
     simp only [Set.mem_singleton_iff] at hx_m
@@ -98,7 +98,7 @@ theorem not_coprime_not_top {S : Type _} [CommRing S] (a b : Ideal S) :
   rw [hxy]
   simp
   intro h
-  refine' ⟨1, 1, _⟩
+  refine ⟨1, 1, ?_⟩
   simp only [one_eq_top, top_mul, Submodule.add_eq_sup, ge_iff_le]
   rw [← h]
   rfl
@@ -176,19 +176,13 @@ theorem diff_of_roots [hp : Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : 
   obtain ⟨u, hu⟩ :=
     CyclotomicUnit.IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one R ph hp.out hp.out.one_lt H
       hi1 h
-  refine' ⟨u, _⟩
-  rw [← hu, hi, pow_one]
+  exact ⟨u, by rw [← hu, hi, pow_one]⟩
 
 theorem diff_of_roots2 [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nthRootsFinset p R)
     (hη₂ : η₂ ∈ nthRootsFinset p R) (hdiff : η₁ ≠ η₂) (hwlog : η₁ ≠ 1) :
     ∃ u : Rˣ, η₂ - η₁ = u * (1 - η₁) := by
   obtain ⟨u, hu⟩ := diff_of_roots ph hη₁ hη₂ hdiff hwlog
-  refine' ⟨-u, _⟩
-  rw [Units.val_neg, neg_mul, ← hu]
-  ring
-
-noncomputable
-instance : AddCommGroup R := AddCommGroupWithOne.toAddCommGroup
+  exact ⟨-u, by simp [← hu]⟩
 
 lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p R)
@@ -273,7 +267,7 @@ lemma fltIdeals_coprime2_lemma [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {x y : ℤ}
       rw [H3] at H1
       have H4 : -↑y * (1 - η₁) ∈ P := by
         rw [← hηP]; rw [Ideal.mem_span_singleton']
-        refine' ⟨-(y : R), rfl⟩
+        exact ⟨-(y : R), rfl⟩
       apply (Ideal.add_mem_iff_left P H4).1 H1
     have hxyinP2 : x + y ∈ Ideal.span ({(p : ℤ)} : Set ℤ) := by rw [← hcapZ]; simp [hxyinP]
     rw [mem_span_singleton] at hxyinP2
@@ -427,3 +421,5 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.cast hdim.symm) ⟨j, hj⟩) y m
   rw [hy, ← smul_eq_mul, ← zsmul_eq_smul_cast, ← b.basis.coord_apply, ← Fin.cast_mk, hn]
   exact dvd_add (dvd_mul_right _ _) last_dvd
+
+end IntFacts

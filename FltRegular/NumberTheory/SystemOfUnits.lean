@@ -1,12 +1,8 @@
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.GaloisPrime
 import FltRegular.NumberTheory.CyclotomicRing
 import FltRegular.NumberTheory.Finrank
 import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
-import Mathlib
 
-set_option autoImplicit false
-open scoped NumberField nonZeroDivisors
 open FiniteDimensional
 open NumberField
 
@@ -17,13 +13,9 @@ open FiniteDimensional BigOperators Finset
 open CyclotomicIntegers(zeta)
 
 variable
-  (G : Type*) {H : Type*} [AddCommGroup G] -- [CommGroup H] [Fintype H] (hCard : Fintype.card H = p)
-  -- (σ : H) (hσ : Subgroup.zpowers σ = ⊤)
-  (r : ℕ)
-  -- [DistribMulAction H G]
-  [Module.Free ℤ G]  (hf : finrank ℤ G = r * (p - 1))
+  (G : Type*) {H : Type*} [AddCommGroup G] (r : ℕ) [Module.Free ℤ G]
+  (hf : finrank ℤ G = r * (p - 1))
 
--- TODO maybe abbrev
 local notation "A" => (CyclotomicIntegers (PNat.val p))
 
 variable [Module (CyclotomicIntegers p) G]
@@ -35,28 +27,8 @@ structure systemOfUnits (r : ℕ)
 
 namespace systemOfUnits
 
-lemma nontrivial (hr : r ≠ 0) : Nontrivial G := by
-    by_contra! h
-    rw [not_nontrivial_iff_subsingleton] at h
-    rw [FiniteDimensional.finrank_zero_of_subsingleton] at hf
-    simp only [ge_iff_le, zero_eq_mul, tsub_eq_zero_iff_le] at hf
-    cases hf with
-    | inl h => exact hr h
-    | inr h => simpa [Nat.lt_succ_iff, h] using not_lt.2 (Nat.prime_def_lt.1 hp).1
-
 lemma existence0 : Nonempty (systemOfUnits p G 0) := by
     exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
-
-lemma spanA_eq_spanZ {R : ℕ} (f : Fin R → G) :
-    (Submodule.span A (Set.range f)).restrictScalars ℤ = Submodule.span ℤ
-      (Set.range (fun (e : Fin R × (Fin (p - 1))) ↦ (zeta p) ^ e.2.1 • f e.1)) := by
-  letI := Fact.mk hp
-  rw [← Submodule.span_smul_of_span_eq_top (CyclotomicIntegers.powerBasis p).basis.span_eq,
-    Set.range_smul_range]
-  congr
-  ext
-  simp only [PowerBasis.coe_basis, CyclotomicIntegers.powerBasis_gen, Set.mem_range, Prod.exists]
-  rw [exists_comm, CyclotomicIntegers.powerBasis_dim]
 
 theorem _root_.PowerBasis.finrank' {R S} [CommRing R] [Nontrivial R] [CommRing S] [Algebra R S]
     (pb : PowerBasis R S) : FiniteDimensional.finrank R S = pb.dim := by

@@ -1,5 +1,4 @@
 import Mathlib.FieldTheory.SplittingField.Construction
-import Mathlib.NumberTheory.Bernoulli
 import Mathlib.NumberTheory.ClassNumber.Finite
 import Mathlib.NumberTheory.ClassNumber.AdmissibleAbs
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
@@ -56,15 +55,6 @@ def IsRegularNumber [hn : Fact (0 < n)] : Prop :=
 def IsRegularPrime : Prop :=
   IsRegularNumber p
 
-/-- A prime number is Bernoulli regular if it does not divide the numerator of any of
-the first `p - 3` (non-zero) Bernoulli numbers-/
-def IsBernoulliRegular : Prop :=
-  ∀ i ∈ Finset.range ((p - 3) / 2), ((bernoulli 2 * i).num : ZMod p) ≠ 0
-
-/-- A prime is super regular if its regular and Bernoulli regular.-/
-def IsSuperRegular : Prop :=
-  IsRegularNumber p ∧ IsBernoulliRegular p
-
 section TwoRegular
 
 variable (A K : Type _) [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFractionRing A K]
@@ -90,8 +80,8 @@ instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
     { algebraMap_injective' := (algebraMap ℤ L).injective_int
       isIntegral_iff := fun {x} => by
         let f := cyclotomicFieldTwoEquiv ℚ L
-        refine'
-          ⟨fun hx => ⟨IsIntegralClosure.mk' ℤ (f x) (map_isIntegral_int f hx), f.injective _⟩, _⟩
+        refine
+          ⟨fun hx => ⟨IsIntegralClosure.mk' ℤ (f x) (map_isIntegral_int f hx), f.injective ?_⟩, ?_⟩
         · convert IsIntegralClosure.algebraMap_mk' ℤ (f x) (map_isIntegral_int f hx)
           simp
         · rintro ⟨y, hy⟩

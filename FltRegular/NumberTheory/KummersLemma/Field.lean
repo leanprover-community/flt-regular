@@ -1,4 +1,3 @@
-import FltRegular.NumberTheory.RegularPrimes
 import Mathlib.NumberTheory.Cyclotomic.Rat
 import Mathlib.FieldTheory.KummerExtension
 import FltRegular.NumberTheory.Unramified
@@ -78,20 +77,19 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
     (((C ((algebraMap ((𝓞 K)) K) ↑hζ.unit') - 1) * X - 1) ^ (p : ℕ)).coeff i +
     (C ((algebraMap ((𝓞 K)) K) ↑u)).coeff i := by
       simp only [map_pow, map_sub, map_one, Polynomial.map_add, Polynomial.map_pow,
-        Polynomial.map_sub, Polynomial.map_mul, map_C, IsPrimitiveRoot.coe_unit'_coe,
+        Polynomial.map_sub, Polynomial.map_mul, map_C,
         Polynomial.map_one, map_X, coeff_add] at this
       convert this
       simp only [NumberField.RingOfIntegers.coe_eq_algebraMap, ← Polynomial.coeff_map]
       simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
-        IsPrimitiveRoot.coe_unit'_coe, Polynomial.map_one]
+        Polynomial.map_one]
       rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
-      simp
+      simp [show hζ.unit'.1 = ζ from rfl]
   apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
   simp only [Subalgebra.algebraMap_eq, Algebra.id.map_eq_id, RingHomCompTriple.comp_eq, coeff_map,
     RingHom.coe_coe, Subalgebra.coe_val, one_div, map_sub, map_one, coeff_add, coeff_sub,
-    PNat.pos, pow_eq_zero_iff, this, mul_add, IsPrimitiveRoot.val_unit'_coe,
-    IsPrimitiveRoot.coe_unit'_coe]
-  simp_rw [← smul_eq_mul K, ← coeff_smul]
+    PNat.pos, pow_eq_zero_iff, this, mul_add, IsPrimitiveRoot.val_unit'_coe]
+  simp_rw [← smul_eq_mul K, ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
   rw [smul_C, smul_eq_mul, ← smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub, smul_C,
     smul_eq_mul, mul_inv_cancel, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub, map_one]
   · exact hζ.sub_one_ne_zero hpri.out.one_lt
@@ -222,14 +220,6 @@ lemma minpoly_polyRoot' {L : Type*} [Field L] [Algebra K L] (α : L)
   rw [← minpoly.isIntegrallyClosed_eq_field_fractions' K]
   exact minpoly_polyRoot'' hp hζ u hcong hu α e i
   exact IsIntegral.tower_top (polyRoot hp hζ u hcong α e i).prop
-
-lemma minpoly_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
-    (e : α ^ (p : ℕ) = algebraMap K L u) (i) :
-    minpoly (𝓞 K) (polyRoot hp hζ u hcong α e i) = (poly hp hζ u hcong) := by
-  apply map_injective (algebraMap (𝓞 K) K) Subtype.coe_injective
-  rw [← minpoly.isIntegrallyClosed_eq_field_fractions K L]
-  exact minpoly_polyRoot'' hp hζ u hcong hu α e i
-  exact IsIntegralClosure.isIntegral _ L (polyRoot hp hζ u hcong α e i)
 
 lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) : Separable ((poly hp hζ u hcong).map

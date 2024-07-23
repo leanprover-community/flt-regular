@@ -1,15 +1,15 @@
 
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.AuxLemmas
-import FltRegular.NumberTheory.GaloisPrime
+import Mathlib.RingTheory.SimpleModule
+import Mathlib.RingTheory.Valuation.ValuationRing
+import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.GroupTheory.OrderOfElement
 import Mathlib.Tactic.Widget.Conv
 import Mathlib.RepresentationTheory.GroupCohomology.Hilbert90
 
-open scoped NumberField nonZeroDivisors
+open scoped nonZeroDivisors
 open FiniteDimensional Finset BigOperators Submodule groupCohomology
 
-variable {K L : Type*} [Field K] [Field L] [NumberField K] [Algebra K L]
+variable {K L : Type*} [Field K] [Field L] [Algebra K L]
 variable [IsGalois K L] [FiniteDimensional K L]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 variable {η : L} (hη : Algebra.norm K η = 1)

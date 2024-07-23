@@ -1,7 +1,8 @@
 import Mathlib.NumberTheory.RamificationInertia
-import Mathlib.RingTheory.Trace
 import Mathlib.Algebra.Polynomial.Taylor
 import Mathlib.RingTheory.Valuation.ValuationRing
+import Mathlib.FieldTheory.Separable
+import Mathlib.RingTheory.Trace.Defs
 
 /-!
 
@@ -64,7 +65,7 @@ lemma Ideal.inertiaDeg_comap_eq (e : S₁ ≃ₐ[R] S₂) (p : Ideal R) (P : Ide
 
 end RamificationInertia
 
-open Polynomial IntermediateField
+open Polynomial
 
 open nonZeroDivisors
 
@@ -84,93 +85,93 @@ lemma isIntegrallyClosed_of_isLocalization {R} [CommRing R] [IsIntegrallyClosed 
   intro hx
   obtain ⟨⟨y, y_mem⟩, hy⟩ := hx.exists_multiple_integral_of_isLocalization M _
   obtain ⟨z, hz⟩ := (isIntegrallyClosed_iff _).mp ‹_› hy
-  refine' ⟨IsLocalization.mk' S z ⟨y, y_mem⟩, (IsLocalization.lift_mk'_spec _ _ _ _).mpr _⟩
+  refine ⟨IsLocalization.mk' S z ⟨y, y_mem⟩, (IsLocalization.lift_mk'_spec _ _ _ _).mpr ?_⟩
   rw [RingHom.comp_id, hz, ← Algebra.smul_def]
   rfl
 
--- Mathlib/RingTheory/LocalProperties.lean
-open Polynomial nonZeroDivisors in
-lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [CommRing Rₚ]
-    [CommRing Sₚ] [Algebra R S] [Algebra R Rₚ] [Algebra R Sₚ] [Algebra S Sₚ] [Algebra Rₚ Sₚ]
-    [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ] (M : Submonoid R) [IsLocalization M Rₚ]
-    [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] (hRS : Algebra.IsIntegral R S) :
-    Algebra.IsIntegral Rₚ Sₚ := by
-  classical
-  have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
-    (algebraMap R S) (Submonoid.le_comap_map M) := by
-    apply IsLocalization.ringHom_ext M
-    simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
-  constructor
-  intros x
-  obtain ⟨x, ⟨_, t, ht, rfl⟩, rfl⟩ := IsLocalization.mk'_surjective
-    (Algebra.algebraMapSubmonoid S M) x
-  rw [IsLocalization.mk'_eq_mul_mk'_one]
-  apply RingHom.IsIntegralElem.mul
-  · exact IsIntegral.tower_top (IsIntegral.map (IsScalarTower.toAlgHom R S Sₚ) (hRS.1 x))
-  · show IsIntegral _ _
-    convert isIntegral_algebraMap (x := IsLocalization.mk' Rₚ 1 ⟨t, ht⟩)
-    rw [this, IsLocalization.map_mk', _root_.map_one]
+-- -- Mathlib/RingTheory/LocalProperties.lean
+-- open Polynomial nonZeroDivisors in
+-- lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [CommRing Rₚ]
+--     [CommRing Sₚ] [Algebra R S] [Algebra R Rₚ] [Algebra R Sₚ] [Algebra S Sₚ] [Algebra Rₚ Sₚ]
+--     [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ] (M : Submonoid R) [IsLocalization M Rₚ]
+--     [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] (hRS : Algebra.IsIntegral R S) :
+--     Algebra.IsIntegral Rₚ Sₚ := by
+--   classical
+--   have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
+--     (algebraMap R S) (Submonoid.le_comap_map M) := by
+--     apply IsLocalization.ringHom_ext M
+--     simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
+--   constructor
+--   intros x
+--   obtain ⟨x, ⟨_, t, ht, rfl⟩, rfl⟩ := IsLocalization.mk'_surjective
+--     (Algebra.algebraMapSubmonoid S M) x
+--   rw [IsLocalization.mk'_eq_mul_mk'_one]
+--   apply RingHom.IsIntegralElem.mul
+--   · exact IsIntegral.tower_top (IsIntegral.map (IsScalarTower.toAlgHom R S Sₚ) (hRS.1 x))
+--   · show IsIntegral _ _
+--     convert isIntegral_algebraMap (x := IsLocalization.mk' Rₚ 1 ⟨t, ht⟩)
+--     rw [this, IsLocalization.map_mk', _root_.map_one]
 
 -- Mathlib/RingTheory/Polynomial/ScaleRoots.lean (this section is not needed anymore)
-section scaleRoots
+-- section scaleRoots
 
-open Polynomial in
-lemma Polynomial.derivative_scaleRoots {R} [CommRing R] (p : R[X]) (r) :
-    derivative (p.scaleRoots r) = r ^ (natDegree p - (natDegree (derivative p) + 1)) •
-      ((derivative p).scaleRoots r) := by
-  by_cases hp : natDegree p = 0
-  · rw [hp, Nat.zero_sub, pow_zero, one_smul]
-    rw [natDegree_eq_zero_iff_degree_le_zero, degree_le_zero_iff] at hp
-    rw [hp]; simp only [scaleRoots_C, derivative_C, zero_scaleRoots]
-  ext i
-  simp only [coeff_smul, coeff_scaleRoots, ge_iff_le, smul_eq_mul, coeff_derivative,
-    mul_comm (r ^ (natDegree p - _)), mul_assoc, ← pow_add]
-  simp_rw [← mul_assoc, ← coeff_derivative]
-  cases lt_or_le (natDegree (derivative p)) i with
-  | inl h => simp only [coeff_eq_zero_of_natDegree_lt h, zero_mul]
-  | inr h =>
-    congr
-    have h' := natDegree_derivative_lt hp
-    zify
-    rw [Int.ofNat_sub h', Int.ofNat_sub h, Int.ofNat_sub (h.trans_lt h')]
-    simp only [Nat.cast_succ]
-    abel
+-- open Polynomial in
+-- lemma Polynomial.derivative_scaleRoots {R} [CommRing R] (p : R[X]) (r) :
+--     derivative (p.scaleRoots r) = r ^ (natDegree p - (natDegree (derivative p) + 1)) •
+--       ((derivative p).scaleRoots r) := by
+--   by_cases hp : natDegree p = 0
+--   · rw [hp, Nat.zero_sub, pow_zero, one_smul]
+--     rw [natDegree_eq_zero_iff_degree_le_zero, degree_le_zero_iff] at hp
+--     rw [hp]; simp only [scaleRoots_C, derivative_C, zero_scaleRoots]
+--   ext i
+--   simp only [coeff_smul, coeff_scaleRoots, ge_iff_le, smul_eq_mul, coeff_derivative,
+--     mul_comm (r ^ (natDegree p - _)), mul_assoc, ← pow_add]
+--   simp_rw [← mul_assoc, ← coeff_derivative]
+--   cases lt_or_le (natDegree (derivative p)) i with
+--   | inl h => simp only [coeff_eq_zero_of_natDegree_lt h, zero_mul]
+--   | inr h =>
+--     congr
+--     have h' := natDegree_derivative_lt hp
+--     zify
+--     rw [Int.ofNat_sub h', Int.ofNat_sub h, Int.ofNat_sub (h.trans_lt h')]
+--     simp only [Nat.cast_succ]
+--     abel
 
-open Polynomial in
-lemma Polynomial.Separable.scaleRoots {R} [CommRing R] {p : R[X]}
-    (hp : Polynomial.Separable p) (r) (hr : IsUnit r) :
-    Polynomial.Separable (p.scaleRoots r) := by
-  delta Polynomial.Separable at hp ⊢
-  rw [Polynomial.derivative_scaleRoots, Algebra.smul_def]
-  refine (isCoprime_mul_unit_left_right ((hr.pow _).map _) _ _).mpr ?_
-  exact Polynomial.isCoprime_scaleRoots _ _ _ hr hp
+-- open Polynomial in
+-- lemma Polynomial.Separable.scaleRoots {R} [CommRing R] {p : R[X]}
+--     (hp : Polynomial.Separable p) (r) (hr : IsUnit r) :
+--     Polynomial.Separable (p.scaleRoots r) := by
+--   delta Polynomial.Separable at hp ⊢
+--   rw [Polynomial.derivative_scaleRoots, Algebra.smul_def]
+--   refine (isCoprime_mul_unit_left_right ((hr.pow _).map _) _ _).mpr ?_
+--   exact Polynomial.isCoprime_scaleRoots _ _ _ hr hp
 
-open Polynomial nonZeroDivisors in
-lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Field Rₚ]
-    [CommRing Sₚ] [Algebra R S] [Algebra R Rₚ] [Algebra R Sₚ] [Algebra S Sₚ] [Algebra Rₚ Sₚ]
-    [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ] (M : Submonoid R) [IsLocalization M Rₚ]
-    [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] [hRS : IsSeparable R S] :
-    IsSeparable Rₚ Sₚ := by
-  have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
-    (algebraMap R S) (Submonoid.le_comap_map M) := by
-    apply IsLocalization.ringHom_ext M
-    simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
-  refine ⟨fun x ↦ ?_⟩
-  obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid S M) x
-  obtain ⟨t, ht, e⟩ := s.prop
-  let P := ((minpoly R x).map (algebraMap R Rₚ)).scaleRoots (IsLocalization.mk' _ 1 ⟨t, ht⟩)
-  refine Separable.of_dvd ?_ (minpoly.dvd _ (p := P) ?_)
-  · apply (IsSeparable.separable R x).map.scaleRoots
-    exact isUnit_of_invertible _
-  · rw [aeval_def]
-    convert scaleRoots_eval₂_eq_zero _ (r := algebraMap S Sₚ x) _
-    · rw [this, IsLocalization.map_mk', _root_.map_one, IsLocalization.mk'_eq_mul_mk'_one,
-        mul_comm]
-      congr; ext; exact e.symm
-    · rw [← aeval_def, ← map_aeval_eq_aeval_map, minpoly.aeval, map_zero]
-      rw [← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
+-- open Polynomial nonZeroDivisors in
+-- lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Field Rₚ]
+--     [CommRing Sₚ] [Algebra R S] [Algebra R Rₚ] [Algebra R Sₚ] [Algebra S Sₚ] [Algebra Rₚ Sₚ]
+--     [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ] (M : Submonoid R) [IsLocalization M Rₚ]
+--     [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] [hRS : IsSeparable R S] :
+--     IsSeparable Rₚ Sₚ := by
+--   have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
+--     (algebraMap R S) (Submonoid.le_comap_map M) := by
+--     apply IsLocalization.ringHom_ext M
+--     simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
+--   refine ⟨fun x ↦ ?_⟩
+--   obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid S M) x
+--   obtain ⟨t, ht, e⟩ := s.prop
+--   let P := ((minpoly R x).map (algebraMap R Rₚ)).scaleRoots (IsLocalization.mk' _ 1 ⟨t, ht⟩)
+--   refine Separable.of_dvd ?_ (minpoly.dvd _ (p := P) ?_)
+--   · apply (IsSeparable.separable R x).map.scaleRoots
+--     exact isUnit_of_invertible _
+--   · rw [aeval_def]
+--     convert scaleRoots_eval₂_eq_zero _ (r := algebraMap S Sₚ x) _
+--     · rw [this, IsLocalization.map_mk', _root_.map_one, IsLocalization.mk'_eq_mul_mk'_one,
+--         mul_comm]
+--       congr; ext; exact e.symm
+--     · rw [← aeval_def, ← map_aeval_eq_aeval_map, minpoly.aeval, map_zero]
+--       rw [← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
 
-end scaleRoots
+-- end scaleRoots
 
 -- Mathlib/RingTheory/Trace.lean
 universe u v in

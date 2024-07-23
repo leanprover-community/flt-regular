@@ -5,14 +5,13 @@ Authors: Alex J. Best
 
 ! This file was ported from Lean 3 source module number_theory.cyclotomic.cyclotomic_units
 -/
-import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
-import Mathlib.RingTheory.Polynomial.Cyclotomic.Eval
+import Mathlib.RingTheory.RootsOfUnity.Basic
 
 noncomputable section
 
-open scoped BigOperators nonZeroDivisors NumberField
+open scoped BigOperators nonZeroDivisors
 
-open NumberField Polynomial Finset Module Units Submodule
+open Polynomial Finset Module Units Submodule
 
 universe u v w z
 
@@ -22,23 +21,7 @@ variable [CommRing A] [CommRing B] [Algebra A B]
 
 variable [Field K] [Field L] [Algebra K L]
 
-namespace IsPrimitiveRoot
-
-variable {B}
-
-variable (B)
-
-end IsPrimitiveRoot
-
-namespace IsCyclotomicExtension
-
-variable [IsCyclotomicExtension {n} A B]
-
 variable [IsDomain A] [Algebra A K] [IsFractionRing A K]
-
-open IsCyclotomicExtension
-
-open IsCyclotomicExtension
 
 section CyclotomicUnit
 
@@ -61,7 +44,7 @@ theorem associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
     exact (this hj).symm.trans (this hk)
   clear k j hk hj
   intro j hj
-  refine' associated_of_dvd_dvd ⟨∑ i in range j, ζ ^ i, by rw [← geom_sum_mul_neg, mul_comm]⟩ _
+  refine associated_of_dvd_dvd ⟨∑ i in range j, ζ ^ i, by rw [← geom_sum_mul_neg, mul_comm]⟩ ?_
   -- is there an easier way to do this?
   rcases eq_or_ne n 0 with (rfl | hn')
   · simp [j.coprime_zero_right.mp hj]
@@ -155,49 +138,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
   rw [mul_assoc]
   rw [h2]
 
-/-
-def unitlem2 {n k : ℕ} {ζ : A} (hk : nat.coprime n k)
-(hζ : is_primitive_root ζ n) : Aˣ :=
-{ val := (∑ (i : finset.range k), ζ^(i : ℕ)),
-  inv := (ζ-1)  ,
-  val_inv := admit,
-  inv_val := admit,
-
-}
-
-
-
-
-variable (n)
-
-instance : is_localization ((ring_of_integers (cyclotomic_field n K)))⁰ (cyclotomic_field n K) :=
-admit
-
-lemma prime_ideal_eq_pow_cyclotomic [hn : fact ((n : ℕ).prime)] :
-  (span_singleton _ n : fractional_ideal RR⁰ L) =
-  (span_singleton _ (1 - (zeta_runity n K L)) ^ ((n : ℕ) - 1) : fractional_ideal RR⁰ L) :=
-  --(mk0 (p : cyclotomic_field p) (by norm_num [hn.ne_zero]))
-begin
-  rw fractional_ideal.span_singleton_pow,
-  apply coe_to_submodule_injective,
-  simp only [coe_span_singleton, coe_coe],
-  -- rw ideal.span_singleton_eq_span_singleton,
-  simp only [submodule.span_singleton_eq_span_singleton],
-  rw ← eval_one_cyclotomic_prime,
-  --rw calc
-  --  eval 1 (cyclotomic n (cyclotomic_field n)) = _ : by simp_rw
-  --    cyclotomic_eq_prod_X_sub_primitive_roots (zeta_primitive_root n _)
-  --                      ... = _ : by simp only [polynomial.eval_sub, polynomial.eval_C,
-  --                                  polynomial.eval_prod, polynomial.eval_X],
-
-  -- apply span_singleton_eq_span_singleton_,
-  admit,
-end -/
 end CyclotomicUnit
-
-end CyclotomicUnit
-
-end IsCyclotomicExtension
 
 lemma IsPrimitiveRoot.associated_sub_one {A : Type*} [CommRing A] [IsDomain A]
     {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A} (hη₁ : η₁ ∈ nthRootsFinset p A)
@@ -206,8 +147,10 @@ lemma IsPrimitiveRoot.associated_sub_one {A : Type*} [CommRing A] [IsDomain A]
   obtain ⟨i, ⟨hi, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset hp.pos).1 hη₁) hp.pos
   obtain ⟨j, ⟨hj, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset hp.pos).1 hη₂) hp.pos
   have : i ≠ j := ne_of_apply_ne _ e
-  obtain ⟨u, h⟩ := IsCyclotomicExtension.CyclotomicUnit.IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one A
+  obtain ⟨u, h⟩ := CyclotomicUnit.IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one A
     hp.two_le hp hi hj this hζ
   rw [h, associated_isUnit_mul_right_iff u.isUnit, ← associated_isUnit_mul_right_iff isUnit_one.neg,
     neg_one_mul, neg_sub]
   rfl
+
+end CyclotomicUnit

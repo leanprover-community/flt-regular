@@ -10,11 +10,6 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
 namespace FltRegular
 
-/-- Statement of case II. -/
-def CaseII.Statement : Prop :=
-  ∀ ⦃a b c : ℤ⦄ ⦃p : ℕ⦄ [hp : Fact p.Prime] (_ : @IsRegularPrime p hp) (_ : p ≠ 2)
-    (_ : a * b * c ≠ 0) (_ : ↑p ∣ a * b * c), a ^ p + b ^ p ≠ c ^ p
-
 lemma not_exists_solution (hm : 1 ≤ m) :
   ¬∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
     ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
