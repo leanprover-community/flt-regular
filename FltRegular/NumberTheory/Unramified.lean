@@ -221,7 +221,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
       ← Finset.mem_coe, coe_primesOverFinset _ p hpbot]
     rwa [ne_eq, Ideal.map_eq_bot_iff_of_injective hRS]
 
-lemma isUnramifiedAt_of_Separable_minpoly [IsSeparable K L]
+lemma isUnramifiedAt_of_Separable_minpoly [Algebra.IsSeparable K L]
     (p : Ideal R) [hp : p.IsPrime] (hpbot : p ≠ ⊥) (x : L) (hx : IsIntegral R x)
     (hx' : Algebra.adjoin K {x} = ⊤)
     (h : Polynomial.Separable ((minpoly R x).map (Ideal.Quotient.mk p))) :
