@@ -57,7 +57,7 @@ jobs:
             DocGen4-
 
       - name: Build documentation
-        run: ~/.elan/bin/lake -Kenv=dev build FltRegular:docs
+        run: ~/.elan/bin/lake -R -Kenv=dev build FltRegular:docs
 
       - name: Install Python
         uses: actions/setup-python@v4
