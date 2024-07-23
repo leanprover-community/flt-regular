@@ -854,7 +854,3 @@ lemma Hilbert92
 end application
 
 end thm91
-
-
-lemma and_impl_equiv (P Q R : Prop) : (P  → Q) ∧ (Q → R) ↔ (P → R) ∧ ((P ↔ Q) ∨ (R ↔ Q)) := by
-  tauto 

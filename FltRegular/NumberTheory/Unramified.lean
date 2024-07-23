@@ -181,7 +181,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
   have := IsIntegralClosure.isNoetherian R K L S
   have := IsIntegralClosure.isDedekindDomain R K L S
   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  --have := aeval_derivative_mem_differentIdeal R K L x hx'
+  have := aeval_derivative_mem_differentIdeal R K L x hx'
   have H : RingHom.comp (algebraMap (FractionRing R) (FractionRing S))
     ↑(FractionRing.algEquiv R K).symm.toRingEquiv =
       RingHom.comp ↑(FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L) := by
@@ -221,7 +221,6 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
       ← Finset.mem_coe, coe_primesOverFinset _ p hpbot]
     rwa [ne_eq, Ideal.map_eq_bot_iff_of_injective hRS]
 
-/- If the reduction mod p of the min poly is separable then p is unramified.-/
 lemma isUnramifiedAt_of_Separable_minpoly [IsSeparable K L]
     (p : Ideal R) [hp : p.IsPrime] (hpbot : p ≠ ⊥) (x : L) (hx : IsIntegral R x)
     (hx' : Algebra.adjoin K {x} = ⊤)

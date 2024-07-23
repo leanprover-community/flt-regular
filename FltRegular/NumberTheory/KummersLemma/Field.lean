@@ -13,7 +13,6 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
 
 open Polynomial
 
-/- ζ-1 divides ((ζ-1)x -1)^p + u, with (ζ-1)^p dividing u-1. -/
 lemma zeta_sub_one_pow_dvd_poly :
     C ((hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ)) ∣
       (C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ (p : ℕ) + C (u : 𝓞 K) := by
