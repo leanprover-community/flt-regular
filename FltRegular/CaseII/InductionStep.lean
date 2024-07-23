@@ -4,12 +4,12 @@ import FltRegular.NumberTheory.KummersLemma.KummersLemma
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-variable (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
-
-variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
-
-variable {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
+[IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))]
+(hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
+{ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
+{m : ℕ} (e : x ^ (p : ℕ) + y ^ (p : ℕ) = ε * ((hζ.unit'.1 - 1) ^ (m + 1) * z) ^ (p : ℕ))
+(hy : ¬ hζ.unit'.1 - 1 ∣ y) (hz : ¬ hζ.unit'.1 - 1 ∣ z)
 
 attribute [local instance 2000] Algebra.toModule Module.toDistribMulAction AddMonoid.toZero
   DistribMulAction.toMulAction MulAction.toSMul NumberField.inst_ringOfIntegersAlgebra
@@ -29,8 +29,7 @@ local notation3 "𝔶" => Ideal.span {y}
 local notation3 "𝔷" => Ideal.span {z}
 local notation3 "𝔪" => gcd 𝔵 𝔶
 
-variable {m : ℕ} (e : x ^ (p : ℕ) + y ^ (p : ℕ) = ε * ((hζ.unit'.1 - 1) ^ (m + 1) * z) ^ (p : ℕ))
-variable (hy : ¬ hζ.unit'.1 - 1 ∣ y) (hz : ¬ hζ.unit'.1 - 1 ∣ z)
+
 variable (η : nthRootsFinset p (𝓞 K))
 
 /- We have `x,y,z` elements of `O_K` and we assume that we have $$x^p+y^p= ε * ((ζ-1)^(m+1)*z)^p$$-/
