@@ -259,9 +259,6 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
   let L := K[(p : ℕ)√(u : K)]
   letI := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
   let J := I.map (algebraMap (𝓞 K) (𝓞 L))
-  letI : AddCommGroup (𝓞 L) := AddCommGroupWithOne.toAddCommGroup
-  letI : Module (𝓞 K) (𝓞 L) := Algebra.toModule
-  letI := Ideal.Quotient.commRing J
   let i : 𝓞 K ⧸ I →+* 𝓞 L ⧸ J := Ideal.quotientMap _
     (algebraMap (𝓞 K) (𝓞 L)) Ideal.le_comap_map
   haveI : Nontrivial (𝓞 L ⧸ J) := by

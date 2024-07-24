@@ -18,7 +18,7 @@ variable [IsSplittingField K L (X ^ (p : ℕ) - C (u : K))]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
 theorem not_for_all_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
-    (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1) : ¬∀ v : K, v ^ (p : ℕ) ≠ u := by
+    (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (u : 𝓞 K) - 1) : ¬∀ v : K, v ^ (p : ℕ) ≠ u := by
   intro hu
   letI := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
   let L := AdjoinRoot (Polynomial.X ^ (p : ℕ) - Polynomial.C (u : K))
@@ -46,7 +46,7 @@ theorem not_for_all_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
 -- the 𝑝-th cyclotomic field) and 𝜉 a primitive 𝑝-th root of unity;
 -- if a unit 𝑢∈𝐐(𝜉) is congruent to an integer modulo 𝑝, then 𝑢 is a 𝑝-th power in 𝐐(𝜉).
 theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
-    (hcong : ∃ n : ℤ, (p : 𝓞 K) ∣ (↑u - n : 𝓞 K)) :
+    (hcong : ∃ n : ℤ, (p : 𝓞 K) ∣ (u - n : 𝓞 K)) :
     ∃ v, u = v ^ (p : ℕ) := by
   haveI : Fact (Nat.Prime p) := hpri
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root (S := {p}) ℚ (B := K) (n := p) rfl

@@ -24,7 +24,7 @@ attribute [local instance 2000] Algebra.toModule Module.toDistribMulAction AddMo
 set_option quotPrecheck false
 local notation3 "π" => Units.val (IsPrimitiveRoot.unit' hζ) - 1
 local notation3 "𝔭" => Ideal.span {π}
-local notation3 "𝔦" η => Ideal.span {(x + y * ↑η : 𝓞 K)}
+local notation3 "𝔦" η => Ideal.span {(x + y * η : 𝓞 K)}
 local notation3 "𝔵" => Ideal.span {x}
 local notation3 "𝔶" => Ideal.span {y}
 local notation3 "𝔷" => Ideal.span {z}
@@ -476,7 +476,7 @@ lemma formula (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η�
 
 lemma exists_solution :
     ∃ (x' y' z' : 𝓞 K) (ε₁ ε₂ ε₃ : (𝓞 K)ˣ), ¬ π ∣ x' ∧ ¬ π ∣ y' ∧ ¬ π ∣ z' ∧
-      ↑ε₁ * x' ^ (p : ℕ) + ε₂ * y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
+      ε₁ * x' ^ (p : ℕ) + ε₂ * y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
   letI : Fact (Nat.Prime p) := hpri
   let η₁ : nthRootsFinset p (𝓞 K) := ⟨η₀ * hζ.unit', mul_mem_nthRootsFinset
     (η₀ : _).prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)⟩
