@@ -17,7 +17,7 @@ variable {L} [Field L] [Algebra K L] [FiniteDimensional K L]
 variable [IsSplittingField K L (X ^ (p : ℕ) - C (u : K))]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
-theorem false_of_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
+theorem not_for_all_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
     (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1) : ¬∀ v : K, v ^ (p : ℕ) ≠ u := by
   intro hu
   letI := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
@@ -75,7 +75,7 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     simpa [ge_iff_le, Int.cast_one, sub_self, nsmul_eq_mul, Nat.cast_mul, PNat.pos,
       Nat.cast_pred, zero_sub, IsUnit.mul_iff, ne_eq, tsub_eq_zero_iff_le, not_le, dvd_neg,
       Units.isUnit, and_true, zero_add] using this
-  have := false_of_zeta_sub_one_pow_dvd_sub_one_of_pow_ne hp hreg hζ _ this
+  have := not_for_all_zeta_sub_one_pow_dvd_sub_one_of_pow_ne hp hreg hζ _ this
   simp only [not_forall, not_not] at this
   obtain ⟨v, hv⟩ := this
   have hv' : IsIntegral ℤ v := by
