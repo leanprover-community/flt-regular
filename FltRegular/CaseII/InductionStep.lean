@@ -461,7 +461,7 @@ lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
   rw [this.resolve_left (pow_ne_zero (m + 1) (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt))] at hz
   exact hz (dvd_zero _)
 
-lemma stuff (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η₀) :
+lemma formula (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η₀) :
   (η₂ - η₀ : 𝓞 K) * ε η₁ hη₁ * (α η₁ hη₁ * β η₂ hη₂) ^ (p : ℕ) +
     (η₀ - η₁) * ε η₂ hη₂ * (α η₂ hη₂ * β η₁ hη₁) ^ (p : ℕ) =
     (η₂ - η₁) * (π ^ m * (β η₁ hη₁ * β η₂ hη₂)) ^ (p : ℕ) := by
@@ -508,7 +508,7 @@ lemma exists_solution :
     (Subtype.coe_injective.ne_iff.mpr hη₁.symm)
   obtain ⟨u₃, hu₃⟩ := hζ.unit'_coe.associated_sub_one hpri.out η₂.prop (η₁ : _).prop
     (Subtype.coe_injective.ne_iff.mpr hη)
-  have := stuff hp hreg hζ e hy hz η₁ hη₁ η₂ hη₂
+  have := formula hp hreg hζ e hy hz η₁ hη₁ η₂ hη₂
   rw [← hu₁, ← hu₂, ← hu₃, mul_assoc _ (u₁ : 𝓞 K), mul_assoc _ (u₂ : 𝓞 K), mul_assoc _ (u₃ : 𝓞 K),
     mul_assoc (π), mul_assoc (π), ← mul_add,
     mul_right_inj' (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt), ← Units.val_mul,

@@ -16,8 +16,7 @@ open Polynomial Finset MvPolynomial
 where `μ` varies over the `n`-th roots of unity. -/
 theorem pow_sub_pow_eq_prod_sub_zeta_runity_mul {K : Type _} [CommRing K] [IsDomain K] {ζ : K}
     {n : ℕ} (hpos : 0 < n) (h : IsPrimitiveRoot ζ n) (x y : K) :
-    x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ ζ : K in nthRootsFinset n K, (x - ζ * y) :=
-  by
+    x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ ζ : K in nthRootsFinset n K, (x - ζ * y) := by
   -- suffices to show the identity in a multivariate polynomial ring with two generators over K
   suffices
     (X 0 : MvPolynomial (Fin 2) K) ^ (n : ℕ) - X 1 ^ (n : ℕ) =
