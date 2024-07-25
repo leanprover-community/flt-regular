@@ -114,13 +114,13 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I
   then there is an ideal that capitulates in `K`. -/
 theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type*)
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
-    [FiniteDimensional K L] [IsGalois K L] [IsUnramified (𝓞 K) (𝓞 L)] [IsCyclic (L ≃ₐ[K] L)]
+    [FiniteDimensional K L] [IsGalois K L] [IsUnramified (𝓞 K) (𝓞 L)] [h : IsCyclic (L ≃ₐ[K] L)]
     (hKL : Nat.Prime (finrank K L))
     (hKL' : finrank K L ≠ 2) :
     ∃ I : Ideal (𝓞 K), ¬I.IsPrincipal ∧ (I.map (algebraMap (𝓞 K) (𝓞 L))).IsPrincipal := by
-  obtain ⟨⟨σ, hσ⟩⟩ := ‹IsCyclic (L ≃ₐ[K] L)›
+  obtain ⟨⟨σ, hσ⟩⟩ := h
   obtain ⟨η, hη, hη'⟩ := Hilbert92 hKL hKL' σ hσ
-  exact exists_not_isPrincipal_and_isPrincipal_map_aux (A := (𝓞 K)) σ hσ η hη (not_exists.mpr hη')
+  exact exists_not_isPrincipal_and_isPrincipal_map_aux σ hσ η hη (not_exists.mpr hη')
 
 /-- This is the second part of **Hilbert Theorem 94**, which states that if `L/K` is an unramified
   cyclic finite extension of number fields of odd prime degree,

@@ -120,8 +120,8 @@ lemma div_zeta_sub_one_Bijective :
   use div_zeta_sub_one_Injective hp hζ e hy
   simp only [PNat.pos, mem_nthRootsFinset, Fintype.card_coe]
   rw [hζ.unit'_coe.card_nthRootsFinset, ← Nat.card_eq_fintype_card, ← Submodule.cardQuot_apply,
-    ← Ideal.absNorm_apply, Ideal.absNorm_span_singleton, norm_Int_zeta_sub_one hζ hp]
-  rfl
+    ← Ideal.absNorm_apply, Ideal.absNorm_span_singleton]
+  simp [show Algebra.norm ℤ π = _ from hζ.norm_toInteger_sub_one_of_prime_ne_two' hp]
 
 /- the gcd of x y called 𝔪 is coprime to 𝔭-/
 lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by

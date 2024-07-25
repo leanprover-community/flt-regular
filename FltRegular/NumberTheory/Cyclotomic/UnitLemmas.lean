@@ -18,7 +18,6 @@ universe u
 noncomputable section
 
 /-- zeta now as a unit in the ring of integers. This way there are no coe issues-/
-@[simps]
 def IsPrimitiveRoot.unit' {p : ℕ+} {K : Type _} [Field K] {ζ : K} (hζ : IsPrimitiveRoot ζ p) :
     (𝓞 K)ˣ where
   val := (⟨ζ, hζ.isIntegral p.pos⟩ : 𝓞 K)

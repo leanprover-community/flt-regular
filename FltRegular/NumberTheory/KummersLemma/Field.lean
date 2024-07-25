@@ -87,7 +87,7 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
   apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
   simp only [Subalgebra.algebraMap_eq, Algebra.id.map_eq_id, RingHomCompTriple.comp_eq, coeff_map,
     RingHom.coe_coe, Subalgebra.coe_val, one_div, map_sub, map_one, coeff_add, coeff_sub,
-    PNat.pos, pow_eq_zero_iff, this, mul_add, IsPrimitiveRoot.val_unit'_coe]
+    PNat.pos, pow_eq_zero_iff, this, mul_add]
   simp_rw [← smul_eq_mul K, ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
   rw [smul_C, smul_eq_mul, ← smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub, smul_C,
     smul_eq_mul, mul_inv_cancel, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub, map_one]
@@ -119,7 +119,7 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
   have hcoe1 : (algebraMap (𝓞 K) L) ↑u = algebraMap K L ↑↑u := rfl
   simp only [map_sub, map_one, map_pow, map_mul, aeval_C, Subalgebra.algebraMap_eq, smul_pow,
     hcoe, RingHom.coe_comp, RingHom.coe_coe, Subalgebra.coe_val, Function.comp_apply, e, hcoe1,
-    IsPrimitiveRoot.val_unit'_coe, map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ',
+    map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ',
     sub_sub_cancel_left, (hpri.out.odd_of_ne_two (PNat.coe_injective.ne hp)).neg_pow] at this
   rw [← pow_mul, mul_comm m, pow_mul, hζ.pow_eq_one, one_pow, one_smul, add_left_neg,
     mul_eq_zero] at this
@@ -237,7 +237,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     · exact mt (hζ.unit'_coe.injOn_pow hj hi) hij.symm
   rw [NumberField.RingOfIntegers.ext_iff] at hv
   have hcoe : (algebraMap (𝓞 K) K) (↑hζ.unit') = ζ := rfl
-  simp only [map_mul, map_sub, IsPrimitiveRoot.val_unit'_coe, map_one, map_pow, hcoe] at hv
+  simp only [map_mul, map_sub, map_one, map_pow, hcoe] at hv
   have hα : IsIntegral (𝓞 K) α := by
     apply IsIntegral.of_pow p.pos; rw [e]; exact isIntegral_algebraMap
   have : IsUnit (⟨α, isIntegral_trans _ hα⟩ : 𝓞 L) := by
