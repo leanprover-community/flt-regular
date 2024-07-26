@@ -13,7 +13,7 @@ variable [Fintype (ClassGroup (𝓞 K))]
 open Polynomial
 
 variable {L} [Field L] [Algebra K L] [FiniteDimensional K L] [IsGalois K L]
-variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hKL : FiniteDimensional.finrank K L = p)
+  (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hKL : FiniteDimensional.finrank K L = p)
 
 variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
@@ -68,10 +68,6 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     · exact (mul_ne_zero_iff.mp hβ_zero).1
   · rw [hβ']
     exact ⟨⟨_, rfl⟩⟩
-
-attribute [local instance 2000] NumberField.inst_ringOfIntegersAlgebra Algebra.toSMul Algebra.toModule
-
-attribute [local instance] FractionRing.liftAlgebra
 
 open FiniteDimensional (finrank)
 

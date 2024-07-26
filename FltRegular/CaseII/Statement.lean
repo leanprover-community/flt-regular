@@ -3,8 +3,9 @@ import FltRegular.CaseII.InductionStep
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-variable (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
+  [IsCyclotomicExtension {p} ℚ K]  (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))]
+  (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
@@ -42,8 +43,8 @@ lemma not_exists_solution' :
   refine not_exists_solution hp hreg hζ hm ⟨x, y, z, 1, hy, hz'', ?_⟩
   rwa [Units.val_one, one_mul]
 
-lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p) (hodd : p ≠ 2) :
-  ¬∃ (x y z : ℤ), ¬↑p ∣ y ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
+lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p)
+    (hodd : p ≠ 2) : ¬∃ (x y z : ℤ), ¬↑p ∣ y ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
   haveI : Fact (PNat.Prime ⟨p, hpri.out.pos⟩) := hpri
   haveI := CyclotomicField.isCyclotomicExtension ⟨p, hpri.out.pos⟩ ℚ
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root
@@ -61,8 +62,9 @@ lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRe
   · dsimp
     simp_rw [← Int.cast_pow, ← Int.cast_add, e]
 
-lemma not_exists_Int_solution' {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p) (hodd : p ≠ 2) :
-  ¬∃ (x y z : ℤ), ({x, y, z} : Finset ℤ).gcd id = 1 ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
+lemma not_exists_Int_solution' {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p)
+    (hodd : p ≠ 2) :
+    ¬∃ (x y z : ℤ), ({x, y, z} : Finset ℤ).gcd id = 1 ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
   rintro ⟨x, y, z, hgcd, hz, hz', e⟩
   refine not_exists_Int_solution hreg hodd ⟨x, y, z, ?_, hz, hz', e⟩
   intro hy

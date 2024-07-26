@@ -22,8 +22,6 @@ instance {K : Type*} [Field K] : Module (𝓞 K) (𝓞 K) := Semiring.toModule
 
 open Ideal IsCyclotomicExtension
 
--- TODO can we make a relative version of this with another base ring instead of ℤ ?
--- A version of flt_facts_3 indep of the ring
 theorem exists_int_sub_pow_prime_dvd {A : Type _} [CommRing A] [IsCyclotomicExtension {p} ℤ A]
     [hp : Fact (p : ℕ).Prime] (a : A) : ∃ m : ℤ, a ^ (p : ℕ) - m ∈ span ({(p : A)} : Set A) := by
   have : a ∈ Algebra.adjoin ℤ _ := @adjoin_roots {p} ℤ A _ _ _ _ a
@@ -346,7 +344,8 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
     by_contra! habs
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt i))] at H
   obtain ⟨y, hy⟩ := hdiv
-  rw [← Equiv.sum_comp (Fin.castOrderIso (succ_pred_prime hp.out)).toEquiv, Fin.sum_univ_castSucc] at hy
+  rw [← Equiv.sum_comp (Fin.castOrderIso (succ_pred_prime hp.out)).toEquiv,
+    Fin.sum_univ_castSucc] at hy
   simp only [hlast, h, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
     ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy

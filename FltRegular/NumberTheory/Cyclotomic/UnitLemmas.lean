@@ -288,8 +288,8 @@ lemma map_two {S T F: Type*} [NonAssocSemiring S] [NonAssocSemiring T] [FunLike 
   rw [← one_add_one_eq_two, map_add, map_one]
   exact one_add_one_eq_two
 
-lemma neg_one_eq_one_iff_two_eq_zero {M : Type*} [AddGroupWithOne M] : (-1 : M) = 1 ↔ (2 : M) = 0 := by
-  rw [neg_eq_iff_add_eq_zero, one_add_one_eq_two]
+lemma neg_one_eq_one_iff_two_eq_zero {M : Type*} [AddGroupWithOne M] :
+    (-1 : M) = 1 ↔ (2 : M) = 0 := by rw [neg_eq_iff_add_eq_zero, one_add_one_eq_two]
 
 lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [FunLike F M N]
     [MonoidHomClass F M N] (f : F) (m : Mˣ) :
@@ -316,7 +316,6 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
     ext x
     congr 1
     rw [map_zsmul]
-      -- todo: probably swap `is_primitive_root.inv` and `is_primitive_root.inv'`.
   have : ∀ x : Fin φn, intGal ((galConj K p)) (⟨ζ, hζ.isIntegral p.pos⟩ ^ (x : ℕ)) =
       ⟨ζ⁻¹, hζ.inv.isIntegral p.pos⟩ ^ (x : ℕ) := by
     intro x

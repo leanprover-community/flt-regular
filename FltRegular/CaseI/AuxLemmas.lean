@@ -16,7 +16,6 @@ local notation "K" => CyclotomicField P ℚ
 
 local notation "R" => 𝓞 K
 
-
 namespace CaseI
 
 theorem two_lt (hp5 : 5 ≤ p) : 2 < p := by linarith
@@ -188,8 +187,9 @@ theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
       rwa [this]
     simp_rw [f1k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right
       (show 0 ≠ 2 by norm_num), Finset.range_filter_eq]
-    simp only [hpri.pos, ite_true, zsmul_eq_mul, sum_singleton, _root_.pow_zero, mul_one, two_lt hp5, neg_smul,
-  sum_neg_distrib, ne_eq, mem_range, not_and, not_not, zero_smul, sum_const_zero, add_zero]
+    simp only [hpri.pos, ite_true, zsmul_eq_mul, sum_singleton, _root_.pow_zero, mul_one,
+      two_lt hp5,neg_smul, sum_neg_distrib, ne_eq, mem_range, not_and, not_not, zero_smul,
+      sum_const_zero, add_zero]
     ring
   rw [sum_range] at key
   refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ?_ _) _)

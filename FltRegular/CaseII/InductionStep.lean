@@ -5,21 +5,14 @@ import FltRegular.NumberTheory.Cyclotomic.Factoring
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-variable (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
+  [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))]
+  (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
-variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
+variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
 
-variable {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
-
-attribute [local instance 2000] Algebra.toModule Module.toDistribMulAction AddMonoid.toZero
-  DistribMulAction.toMulAction MulAction.toSMul NumberField.inst_ringOfIntegersAlgebra
-  Ideal.Quotient.commRing CommRing.toRing Ring.toSemiring
-  Semiring.toNonUnitalSemiring NonUnitalSemiring.toNonUnitalNonAssocSemiring
-  NonUnitalNonAssocSemiring.toAddCommMonoid NonUnitalNonAssocSemiring.toMulZeroClass
-  MulZeroClass.toMul Submodule.idemSemiring IdemSemiring.toSemiring
-  Submodule.instIdemCommSemiring
-  IdemCommSemiring.toCommSemiring CommSemiring.toCommMonoid
+attribute [local instance 2000] CommRing.toRing Semiring.toNonUnitalSemiring
+  NonUnitalSemiring.toNonUnitalNonAssocSemiring NonUnitalNonAssocSemiring.toAddCommMonoid
 
 set_option quotPrecheck false
 local notation3 "π" => Units.val (IsPrimitiveRoot.unit' hζ) - 1
@@ -313,8 +306,9 @@ lemma p_pow_dvd_c_eta_zero_aux [DecidableEq (𝓞 K)] :
 /- all the powers of 𝔭 have to be in 𝔠 η₀-/
 lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
   classical
-  rw [← one_mul (𝔠 η₀), ← p_pow_dvd_c_eta_zero_aux hp hζ e hy, dvd_gcd_mul_iff_dvd_mul, mul_comm _ (𝔠 η₀),
-    ← Finset.prod_eq_mul_prod_diff_singleton (Finset.mem_attach _ η₀) 𝔠, prod_c, mul_pow]
+  rw [← one_mul (𝔠 η₀), ← p_pow_dvd_c_eta_zero_aux hp hζ e hy, dvd_gcd_mul_iff_dvd_mul,
+    mul_comm _ (𝔠 η₀), ← Finset.prod_eq_mul_prod_diff_singleton (Finset.mem_attach _ η₀) 𝔠,
+    prod_c, mul_pow]
   apply dvd_mul_of_dvd_right
   rw [pow_mul]
 
@@ -553,7 +547,8 @@ lemma exists_solution' :
       add_comm _ (p - 1 : ℕ), pow_add, mul_assoc] at e'
     apply_fun Ideal.Quotient.mk (Ideal.span <| singleton (p : 𝓞 K)) at e'
     rw [map_mul, (Ideal.Quotient.eq_zero_iff_dvd _ _).mpr
-      (associated_zeta_sub_one_pow_prime hζ).symm.dvd, zero_mul, Ideal.Quotient.eq_zero_iff_dvd] at e'
+      (associated_zeta_sub_one_pow_prime hζ).symm.dvd, zero_mul,
+      Ideal.Quotient.eq_zero_iff_dvd] at e'
     obtain ⟨a, ha⟩ := exists_solution'_aux hp hζ hx' e'
     obtain ⟨b, hb⟩ := exists_dvd_pow_sub_Int_pow hp a
     have := dvd_add ha hb

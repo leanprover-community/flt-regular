@@ -23,7 +23,6 @@ variable
   (σ : H) (hσ : Subgroup.zpowers σ = ⊤) (r : ℕ)
   [DistribMulAction H G] [Module.Free ℤ G] [Module.Finite ℤ G] (hf : finrank ℤ G = r * (p - 1))
 
--- TODO maybe abbrev
 local notation3 "A" => CyclotomicIntegers p
 
 abbrev systemOfUnits.IsMaximal {r} {p : ℕ+} {G} [AddCommGroup G] [Module (CyclotomicIntegers p) G]
@@ -167,7 +166,8 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (i : 
   have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i := by
     ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
       Function.update_noteq]
-  have ha' : Finsupp.total _ G A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g := by
+  have ha' :
+      Finsupp.total _ G A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g := by
     rw [hS', Finsupp.total_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
       ← one_smul A (S.units i), hg, ← ha, ← Finsupp.total_single, ← map_add]
     congr 1
@@ -242,10 +242,6 @@ def RelativeUnits (k K : Type*) [Field k] [Field K] [Algebra k K] :=
 
 instance : CommGroup (RelativeUnits k K) := by delta RelativeUnits; infer_instance
 
-attribute [local instance] IsCyclic.commGroup
-
-attribute [local instance 2000] inst_ringOfIntegersAlgebra Algebra.toSMul Algebra.toModule
-
 instance : IsScalarTower (𝓞 k) (𝓞 K) K := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
 
 instance : IsIntegralClosure (𝓞 K) (𝓞 k) K := by
@@ -277,7 +273,7 @@ def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) 
     refine DFunLike.ext _ _ (fun x ↦ ?_)
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
     rw [relativeUnitsMap]
-    erw [QuotientGroup.lift_mk'] -- why?
+    erw [QuotientGroup.lift_mk']
     simp only [map_one, MonoidHom.coe_comp, QuotientGroup.coe_mk', Function.comp_apply,
       Monoid.coe_one, id_eq]
     rfl
@@ -398,15 +394,13 @@ lemma NumberField.Units.finrank_eq : finrank ℤ (Additive (𝓞 k)ˣ) = NumberF
   rw [← Submodule.torsion_int]
   exact (FiniteDimensional.finrank_quotient_of_le_torsion _ le_rfl).symm
 
-local instance : Module.Finite ℤ (Additive <| RelativeUnits k K) := by
-  delta RelativeUnits
-  show Module.Finite ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
-    (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K)))))
-  infer_instance
+local instance : Module.Finite ℤ (Additive <| RelativeUnits k K) :=
+  inferInstanceAs
+    (Module.Finite ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
+    (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))))))
 
-local instance : Module.Finite ℤ (Additive <| relativeUnitsWithGenerator p hp hKL σ hσ) := by
-  delta relativeUnitsWithGenerator
-  infer_instance
+local instance : Module.Finite ℤ (Additive <| relativeUnitsWithGenerator p hp hKL σ hσ) :=
+  inferInstanceAs (Module.Finite ℤ (Additive (RelativeUnits k K)))
 
 local instance : Module.Finite ℤ G := Module.Finite.of_surjective
   (M := Additive (relativeUnitsWithGenerator p hp hKL σ hσ))

@@ -20,7 +20,7 @@ import Mathlib.NumberTheory.KummerDedekind
 -/
 universe u
 
-attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
+attribute [local instance] FractionRing.liftAlgebra
 
 variable (A K L B) [CommRing A] [Field K] [CommRing B] [Field L]
 variable [Algebra A K] [Algebra B L] [Algebra A B] [Algebra K L] [Algebra A L]

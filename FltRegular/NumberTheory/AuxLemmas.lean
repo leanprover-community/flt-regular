@@ -215,8 +215,8 @@ lemma Polynomial.irreducible_taylor_iff {R} [CommRing R] {r} {p : R[X]} :
 -- Generalizes (and should follow) `Separable.map`
 open Polynomial in
 attribute [local instance] Ideal.Quotient.field in
-lemma Polynomial.separable_map' {R S} [Field R] [CommRing S] [Nontrivial S] (f : R →+* S) (p : R[X]) :
-    (p.map f).Separable ↔ p.Separable :=  by
+lemma Polynomial.separable_map' {R S} [Field R] [CommRing S] [Nontrivial S] (f : R →+* S)
+    (p : R[X]) : (p.map f).Separable ↔ p.Separable :=  by
   refine ⟨fun H ↦ ?_, fun H ↦ H.map⟩
   obtain ⟨m, hm⟩ := Ideal.exists_maximal S
   have := Separable.map H (f := Ideal.Quotient.mk m)

@@ -4,7 +4,8 @@ import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import Mathlib.RingTheory.Ideal.Norm
 import Mathlib.RingTheory.NormTrace
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K]
+  [IsCyclotomicExtension {p} ℚ K]
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
@@ -13,12 +14,13 @@ open Polynomial
 
 variable (hp : p ≠ 2)
 
-lemma IsPrimitiveRoot.prime_span_sub_one : Prime (Ideal.span <| singleton <| (hζ.unit' - 1 : 𝓞 K)) := by
+lemma IsPrimitiveRoot.prime_span_sub_one :
+    Prime (Ideal.span <| singleton <| (hζ.unit' - 1 : 𝓞 K)) := by
   haveI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [Ideal.prime_iff_isPrime,
     Ideal.span_singleton_prime (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)]
-  exact hζ.zeta_sub_one_prime'
+  · exact hζ.zeta_sub_one_prime'
   · rw [Ne, Ideal.span_singleton_eq_bot]
     exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
@@ -92,8 +94,8 @@ lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ �
     exact hpri.1
 
 lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
-    {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A} (hη₁ : η₁ ∈ nthRootsFinset p A)
-    {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p A) :
+    {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A}
+    (hη₁ : η₁ ∈ nthRootsFinset p A) {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p A) :
     ζ - 1 ∣ η₁ - η₂ := by
   by_cases h : η₁ = η₂
   · rw [h, sub_self]; exact dvd_zero _

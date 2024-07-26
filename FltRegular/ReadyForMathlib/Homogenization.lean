@@ -353,9 +353,6 @@ theorem leadingTerms_monomial (s : ι →₀ ℕ) (r : R) :
   simp [totalDegree_monomial _ hr]
   rfl
 
-section DangerousInstance
-
-attribute [local instance] MvPolynomial.unique
 
 @[simp]
 theorem leadingTerms_X (s : ι) : (X s : MvPolynomial ι R).leadingTerms = X s := by
@@ -363,8 +360,6 @@ theorem leadingTerms_X (s : ι) : (X s : MvPolynomial ι R).leadingTerms = X s :
   rw [leadingTerms_eq_self_iff_isHomogeneous]
   convert isHomogeneous_X _ _
   exact totalDegree_X _
-
-end DangerousInstance
 
 theorem isHomogeneous_leadingTerms (p : MvPolynomial ι R) :
     p.leadingTerms.IsHomogeneous p.totalDegree :=
@@ -535,7 +530,8 @@ theorem NoZeroSmulDivisors.smul_eq_zero_iff_eq_zero_or_eq_zero (R M : Type _) [Z
 
 --TODO this generalized lemma when distrib_mul_action_with_zero exists?
 -- lemma support_smul_eq {α M R : Type*} {_ : monoid_with_zero R} [add_monoid M]
---   [distrib_mul_action_with_zero R M] [no_zero_smul_divisors R M] {b : R} (hb : b ≠ 0) {g : α →₀ M} :
+--   [distrib_mul_action_with_zero R M] [no_zero_smul_divisors R M] {b : R} (hb : b ≠ 0)
+--  {g : α →₀ M} :
 --   (b • g).support = g.support :=
 -- begin
 --   ext a,
@@ -545,7 +541,8 @@ theorem NoZeroSmulDivisors.smul_eq_zero_iff_eq_zero_or_eq_zero (R M : Type _) [Z
 -- end
 -- haveI : no_zero_smul_divisors R (mv_polynomial ι R), --TODO add this instance
 --TODO maybe this for leading terms and homog
--- lemma homogeneous_s_monomial_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) (x : ι →₀ ℕ) :
+-- lemma homogeneous_s_monomial_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R)
+-- (x : ι →₀ ℕ) :
 -- (p * monomial x r).leading_terms = p.leading_terms * monomial x r :=
 --TODO also maybe an smul version
 @[simp]
@@ -574,7 +571,7 @@ theorem eq_C_of_totalDegree_zero {p : MvPolynomial ι R} (hp : p.totalDegree = 0
   apply hm
   rw [Finsupp.sum] at hp
   -- TODO this and line below could be a lemma, finsupp.sum_eq_zero_iff?
-  simp only [_root_.not_imp_self, bot_eq_zero, Finsupp.mem_support_iff, Finset.sum_eq_zero_iff] at hp
+  simp only [_root_.not_imp_self, bot_eq_zero, Finsupp.mem_support_iff, sum_eq_zero_iff] at hp
   ext
   simp [hp]
 

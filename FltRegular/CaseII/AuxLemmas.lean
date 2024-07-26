@@ -138,7 +138,8 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
     {x : R} (hx : Prime x) (I J : Ideal R)
     (hI : ¬ (Ideal.span <| singleton x) ∣ I) (hJ : ¬ (Ideal.span <| singleton x) ∣ J)
     (h : Submodule.IsPrincipal ((I / J : FractionalIdeal R⁰ K) : Submodule R K)) :
-    ∃ a b : R, ¬(x ∣ a) ∧ ¬(x ∣ b) ∧ spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
+    ∃ a b : R,
+      ¬(x ∣ a) ∧ ¬(x ∣ b) ∧ spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
   by_contra H1
   have hI' : (I : FractionalIdeal R⁰ K) ≠ 0 :=
     by rw [← coeIdeal_bot, Ne, coeIdeal_inj]; rintro rfl; exact hI (dvd_zero _)

@@ -141,11 +141,13 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
 end CyclotomicUnit
 
 lemma IsPrimitiveRoot.associated_sub_one {A : Type*} [CommRing A] [IsDomain A]
-    {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A} (hη₁ : η₁ ∈ nthRootsFinset p A)
-    {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p A) (e : η₁ ≠ η₂) :
+    {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A}
+    (hη₁ : η₁ ∈ nthRootsFinset p A) {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p A) (e : η₁ ≠ η₂) :
     Associated (ζ - 1) (η₁ - η₂) := by
-  obtain ⟨i, ⟨hi, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset hp.pos).1 hη₁) hp.pos
-  obtain ⟨j, ⟨hj, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset hp.pos).1 hη₂) hp.pos
+  obtain ⟨i, ⟨hi, rfl⟩⟩ :=
+    hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset hp.pos).1 hη₁) hp.pos
+  obtain ⟨j, ⟨hj, rfl⟩⟩ :=
+    hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset hp.pos).1 hη₂) hp.pos
   have : i ≠ j := ne_of_apply_ne _ e
   obtain ⟨u, h⟩ := CyclotomicUnit.IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one A
     hp.two_le hp hi hj this hζ

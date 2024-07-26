@@ -127,7 +127,8 @@ lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
   simp only [map_inv₀, div_inv_eq_mul]
   specialize hε σ
   nth_rewrite 2 [← inv_inv ε] at hε
-  rw [div_inv_eq_mul, cocycle_spec hσ hη hone, mul_inv_eq_iff_eq_mul, mul_comm, ← Units.eq_iff] at hε
+  rw [div_inv_eq_mul, cocycle_spec hσ hη hone, mul_inv_eq_iff_eq_mul, mul_comm,
+    ← Units.eq_iff] at hε
   simp only [AlgEquiv.smul_units_def, Units.coe_map, MonoidHom.coe_coe, Units.val_mul] at hε
   symm
   rw [inv_mul_eq_iff_eq_mul₀ ε.ne_zero, hε]

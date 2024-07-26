@@ -5,8 +5,8 @@ import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
 open scoped NumberField BigOperators
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-variable (hp : p ≠ 2)
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
+  [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
   (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ (p : ℕ) ≠ u)
@@ -193,9 +193,6 @@ lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [
 
 instance {K L} [Field K] [Field L] [Algebra K L] :
     IsIntegralClosure (𝓞 L) (𝓞 K) L := isIntegralClosure_of_isScalarTower ℤ _ K _ _
-
-attribute [local instance 2000] Algebra.toModule Module.toDistribMulAction
-  DistribMulAction.toMulAction MulAction.toSMul NumberField.inst_ringOfIntegersAlgebra
 
 instance {K L} [Field K] [Field L] [Algebra K L] :
     IsScalarTower (𝓞 K) (𝓞 L) L := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)

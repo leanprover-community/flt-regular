@@ -3,13 +3,12 @@ import FltRegular.NumberTheory.Hilbert94
 
 open scoped NumberField
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-variable (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
+  [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))]
+  (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
   (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ (p : ℕ) ≠ u)
-
--- attribute [-instance] instCoeOut
 
 open Polynomial
 
