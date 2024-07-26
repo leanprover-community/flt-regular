@@ -61,10 +61,6 @@ See also `Ideal.relNorm`.
 def spanIntNorm (I : Ideal S) : Ideal R :=
   Ideal.span (Algebra.intNorm R S '' (I : Set S))
 
-@[simp]
-theorem spanIntNorm_bot [Nontrivial S] [Module.Free R S] [Module.Finite R S] :
-    spanIntNorm R (⊥ : Ideal S) = ⊥ := span_eq_bot.mpr fun x hx => by simpa using hx
-
 variable {R}
 
 @[simp]
