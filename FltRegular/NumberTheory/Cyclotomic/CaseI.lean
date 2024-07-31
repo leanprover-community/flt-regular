@@ -1,7 +1,5 @@
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import FltRegular.NumberTheory.RegularPrimes
-import FltRegular.NumberTheory.Cyclotomic.Factoring
 
 open scoped NumberField nonZeroDivisors
 
@@ -37,8 +35,10 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) :
     add_right_inj, mul_eq_mul_left_iff, Int.cast_eq_zero]
   simp_rw [NumberField.Units.coe_zpow]
   left
-  push_cast
-  simp only [map_zpow₀, galConj_zeta_runity hζ, inv_zpow', zpow_neg]
+  simp only [map_zpow₀]
+  rw [← inv_zpow]
+  congr
+  exact galConj_zeta_runity hζ
 
 theorem exists_int_sum_eq_zero' (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i : ℤ) {u : (𝓞 K)ˣ}
     {α : 𝓞 K} (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ (p : ℕ)) :
@@ -48,7 +48,7 @@ theorem exists_int_sum_eq_zero' (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i 
   letI : NumberField K := IsCyclotomicExtension.numberField { p } ℚ _
   have : Fact (p : ℕ).Prime := ⟨hp⟩
   obtain ⟨k, H⟩ := unit_inv_conj_is_root_of_unity hζ hpodd hp u
-  refine' ⟨k, _⟩
+  refine ⟨k, ?_⟩
   rw [← exists_int_sum_eq_zero'_aux, h, ← H, Units.val_mul, mul_assoc, ← mul_sub, _root_.map_mul,
     ← coe_unitGalConj, ← mul_assoc, ← Units.val_mul, inv_mul_self, Units.val_one, one_mul]
   exact Ideal.mul_mem_left _ _ (pow_sub_intGalConj_mem hp α)

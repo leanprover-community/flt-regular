@@ -1,4 +1,5 @@
-import Mathlib.LinearAlgebra.FiniteDimensional
+import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.LinearAlgebra.Dimension.Finite
 import Mathlib.Algebra.Module.Torsion
 import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
 import Mathlib.LinearAlgebra.FreeModule.PID
@@ -40,7 +41,8 @@ lemma FiniteDimensional.finrank_add_finrank_quotient_le (N : Submodule R M) :
   obtain ⟨s, hs, hs'⟩ := exists_finset_card_eq_finrank_and_linearIndependent R N
   obtain ⟨t, ht, ht'⟩ := exists_finset_card_eq_finrank_and_linearIndependent R (M ⧸ N)
   obtain ⟨f, hf⟩ := N.mkQ_surjective.hasRightInverse
-  have H : Disjoint (Submodule.span R (Subtype.val '' (s : Set N))) (Submodule.span R (f '' t)) := by
+  have H :
+      Disjoint (Submodule.span R (Subtype.val '' (s : Set N))) (Submodule.span R (f '' t)) := by
     apply Disjoint.mono_left (Submodule.span_le.mpr Set.image_val_subset)
     rw [disjoint_iff, eq_bot_iff, ← @Subtype.range_val (M ⧸ N) t, ← Set.range_comp,
       ← Finsupp.range_total]

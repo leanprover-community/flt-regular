@@ -1,5 +1,4 @@
 import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
-import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import Mathlib.NumberTheory.Cyclotomic.Rat
 import Mathlib.NumberTheory.NumberField.Embeddings
 
@@ -19,25 +18,12 @@ universe u
 noncomputable section
 
 /-- zeta now as a unit in the ring of integers. This way there are no coe issues-/
-@[simps]
 def IsPrimitiveRoot.unit' {p : ℕ+} {K : Type _} [Field K] {ζ : K} (hζ : IsPrimitiveRoot ζ p) :
     (𝓞 K)ˣ where
   val := (⟨ζ, hζ.isIntegral p.pos⟩ : 𝓞 K)
   inv := (⟨ζ⁻¹, hζ.inv.isIntegral p.pos⟩ : 𝓞 K)
   val_inv := Subtype.ext <| mul_inv_cancel <| hζ.ne_zero p.ne_zero
   inv_val := Subtype.ext <| inv_mul_cancel <| hζ.ne_zero p.ne_zero
-
-@[simp, norm_cast]
-theorem IsPrimitiveRoot.coe_unit'_coe {p : ℕ+} {K : Type _} [Field K] {ζ : K}
-  (hζ : IsPrimitiveRoot ζ p) : ↑↑(hζ.unit') = ζ := rfl
-
-@[simp, norm_cast]
-theorem IsPrimitiveRoot.coe_inv_unit'_coe {p : ℕ+} {K : Type _} [Field K] {ζ : K}
-  (hζ : IsPrimitiveRoot ζ p) : ↑↑(hζ.unit'⁻¹) = ζ⁻¹ := rfl
-
-@[simp, norm_cast]
-theorem IsPrimitiveRoot.unit'_val_coe {p : ℕ+} {K : Type u_1} [Field K] {ζ : K}
-  (hζ : IsPrimitiveRoot ζ p) : ↑↑(IsPrimitiveRoot.unit' hζ) = ζ := rfl
 
 set_option quotPrecheck false
 local notation "ζ1" => (hζ.unit' - 1 : 𝓞 K)
@@ -66,14 +52,6 @@ theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot (hζ.unit' : R) p := by
   have : (algebraMap R K) (hζ.unit' : R) = ζ := rfl
   rw [← this] at z1
   exact z1.of_map_of_injective (IsFractionRing.injective _ _)
-
-variable (p)
-
-/-- `is_gal_conj_real x` means that `x` is real. -/
-def IsGalConjReal (x : K) [IsCyclotomicExtension {p} ℚ K] : Prop :=
-  galConj K p x = x
-
-variable {p}
 
 theorem contains_two_primitive_roots {p q : ℕ} {x y : K} [FiniteDimensional ℚ K]
     (hx : IsPrimitiveRoot x p) (hy : IsPrimitiveRoot y q) :
@@ -108,7 +86,7 @@ theorem contains_two_primitive_roots {p q : ℕ} {x y : K} [FiniteDimensional �
   obtain ⟨nx, hnx⟩ := hg ⟨xu, hxmem⟩
   obtain ⟨ny, hny⟩ := hg ⟨yu, hymem⟩
   have H : orderOf g = k := by
-    refine' Nat.dvd_antisymm (orderOf_dvd_of_pow_eq_one _) (Nat.lcm_dvd _ _)
+    refine Nat.dvd_antisymm (orderOf_dvd_of_pow_eq_one ?_) (Nat.lcm_dvd ?_ ?_)
     · have := (mem_rootsOfUnity _ _).1 g.2
       simp only [PNat.mk_coe] at this
       exact_mod_cast this
@@ -184,7 +162,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ} (hl : l ∈ n.divisors) 
   by_contra h
   have hpl' : IsPrimitiveRoot (⟨x, hx⟩ : R) l := by
     have nezero : NeZero (l : 𝓞 K) := by
-      refine' ⟨fun hzero => _⟩
+      refine ⟨fun hzero ↦ ?_⟩
       simp only [Nat.cast_eq_zero] at hzero
       simp [hzero] at hl
     rw [isRoot_cyclotomic_iff.symm]
@@ -229,8 +207,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
     ∃ (m : ℕ) (k : ℕ+), x = (-1) ^ (k : ℕ) * (hζ.unit' : K) ^ (m : ℕ) :=  by
   obtain ⟨n, hn0, hn⟩ := h
   have hx : IsIntegral ℤ x := by
-    refine' ⟨X ^ n - 1, _⟩
-    constructor
+    refine ⟨X ^ n - 1, ⟨?_, ?_⟩⟩
     · exact monic_X_pow_sub_C 1 (ne_of_lt hn0).symm
     · simp only [hn, eval₂_one, eval₂_X_pow, eval₂_sub, sub_self]
   have hxu : (⟨x, hx⟩ : R) ^ n = 1 := by ext; simp [hn]
@@ -256,28 +233,26 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
       apply hxp'
     cases' hxp'' with hxp'' hxp''
     · obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp'' p.prop
-      refine' ⟨i, 2, _⟩
-      simp only [IsPrimitiveRoot.unit'_val_coe]
+      refine ⟨i, 2, ?_⟩
       rw [← Subtype.val_inj] at Hi
-      simp only [SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe] at Hi
-      rw [← Hi, show ((2 : ℕ+) : ℕ) = 2 by decide]
-      simp only [even_two, Even.neg_pow, one_pow, one_mul]
+      simp only [SubmonoidClass.coe_pow] at Hi
+      simp only [PNat.val_ofNat, even_two, Even.neg_pow, one_pow, one_mul]
+      rw [← Hi]
       rfl
     · have hone : (-1 : R) ^ (p : ℕ) = (-1 : R) := by apply Odd.neg_one_pow hpo
       have hxp3 : (-1 * ⟨x, hx⟩ : R) ^ (p : ℕ) = 1 := by
         rw [mul_pow, hone, hxp'']
         ring
       obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp3 p.prop
-      refine' ⟨i, 1, _⟩
+      refine ⟨i, 1, ?_⟩
       simp only [PNat.one_coe, pow_one, neg_mul, one_mul, neg_neg]
       rw [← Subtype.val_inj] at Hi
-      simp only [SubmonoidClass.coe_pow, IsPrimitiveRoot.unit'_val_coe, Submonoid.coe_mul,
+      simp only [SubmonoidClass.coe_pow, Submonoid.coe_mul,
         Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, InvMemClass.coe_inv,
         OneMemClass.coe_one, neg_mul, one_mul] at Hi
-      simp only [IsPrimitiveRoot.unit'_val_coe]
       exact Iff.mp neg_eq_iff_eq_neg (id (Eq.symm (by simpa using Hi)))
   obtain ⟨m, k, hmk⟩ := H
-  refine' ⟨m, k, _⟩
+  refine ⟨m, k, ?_⟩
   have eq : ((⟨x, hx⟩ : R) : K) = x := rfl
   rw [← eq, hmk]
 
@@ -292,9 +267,10 @@ theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] :
   apply_fun (fun x : 𝓞 K => (x : K))
   push_cast
   intro h
-  simp only [map_sub, coe_unit'_coe, map_one, map_zero, sub_eq_zero] at h
   refine hp.1.ne_one (hζ.unique ?_)
-  simp [h]
+  simp only [one_right_iff]
+  simp only [map_sub, map_one, map_zero, sub_eq_zero] at h
+  exact h
 
 theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h : p ≠ 2) :
     (2 : 𝓞 K) ∉ I := by
@@ -307,18 +283,13 @@ theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h 
   rw [sub_eq_of_eq_add hk] at this
   exact hζ.isPrime_one_sub_zeta.ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
-lemma IsUnit.eq_mul_left_iff {S : Type*} [CommRing S] {x : S} (hx : IsUnit x) (y : S) :
-  x = y * x ↔ y = 1 := by
-  nth_rw 1 [← one_mul x]
-  rw [eq_comm, hx.mul_left_injective.eq_iff]
-
 lemma map_two {S T F: Type*} [NonAssocSemiring S] [NonAssocSemiring T] [FunLike F S T]
   [RingHomClass F S T] (f : F) : f 2 = 2 := by
   rw [← one_add_one_eq_two, map_add, map_one]
   exact one_add_one_eq_two
 
-lemma neg_one_eq_one_iff_two_eq_zero {M : Type*} [AddGroupWithOne M] : (-1 : M) = 1 ↔ (2 : M) = 0 := by
-  rw [neg_eq_iff_add_eq_zero, one_add_one_eq_two]
+lemma neg_one_eq_one_iff_two_eq_zero {M : Type*} [AddGroupWithOne M] :
+    (-1 : M) = 1 ↔ (2 : M) = 0 := by rw [neg_eq_iff_add_eq_zero, one_add_one_eq_two]
 
 lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [FunLike F M N]
     [MonoidHomClass F M N] (f : F) (m : Mˣ) :
@@ -339,13 +310,12 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
   replace hu' :
       ∑ x : Fin φn, (a u) x • (intGal ↑(galConj K p)) (⟨ζ, hζ.isIntegral p.pos⟩ ^ (x : ℕ)) =
       unitGalConj K p u := by
-    refine' Eq.trans _ hu'
+    refine Eq.trans ?_ hu'
     rw [map_sum]
     congr 1
     ext x
     congr 1
     rw [map_zsmul]
-      -- todo: probably swap `is_primitive_root.inv` and `is_primitive_root.inv'`.
   have : ∀ x : Fin φn, intGal ((galConj K p)) (⟨ζ, hζ.isIntegral p.pos⟩ ^ (x : ℕ)) =
       ⟨ζ⁻¹, hζ.inv.isIntegral p.pos⟩ ^ (x : ℕ) := by
     intro x
@@ -391,7 +361,7 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
     rw [← map_mul, ← Units.val_mul, ← map_pow, ← Units.val_pow_eq_pow_val] at hz
     norm_cast at hz
     rw [hz]
-    refine' (exists_congr fun a => _).mp (zeta_runity_pow_even hζ hpo n)
+    refine (exists_congr fun a => ?_).mp (zeta_runity_pow_even hζ hpo n)
     · rw [mul_comm]
   · by_contra
     simp only [hk.neg_one_pow, neg_mul, one_mul] at hz
@@ -402,13 +372,6 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
     · exact NumberField.RingOfIntegers.isIntegral_coe _
     · exact NumberField.RingOfIntegers.isIntegral_coe _
   · exact unit_lemma_val_one p u
-
-lemma inv_coe_coe {K A : Type*} [Field K] [SetLike A K] [SubsemiringClass A K] {S : A} (s : Sˣ) :
-  (s : K)⁻¹ = ((s⁻¹ : Sˣ) : K) := by
-  apply inv_eq_of_mul_eq_one_right
-  change ((s * s⁻¹ : Sˣ) : K) = 1
-  rw [mul_inv_self]
-  rfl
 
 lemma IsPrimitiveRoot.eq_one_mod_one_sub' {A : Type*} [CommRing A] [IsDomain A]
     {n : ℕ+} {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n A) :

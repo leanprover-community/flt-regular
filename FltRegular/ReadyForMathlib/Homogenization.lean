@@ -42,7 +42,7 @@ import Mathlib.Order.SymmDiff
 
 variable {R ι : Type _} [CommSemiring R]
 
-open Polynomial Finset MvPolynomial
+open Polynomial Finset MvPolynomial Finsupp
 
 open scoped BigOperators
 
@@ -88,7 +88,7 @@ theorem support_mapDomain {α β M : Type _} [AddCommMonoid M] (f : α ↪ β) (
     (Finsupp.mapDomain f v).support ⊆ v.support.map f := by
   classical
   rw [Finsupp.mapDomain]
-  refine' Finset.Subset.trans Finsupp.support_sum _
+  refine Finset.Subset.trans Finsupp.support_sum ?_
   simp only [Finsupp.mem_support_iff, Finset.biUnion_subset_iff_forall_subset, Ne]
   intro x hx
   apply Finset.Subset.trans Finsupp.support_single_subset
@@ -149,16 +149,9 @@ theorem mapDomain_injOn {α β M : Type _} [AddCommMonoid M] (S : Set α) {f : �
   · simp only [not_or, mem_union, Classical.not_not, Finsupp.mem_support_iff] at h
     simp [h]
 
--- rw [finsupp.map_domain_apply hf, finsupp.map_domain_apply hf] at this,
+
 end Finsupp
 
--- lemma support_homogenization [decidable_eq ι] (i : ι) (p : mv_polynomial ι R)
---   (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) : (p.homogenization i).support = p.support.image
---     (λ (j : ι →₀ ℕ), j + finsupp.single i (p.total_degree - j.sum (λ (_x : ι) (m : ℕ), m))) :=
--- begin
---   rw homogenization,
---   apply finsupp.support_map_domain _ _ _,
--- end
 @[simp]
 theorem homogenization_zero (i : ι) : (0 : MvPolynomial ι R).homogenization i = 0 := by
   simp [homogenization]
@@ -169,12 +162,12 @@ theorem homogenization_zero (i : ι) : (0 : MvPolynomial ι R).homogenization i 
 --   finsupp.map_domain f (finsupp.single 0 1 : α →₀ M) = (finsupp.single 0 1 : β →₀ M) :=
 -- by simp [hf]
 -- TODO maybe instead prove this via is_homogeneous_one
+
 @[simp]
 theorem homogenization_one (i : ι) : (1 : MvPolynomial ι R).homogenization i = 1 :=
   by
   simp only [homogenization, totalDegree_one, zero_tsub, add_zero, Finsupp.single_zero]
   erw [Finsupp.mapDomain_single]
-  -- erw map_domain_one,
   rfl
 
 @[simp]
@@ -223,7 +216,7 @@ theorem isHomogeneous_homogenization (i : ι) (p : MvPolynomial ι R) :
       ¬x + Finsupp.single i (p.totalDegree - x.sum fun (_x : ι) (m : ℕ) => m) = d := by
     intro x hx hh
     apply hd
-    rw [← hh, weightedDegree_one]
+    rw [← hh, ← degree_eq_weight_one]
     change ((x + Finsupp.single i (p.totalDegree - x.sum fun _ m => m)).sum fun _ m => m) = _
     rw [aux hx]
   rw [← Finset.sum_coe_sort]
@@ -246,10 +239,9 @@ theorem homogenization_of_isHomogeneous (n : ℕ) (i : ι) (p : MvPolynomial ι 
     intro x hx
     simp only [add_right_eq_self, Finsupp.single_eq_same, tsub_eq_zero_iff_le, Finsupp.single_tsub,
       Finsupp.single_le_iff]
-    rw [← hp (mem_support_iff.mp hx), weightedDegree_one]
+    rw [← hp (mem_support_iff.mp hx), ← degree_eq_weight_one]
     exact le_refl _
   rw [Finsupp.mapDomain_congr this]
-  -- simp,
   erw [Finsupp.mapDomain_id]
 
 -- TODO there should be a simp lemma version of this for λ x, x so simp works
@@ -281,20 +273,10 @@ theorem homogenization_ne_zero_of_ne_zero (i : ι) {p : MvPolynomial ι R} (hp :
     split_ifs at this  with hia
     · rw [← hia, ht, hy]
     · simpa
-  refine' Finsupp.mapDomain_injOn _ this _ _ h
-  · intro x hx
-    rw [Set.mem_setOf_eq, hjp x hx]
-  · simp only [Set.mem_setOf_eq]
-    intro x hx
-    simp only [mem_coe, Finsupp.mem_support_iff, ne_eq] at hx
-    change ¬ 0 = 0 at hx
-    simp only [not_true] at hx
+  refine Finsupp.mapDomain_injOn _ this (fun x hx ↦ by rw [Set.mem_setOf_eq, hjp _ hx])
+    (fun _ hx ↦ by simp at hx) h
 
--- refine finsupp.map_domain_injective _ h,
--- intros x y hxy,
--- simp at hxy,
 -- -- TODO something like this but this isnt exactly true
--- admit,
 -- TODO this can follow from previous
 theorem totalDegree_homogenization (i : ι) (p : MvPolynomial ι R)
     (h : ∀ j ∈ p.support, (j : ι → ℕ) i = 0) :
@@ -303,23 +285,9 @@ theorem totalDegree_homogenization (i : ι) (p : MvPolynomial ι R)
   by_cases hp : p = 0
   · simp [hp]
   apply IsHomogeneous.totalDegree
-  refine' isHomogeneous_homogenization _ _
-  exact homogenization_ne_zero_of_ne_zero _ hp h
+  · exact isHomogeneous_homogenization _ _
+  · exact homogenization_ne_zero_of_ne_zero _ hp h
 
--- rw total_degree,
--- have : (homogenization i p).support.nonempty,
--- { simp [homogenization],
---   admit,
---    },
--- rw ← finset.sup'_eq_sup this,
--- rw finset.nonempty.sup'_eq_cSup_image,
--- suffices : (λ (s : ι →₀ ℕ), s.sum (λ (n : ι) (e : ℕ), e)) '' ↑((homogenization i p).support) =
---   {p.total_degree},
--- { simp [this], },
--- refine set.eq_singleton_iff_unique_mem.mpr _,
--- split,
--- { simp, admit, },
--- { simp, admit, },
 section LeadingTerms
 
 -- TODO is this the best def?
@@ -347,7 +315,7 @@ theorem leadingTerms_eq_self_iff_isHomogeneous (p : MvPolynomial ι R) :
     push_neg
     use h_w
     classical
-    rw [weightedDegree_one] at h_h₂
+    rw [← degree_eq_weight_one] at h_h₂
     change ¬(h_w.sum fun (_x : ι) (e : ℕ) => e) = p.totalDegree at h_h₂
     simp only [h_h₁.symm, coeff_homogeneousComponent, exists_prop, and_true_iff, Ne,
       not_false_iff, not_forall, ite_eq_left_iff]
@@ -360,7 +328,7 @@ theorem leadingTerms_eq_self_iff_isHomogeneous (p : MvPolynomial ι R) :
     · rw [Finset.filter_eq_self]
       intro s hs
       rw [mem_support_iff] at hs
-      rw [← h hs, weightedDegree_one]
+      rw [← h hs, ← degree_eq_weight_one]
       rfl
 
 @[simp]
@@ -385,9 +353,6 @@ theorem leadingTerms_monomial (s : ι →₀ ℕ) (r : R) :
   simp [totalDegree_monomial _ hr]
   rfl
 
-section DangerousInstance
-
-attribute [local instance] MvPolynomial.unique
 
 @[simp]
 theorem leadingTerms_X (s : ι) : (X s : MvPolynomial ι R).leadingTerms = X s := by
@@ -395,8 +360,6 @@ theorem leadingTerms_X (s : ι) : (X s : MvPolynomial ι R).leadingTerms = X s :
   rw [leadingTerms_eq_self_iff_isHomogeneous]
   convert isHomogeneous_X _ _
   exact totalDegree_X _
-
-end DangerousInstance
 
 theorem isHomogeneous_leadingTerms (p : MvPolynomial ι R) :
     p.leadingTerms.IsHomogeneous p.totalDegree :=
@@ -548,7 +511,7 @@ theorem eq_leadingTerms_add (p : MvPolynomial ι R) (hp : p.totalDegree ≠ 0) :
     simp only [Finset.mem_filter] at this
     cases' this with this_left this_right
     rw [totalDegree]
-    refine' lt_of_le_of_ne (by apply Finset.le_sup this_left) this_right
+    exact lt_of_le_of_ne (by apply Finset.le_sup this_left) this_right
     rw [bot_eq_zero]
     exact pos_iff_ne_zero.mpr hp
 
@@ -567,7 +530,8 @@ theorem NoZeroSmulDivisors.smul_eq_zero_iff_eq_zero_or_eq_zero (R M : Type _) [Z
 
 --TODO this generalized lemma when distrib_mul_action_with_zero exists?
 -- lemma support_smul_eq {α M R : Type*} {_ : monoid_with_zero R} [add_monoid M]
---   [distrib_mul_action_with_zero R M] [no_zero_smul_divisors R M] {b : R} (hb : b ≠ 0) {g : α →₀ M} :
+--   [distrib_mul_action_with_zero R M] [no_zero_smul_divisors R M] {b : R} (hb : b ≠ 0)
+--  {g : α →₀ M} :
 --   (b • g).support = g.support :=
 -- begin
 --   ext a,
@@ -577,7 +541,8 @@ theorem NoZeroSmulDivisors.smul_eq_zero_iff_eq_zero_or_eq_zero (R M : Type _) [Z
 -- end
 -- haveI : no_zero_smul_divisors R (mv_polynomial ι R), --TODO add this instance
 --TODO maybe this for leading terms and homog
--- lemma homogeneous_s_monomial_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R) (x : ι →₀ ℕ) :
+-- lemma homogeneous_s_monomial_mul [no_zero_divisors R] (p : mv_polynomial ι R) (r : R)
+-- (x : ι →₀ ℕ) :
 -- (p * monomial x r).leading_terms = p.leading_terms * monomial x r :=
 --TODO also maybe an smul version
 @[simp]
@@ -606,7 +571,7 @@ theorem eq_C_of_totalDegree_zero {p : MvPolynomial ι R} (hp : p.totalDegree = 0
   apply hm
   rw [Finsupp.sum] at hp
   -- TODO this and line below could be a lemma, finsupp.sum_eq_zero_iff?
-  simp only [_root_.not_imp_self, bot_eq_zero, Finsupp.mem_support_iff, Finset.sum_eq_zero_iff] at hp
+  simp only [_root_.not_imp_self, bot_eq_zero, Finsupp.mem_support_iff, sum_eq_zero_iff] at hp
   ext
   simp [hp]
 
@@ -711,7 +676,7 @@ theorem homogenization_mul {S : Type _} [CommRing S] [IsDomain S] (i : ι) (p q 
     intros f s p q fs ss hP hQ
     zify [add_le_add hP hQ, hP, hQ]
     ring
-  refine' this _ _ <;> rw [Finsupp.single_apply] <;> split_ifs with h
+  refine this ?_ ?_ <;> rw [Finsupp.single_apply] <;> split_ifs with h
   · simp only [h, Finsupp.single_eq_same]
     convert Finset.le_sup (α := ℕ) ha.left
     rfl
@@ -846,14 +811,13 @@ theorem support_prod (P : Finset (MvPolynomial ι R)) : (P.prod id).support ⊆ 
   · simp only [prod_empty, sum_empty]; exact support_one
   rw [Finset.prod_insert hS, Finset.sum_insert hS]
   simp only [id]
-  refine' Finset.Subset.trans (support_mul' _ _) _
-  convert Finset.add_subset_add (Finset.Subset.refl _) hSi
+  refine Finset.Subset.trans (support_mul' _ _) ?_
+  exact Finset.add_subset_add (Finset.Subset.refl _) hSi
 
 end
 
 theorem degreeOf_eq_zero_iff (i : ι) (p : MvPolynomial ι R) :
-    degreeOf i p = 0 ↔ ∀ j : ι →₀ ℕ, j ∈ p.support → j i = 0 :=
-  by
+    degreeOf i p = 0 ↔ ∀ j : ι →₀ ℕ, j ∈ p.support → j i = 0 := by
   rw [degreeOf_eq_sup]
   apply Iff.intro
   · intro h j hj
@@ -868,11 +832,10 @@ theorem degreeOf_eq_zero_iff (i : ι) (p : MvPolynomial ι R) :
 
 theorem prod_contains_no (i : ι) (P : Finset (MvPolynomial ι R))
     (hp : ∀ (p : MvPolynomial ι R) (_ : p ∈ P) (j) (_ : j ∈ p.support), (j : ι → ℕ) i = 0) (j)
-    (hjp : j ∈ (P.prod id).support) : (j : ι → ℕ) i = 0 :=
-  by
+    (hjp : j ∈ (P.prod id).support) : (j : ι → ℕ) i = 0 := by
   apply (degreeOf_eq_zero_iff i (P.prod id)).1 _ j hjp
   revert hp
-  refine' Finset.cons_induction_on P _ _
+  refine Finset.cons_induction_on P ?_ ?_
   · intro _
     simp only [prod_empty, ← C_1, degreeOf_C]
   · intro a s has hs
