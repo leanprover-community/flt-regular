@@ -23,6 +23,7 @@ variable
 -- TODO maybe abbrev
 local notation3 "A" => CyclotomicIntegers p
 
+/-The system of units is maximal if the quotient by its span leaves a torsion module (i.e. finite) -/
 abbrev systemOfUnits.IsMaximal {r} {p : ℕ+} {G} [AddCommGroup G] [Module (CyclotomicIntegers p) G]
     (sys : systemOfUnits (G := G) p r) :=
   Fintype (G ⧸ Submodule.span (CyclotomicIntegers p) (Set.range sys.units))
@@ -40,7 +41,7 @@ noncomputable
 def systemOfUnits.index [Module A G] (sys : systemOfUnits p G r) [sys.IsMaximal] :=
   Fintype.card (G ⧸ Submodule.span A (Set.range sys.units))
 
-
+/-- A system of units is fundamental if its maximal and has smallest index -/
 def systemOfUnits.IsFundamental [Module A G] (h : systemOfUnits p G r) :=
   ∃ _ : h.IsMaximal, ∀ (s : systemOfUnits p G r) (_ : s.IsMaximal), h.index ≤ s.index
 
@@ -138,6 +139,7 @@ lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H�
 
 namespace systemOfUnits.IsFundamental
 
+/-there exists an fundamental set of units.-/
 lemma existence [Module A G] : ∃ S : systemOfUnits p G r, S.IsFundamental := by
   obtain ⟨S⟩ := systemOfUnits.existence p hp G r hf
   letI := S.isMaximal hp hf
@@ -370,6 +372,8 @@ instance relativeUnitsModule : Module A G := by
   letI : Module A (Additive (relativeUnitsWithGenerator p hp hKL σ hσ)) :=
     (isTors' p hp hKL σ hσ).module
   infer_instance
+
+
 
 lemma relativeUnitsModule_zeta_smul (x) :
     (zeta p) • mkG x = mkG (Units.map (galRestrictHom (𝓞 k) k K (𝓞 K) σ) x) := by
@@ -677,6 +681,7 @@ lemma Hilbert92ish_aux0 (h : ℕ) (ζ : (𝓞 k)ˣ) (hζ : IsPrimitiveRoot (ζ :
       SubmonoidClass.coe_pow]
     rfl
 
+--some complicated unit called J in the paper, has norm 1
 lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (𝓞 k)ˣ)
     (a : ℤ) (ι : Fin n → ℤ) (η : Fin n → Additive (𝓞 k)ˣ)
     (ha : ∑ i : Fin n, ι i • η i = (a * ↑↑p) • Additive.ofMul ζ)
@@ -705,6 +710,7 @@ lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (�
   rwa [← zpow_natCast, ← zpow_mul, mul_comm _ a, mul_inv_eq_one₀]
   simp [← Units.coe_zpow]
 
+/- If ζ = E/σ E, then the norm of E is E^p -/
 lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / σ E)
   (hζ : (ζ : k) ^ (p : ℕ) = 1) (hpodd : (p : ℕ) ≠ 2) :
     algebraMap k K (Algebra.norm k (S := K) E) = E ^ (p : ℕ) := by
@@ -769,6 +775,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
   classical
   obtain ⟨h, ζ, hζ, hζ'⟩ := h_exists' p (k := k) hp
   by_cases H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ζ ^ ((p : ℕ)^(h - 1)) ≠ ε / (σ ε : K)
+  /- ζ is ζ' in Hilbert, so their ζ is our ζ ^ ((p : ℕ)^(h - 1))  -/
   · exact Hilbert92ish_aux0 p hKL σ h ζ hζ H
   simp only [ne_eq, not_forall, not_not] at H
   obtain ⟨E, hE⟩ := H
@@ -787,11 +794,15 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
       zero_add, pow_one, one_dvd, Nat.succ_sub_succ_eq_sub,
       nonpos_iff_eq_zero, tsub_zero, dvd_refl]
   let H := unitlifts p hp hKL σ hσ S
+  -- the list of norms of fundamental units
   let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
     fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
+  --append the norm of E to the end of the list of norms of fundamental units
   let η : Fin (r + 2) → Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
   obtain ⟨a, ι, i, ha, ha', ha''⟩ := lh_pow_free p hp ζ (k := k) (K := K) hζ' η
+  --append E to the end of the list of fundamental units
   let H2 : Fin (r + 2) → Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul E)
+  --J = (∏_i H_i^a_i)*E^{a_{r+2}}*ζ^{-a}
   let J := (Additive.toMul (∑ i : Fin (r + 2), ι i • H2 i)) *
                 (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ζ) ^ (-a)
   refine ⟨J, ?_⟩
@@ -805,18 +816,27 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
       simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE,
         η, H2, J, N, H]
   · intro ε hε
+    --going to show that if not this would contradict our corollary.
     refine hS.corollary p hp _ _ (finrank_G p hp hKL σ hσ) _ (ι ∘ Fin.castSucc) ?_ (mkG ε) ?_
     · by_contra hε'
+      /-assume for contradiction this is not the case, so all of the first r+1 indecies are
+      divisible by p-/
       simp only [Function.comp_apply, not_exists, not_not] at hε'
+      --i cant be one of these indecies, since its not divisible by p
       have : i ∉ Set.range Fin.castSucc := by rintro ⟨i, rfl⟩; exact ha' (hε' i)
       rw [← Fin.succAbove_last, Fin.range_succAbove, Set.mem_compl_iff,
         Set.mem_singleton_iff, not_not] at this
+      --this has forced i to be r+2
       rw [this] at ha'
+      -- now do the caser h  = 0 or general
       cases' h with h
-      · refine ha'' ?_ this
+      · -- the h=0 case
+        refine ha'' ?_ this -- in this case we have both that i = r+2 and i ≠ r+2 (since ζ = 1)
         ext
-        simpa using hζ
+        simpa only [Units.val_one, map_one, pow_zero, IsPrimitiveRoot.one_right_iff] using hζ
+      -- general case, h ≠ 0
       obtain ⟨ε', hε'⟩ : ∃ ε' : (𝓞 k)ˣ, ε' ^ (p : ℕ) = NE := by
+        --the norm of E now has to be a p-th power of a unit.
         rw [← (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd] at ha'
         obtain ⟨α, β, hαβ⟩ := ha'
         choose ι' hι' using hε'
@@ -830,7 +850,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
         exact ⟨_, ha.symm⟩
       have hζ'' := (hζ.pow (p ^ h.succ).pos (pow_succ _ _)).map_of_injective
         (algebraMap k K).injective
-      obtain ⟨ε'', hε''⟩ :
+      obtain ⟨ε'', hε''⟩ : -- now it means the E must be a unit in k (Not just K).
           ∃ ε'' : (𝓞 k)ˣ, E = Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ε'' := by
         rw [← hε', map_pow, eq_comm, ← mul_inv_eq_one, ← inv_pow, ← mul_pow] at NE_p_pow
         apply_fun ((↑) : (𝓞 K)ˣ → K) at NE_p_pow
@@ -851,8 +871,10 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
       erw [hE] at hζ'' --why?
       rw [IsPrimitiveRoot.one_left_iff] at hζ''
       exact hp.one_lt.ne.symm hζ''
+      --proof ends by showing that our root of unity would then be trivial, which cant happen since h ≠ 0.
     · rw [← u_lemma2 p hp hKL σ hσ _ _ hε, unit_to_U_mul, toMul_sum, unit_to_U_prod,
         Fin.sum_univ_castSucc]
+      -- check this equality in the quotient, removes the ζ, just asks that the reduction of E is zero
       simp only [Fin.snoc_castSucc, toMul_zsmul, unit_to_U_zpow, unitlifts_spec, Fin.snoc_last,
         toMul_ofMul, RingHom.toMonoidHom_eq_coe, zpow_neg, unit_to_U_inv, Function.comp_apply,
         unit_to_U_map, smul_zero, neg_zero, add_zero, add_right_eq_self, NE, η, H2, J, N, H]
