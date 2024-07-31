@@ -1,12 +1,7 @@
-import Mathlib.NumberTheory.Cyclotomic.Rat
-import FltRegular.NumberTheory.Cyclotomic.Factoring
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import Mathlib.RingTheory.Ideal.Norm
 import Mathlib.RingTheory.ClassGroup
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
-import FltRegular.ReadyForMathlib.PowerBasis
+import Mathlib.NumberTheory.NumberField.Basic
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
+variable {K : Type*} {p : ℕ+} [Field K] [CharZero K]
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
@@ -49,11 +44,6 @@ lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero 
   · intro ⟨hx, hy⟩
     exact WfDvdMonoid.multiplicity_finite hx hy
 
-lemma WfDvdMonoid.multiplicity_eq_top_iff {M : Type*} [CancelCommMonoidWithZero M] [WfDvdMonoid M]
-    [DecidableRel (fun a b : M ↦ a ∣ b)] {x y : M} :
-    multiplicity x y = ⊤ ↔ IsUnit x ∨ y = 0 := by
-  rw [multiplicity.eq_top_iff_not_finite, WfDvdMonoid.multiplicity_finite_iff, or_iff_not_and_not]
-
 lemma dvd_iff_multiplicity_le {M : Type*}
     [CancelCommMonoidWithZero M] [DecidableRel (fun a b : M ↦ a ∣ b)] [UniqueFactorizationMonoid M]
     {a b : M} (ha : a ≠ 0) : a ∣ b ↔ ∀ p : M, Prime p → multiplicity p a ≤ multiplicity p b := by
@@ -69,7 +59,7 @@ lemma dvd_iff_multiplicity_le {M : Type*}
     · simp only [ne_eq, mul_eq_zero, not_or] at ha
       rw [UniqueFactorizationMonoid.irreducible_iff_prime] at hq
       obtain ⟨c, rfl⟩ : a ∣ b := by
-        refine' IH ha.2 (fun p hp ↦ (le_trans ?_ (H p hp)))
+        refine IH ha.2 (fun p hp ↦ (le_trans ?_ (H p hp)))
         rw [multiplicity.mul hp]
         exact le_add_self
       rw [mul_comm]
@@ -148,7 +138,8 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
     {x : R} (hx : Prime x) (I J : Ideal R)
     (hI : ¬ (Ideal.span <| singleton x) ∣ I) (hJ : ¬ (Ideal.span <| singleton x) ∣ J)
     (h : Submodule.IsPrincipal ((I / J : FractionalIdeal R⁰ K) : Submodule R K)) :
-    ∃ a b : R, ¬(x ∣ a) ∧ ¬(x ∣ b) ∧ spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
+    ∃ a b : R,
+      ¬(x ∣ a) ∧ ¬(x ∣ b) ∧ spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
   by_contra H1
   have hI' : (I : FractionalIdeal R⁰ K) ≠ 0 :=
     by rw [← coeIdeal_bot, Ne, coeIdeal_inj]; rintro rfl; exact hI (dvd_zero _)

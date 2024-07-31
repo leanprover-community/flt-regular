@@ -25,7 +25,6 @@ lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
 
 lemma AdjoinRoot.aeval_root {R} [CommRing R] (P : R[X]) : aeval (root P) P = 0 := by simp
 
-@[simps!]
 def AdjoinRoot.equivOfMinpolyEq {R S} [CommRing R] [CommRing S] [Algebra R S]
     (P : R[X]) (pb : PowerBasis R S) (hpb : minpoly R pb.gen = P) :
     AdjoinRoot P ≃ₐ[R] S := AdjoinRoot.equiv' P pb (hpb ▸ aeval_root _) (hpb ▸ minpoly.aeval _ _)
@@ -99,9 +98,6 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m 
 
 def powerBasis : PowerBasis ℤ (CyclotomicIntegers p) :=
    AdjoinRoot.powerBasis' (cyclotomic.monic _ _)
-
-@[simp]
-lemma powerBasis_gen : (powerBasis p).gen = zeta p := rfl
 
 lemma powerBasis_dim : (powerBasis p).dim = p - 1 := by
   simp [powerBasis, Nat.totient_prime hpri.out, natDegree_cyclotomic]

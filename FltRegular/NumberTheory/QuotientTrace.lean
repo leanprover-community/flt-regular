@@ -1,5 +1,5 @@
 import FltRegular.NumberTheory.AuxLemmas
-import Mathlib.RingTheory.IntegralRestrict
+import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.RingTheory.DedekindDomain.Dvr
 /-!
 
@@ -11,12 +11,10 @@ import Mathlib.RingTheory.DedekindDomain.Dvr
 
 -/
 
-attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
-
 section LocalRing
 
-variable {R S} [CommRing R] [CommRing S] [Algebra R S] [LocalRing R] [Module.Free R S] [Module.Finite R S]
-variable {p : Ideal R} [p.IsMaximal] [LocalRing R]
+variable {R S} [CommRing R] [CommRing S] [Algebra R S] [LocalRing R] [Module.Free R S]
+  [Module.Finite R S] {p : Ideal R} [p.IsMaximal] [LocalRing R]
 
 open LocalRing FiniteDimensional
 
