@@ -1,5 +1,5 @@
 import FltRegular.NumberTheory.AuxLemmas
-import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
+import Mathlib.RingTheory.IntegralRestrict
 import Mathlib.Data.Set.Card
 
 /-!
@@ -396,7 +396,7 @@ lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.
     rw [← Finset.filter_val, ← Finset.card, ← Fintype.card_subtype]
     obtain ⟨σ, hσ⟩ := MulAction.exists_smul_eq (L ≃ₐ[K] L) P ⟨P', hP'⟩
     have : P' = ↑(σ • P) := by rw [hσ]
-    simp_rw [this, ← Subtype.ext_iff, ← eq_inv_smul_iff (g := σ), ← mul_smul, eq_comm (a := P)]
+    simp_rw [this, ← Subtype.ext_iff, ← eq_inv_smul_iff (a := σ), ← mul_smul, eq_comm (a := P)]
     exact Fintype.card_congr
       { toFun := fun x ↦ ⟨σ⁻¹ * x, x.prop⟩,
         invFun := fun x ↦ ⟨σ * x, (inv_mul_cancel_left σ x).symm ▸ x.prop⟩,

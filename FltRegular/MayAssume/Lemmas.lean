@@ -1,6 +1,7 @@
-import Mathlib.NumberTheory.FLT.Three
+import FltRegular.FltThree.FltThree
 import Mathlib.Algebra.GCDMonoid.Finset
 import Mathlib.FieldTheory.Finite.Basic
+import FltRegular.NumberTheory.RegularPrimes
 
 open Int Finset
 
@@ -14,7 +15,7 @@ theorem p_ne_three {a b c : ℤ} {n : ℕ} (hprod : a * b * c ≠ 0) (h : a ^ n 
   have ha : a ≠ 0 := fun ha => by simp [ha] at hprod
   have hb : b ≠ 0 := fun hb => by simp [hb] at hprod
   have hc : c ≠ 0 := fun hc => by simp [hc] at hprod
-  exact fermatLastTheoremFor_iff_int.1 fermatLastTheoremThree a b c ha hb hc (hn ▸ h)
+  simp [hn, flt_three a b c ha hb hc] at h
 
 theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a * b * c ≠ 0) :
     let d := ({a, b, c} : Finset ℤ).gcd id
@@ -31,7 +32,7 @@ theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a *
   have hdzero : d ≠ 0 := fun hdzero => by
     simpa [ha] using Finset.gcd_eq_zero_iff.1 hdzero a (by simp [s])
   have hdp : d ^ n ≠ 0 := fun hdn => hdzero (pow_eq_zero hdn)
-  refine ⟨?_, ?_, fun habs => ?_⟩
+  refine' ⟨_, _, fun habs => _⟩
   · obtain ⟨na, hna⟩ := hadiv; obtain ⟨nb, hnb⟩ := hbdiv; obtain ⟨nc, hnc⟩ := hcdiv
     rwa [← mul_left_inj' hdp, add_mul, ← mul_pow, ← mul_pow, ← mul_pow, hna, hnb, hnc,
       Int.mul_ediv_cancel_left _ hdzero, Int.mul_ediv_cancel_left _ hdzero,
@@ -58,7 +59,7 @@ theorem p_dvd_c_of_ab_of_anegc {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp : p 
   simp only [Int.cast_neg, Int.cast_mul, Int.cast_one, Int.cast_ofNat, neg_eq_zero,
     mul_eq_zero] at h
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-  refine Or.resolve_right h fun h3 => ?_
+  refine' Or.resolve_right h fun h3 => _
   rw [show (3 : ZMod p) = ((3 : ℕ) : ZMod p) by simp, ZMod.natCast_zmod_eq_zero_iff_dvd,
     Nat.dvd_prime Nat.prime_three] at h3
   cases' h3 with H₁ H₂
@@ -73,7 +74,7 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p) (h
   by_cases H : a ≡ b [ZMOD p]
   swap
   · exact ⟨a, b, c, ⟨h, hgcd, H, hprod, caseI⟩⟩
-  refine ⟨a, -c, -b, ⟨?_, ?_, fun habs => ?_, ?_, ?_⟩⟩
+  refine' ⟨a, -c, -b, ⟨_, _, fun habs => _, _, _⟩⟩
   · have hpodd : p ≠ 2 := by linarith
     rw [neg_pow, (Or.resolve_left hpri.eq_two_or_odd' hpodd).neg_one_pow, neg_pow,
       (Or.resolve_left hpri.eq_two_or_odd' hpodd).neg_one_pow]
@@ -83,7 +84,7 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p) (h
     exact h.symm
   · convert hgcd using 1
     have : ({a, -c, -b} : Finset ℤ) = {a, -b, -c} := by
-      refine Finset.ext fun x => ⟨fun hx => ?_, fun hx => ?_⟩ <;>
+      refine' Finset.ext fun x => ⟨fun hx => _, fun hx => _⟩ <;>
         · simp only [mem_insert, mem_singleton] at hx
           rcases hx with (H | H | H) <;> simp [H]
     rw [this]
@@ -102,7 +103,7 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p) (h
     rw [H] at habs
     rw [ZMod.intCast_eq_intCast_iff] at habs H
     obtain ⟨n, hn⟩ := p_dvd_c_of_ab_of_anegc hpri hp3 h H habs
-    refine caseI ⟨a * b * n, ?_⟩
+    refine' caseI ⟨a * b * n, _⟩
     rw [hn]
     ring
   · convert hprod using 1

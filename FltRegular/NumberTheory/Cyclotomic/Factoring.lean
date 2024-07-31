@@ -5,8 +5,10 @@ Authors: Alex J. Best
 
 ! This file was ported from Lean 3 source module number_theory.cyclotomic.factoring
 -/
-import  Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
+import Mathlib.NumberTheory.Cyclotomic.Basic
 import FltRegular.ReadyForMathlib.Homogenization
+
+open scoped BigOperators
 
 open Polynomial Finset MvPolynomial
 
@@ -16,7 +18,8 @@ open Polynomial Finset MvPolynomial
 where `μ` varies over the `n`-th roots of unity. -/
 theorem pow_sub_pow_eq_prod_sub_zeta_runity_mul {K : Type _} [CommRing K] [IsDomain K] {ζ : K}
     {n : ℕ} (hpos : 0 < n) (h : IsPrimitiveRoot ζ n) (x y : K) :
-    x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ ζ : K in nthRootsFinset n K, (x - ζ * y) := by
+    x ^ (n : ℕ) - y ^ (n : ℕ) = ∏ ζ : K in nthRootsFinset n K, (x - ζ * y) :=
+  by
   -- suffices to show the identity in a multivariate polynomial ring with two generators over K
   suffices
     (X 0 : MvPolynomial (Fin 2) K) ^ (n : ℕ) - X 1 ^ (n : ℕ) =
@@ -29,7 +32,7 @@ theorem pow_sub_pow_eq_prod_sub_zeta_runity_mul {K : Type _} [CommRing K] [IsDom
   -- transfer this to a polynomial ring with two variables
   have := congr_arg (Polynomial.aeval (X 0 : MvPolynomial (Fin 2) K)) this
   simp only [map_prod, aeval_X_pow, Polynomial.aeval_X, aeval_one, Polynomial.aeval_C,
-    map_sub] at this
+    AlgHom.map_sub] at this
   -- the homogenization of the identity is also true
   have := congr_arg (homogenization 1) this
   -- simplify to get the result we want

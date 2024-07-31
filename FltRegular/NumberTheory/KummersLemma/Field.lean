@@ -1,3 +1,4 @@
+import FltRegular.NumberTheory.RegularPrimes
 import Mathlib.NumberTheory.Cyclotomic.Rat
 import Mathlib.FieldTheory.KummerExtension
 import FltRegular.NumberTheory.Unramified
@@ -5,8 +6,8 @@ import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
 open scoped NumberField BigOperators
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
-  [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2)
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
+variable (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
   (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ (p : ℕ) ≠ u)
@@ -76,19 +77,20 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
     (((C ((algebraMap ((𝓞 K)) K) ↑hζ.unit') - 1) * X - 1) ^ (p : ℕ)).coeff i +
     (C ((algebraMap ((𝓞 K)) K) ↑u)).coeff i := by
       simp only [map_pow, map_sub, map_one, Polynomial.map_add, Polynomial.map_pow,
-        Polynomial.map_sub, Polynomial.map_mul, map_C,
+        Polynomial.map_sub, Polynomial.map_mul, map_C, IsPrimitiveRoot.coe_unit'_coe,
         Polynomial.map_one, map_X, coeff_add] at this
       convert this
       simp only [NumberField.RingOfIntegers.coe_eq_algebraMap, ← Polynomial.coeff_map]
       simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
-        Polynomial.map_one]
+        IsPrimitiveRoot.coe_unit'_coe, Polynomial.map_one]
       rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
-      simp [show hζ.unit'.1 = ζ from rfl]
+      simp
   apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
   simp only [Subalgebra.algebraMap_eq, Algebra.id.map_eq_id, RingHomCompTriple.comp_eq, coeff_map,
     RingHom.coe_coe, Subalgebra.coe_val, one_div, map_sub, map_one, coeff_add, coeff_sub,
-    PNat.pos, pow_eq_zero_iff, this, mul_add]
-  simp_rw [← smul_eq_mul K, ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
+    PNat.pos, pow_eq_zero_iff, this, mul_add, IsPrimitiveRoot.val_unit'_coe,
+    IsPrimitiveRoot.coe_unit'_coe]
+  simp_rw [← smul_eq_mul K, ← coeff_smul]
   rw [smul_C, smul_eq_mul, ← smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub, smul_C,
     smul_eq_mul, mul_inv_cancel, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub, map_one]
   · exact hζ.sub_one_ne_zero hpri.out.one_lt
@@ -119,7 +121,7 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
   have hcoe1 : (algebraMap (𝓞 K) L) ↑u = algebraMap K L ↑↑u := rfl
   simp only [map_sub, map_one, map_pow, map_mul, aeval_C, Subalgebra.algebraMap_eq, smul_pow,
     hcoe, RingHom.coe_comp, RingHom.coe_coe, Subalgebra.coe_val, Function.comp_apply, e, hcoe1,
-    map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ',
+    IsPrimitiveRoot.val_unit'_coe, map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ',
     sub_sub_cancel_left, (hpri.out.odd_of_ne_two (PNat.coe_injective.ne hp)).neg_pow] at this
   rw [← pow_mul, mul_comm m, pow_mul, hζ.pow_eq_one, one_pow, one_smul, add_left_neg,
     mul_eq_zero] at this
@@ -194,6 +196,9 @@ lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [
 instance {K L} [Field K] [Field L] [Algebra K L] :
     IsIntegralClosure (𝓞 L) (𝓞 K) L := isIntegralClosure_of_isScalarTower ℤ _ K _ _
 
+attribute [local instance 2000] Algebra.toModule Module.toDistribMulAction
+  DistribMulAction.toMulAction MulAction.toSMul NumberField.inst_ringOfIntegersAlgebra
+
 instance {K L} [Field K] [Field L] [Algebra K L] :
     IsScalarTower (𝓞 K) (𝓞 L) L := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
 
@@ -217,6 +222,14 @@ lemma minpoly_polyRoot' {L : Type*} [Field L] [Algebra K L] (α : L)
   exact minpoly_polyRoot'' hp hζ u hcong hu α e i
   exact IsIntegral.tower_top (polyRoot hp hζ u hcong α e i).prop
 
+lemma minpoly_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
+    (e : α ^ (p : ℕ) = algebraMap K L u) (i) :
+    minpoly (𝓞 K) (polyRoot hp hζ u hcong α e i) = (poly hp hζ u hcong) := by
+  apply map_injective (algebraMap (𝓞 K) K) Subtype.coe_injective
+  rw [← minpoly.isIntegrallyClosed_eq_field_fractions K L]
+  exact minpoly_polyRoot'' hp hζ u hcong hu α e i
+  exact IsIntegralClosure.isIntegral _ L (polyRoot hp hζ u hcong α e i)
+
 lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) : Separable ((poly hp hζ u hcong).map
     (algebraMap (𝓞 K) (𝓞 L))) := by
@@ -234,7 +247,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     · exact mt (hζ.unit'_coe.injOn_pow hj hi) hij.symm
   rw [NumberField.RingOfIntegers.ext_iff] at hv
   have hcoe : (algebraMap (𝓞 K) K) (↑hζ.unit') = ζ := rfl
-  simp only [map_mul, map_sub, map_one, map_pow, hcoe] at hv
+  simp only [map_mul, map_sub, IsPrimitiveRoot.val_unit'_coe, map_one, map_pow, hcoe] at hv
   have hα : IsIntegral (𝓞 K) α := by
     apply IsIntegral.of_pow p.pos; rw [e]; exact isIntegral_algebraMap
   have : IsUnit (⟨α, isIntegral_trans _ hα⟩ : 𝓞 L) := by
@@ -256,6 +269,9 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
   let L := K[(p : ℕ)√(u : K)]
   letI := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
   let J := I.map (algebraMap (𝓞 K) (𝓞 L))
+  letI : AddCommGroup (𝓞 L) := AddCommGroupWithOne.toAddCommGroup
+  letI : Module (𝓞 K) (𝓞 L) := Algebra.toModule
+  letI := Ideal.Quotient.commRing J
   let i : 𝓞 K ⧸ I →+* 𝓞 L ⧸ J := Ideal.quotientMap _
     (algebraMap (𝓞 K) (𝓞 L)) Ideal.le_comap_map
   haveI : Nontrivial (𝓞 L ⧸ J) := by

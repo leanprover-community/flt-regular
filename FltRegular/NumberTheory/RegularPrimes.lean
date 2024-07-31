@@ -1,4 +1,5 @@
 import Mathlib.FieldTheory.SplittingField.Construction
+import Mathlib.NumberTheory.Bernoulli
 import Mathlib.NumberTheory.ClassNumber.Finite
 import Mathlib.NumberTheory.ClassNumber.AdmissibleAbs
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
@@ -80,8 +81,8 @@ instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
     { algebraMap_injective' := (algebraMap ℤ L).injective_int
       isIntegral_iff := fun {x} => by
         let f := cyclotomicFieldTwoEquiv ℚ L
-        refine
-          ⟨fun hx => ⟨IsIntegralClosure.mk' ℤ (f x) (map_isIntegral_int f hx), f.injective ?_⟩, ?_⟩
+        refine'
+          ⟨fun hx => ⟨IsIntegralClosure.mk' ℤ (f x) (map_isIntegral_int f hx), f.injective _⟩, _⟩
         · convert IsIntegralClosure.algebraMap_mk' ℤ (f x) (map_isIntegral_int f hx)
           simp
         · rintro ⟨y, hy⟩

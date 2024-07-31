@@ -43,10 +43,10 @@ jobs:
         run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
 
       - name: Get cache
-        run: ~/.elan/bin/lake exe cache get || true
+        run: ~/.elan/bin/lake -Kenv=dev exe cache get
 
       - name: Build project
-        run: ~/.elan/bin/lake -R -Kenv=dev build FltRegular
+        run: ~/.elan/bin/lake -Kenv=dev build FltRegular
 
       - uses: actions/cache@v3
         name: Mathlib doc Cache
@@ -57,7 +57,7 @@ jobs:
             DocGen4-
 
       - name: Build documentation
-        run: ~/.elan/bin/lake -R -Kenv=dev build FltRegular:docs
+        run: ~/.elan/bin/lake -Kenv=dev build FltRegular:docs
 
       - name: Install Python
         uses: actions/setup-python@v4

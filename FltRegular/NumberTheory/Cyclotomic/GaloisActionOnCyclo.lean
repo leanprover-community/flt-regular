@@ -1,3 +1,4 @@
+import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import Mathlib.NumberTheory.Cyclotomic.Gal
 import Mathlib.NumberTheory.NumberField.Units.Basic
 
@@ -62,7 +63,9 @@ theorem conj_norm_one (x : ℂ) (h : Complex.abs x = 1) : conj x = x⁻¹ := by
     Complex.exp_neg, map_mul, Complex.conj_I, mul_neg, Complex.conj_ofReal]
 
 @[simp]
-theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K p x) := by
+theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K p x) :=
+  by
+  -- dependent type theory is my favourite
   change RingHom.comp conj φ x = (φ.comp <| ↑(galConj K p)) x
   revert x
   suffices φ (galConj K p ζ) = conj (φ ζ)
@@ -72,7 +75,14 @@ theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K 
     apply (hζ.powerBasis ℚ).rat_hom_ext
     exact this.symm
   rw [conj_norm_one, galConj_zeta_runity hζ, map_inv₀]
-  exact Complex.norm_eq_one_of_pow_eq_one (by rw [← map_pow, hζ.pow_eq_one, map_one]) p.ne_zero
+  refine' Complex.norm_eq_one_of_pow_eq_one _ p.ne_zero
+  rw [← map_pow, hζ.pow_eq_one, map_one]
+
+-- this proof makes me happy inside
+theorem galConj_idempotent : (galConj K p).trans (galConj K p) = AlgEquiv.refl :=
+  by
+  rw [← AlgEquiv.aut_mul, galConj, ← map_mul, neg_one_mul, neg_neg, map_one]
+  rfl
 
 variable (p)
 

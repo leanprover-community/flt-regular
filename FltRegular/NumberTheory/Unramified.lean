@@ -19,11 +19,11 @@ import FltRegular.NumberTheory.Different
 -/
 open BigOperators UniqueFactorizationMonoid
 
-attribute [local instance] FractionRing.liftAlgebra
+attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
 
 variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
-    [IsDedekindDomain R] [Algebra R K] [IsFractionRing R K] [Algebra S L]
-    [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L]
+    [IsDedekindDomain R] [Algebra R K] [IsFractionRing R K] [Algebra S L] -- [IsFractionRing S L]
+    [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L] -- [IsNoetherian R S]
     [IsIntegralClosure S R L] [FiniteDimensional K L]
 
 def IsUnramifiedAt {R} (S : Type*) [CommRing R] [CommRing S] [Algebra R S] (p : Ideal R) : Prop :=
@@ -165,7 +165,7 @@ lemma isUnramifiedAt_iff_SquareFree_minpoly_powerBasis [NoZeroSMulDivisors R S] 
 open nonZeroDivisors Polynomial
 
 attribute [local instance] Ideal.Quotient.field in
-lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
+lemma isUnramifiedAt_of_Separable_minpoly' [IsSeparable K L]
     (p : Ideal R) [hp : p.IsPrime] (hpbot : p ≠ ⊥) (x : S)
     (hx' : Algebra.adjoin K {algebraMap S L x} = ⊤)
     (h : Polynomial.Separable ((minpoly R x).map (Ideal.Quotient.mk p))) :
@@ -191,9 +191,9 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
       AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
       ← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply R S L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-  have : Algebra.IsSeparable (FractionRing R) (FractionRing S) :=
-    Algebra.IsSeparable.of_equiv_equiv _ _ H
+  have : IsSeparable (FractionRing R) (FractionRing S) := IsSeparable.of_equiv_equiv _ _ H
   have := hp.isMaximal hpbot
+
   intro P hP
   letI : IsScalarTower S (S ⧸ P) (S ⧸ P) := IsScalarTower.right
   have := isMaximal_of_mem_primesOver hpbot hP
@@ -221,7 +221,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
       ← Finset.mem_coe, coe_primesOverFinset _ p hpbot]
     rwa [ne_eq, Ideal.map_eq_bot_iff_of_injective hRS]
 
-lemma isUnramifiedAt_of_Separable_minpoly [Algebra.IsSeparable K L]
+lemma isUnramifiedAt_of_Separable_minpoly [IsSeparable K L]
     (p : Ideal R) [hp : p.IsPrime] (hpbot : p ≠ ⊥) (x : L) (hx : IsIntegral R x)
     (hx' : Algebra.adjoin K {x} = ⊤)
     (h : Polynomial.Separable ((minpoly R x).map (Ideal.Quotient.mk p))) :

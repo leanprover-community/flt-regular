@@ -1,10 +1,10 @@
-import FltRegular.FltRegular
-import Mathlib.NumberTheory.Cyclotomic.PID
+import Mathlib
+import FltRegular
 
 open Nat NumberField IsCyclotomicExtension
 
 theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
-  have : Fact (Nat.Prime 5) := ⟨Nat.prime_five⟩
+  have : Fact (Nat.Prime 5) := ⟨by norm_num⟩
 
   refine flt_regular ?_ (by omega)
   rw [IsRegularPrime, IsRegularNumber]
