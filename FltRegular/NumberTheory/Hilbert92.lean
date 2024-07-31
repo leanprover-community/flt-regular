@@ -227,7 +227,7 @@ lemma corollary [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (a
     simp only [smul_smul, Finsupp.ofSupportFinite_coe, add_smul, b', b]
     congr 1
     · rw [mul_comm]
-    · rw [← intCast_smul (k := A), smul_smul]
+    · rw [← Int.cast_smul_eq_nsmul (R := A), smul_smul]
   · simp
 
 end systemOfUnits.IsFundamental

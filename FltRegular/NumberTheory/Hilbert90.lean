@@ -28,7 +28,7 @@ lemma hφ : ∀ (n : ℕ), φ σ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n
 noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ, hσ τ⟩), Units.map (σ ^ i) (ηu hη)
 
-lemma aux {a: ℕ} (h : a % orderOf σ = 0) :
+lemma aux1 {a: ℕ} (h : a % orderOf σ = 0) :
     ∏ i in range a, (σ ^ i) (ηu hη) = 1 := by
   obtain ⟨n, hn⟩ := (Nat.dvd_iff_mod_eq_zero _ _).2 h
   rw [hn]
@@ -53,14 +53,14 @@ lemma aux {a: ℕ} (h : a % orderOf σ = 0) :
       simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
       rfl
 
-lemma aux1 {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
+lemma aux2 {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
     ∏ i in range a, (σ ^ i) (ηu hη) = ∏ i in range b, (σ ^ i) (ηu hη) := by
   wlog hab : b ≤ a generalizing a b
   · exact (this h.symm (not_le.1 hab).le).symm
   obtain ⟨c, hc⟩ := (Nat.dvd_iff_mod_eq_zero _ _).2 (Nat.sub_mod_eq_zero_of_mod_eq h)
   rw [Nat.sub_eq_iff_eq_add hab] at hc
   rw [hc, prod_range_add]
-  rw [aux hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
+  rw [aux1 hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
   simp [pow_add, pow_mul, pow_orderOf_eq_one]
 
 lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ hη) σ = (ηu hη) := by
@@ -104,7 +104,7 @@ lemma is_cocycle_aux : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β
     enter [2, 2, 2, x]
     rw [← AlgEquiv.mul_apply, ← pow_add, H]
   rw [← prod_range_add (fun (n : ℕ) ↦ (σ ^ n) (ηu hη)) (a % orderOf σ) (b % orderOf σ)]
-  simpa using aux1 hσ hη (by simp)
+  simpa using aux2 hσ hη (by simp)
 
 lemma is_cocycle : IsMulOneCocycle (cocycle hσ hη) := by
   intro α β

@@ -79,7 +79,7 @@ lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
     replace hy := congr_arg (f • ·) hy
     simp only at hy
     rw [smul_zero, smul_add, smul_smul, mul_comm f,
-      ← Hf, ← eq_neg_iff_add_eq_zero, intCast_smul] at hy
+      ← Hf, ← eq_neg_iff_add_eq_zero, Int.cast_smul_eq_nsmul] at hy
     apply hg _ h0
     rw [hy]
     exact Submodule.neg_mem _ (Submodule.smul_mem _ _ y.2)
