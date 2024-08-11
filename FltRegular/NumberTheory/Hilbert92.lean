@@ -230,7 +230,7 @@ lemma corollary [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (a
     simp only [smul_smul, Finsupp.ofSupportFinite_coe, add_smul, b', b]
     congr 1
     · rw [mul_comm]
-    · rw [← Int.cast_smul_eq_nsmul (R := A), smul_smul]
+    · rw [← Int.cast_smul_eq_zsmul (R := A), smul_smul]
   · simp
 
 end systemOfUnits.IsFundamental
@@ -455,7 +455,6 @@ lemma unitlifts_spec (S : systemOfUnits p G (NumberField.Units.rank k + 1)) (i) 
     mkG (Additive.toMul <| unitlifts p hp hKL σ hσ S i) = S.units i := by
   delta unit_to_U unitlifts
   simp only [toMul_ofMul, Quotient.out_eq', ofMul_toMul]
-  exact Quotient.out_eq' _
 
 lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zeta p : A) • (mkG v) := by
   rw [sub_smul, one_smul, relativeUnitsModule_zeta_smul, ← unit_to_U_div]

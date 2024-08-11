@@ -365,7 +365,7 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact (p : ℕ).Prime] {ζ : 𝓞 L}
   replace hy := congr_arg (b.basis.coord ((Fin.castOrderIso hdim.symm) ⟨i, hi⟩)) hy
   rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
     b.basis.coord_equivFun_symm, b.basis.coord_equivFun_symm, ← smul_eq_mul,
-    Int.cast_smul_eq_nsmul] at hy
+    Int.cast_smul_eq_zsmul] at hy
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.castOrderIso hdim.symm) ⟨i, hi⟩) y m
   rw [hn] at hy
   simp only [Fin.castOrderIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub,
@@ -418,7 +418,7 @@ theorem dvd_coeff_cycl_integer (hp : (p : ℕ).Prime) {ζ : 𝓞 L} (hζ : IsPri
   simp only [Fin.castOrderIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Basis.coord_apply,
     sub_eq_iff_eq_add] at hy
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.cast hdim.symm) ⟨j, hj⟩) y m
-  rw [hy, ← smul_eq_mul, Int.cast_smul_eq_nsmul, ← b.basis.coord_apply, ← Fin.cast_mk, hn]
+  rw [hy, ← smul_eq_mul, Int.cast_smul_eq_zsmul, ← b.basis.coord_apply, ← Fin.cast_mk, hn]
   exact dvd_add (dvd_mul_right _ _) last_dvd
 
 end IntFacts

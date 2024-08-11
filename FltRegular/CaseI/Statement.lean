@@ -224,7 +224,7 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬↑p ∣ a * b * c) :
     a ^ p + b ^ p ≠ c ^ p := by
   have hcycl : IsCyclotomicExtension {P} ℤ (𝓞 (CyclotomicField P ℚ)) := by
-    apply @IsCyclotomicExtension.ring_of_integers' _ _ _ _ (by exact hpri) _
+    apply @IsCyclotomicExtension.ring_of_integers' _ _ _ (by exact hpri) _
   set ζ := zeta P ℤ R
   have hζ := zeta_spec P ℤ R
   intro H
