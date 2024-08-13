@@ -30,10 +30,10 @@ lemma FiniteDimensional.exists_finset_card_eq_finrank_and_linearIndependent :
 
 variable {R M}
 
-variable [Nontrivial R] [StrongRankCondition R] [Module.Finite R M]
-
 lemma LinearIndependent.finset_toSet (s : Finset M) : LinearIndependent R ((↑) : (↑s : Set M) → M) ↔
     LinearIndependent R ((↑) : s → M) := Iff.rfl
+
+variable [Nontrivial R] [StrongRankCondition R] [Module.Finite R M]
 
 lemma FiniteDimensional.finrank_add_finrank_quotient_le (N : Submodule R M) :
     finrank R N + finrank R (M ⧸ N) ≤ finrank R M := by
@@ -86,8 +86,8 @@ instance {S} [Ring S] [Module S M] [SMul R S] [IsScalarTower R S M] :
 
 end
 
-variable {R : Type u} {M : Type v} [CommRing R] [Nontrivial R] [AddCommGroup M]
-variable [Module R M] [Module.Finite R M] (N : Submodule R M)
+variable {R : Type u} {M : Type v} [CommRing R] [AddCommGroup M]
+variable [Module R M] (N : Submodule R M)
 
 lemma FiniteDimensional.finrank_quotient_of_le_torsion (hN : N ≤ Submodule.torsion R M) :
     finrank R (M ⧸ N) = finrank R M := congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion hN)
@@ -101,6 +101,8 @@ lemma FiniteDimensional.finrank_map_of_le_torsion {M'} [AddCommGroup M'] [Module
   rintro x hx
   obtain ⟨a, ha⟩ := hN ⟨x.prop, hx⟩
   exact ⟨a, Subtype.val_injective ha⟩
+
+variable [Module.Finite R M]
 
 lemma FiniteDimensional.finrank_of_surjective_of_le_torsion {M'} [AddCommGroup M'] [Module R M']
     (l : M →ₗ[R] M') (hl : Function.Surjective l)

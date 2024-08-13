@@ -7,18 +7,18 @@ import Mathlib.NumberTheory.NumberField.ClassNumber
 
 open scoped NumberField
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
-variable [Fintype (ClassGroup (𝓞 K))]
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K]
 
 open Polynomial
 
-variable {L} [Field L] [Algebra K L] [FiniteDimensional K L] [IsGalois K L]
+variable {L} [Field L] [Algebra K L] [FiniteDimensional K L]
   (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hKL : FiniteDimensional.finrank K L = p)
 
 variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
     [IsIntegralClosure B A L]
 
+include hσ in
 lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K L B σ) β = β)
     (σ' : L ≃ₐ[K] L) :
     (Ideal.span {β}).comap (galRestrict A K L B σ') = Ideal.span {β} := by
@@ -41,6 +41,9 @@ lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRe
     conv_lhs at IH => rw [← hβ, Ideal.map_map]
     exact IH
 
+variable [IsGalois K L]
+
+include hσ in
 open FiniteDimensional in
 theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     [IsDedekindDomain A] [IsUnramified A B] (η : Bˣ)

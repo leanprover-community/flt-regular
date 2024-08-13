@@ -53,6 +53,7 @@ lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1
     sub_eq_zero, ← SModEq.def]
   exact hζ.subOneIntegralPowerBasis'_gen ▸ hζ.subOneIntegralPowerBasis'.exists_smodEq a
 
+include hp in
 lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ (p : ℕ) - (b : 𝓞 K) ^ (p : ℕ) := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root ℚ (B := K) (Set.mem_singleton p)
   obtain ⟨b, k, e⟩ := exists_zeta_sub_one_dvd_sub_Int hζ a
@@ -74,7 +75,6 @@ theorem prime_units_mul (a : αˣ) (b : α) : Prime (↑a * b) ↔ Prime b := by
 end
 
 lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by
-  clear hp
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   by_cases hp : p = 2
   · subst hp

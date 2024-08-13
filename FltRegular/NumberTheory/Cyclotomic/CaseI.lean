@@ -50,7 +50,7 @@ theorem exists_int_sum_eq_zero' (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i 
   obtain ⟨k, H⟩ := unit_inv_conj_is_root_of_unity hζ hpodd hp u
   refine ⟨k, ?_⟩
   rw [← exists_int_sum_eq_zero'_aux, h, ← H, Units.val_mul, mul_assoc, ← mul_sub, _root_.map_mul,
-    ← coe_unitGalConj, ← mul_assoc, ← Units.val_mul, inv_mul_self, Units.val_one, one_mul]
+    ← coe_unitGalConj, ← mul_assoc, ← Units.val_mul, inv_mul_cancel, Units.val_one, one_mul]
   exact Ideal.mul_mem_left _ _ (pow_sub_intGalConj_mem hp α)
 
 theorem exists_int_sum_eq_zero (hpodd : p ≠ 2) (hp : (p : ℕ).Prime) (x y i : ℤ) {u : (𝓞 K)ˣ}

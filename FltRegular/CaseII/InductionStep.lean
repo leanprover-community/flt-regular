@@ -5,9 +5,7 @@ import FltRegular.NumberTheory.Cyclotomic.Factoring
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
-  [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))]
-  (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
+variable {K : Type*} {p : ℕ+} [Field K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
 
@@ -29,6 +27,7 @@ variable (η : nthRootsFinset p (𝓞 K))
 
 /- We have `x,y,z` elements of `O_K` and we assume that we have $$x^p+y^p= ε * ((ζ-1)^(m+1)*z)^p$$-/
 
+include e in
 /- Let π = ζ -1, then π divides x^p+y^p. -/
 lemma zeta_sub_one_dvd : π ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
   rw [e, mul_pow, ← pow_mul]
@@ -37,6 +36,53 @@ lemma zeta_sub_one_dvd : π ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
   apply dvd_pow_self
   simp
 
+include e in
+/- x^p+y^p = 𝔭^((m+1)*p) * (z)^p, here 𝔷 = (z) (the ideal gen by z)-/
+lemma span_pow_add_pow_eq :
+    Ideal.span {x ^ (p : ℕ) + y ^ (p : ℕ)} = (𝔭 ^ (m + 1) * 𝔷) ^ (p : ℕ) := by
+  simp only [e, ← Ideal.span_singleton_pow, ← Ideal.span_singleton_mul_span_singleton]
+  convert one_mul _
+  rw [Ideal.one_eq_top, Ideal.span_singleton_eq_top]
+  exact ε.isUnit
+
+variable [NumberField K]
+
+include hy in
+lemma m_ne_zero : 𝔪 ≠ 0 := by
+  simp_rw [Ne, gcd_eq_zero_iff, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
+  rintro ⟨rfl, rfl⟩
+  exact hy (dvd_zero _)
+
+variable [hpri : Fact p.Prime]
+
+lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ η₂) : (𝔦 η₁) ⊔ (𝔦 η₂) ∣ 𝔪 * 𝔭 := by
+  have : 𝔭 = Ideal.span (singleton <| (η₁ : 𝓞 K) - η₂) := by
+    rw [Ideal.span_singleton_eq_span_singleton]
+    exact hζ.unit'_coe.associated_sub_one hpri.out η₁.prop η₂.prop (Subtype.coe_injective.ne hη)
+  rw [(gcd_mul_right' 𝔭 𝔵 𝔶).symm.dvd_iff_dvd_right, dvd_gcd_iff]
+  simp_rw [this, Ideal.span_singleton_mul_span_singleton, Ideal.dvd_span_singleton,
+    Ideal.mem_span_singleton_sup, Ideal.mem_span_singleton]
+  refine ⟨⟨-η₂, _, ⟨η₁, rfl⟩, ?_⟩, ⟨1, _, ⟨-1, rfl⟩, ?_⟩⟩
+  · ring
+  · ring
+
+include hp hζ e hz in
+lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
+  intro hη
+  have : x + y * η ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
+    rw [pow_add_pow_eq_prod_add_zeta_runity_mul
+      (hpri.out.eq_two_or_odd.resolve_left (PNat.coe_injective.ne hp)) hζ.unit'_coe]
+    simp_rw [mul_comm _ y]
+    exact Finset.dvd_prod_of_mem _ η.prop
+  rw [hη, zero_dvd_iff, e] at this
+  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff p.ne_zero, add_pos_iff, or_true, false_or]
+    at this
+  rw [this.resolve_left (pow_ne_zero (m + 1) (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt))] at hz
+  exact hz (dvd_zero _)
+
+variable [IsCyclotomicExtension {p} ℚ K]
+
+include e hp in
 /- Let π = ζ -1, then π divides x+yη with η a primivite root of unity. -/
 lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
@@ -51,6 +97,7 @@ lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   rw [Finset.prod_const, ← map_pow, Ideal.Quotient.eq_zero_iff_dvd] at h
   exact hζ.zeta_sub_one_prime'.dvd_of_dvd_pow h
 
+include hp hζ e in
 /- x+yη is divisible by ζ-1 in O_k -/
 lemma div_one_sub_zeta_mem : IsIntegral ℤ ((x + y * η : 𝓞 K) / (ζ - 1)) := by
   obtain ⟨⟨a, ha⟩, e⟩ := one_sub_zeta_dvd_zeta_pow_sub hp hζ e η
@@ -84,6 +131,7 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
   rw [Ne, ← Subtype.ext_iff.not]
   exact hη
 
+include hy in
 /- sending η to (x+yη)/(ζ-1) mod (π) = 𝔭 is injective. -/
 lemma div_zeta_sub_one_Injective :
     Function.Injective (fun η ↦ Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η)) := by
@@ -103,6 +151,7 @@ instance : Finite (𝓞 K ⧸ 𝔭) := by
   rw [← Ideal.absNorm_ne_zero_iff, Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
   exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
+include hy in
 /- sending η to (x+yη)/(ζ-1) mod (π) = 𝔭 is bijective. -/
 lemma div_zeta_sub_one_Bijective :
     Function.Bijective (fun η ↦ Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η)) := by
@@ -116,6 +165,7 @@ lemma div_zeta_sub_one_Bijective :
     ← Ideal.absNorm_apply, Ideal.absNorm_span_singleton]
   simp [show Algebra.norm ℤ π = _ from hζ.norm_toInteger_sub_one_of_prime_ne_two' hp]
 
+include hy in
 /- the gcd of x y called 𝔪 is coprime to 𝔭-/
 lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by
   have : Fact (Nat.Prime p) := hpri
@@ -125,6 +175,7 @@ lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by
   · rw [irreducible_iff_prime]
     exact hζ.prime_span_sub_one
 
+include hy in
 /- the ideal (x+yη)/(ζ -1) is divisible by 𝔪 -/
 lemma gcd_div_div_zeta_sub_one (η) : 𝔪 ∣ Ideal.span {div_zeta_sub_one hp hζ e η} := by
   have : Fact (Nat.Prime p) := hpri
@@ -142,7 +193,7 @@ noncomputable
 def div_zeta_sub_one_dvd_gcd : Ideal (𝓞 K) :=
 (gcd_div_div_zeta_sub_one hp hζ e hy η).choose
 
-local notation "𝔠" => div_zeta_sub_one_dvd_gcd hp hζ e hy
+local notation "𝔠" => fun η ↦ div_zeta_sub_one_dvd_gcd hp hζ e hy η
 
 lemma div_zeta_sub_one_dvd_gcd_spec :
     𝔪 * 𝔠 η = (Ideal.span <| singleton <| div_zeta_sub_one hp hζ e η) :=
@@ -152,48 +203,24 @@ lemma m_mul_c_mul_p : 𝔪 * 𝔠 η * 𝔭 = 𝔦 η := by
   rw [div_zeta_sub_one_dvd_gcd_spec, Ideal.span_singleton_mul_span_singleton,
     div_zeta_sub_one_mul_zeta_sub_one]
 
-lemma m_ne_zero : 𝔪 ≠ 0 := by
-  simp_rw [Ne, gcd_eq_zero_iff, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
-  rintro ⟨rfl, rfl⟩
-  exact hy (dvd_zero _)
-
 lemma p_ne_zero : 𝔭 ≠ 0 := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
   exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
-
-lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ η₂) : (𝔦 η₁) ⊔ (𝔦 η₂) ∣ 𝔪 * 𝔭 := by
-  have : 𝔭 = Ideal.span (singleton <| (η₁ : 𝓞 K) - η₂) := by
-    rw [Ideal.span_singleton_eq_span_singleton]
-    exact hζ.unit'_coe.associated_sub_one hpri.out η₁.prop η₂.prop (Subtype.coe_injective.ne hη)
-  rw [(gcd_mul_right' 𝔭 𝔵 𝔶).symm.dvd_iff_dvd_right, dvd_gcd_iff]
-  simp_rw [this, Ideal.span_singleton_mul_span_singleton, Ideal.dvd_span_singleton,
-    Ideal.mem_span_singleton_sup, Ideal.mem_span_singleton]
-  refine ⟨⟨-η₂, _, ⟨η₁, rfl⟩, ?_⟩, ⟨1, _, ⟨-1, rfl⟩, ?_⟩⟩
-  · ring
-  · ring
-
 lemma coprime_c (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ η₂) : IsCoprime (𝔠 η₁) (𝔠 η₂) := by
   rw [Ideal.isCoprime_iff_codisjoint, codisjoint_iff_le_sup, ← Ideal.dvd_iff_le]
-  rw [← mul_dvd_mul_iff_left (m_ne_zero hζ e hy), ← mul_dvd_mul_iff_right (p_ne_zero hζ)]
+  rw [← mul_dvd_mul_iff_left (m_ne_zero hζ hy), ← mul_dvd_mul_iff_right (p_ne_zero hζ)]
   rw [Ideal.mul_sup, Ideal.sup_mul, m_mul_c_mul_p, m_mul_c_mul_p, Ideal.mul_top]
   exact coprime_c_aux hζ η₁ η₂ hη
 
-/- x^p+y^p = 𝔭^((m+1)*p) * (z)^p, here 𝔷 = (z) (the ideal gen by z)-/
-lemma span_pow_add_pow_eq :
-    Ideal.span {x ^ (p : ℕ) + y ^ (p : ℕ)} = (𝔭 ^ (m + 1) * 𝔷) ^ (p : ℕ) := by
-  simp only [e, ← Ideal.span_singleton_pow, ← Ideal.span_singleton_mul_span_singleton]
-  convert one_mul _
-  rw [Ideal.one_eq_top, Ideal.span_singleton_eq_top]
-  exact ε.isUnit
-
+include hy in
 lemma gcd_m_p_pow_eq_one : gcd 𝔪 (𝔭 ^ (m + 1)) = 1 := by
   rw [← Ideal.isCoprime_iff_gcd, IsCoprime.pow_right_iff, Ideal.isCoprime_iff_gcd,
     gcd_zeta_sub_one_eq_one hζ hy]
   simp only [add_pos_iff, or_true, one_pos]
 
-
+include hζ m hy e in
 lemma m_dvd_z : 𝔪 ∣ 𝔷 := by
   rw [← one_mul 𝔷, ← gcd_m_p_pow_eq_one hζ hy (x := x) (m := m)]
   apply dvd_gcd_mul_of_dvd_mul
@@ -227,7 +254,7 @@ lemma prod_c : ∏ η in Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (�
     Finset.prod_mul_distrib, Finset.prod_const, Finset.card_attach,
     hζ.unit'_coe.card_nthRootsFinset] at e'
   rw [← mul_right_inj'
-    ((pow_ne_zero_iff hpri.out.ne_zero).mpr (m_ne_zero hζ e hy) : _),
+    ((pow_ne_zero_iff hpri.out.ne_zero).mpr (m_ne_zero hζ hy) : _),
     ← mul_left_inj' ((pow_ne_zero_iff hpri.out.ne_zero).mpr (p_ne_zero hζ) : _), e',
     exists_ideal_pow_eq_c_aux]
 
@@ -256,7 +283,7 @@ lemma c_div_principal_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
   simp_rw [← m_mul_c_mul_p hp hζ e hy, FractionalIdeal.coeIdeal_mul]
   rw [mul_div_mul_right, mul_div_mul_left]
   · rw [← FractionalIdeal.coeIdeal_bot, (FractionalIdeal.coeIdeal_injective' le_rfl).ne_iff]
-    exact m_ne_zero hζ e hy
+    exact m_ne_zero hζ hy
   · rw [← FractionalIdeal.coeIdeal_bot, (FractionalIdeal.coeIdeal_injective' le_rfl).ne_iff]
     exact p_ne_zero hζ
 
@@ -266,14 +293,6 @@ lemma c_div_principal (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
     FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.spanSingleton_div_spanSingleton,
     FractionalIdeal.coe_spanSingleton]
   exact ⟨⟨_, rfl⟩⟩
-
-lemma a_div_principal (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
-    Submodule.IsPrincipal ((𝔞 η₁ / 𝔞 η₂ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) := by
-  apply isPrincipal_of_isPrincipal_pow_of_Coprime' _ hreg
-  /- the line above is where we use the p is regular.-/
-  rw [div_pow, ← FractionalIdeal.coeIdeal_pow, ← FractionalIdeal.coeIdeal_pow,
-    root_div_zeta_sub_one_dvd_gcd_spec, root_div_zeta_sub_one_dvd_gcd_spec]
-  exact c_div_principal hp hζ e hy η₁ η₂
 
 noncomputable
 def zeta_sub_one_dvd_root : nthRootsFinset p (𝓞 K) :=
@@ -303,6 +322,10 @@ lemma p_pow_dvd_c_eta_zero_aux [DecidableEq (𝓞 K)] :
     simp only [Finset.mem_sdiff, Finset.mem_singleton] at hη
     exact hη.2 h
 
+lemma p_dvd_a_iff : 𝔭 ∣ 𝔞 η ↔ η = η₀ := by
+  rw [← p_dvd_c_iff hp hζ e hy, ← root_div_zeta_sub_one_dvd_gcd_spec,
+    hζ.prime_span_sub_one.dvd_pow_iff_dvd hpri.out.ne_zero]
+
 /- all the powers of 𝔭 have to be in 𝔠 η₀-/
 lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
   classical
@@ -311,10 +334,6 @@ lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
     prod_c, mul_pow]
   apply dvd_mul_of_dvd_right
   rw [pow_mul]
-
-lemma p_dvd_a_iff : 𝔭 ∣ 𝔞 η ↔ η = η₀ := by
-  rw [← p_dvd_c_iff hp hζ e hy, ← root_div_zeta_sub_one_dvd_gcd_spec,
-    hζ.prime_span_sub_one.dvd_pow_iff_dvd hpri.out.ne_zero]
 
 /- since the is only one 𝔞 η which is divisble by 𝔭 it has to be the η₀ one and it has to divide
 to 𝔭^m power.-/
@@ -332,6 +351,7 @@ local notation "𝔞₀" => a_eta_zero_dvd_p_pow hp hζ e hy
 lemma a_eta_zero_dvd_p_pow_spec : 𝔭 ^ m * 𝔞₀ = 𝔞 η₀ :=
 (p_pow_dvd_a_eta_zero hp hζ e hy).choose_spec.symm
 
+include hz in
 lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
   intro h
   have := pow_dvd_pow_of_dvd (mul_dvd_mul (dvd_refl (𝔭 ^ m)) h) p
@@ -347,6 +367,7 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
     rw [Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
     exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
+include hp hζ e hy hz in
 lemma one_le_m : 1 ≤ m := by
   have ha := not_p_div_a_zero hp hζ e hy hz
   rw [← hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff] at ha
@@ -355,9 +376,38 @@ lemma one_le_m : 1 ≤ m := by
   nth_rw 1 [← pow_one 𝔭] at this
   rwa [← pow_dvd_pow_iff (p_ne_zero hζ) hζ.prime_span_sub_one.not_unit]
 
+include hp in
+lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
+    (h : (p : 𝓞 K) ∣ ε₁ * x ^ (p : ℕ) + ε₂ * y ^ (p : ℕ)) :
+    ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ (p : ℕ) := by
+  letI : Fact (Nat.Prime p) := hpri
+  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hx
+  have : (p : 𝓞 K) ∣ b * x - 1 := by use -a ; rw [← e]; ring
+  have := (this.trans (sub_one_dvd_pow_sub_one _ p)).trans (dvd_mul_left _ ↑(ε₁ / ε₂))
+  use - y * b
+  replace h := (h.trans (dvd_mul_right _ (b ^ (p : ℕ)))).trans (dvd_mul_left _ ↑(ε₂⁻¹))
+  rw [add_mul, mul_assoc, mul_assoc, ← mul_pow, ← mul_pow, mul_add] at h
+  simp_rw [← mul_assoc, ← Units.val_mul] at h
+  rw [← mul_comm ε₁, ← div_eq_mul_inv, inv_mul_cancel, Units.val_one, one_mul] at h
+  convert dvd_sub h this using 1
+  rw [neg_mul, (Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp)).neg_pow,
+    sub_neg_eq_add, mul_sub, mul_one, mul_comm x b, add_sub_sub_cancel, add_comm]
+
+variable [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
+
+include hreg in
+lemma a_div_principal (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
+    Submodule.IsPrincipal ((𝔞 η₁ / 𝔞 η₂ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) := by
+  apply isPrincipal_of_isPrincipal_pow_of_Coprime' _ hreg
+  /- the line above is where we use the p is regular.-/
+  rw [div_pow, ← FractionalIdeal.coeIdeal_pow, ← FractionalIdeal.coeIdeal_pow,
+    root_div_zeta_sub_one_dvd_gcd_spec, root_div_zeta_sub_one_dvd_gcd_spec]
+  exact c_div_principal hp hζ e hy η₁ η₂
+
+include hreg in
 lemma isPrincipal_a_div_a_zero :
     Submodule.IsPrincipal ((𝔞 η / 𝔞₀ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) := by
-  have := a_div_principal hp hreg hζ e hy η η₀
+  have := a_div_principal hp hζ e hy hreg η η₀
   rw [← a_eta_zero_dvd_p_pow_spec, mul_comm, FractionalIdeal.coeIdeal_mul, ← div_div,
    FractionalIdeal.isPrincipal_iff] at this
   obtain ⟨a, ha⟩ := this
@@ -371,42 +421,45 @@ lemma isPrincipal_a_div_a_zero :
     rw [Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
     exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
+include hz hreg in
 lemma exists_not_dvd_spanSingleton_eq_a_div_a_zero (hη : η ≠ η₀) :
     ∃ a b : 𝓞 K, ¬ π ∣ a ∧ ¬ π ∣ b ∧
       FractionalIdeal.spanSingleton (𝓞 K)⁰ (a / b : K) = 𝔞 η / 𝔞₀ := by
   haveI : Fact (Nat.Prime p) := hpri
   exact exists_not_dvd_spanSingleton_eq hζ.zeta_sub_one_prime'
     _ _ ((p_dvd_a_iff hp hζ e hy η).not.mpr hη) (not_p_div_a_zero hp hζ e hy hz)
-      (isPrincipal_a_div_a_zero hp hreg hζ e hy η)
+      (isPrincipal_a_div_a_zero hp hζ e hy η hreg)
 
 noncomputable
 def a_div_a_zero_num (hη : η ≠ η₀) : 𝓞 K :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hreg hζ e hy hz η hη).choose
+(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose
 
 noncomputable
 def a_div_a_zero_denom (hη : η ≠ η₀) : 𝓞 K :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hreg hζ e hy hz η hη).choose_spec.choose
+(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose
 
-local notation "α" => a_div_a_zero_num hp hreg hζ e hy hz
-local notation "β" => a_div_a_zero_denom hp hreg hζ e hy hz
+local notation "α" => fun η ↦ a_div_a_zero_num hp hζ e hy hz η hreg
+local notation "β" => fun η ↦ a_div_a_zero_denom hp hζ e hy hz η hreg
 
+include hreg in
 lemma a_div_a_zero_num_spec (hη : η ≠ η₀) : ¬ π ∣ α η hη :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hreg hζ e hy hz η hη).choose_spec.choose_spec.1
+(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.1
 
+include hreg in
 lemma a_div_a_zero_denom_spec (hη : η ≠ η₀) : ¬ π ∣ β η hη :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hreg hζ e hy hz η hη).choose_spec.choose_spec.2.1
+(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.2.1
 
 /- eqn 7.8 of Borevich-Shafarevich-/
 lemma a_div_a_zero_eq (hη : η ≠ η₀) :
     FractionalIdeal.spanSingleton (𝓞 K)⁰ (α η hη / β η hη : K) = 𝔞 η / 𝔞₀ :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hreg hζ e hy hz η hη).choose_spec.choose_spec.2.2
+(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.2.2
 
 lemma a_mul_denom_eq_a_zero_mul_num (hη : η ≠ η₀) :
     𝔞 η * Ideal.span {β η hη} = 𝔞₀ * Ideal.span {α η hη} := by
   apply FractionalIdeal.coeIdeal_injective (K := K)
   simp only [FractionalIdeal.coeIdeal_mul, FractionalIdeal.coeIdeal_span_singleton]
   rw [mul_comm (𝔞₀ : FractionalIdeal (𝓞 K)⁰ K), ← div_eq_div_iff,
-    ← a_div_a_zero_eq hp hreg hζ e hy hz η hη, FractionalIdeal.spanSingleton_div_spanSingleton]
+    ← a_div_a_zero_eq hp hζ e hy hz η hreg hη, FractionalIdeal.spanSingleton_div_spanSingleton]
   · intro ha
     rw [FractionalIdeal.coeIdeal_eq_zero] at ha
     apply not_p_div_a_zero hp hζ e hy hz
@@ -415,7 +468,8 @@ lemma a_mul_denom_eq_a_zero_mul_num (hη : η ≠ η₀) :
   · rw [Ne, FractionalIdeal.spanSingleton_eq_zero_iff, ← (algebraMap (𝓞 K) K).map_zero,
       (IsFractionRing.injective (𝓞 K) K).eq_iff]
     intro hβ
-    apply a_div_a_zero_denom_spec hp hreg hζ e hy hz η hη
+    apply a_div_a_zero_denom_spec hp hζ e hy hz η hreg hη
+    simp only
     rw [hβ]
     exact dvd_zero _
 
@@ -433,27 +487,14 @@ lemma associated_eta_zero (hη : η ≠ η₀) :
 
 noncomputable
 def associated_eta_zero_unit (hη : η ≠ η₀) : (𝓞 K)ˣ :=
-(associated_eta_zero hp hreg hζ e hy hz η hη).choose
+(associated_eta_zero hp hζ e hy hz η hreg hη).choose
 
-local notation "ε" => associated_eta_zero_unit hp hreg hζ e hy hz
+local notation "ε" => fun η ↦ associated_eta_zero_unit hp hζ e hy hz η hreg
 
 lemma associated_eta_zero_unit_spec (η) (hη : η ≠ η₀) :
     ε η hη * (x + y * η₀) * α η hη ^ (p : ℕ) = (x + y * η) * π ^ (m * p) * β η hη ^ (p : ℕ) := by
   rw [mul_assoc, mul_comm (ε η hη : 𝓞 K)]
-  exact (associated_eta_zero hp hreg hζ e hy hz η hη).choose_spec
-
-lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
-  intro hη
-  have : x + y * η ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
-    rw [pow_add_pow_eq_prod_add_zeta_runity_mul
-      (hpri.out.eq_two_or_odd.resolve_left (PNat.coe_injective.ne hp)) hζ.unit'_coe]
-    simp_rw [mul_comm _ y]
-    exact Finset.dvd_prod_of_mem _ η.prop
-  rw [hη, zero_dvd_iff, e] at this
-  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff p.ne_zero, add_pos_iff, or_true, false_or]
-    at this
-  rw [this.resolve_left (pow_ne_zero (m + 1) (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt))] at hz
-  exact hz (dvd_zero _)
+  exact (associated_eta_zero hp hζ e hy hz η hreg hη).choose_spec
 
 lemma formula (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η₀) :
   (η₂ - η₀ : 𝓞 K) * ε η₁ hη₁ * (α η₁ hη₁ * β η₂ hη₂) ^ (p : ℕ) +
@@ -468,6 +509,7 @@ lemma formula (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η�
   congr 1
   ring
 
+include hreg e hy hz hp in
 lemma exists_solution :
     ∃ (x' y' z' : 𝓞 K) (ε₁ ε₂ ε₃ : (𝓞 K)ˣ), ¬ π ∣ x' ∧ ¬ π ∣ y' ∧ ¬ π ∣ z' ∧
       ε₁ * x' ^ (p : ℕ) + ε₂ * y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
@@ -502,42 +544,27 @@ lemma exists_solution :
     (Subtype.coe_injective.ne_iff.mpr hη₁.symm)
   obtain ⟨u₃, hu₃⟩ := hζ.unit'_coe.associated_sub_one hpri.out η₂.prop (η₁ : _).prop
     (Subtype.coe_injective.ne_iff.mpr hη)
-  have := formula hp hreg hζ e hy hz η₁ hη₁ η₂ hη₂
+  have := formula hp hζ e hy hz hreg η₁ hη₁ η₂ hη₂
   rw [← hu₁, ← hu₂, ← hu₃, mul_assoc _ (u₁ : 𝓞 K), mul_assoc _ (u₂ : 𝓞 K), mul_assoc _ (u₃ : 𝓞 K),
     mul_assoc (π), mul_assoc (π), ← mul_add,
     mul_right_inj' (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt), ← Units.val_mul,
     ← Units.val_mul] at this
   refine ⟨_, _, _, _, _, _, ?_, ?_, ?_, this⟩
   · exact hζ.zeta_sub_one_prime'.not_dvd_mul
-      (a_div_a_zero_num_spec hp hreg hζ e hy hz η₁ hη₁)
-      (a_div_a_zero_denom_spec hp hreg hζ e hy hz η₂ hη₂)
+      (a_div_a_zero_num_spec hp hζ e hy hz η₁ hreg hη₁)
+      (a_div_a_zero_denom_spec hp hζ e hy hz η₂ hreg hη₂)
   · exact hζ.zeta_sub_one_prime'.not_dvd_mul
-      (a_div_a_zero_num_spec hp hreg hζ e hy hz η₂ hη₂)
-      (a_div_a_zero_denom_spec hp hreg hζ e hy hz η₁ hη₁)
+      (a_div_a_zero_num_spec hp hζ e hy hz η₂ hreg hη₂)
+      (a_div_a_zero_denom_spec hp hζ e hy hz η₁ hreg hη₁)
   · exact hζ.zeta_sub_one_prime'.not_dvd_mul
-      (a_div_a_zero_denom_spec hp hreg hζ e hy hz η₁ hη₁)
-      (a_div_a_zero_denom_spec hp hreg hζ e hy hz η₂ hη₂)
+      (a_div_a_zero_denom_spec hp hζ e hy hz η₁ hreg hη₁)
+      (a_div_a_zero_denom_spec hp hζ e hy hz η₂ hreg hη₂)
 
-lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
-    (h : (p : 𝓞 K) ∣ ε₁ * x ^ (p : ℕ) + ε₂ * y ^ (p : ℕ)) :
-    ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ (p : ℕ) := by
-  letI : Fact (Nat.Prime p) := hpri
-  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hx
-  have : (p : 𝓞 K) ∣ b * x - 1 := by use -a ; rw [← e]; ring
-  have := (this.trans (sub_one_dvd_pow_sub_one _ p)).trans (dvd_mul_left _ ↑(ε₁ / ε₂))
-  use - y * b
-  replace h := (h.trans (dvd_mul_right _ (b ^ (p : ℕ)))).trans (dvd_mul_left _ ↑(ε₂⁻¹))
-  rw [add_mul, mul_assoc, mul_assoc, ← mul_pow, ← mul_pow, mul_add] at h
-  simp_rw [← mul_assoc, ← Units.val_mul] at h
-  rw [← mul_comm ε₁, ← div_eq_mul_inv, inv_mul_self, Units.val_one, one_mul] at h
-  convert dvd_sub h this using 1
-  rw [neg_mul, (Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp)).neg_pow,
-    sub_neg_eq_add, mul_sub, mul_one, mul_comm x b, add_sub_sub_cancel, add_comm]
-
+include hp hreg e hy hz in
 lemma exists_solution' :
     ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
       ¬ π ∣ y' ∧ ¬ π ∣ z' ∧ x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
-  obtain ⟨x', y', z', ε₁, ε₂, ε₃, hx', hy', hz', e'⟩ := exists_solution hp hreg hζ e hy hz
+  obtain ⟨x', y', z', ε₁, ε₂, ε₃, hx', hy', hz', e'⟩ := exists_solution hp hζ e hy hz hreg
   obtain ⟨ε', hε'⟩ : ∃ ε', ε₁ / ε₂ = ε' ^ (p : ℕ) := by
     apply eq_pow_prime_of_unit_of_congruent hp hreg --this is Kummers
     have : p - 1 ≤ m * p := (Nat.sub_le _ _).trans

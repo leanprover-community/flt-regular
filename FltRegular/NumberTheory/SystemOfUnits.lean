@@ -13,10 +13,12 @@ open FiniteDimensional BigOperators Finset
 open CyclotomicIntegers(zeta)
 
 variable
-  (G : Type*) {H : Type*} [AddCommGroup G] (r : ℕ) [Module.Free ℤ G]
+  (G : Type*) {H : Type*} [AddCommGroup G] (r : ℕ)
   (hf : finrank ℤ G = r * (p - 1))
 
 local notation "A" => (CyclotomicIntegers (PNat.val p))
+
+section
 
 variable [Module (CyclotomicIntegers p) G]
 
@@ -43,6 +45,8 @@ theorem _root_.finrank_span_set_eq_card' {R M} [CommRing R] [AddCommGroup M] [Mo
       have : Module.rank R (span R s) = #s := rank_span_set hs
       rwa [Cardinal.mk_fintype, ← Set.toFinset_card] at this)
 
+include hp
+
 lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
     finrank ℤ (Submodule.span A (Set.range f)) = (p - 1) * R := by
   classical
@@ -56,8 +60,9 @@ lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
   have := Module.Finite.of_basis (Basis.span hf)
   rw [finrank_mul_finrank]
 
+include hf
 
-lemma ex_not_mem {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
+lemma ex_not_mem [Module.Free ℤ G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
     ∃ g, ∀ (k : ℤ), k ≠ 0 → ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
   have := Fact.mk hp
   have : Module.Finite ℤ G := Module.finite_of_finrank_pos
@@ -67,6 +72,16 @@ lemma ex_not_mem {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
   show finrank ℤ (Submodule.span A _) < _
   rw [finrank_spanA p hp G S.units S.linearIndependent, hf, mul_comm]
   exact Nat.mul_lt_mul_of_lt_of_le hR rfl.le hp.pred_pos
+
+end systemOfUnits
+
+end
+
+namespace systemOfUnits
+
+include hp hf
+
+variable [Module.Free ℤ G]
 
 lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
         Nonempty (systemOfUnits p G (R + 1)) := by

@@ -13,14 +13,16 @@ import Mathlib.RingTheory.DedekindDomain.Dvr
 
 section LocalRing
 
-variable {R S} [CommRing R] [CommRing S] [Algebra R S] [LocalRing R] [Module.Free R S]
-  [Module.Finite R S] {p : Ideal R} [p.IsMaximal] [LocalRing R]
+variable {R S} [CommRing R] [CommRing S] [Algebra R S] [Module.Finite R S] {p : Ideal R}
+  [p.IsMaximal]
 
 open LocalRing FiniteDimensional
 
 local notation "p" => maximalIdeal R
 local notation "pS" => Ideal.map (algebraMap R S) (maximalIdeal R)
 attribute [local instance] Ideal.Quotient.field
+
+variable [LocalRing R]
 
 theorem quotient_span_eq_top_iff_span_eq_top_of_localRing (s : Set S) :
     Submodule.span (R ⧸ p) ((Ideal.Quotient.mk (I := pS)) '' s) = ⊤ ↔
@@ -47,6 +49,8 @@ theorem quotient_span_eq_top_iff_span_eq_top_of_localRing (s : Set S) :
     change _ = LinearMap.range (Ideal.Quotient.mkₐ _ _) at H
     rwa [LinearMap.range_eq_top.mpr (Ideal.Quotient.mkₐ_surjective _ _),
       Submodule.restrictScalars_eq_top_iff] at H
+
+variable [Module.Free R S]
 
 theorem finrank_quotient_map_of_localRing :
     finrank (R ⧸ p) (S ⧸ pS) = finrank R S := by
@@ -116,7 +120,7 @@ end LocalRing
 section IsDedekindDomain
 
 variable {R S} [CommRing R] [CommRing S] [Algebra R S] {p : Ideal R} [p.IsMaximal]
-variable {Rₚ Sₚ} [CommRing Rₚ] [CommRing Sₚ] [Algebra R Rₚ] [IsLocalization.AtPrime Rₚ p]
+variable {Rₚ Sₚ} [CommRing Rₚ] [Algebra R Rₚ] [IsLocalization.AtPrime Rₚ p]
 variable [LocalRing Rₚ] [CommRing Sₚ] [Algebra S Sₚ] [Algebra R Sₚ] [Algebra Rₚ Sₚ]
 variable [IsLocalization (Algebra.algebraMapSubmonoid S p.primeCompl) Sₚ]
 variable [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ]
@@ -148,7 +152,7 @@ def equivQuotMaximalIdealOfIsLocalization : R ⧸ p ≃+* Rₚ ⧸ maximalIdeal 
     rw [mul_sub, IsLocalization.mul_mk'_eq_mk'_of_mul, IsLocalization.mk'_mul_cancel_left,
       ← map_mul, ← map_sub, ← Ideal.mem_comap, IsLocalization.AtPrime.comap_maximalIdeal Rₚ p,
       mul_left_comm,
-      ← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_mul, map_mul, hs, mul_inv_cancel, mul_one,
+      ← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_mul, map_mul, hs, mul_inv_cancel₀, mul_one,
       sub_self]
     rw [Ne, Ideal.Quotient.eq_zero_iff_mem]
     exact s.prop
@@ -181,7 +185,7 @@ lemma comap_map_eq_map_of_isLocalization_algebraMapSubmonoid :
     obtain ⟨β, hβ⟩ := Ideal.Quotient.mk_surjective (I := p) (Ideal.Quotient.mk p α)⁻¹
     refine ⟨β, β * α - 1, ?_, ?_⟩
     · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one,
-        map_mul, hβ, inv_mul_cancel, sub_self]
+        map_mul, hβ, inv_mul_cancel₀, sub_self]
       rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
     · rw [add_sub_cancel]
   have := Ideal.mul_mem_left _ (algebraMap _ _ β) hαx
@@ -212,7 +216,7 @@ def quotMapEquivQuotMapMaximalIdealOfIsLocalization : S ⧸ pS ≃+* Sₚ ⧸ pS
       obtain ⟨β, hβ⟩ := Ideal.Quotient.mk_surjective (I := p) (Ideal.Quotient.mk p α)⁻¹
       refine ⟨β, α * β - 1, ?_, ?_⟩
       · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_one,
-          map_mul, hβ, mul_inv_cancel, sub_self]
+          map_mul, hβ, mul_inv_cancel₀, sub_self]
         rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
       · rw [add_sub_cancel]
     use β • x

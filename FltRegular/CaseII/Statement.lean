@@ -11,6 +11,7 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
 namespace FltRegular
 
+include hp hreg in
 lemma not_exists_solution (hm : 1 ≤ m) :
   ¬∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
     ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
@@ -19,8 +20,9 @@ lemma not_exists_solution (hm : 1 ≤ m) :
   · rintro ⟨x, y, z, ε₃, hy, hz, e⟩
     exact zero_lt_one.not_le (one_le_m hp hζ e hy hz)
   · rintro ⟨x, y, z, ε₃, hy, hz, e⟩
-    exact IH (exists_solution' hp hreg hζ e hy hz)
+    exact IH (exists_solution' hp hζ e hy hz hreg)
 
+include hp hreg in
 lemma not_exists_solution' :
   ¬∃ (x y z : 𝓞 K), ¬(hζ.unit' : 𝓞 K) - 1 ∣ y ∧ (hζ.unit' : 𝓞 K) - 1 ∣ z ∧ z ≠ 0 ∧
     x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ) := by

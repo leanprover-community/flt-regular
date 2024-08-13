@@ -10,14 +10,7 @@ open scoped BigOperators NumberField
 
 namespace FltRegular
 
-variable {p : ℕ} [hpri : Fact p.Prime]
-
-set_option quotPrecheck false
-local notation "P" => (⟨p, hpri.out.pos⟩ : ℕ+)
-
-local notation "K" => CyclotomicField P ℚ
-
-local notation "R" => 𝓞 K
+variable {p : ℕ}
 
 namespace CaseI
 
@@ -94,6 +87,48 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
     rcases hx with (H | H | H) <;> simpa [H]
   rw [hgcd] at Hq
   exact hqpri.not_unit (isUnit_of_dvd_one Hq)
+
+/-- Auxiliary function -/
+def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>
+  if x = 0 then a else if x = 1 then b else if x = k₁ then -a else if x = k₂ then -b else 0
+
+theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
+    ∃ i ∈ range p, f a b k₁ k₂ (i : ℕ) = 0 := by
+  have h0 : 0 < p := by linarith
+  have h1 : 1 < p := by linarith
+  let s := ({0, 1, k₁.1, k₂.1} : Finset ℕ)
+  have : s.card ≤ 4 := by
+    repeat refine le_trans (card_insert_le _ _) (succ_le_succ ?_)
+    exact rfl.ge
+  replace this : s.card < 5 := lt_of_le_of_lt this (by norm_num)
+  have hs : s ⊆ range p := insert_subset_iff.2 ⟨mem_range.2 h0, insert_subset_iff.2
+    ⟨mem_range.2 h1, insert_subset_iff.2 ⟨mem_range.2 (Fin.is_lt _),
+    singleton_subset_iff.2 (mem_range.2 (Fin.is_lt _))⟩⟩⟩
+  have hcard := card_sdiff hs
+  replace hcard : (range p \ s).Nonempty := by
+    rw [← Finset.card_pos, hcard, card_range]
+    exact Nat.sub_pos_of_lt (lt_of_lt_of_le this hp5)
+  obtain ⟨i, hi⟩ := hcard
+  refine ⟨i, sdiff_subset hi, ?_⟩
+  have hi0 : i ≠ 0 := fun h => by simp [h, s] at hi
+  have hi1 : i ≠ 1 := fun h => by simp [h, s] at hi
+  have hik₁ : i ≠ k₁ := fun h => by simp [h, s] at hi
+  have hik₂ : i ≠ k₂ := fun h => by simp [h, s] at hi
+  simp [f, hi0, hi1, hik₁, hik₂]
+
+theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f a b k₁ k₂ (i : ℕ) = 0 :=
+  by
+  obtain ⟨i, hrange, hi⟩ := auxf' hp5 a b k₁ k₂
+  exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
+
+variable [hpri : Fact p.Prime]
+
+set_option quotPrecheck false
+local notation "P" => (⟨p, hpri.out.pos⟩ : ℕ+)
+
+local notation "K" => CyclotomicField P ℚ
+
+local notation "R" => 𝓞 K
 
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1)
@@ -185,39 +220,6 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
       zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,
       Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, Int.cast_natCast, Int.cast_one, sub_self]
-
-/-- Auxiliary function -/
-def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>
-  if x = 0 then a else if x = 1 then b else if x = k₁ then -a else if x = k₂ then -b else 0
-
-theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
-    ∃ i ∈ range p, f a b k₁ k₂ (i : ℕ) = 0 := by
-  have h0 : 0 < p := by linarith
-  have h1 : 1 < p := by linarith
-  let s := ({0, 1, k₁.1, k₂.1} : Finset ℕ)
-  have : s.card ≤ 4 := by
-    repeat refine le_trans (card_insert_le _ _) (succ_le_succ ?_)
-    exact rfl.ge
-  replace this : s.card < 5 := lt_of_le_of_lt this (by norm_num)
-  have hs : s ⊆ range p := insert_subset_iff.2 ⟨mem_range.2 h0, insert_subset_iff.2
-    ⟨mem_range.2 h1, insert_subset_iff.2 ⟨mem_range.2 (Fin.is_lt _),
-    singleton_subset_iff.2 (mem_range.2 (Fin.is_lt _))⟩⟩⟩
-  have hcard := card_sdiff hs
-  replace hcard : (range p \ s).Nonempty := by
-    rw [← Finset.card_pos, hcard, card_range]
-    exact Nat.sub_pos_of_lt (lt_of_lt_of_le this hp5)
-  obtain ⟨i, hi⟩ := hcard
-  refine ⟨i, sdiff_subset hi, ?_⟩
-  have hi0 : i ≠ 0 := fun h => by simp [h, s] at hi
-  have hi1 : i ≠ 1 := fun h => by simp [h, s] at hi
-  have hik₁ : i ≠ k₁ := fun h => by simp [h, s] at hi
-  have hik₂ : i ≠ k₂ := fun h => by simp [h, s] at hi
-  simp [f, hi0, hi1, hik₁, hik₂]
-
-theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f a b k₁ k₂ (i : ℕ) = 0 :=
-  by
-  obtain ⟨i, hrange, hi⟩ := auxf' hp5 a b k₁ k₂
-  exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
 
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)

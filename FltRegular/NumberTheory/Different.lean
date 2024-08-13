@@ -28,13 +28,14 @@ variable [IsScalarTower A K L] [IsScalarTower A B L]
 variable [IsDomain A] [IsDomain B]
 variable [IsFractionRing A K] [IsIntegralClosure B A L] [IsFractionRing B L]
 variable [FiniteDimensional K L] [Algebra.IsSeparable K L]
-variable [IsIntegrallyClosed A] [IsDedekindDomain B] [IsFractionRing B L]
+variable [IsIntegrallyClosed A]
 
 open nonZeroDivisors IsLocalization Matrix Algebra
 
-variable [IsDedekindDomain A] [IsDedekindDomain B] [IsFractionRing B L]
+variable [IsDedekindDomain B]
 
-lemma pow_sub_one_dvd_differentIdeal_aux
+include K L in
+lemma pow_sub_one_dvd_differentIdeal_aux [IsDedekindDomain A]
     [NoZeroSMulDivisors A B] [Module.Finite A B]
     {p : Ideal A} [p.IsMaximal] (P : Ideal B) (e : ℕ) (he : e ≠ 0) (hp : p ≠ ⊥)
     (hP : P ^ e ∣ p.map (algebraMap A B)) : P ^ (e - 1) ∣ differentIdeal A B := by

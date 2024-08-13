@@ -16,6 +16,8 @@ variable {L} [Field L] [Algebra K L] [FiniteDimensional K L]
 variable [IsSplittingField K L (X ^ (p : ℕ) - C (u : K))]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
+include hp hreg
+
 theorem not_for_all_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
     (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (u : 𝓞 K) - 1) : ¬∀ v : K, v ^ (p : ℕ) ≠ u := by
   intro hu

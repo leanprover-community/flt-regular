@@ -10,7 +10,7 @@ open scoped nonZeroDivisors
 open FiniteDimensional Finset BigOperators Submodule groupCohomology
 
 variable {K L : Type*} [Field K] [Field L] [Algebra K L]
-variable [IsGalois K L] [FiniteDimensional K L]
+variable [FiniteDimensional K L]
 variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 variable {η : L} (hη : Algebra.norm K η = 1)
 
@@ -28,7 +28,8 @@ lemma hφ : ∀ (n : ℕ), φ σ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n
 noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ, hσ τ⟩), Units.map (σ ^ i) (ηu hη)
 
-lemma aux1 {a: ℕ} (h : a % orderOf σ = 0) :
+include hσ in
+lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) :
     ∏ i in range a, (σ ^ i) (ηu hη) = 1 := by
   obtain ⟨n, hn⟩ := (Nat.dvd_iff_mod_eq_zero _ _).2 h
   rw [hn]
@@ -53,7 +54,8 @@ lemma aux1 {a: ℕ} (h : a % orderOf σ = 0) :
       simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
       rfl
 
-lemma aux2 {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
+include hσ in
+lemma aux2 [IsGalois K L] {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
     ∏ i in range a, (σ ^ i) (ηu hη) = ∏ i in range b, (σ ^ i) (ηu hη) := by
   wlog hab : b ≤ a generalizing a b
   · exact (this h.symm (not_le.1 hab).le).symm
@@ -84,7 +86,7 @@ lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ hη) σ = (ηu hη) 
   simp only [cocycle, SetLike.coe_sort_coe, horder, this, range_one, prod_singleton, pow_zero]
   rfl
 
-lemma is_cocycle_aux : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
+lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
     α ((cocycle hσ hη) β) * (cocycle hσ hη) α := by
   intro α β
   have hσmon : ∀ x, x ∈ Submonoid.powers σ := by
@@ -106,11 +108,12 @@ lemma is_cocycle_aux : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β
   rw [← prod_range_add (fun (n : ℕ) ↦ (σ ^ n) (ηu hη)) (a % orderOf σ) (b % orderOf σ)]
   simpa using aux2 hσ hη (by simp)
 
-lemma is_cocycle : IsMulOneCocycle (cocycle hσ hη) := by
+lemma is_cocycle [IsGalois K L] : IsMulOneCocycle (cocycle hσ hη) := by
   intro α β
   simp [← Units.eq_iff, is_cocycle_aux hσ hη α β]
 
-lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
+include hη hσ in
+lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
   by_cases hone : orderOf σ = 1
   · suffices finrank K L = 1 by
       obtain ⟨a, ha⟩ := mem_span_singleton.1 <| (eq_top_iff'.1 <|
@@ -136,15 +139,14 @@ lemma Hilbert90 : ∃ ε : L, η = ε / σ ε := by
 
 variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
 variable [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K] [IsDomain A]
-variable [IsIntegralClosure B A L] [IsDomain B]
+variable [IsIntegralClosure B A L]
 
-lemma Hilbert90_integral (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
-    (η : B) (hη : Algebra.norm K (algebraMap B L η) = 1) :
+lemma Hilbert90_integral [IsGalois K L] (σ : L ≃ₐ[K] L)
+    (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (η : B) (hη : Algebra.norm K (algebraMap B L η) = 1) :
     ∃ ε : B, ε ≠ 0 ∧ η * galRestrict A K L B σ ε = ε := by
   haveI : NoZeroSMulDivisors A L := by
     rw [NoZeroSMulDivisors.iff_algebraMap_injective, IsScalarTower.algebraMap_eq A K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective A K)
-  haveI := IsIntegralClosure.isFractionRing_of_finite_extension A K L B
   have : IsLocalization (Algebra.algebraMapSubmonoid B A⁰) L :=
     IsIntegralClosure.isLocalization A K L B
   obtain ⟨ε, hε⟩ := Hilbert90 hσ hη

@@ -5,15 +5,15 @@ import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
 open scoped NumberField BigOperators
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
-  [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2)
+variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
   (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ (p : ℕ) ≠ u)
 
 open Polynomial
 
-lemma zeta_sub_one_pow_dvd_poly :
+include hcong hp in
+lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
     C ((hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ)) ∣
       (C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ (p : ℕ) + C (u : 𝓞 K) := by
   rw [← dvd_sub_left (_root_.map_dvd C hcong), add_sub_assoc, C.map_sub (u : 𝓞 K), ← sub_add,
@@ -23,13 +23,6 @@ lemma zeta_sub_one_pow_dvd_poly :
   exact mul_dvd_mul_right (associated_zeta_sub_one_pow_prime hζ).dvd _
 
 namespace KummersLemma
-
-noncomputable def poly : (𝓞 K)[X] := (zeta_sub_one_pow_dvd_poly hp hζ u hcong).choose
-
-lemma poly_spec :
-    C ((hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ)) * poly hp hζ u hcong =
-      (C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ (p : ℕ) + C (u : 𝓞 K) :=
-  (zeta_sub_one_pow_dvd_poly hp hζ u hcong).choose_spec.symm
 
 lemma natDegree_poly_aux :
     natDegree ((C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ (p : ℕ) + C (u : 𝓞 K)) = p := by
@@ -51,6 +44,15 @@ lemma monic_poly_aux :
     simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C, ite_true,
       coeff_one, ite_false, sub_zero]
     exact C_ne_zero.mpr (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
+
+variable [IsCyclotomicExtension {p} ℚ K]
+
+noncomputable def poly : (𝓞 K)[X] := (zeta_sub_one_pow_dvd_poly hp hζ u hcong).choose
+
+lemma poly_spec :
+    C ((hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ)) * poly hp hζ u hcong =
+      (C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ (p : ℕ) + C (u : 𝓞 K) :=
+  (zeta_sub_one_pow_dvd_poly hp hζ u hcong).choose_spec.symm
 
 lemma monic_poly : Monic (poly hp hζ u hcong) := by
   haveI : Fact (Nat.Prime p) := hpri
@@ -90,10 +92,11 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
     PNat.pos, pow_eq_zero_iff, this, mul_add]
   simp_rw [← smul_eq_mul K, ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
   rw [smul_C, smul_eq_mul, ← smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub, smul_C,
-    smul_eq_mul, mul_inv_cancel, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub, map_one]
+    smul_eq_mul, mul_inv_cancel₀, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub, map_one]
   · exact hζ.sub_one_ne_zero hpri.out.one_lt
   · exact pow_ne_zero _ (hζ.sub_one_ne_zero hpri.out.one_lt)
 
+include hu in
 lemma irreducible_map_poly :
     Irreducible ((poly hp hζ u hcong).map (algebraMap (𝓞 K) K)) := by
   rw [map_poly, ← irreducible_taylor_iff (r := 1 / (ζ - 1))]
@@ -121,7 +124,7 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
     hcoe, RingHom.coe_comp, RingHom.coe_coe, Subalgebra.coe_val, Function.comp_apply, e, hcoe1,
     map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ',
     sub_sub_cancel_left, (hpri.out.odd_of_ne_two (PNat.coe_injective.ne hp)).neg_pow] at this
-  rw [← pow_mul, mul_comm m, pow_mul, hζ.pow_eq_one, one_pow, one_smul, add_left_neg,
+  rw [← pow_mul, mul_comm m, pow_mul, hζ.pow_eq_one, one_pow, one_smul, neg_add_cancel,
     mul_eq_zero] at this
   exact this.resolve_left (pow_ne_zero _ hζ')
 
@@ -197,6 +200,7 @@ instance {K L} [Field K] [Field L] [Algebra K L] :
 instance {K L} [Field K] [Field L] [Algebra K L] :
     IsScalarTower (𝓞 K) (𝓞 L) L := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
 
+include hu in
 lemma minpoly_polyRoot'' {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (i) :
     minpoly K (polyRoot hp hζ u hcong α e i : L) =
@@ -209,6 +213,7 @@ lemma minpoly_polyRoot'' {L : Type*} [Field L] [Algebra K L] (α : L)
   rw [aeval_def, eval₂_map, ← IsScalarTower.algebraMap_eq, ← aeval_def]
   exact aeval_poly hp hζ u hcong α e i
 
+include hu in
 lemma minpoly_polyRoot' {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (i) :
     minpoly (𝓞 K) (polyRoot hp hζ u hcong α e i : L) = (poly hp hζ u hcong) := by
@@ -249,6 +254,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     mul_div_cancel_left₀ _ hζ']
   rfl
 
+include hu in
 open scoped KummerExtension in
 attribute [local instance] Ideal.Quotient.field in
 lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
@@ -276,7 +282,7 @@ lemma polyRoot_spec {L : Type*} [Field L] [Algebra K L] (α : L)
     Algebra.smul_def (ζ - 1), ← mul_div_assoc,
     mul_div_cancel_left₀ _
       ((hζ.map_of_injective (algebraMap K L).injective).sub_one_ne_zero hpri.out.one_lt),
-    sub_sub_cancel, smul_smul, inv_mul_cancel (pow_ne_zero _ <| hζ.ne_zero p.pos.ne.symm), one_smul]
+    sub_sub_cancel, smul_smul, inv_mul_cancel₀ (pow_ne_zero _ <| hζ.ne_zero p.pos.ne.symm), one_smul]
 
 lemma mem_adjoin_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (i) :
@@ -285,6 +291,7 @@ lemma mem_adjoin_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
   exact Subalgebra.smul_mem _ (sub_mem (one_mem _)
     (Subalgebra.smul_mem _ (Algebra.self_mem_adjoin_singleton K _) _)) _
 
+include hu hp hζ hcong in
 attribute [local instance] Ideal.Quotient.field in
 lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ (p : ℕ) - C (u : K))] :
     IsUnramified (𝓞 K) (𝓞 L) := by

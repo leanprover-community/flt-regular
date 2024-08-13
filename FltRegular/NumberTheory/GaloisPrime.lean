@@ -108,11 +108,11 @@ lemma prime_of_mem_primesOver [IsDedekindDomain S] [NoZeroSMulDivisors R S] {p :
 end primesOver
 
 variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
-    [IsDedekindDomain R] [Algebra R K] [IsFractionRing R K] [Algebra S L] -- [IsFractionRing S L]
-    [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L] -- [IsNoetherian R S]
+    [Algebra R K] [IsFractionRing R K] [Algebra S L]
+    [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L]
     [IsIntegralClosure S R L] [FiniteDimensional K L]
 
-lemma prod_galRestrictHom_eq_norm [IsGalois K L] (x) :
+lemma prod_galRestrictHom_eq_norm [IsDedekindDomain R] [IsGalois K L] (x) :
     (∏ σ : L ≃ₐ[K] L, galRestrictHom R K L S σ x) =
     algebraMap R S (IsIntegralClosure.mk' (R := R) R (Algebra.norm K <| algebraMap S L x)
       (Algebra.isIntegral_norm K (IsIntegralClosure.isIntegral R L x).algebraMap)) := by
@@ -146,7 +146,7 @@ lemma coe_smul_primesOver {p : Ideal R} (σ : L ≃ₐ[K] L) (P : primesOver S p
 
 open BigOperators
 
-instance [IsGalois K L] (p : Ideal R) :
+instance [IsDedekindDomain R] [IsGalois K L] (p : Ideal R) :
     MulAction.IsPretransitive (L ≃ₐ[K] L) (primesOver S p) := by
   -- Set up instances.
   have : IsDomain S :=
@@ -214,8 +214,8 @@ instance [IsGalois K L] (p : Ideal R) :
   exact dvd_rfl
   -- Which gives a contradiction and hence there is some `σ` such that `σ • P = Q`.
 
-lemma exists_comap_galRestrict_eq [IsGalois K L] {p : Ideal R} {P₁ P₂ : Ideal S}
-    (hP₁ : P₁ ∈ primesOver S p) (hP₂ : P₂ ∈ primesOver S p) :
+lemma exists_comap_galRestrict_eq [IsDedekindDomain R] [IsGalois K L] {p : Ideal R}
+    {P₁ P₂ : Ideal S} (hP₁ : P₁ ∈ primesOver S p) (hP₂ : P₂ ∈ primesOver S p) :
     ∃ σ, P₁.comap (galRestrict R K L S σ) = P₂ :=
 ⟨_, congr_arg Subtype.val (MulAction.exists_smul_eq (L ≃ₐ[K] L)
   (⟨P₁, hP₁⟩ : primesOver S p) ⟨P₂, hP₂⟩).choose_spec⟩
@@ -258,6 +258,8 @@ lemma Ideal.inertiaDegIn_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S
   exact inertiaDeg_algebraMap _ _
 
 variable {R S}
+
+variable [IsDedekindDomain R]
 
 lemma Ideal.ramificationIdxIn_eq_ramificationIdx [IsGalois K L] (p : Ideal R) (P : Ideal S)
     (hP : P ∈ primesOver S p) :

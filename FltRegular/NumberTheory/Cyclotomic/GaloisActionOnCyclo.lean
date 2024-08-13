@@ -46,12 +46,14 @@ theorem galConj_zeta : galConj K p (zeta p ℚ K) = (zeta p ℚ K)⁻¹ :=
   rw [IsPrimitiveRoot.powerBasis_gen, ZMod.val_neg_one' p.pos,
     pow_sub₀ _ (hζ.ne_zero p.ne_zero) p.pos, pow_one, hζ.pow_eq_one, one_mul]
 
+include hζ in
 @[simp]
 theorem galConj_zeta_runity : galConj K p ζ = ζ⁻¹ :=
   by
   obtain ⟨t, _, rfl⟩ := (zeta_spec p ℚ K).eq_pow_of_pow_eq_one hζ.pow_eq_one p.pos
   rw [map_pow, galConj_zeta, inv_pow]
 
+include hζ in
 theorem galConj_zeta_runity_pow (n : ℕ) : galConj K p (ζ ^ n) = ζ⁻¹ ^ n := by
   rw [map_pow, galConj_zeta_runity hζ]
 
@@ -61,6 +63,7 @@ theorem conj_norm_one (x : ℂ) (h : Complex.abs x = 1) : conj x = x⁻¹ := by
   rw [← Complex.abs_mul_exp_arg_mul_I x, h, Complex.ofReal_one, one_mul, ← Complex.exp_conj, ←
     Complex.exp_neg, map_mul, Complex.conj_I, mul_neg, Complex.conj_ofReal]
 
+include hζ in
 @[simp]
 theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K p x) := by
   change RingHom.comp conj φ x = (φ.comp <| ↑(galConj K p)) x

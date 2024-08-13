@@ -22,8 +22,8 @@ def IsPrimitiveRoot.unit' {p : ℕ+} {K : Type _} [Field K] {ζ : K} (hζ : IsPr
     (𝓞 K)ˣ where
   val := (⟨ζ, hζ.isIntegral p.pos⟩ : 𝓞 K)
   inv := (⟨ζ⁻¹, hζ.inv.isIntegral p.pos⟩ : 𝓞 K)
-  val_inv := Subtype.ext <| mul_inv_cancel <| hζ.ne_zero p.ne_zero
-  inv_val := Subtype.ext <| inv_mul_cancel <| hζ.ne_zero p.ne_zero
+  val_inv := Subtype.ext <| mul_inv_cancel₀ <| hζ.ne_zero p.ne_zero
+  inv_val := Subtype.ext <| inv_mul_cancel₀ <| hζ.ne_zero p.ne_zero
 
 set_option quotPrecheck false
 local notation "ζ1" => (hζ.unit' - 1 : 𝓞 K)
@@ -111,7 +111,7 @@ theorem totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : 
       h <;>
     simp [h]
 
-theorem eq_one_mod_one_sub {A : Type _} [CommRing A] {t : A} :
+theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
     algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 :=
   by
   rw [← map_one <| algebraMap A <| A ⧸ Ideal.span ({t - 1} : Set A), ← sub_eq_zero, ← map_sub,
@@ -119,7 +119,7 @@ theorem eq_one_mod_one_sub {A : Type _} [CommRing A] {t : A} :
   apply Ideal.subset_span
   exact Set.mem_singleton _
 
-theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type _} [CommRing A] [IsDomain A] {ζ : A}
+theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type*} [CommRing A] [IsDomain A] {ζ : A}
     (hζ : IsPrimitiveRoot ζ p) {μ : A} (hμ : μ ^ (p : ℕ) = 1) :
     (@DFunLike.coe _ A (fun _ => A ⧸ Ideal.span {ζ - 1}) _
       (algebraMap A (A ⧸ Ideal.span {ζ - 1})) μ) = 1 := by
