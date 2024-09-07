@@ -26,7 +26,7 @@ lemma FiniteDimensional.exists_finset_card_eq_finrank_and_linearIndependent :
   cases nonempty_fintype s
   exact ⟨s.toFinset,
     Cardinal.natCast_injective (by rwa [Set.toFinset_card, ← Cardinal.mk_fintype]),
-    by convert hs <;> simp only [Set.mem_toFinset]⟩
+    by convert hs using 2 <;> simp only [Set.mem_toFinset]⟩
 
 variable {R M}
 
@@ -45,10 +45,11 @@ lemma FiniteDimensional.finrank_add_finrank_quotient_le (N : Submodule R M) :
       Disjoint (Submodule.span R (Subtype.val '' (s : Set N))) (Submodule.span R (f '' t)) := by
     apply Disjoint.mono_left (Submodule.span_le.mpr Set.image_val_subset)
     rw [disjoint_iff, eq_bot_iff, ← @Subtype.range_val (M ⧸ N) t, ← Set.range_comp,
-      ← Finsupp.range_total]
+      ← Finsupp.range_linearCombination]
     rintro _ ⟨h, l, rfl⟩
     rw [SetLike.mem_coe, ← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply,
-      Finsupp.apply_total, ← Function.comp.assoc, show N.mkQ ∘ f = id from funext hf] at h
+      Finsupp.apply_linearCombination, ← Function.comp.assoc,
+      show N.mkQ ∘ f = id from funext hf] at h
     rw [linearIndependent_iff.mp ht' l h, map_zero]
     exact zero_mem _
   rw [← hs, ← ht, ← t.card_image_of_injective hf.injective,
@@ -122,8 +123,8 @@ lemma FiniteDimensional.finrank_add_finrank_quotient_of_free [IsDomain R] [IsPri
     rw [linearIndependent_iff]
     intros l hl
     ext i
-    rw [← Finsupp.apply_total, N.mkQ_apply, Submodule.Quotient.mk_eq_zero, Finsupp.total_apply,
-      Finsupp.sum_fintype _ _ (by simp)] at hl
+    rw [← Finsupp.apply_linearCombination, N.mkQ_apply, Submodule.Quotient.mk_eq_zero,
+      Finsupp.linearCombination_apply, Finsupp.sum_fintype _ _ (by simp)] at hl
     simpa only [Function.comp_apply, map_sum, map_smul, Basis.repr_self, Finsupp.smul_single,
       smul_eq_mul, mul_one, Finsupp.single_apply, Finsupp.finset_sum_apply,
       ← Subtype.ext_iff, Finset.sum_ite_eq', Finset.mem_univ, ite_true] using
@@ -191,6 +192,6 @@ lemma FiniteDimensional.exists_of_finrank_lt [IsDomain R] [IsPrincipalIdealRing 
   use v
   intro r hr
   have := linearIndependent_iff.mp hs' (Finsupp.single ⟨_, hv⟩ r)
-  rw [Finsupp.total_single, Finsupp.single_eq_zero, ← LinearMap.map_smul,
+  rw [Finsupp.linearCombination_single, Finsupp.single_eq_zero, ← LinearMap.map_smul,
     Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at this
   exact mt this hr

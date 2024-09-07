@@ -93,7 +93,7 @@ theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin P, f0k₂ a b (i : �
     simp only [Fin.ext_iff, Fin.val_mk] at h; contradiction
   have hzero : ((⟨2, two_lt hp5⟩ : Fin p) : ℕ) ≠ 0 := by
     intro h
-    simp only [Fin.ext_iff, Fin.val_mk] at h
+    simp [Fin.ext_iff, Fin.val_mk] at h
   simp only [f0k₂, h1, if_false, hzero, one_lt_two.ne']
 
 theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p) (hab : ¬a ≡ b [ZMOD p])

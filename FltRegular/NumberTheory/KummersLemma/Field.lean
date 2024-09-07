@@ -42,8 +42,9 @@ lemma monic_poly_aux :
     rw [natDegree_poly_aux hζ, coeff_C, if_neg p.pos.ne.symm]
   · rw [leadingCoeff_pow, ← C.map_one, leadingCoeff, natDegree_sub_C, natDegree_mul_X]
     simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C, ite_true,
-      coeff_one, ite_false, sub_zero]
+      coeff_one, ite_false, sub_zero, one_ne_zero, ↓reduceIte]
     exact C_ne_zero.mpr (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
+
 
 variable [IsCyclotomicExtension {p} ℚ K]
 
@@ -287,7 +288,7 @@ lemma polyRoot_spec {L : Type*} [Field L] [Algebra K L] (α : L)
 lemma mem_adjoin_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) (i) :
     α ∈ Algebra.adjoin K {(polyRoot hp hζ u hcong α e i : L)} := by
-  conv_lhs => rw [polyRoot_spec hp hζ u hcong α e i]
+  conv => enter [2]; rw [polyRoot_spec hp hζ u hcong α e i]
   exact Subalgebra.smul_mem _ (sub_mem (one_mem _)
     (Subalgebra.smul_mem _ (Algebra.self_mem_adjoin_singleton K _) _)) _
 

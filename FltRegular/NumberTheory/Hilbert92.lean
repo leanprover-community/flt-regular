@@ -67,8 +67,9 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
   classical
   rw [linearIndependent_iff] at hf ⊢
   intros l hl
-  have : (Finsupp.total ι G R f) (Finsupp.update (σ • l) i (l i)) = 0 := by
-    rw [← smul_zero σ, ← hl, Finsupp.total_apply, Finsupp.total_apply, Finsupp.smul_sum]
+  have : (Finsupp.linearCombination R f) (Finsupp.update (σ • l) i (l i)) = 0 := by
+    rw [← smul_zero σ, ← hl, Finsupp.linearCombination_apply, Finsupp.linearCombination_apply,
+      Finsupp.smul_sum]
     apply Finsupp.sum_congr'
     · intro x
       simp only [Finsupp.coe_update, Finsupp.coe_smul, Function.update_apply, ite_smul, smul_ite]
@@ -88,21 +89,21 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
 noncomputable
 def Finsupp.ltotal (α M R) [CommSemiring R] [AddCommMonoid M] [Module R M] :
     (α → M) →ₗ[R] (α →₀ R) →ₗ[R] M where
-  toFun := Finsupp.total α M R
+  toFun := Finsupp.linearCombination R
   map_add' := fun u v ↦ by ext f; simp
   map_smul' := fun r v ↦ by ext f; simp
 
 lemma Finsupp.total_pi_single {α M R} [CommSemiring R] [AddCommMonoid M] [Module R M]
     [DecidableEq α] (i : α) (m : M) (f : α →₀ R) :
-    Finsupp.total α M R (Pi.single i m) f = f i • m := by
-  simp only [Finsupp.total, ne_eq, Pi.single_apply, coe_lsum, LinearMap.coe_smulRight,
+    Finsupp.linearCombination R (Pi.single i m) f = f i • m := by
+  simp only [Finsupp.linearCombination, ne_eq, Pi.single_apply, coe_lsum, LinearMap.coe_smulRight,
     LinearMap.id_coe, id_eq, smul_ite, smul_zero, sum_ite_eq', mem_support_iff, ite_eq_left_iff,
     not_not]
   exact fun e ↦ e ▸ (zero_smul R m).symm
 
 lemma LinearIndependent.update' {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
     (f : ι → G) (l : ι →₀ R) (i : ι) (g : G) (σ : R)
-    (hσ : σ ∈ nonZeroDivisors R) (hg : σ • g = Finsupp.total _ _ R f l)
+    (hσ : σ ∈ nonZeroDivisors R) (hg : σ • g = Finsupp.linearCombination R f l)
     (hl : l i ∈ nonZeroDivisors R) (hf : LinearIndependent R f) :
     LinearIndependent R (Function.update f i g) := by
   classical
@@ -113,7 +114,7 @@ lemma LinearIndependent.update' {ι} [DecidableEq ι] {R} [CommRing R] [Module R
   simp only [Finsupp.ltotal_apply, LinearMap.add_apply, LinearMap.sub_apply,
     Finsupp.total_pi_single, smul_add, smul_sub, smul_zero] at hl'
   rw [smul_comm σ (l' i) g, hg, ← LinearMap.map_smul, ← LinearMap.map_smul, smul_smul,
-    ← Finsupp.total_single, ← (Finsupp.total ι G R f).map_sub, ← map_add] at hl'
+    ← Finsupp.linearCombination_single, ← (Finsupp.linearCombination R f).map_sub, ← map_add] at hl'
   replace hl' : ∀ j, (σ * l' j - (Finsupp.single i (σ * l' i)) j) + l' i * l j = 0 := by
     intro j
     exact DFunLike.congr_fun (hf _ hl') j
@@ -163,7 +164,7 @@ lemma existence [Module.Free ℤ G] [Module A G] :
 
 lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental)
     (i : Fin r) (a : Fin r →₀ A) (ha : a i = 1) :
-    ∀ g : G, (1 - zeta p) • g ≠ Finsupp.total _ G A S.units a := by
+    ∀ g : G, (1 - zeta p) • g ≠ Finsupp.linearCombination A S.units a := by
   cases' r with r
   · exact isEmptyElim i
   intro g hg
@@ -176,9 +177,9 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental)
     ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
       Function.update_noteq]
   have ha' :
-      Finsupp.total _ G A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g := by
-    rw [hS', Finsupp.total_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
-      ← one_smul A (S.units i), hg, ← ha, ← Finsupp.total_single, ← map_add]
+      Finsupp.linearCombination A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g := by
+    rw [hS', Finsupp.linearCombination_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
+      ← one_smul A (S.units i), hg, ← ha, ← Finsupp.linearCombination_single, ← map_add]
     congr 1
     ext j
     rw [Finsupp.coe_add, Pi.add_apply, Finsupp.single_apply]
@@ -201,17 +202,17 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental)
       rw [← hij, ha']
       apply sub_mem
       · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, Function.update_same _ _ _⟩)
-      · rw [← Finsupp.range_total, Finsupp.total_comp, LinearMap.comp_apply]
+      · rw [← Finsupp.range_linearCombination, Finsupp.linearCombination_comp, LinearMap.comp_apply]
         exact ⟨_, rfl⟩
     · exact Submodule.subset_span ⟨j, Function.update_noteq (Ne.symm hij) _ _⟩
   · refine ⟨g, Submodule.subset_span ⟨i, Function.update_same _ _ _⟩, ?_⟩
-    rw [← Finsupp.range_total]
+    rw [← Finsupp.range_linearCombination]
     rintro ⟨l, rfl⟩
     letI := (Algebra.id A).toModule
     letI : SMulZeroClass A A := SMulWithZero.toSMulZeroClass
     letI : Module A (Fin r →₀ A) := Finsupp.module (Fin r) A
     rw [← LinearMap.map_smul, ← sub_eq_zero,
-      ← (Finsupp.total (Fin _) G A S.units).map_sub] at hg
+      ← (Finsupp.linearCombination A S.units).map_sub] at hg
     have := DFunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
     simp only [algebraMap_int_eq, Int.coe_castRingHom, Finsupp.coe_sub, Finsupp.coe_smul, ha,
       Pi.sub_apply, Finsupp.mapRange_apply, Finsupp.coe_zero, Pi.zero_apply, sub_eq_zero] at this
@@ -230,7 +231,7 @@ lemma corollary [Module A G] (S : systemOfUnits p G r) (hs : S.IsFundamental) (a
   have hb : b i = 1 := by rw [← e]; rfl
   apply lemma2 p hp G r hf S hs i b hb (x • ∑ i, S.units i + y • g)
   rw [smul_add, smul_smul _ y, mul_comm, ← smul_smul, hg, smul_sum, smul_sum, smul_sum,
-    ← sum_add_distrib, Finsupp.total_apply, Finsupp.sum_fintype]
+    ← sum_add_distrib, Finsupp.linearCombination_apply, Finsupp.sum_fintype]
   congr
   · ext j
     simp only [smul_smul, Finsupp.ofSupportFinite_coe, add_smul, b', b]
@@ -267,6 +268,7 @@ lemma norm_eq_prod_pow_gen
     [IsGalois k K] [FiniteDimensional k K]
     (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (η : K) :
     algebraMap k K (Algebra.norm k η) = (∏ i in Finset.range (orderOf σ), (σ ^ i) η)   := by
+  let _ : Fintype (Subgroup.zpowers σ) := inferInstance
   rw [Algebra.norm_eq_prod_automorphisms, ← Fin.prod_univ_eq_prod_range,
     ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
   simp only [pow_finEquivZPowers_symm_apply]
@@ -757,6 +759,7 @@ lemma h_exists' : ∃ (h : ℕ) (ζ : (𝓞 k)ˣ),
   obtain ⟨j, _, hj'⟩ := (Nat.dvd_prime_pow hp).mp (orderOf_dvd_of_pow_eq_one hiζ)
   refine ⟨j, ζ, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ζ.1),
     fun ε n hn ↦ ?_⟩
+  let _ :   Fintype (Units.torsion k) := inferInstance
   have : Fintype H := Set.fintypeSubset (NumberField.Units.torsion k) (by exact this)
   obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hζ ⟨ε, ⟨_, n, rfl⟩, hn⟩)
   exact ⟨i, congr_arg Subtype.val hi⟩

@@ -20,7 +20,7 @@ lemma WfDvdMonoid.multiplicity_finite {M : Type*} [CancelCommMonoidWithZero M] [
   rw [multiplicity.Finite, not_exists_not] at h
   choose f hf using h
   obtain ⟨_, ⟨n, rfl⟩, hn⟩ :=
-    (WfDvdMonoid.wellFounded_dvdNotUnit (α := M)).has_min (Set.range f) (Set.range_nonempty f)
+    (wellFounded_dvdNotUnit (α := M)).has_min (Set.range f) (Set.range_nonempty f)
   apply hn _ ⟨n + 1, rfl⟩
   constructor
   · intro e

@@ -31,7 +31,7 @@ theorem may_assume : SlightlyEasier → Statement := by
     rw [h] at H hI
     refine hI <| Dvd.dvd.mul_left ?_ _
     simp only [Nat.cast_ofNat] at hI ⊢
-    rw [← even_iff_two_dvd, ← Int.odd_iff_not_even] at hI
+    rw [← even_iff_two_dvd, Int.not_even_iff_odd] at hI
     rw [← even_iff_two_dvd, ← Int.even_pow' (show 2 ≠ 0 by norm_num), ← H]
     exact (Int.Odd.of_mul_left (Odd.of_mul_left hI)).pow.add_odd
       (Int.Odd.of_mul_right (Odd.of_mul_left hI)).pow
