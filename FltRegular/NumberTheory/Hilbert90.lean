@@ -137,7 +137,7 @@ lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
   rw [inv_mul_eq_iff_eq_mul₀ ε.ne_zero, hε]
   rfl
 
-variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
+variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
 variable [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K] [IsDomain A]
 variable [IsIntegralClosure B A L]
 
