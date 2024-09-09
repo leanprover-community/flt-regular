@@ -14,7 +14,7 @@ open Polynomial
 variable {L} [Field L] [Algebra K L] [FiniteDimensional K L]
   (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hKL : FiniteDimensional.finrank K L = p)
 
-variable {A B} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
+variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
     [IsIntegralClosure B A L]
 
