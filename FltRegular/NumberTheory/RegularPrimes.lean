@@ -2,7 +2,7 @@ import Mathlib.FieldTheory.SplittingField.Construction
 import Mathlib.NumberTheory.ClassNumber.Finite
 import Mathlib.NumberTheory.ClassNumber.AdmissibleAbs
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.NumberTheory.Cyclotomic.Rat
+import Mathlib.NumberTheory.Cyclotomic.PID
 
 /-!
 # Regular primes
@@ -95,12 +95,20 @@ CyclotomicField.isCyclotomicExtension 2 ℚ
 instance : IsPrincipalIdealRing (𝓞 (CyclotomicField (⟨2, two_pos⟩ : ℕ+) ℚ)) :=
 IsPrincipalIdealRing_of_IsCyclotomicExtension_two _
 
-theorem isRegularNumber_two : IsRegularNumber 2 := by
-  rw [IsRegularNumber]
+theorem isRegularPrime_two : IsRegularPrime 2 := by
+  rw [IsRegularPrime, IsRegularNumber]
   convert coprime_one_right _
   dsimp
   apply (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField (⟨2, two_pos⟩ : ℕ+) ℚ))).2
   infer_instance
+
+theorem isRegularPrime_three :
+    haveI : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
+    IsRegularPrime 3 := by
+  rw [IsRegularPrime, IsRegularNumber]
+  convert coprime_one_right _
+  exact classNumber_eq_one_iff.2
+    (IsCyclotomicExtension.Rat.three_pid (CyclotomicField _ ℚ))
 
 end TwoRegular
 
