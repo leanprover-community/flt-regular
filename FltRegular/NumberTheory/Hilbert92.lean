@@ -780,7 +780,7 @@ lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
   classical
   obtain ⟨h, ν, hν, hν'⟩ := h_exists' p (k := k) hp
   by_cases H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ν ^ ((p : ℕ)^(h - 1)) ≠ ε / (σ ε : K)
-  /- ν is ν' in Hilbert, so their ν is our ν ^ ((p : ℕ)^(h - 1))  -/
+  /- ν is ζ' in Hilbert, so their ζ is our ν ^ ((p : ℕ)^(h - 1))  -/
   · exact Hilbert92_aux0 p hKL σ h ν hν H
   simp only [ne_eq, not_forall, not_not] at H
   obtain ⟨E, hE⟩ := H
