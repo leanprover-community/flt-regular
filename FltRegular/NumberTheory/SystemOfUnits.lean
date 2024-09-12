@@ -13,8 +13,8 @@ open FiniteDimensional BigOperators Finset
 open CyclotomicIntegers(zeta)
 
 variable
-  (G : Type*) {H : Type*} [AddCommGroup G] (r : ℕ)
-  (hf : finrank ℤ G = r * (p - 1))
+  (G : Type*) {H : Type*} [AddCommGroup G] (s : ℕ)
+  (hf : finrank ℤ G = s * (p - 1))
 
 local notation "A" => (CyclotomicIntegers (PNat.val p))
 
@@ -22,9 +22,9 @@ section
 
 variable [Module (CyclotomicIntegers p) G]
 
-structure systemOfUnits (k : ℕ)
+structure systemOfUnits (s : ℕ)
   where
-  units : Fin k → G
+  units : Fin s → G
   linearIndependent : LinearIndependent A units
 
 namespace systemOfUnits
@@ -62,7 +62,7 @@ lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
 
 include hf
 
-lemma ex_not_mem [Module.Free ℤ G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
+lemma ex_not_mem [Module.Free ℤ G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < s) :
     ∃ g, ∀ (k : ℤ), k ≠ 0 → ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
   have := Fact.mk hp
   have : Module.Finite ℤ G := Module.finite_of_finrank_pos
@@ -83,9 +83,9 @@ include hp hf
 
 variable [Module.Free ℤ G]
 
-lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
+lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < s) :
         Nonempty (systemOfUnits p G (R + 1)) := by
-    obtain ⟨g, hg⟩ := ex_not_mem p hp G r hf S hR
+    obtain ⟨g, hg⟩ := ex_not_mem p hp G s hf S hR
     refine ⟨⟨Fin.cases g S.units, ?_⟩⟩
     refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
     by_contra! ha
@@ -99,13 +99,13 @@ lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < r) :
     rw [hy]
     exact Submodule.neg_mem _ (Submodule.smul_mem _ _ y.2)
 
-lemma existence'' [Module A G] {R : ℕ} (hR : R ≤ r) :  Nonempty (systemOfUnits p G R) := by
+lemma existence'' [Module A G] {R : ℕ} (hR : R ≤ s) :  Nonempty (systemOfUnits p G R) := by
     induction R with
     | zero => exact existence0 p G
     | succ n ih =>
         obtain ⟨S⟩ := ih (le_trans (Nat.le_succ n) hR)
-        exact existence' p hp G r hf S (lt_of_lt_of_le (Nat.lt.base n) hR)
+        exact existence' p hp G s hf S (lt_of_lt_of_le (Nat.lt.base n) hR)
 
-lemma existence [Module A G] : Nonempty (systemOfUnits p G r) := existence'' p hp G r hf rfl.le
+lemma existence [Module A G] : Nonempty (systemOfUnits p G s) := existence'' p hp G s hf rfl.le
 
 end systemOfUnits
