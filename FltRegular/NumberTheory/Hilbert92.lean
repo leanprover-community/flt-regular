@@ -561,9 +561,9 @@ include hp in
 lemma lh_pow_free [FiniteDimensional k K] (ν: (𝓞 k)ˣ)
     (hk : ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ν ^ i = ε)
     (η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ) :
-    ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i : Fin (NumberField.Units.rank k + 2)),
-      ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ν) ∧ ¬ ((p : ℤ) ∣ ι i) ∧
-      (ν = 1 → i ≠ Fin.last _) := by
+    ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i₀ : Fin (NumberField.Units.rank k + 2)),
+      ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ν) ∧ ¬ ((p : ℤ) ∣ ι i₀) ∧
+      (ν = 1 → i₀ ≠ Fin.last _) := by
   convert lh_pow_free' p hp ν hk _ ?_ η
   · simp only [ge_iff_le, Nat.succ_sub_succ_eq_sub, nonpos_iff_eq_zero, add_eq_zero, one_ne_zero,
       and_false, tsub_zero, Fin.ext_iff, Fin.val_last]
