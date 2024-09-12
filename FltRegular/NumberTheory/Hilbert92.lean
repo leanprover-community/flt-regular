@@ -730,7 +730,7 @@ lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
     apply (algebraMap k K).injective
     exact congr_arg (fun i : Additive (𝓞 K)ˣ ↦ (↑(↑(Additive.toMul i) : 𝓞 K) : K)) e
 
-lemma Hilbert91ish :
+theorem Hilbert91 :
     ∃ S : systemOfUnits p G (NumberField.Units.rank k + 1), S.IsFundamental :=
   systemOfUnits.IsFundamental.existence p hp G (NumberField.Units.rank k + 1)
     (finrank_G p hp hKL σ hσ)
@@ -786,7 +786,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
   obtain ⟨E, hE⟩ := H
   let NE := Units.map (RingOfIntegers.norm k) E
   have hNE : (NE : k) = Algebra.norm k (E : K) := rfl
-  obtain ⟨S, hS⟩ := Hilbert91ish p (K := K) (k := k) hp hKL σ hσ
+  obtain ⟨S, hS⟩ := Hilbert91 p (K := K) (k := k) hp hKL σ hσ
   have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ) := by
     ext
     simp only [RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
