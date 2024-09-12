@@ -22,9 +22,9 @@ section
 
 variable [Module (CyclotomicIntegers p) G]
 
-structure systemOfUnits (r : ℕ)
+structure systemOfUnits (k : ℕ)
   where
-  units : Fin r → G
+  units : Fin k → G
   linearIndependent : LinearIndependent A units
 
 namespace systemOfUnits
