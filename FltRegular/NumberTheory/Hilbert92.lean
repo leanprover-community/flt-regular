@@ -277,7 +277,7 @@ lemma norm_eq_prod_pow_gen
   congr; ext; simp [hσ]
 
 include hKL in
-lemma Hilbert92ish_aux0 (h : ℕ) (ζ : (𝓞 k)ˣ) (hζ : IsPrimitiveRoot (ζ : k) (p ^ h))
+lemma Hilbert92_aux0 (h : ℕ) (ζ : (𝓞 k)ˣ) (hζ : IsPrimitiveRoot (ζ : k) (p ^ h))
   (H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ζ ^ ((p : ℕ) ^ (h - 1)) ≠ ε / (σ ε : K)) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ζ : (𝓞 K)ˣ)
@@ -585,7 +585,7 @@ variable [NumberField K]
 
 include hKL in
 --some complicated unit called J in the paper, has norm 1
-lemma Hilbert92ish_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (𝓞 k)ˣ)
+lemma Hilbert92_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ζ : (𝓞 k)ˣ)
     (a : ℤ) (ι : Fin n → ℤ) (η : Fin n → Additive (𝓞 k)ˣ)
     (ha : ∑ i : Fin n, ι i • η i = (a * ↑↑p) • Additive.ofMul ζ)
     (hη : ∀ i, Additive.toMul (η i) = Algebra.norm k (S := K) ((Additive.toMul (H i) : _) : K)) :
@@ -673,7 +673,7 @@ lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zet
 
 include hKL hσ hp in
 /- If ζ = E/σ E, then the norm of E is E^p -/
-lemma Hilbert92ish_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / σ E)
+lemma Hilbert92_aux2 (E : (𝓞 K)ˣ) (ζ : k) (hE : algebraMap k K ζ = E / σ E)
   (hζ : (ζ : k) ^ (p : ℕ) = 1) (hpodd : (p : ℕ) ≠ 2) :
     algebraMap k K (Algebra.norm k (S := K) E) = E ^ (p : ℕ) := by
   have h1 : ∀ (i : ℕ), (σ ^ i) E = ((algebraMap k K ζ)⁻¹)^i * E := by
@@ -775,13 +775,13 @@ lemma IsPrimitiveRoot.one_left_iff {M} [CommMonoid M] {n : ℕ} :
 
 include hp hKL hσ in
 -- TODO : remove `p ≠ 2`. The offending case is when `K = k[i]`.
-lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
+lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   classical
   obtain ⟨h, ζ, hζ, hζ'⟩ := h_exists' p (k := k) hp
   by_cases H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ζ ^ ((p : ℕ)^(h - 1)) ≠ ε / (σ ε : K)
   /- ζ is ζ' in Hilbert, so their ζ is our ζ ^ ((p : ℕ)^(h - 1))  -/
-  · exact Hilbert92ish_aux0 p hKL σ h ζ hζ H
+  · exact Hilbert92_aux0 p hKL σ h ζ hζ H
   simp only [ne_eq, not_forall, not_not] at H
   obtain ⟨E, hE⟩ := H
   let NE := Units.map (RingOfIntegers.norm k) E
@@ -792,7 +792,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
     simp only [RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
       RingOfInteger.coe_algebraMap_apply, Units.val_pow_eq_pow_val, map_pow]
     rw [← map_pow] at hE
-    refine Hilbert92ish_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
+    refine Hilbert92_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
     rw [← pow_mul, ← pow_succ]
     apply (hζ.pow_eq_one_iff_dvd _).2
     cases h <;> simp only [Nat.zero_eq, pow_zero, zero_le, tsub_eq_zero_of_le,
@@ -812,7 +812,7 @@ lemma Hilbert92ish (hpodd : (p : ℕ) ≠ 2) :
                 (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ζ) ^ (-a)
   refine ⟨J, ?_⟩
   constructor
-  · apply Hilbert92ish_aux1 p hKL (r + 2) H2 ζ a ι η ha
+  · apply Hilbert92_aux1 p hKL (r + 2) H2 ζ a ι η ha
     intro i
     induction i using Fin.lastCases with
     | last =>
@@ -897,6 +897,6 @@ lemma Hilbert92 [Algebra k K] [IsGalois k K] [NumberField k] [NumberField K]
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) :=
   haveI := IsUnramifiedAtInfinitePlaces_of_odd_finrank (hKL.odd_of_ne_two hpodd)
   letI : IsCyclic (K ≃ₐ[k] K) := ⟨σ, hσ⟩
-  Hilbert92ish ⟨finrank k K, finrank_pos⟩ hKL rfl σ hσ hpodd
+  almostHilbert92 ⟨finrank k K, finrank_pos⟩ hKL rfl σ hσ hpodd
 
 end thm91
