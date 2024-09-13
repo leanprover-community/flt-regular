@@ -185,7 +185,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ} (hl : l ∈ n.divisors) 
     by_contra h
     simp only [not_lt, le_zero_iff] at h
     rw [h] at pdivlcm_h
-    simp only [MulZeroClass.mul_zero, lcm_eq_zero_iff, PNat.ne_zero, or_false_iff] at pdivlcm_h
+    simp only [MulZeroClass.mul_zero, lcm_eq_zero_iff, PNat.ne_zero, or_false] at pdivlcm_h
     apply absurd pdivlcm_h (ne_of_gt (Nat.pos_of_mem_divisors hl))
   have K5 := (Nat.dvd_prime Nat.prime_two).1 (totient_le_one_dvd_two pdiv_ne_zero KEY3)
   cases' K5 with K5 K5
@@ -217,7 +217,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
     have isPrimRoot : IsPrimitiveRoot (hζ.unit' : R) p := hζ.unit'_coe
     have hxl : (⟨x, hx⟩ : R) ^ l = 1 :=  by
       apply isRoot_of_unity_of_root_cyclotomic _ hhl
-      simp only [Nat.mem_divisors, dvd_refl, Ne, true_and_iff]
+      simp only [Nat.mem_divisors, dvd_refl, Ne, true_and]
       apply pos_iff_ne_zero.1 (Nat.pos_of_mem_divisors hl)
     have hxp' : (⟨x, hx⟩ : R) ^ (2 * p : ℕ) = 1 := by
       cases' hlp with hlp_w hlp_h

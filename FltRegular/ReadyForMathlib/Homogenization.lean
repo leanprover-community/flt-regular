@@ -317,8 +317,8 @@ theorem leadingTerms_eq_self_iff_isHomogeneous (p : MvPolynomial ι R) :
     classical
     rw [← degree_eq_weight_one] at h_h₂
     change ¬(h_w.sum fun (_x : ι) (e : ℕ) => e) = p.totalDegree at h_h₂
-    simp only [h_h₁.symm, coeff_homogeneousComponent, exists_prop, and_true_iff, Ne,
-      not_false_iff, not_forall, ite_eq_left_iff]
+    simp only [h_h₁.symm, coeff_homogeneousComponent, exists_prop, and_true, Ne, not_false_iff,
+      not_forall, ite_eq_left_iff]
     convert h_h₂
   · rw [leadingTerms_apply]
     rw [(_ :
@@ -848,7 +848,7 @@ theorem prod_contains_no (i : ι) (P : Finset (MvPolynomial ι R))
       exact (degreeOf_eq_zero_iff _ _).2 (hp a (mem_cons_self _ _))
     · intro p hps m hmp
       apply hp p _ m hmp
-      simp only [hps, mem_cons, or_true_iff]
+      simp only [hps, mem_cons, or_true]
 
 open scoped BigOperators
 
