@@ -157,14 +157,13 @@ theorem IsPrimitiveRoot.p_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] : (p : �
 
 variable [IsCyclotomicExtension {p} ℚ K]
 
-theorem roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ} (hl : l ∈ n.divisors) (hx : IsIntegral ℤ x)
+theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsIntegral ℤ x)
     (hhl : (cyclotomic l R).IsRoot ⟨x, hx⟩) {ζ : K} (hζ : IsPrimitiveRoot ζ p) : l ∣ 2 * p := by
   by_contra h
   have hpl' : IsPrimitiveRoot (⟨x, hx⟩ : R) l := by
     have nezero : NeZero (l : 𝓞 K) := by
       refine ⟨fun hzero ↦ ?_⟩
-      simp only [Nat.cast_eq_zero] at hzero
-      simp [hzero] at hl
+      simp only [Nat.cast_eq_zero, hl] at hzero
     rw [isRoot_cyclotomic_iff.symm]
     apply hhl
   have hpl : IsPrimitiveRoot x l := by
@@ -186,7 +185,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {n l : ℕ} (hl : l ∈ n.divisors) 
     simp only [not_lt, le_zero_iff] at h
     rw [h] at pdivlcm_h
     simp only [MulZeroClass.mul_zero, lcm_eq_zero_iff, PNat.ne_zero, or_false] at pdivlcm_h
-    apply absurd pdivlcm_h (ne_of_gt (Nat.pos_of_mem_divisors hl))
+    apply absurd pdivlcm_h (ne_of_gt (Nat.pos_of_ne_zero hl))
   have K5 := (Nat.dvd_prime Nat.prime_two).1 (totient_le_one_dvd_two pdiv_ne_zero KEY3)
   cases' K5 with K5 K5
   rw [K5] at pdivlcm_h
@@ -213,12 +212,13 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
   have hxu : (⟨x, hx⟩ : R) ^ n = 1 := by ext; simp [hn]
   have H : ∃ (m : ℕ) (k : ℕ+), (⟨x, hx⟩ : R) = (-1) ^ (k : ℕ) * (hζ.unit' : K) ^ (m : ℕ) := by
     obtain ⟨l, hl, hhl⟩ := (_root_.isRoot_of_unity_iff hn0 _).1 hxu
+    replace hl : l ≠ 0 := fun H ↦ by simp [H] at hl
     have hlp := roots_of_unity_in_cyclo_aux hl hx hhl hζ
     have isPrimRoot : IsPrimitiveRoot (hζ.unit' : R) p := hζ.unit'_coe
     have hxl : (⟨x, hx⟩ : R) ^ l = 1 :=  by
       apply isRoot_of_unity_of_root_cyclotomic _ hhl
       simp only [Nat.mem_divisors, dvd_refl, Ne, true_and]
-      apply pos_iff_ne_zero.1 (Nat.pos_of_mem_divisors hl)
+      apply pos_iff_ne_zero.1 (Nat.pos_of_ne_zero hl)
     have hxp' : (⟨x, hx⟩ : R) ^ (2 * p : ℕ) = 1 := by
       cases' hlp with hlp_w hlp_h
       rw [hlp_h, pow_mul, hxl]; simp only [one_pow]
