@@ -48,7 +48,7 @@ lemma FiniteDimensional.finrank_add_finrank_quotient_le (N : Submodule R M) :
       ← Finsupp.range_linearCombination]
     rintro _ ⟨h, l, rfl⟩
     rw [SetLike.mem_coe, ← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply,
-      Finsupp.apply_linearCombination, ← Function.comp.assoc,
+      Finsupp.apply_linearCombination, ← Function.comp_assoc,
       show N.mkQ ∘ f = id from funext hf] at h
     rw [linearIndependent_iff.mp ht' l h, map_zero]
     exact zero_mem _

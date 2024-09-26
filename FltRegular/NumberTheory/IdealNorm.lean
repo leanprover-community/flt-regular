@@ -3,7 +3,7 @@ import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.RingTheory.Localization.NormTrace
 import Mathlib.RingTheory.Localization.LocalizationLocalization
 import Mathlib.RingTheory.Nakayama
-import Mathlib.RingTheory.LocalProperties
+import Mathlib.RingTheory.LocalProperties.IntegrallyClosed
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 import Mathlib.NumberTheory.RamificationInertia
