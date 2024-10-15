@@ -8,66 +8,26 @@ open Module
 
 section
 
-variable (R M : Type*) [Ring R] [AddCommGroup M] [Module R M]
+universe u v
 
-open Cardinal in
-lemma FiniteDimensional.exists_finset_card_eq_finrank_and_linearIndependent :
-    ∃ s : Finset M, s.card = finrank R M ∧ LinearIndependent R ((↑) : s → M) := by
-  by_cases H : finrank R M = 0
-  · use ∅
-    simp only [Finset.card_empty, H, linearIndependent_empty_type, and_self]
-  haveI := nonempty_linearIndependent_set R M
-  have := (Cardinal.toNat_eq_iff H).mp rfl
-  rw [Module.rank_def] at this
-  obtain ⟨⟨s, hs⟩, hι : #s = _⟩ :=
-    Cardinal.exists_eq_natCast_of_iSup_eq _ (Cardinal.bddAbove_range _) _ this
-  have : Finite s := Cardinal.lt_aleph0_iff_finite.mp (hι ▸ nat_lt_aleph0 (finrank R M))
-  cases nonempty_fintype s
-  exact ⟨s.toFinset,
-    Cardinal.natCast_injective (by rwa [Set.toFinset_card, ← Cardinal.mk_fintype]),
-    by convert hs using 2 <;> simp only [Set.mem_toFinset]⟩
+variable (R : Type u) (M : Type v) [Ring R] [AddCommGroup M] [Module R M]
 
 variable {R M}
 
-lemma LinearIndependent.finset_toSet (s : Finset M) : LinearIndependent R ((↑) : (↑s : Set M) → M) ↔
-    LinearIndependent R ((↑) : s → M) := Iff.rfl
-
-variable [Nontrivial R] [StrongRankCondition R] [Module.Finite R M]
+variable [StrongRankCondition R] [Module.Finite R M]
 
 lemma FiniteDimensional.finrank_add_finrank_quotient_le (N : Submodule R M) :
     finrank R N + finrank R (M ⧸ N) ≤ finrank R M := by
-  classical
-  obtain ⟨s, hs, hs'⟩ := exists_finset_card_eq_finrank_and_linearIndependent R N
-  obtain ⟨t, ht, ht'⟩ := exists_finset_card_eq_finrank_and_linearIndependent R (M ⧸ N)
-  obtain ⟨f, hf⟩ := N.mkQ_surjective.hasRightInverse
-  have H :
-      Disjoint (Submodule.span R (Subtype.val '' (s : Set N))) (Submodule.span R (f '' t)) := by
-    apply Disjoint.mono_left (Submodule.span_le.mpr Set.image_val_subset)
-    rw [disjoint_iff, eq_bot_iff, ← @Subtype.range_val (M ⧸ N) t, ← Set.range_comp,
-      ← Finsupp.range_linearCombination]
-    rintro _ ⟨h, l, rfl⟩
-    rw [SetLike.mem_coe, ← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply,
-      Finsupp.apply_linearCombination, ← Function.comp_assoc,
-      show N.mkQ ∘ f = id from funext hf] at h
-    rw [linearIndependent_iff.mp ht' l h, map_zero]
-    exact zero_mem _
-  rw [← hs, ← ht, ← t.card_image_of_injective hf.injective,
-    ← s.card_image_of_injective Subtype.val_injective, ← Finset.card_union_of_disjoint]
-  apply LinearIndependent.finset_card_le_finrank
-  · rw [← LinearIndependent.finset_toSet, Finset.coe_union, Finset.coe_image, Finset.coe_image]
-    refine LinearIndependent.union ?_ ?_ H
-    · rw [← linearIndependent_image Subtype.val_injective.injOn]
-      exact hs'.map' N.subtype N.ker_subtype
-    · rw [← linearIndependent_image hf.injective.injOn]
-      apply LinearIndependent.of_comp N.mkQ
-      convert ht'
-      exact funext fun x => hf _
-  · rw [← Finset.disjoint_coe, Finset.coe_image, Finset.coe_image, Set.disjoint_iff]
-    intro x ⟨h₁, h₂⟩
-    obtain rfl : x = 0 :=
-      (disjoint_iff.mp H).le ⟨Submodule.subset_span h₁, Submodule.subset_span h₂⟩
-    simp only [Set.mem_image, Finset.mem_coe, ZeroMemClass.coe_eq_zero, exists_eq_right] at h₁
-    exact hs'.ne_zero ⟨0, h₁⟩ (by simp only)
+  by_cases h : Subsingleton R
+  · rw [finrank_zero_iff.2 (Module.subsingleton R _), finrank_zero_iff.2 (Module.subsingleton R _),
+      finrank_zero_iff.2 (Module.subsingleton R _)]
+  rw [not_subsingleton_iff_nontrivial] at h
+  have := rank_quotient_add_rank_le N
+  have H : Module.rank R N = finrank R N := by
+    rw [finrank, Cardinal.cast_toNat_of_lt_aleph0]
+    exact lt_of_le_of_lt (Submodule.rank_le N) (rank_lt_aleph0 R M)
+  rw [← finrank_eq_rank R M, ← finrank_eq_rank R, H, add_comm] at this
+  exact mod_cast this
 
 instance torsion.module {R M} [Ring R] [AddCommGroup M] [Module R M] :
     Module R (M ⧸ AddCommGroup.torsion M) := by
@@ -75,14 +35,6 @@ instance torsion.module {R M} [Ring R] [AddCommGroup M] [Module R M] :
     ⟨n, hn, by { simp only [Function.IsPeriodicPt, Function.IsFixedPt, add_left_iterate, add_zero,
       Nat.isUnit_iff, smul_comm n] at hn' ⊢; simp only [hn', smul_zero] }⟩ }
   exact inferInstanceAs (Module R (M ⧸ this))
-
-instance {S} [Ring S] [Module S M] [SMul R S] [IsScalarTower R S M] (N : Submodule S M) :
-    Module.Finite R (M ⧸ N) :=
-  Module.Finite.of_surjective (N.mkQ.restrictScalars R) N.mkQ_surjective
-
-instance {S} [Ring S] [Module S M] [SMul R S] [IsScalarTower R S M] :
-    Module.Finite R (⊤ : Submodule S M) :=
-  Module.Finite.of_surjective _ Submodule.topEquiv.symm.surjective
 
 end
 
@@ -184,7 +136,7 @@ lemma FiniteDimensional.exists_of_finrank_lt [IsDomain R] [IsPrincipalIdealRing 
     (N : Submodule R M) (h : finrank R N < finrank R M) :
     ∃ m : M, ∀ r : R, r ≠ 0 → r • m ∉ N := by
   obtain ⟨s, hs, hs'⟩ :=
-    FiniteDimensional.exists_finset_card_eq_finrank_and_linearIndependent R (M ⧸ N)
+    exists_finset_linearIndependent_of_le_finrank (R := R) (M := M ⧸ N) le_rfl
   obtain ⟨v, hv⟩ : s.Nonempty := by rwa [Finset.nonempty_iff_ne_empty, ne_eq, ← Finset.card_eq_zero,
     hs, FiniteDimensional.finrank_quotient, tsub_eq_zero_iff_le, not_le]
   obtain ⟨v, rfl⟩ := N.mkQ_surjective v
