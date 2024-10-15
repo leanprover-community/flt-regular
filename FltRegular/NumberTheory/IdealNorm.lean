@@ -6,8 +6,6 @@ import Mathlib.RingTheory.Nakayama
 import Mathlib.RingTheory.LocalProperties.IntegrallyClosed
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
-import Mathlib.NumberTheory.RamificationInertia
-import FltRegular.NumberTheory.AuxLemmas
 import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 import Mathlib.RingTheory.DedekindDomain.PID
