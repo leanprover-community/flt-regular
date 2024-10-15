@@ -9,10 +9,10 @@ open scoped NumberField
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K]
 
-open Polynomial
+open Polynomial Module
 
 variable {L} [Field L] [Algebra K L] [FiniteDimensional K L]
-  (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hKL : FiniteDimensional.finrank K L = p)
+  (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hKL : finrank K L = p)
 
 variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
@@ -71,8 +71,6 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     · exact (mul_ne_zero_iff.mp hβ_zero).1
   · rw [hβ']
     exact ⟨⟨_, rfl⟩⟩
-
-open FiniteDimensional (finrank)
 
 theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I : Ideal A)
     (hI : (I.map (algebraMap A B)).IsPrincipal) : (I ^ finrank K L).IsPrincipal := by

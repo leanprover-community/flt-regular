@@ -170,7 +170,7 @@ theorem spanIntNorm_localization (I : Ideal S) (M : Submonoid R) (hM : M ≤ R�
       IsLocalization.mem_map_algebraMap_iff M Rₘ, Prod.exists] at ha' ⊢
     obtain ⟨⟨a, ha⟩, ⟨_, ⟨s, hs, rfl⟩⟩, has⟩ := ha'
     refine ⟨⟨Algebra.intNorm R S a, intNorm_mem_spanIntNorm _ _ ha⟩,
-      ⟨s ^ FiniteDimensional.finrank K L, pow_mem hs _⟩, ?_⟩
+      ⟨s ^ Module.finrank K L, pow_mem hs _⟩, ?_⟩
     simp only [Submodule.coe_mk, Subtype.coe_mk, map_pow] at has ⊢
     apply_fun algebraMap _ L at has
     apply_fun Algebra.norm K at has
@@ -262,7 +262,7 @@ theorem spanIntNorm_mul [Module.Free R S] (I J : Ideal S) :
   haveI : IsDedekindDomain Sₚ := IsLocalization.isDedekindDomain S h _
   haveI : IsPrincipalIdealRing Sₚ :=
     IsDedekindDomain.isPrincipalIdealRing_localization_over_prime S P hP0
-  haveI := isIntegrallyClosed_of_isLocalization P.primeCompl P.primeCompl_le_nonZeroDivisors Rₚ
+  haveI := isIntegrallyClosed_of_isLocalization Rₚ P.primeCompl P.primeCompl_le_nonZeroDivisors
   haveI := NoZeroSMulDivisors_of_isLocalization R S Rₚ Sₚ _ P.primeCompl_le_nonZeroDivisors
   haveI := Module.Finite_of_isLocalization R S Rₚ Sₚ P.primeCompl
   let L := FractionRing S
@@ -299,7 +299,7 @@ theorem spanIntNorm_mul [Module.Free R S] (I J : Ideal S) :
 /-- Multiplicativity of `Ideal.spanIntNorm`. simp-normal form is `map_mul (Ideal.relNorm R)`. -/
 theorem spanIntNorm_map (I : Ideal R) :
     spanIntNorm R (I.map (algebraMap R S)) =
-      I ^ (FiniteDimensional.finrank (FractionRing R) (FractionRing S)) := by
+      I ^ (Module.finrank (FractionRing R) (FractionRing S)) := by
   classical
   nontriviality R
   nontriviality S
@@ -318,7 +318,7 @@ theorem spanIntNorm_map (I : Ideal R) :
   haveI : IsDomain Sₚ := IsLocalization.isDomain_localization h
   haveI : IsDedekindDomain Sₚ := IsLocalization.isDedekindDomain S h _
   haveI : IsPrincipalIdealRing Rₚ := IsLocalization.AtPrime.PID_of_dedekind_domain P Rₚ
-  haveI := isIntegrallyClosed_of_isLocalization P.primeCompl P.primeCompl_le_nonZeroDivisors Rₚ
+  haveI := isIntegrallyClosed_of_isLocalization Rₚ P.primeCompl P.primeCompl_le_nonZeroDivisors
   haveI := NoZeroSMulDivisors_of_isLocalization R S Rₚ Sₚ _ P.primeCompl_le_nonZeroDivisors
   haveI := Module.Finite_of_isLocalization R S Rₚ Sₚ P.primeCompl
   let K := FractionRing R

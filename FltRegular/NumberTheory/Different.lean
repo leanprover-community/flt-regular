@@ -2,8 +2,10 @@ import Mathlib.RingTheory.DedekindDomain.Different
 import Mathlib.RingTheory.DedekindDomain.Ideal
 import Mathlib.RingTheory.DedekindDomain.Different
 import Mathlib.RingTheory.Localization.FractionRing
-import FltRegular.NumberTheory.QuotientTrace
+import Mathlib.RingTheory.Trace.Quotient
 import Mathlib.NumberTheory.KummerDedekind
+import FltRegular.NumberTheory.AuxLemmas
+
 /-!
 # The different ideal
 

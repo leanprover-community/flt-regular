@@ -9,7 +9,7 @@ open NumberField
 variable (p : ℕ+) {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
 variable {k : Type*} [Field k] [NumberField k] (hp : Nat.Prime p)
 
-open FiniteDimensional BigOperators Finset
+open Module BigOperators Finset
 open CyclotomicIntegers(zeta)
 
 variable
@@ -33,8 +33,8 @@ lemma existence0 : Nonempty (systemOfUnits p G 0) := by
     exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
 theorem _root_.PowerBasis.finrank' {R S} [CommRing R] [Nontrivial R] [CommRing S] [Algebra R S]
-    (pb : PowerBasis R S) : FiniteDimensional.finrank R S = pb.dim := by
-  rw [FiniteDimensional.finrank_eq_card_basis pb.basis, Fintype.card_fin]
+    (pb : PowerBasis R S) : finrank R S = pb.dim := by
+  rw [finrank_eq_card_basis pb.basis, Fintype.card_fin]
 
 open Cardinal Submodule in
 theorem _root_.finrank_span_set_eq_card' {R M} [CommRing R] [AddCommGroup M] [Module R M]

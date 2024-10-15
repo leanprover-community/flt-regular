@@ -244,7 +244,7 @@ lemma Ideal.ramificationIdxIn_bot : (⊥ : Ideal R).ramificationIdxIn S = 0 := b
 
 lemma Ideal.inertiaDegIn_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S] [IsNoetherian R S]
     [Algebra.IsIntegral R S] [H : (⊥ : Ideal R).IsMaximal] :
-    (⊥ : Ideal R).inertiaDegIn S = FiniteDimensional.finrank R S := by
+    (⊥ : Ideal R).inertiaDegIn S = Module.finrank R S := by
   delta inertiaDegIn
   rw [primesOver_bot]
   have : ({⊥} : Set (Ideal S)).Nonempty := by simp
@@ -281,7 +281,7 @@ lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S
   rw [← hσ]
   exact Ideal.inertiaDeg_comap_eq (galRestrict R K L S σ) p P
 
-open FiniteDimensional
+open Module
 
 lemma Ideal.ramificationIdxIn_mul_inertiaDegIn_mul_ncard_primesOver
     [IsGalois K L] (p : Ideal R) (hp : p ≠ ⊥) [p.IsMaximal] :

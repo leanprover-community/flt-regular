@@ -24,7 +24,6 @@ import FltRegular.NumberTheory.Hilbert94
 import FltRegular.NumberTheory.IdealNorm
 import FltRegular.NumberTheory.KummersLemma.Field
 import FltRegular.NumberTheory.KummersLemma.KummersLemma
-import FltRegular.NumberTheory.QuotientTrace
 import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.NumberTheory.SystemOfUnits
 import FltRegular.NumberTheory.Unramified

@@ -55,7 +55,7 @@ theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot (hζ.unit' : R) p := by
 
 theorem contains_two_primitive_roots {p q : ℕ} {x y : K} [FiniteDimensional ℚ K]
     (hx : IsPrimitiveRoot x p) (hy : IsPrimitiveRoot y q) :
-    (lcm p q).totient ≤ FiniteDimensional.finrank ℚ K := by
+    (lcm p q).totient ≤ Module.finrank ℚ K := by
   classical
   rcases Nat.eq_zero_or_pos p with (rfl | hppos)
   · simp

@@ -31,7 +31,7 @@ def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ,
 include hσ in
 lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) :
     ∏ i in range a, (σ ^ i) (ηu hη) = 1 := by
-  obtain ⟨n, hn⟩ := (Nat.dvd_iff_mod_eq_zero _ _).2 h
+  obtain ⟨n, hn⟩ := Nat.dvd_iff_mod_eq_zero.2 h
   rw [hn]
   revert a
   induction n with
@@ -59,7 +59,7 @@ lemma aux2 [IsGalois K L] {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
     ∏ i in range a, (σ ^ i) (ηu hη) = ∏ i in range b, (σ ^ i) (ηu hη) := by
   wlog hab : b ≤ a generalizing a b
   · exact (this h.symm (not_le.1 hab).le).symm
-  obtain ⟨c, hc⟩ := (Nat.dvd_iff_mod_eq_zero _ _).2 (Nat.sub_mod_eq_zero_of_mod_eq h)
+  obtain ⟨c, hc⟩ := Nat.dvd_iff_mod_eq_zero.2 (Nat.sub_mod_eq_zero_of_mod_eq h)
   rw [Nat.sub_eq_iff_eq_add hab] at hc
   rw [hc, prod_range_add]
   rw [aux1 hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
@@ -115,7 +115,7 @@ lemma is_cocycle [IsGalois K L] : IsMulOneCocycle (cocycle hσ hη) := by
 include hη hσ in
 lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
   by_cases hone : orderOf σ = 1
-  · suffices finrank K L = 1 by
+  · suffices Module.finrank K L = 1 by
       obtain ⟨a, ha⟩ := mem_span_singleton.1 <| (eq_top_iff'.1 <|
         (finrank_eq_one_iff_of_nonzero _ one_ne_zero).1 this) η
       rw [← Algebra.algebraMap_eq_smul_one] at ha

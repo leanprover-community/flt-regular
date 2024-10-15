@@ -4,12 +4,11 @@ import Mathlib.Algebra.Module.Torsion
 import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
 import Mathlib.LinearAlgebra.FreeModule.PID
 
-universe u v w
+open Module
+
 section
 
-variable {R : Type u} {M : Type v} [Ring R] [AddCommGroup M] [Module R M]
-
-variable (R M)
+variable (R M : Type*) [Ring R] [AddCommGroup M] [Module R M]
 
 open Cardinal in
 lemma FiniteDimensional.exists_finset_card_eq_finrank_and_linearIndependent :
@@ -21,7 +20,7 @@ lemma FiniteDimensional.exists_finset_card_eq_finrank_and_linearIndependent :
   have := (Cardinal.toNat_eq_iff H).mp rfl
   rw [Module.rank_def] at this
   obtain ⟨⟨s, hs⟩, hι : #s = _⟩ :=
-    Cardinal.exists_eq_natCast_of_iSup_eq _ (Cardinal.bddAbove_range.{v, v} _) _ this
+    Cardinal.exists_eq_natCast_of_iSup_eq _ (Cardinal.bddAbove_range _) _ this
   have : Finite s := Cardinal.lt_aleph0_iff_finite.mp (hι ▸ nat_lt_aleph0 (finrank R M))
   cases nonempty_fintype s
   exact ⟨s.toFinset,

@@ -34,7 +34,7 @@ theorem not_for_all_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
   have : CharZero L := charZero_of_injective_algebraMap (algebraMap K L).injective
   have : FiniteDimensional ℚ L := Module.Finite.trans K L
   have : NumberField L := ⟨⟩
-  have hKL : FiniteDimensional.finrank K L = p := (finrank_of_isSplittingField_X_pow_sub_C
+  have hKL : Module.finrank K L = p := (finrank_of_isSplittingField_X_pow_sub_C
     ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu) L)
   have := KummersLemma.isUnramified hp hζ u hcong hu L
   have := dvd_card_classGroup_of_isUnramified_isCyclic K L (hKL.symm ▸ hpri.out)

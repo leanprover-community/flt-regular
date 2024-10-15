@@ -69,26 +69,6 @@ open Polynomial
 
 open nonZeroDivisors
 
--- Mathlib/RingTheory/IntegralClosure.lean
--- or Mathlib/RingTheory/LocalProperties.lean
-lemma isIntegrallyClosed_of_isLocalization {R} [CommRing R] [IsIntegrallyClosed R] [IsDomain R]
-    (M : Submonoid R) (hM : M ≤ R⁰) (S) [CommRing S] [Algebra R S] [IsLocalization M S] :
-    IsIntegrallyClosed S := by
-  let K := FractionRing R
-  let g : S →+* K := IsLocalization.map _ (T := R⁰) (RingHom.id R) hM
-  letI := g.toAlgebra
-  have : IsScalarTower R S K := IsScalarTower.of_algebraMap_eq'
-    (by rw [RingHom.algebraMap_toAlgebra, IsLocalization.map_comp, RingHomCompTriple.comp_eq])
-  have := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization M S K
-  refine (isIntegrallyClosed_iff_isIntegralClosure (K := K)).mpr
-    ⟨IsFractionRing.injective _ _, fun {x} ↦ ⟨?_, fun e ↦ e.choose_spec ▸ isIntegral_algebraMap⟩⟩
-  intro hx
-  obtain ⟨⟨y, y_mem⟩, hy⟩ := hx.exists_multiple_integral_of_isLocalization M _
-  obtain ⟨z, hz⟩ := (isIntegrallyClosed_iff _).mp ‹_› hy
-  refine ⟨IsLocalization.mk' S z ⟨y, y_mem⟩, (IsLocalization.lift_mk'_spec _ _ _ _).mpr ?_⟩
-  rw [RingHom.comp_id, hz, ← Algebra.smul_def]
-  rfl
-
 -- Mathlib/RingTheory/LocalProperties.lean
 open Polynomial nonZeroDivisors in
 lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [CommRing Rₚ]
@@ -160,7 +140,7 @@ lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [F
   obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid S M) x
   obtain ⟨t, ht, e⟩ := s.prop
   let P := ((minpoly R x).map (algebraMap R Rₚ)).scaleRoots (IsLocalization.mk' _ 1 ⟨t, ht⟩)
-  refine Separable.of_dvd ?_ (minpoly.dvd _ (p := P) ?_)
+  refine Separable.of_dvd ?_ (minpoly.dvd _ _ (p := P) ?_)
   · apply (Algebra.IsSeparable.isSeparable R x).map.scaleRoots
     exact isUnit_of_invertible _
   · rw [aeval_def]
@@ -186,15 +166,6 @@ lemma Algebra.isNilpotent_trace_of_isNilpotent {R : Type u} {S : Type v} [CommRi
   · rw [trace_eq_zero_of_not_exists_basis _ hS, LinearMap.zero_apply]
     exact IsNilpotent.zero
 
--- Mathlib/LinearAlgebra/Dimension.lean
-lemma FiniteDimensional.finrank_le_of_span_eq_top
-    {R M} [Ring R] [StrongRankCondition R] [AddCommGroup M] [Module R M]
-    [Module.Free R M] {ι} [Fintype ι] (v : ι → M) (hv : Submodule.span R (Set.range v) = ⊤) :
-    finrank R M ≤ Fintype.card ι := by
-  classical
-  rw [← finrank_top, ← hv]
-  exact (finrank_span_le_card _).trans (by convert Fintype.card_range_le v; rw [Set.toFinset_card])
-
 -- Mathlib/Data/Polynomial/Taylor.lean
 @[simps] noncomputable
 def Polynomial.taylorAlgEquiv {R} [CommRing R] (r : R) : R[X] ≃ₐ[R] R[X] where
@@ -206,8 +177,8 @@ def Polynomial.taylorAlgEquiv {R} [CommRing R] (r : R) : R[X] ≃ₐ[R] R[X] whe
 -- Mathlib/Data/Polynomial/Taylor.lean
 lemma Polynomial.irreducible_taylor_iff {R} [CommRing R] {r} {p : R[X]} :
     Irreducible (taylor r p) ↔ Irreducible p := by
-  refine ⟨fun H ↦ of_irreducible_map (taylorAlgEquiv r).toRingEquiv H, fun H ↦ ?_⟩
-  apply of_irreducible_map ((taylorAlgEquiv r).symm.toRingEquiv : R[X] →+* R[X])
+  refine ⟨fun H ↦ H.of_map (f := (taylorAlgEquiv r).toRingEquiv), fun H ↦ ?_⟩
+  apply Irreducible.of_map (f := (taylorAlgEquiv r).symm.toRingEquiv)
   simpa only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_coe, AlgEquiv.coe_ringEquiv,
     taylorAlgEquiv_symm_apply, taylor_taylor, neg_add_cancel, taylor_zero', LinearMap.id_coe, id_eq]
 

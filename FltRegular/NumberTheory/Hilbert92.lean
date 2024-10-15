@@ -14,7 +14,7 @@ open FiniteDimensional NumberField
 variable (p : ℕ+) {K : Type*} [Field K]
 variable {k : Type*} [Field k] (hp : Nat.Prime p)
 
-open FiniteDimensional BigOperators Finset
+open Module BigOperators Finset
 open CyclotomicIntegers (zeta)
 
 section thm91
@@ -33,7 +33,7 @@ def systemOfUnits.isMaximal [Module.Finite ℤ G] {s : ℕ} (hf : finrank ℤ G 
   apply Nonempty.some
   apply (@nonempty_fintype _ ?_)
   apply Module.finite_of_fg_torsion
-  rw [← FiniteDimensional.finrank_eq_zero_iff_isTorsion,  finrank_quotient',
+  rw [← finrank_eq_zero_iff_isTorsion,  finrank_quotient',
     finrank_spanA p hp _ _ sys.linearIndependent, hf, mul_comm, Nat.sub_self]
 
 noncomputable
@@ -153,9 +153,9 @@ variable [Module.Finite ℤ G]
 lemma existence [Module.Free ℤ G] [Module A G] :
     ∃ S : systemOfUnits p G s, S.IsFundamental := by
   obtain ⟨S⟩ := systemOfUnits.existence p hp G s hf
-  letI := S.isMaximal hp hf
+  letI := S.isMaximal p hp G hf
   have : { a | ∃ (S : systemOfUnits p G s) (_ : S.IsMaximal), a = S.index p G }.Nonempty :=
-    ⟨S.index, S, S.isMaximal hp hf, rfl⟩
+    ⟨S.index, S, S.isMaximal p hp G hf, rfl⟩
   obtain ⟨S', hS', ha⟩ := Nat.sInf_mem this
   use S', hS'
   intro a' ha'
@@ -191,9 +191,9 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
     · obtain ⟨j, rfl⟩ := not_imp_comm.mp this.mpr hij
       rw [Finsupp.mapDomain_apply Fin.succAbove_right_injective, add_zero,
         Finsupp.comapDomain_apply]
-  letI := S'.isMaximal hp hf
+  letI := S'.isMaximal p hp G hf
   suffices Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units) by
-    exact (hs.maximal' S').not_lt (AddSubgroup.index_mono (h₁ := S.isMaximal hp hf) this)
+    exact (hs.maximal' _ _ _ S').not_lt (AddSubgroup.index_mono (h₁ := S.isMaximal _ hp _ hf) this)
   rw [SetLike.lt_iff_le_and_exists]
   constructor
   · rw [Submodule.span_le]
