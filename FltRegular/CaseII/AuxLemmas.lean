@@ -1,37 +1,13 @@
 import Mathlib.RingTheory.ClassGroup
-import Mathlib.NumberTheory.NumberField.Basic
 
 variable {K : Type*} {p : ℕ+} [Field K] [CharZero K]
 
-variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
+variable {ζ : K}
 
-open scoped BigOperators nonZeroDivisors NumberField
+open scoped BigOperators nonZeroDivisors
 open Polynomial
 
-instance foofoo [NumberField K] : IsDomain (Ideal (𝓞 K)) := by convert Ideal.isDomain (A := 𝓞 K)
-
-instance [NumberField K] : CancelMonoidWithZero (Ideal (𝓞 K)) :=
-  @IsDomain.toCancelMonoidWithZero _ _ foofoo
-
-lemma WfDvdMonoid.multiplicity_finite {M : Type*} [CancelCommMonoidWithZero M] [WfDvdMonoid M]
-    {x y : M} (hx : ¬ IsUnit x) (hy : y ≠ 0) :
-    multiplicity.Finite x y := by
-  by_contra h
-  rw [multiplicity.Finite, not_exists_not] at h
-  choose f hf using h
-  obtain ⟨_, ⟨n, rfl⟩, hn⟩ :=
-    (wellFounded_dvdNotUnit (α := M)).has_min (Set.range f) (Set.range_nonempty f)
-  apply hn _ ⟨n + 1, rfl⟩
-  constructor
-  · intro e
-    apply hy
-    rw [hf (n + 1), e, mul_zero]
-  · refine ⟨x, hx, ?_⟩
-    rw [mul_comm, ← (mul_right_injective₀ (a := x ^ (n + 1)) _).eq_iff]
-    · simp only [← mul_assoc, ← pow_succ, ← hf]
-    · intro e
-      apply hy
-      rw [hf n, e, zero_mul]
+--TODO: fix the following proofs using new multiplicity API
 
 lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero M] [WfDvdMonoid M]
     {x y : M} :
@@ -42,14 +18,14 @@ lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero 
     · exact fun ⟨n, hn⟩ ↦ hn (hx.pow _).dvd
     · simp [hy]
   · intro ⟨hx, hy⟩
-    exact WfDvdMonoid.multiplicity_finite hx hy
+    exact multiplicity.finite_of_not_isUnit hx hy
 
-lemma dvd_iff_multiplicity_le {M : Type*}
+lemma dvd_iff_emultiplicity_le {M : Type*}
     [CancelCommMonoidWithZero M] [DecidableRel (fun a b : M ↦ a ∣ b)] [UniqueFactorizationMonoid M]
-    {a b : M} (ha : a ≠ 0) : a ∣ b ↔ ∀ p : M, Prime p → multiplicity p a ≤ multiplicity p b := by
+    {a b : M} (ha : a ≠ 0) : a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
   constructor
   · intro hab p _
-    exact multiplicity.multiplicity_le_multiplicity_of_dvd_right hab
+    exact emultiplicity_le_emultiplicity_of_dvd_right hab
   · intro H
     by_cases hb : b = 0
     · exact hb ▸ dvd_zero a
@@ -60,60 +36,56 @@ lemma dvd_iff_multiplicity_le {M : Type*}
       rw [UniqueFactorizationMonoid.irreducible_iff_prime] at hq
       obtain ⟨c, rfl⟩ : a ∣ b := by
         refine IH ha.2 (fun p hp ↦ (le_trans ?_ (H p hp)))
-        rw [multiplicity.mul hp]
+        rw [emultiplicity_mul hp]
         exact le_add_self
       rw [mul_comm]
       simp only [ne_eq, mul_eq_zero, not_or] at hb
+      refine mul_dvd_mul_left _ ?_
+      rw [← pow_one q, pow_dvd_iff_le_emultiplicity]
       have := H q hq
-      rw [multiplicity.mul hq, multiplicity.mul hq, add_comm,
-        ← PartENat.natCast_get (multiplicity.finite_iff_dom.mp
-          (WfDvdMonoid.multiplicity_finite hq.not_unit ha.2)),
-        ← PartENat.natCast_get (multiplicity.finite_iff_dom.mp
-          (WfDvdMonoid.multiplicity_finite hq.not_unit hb.2)),
-        ← PartENat.natCast_get (multiplicity.finite_iff_dom.mp
-          (WfDvdMonoid.multiplicity_finite hq.not_unit ha.1)),
-        ← Nat.cast_add, ← Nat.cast_add, PartENat.coe_le_coe,
-        multiplicity.get_multiplicity_self, add_le_add_iff_left,
-        ← PartENat.coe_le_coe, PartENat.natCast_get, ← multiplicity.pow_dvd_iff_le_multiplicity,
-        pow_one] at this
-      exact mul_dvd_mul_left _ this
-
-lemma ENat.mul_mono_left {k n m : ℕ∞} (hk : k ≠ 0) (hk' : k ≠ ⊤) : k * n ≤ k * m ↔ n ≤ m := by
-  obtain (n|n) := n
-  · rw [WithTop.none_eq_top, top_le_iff, WithTop.mul_top hk, top_le_iff, WithTop.mul_eq_top_iff,
-      iff_true_intro hk, iff_false_intro hk']
-    simp
-  obtain (m|m) := m
-  · simp only [WithTop.none_eq_top, le_top, iff_true]
-    rw [WithTop.mul_top hk]
-    simp
-  obtain (k|k) := k
-  · simp at hk'; contradiction
-  simp_rw [WithTop.some_eq_coe, ENat.some_eq_coe]
-  rw [← ENat.coe_mul, ← ENat.coe_mul, Nat.cast_le, Nat.cast_le]
-  refine (strictMono_mul_left_of_pos (Nat.pos_of_ne_zero ?_)).le_iff_le
-  rintro rfl
-  exact hk rfl
-
-lemma ENat.nsmul_mono {n m : ℕ∞} {k : ℕ} (hk : k ≠ 0) : k • n ≤ k • m ↔ n ≤ m := by
-  simp_rw [nsmul_eq_mul]
-  apply ENat.mul_mono_left
-  · exact Nat.cast_ne_zero.mpr hk
-  · exact coe_ne_top k
+      rw [emultiplicity_mul hq, emultiplicity_mul hq,
+        multiplicity.Finite.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
+          ⟨hq.not_unit, hb.2⟩), multiplicity.Finite.emultiplicity_eq_multiplicity
+          (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, ha.2⟩), multiplicity.Finite.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
+          ⟨hq.not_unit, hq.ne_zero⟩), multiplicity_self, ← Nat.cast_add, ← Nat.cast_add,
+          Nat.cast_le, add_comm, add_le_add_iff_left] at this
+      rwa [multiplicity.Finite.emultiplicity_eq_multiplicity
+        (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, hb.2⟩), Nat.cast_one,
+        Nat.one_le_cast]
 
 lemma pow_dvd_pow_iff_dvd {M : Type*} [CancelCommMonoidWithZero M] [UniqueFactorizationMonoid M]
     {a b : M} {x : ℕ} (h' : x ≠ 0) : a ^ x ∣ b ^ x ↔ a ∣ b := by
   classical
   by_cases ha : a = 0
-  · rw [ha, zero_pow h', zero_dvd_iff, zero_dvd_iff, pow_eq_zero_iff h']
+  · simp [ha, h']
+  by_cases hb : b = 0
+  · simp [hb, h']
   have ha' : a ^ x ≠ 0 := (pow_ne_zero_iff h').mpr ha
-  rw [dvd_iff_multiplicity_le ha, dvd_iff_multiplicity_le ha']
-  refine forall₂_congr (fun p hp ↦ ?_)
-  simp_rw [multiplicity.pow hp, ← PartENat.withTopEquiv_le]
-  show PartENat.withTopAddEquiv _ ≤ PartENat.withTopAddEquiv _ ↔ _
-  simp_rw [map_nsmul]
-  rw [ENat.nsmul_mono h']
-  rfl
+  rw [dvd_iff_emultiplicity_le ha, dvd_iff_emultiplicity_le ha']
+  refine forall₂_congr (fun p hp ↦ ⟨fun h ↦ ?_, fun h ↦  ?_⟩)
+  · rw [emultiplicity_pow hp, emultiplicity_pow hp,
+      multiplicity.Finite.emultiplicity_eq_multiplicity
+      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
+      multiplicity.Finite.emultiplicity_eq_multiplicity
+      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), ← Nat.cast_mul, ← Nat.cast_mul,
+      Nat.cast_le] at h
+    rw [multiplicity.Finite.emultiplicity_eq_multiplicity
+      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
+      multiplicity.Finite.emultiplicity_eq_multiplicity
+      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), Nat.cast_le]
+    exact le_of_nsmul_le_nsmul_right h' h
+  · rw [emultiplicity_pow hp, emultiplicity_pow hp,
+      multiplicity.Finite.emultiplicity_eq_multiplicity
+      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
+      multiplicity.Finite.emultiplicity_eq_multiplicity
+      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), ← Nat.cast_mul, ← Nat.cast_mul,
+      Nat.cast_le]
+    rw [multiplicity.Finite.emultiplicity_eq_multiplicity
+      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
+      multiplicity.Finite.emultiplicity_eq_multiplicity
+      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩),
+      Nat.cast_le] at h
+    exact Nat.mul_le_mul_left x h
 
 theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
     {A K: Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
@@ -201,8 +173,8 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
   by_cases h : s = 0
   · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
     exact hI' ha
-  obtain ⟨n, hn⟩ := WfDvdMonoid.multiplicity_finite hx.not_unit h
-  obtain ⟨m, hm⟩ := WfDvdMonoid.multiplicity_finite hx.not_unit (nonZeroDivisors.ne_zero t.prop)
+  obtain ⟨n, hn⟩ := multiplicity.finite_of_not_isUnit hx.not_unit h
+  obtain ⟨m, hm⟩ := multiplicity.finite_of_not_isUnit hx.not_unit (nonZeroDivisors.ne_zero t.prop)
   rw [IsFractionRing.mk'_eq_div] at ha
   refine this (n + m + 1) (Nat.le_add_left 1 (n + m)) ⟨s, t, ?_, ?_, ha.symm⟩
   · intro hs

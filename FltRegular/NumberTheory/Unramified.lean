@@ -100,13 +100,13 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
     rw [← Finset.mem_coe, coe_primesOverFinset S p hpbot] at hP
     congr
     rw [dif_pos hp]
-    apply PartENat.natCast_inj.mp
+    rw [← Nat.cast_inj (R := ENat)]
     rw [← normalize_eq P, factors_eq_normalizedFactors,
-      ← multiplicity_eq_count_normalizedFactors
+      ← emultiplicity_eq_count_normalizedFactors
         (prime_of_mem_primesOver hpbot hP).irreducible hIbot,
-      ← normalize_eq (𝔓 p hp), ← multiplicity_eq_count_normalizedFactors
+      ← normalize_eq (𝔓 p hp), ← emultiplicity_eq_count_normalizedFactors
         (prime_of_mem_primesOver hpbot <| h𝔓' p hp).irreducible hIbot,
-      multiplicity.multiplicity_eq_multiplicity_iff]
+      emultiplicity_eq_emultiplicity_iff]
     intro n
     have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) hP
     rw [Ideal.dvd_iff_le, Ideal.dvd_iff_le]

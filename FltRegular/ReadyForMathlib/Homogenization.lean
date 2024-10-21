@@ -714,22 +714,22 @@ theorem homogenization_X_sub_C {R : Type _} [CommRing R] {i j : ι} (r : R) :
 
 @[simp]
 theorem homogenization_X_pow_add_C {i j : ι} {n : ℕ} (hn : 0 < n) (r : R) :
-    (X j ^ n + C r : MvPolynomial ι R).homogenization i = X j ^ n + C r * X i ^ n :=
-  by
+    (X j ^ n + C r : MvPolynomial ι R).homogenization i = X j ^ n + C r * X i ^ n := by
   nontriviality R
   have : totalDegree (X j ^ n + C r) = n := by
     rw [totalDegree_add_eq_left_of_totalDegree_lt]
     · exact totalDegree_X_pow _ _
     · simp only [totalDegree_C, totalDegree_X_pow, hn]
-  erw [homogenization, Finsupp.mapDomain_add]
-  erw [AddMonoidAlgebra.single_pow]
-  erw [Finsupp.mapDomain_single, Finsupp.mapDomain_single]
+  rw [homogenization, Finsupp.mapDomain_add]
+  erw [AddMonoidAlgebra.single_pow, Finsupp.mapDomain_single, Finsupp.mapDomain_single]
   simp only [tsub_zero, Finsupp.sum_zero_index, Finsupp.sum_single_index, zero_add,
     single_eq_monomial, one_pow, mul_one, Finsupp.smul_single', Finsupp.single_tsub]
   congr
   · rw [totalDegree_add_eq_left_of_totalDegree_lt]
-    simp [one_ne_zero]
-    simp [one_ne_zero, hn]
+    simp only [ne_eq, one_ne_zero, not_false_eq_true, totalDegree_monomial, sum_single_index,
+      add_right_eq_self]
+    · exact tsub_self (single i n)
+    · simp [hn]
   · convert (C_mul_X_pow_eq_monomial (R := R)).symm
     rw [← C_mul_X_pow_eq_monomial]
     simp [this]
@@ -741,15 +741,13 @@ theorem homogenization_X_pow_sub_C {R : Type _} [CommRing R] {i j : ι} {n : ℕ
 
 @[simp]
 theorem homogenization_X_pow_sub_one {R : Type _} [CommRing R] {i j : ι} {n : ℕ} (hn : 0 < n) :
-    (X j ^ n - 1 : MvPolynomial ι R).homogenization i = X j ^ n - X i ^ n :=
-  by
+    (X j ^ n - 1 : MvPolynomial ι R).homogenization i = X j ^ n - X i ^ n := by
   convert homogenization_X_pow_sub_C hn (R := R) _
   simp
 
 @[simp]
 theorem homogenization_X_pow_add_one {i j : ι} {n : ℕ} (hn : 0 < n) :
-    (X j ^ n + 1 : MvPolynomial ι R).homogenization i = X j ^ n + X i ^ n :=
-  by
+    (X j ^ n + 1 : MvPolynomial ι R).homogenization i = X j ^ n + X i ^ n := by
   convert homogenization_X_pow_add_C (R := R) hn _
   simp
 

@@ -25,7 +25,7 @@ open Ideal IsCyclotomicExtension
 theorem exists_int_sub_pow_prime_dvd {A : Type _} [CommRing A] [IsCyclotomicExtension {p} ℤ A]
     [hp : Fact (p : ℕ).Prime] (a : A) : ∃ m : ℤ, a ^ (p : ℕ) - m ∈ span ({(p : A)} : Set A) := by
   have : a ∈ Algebra.adjoin ℤ _ := @adjoin_roots {p} ℤ A _ _ _ _ a
-  refine Algebra.adjoin_induction this ?_ ?_ ?_ ?_
+  refine Algebra.adjoin_induction ?_ ?_ ?_ ?_ this
   · intro x hx
     rcases hx with ⟨hx_w, hx_m, hx_p⟩
     simp only [Set.mem_singleton_iff] at hx_m
@@ -36,7 +36,7 @@ theorem exists_int_sub_pow_prime_dvd {A : Type _} [CommRing A] [IsCyclotomicExte
   · intro r
     use r ^ (p : ℕ)
     simp
-  · rintro x y ⟨b, hb⟩ ⟨c, hc⟩
+  · rintro x y _ _ ⟨b, hb⟩ ⟨c, hc⟩
     obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hp.out x y
     rw [hr]
     use c + b
@@ -48,7 +48,7 @@ theorem exists_int_sub_pow_prime_dvd {A : Type _} [CommRing A] [IsCyclotomicExte
       ring
     · rw [mem_span_singleton]
       exact dvd_mul_right _ _
-  · rintro x y ⟨b, hb⟩ ⟨c, hc⟩
+  · rintro x y _ _ ⟨b, hb⟩ ⟨c, hc⟩
     rw [mul_pow]
     use b * c
     have := Ideal.mul_mem_left _ (x ^ (p : ℕ)) hc

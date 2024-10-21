@@ -442,7 +442,9 @@ variable [NumberField k]
 open multiplicity in
 theorem padicValNat_dvd_iff_le' {p : ℕ} (hp : p ≠ 1) {a n : ℕ} (ha : a ≠ 0) :
     p ^ n ∣ a ↔ n ≤ padicValNat p a := by
-  rw [pow_dvd_iff_le_multiplicity, ← padicValNat_def' hp ha.bot_lt, PartENat.coe_le_coe]
+  rw [pow_dvd_iff_le_emultiplicity, padicValNat_def' hp ha.bot_lt]
+  exact ⟨fun h ↦ Finite.le_multiplicity_of_le_emultiplicity (Nat.multiplicity_finite_iff.2
+    ⟨hp, Nat.zero_lt_of_ne_zero ha⟩) h, fun h ↦ le_emultiplicity_of_le_multiplicity h⟩
 
 theorem padicValNat_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℕ) :
     p ^ n ∣ a ↔ a = 0 ∨ n ≤ padicValNat p a := by

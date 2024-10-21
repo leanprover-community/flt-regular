@@ -84,6 +84,7 @@ variable [IsCyclotomicExtension {p} ℚ K]
 
 include e hp in
 /- Let π = ζ -1, then π divides x+yη with η a primivite root of unity. -/
+set_option synthInstance.maxHeartbeats 40000 in
 lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -133,6 +134,7 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
 
 include hy in
 /- sending η to (x+yη)/(ζ-1) mod (π) = 𝔭 is injective. -/
+set_option synthInstance.maxHeartbeats 40000 in
 lemma div_zeta_sub_one_Injective :
     Function.Injective (fun η ↦ Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η)) := by
   letI : AddGroup (𝓞 K ⧸ 𝔭) := inferInstance
@@ -561,6 +563,7 @@ lemma exists_solution :
       (a_div_a_zero_denom_spec hp hζ e hy hz η₂ hreg hη₂)
 
 include hp hreg e hy hz in
+set_option synthInstance.maxHeartbeats 40000 in
 lemma exists_solution' :
     ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
       ¬ π ∣ y' ∧ ¬ π ∣ z' ∧ x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
