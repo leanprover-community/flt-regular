@@ -12,7 +12,7 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 namespace FltRegular
 
 include hp hreg in
-lemma not_exists_solution (hm : 1 ≤ m) :
+lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
   ¬∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
     ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
     x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (((hζ.unit' : 𝓞 K) - 1) ^ m * z') ^ (p : ℕ) := by

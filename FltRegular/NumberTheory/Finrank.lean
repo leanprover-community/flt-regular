@@ -6,19 +6,11 @@ import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.LinearAlgebra.Dimension.Localization
 
 open Module
-
 section
 
-universe u v
+variable (R M : Type*) [Ring R] [AddCommGroup M] [Module R M]
 
-variable (R : Type u) (M : Type v) [Ring R] [AddCommGroup M] [Module R M]
-
-variable {R M}
-
-variable [StrongRankCondition R] [Module.Finite R M]
-
-instance torsion.module {R M} [Ring R] [AddCommGroup M] [Module R M] :
-    Module R (M ⧸ AddCommGroup.torsion M) := by
+instance torsion.module : Module R (M ⧸ AddCommGroup.torsion M) := by
   letI : Submodule R M := { AddCommGroup.torsion M with smul_mem' := fun r m ⟨n, hn, hn'⟩ ↦
     ⟨n, hn, by { simp only [Function.IsPeriodicPt, Function.IsFixedPt, add_left_iterate, add_zero,
       Nat.isUnit_iff, smul_comm n] at hn' ⊢; simp only [hn', smul_zero] }⟩ }
@@ -26,15 +18,14 @@ instance torsion.module {R M} [Ring R] [AddCommGroup M] [Module R M] :
 
 end
 
-variable {R : Type u} {M : Type v} [CommRing R] [AddCommGroup M]
-variable [Module R M] (N : Submodule R M)
+variable {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (N : Submodule R M)
 
 lemma FiniteDimensional.finrank_quotient_of_le_torsion (hN : N ≤ Submodule.torsion R M) :
     finrank R (M ⧸ N) = finrank R M := congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion hN)
 
-lemma FiniteDimensional.finrank_map_of_le_torsion {M'} [AddCommGroup M'] [Module R M']
-    (l : M →ₗ[R] M') [Module.Finite R N]
-    (hN : N ⊓ LinearMap.ker l ≤ Submodule.torsion R M) : finrank R (N.map l) = finrank R N := by
+lemma FiniteDimensional.finrank_map_of_le_torsion {M' : Type*} [AddCommGroup M'] [Module R M']
+    (l : M →ₗ[R] M') [Module.Finite R N] (hN : N ⊓ LinearMap.ker l ≤ Submodule.torsion R M) :
+      finrank R (N.map l) = finrank R N := by
   conv_lhs => rw [← N.range_subtype, ← LinearMap.range_comp,
     ← (LinearMap.quotKerEquivRange (l.comp N.subtype)).finrank_eq]
   apply FiniteDimensional.finrank_quotient_of_le_torsion
@@ -68,7 +59,7 @@ instance [IsDomain R] [IsPrincipalIdealRing R] : Module.Free R (M ⧸ Submodule.
 
 lemma FiniteDimensional.finrank_add_finrank_quotient [IsDomain R] (N : Submodule R M) :
     finrank R (M ⧸ N) + finrank R N = finrank R M := by
-  rw [← Cardinal.natCast_inj.{v}, Module.finrank_eq_rank, Nat.cast_add, Module.finrank_eq_rank,
+  rw [← Cardinal.natCast_inj, Module.finrank_eq_rank, Nat.cast_add, Module.finrank_eq_rank,
     Submodule.finrank_eq_rank]
   exact HasRankNullity.rank_quotient_add_rank _
 

@@ -11,7 +11,7 @@ import Mathlib.RingTheory.Henselian
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional NumberField
 
-variable (p : ℕ+) {K : Type*} [Field K]
+variable {s r : ℕ} (p : ℕ+) {K : Type*} [Field K]
 variable {k : Type*} [Field k] (hp : Nat.Prime p)
 
 open Module BigOperators Finset
@@ -23,12 +23,12 @@ variable (G : Type*) [AddCommGroup G]
 local notation3 "A" => CyclotomicIntegers p
 
 /-The system of units is maximal if the quotient by its span leaves a torsion module (i.e. finite) -/
-abbrev systemOfUnits.IsMaximal {s : ℕ} {p : ℕ+} {G : Type*} [AddCommGroup G]
+abbrev systemOfUnits.IsMaximal {p : ℕ+} {G : Type*} [AddCommGroup G]
     [Module (CyclotomicIntegers p) G] (sys : systemOfUnits (G := G) p s) :=
   Fintype (G ⧸ Submodule.span (CyclotomicIntegers p) (Set.range sys.units))
 
 noncomputable
-def systemOfUnits.isMaximal [Module.Finite ℤ G] {s : ℕ} (hf : finrank ℤ G = s * (p - 1))
+def systemOfUnits.isMaximal [Module.Finite ℤ G] (hf : finrank ℤ G = s * (p - 1))
   [Module A G] (sys : systemOfUnits (G := G) p s) : sys.IsMaximal := by
   apply Nonempty.some
   apply (@nonempty_fintype _ ?_)
