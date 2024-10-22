@@ -20,27 +20,7 @@ end
 
 variable {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (N : Submodule R M)
 
-lemma FiniteDimensional.finrank_quotient_of_le_torsion (hN : N ≤ Submodule.torsion R M) :
-    finrank R (M ⧸ N) = finrank R M := congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion hN)
-
-lemma FiniteDimensional.finrank_map_of_le_torsion {M' : Type*} [AddCommGroup M'] [Module R M']
-    (l : M →ₗ[R] M') [Module.Finite R N] (hN : N ⊓ LinearMap.ker l ≤ Submodule.torsion R M) :
-      finrank R (N.map l) = finrank R N := by
-  conv_lhs => rw [← N.range_subtype, ← LinearMap.range_comp,
-    ← (LinearMap.quotKerEquivRange (l.comp N.subtype)).finrank_eq]
-  apply FiniteDimensional.finrank_quotient_of_le_torsion
-  rintro x hx
-  obtain ⟨a, ha⟩ := hN ⟨x.prop, hx⟩
-  exact ⟨a, Subtype.val_injective ha⟩
-
 variable [Module.Finite R M]
-
-lemma FiniteDimensional.finrank_of_surjective_of_le_torsion {M'} [AddCommGroup M'] [Module R M']
-    (l : M →ₗ[R] M') (hl : Function.Surjective l)
-    (hl' : LinearMap.ker l ≤ Submodule.torsion R M) : finrank R M' = finrank R M := by
-  have := FiniteDimensional.finrank_map_of_le_torsion ⊤ l (inf_le_right.trans hl')
-  rw [← LinearMap.range_eq_map l, LinearMap.range_eq_top.mpr hl] at this
-  simpa only [finrank_top] using this
 
 instance [IsDomain R] : NoZeroSMulDivisors R (M ⧸ Submodule.torsion R M) := by
   constructor
@@ -53,9 +33,6 @@ instance [IsDomain R] : NoZeroSMulDivisors R (M ⧸ Submodule.torsion R M) := by
   simp only [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, Submonoid.mk_smul, exists_prop]
   refine ⟨n * ⟨c, mem_nonZeroDivisors_of_ne_zero hc⟩, ?_⟩
   simpa [Submonoid.smul_def, smul_smul] using hn
-
-instance [IsDomain R] [IsPrincipalIdealRing R] : Module.Free R (M ⧸ Submodule.torsion R M) :=
-  Module.free_of_finite_type_torsion_free'
 
 lemma FiniteDimensional.finrank_add_finrank_quotient [IsDomain R] (N : Submodule R M) :
     finrank R (M ⧸ N) + finrank R N = finrank R M := by

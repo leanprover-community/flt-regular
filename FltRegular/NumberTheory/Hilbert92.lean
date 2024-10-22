@@ -33,7 +33,7 @@ def systemOfUnits.isMaximal [Module.Finite ℤ G] (hf : finrank ℤ G = s * (p -
   apply Nonempty.some
   apply (@nonempty_fintype _ ?_)
   apply Module.finite_of_fg_torsion
-  rw [← finrank_eq_zero_iff_isTorsion,  finrank_quotient',
+  rw [← finrank_eq_zero_iff_isTorsion, finrank_quotient',
     finrank_spanA p hp _ _ sys.linearIndependent, hf, mul_comm, Nat.sub_self]
 
 noncomputable
@@ -557,7 +557,7 @@ lemma NumberField.Units.finrank_eq : finrank ℤ (Additive (𝓞 k)ˣ) = NumberF
   rw [← rank_modTorsion]
   show _ = finrank ℤ (Additive (𝓞 k)ˣ ⧸ (AddCommGroup.torsion <| Additive (𝓞 k)ˣ))
   rw [← Submodule.torsion_int]
-  exact (FiniteDimensional.finrank_quotient_of_le_torsion _ le_rfl).symm
+  exact (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).symm
 
 include hp in
 lemma lh_pow_free [FiniteDimensional k K] (ν: (𝓞 k)ˣ)
@@ -715,7 +715,7 @@ lemma NumberField.Units.rank_of_isUnramified :
 
 lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
   rw [← Submodule.torsion_int]
-  refine (FiniteDimensional.finrank_quotient_of_le_torsion _ le_rfl).trans ?_
+  refine (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).trans ?_
   show finrank ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
     (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))))) = _
   rw [FiniteDimensional.finrank_quotient]
