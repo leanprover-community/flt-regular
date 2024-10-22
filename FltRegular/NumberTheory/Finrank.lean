@@ -22,18 +22,6 @@ variable {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (N : Submodule
 
 variable [Module.Finite R M]
 
-instance [IsDomain R] : NoZeroSMulDivisors R (M ⧸ Submodule.torsion R M) := by
-  constructor
-  intros c x hcx
-  rw [or_iff_not_imp_left]
-  intro hc
-  obtain ⟨x, rfl⟩ := Submodule.mkQ_surjective _ x
-  rw [← LinearMap.map_smul, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at hcx
-  obtain ⟨n, hn⟩ := hcx
-  simp only [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero, Submonoid.mk_smul, exists_prop]
-  refine ⟨n * ⟨c, mem_nonZeroDivisors_of_ne_zero hc⟩, ?_⟩
-  simpa [Submonoid.smul_def, smul_smul] using hn
-
 lemma FiniteDimensional.finrank_add_finrank_quotient [IsDomain R] (N : Submodule R M) :
     finrank R (M ⧸ N) + finrank R N = finrank R M := by
   rw [← Cardinal.natCast_inj, Module.finrank_eq_rank, Nat.cast_add, Module.finrank_eq_rank,
