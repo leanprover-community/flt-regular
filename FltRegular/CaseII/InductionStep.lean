@@ -70,7 +70,7 @@ include hp hζ e hz in
 lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
   intro hη
   have : x + y * η ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
-    rw [pow_add_pow_eq_prod_add_zeta_runity_mul
+    rw [pow_add_pow_eq_prod_add_zeta_runity_mul _ _
       (hpri.out.eq_two_or_odd.resolve_left (PNat.coe_injective.ne hp)) hζ.unit'_coe]
     simp_rw [mul_comm _ y]
     exact Finset.dvd_prod_of_mem _ η.prop
@@ -90,7 +90,7 @@ lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   have h := zeta_sub_one_dvd hζ e
   replace h : ∏ _η in nthRootsFinset p (𝓞 K), Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0 := by
-    rw [pow_add_pow_eq_prod_add_zeta_runity_mul (hpri.out.eq_two_or_odd.resolve_left
+    rw [pow_add_pow_eq_prod_add_zeta_runity_mul _ _ (hpri.out.eq_two_or_odd.resolve_left
       (PNat.coe_injective.ne hp)) hζ.unit'_coe, ← Ideal.Quotient.eq_zero_iff_dvd, map_prod] at h
     convert h using 2 with η' hη'
     rw [map_add, map_add, map_mul, map_mul, IsPrimitiveRoot.eq_one_mod_one_sub' hζ.unit'_coe hη',
@@ -249,7 +249,7 @@ lemma exists_ideal_pow_eq_c_aux :
 /- The ∏_η,  𝔠 η = (𝔷' 𝔭^m)^p with 𝔷 = 𝔪 𝔷' -/
 lemma prod_c : ∏ η in Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (𝔷' * 𝔭 ^ m) ^ (p : ℕ) := by
   have e' := span_pow_add_pow_eq hζ e
-  rw [pow_add_pow_eq_prod_add_zeta_runity_mul
+  rw [pow_add_pow_eq_prod_add_zeta_runity_mul _ _
     (hpri.out.eq_two_or_odd.resolve_left (PNat.coe_injective.ne hp)) hζ.unit'_coe] at e'
   rw [← Ideal.prod_span_singleton, ← Finset.prod_attach] at e'
   simp_rw [mul_comm _ y, ← m_mul_c_mul_p hp hζ e hy,
