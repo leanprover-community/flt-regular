@@ -1,6 +1,10 @@
 import FltRegular.NumberTheory.AuxLemmas
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.Data.Set.Card
+import Mathlib.FieldTheory.PurelyInseparable
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.RingTheory.DedekindDomain.Dvr
+import Mathlib.Algebra.Order.Star.Basic
 
 /-!
 # Galois action on primes

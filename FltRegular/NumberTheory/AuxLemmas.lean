@@ -1,10 +1,9 @@
 import Mathlib.NumberTheory.RamificationInertia
 import Mathlib.Algebra.Polynomial.Taylor
-import Mathlib.RingTheory.Valuation.ValuationRing
 import Mathlib.FieldTheory.Separable
 import Mathlib.RingTheory.Trace.Defs
-
-import Mathlib
+import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.RingTheory.SimpleRing.Basic
 
 /-!
 
