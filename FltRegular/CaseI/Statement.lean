@@ -138,7 +138,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   have H₁ := congr_arg (algebraMap ℤ R) H
   simp only [eq_intCast, Int.cast_add, Int.cast_pow] at H₁
   have hζ' := (zeta_spec P ℚ K).unit'_coe
-  rw [pow_add_pow_eq_prod_add_zeta_runity_mul
+  rw [pow_add_pow_eq_prod_add_zeta_runity_mul _ _
     (hpri.out.eq_two_or_odd.resolve_left fun h => by simp [h] at h5p) hζ'] at H₁
   replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
   simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
