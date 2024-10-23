@@ -4,6 +4,8 @@ import Mathlib.RingTheory.Valuation.ValuationRing
 import Mathlib.FieldTheory.Separable
 import Mathlib.RingTheory.Trace.Defs
 
+import Mathlib
+
 /-!
 
 This file contains lemmas that should go somewhere in a file in mathlib.
@@ -132,10 +134,6 @@ lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [F
     [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ] (M : Submonoid R) [IsLocalization M Rₚ]
     [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] [hRS : Algebra.IsSeparable R S] :
     Algebra.IsSeparable Rₚ Sₚ := by
-  have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
-    (algebraMap R S) (Submonoid.le_comap_map M) := by
-    apply IsLocalization.ringHom_ext M
-    simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
   refine ⟨fun x ↦ ?_⟩
   obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid S M) x
   obtain ⟨t, ht, e⟩ := s.prop
@@ -145,8 +143,8 @@ lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [F
     exact isUnit_of_invertible _
   · rw [aeval_def]
     convert scaleRoots_eval₂_eq_zero _ (r := algebraMap S Sₚ x) _
-    · rw [this, IsLocalization.map_mk', _root_.map_one, IsLocalization.mk'_eq_mul_mk'_one,
-        mul_comm]
+    · rw [IsLocalization.algebraMap_eq_map_map_submonoid M S, IsLocalization.map_mk',
+          _root_.map_one, IsLocalization.mk'_eq_mul_mk'_one, mul_comm]
       congr; ext; exact e.symm
     · rw [← aeval_def, ← map_aeval_eq_aeval_map, minpoly.aeval, map_zero]
       rw [← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
