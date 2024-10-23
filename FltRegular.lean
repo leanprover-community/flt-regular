@@ -27,4 +27,3 @@ import FltRegular.NumberTheory.KummersLemma.KummersLemma
 import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.NumberTheory.SystemOfUnits
 import FltRegular.NumberTheory.Unramified
-import FltRegular.ReadyForMathlib.Homogenization
