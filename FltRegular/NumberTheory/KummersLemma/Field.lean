@@ -92,8 +92,9 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
     RingHom.coe_coe, Subalgebra.coe_val, one_div, map_sub, map_one, coeff_add, coeff_sub,
     PNat.pos, pow_eq_zero_iff, this, mul_add]
   simp_rw [← smul_eq_mul K, ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
-  rw [smul_C, smul_eq_mul, ← smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub, smul_C,
-    smul_eq_mul, mul_inv_cancel₀, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub, map_one]
+  rw [smul_C, smul_eq_mul, ← _root_.smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub,
+    smul_C, smul_eq_mul, mul_inv_cancel₀, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub,
+    map_one]
   · exact hζ.sub_one_ne_zero hpri.out.one_lt
   · exact pow_ne_zero _ (hζ.sub_one_ne_zero hpri.out.one_lt)
 
@@ -121,7 +122,7 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
   -- also add to mathlib
   have hcoe : (algebraMap (𝓞 K) L) (↑hζ.unit') = algebraMap K L ζ := rfl
   have hcoe1 : (algebraMap (𝓞 K) L) ↑u = algebraMap K L ↑↑u := rfl
-  simp only [map_sub, map_one, map_pow, map_mul, aeval_C, Subalgebra.algebraMap_eq, smul_pow,
+  simp only [map_sub, map_one, map_pow, map_mul, aeval_C, Subalgebra.algebraMap_eq, _root_.smul_pow,
     hcoe, RingHom.coe_comp, RingHom.coe_coe, Subalgebra.coe_val, Function.comp_apply, e, hcoe1,
     map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ',
     sub_sub_cancel_left, (hpri.out.odd_of_ne_two (PNat.coe_injective.ne hp)).neg_pow] at this
@@ -257,6 +258,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
 
 include hu in
 open scoped KummerExtension in
+set_option synthInstance.maxHeartbeats 40000 in
 attribute [local instance] Ideal.Quotient.field in
 lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     Separable ((poly hp hζ u hcong).map (Ideal.Quotient.mk I)) := by
