@@ -61,31 +61,6 @@ theorem Finsupp.prod_congr' {α M N} [Zero M] [CommMonoid N] {f₁ f₂ : α →
     f₂.prod_of_support_subset Finset.subset_union_right _ (fun i _ ↦ hg2 i)]
   exact Finset.prod_congr rfl (fun x _ ↦ h x)
 
-lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
-    (f : ι → G) (i : ι) (g : G) (σ : R)
-    (hσ : σ ∈ nonZeroDivisors R) (hg : σ • g = f i) (hf : LinearIndependent R f):
-    LinearIndependent R (Function.update f i g) := by
-  classical
-  rw [linearIndependent_iff] at hf ⊢
-  intros l hl
-  have : (Finsupp.linearCombination R f) (Finsupp.update (σ • l) i (l i)) = 0 := by
-    rw [← smul_zero σ, ← hl, Finsupp.linearCombination_apply, Finsupp.linearCombination_apply,
-      Finsupp.smul_sum]
-    apply Finsupp.sum_congr'
-    · intro x
-      simp only [Finsupp.coe_update, Finsupp.coe_smul, Function.update_apply, ite_smul, smul_ite]
-      rw [smul_smul, mul_comm σ, ← smul_smul, hg, Pi.smul_apply, smul_eq_mul, ← smul_smul]
-      split <;> simp [*]
-    · simp
-    · simp
-  ext j
-  have := DFunLike.congr_fun (hf (Finsupp.update (σ • l) i (l i)) this) j
-  simp only [Finsupp.coe_update, Finsupp.coe_smul, ne_eq, Function.update_apply, Finsupp.coe_zero,
-    Pi.zero_apply] at this
-  split_ifs at this with hij
-  · exact hij ▸ this
-  · exact hσ (l j) ((mul_comm _ _).trans this)
-
 @[simps]
 noncomputable
 def Finsupp.ltotal (α M R) [CommSemiring R] [AddCommMonoid M] [Module R M] :
@@ -102,7 +77,7 @@ lemma Finsupp.total_pi_single {α M R} [CommSemiring R] [AddCommMonoid M] [Modul
     not_not]
   exact fun e ↦ e ▸ (zero_smul R m).symm
 
-lemma LinearIndependent.update' {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
+lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
     (f : ι → G) (l : ι →₀ R) (i : ι) (g : G) (σ : R)
     (hσ : σ ∈ nonZeroDivisors R) (hg : σ • g = Finsupp.linearCombination R f l)
     (hl : l i ∈ nonZeroDivisors R) (hf : LinearIndependent R f) :
@@ -171,7 +146,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
   intro g hg
   letI := Fact.mk hp
   let S' : systemOfUnits p G (s + 1) := ⟨Function.update S.units i g,
-    LinearIndependent.update' _ _ _ _ _ _ (CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
+    LinearIndependent.update _ _ _ _ _ _ (CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
     hg (ha ▸ one_mem A⁰) S.linearIndependent⟩
   let a' := a.comapDomain (Fin.succAbove i) Fin.succAbove_right_injective.injOn
   have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i := by

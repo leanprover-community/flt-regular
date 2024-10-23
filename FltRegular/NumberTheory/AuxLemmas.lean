@@ -71,29 +71,6 @@ open Polynomial
 
 open nonZeroDivisors
 
--- Mathlib/RingTheory/LocalProperties.lean
-open Polynomial nonZeroDivisors in
-lemma IsIntegral_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [CommRing Rₚ]
-    [CommRing Sₚ] [Algebra R S] [Algebra R Rₚ] [Algebra R Sₚ] [Algebra S Sₚ] [Algebra Rₚ Sₚ]
-    [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ] (M : Submonoid R) [IsLocalization M Rₚ]
-    [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] (hRS : Algebra.IsIntegral R S) :
-    Algebra.IsIntegral Rₚ Sₚ := by
-  classical
-  have : algebraMap Rₚ Sₚ = IsLocalization.map (T := Algebra.algebraMapSubmonoid S M) Sₚ
-    (algebraMap R S) (Submonoid.le_comap_map M) := by
-    apply IsLocalization.ringHom_ext M
-    simp only [IsLocalization.map_comp, ← IsScalarTower.algebraMap_eq]
-  constructor
-  intros x
-  obtain ⟨x, ⟨_, t, ht, rfl⟩, rfl⟩ := IsLocalization.mk'_surjective
-    (Algebra.algebraMapSubmonoid S M) x
-  rw [IsLocalization.mk'_eq_mul_mk'_one]
-  apply RingHom.IsIntegralElem.mul
-  · exact IsIntegral.tower_top (IsIntegral.map (IsScalarTower.toAlgHom R S Sₚ) (hRS.1 x))
-  · show IsIntegral _ _
-    convert isIntegral_algebraMap (x := IsLocalization.mk' Rₚ 1 ⟨t, ht⟩)
-    rw [this, IsLocalization.map_mk', _root_.map_one]
-
 -- Mathlib/RingTheory/Polynomial/ScaleRoots.lean (this section is not needed anymore)
 section scaleRoots
 
@@ -127,27 +104,6 @@ lemma Polynomial.Separable.scaleRoots {R} [CommRing R] {p : R[X]}
   rw [Polynomial.derivative_scaleRoots, Algebra.smul_def]
   refine (isCoprime_mul_unit_left_right ((hr.pow _).map _) _ _).mpr ?_
   exact Polynomial.isCoprime_scaleRoots _ _ _ hr hp
-
-open Polynomial nonZeroDivisors in
-lemma IsSeparable_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRing S] [Field Rₚ]
-    [CommRing Sₚ] [Algebra R S] [Algebra R Rₚ] [Algebra R Sₚ] [Algebra S Sₚ] [Algebra Rₚ Sₚ]
-    [IsScalarTower R S Sₚ] [IsScalarTower R Rₚ Sₚ] (M : Submonoid R) [IsLocalization M Rₚ]
-    [IsLocalization (Algebra.algebraMapSubmonoid S M) Sₚ] [hRS : Algebra.IsSeparable R S] :
-    Algebra.IsSeparable Rₚ Sₚ := by
-  refine ⟨fun x ↦ ?_⟩
-  obtain ⟨x, s, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid S M) x
-  obtain ⟨t, ht, e⟩ := s.prop
-  let P := ((minpoly R x).map (algebraMap R Rₚ)).scaleRoots (IsLocalization.mk' _ 1 ⟨t, ht⟩)
-  refine Separable.of_dvd ?_ (minpoly.dvd _ _ (p := P) ?_)
-  · apply (Algebra.IsSeparable.isSeparable R x).map.scaleRoots
-    exact isUnit_of_invertible _
-  · rw [aeval_def]
-    convert scaleRoots_eval₂_eq_zero _ (r := algebraMap S Sₚ x) _
-    · rw [IsLocalization.algebraMap_eq_map_map_submonoid M S, IsLocalization.map_mk',
-          _root_.map_one, IsLocalization.mk'_eq_mul_mk'_one, mul_comm]
-      congr; ext; exact e.symm
-    · rw [← aeval_def, ← map_aeval_eq_aeval_map, minpoly.aeval, map_zero]
-      rw [← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
 
 end scaleRoots
 
