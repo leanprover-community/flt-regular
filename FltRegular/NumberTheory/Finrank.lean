@@ -1,8 +1,4 @@
-import Mathlib.LinearAlgebra.Dimension.Constructions
-import Mathlib.LinearAlgebra.Dimension.Finite
-import Mathlib.Algebra.Module.Torsion
-import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
-import Mathlib.LinearAlgebra.Dimension.Localization
+import Mathlib.GroupTheory.Torsion
 
 open Module
 section

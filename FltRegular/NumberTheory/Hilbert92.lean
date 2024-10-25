@@ -7,6 +7,7 @@ import Mathlib.GroupTheory.FiniteAbelian
 import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
+import FltRegular.NumberTheory.Finrank
 
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional NumberField
