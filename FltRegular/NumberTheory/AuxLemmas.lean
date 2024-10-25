@@ -70,42 +70,6 @@ open Polynomial
 
 open nonZeroDivisors
 
--- Mathlib/RingTheory/Polynomial/ScaleRoots.lean (this section is not needed anymore)
-section scaleRoots
-
-open Polynomial in
-lemma Polynomial.derivative_scaleRoots {R} [CommRing R] (p : R[X]) (r) :
-    derivative (p.scaleRoots r) = r ^ (natDegree p - (natDegree (derivative p) + 1)) •
-      ((derivative p).scaleRoots r) := by
-  by_cases hp : natDegree p = 0
-  · rw [hp, Nat.zero_sub, pow_zero, one_smul]
-    rw [natDegree_eq_zero_iff_degree_le_zero, degree_le_zero_iff] at hp
-    rw [hp]; simp only [scaleRoots_C, derivative_C, zero_scaleRoots]
-  ext i
-  simp only [coeff_smul, coeff_scaleRoots, ge_iff_le, smul_eq_mul, coeff_derivative,
-    mul_comm (r ^ (natDegree p - _)), mul_assoc, ← pow_add]
-  simp_rw [← mul_assoc, ← coeff_derivative]
-  cases lt_or_le (natDegree (derivative p)) i with
-  | inl h => simp only [coeff_eq_zero_of_natDegree_lt h, zero_mul]
-  | inr h =>
-    congr
-    have h' := natDegree_derivative_lt hp
-    zify
-    rw [Int.ofNat_sub h', Int.ofNat_sub h, Int.ofNat_sub (h.trans_lt h')]
-    simp only [Nat.cast_succ]
-    abel
-
-open Polynomial in
-lemma Polynomial.Separable.scaleRoots {R} [CommRing R] {p : R[X]}
-    (hp : Polynomial.Separable p) (r) (hr : IsUnit r) :
-    Polynomial.Separable (p.scaleRoots r) := by
-  delta Polynomial.Separable at hp ⊢
-  rw [Polynomial.derivative_scaleRoots, Algebra.smul_def]
-  refine (isCoprime_mul_unit_left_right ((hr.pow _).map _) _ _).mpr ?_
-  exact Polynomial.isCoprime_scaleRoots _ _ _ hr hp
-
-end scaleRoots
-
 -- Mathlib/RingTheory/Trace.lean
 universe u v in
 lemma Algebra.isNilpotent_trace_of_isNilpotent {R : Type u} {S : Type v} [CommRing R] [CommRing S]
