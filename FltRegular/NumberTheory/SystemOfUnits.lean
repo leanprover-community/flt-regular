@@ -67,7 +67,7 @@ lemma ex_not_mem [Module.Free ℤ G] {R : ℕ} (S : systemOfUnits p G R) (hR : R
   have := Fact.mk hp
   have : Module.Finite ℤ G := Module.finite_of_finrank_pos
     (by simp [hf, R.zero_le.trans_lt hR, hp.one_lt])
-  refine FiniteDimensional.exists_of_finrank_lt
+  refine Submodule.exists_of_finrank_lt
     ((Submodule.span A (Set.range S.units)).restrictScalars ℤ) ?_
   show finrank ℤ (Submodule.span A _) < _
   rw [finrank_spanA p hp G S.units S.linearIndependent, hf, mul_comm]
