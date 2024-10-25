@@ -35,12 +35,6 @@ open nonZeroDivisors IsLocalization Matrix Algebra
 
 variable [IsDedekindDomain B]
 
-noncomputable
-example : InvolutiveInv (FractionalIdeal B⁰ L) := by
-  exact DivisionMonoid.toInvolutiveInv
-
-#synth DivisionMonoid (FractionalIdeal B⁰ L)
-
 include K L in
 lemma pow_sub_one_dvd_differentIdeal_aux [IsDedekindDomain A]
     [NoZeroSMulDivisors A B] [Module.Finite A B]
