@@ -1,9 +1,7 @@
 import Mathlib.NumberTheory.RamificationInertia
 import Mathlib.Algebra.Polynomial.Taylor
-import Mathlib.FieldTheory.Separable
 import Mathlib.RingTheory.Trace.Defs
 import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.RingTheory.SimpleRing.Basic
 
 /-!
 
@@ -98,17 +96,6 @@ lemma Polynomial.irreducible_taylor_iff {R} [CommRing R] {r} {p : R[X]} :
   apply Irreducible.of_map (f := (taylorAlgEquiv r).symm.toRingEquiv)
   simpa only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_coe, AlgEquiv.coe_ringEquiv,
     taylorAlgEquiv_symm_apply, taylor_taylor, neg_add_cancel, taylor_zero', LinearMap.id_coe, id_eq]
-
--- Mathlib/FieldTheory/Separable.lean
--- Generalizes (and should follow) `Separable.map`
-open Polynomial in
-attribute [local instance] Ideal.Quotient.field in
-lemma Polynomial.separable_map' {R S} [Field R] [CommRing S] [Nontrivial S] (f : R →+* S)
-    (p : R[X]) : (p.map f).Separable ↔ p.Separable :=  by
-  refine ⟨fun H ↦ ?_, fun H ↦ H.map⟩
-  obtain ⟨m, hm⟩ := Ideal.exists_maximal S
-  have := Separable.map H (f := Ideal.Quotient.mk m)
-  rwa [map_map, separable_map] at this
 
 -- Somewhere in polynomial.
 lemma Polynomial.dvd_C_mul_X_sub_one_pow_add_one

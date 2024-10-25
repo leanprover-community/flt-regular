@@ -272,7 +272,7 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     rw [ne_eq, Ideal.map_eq_top_iff]; exact Ideal.IsMaximal.ne_top ‹_›
     · intros x y e; ext; exact (algebraMap K L).injective (congr_arg Subtype.val e)
     · intros x; exact IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ L x)
-  rw [← Polynomial.separable_map' i, map_map, Ideal.quotientMap_comp_mk, ← map_map]
+  rw [← Polynomial.separable_map i, map_map, Ideal.quotientMap_comp_mk, ← map_map]
   apply Separable.map
   apply separable_poly_aux hp hζ u hcong
   exact root_X_pow_sub_C_pow _ _

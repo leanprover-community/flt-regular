@@ -5,6 +5,7 @@ import Mathlib.FieldTheory.PurelyInseparable
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.Algebra.Order.Star.Basic
+import Mathlib.RingTheory.SimpleRing.Basic
 
 /-!
 # Galois action on primes
