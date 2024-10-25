@@ -120,47 +120,10 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
       Ideal.mem_normalizedFactors_iff hIbot']
     exact ⟨hP.1.comap _, Ideal.comap_mono hP.2⟩
 
-open scoped Classical in
-lemma isUnramifiedAt_iff_normalizedFactors_nodup [NoZeroSMulDivisors R S] [IsDedekindDomain S]
-    (p : Ideal R) [p.IsPrime] (hp : p ≠ ⊥) :
-    IsUnramifiedAt S p ↔ (normalizedFactors (p.map (algebraMap R S))).Nodup := by
-  simp_rw [Multiset.nodup_iff_count_eq_one, ← Multiset.mem_toFinset,
-    ← factors_eq_normalizedFactors]
-  show _ ↔ ∀ P ∈ (primesOverFinset S p : Set (Ideal S)), _
-  simp_rw [IsUnramifiedAt, coe_primesOverFinset S p hp]
-  refine forall₂_congr (fun P hP ↦ ?_)
-  rw [Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count]
-  · exact (Ideal.map_eq_bot_iff_of_injective
-      (NoZeroSMulDivisors.algebraMap_injective R S)).not.mpr hp
-  · exact hP.1
-  · exact ne_bot_of_mem_primesOver hp hP
-
 section KummerDedekind
 
 end KummerDedekind
 
-attribute [local instance] Ideal.Quotient.field in
-lemma isUnramifiedAt_iff_SquareFree_minpoly [NoZeroSMulDivisors R S] [IsDedekindDomain S]
-    (p : Ideal R) [hp : p.IsPrime] (hpbot : p ≠ ⊥) (x : S)
-    (hx : (conductor R x).comap (algebraMap R S) ⊔ p = ⊤) (hx' : IsIntegral R x) :
-    IsUnramifiedAt S p ↔ Squarefree ((minpoly R x).map (Ideal.Quotient.mk p)) := by
-  classical
-  have := hp.isMaximal hpbot
-  rw [isUnramifiedAt_iff_normalizedFactors_nodup p hpbot,
-    KummerDedekind.normalizedFactors_ideal_map_eq_normalizedFactors_min_poly_mk_map
-    this hpbot hx hx', Multiset.nodup_map_iff_of_injective, Multiset.nodup_attach,
-    ← squarefree_iff_nodup_normalizedFactors (Polynomial.map_monic_ne_zero (minpoly.monic hx'))]
-  exact Subtype.val_injective.comp
-    (KummerDedekind.normalizedFactorsMapEquivNormalizedFactorsMinPolyMk
-      this hpbot hx hx').symm.injective
-
-lemma isUnramifiedAt_iff_SquareFree_minpoly_powerBasis [NoZeroSMulDivisors R S] [IsDedekindDomain S]
-    [Algebra.IsIntegral R S] (pb : PowerBasis R S)
-    (p : Ideal R) [p.IsPrime] (hpbot : p ≠ ⊥) :
-    IsUnramifiedAt S p ↔ Squarefree ((minpoly R pb.gen).map (Ideal.Quotient.mk p)) := by
-  rw [isUnramifiedAt_iff_SquareFree_minpoly p hpbot pb.gen _ _]
-  rw [conductor_eq_top_of_powerBasis, Ideal.comap_top, top_sup_eq]
-  exact PowerBasis.isIntegral_gen pb
 
 open nonZeroDivisors Polynomial
 

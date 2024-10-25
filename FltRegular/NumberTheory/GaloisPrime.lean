@@ -50,11 +50,6 @@ lemma primesOver_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S]
 
 variable (S)
 
-lemma primesOverFinset_bot [IsDedekindDomain S] : primesOverFinset S (⊥ : Ideal R) = ∅ := by
-  classical
-  rw [primesOverFinset, Ideal.map_bot, ← Ideal.zero_eq_bot, factors_zero]
-  rfl
-
 lemma coe_primesOverFinset [Ring.DimensionLEOne R] [IsDedekindDomain S]
     [NoZeroSMulDivisors R S] (p : Ideal R) (hp : p ≠ ⊥) [hp' : p.IsPrime] :
     primesOverFinset S p = primesOver S p := by
@@ -81,14 +76,6 @@ lemma primesOver_finite [Ring.DimensionLEOne R] [IsDedekindDomain S] [NoZeroSMul
     exact Finset.finite_toSet _
   · rw [primesOver_eq_empty_of_not_isPrime S p h]
     exact Set.finite_empty
-
-lemma primesOver_nonempty [IsDomain S] [NoZeroSMulDivisors R S] [Algebra.IsIntegral R S]
-    (p : Ideal R) [p.IsPrime] : (primesOver S p).Nonempty := by
-  have := Ideal.bot_prime (α := S)
-  obtain ⟨Q, _, hQ⟩ := Ideal.exists_ideal_over_prime_of_isIntegral p ⊥
-    (by rw [Ideal.comap_bot_of_injective _
-      (NoZeroSMulDivisors.algebraMap_injective R S)]; exact bot_le)
-  exact ⟨Q, hQ⟩
 
 variable {S}
 
