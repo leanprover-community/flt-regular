@@ -1,20 +1,12 @@
-import Mathlib.NumberTheory.FLT.Three
 import Mathlib.Algebra.GCDMonoid.Finset
 import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.Analysis.Normed.Field.Lemmas
 
 open Int Finset
 
 namespace FltRegular
 
 namespace MayAssume
-
-theorem p_ne_three {a b c : ℤ} {n : ℕ} (hprod : a * b * c ≠ 0) (h : a ^ n + b ^ n = c ^ n) :
-    n ≠ 3 := by
-  intro hn
-  have ha : a ≠ 0 := fun ha => by simp [ha] at hprod
-  have hb : b ≠ 0 := fun hb => by simp [hb] at hprod
-  have hc : c ≠ 0 := fun hc => by simp [hc] at hprod
-  exact fermatLastTheoremFor_iff_int.1 fermatLastTheoremThree a b c ha hb hc (hn ▸ h)
 
 theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a * b * c ≠ 0) :
     let d := ({a, b, c} : Finset ℤ).gcd id

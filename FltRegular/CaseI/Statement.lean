@@ -3,6 +3,7 @@ import FltRegular.NumberTheory.Cyclotomic.Factoring
 import FltRegular.NumberTheory.Cyclotomic.CaseI
 import FltRegular.CaseI.AuxLemmas
 import FltRegular.NumberTheory.RegularPrimes
+import Mathlib.NumberTheory.FLT.Three
 
 open Finset Nat IsCyclotomicExtension Ideal Polynomial Int Basis FltRegular.CaseI
 
@@ -43,13 +44,13 @@ theorem may_assume : SlightlyEasier → Statement := by
     have : p ∈ Finset.Ioo 2 5 :=
       (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_of_ne hpri.out.two_le hodd.symm, by linarith⟩
     fin_cases this
-    · exact MayAssume.p_ne_three hprod H rfl
+    · exact fermatLastTheoremFor_iff_int.1 fermatLastTheoremThree a b c
+        (fun ha ↦ hprod <| by simp [ha]) (fun hb ↦ hprod <| by simp [hb])
+        (fun hc ↦ hprod <| by simp [hc]) H
     · rw [show 2 + 1 + 1 = 2 * 2 from rfl] at hpri
       exact Nat.not_prime_mul one_lt_two.ne' one_lt_two.ne' hpri.out
-  rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
   let d := ({a, b, c} : Finset ℤ).gcd id
-  have hdiv : ¬↑p ∣ a / d * (b / d) * (c / d) :=
-    by
+  have hdiv : ¬↑p ∣ a / d * (b / d) * (c / d) := by
     have hadiv : d ∣ a := gcd_dvd (by simp)
     have hbdiv : d ∣ b := gcd_dvd (by simp)
     have hcdiv : d ∣ c := gcd_dvd (by simp)
@@ -59,6 +60,7 @@ theorem may_assume : SlightlyEasier → Statement := by
       mul_assoc (b / d), ← mul_assoc _ (b / d), Int.mul_ediv_cancel' hbdiv, mul_comm, mul_assoc,
       mul_assoc, Int.ediv_mul_cancel hcdiv, mul_comm, mul_assoc, mul_comm c, ← mul_assoc] at hdiv
     exact hI hdiv
+  rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
   obtain ⟨X, Y, Z, H1, H2, H3, _, H5⟩ := a_not_cong_b hpri.out hp5 hprodxyx Hxyz hunit hdiv
   exact Heasy hreg hp5 H2 H3 (fun hfin => H5 hfin) H1
 
