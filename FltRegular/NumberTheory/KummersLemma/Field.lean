@@ -101,9 +101,10 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
 include hu in
 lemma irreducible_map_poly :
     Irreducible ((poly hp hζ u hcong).map (algebraMap (𝓞 K) K)) := by
-  rw [map_poly, ← irreducible_taylor_iff (r := 1 / (ζ - 1))]
-  simp only [taylor, one_div, map_add, LinearMap.coe_mk, AddHom.coe_mk, pow_comp, sub_comp,
-    X_comp, C_comp, add_sub_cancel_right]
+  rw [map_poly]
+  refine Irreducible.of_map (f := algEquivAevalXAddC (1 / (ζ - 1))) ?_
+  simp only [one_div, map_add, algEquivAevalXAddC_apply, map_pow, map_sub, aeval_X, aeval_C,
+    algebraMap_eq, add_sub_cancel_right]
   rw [← sub_neg_eq_add, ← (C : K →+* _).map_neg]
   apply X_pow_sub_C_irreducible_of_prime hpri.out
   intro b hb

@@ -1,6 +1,7 @@
 import FltRegular.NumberTheory.GaloisPrime
 import Mathlib.NumberTheory.KummerDedekind
-import FltRegular.NumberTheory.Different
+import Mathlib.RingTheory.DedekindDomain.Different
+
 /-!
 # Unramified extensions
 
@@ -166,8 +167,8 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
     have hxP : aeval x (derivative (minpoly R x)) ∈ P := by
       have : differentIdeal R S ≤ P := by
         rw [← Ideal.dvd_iff_le]
-        exact (dvd_pow_self _ H).trans (pow_sub_one_dvd_differentIdeal R S P _ hpbot
-        (Ideal.dvd_iff_le.mpr <| Ideal.le_pow_ramificationIdx (p := p) (f := algebraMap R S)))
+        exact (dvd_pow_self _ H).trans (pow_sub_one_dvd_differentIdeal R P _ hpbot <|
+          Ideal.dvd_iff_le.mpr <| Ideal.le_pow_ramificationIdx)
       exact this (aeval_derivative_mem_differentIdeal R K L _ hx')
     rw [← Ideal.Quotient.eq_zero_iff_mem, ← Ideal.Quotient.algebraMap_eq] at hxP
 

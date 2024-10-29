@@ -1,4 +1,3 @@
-import FltRegular.NumberTheory.AuxLemmas
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.Data.Set.Card
 import Mathlib.FieldTheory.PurelyInseparable
@@ -6,6 +5,8 @@ import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.RingTheory.SimpleRing.Basic
+import Mathlib.NumberTheory.RamificationInertia
+import Mathlib.Algebra.Lie.OfAssociative
 
 /-!
 # Galois action on primes
@@ -237,7 +238,7 @@ lemma Ideal.ramificationIdxIn_bot : (⊥ : Ideal R).ramificationIdxIn S = 0 := b
 lemma Ideal.inertiaDegIn_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S] [IsNoetherian R S]
     [Algebra.IsIntegral R S] [H : (⊥ : Ideal R).IsMaximal] :
     (⊥ : Ideal R).inertiaDegIn S = Module.finrank R S := by
-  delta inertiaDegIn
+  dsimp [inertiaDegIn]
   rw [primesOver_bot]
   have : ({⊥} : Set (Ideal S)).Nonempty := by simp
   rw [dif_pos this, this.choose_spec]
@@ -245,7 +246,6 @@ lemma Ideal.inertiaDegIn_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S
   have hS := isField_of_isIntegral_of_isField' (S := S) hR
   letI : Field R := hR.toField
   letI : Field S := hS.toField
-  have : IsIntegralClosure S R S := isIntegralClosure_self
   rw [← Ideal.map_bot (f := algebraMap R S), ← finrank_quotient_map (R := R) (S := S) ⊥ R S]
   exact inertiaDeg_algebraMap _ _
 
@@ -261,7 +261,7 @@ lemma Ideal.ramificationIdxIn_eq_ramificationIdx [IsGalois K L] (p : Ideal R) (P
   rw [dif_pos this]
   have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
   rw [← hσ]
-  exact Ideal.ramificationIdx_comap_eq (galRestrict R K L S σ) p P
+  exact Ideal.ramificationIdx_comap_eq (galRestrict R K L S σ) P
 
 lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S)
     (hP : P ∈ primesOver S p) [p.IsMaximal] :
@@ -271,7 +271,7 @@ lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S
   rw [dif_pos this]
   have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
   rw [← hσ]
-  exact Ideal.inertiaDeg_comap_eq (galRestrict R K L S σ) p P
+  exact Ideal.inertiaDeg_comap_eq p (galRestrict R K L S σ) P
 
 open Module
 

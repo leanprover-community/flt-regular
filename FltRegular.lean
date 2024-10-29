@@ -6,7 +6,6 @@ import FltRegular.CaseII.Statement
 import FltRegular.FLT5
 import FltRegular.FltRegular
 import FltRegular.MayAssume.Lemmas
-import FltRegular.NumberTheory.AuxLemmas
 import FltRegular.NumberTheory.Cyclotomic.CaseI
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
@@ -15,7 +14,6 @@ import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.CyclotomicRing
-import FltRegular.NumberTheory.Different
 import FltRegular.NumberTheory.Finrank
 import FltRegular.NumberTheory.GaloisPrime
 import FltRegular.NumberTheory.Hilbert90
