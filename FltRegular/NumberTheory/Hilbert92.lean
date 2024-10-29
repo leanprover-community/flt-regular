@@ -600,7 +600,7 @@ lemma relativeUnitsModule_zeta_smul (x) :
     addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
     LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, Module.AEval.of_symm_smul, Polynomial.aeval_X,
     LinearEquiv.symm_apply_apply, LinearMap.smul_def, AddMonoidHom.coe_toIntLinearMap,
-    MonoidHom.toAdditive_apply_apply, toMul_ofMul, relativeUnitsMap_mk, unit_to_U]
+    MonoidHom.toAdditive_apply_apply, toMul_ofMul, unit_to_U]
   rfl
 
 local instance {M} [AddCommGroup M] : NoZeroSMulDivisors ℤ (M ⧸ AddCommGroup.torsion M) := by
