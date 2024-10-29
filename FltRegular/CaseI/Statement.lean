@@ -7,7 +7,7 @@ import Mathlib.NumberTheory.FLT.Three
 
 open Finset Nat IsCyclotomicExtension Ideal Polynomial Int Basis FltRegular.CaseI
 
-open scoped BigOperators NumberField
+open scoped NumberField
 
 namespace FltRegular
 
