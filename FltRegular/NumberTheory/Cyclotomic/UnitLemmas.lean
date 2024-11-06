@@ -65,24 +65,22 @@ theorem contains_two_primitive_roots {p q : ℕ} {x y : K} [FiniteDimensional �
   have hkpos : 0 < k := Nat.pos_of_ne_zero (Nat.lcm_ne_zero hppos.ne' hqpos.ne')
   let xu := IsUnit.unit (hx.isUnit hppos)
   let yu := IsUnit.unit (hy.isUnit hqpos)
-  have hxmem : xu ∈ rootsOfUnity ⟨k, hkpos⟩ K :=  by
-    rw [mem_rootsOfUnity, PNat.mk_coe, ← Units.val_eq_one, Units.val_pow_eq_pow_val,
-      IsUnit.unit_spec]
+  have hxmem : xu ∈ rootsOfUnity k K :=  by
+    rw [mem_rootsOfUnity, ← Units.val_eq_one, Units.val_pow_eq_pow_val, IsUnit.unit_spec]
     exact (hx.pow_eq_one_iff_dvd _).2 (dvd_lcm_left _ _)
-  have hymem : yu ∈ rootsOfUnity ⟨k, hkpos⟩ K := by
-    rw [mem_rootsOfUnity, PNat.mk_coe, ← Units.val_eq_one, Units.val_pow_eq_pow_val,
-      IsUnit.unit_spec]
+  have hymem : yu ∈ rootsOfUnity k K := by
+    rw [mem_rootsOfUnity, ← Units.val_eq_one, Units.val_pow_eq_pow_val, IsUnit.unit_spec]
     exact (hy.pow_eq_one_iff_dvd _).2 (dvd_lcm_right _ _)
-  have hxuord : orderOf (⟨xu, hxmem⟩ : rootsOfUnity ⟨k, hkpos⟩ K) = p := by
-    rw [← orderOf_injective (rootsOfUnity ⟨k, hkpos⟩ K).subtype Subtype.coe_injective,
+  have hxuord : orderOf (⟨xu, hxmem⟩ : rootsOfUnity k K) = p := by
+    rw [← orderOf_injective (rootsOfUnity k K).subtype Subtype.coe_injective,
       Subgroup.coeSubtype, Subgroup.coe_mk, ← orderOf_units, IsUnit.unit_spec]
     exact hx.eq_orderOf.symm
-  have hyuord : orderOf (⟨yu, hymem⟩ : rootsOfUnity ⟨k, hkpos⟩ K) = q := by
-    rw [← orderOf_injective (rootsOfUnity ⟨k, hkpos⟩ K).subtype Subtype.coe_injective,
+  have hyuord : orderOf (⟨yu, hymem⟩ : rootsOfUnity k K) = q := by
+    rw [← orderOf_injective (rootsOfUnity k K).subtype Subtype.coe_injective,
       Subgroup.coeSubtype, Subgroup.coe_mk, ← orderOf_units, IsUnit.unit_spec]
     exact hy.eq_orderOf.symm
-  obtain ⟨g : rootsOfUnity ⟨k, hkpos⟩ K, hg⟩ :=
-    IsCyclic.exists_monoid_generator (α := rootsOfUnity ⟨k, hkpos⟩ K)
+  have : NeZero k := ⟨hkpos.ne'⟩
+  obtain ⟨g : rootsOfUnity k K, hg⟩ := IsCyclic.exists_monoid_generator (α := rootsOfUnity k K)
   obtain ⟨nx, hnx⟩ := hg ⟨xu, hxmem⟩
   obtain ⟨ny, hny⟩ := hg ⟨yu, hymem⟩
   have H : orderOf g = k := by
@@ -123,7 +121,7 @@ theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type*} [CommRing A] [IsDomain
     (hζ : IsPrimitiveRoot ζ p) {μ : A} (hμ : μ ^ (p : ℕ) = 1) :
     (@DFunLike.coe _ A (fun _ => A ⧸ Ideal.span {ζ - 1}) _
       (algebraMap A (A ⧸ Ideal.span {ζ - 1})) μ) = 1 := by
-  obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ p.pos
+  obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ
   rw [map_pow, eq_one_mod_one_sub, one_pow]
 
 set_option synthInstance.maxHeartbeats 80000 in
@@ -232,7 +230,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
       simp only [one_pow]
       apply hxp'
     cases' hxp'' with hxp'' hxp''
-    · obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp'' p.prop
+    · obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp''
       refine ⟨i, 2, ?_⟩
       rw [← Subtype.val_inj] at Hi
       simp only [SubmonoidClass.coe_pow] at Hi
@@ -243,7 +241,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd (p : ℕ)) (x : K)
       have hxp3 : (-1 * ⟨x, hx⟩ : R) ^ (p : ℕ) = 1 := by
         rw [mul_pow, hone, hxp'']
         ring
-      obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp3 p.prop
+      obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp3
       refine ⟨i, 1, ?_⟩
       simp only [PNat.one_coe, pow_one, neg_mul, one_mul, neg_neg]
       rw [← Subtype.val_inj] at Hi
@@ -376,5 +374,5 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
 lemma IsPrimitiveRoot.eq_one_mod_one_sub' {A : Type*} [CommRing A] [IsDomain A]
     {n : ℕ+} {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n A) :
     Ideal.Quotient.mk (Ideal.span ({ζ - 1} : Set A)) η = 1 := by
-  obtain ⟨i, ⟨_, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset n.2).1 hη) n.2
+  obtain ⟨i, ⟨_, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset n.2).1 hη)
   rw [map_pow, ← Ideal.Quotient.algebraMap_eq, eq_one_mod_one_sub, one_pow]

@@ -38,7 +38,7 @@ theorem galConj_zeta : galConj K p (zeta p ℚ K) = (zeta p ℚ K)⁻¹ := by
 include hζ in
 @[simp]
 theorem galConj_zeta_runity : galConj K p ζ = ζ⁻¹ := by
-  obtain ⟨t, _, rfl⟩ := (zeta_spec p ℚ K).eq_pow_of_pow_eq_one hζ.pow_eq_one p.pos
+  obtain ⟨t, _, rfl⟩ := (zeta_spec p ℚ K).eq_pow_of_pow_eq_one hζ.pow_eq_one
   rw [map_pow, galConj_zeta, inv_pow]
 
 include hζ in

@@ -115,7 +115,7 @@ open IsPrimitiveRoot
 theorem nth_roots_prim [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R) (hne1 : η ≠ 1) :
     IsPrimitiveRoot η p := by
   have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe
-  rw [nthRoots_one_eq_biUnion_primitiveRoots' hζ'] at hη
+  rw [nthRoots_one_eq_biUnion_primitiveRoots hζ'] at hη
   simp only [mem_biUnion] at hη
   obtain ⟨a, ha, h2⟩ := hη
   have ha2 : a = p := by
@@ -166,7 +166,7 @@ theorem diff_of_roots [hp : Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : 
     (hwlog : η₁ ≠ 1) : ∃ u : Rˣ, η₁ - η₂ = u * (1 - η₁) := by
   replace ph : 2 ≤ p := le_trans (by decide) ph
   have h := nth_roots_prim hη₁ hwlog
-  obtain ⟨i, ⟨H, hi⟩⟩ := h.eq_pow_of_pow_eq_one ((mem_nthRootsFinset hp.out.pos).1 hη₂) hp.out.pos
+  obtain ⟨i, ⟨H, hi⟩⟩ := h.eq_pow_of_pow_eq_one ((mem_nthRootsFinset hp.out.pos).1 hη₂)
   have hi1 : 1 ≠ i := by
     intro hi1
     rw [← hi1, pow_one] at hi

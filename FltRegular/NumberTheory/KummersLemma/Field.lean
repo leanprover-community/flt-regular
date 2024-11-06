@@ -299,12 +299,12 @@ include hu hp hζ hcong in
 attribute [local instance] Ideal.Quotient.field in
 lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ (p : ℕ) - C (u : K))] :
     IsUnramified (𝓞 K) (𝓞 L) := by
-  let α := polyRoot hp hζ u hcong _ (rootOfSplitsXPowSubC_pow p.pos _ L) 0
+  let α := polyRoot hp hζ u hcong _ (rootOfSplitsXPowSubC_pow _ L) 0
   haveI := Polynomial.IsSplittingField.finiteDimensional L (X ^ (p : ℕ) - C (u : K))
   have hα : Algebra.adjoin K {(α : L)} = ⊤ := by
     rw [eq_top_iff, ← Algebra.adjoin_root_eq_top_of_isSplittingField
       ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu)
-      (rootOfSplitsXPowSubC_pow p.pos (u : K) L), Algebra.adjoin_le_iff, Set.singleton_subset_iff]
+      (rootOfSplitsXPowSubC_pow (u : K) L), Algebra.adjoin_le_iff, Set.singleton_subset_iff]
     exact mem_adjoin_polyRoot hp hζ u hcong _ _ 0
   constructor
   intros I hI hIbot

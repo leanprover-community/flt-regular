@@ -47,7 +47,8 @@ theorem pow_sub_pow_eq_prod_sub_zeta_runity_mul (hpos : 0 < n) (h : IsPrimitiveR
   · rw [mem_nthRootsFinset hpos, ← map_pow, (mem_nthRootsFinset hpos).1 ha, map_one]
   · rw [mem_coe, mem_nthRootsFinset hpos] at ha
     simp only [Set.mem_image, mem_coe]
-    obtain ⟨i, -, hζ⟩ := h'.eq_pow_of_pow_eq_one ha hpos
+    have : NeZero n := ⟨hpos.ne'⟩
+    obtain ⟨i, -, hζ⟩ := h'.eq_pow_of_pow_eq_one ha
     refine ⟨ζ ^ i, ?_, by rwa [map_pow]⟩
     rw [mem_nthRootsFinset hpos, ← pow_mul, mul_comm, pow_mul, h.pow_eq_one, one_pow]
 

@@ -247,7 +247,10 @@ lemma Ideal.inertiaDegIn_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S
   letI : Field R := hR.toField
   letI : Field S := hS.toField
   rw [← Ideal.map_bot (f := algebraMap R S), ← finrank_quotient_map (R := R) (S := S) ⊥ R S]
-  exact inertiaDeg_algebraMap _ _
+  convert inertiaDeg_algebraMap _ _
+  simp only [map_bot]
+  exact ⟨(comap_bot_of_injective _
+    (NoZeroSMulDivisors.iff_algebraMap_injective.1 inferInstance)).symm⟩
 
 variable {R S}
 
@@ -261,7 +264,7 @@ lemma Ideal.ramificationIdxIn_eq_ramificationIdx [IsGalois K L] (p : Ideal R) (P
   rw [dif_pos this]
   have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
   rw [← hσ]
-  exact Ideal.ramificationIdx_comap_eq (galRestrict R K L S σ) P
+  exact Ideal.ramificationIdx_comap_eq _ (galRestrict R K L S σ) P
 
 lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S)
     (hP : P ∈ primesOver S p) [p.IsMaximal] :

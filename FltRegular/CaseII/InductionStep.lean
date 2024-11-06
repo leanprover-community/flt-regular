@@ -9,17 +9,15 @@ variable {K : Type*} {p : ℕ+} [Field K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
 
-attribute [local instance 2000] CommRing.toRing Semiring.toNonUnitalSemiring
-  NonUnitalSemiring.toNonUnitalNonAssocSemiring NonUnitalNonAssocSemiring.toAddCommMonoid
+attribute [local instance 2000] Semiring.toNonUnitalSemiring
+  NonUnitalSemiring.toNonUnitalNonAssocSemiring
 
-set_option quotPrecheck false
 local notation3 "π" => Units.val (IsPrimitiveRoot.unit' hζ) - 1
 local notation3 "𝔭" => Ideal.span {π}
 local notation3 "𝔦" η => Ideal.span {(x + y * η : 𝓞 K)}
 local notation3 "𝔵" => Ideal.span {x}
 local notation3 "𝔶" => Ideal.span {y}
 local notation3 "𝔷" => Ideal.span {z}
-local notation3 "𝔪" => gcd 𝔵 𝔶
 
 variable {m : ℕ} (e : x ^ (p : ℕ) + y ^ (p : ℕ) = ε * ((hζ.unit'.1 - 1) ^ (m + 1) * z) ^ (p : ℕ))
 variable (hy : ¬ hζ.unit'.1 - 1 ∣ y) (hz : ¬ hζ.unit'.1 - 1 ∣ z)
@@ -46,6 +44,8 @@ lemma span_pow_add_pow_eq :
   exact ε.isUnit
 
 variable [NumberField K]
+
+local notation3 "𝔪" => gcd 𝔵 𝔶
 
 include hy in
 lemma m_ne_zero : 𝔪 ≠ 0 := by

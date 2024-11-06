@@ -710,10 +710,6 @@ lemma IsPrimitiveRoot.coe_coe_iff {ν : (𝓞 k)ˣ} {n} :
     (f := (algebraMap (𝓞 k) k).toMonoidHom.comp (Units.coeHom (𝓞 k)))
     ((IsFractionRing.injective (𝓞 k) k).comp Units.ext)
 
-lemma Subgroup.isCyclic_of_le {M : Type*} [Group M] {H₁ H₂ : Subgroup M} [IsCyclic H₂]
-    (e : H₁ ≤ H₂) : IsCyclic H₁ :=
-  isCyclic_of_surjective _ (subgroupOfEquivOfLe e).surjective
-
 include hp in
 lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),
     IsPrimitiveRoot (ν : k) (p ^ h) ∧
@@ -832,7 +828,8 @@ lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
           Units.coe_map_inv, MonoidHom.coe_coe, SubmonoidClass.coe_pow, Submonoid.coe_mul,
           Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, Units.val_one,
           OneMemClass.coe_one, RingOfInteger.coe_algebraMap_apply] at NE_p_pow
-        obtain ⟨i, -, e⟩ := hν''.eq_pow_of_pow_eq_one NE_p_pow p.pos
+        have : NeZero p.1 := ⟨hp.pos.ne'⟩
+        obtain ⟨i, -, e⟩ := hν''.eq_pow_of_pow_eq_one NE_p_pow
         use ((ν ^ (p : ℕ) ^ h) ^ i * ε')
         rw [map_mul, ← mul_inv_eq_iff_eq_mul]
         ext

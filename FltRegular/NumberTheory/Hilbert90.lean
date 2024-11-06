@@ -1,6 +1,5 @@
 
 import Mathlib.RingTheory.SimpleModule
-import Mathlib.RingTheory.Valuation.ValuationRing
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.GroupTheory.OrderOfElement
 import Mathlib.Tactic.Widget.Conv
