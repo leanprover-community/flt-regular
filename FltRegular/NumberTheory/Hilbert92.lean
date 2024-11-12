@@ -3,11 +3,12 @@ import FltRegular.NumberTheory.SystemOfUnits
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.Algebra.Lie.OfAssociative
 import Mathlib.Data.Int.Star
-import Mathlib.GroupTheory.FiniteAbelian
 import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
-import FltRegular.NumberTheory.Finrank
+import Mathlib.LinearAlgebra.Dimension.Torsion
+import Mathlib.GroupTheory.FiniteAbelian.Basic
+
 
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional NumberField

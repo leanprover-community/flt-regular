@@ -14,7 +14,6 @@ import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.CyclotomicRing
-import FltRegular.NumberTheory.Finrank
 import FltRegular.NumberTheory.GaloisPrime
 import FltRegular.NumberTheory.Hilbert90
 import FltRegular.NumberTheory.Hilbert92
