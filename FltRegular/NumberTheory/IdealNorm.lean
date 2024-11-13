@@ -219,11 +219,11 @@ lemma NoZeroSMulDivisors_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRin
 theorem IsLocalization.AtPrime.PID_of_dedekind_domain {A} [CommRing A]
     [IsDedekindDomain A]
     (P : Ideal A) [pP : P.IsPrime] (Aₘ : Type*) [CommRing Aₘ] [IsDomain Aₘ]
-    [Algebra A Aₘ] [IsLocalization.AtPrime Aₘ P] : IsPrincipalIdealRing Aₘ := by
-  letI : IsNoetherianRing Aₘ :=
+    [Algebra A Aₘ] [IsLocalization.AtPrime Aₘ P] : IsPrincipalIdealRing Aₘ :=
+  have : IsNoetherianRing Aₘ :=
     IsLocalization.isNoetherianRing P.primeCompl _ IsDedekindRing.toIsNoetherian
-  letI : LocalRing Aₘ := IsLocalization.AtPrime.localRing Aₘ P
-  exact ((tfae_of_isNoetherianRing_of_localRing_of_isDomain Aₘ).out 2 0).mp
+  have : IsLocalRing Aₘ := IsLocalization.AtPrime.isLocalRing Aₘ P
+  ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain Aₘ).out 2 0).mp
     (IsLocalization.AtPrime.isDedekindDomain A P _)
 
 end

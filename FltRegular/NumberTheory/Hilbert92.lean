@@ -9,7 +9,6 @@ import Mathlib.RingTheory.Henselian
 import Mathlib.LinearAlgebra.Dimension.Torsion
 import Mathlib.GroupTheory.FiniteAbelian.Basic
 
-
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional NumberField
 
@@ -329,7 +328,7 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   obtain ⟨x, rfl⟩ := Additive.ofMul.surjective x
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
   rw [← Module.AEval.of_aeval_smul]
-  simp_rw [LinearMap.smul_def, Polynomial.cyclotomic_prime ℤ p, AddEquivClass.map_eq_zero_iff,
+  simp_rw [LinearMap.smul_def, Polynomial.cyclotomic_prime ℤ p, EmbeddingLike.map_eq_zero_iff,
     map_sum, map_pow, aeval_X, LinearMap.coeFn_sum, sum_apply, ← relativeUnitsMapHom_apply,
     ← map_pow, ← Units.val_pow_eq_pow_val, ← map_pow, AlgEquiv.val_algHomUnitsEquiv_symm_apply,
     relativeUnitsMapHom_apply, Monoid.EndAdditive_apply,
