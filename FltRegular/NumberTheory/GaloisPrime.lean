@@ -5,7 +5,7 @@ import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.RingTheory.SimpleRing.Basic
-import Mathlib.NumberTheory.RamificationInertia
+import Mathlib.NumberTheory.RamificationInertia.Basic
 import Mathlib.Algebra.Lie.OfAssociative
 
 /-!
