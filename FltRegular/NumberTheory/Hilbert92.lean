@@ -341,8 +341,9 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   simp only [Units.coe_map, MonoidHom.coe_coe, RingOfIntegers.coe_algebraMap_norm, map_pow,
     Units.coe_prod, Submonoid.coe_finset_prod, Subsemiring.coe_toSubmonoid,
     Subalgebra.coe_toSubsemiring, Algebra.norm_eq_prod_automorphisms]
-  rw [← hKL, ← IsGalois.card_aut_eq_finrank, ← orderOf_eq_card_of_forall_mem_zpowers hσ,
-    ← Fin.prod_univ_eq_prod_range, ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
+  rw [← hKL, ← IsGalois.card_aut_eq_finrank, Fintype.card_eq_nat_card,
+    ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
+    ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
   simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe, map_prod]
   rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i ↑x) (Subgroup.zpowers σ)]
   congr
@@ -660,7 +661,7 @@ lemma Hilbert92_aux2 (E : (𝓞 K)ˣ) (ν : k) (hE : algebraMap k K ν = E / σ 
       rw [hE]
       field_simp
   rw [norm_eq_prod_pow_gen σ hσ, orderOf_eq_card_of_forall_mem_zpowers hσ,
-    IsGalois.card_aut_eq_finrank, hKL]
+    ← Fintype.card_eq_nat_card, IsGalois.card_aut_eq_finrank, hKL]
   conv =>
     enter [1, 2, i]
     rw [h1 i, mul_comm]
