@@ -214,7 +214,7 @@ lemma NoZeroSMulDivisors_of_isLocalization (R S Rₚ Sₚ) [CommRing R] [CommRin
   obtain ⟨_, ⟨a, ha, rfl⟩, H⟩ := hx
   simp only [← _root_.map_mul,
     (injective_iff_map_eq_zero' _).mp (NoZeroSMulDivisors.algebraMap_injective R S)] at H
-  refine ⟨a, ha, H⟩
+  exact ⟨a, ha, H⟩
 
 theorem IsLocalization.AtPrime.PID_of_dedekind_domain {A} [CommRing A]
     [IsDedekindDomain A]
