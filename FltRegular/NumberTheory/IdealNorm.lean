@@ -233,7 +233,6 @@ variable [Module.Finite R S] [IsDedekindDomain R] [IsDedekindDomain S]
 /-- Multiplicativity of `Ideal.spanIntNorm`. simp-normal form is `map_mul (Ideal.relNorm R)`. -/
 theorem spanIntNorm_mul [Module.Free R S] (I J : Ideal S) :
     spanIntNorm R (I * J) = spanIntNorm R I * spanIntNorm R J := by
-  classical
   nontriviality R
   cases subsingleton_or_nontrivial S
   · have : ∀ I : Ideal S, I = ⊤ := fun I ↦ Subsingleton.elim I ⊤
