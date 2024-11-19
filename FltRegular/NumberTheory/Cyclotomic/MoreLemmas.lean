@@ -1,7 +1,7 @@
 import Mathlib.NumberTheory.Cyclotomic.Rat
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.RingTheory.Ideal.Norm
+import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 import Mathlib.RingTheory.NormTrace
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [CharZero K]
