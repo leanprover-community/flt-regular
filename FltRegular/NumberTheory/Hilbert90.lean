@@ -1,35 +1,24 @@
-
-import Mathlib.RingTheory.SimpleModule
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
-import Mathlib.GroupTheory.OrderOfElement
-import Mathlib.Tactic.Widget.Conv
 import Mathlib.RepresentationTheory.GroupCohomology.Hilbert90
 
 open scoped nonZeroDivisors
-open FiniteDimensional Finset BigOperators Submodule groupCohomology
+open FiniteDimensional Finset BigOperators Submodule groupCohomology Submonoid
 
-variable {K L : Type*} [Field K] [Field L] [Algebra K L]
-variable [FiniteDimensional K L]
-variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
-variable {η : L} (hη : Algebra.norm K η = 1)
+variable {K L : Type*} [Field K] [Field L] [Algebra K L] [FiniteDimensional K L]
+variable {σ : L ≃ₐ[K] L} (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
+variable {η : Lˣ} (hη : Algebra.norm K η.1 = 1)
 
-noncomputable
-def ηu : Lˣ := (Ne.isUnit (fun h ↦ by simp [h] at hη) : IsUnit η).unit
+local notation3 "φ" => (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm
 
-noncomputable
-def φ := (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm
-
-variable {σ}
-
-lemma hφ : ∀ (n : ℕ), φ σ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n ↦ by
+lemma hφ : ∀ (n : ℕ), φ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n ↦ by
   simpa [Fin.ext_iff] using finEquivZPowers_symm_apply _ (isOfFinOrder_of_finite σ) n
 
+variable (η) in
 noncomputable
-def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ σ ⟨τ, hσ τ⟩), Units.map (σ ^ i) (ηu hη)
+def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) η
 
-include hσ in
-lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) :
-    ∏ i in range a, (σ ^ i) (ηu hη) = 1 := by
+include hσ hη in
+lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) : ∏ i in range a, (σ ^ i) η = 1 := by
   obtain ⟨n, hn⟩ := Nat.dvd_iff_mod_eq_zero.2 h
   rw [hn]
   revert a
@@ -39,13 +28,13 @@ lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) :
     intro a _ _
     rw [Nat.mul_succ, prod_range_add, ih (Nat.mul_mod_right (orderOf σ) n) rfl, one_mul]
     simp only [pow_add, pow_mul, pow_orderOf_eq_one, one_pow, one_mul]
-    have := Algebra.norm_eq_prod_automorphisms K η
+    have := Algebra.norm_eq_prod_automorphisms K η.1
     simp only [hη, map_one] at this
     convert this.symm
-    refine prod_bij (fun (n : ℕ) (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp)
+    refine prod_bij (fun n (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp)
       (fun a ha b hb hab ↦ ?_) (fun τ _ ↦ ?_) (fun _ _ ↦ by rfl)
-    · rwa [pow_inj_mod, Nat.mod_eq_of_lt (Finset.mem_range.1 ha),
-        Nat.mod_eq_of_lt (Finset.mem_range.1 hb)] at hab
+    · rwa [pow_inj_mod, Nat.mod_eq_of_lt (mem_range.1 ha),
+        Nat.mod_eq_of_lt (mem_range.1 hb)] at hab
     · refine ⟨(finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
       have := Equiv.symm_apply_apply (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
       simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
@@ -53,18 +42,17 @@ lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) :
       simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
       rfl
 
-include hσ in
+include hσ hη in
 lemma aux2 [IsGalois K L] {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
-    ∏ i in range a, (σ ^ i) (ηu hη) = ∏ i in range b, (σ ^ i) (ηu hη) := by
+    ∏ i in range a, (σ ^ i) η = ∏ i in range b, (σ ^ i) η := by
   wlog hab : b ≤ a generalizing a b
   · exact (this h.symm (not_le.1 hab).le).symm
   obtain ⟨c, hc⟩ := Nat.dvd_iff_mod_eq_zero.2 (Nat.sub_mod_eq_zero_of_mod_eq h)
   rw [Nat.sub_eq_iff_eq_add hab] at hc
-  rw [hc, prod_range_add]
-  rw [aux1 hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
+  rw [hc, prod_range_add, aux1 hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
   simp [pow_add, pow_mul, pow_orderOf_eq_one]
 
-lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ hη) σ = (ηu hη) := by
+lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ η) σ = η := by
   haveI nezero : NeZero (orderOf σ) :=
     ⟨fun hzero ↦ orderOf_eq_zero_iff.1 hzero (isOfFinOrder_of_finite σ)⟩
   conv =>
@@ -85,17 +73,17 @@ lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ hη) σ = (ηu hη) 
   simp only [cocycle, SetLike.coe_sort_coe, horder, this, range_one, prod_singleton, pow_zero]
   rfl
 
-lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ hη) (α * β) =
-    α ((cocycle hσ hη) β) * (cocycle hσ hη) α := by
+include hη in
+lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ η) (α * β) =
+    α ((cocycle hσ η) β) * (cocycle hσ η) α := by
   intro α β
-  have hσmon : ∀ x, x ∈ Submonoid.powers σ := by
-    simpa [← mem_powers_iff_mem_zpowers] using hσ
-  obtain ⟨a, ha⟩ := (Submonoid.mem_powers_iff _ _).1 (hσmon α)
-  obtain ⟨b, hb⟩ := (Submonoid.mem_powers_iff _ _).1 (hσmon β)
+  have hσmon : ∀ x, x ∈ powers σ := by simpa [← mem_powers_iff_mem_zpowers] using hσ
+  obtain ⟨a, ha⟩ := (mem_powers_iff _ _).1 (hσmon α)
+  obtain ⟨b, hb⟩ := (mem_powers_iff _ _).1 (hσmon β)
   rw [← ha, ← hb, ← pow_add]
-  have Hab := hφ (L := L) hσ (a + b)
-  have Ha := hφ (L := L) hσ a
-  have Hb := hφ (L := L) hσ b
+  have Hab := hφ hσ (a + b)
+  have Ha := hφ hσ a
+  have Hb := hφ hσ b
   simp only [SetLike.coe_sort_coe, Nat.cast_add, Fin.ext_iff, Fin.mod_val, Fin.coe_ofNat_eq_mod,
     Nat.mod_self, Nat.mod_zero, cocycle, Units.coe_prod, Units.coe_map, MonoidHom.coe_coe,
     map_prod] at Hab Ha Hb ⊢
@@ -104,10 +92,11 @@ lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle h�
   conv =>
     enter [2, 2, 2, x]
     rw [← AlgEquiv.mul_apply, ← pow_add, H]
-  rw [← prod_range_add (fun (n : ℕ) ↦ (σ ^ n) (ηu hη)) (a % orderOf σ) (b % orderOf σ)]
+  rw [← prod_range_add (fun (n : ℕ) ↦ (σ ^ n) η) (a % orderOf σ) (b % orderOf σ)]
   simpa using aux2 hσ hη (by simp)
 
-lemma is_cocycle [IsGalois K L] : IsMulOneCocycle (cocycle hσ hη) := by
+include hη in
+lemma is_cocycle [IsGalois K L] : IsMulOneCocycle (cocycle hσ η) := by
   intro α β
   simp [← Units.eq_iff, is_cocycle_aux hσ hη α β]
 
@@ -129,25 +118,27 @@ lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
   simp only [map_inv₀, div_inv_eq_mul]
   specialize hε σ
   nth_rewrite 2 [← inv_inv ε] at hε
-  rw [div_inv_eq_mul, cocycle_spec hσ hη hone, mul_inv_eq_iff_eq_mul, mul_comm,
+  rw [div_inv_eq_mul, cocycle_spec hσ hone, mul_inv_eq_iff_eq_mul, mul_comm,
     ← Units.eq_iff] at hε
   simp only [AlgEquiv.smul_units_def, Units.coe_map, MonoidHom.coe_coe, Units.val_mul] at hε
   symm
   rw [inv_mul_eq_iff_eq_mul₀ ε.ne_zero, hε]
-  rfl
 
 variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
 variable [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K] [IsDomain A]
 variable [IsIntegralClosure B A L]
 
-lemma Hilbert90_integral [IsGalois K L] (σ : L ≃ₐ[K] L)
-    (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (η : B) (hη : Algebra.norm K (algebraMap B L η) = 1) :
+include hσ in
+lemma Hilbert90_integral [IsGalois K L] {η : B} (hη : Algebra.norm K (algebraMap B L η) = 1) :
     ∃ ε : B, ε ≠ 0 ∧ η * galRestrict A K L B σ ε = ε := by
-  haveI : NoZeroSMulDivisors A L := by
+  have : NoZeroSMulDivisors A L := by
     rw [NoZeroSMulDivisors.iff_algebraMap_injective, IsScalarTower.algebraMap_eq A K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective A K)
   have : IsLocalization (Algebra.algebraMapSubmonoid B A⁰) L :=
     IsIntegralClosure.isLocalization A K L B
+  let η' : Lˣ := IsUnit.unit (a := (algebraMap B L η)) (isUnit_iff_ne_zero.2
+    (fun h ↦ by simp [h] at hη))
+  replace hη : Algebra.norm K η'.1 = 1 := hη
   obtain ⟨ε, hε⟩ := Hilbert90 hσ hη
   obtain ⟨x, y, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid B A⁰) ε
   obtain ⟨t, ht, ht'⟩ := y.prop
@@ -167,7 +158,7 @@ lemma Hilbert90_integral [IsGalois K L] (σ : L ≃ₐ[K] L)
     apply IsIntegralClosure.algebraMap_injective B A L
     rw [map_mul, ← hε]
     congr 1
-    exact algebraMap_galRestrictHom_apply A K L B σ x
+    · exact algebraMap_galRestrictHom_apply A K L B σ x
     · intro e
       rw [(map_eq_zero _).mp e, zero_div] at hε
       rw [hε, Algebra.norm_zero] at hη

@@ -626,7 +626,7 @@ local instance : Module.Free ℤ G := Module.free_of_finite_type_torsion_free'
 noncomputable
 def unitlifts (S : systemOfUnits p G (NumberField.Units.rank k + 1))  :
     Fin (NumberField.Units.rank k + 1) → Additive (𝓞 K)ˣ :=
-  fun i ↦ Additive.ofMul (Additive.toMul (S.units i).out').out'
+  fun i ↦ Additive.ofMul (Additive.toMul (S.units i).out).out
 
 lemma unitlifts_spec (S : systemOfUnits p G (NumberField.Units.rank k + 1)) (i) :
     mkG (Additive.toMul <| unitlifts p hp hKL σ hσ S i) = S.units i := by

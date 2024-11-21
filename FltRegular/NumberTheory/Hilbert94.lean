@@ -50,7 +50,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     (hη : Algebra.norm K (algebraMap B L η) = 1)
     (hη' : ¬∃ α : Bˣ, algebraMap B L η = (algebraMap B L α) / σ (algebraMap B L α)) :
     ∃ I : Ideal A, ¬I.IsPrincipal ∧ (I.map (algebraMap A B)).IsPrincipal := by
-  obtain ⟨β, hβ_zero, hβ⟩ := Hilbert90_integral (A := A) (B := B) σ hσ η hη
+  obtain ⟨β, hβ_zero, hβ⟩ := Hilbert90_integral (A := A) (B := B) hσ hη
   haveI : IsDomain B :=
     (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
   have hβ' := comap_map_eq_of_isUnramified K L _

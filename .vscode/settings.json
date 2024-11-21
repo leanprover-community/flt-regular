@@ -7,4 +7,7 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
+    "cSpell.enabledFileTypes": {
+      "lean4": false
+    },
   }
