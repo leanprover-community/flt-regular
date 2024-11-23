@@ -92,20 +92,6 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
   ext j
   exact hσ _ ((mul_comm _ _).trans (hl' j))
 
-@[to_additive]
-lemma Subgroup.index_mono {G : Type*} [Group G] {H₁ H₂ : Subgroup G} (h : H₁ < H₂)
-  [h₁ : Fintype (G ⧸ H₁)] :
-  H₂.index < H₁.index := by
-  rcases eq_or_ne H₂.index 0 with hn | hn
-  · rw [hn, index_eq_card, Nat.card_eq_fintype_card]
-    exact Fintype.card_pos
-  apply lt_of_le_of_ne
-  refine Nat.le_of_dvd (by rw [index_eq_card, Nat.card_eq_fintype_card]; apply Fintype.card_pos)
-    <| Subgroup.index_dvd_of_le h.le
-  have := fintypeOfIndexNeZero hn
-  rw [←mul_one H₂.index, ←relindex_mul_index h.le, mul_comm, Ne, eq_comm]
-  simp [-one_mul, -Nat.one_mul, hn, h.not_le]
-
 namespace systemOfUnits.IsFundamental
 
 variable {H : Type*} [CommGroup H] [Fintype H]
@@ -160,7 +146,9 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
         Finsupp.comapDomain_apply]
   letI := S'.isMaximal p hp G hf
   suffices Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units) by
-    exact (hs.maximal' _ _ _ S').not_lt (AddSubgroup.index_mono (h₁ := S.isMaximal _ hp _ hf) this)
+    have : (Submodule.span A (Set.range S.units)).toAddSubgroup.FiniteIndex :=
+      ⟨AddSubgroup.index_ne_zero_of_finite (hH := (S.isMaximal _ hp _ hf).finite)⟩
+    exact (hs.maximal' _ _ _ S').not_lt <| AddSubgroup.index_strictAnti ‹_›
   rw [SetLike.lt_iff_le_and_exists]
   constructor
   · rw [Submodule.span_le]
