@@ -708,7 +708,7 @@ lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),
     (Submodule.torsion' ℤ (Additive (𝓞 k)ˣ) (Submonoid.powers (p : ℕ))).toAddSubgroup
   have : H ≤ NumberField.Units.torsion k := by
     rintro x ⟨⟨_, i, rfl⟩, hnx : x ^ (p ^ i : ℕ) = 1⟩
-    exact isOfFinOrder_iff_pow_eq_one.mpr ⟨p ^ i, Fin.size_pos', hnx⟩
+    exact isOfFinOrder_iff_pow_eq_one.mpr ⟨p ^ i, Fin.pos', hnx⟩
   obtain ⟨ν, hν⟩ := Subgroup.isCyclic_of_le this
   obtain ⟨⟨_, i, rfl⟩, hiν : (ν : (𝓞 k)ˣ) ^ (p ^ i : ℕ) = 1⟩ := ν.prop
   obtain ⟨j, _, hj'⟩ := (Nat.dvd_prime_pow hp).mp (orderOf_dvd_of_pow_eq_one hiν)

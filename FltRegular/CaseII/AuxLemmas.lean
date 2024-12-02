@@ -96,7 +96,7 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   · rw [Izero, FractionalIdeal.coe_zero]
     exact bot_isPrincipal
   rw [← Ne, ← isUnit_iff_ne_zero] at Izero
-  show Submodule.IsPrincipal (Izero.unit' : FractionalIdeal A⁰ K)
+  show Submodule.IsPrincipal ((Izero.unit' : FractionalIdeal A⁰ K) : Submodule A K)
   rw [← ClassGroup.mk_eq_one_iff, ← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
   refine ⟨?_, orderOf_dvd_card⟩
   rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]
