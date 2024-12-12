@@ -6,7 +6,8 @@ import Mathlib.Data.Int.Star
 import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
-import Mathlib.LinearAlgebra.Dimension.Torsion
+import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
+import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
 import Mathlib.GroupTheory.FiniteAbelian.Basic
 
 open scoped NumberField nonZeroDivisors
@@ -399,7 +400,8 @@ open multiplicity in
 theorem padicValNat_dvd_iff_le' {p : ℕ} (hp : p ≠ 1) {a n : ℕ} (ha : a ≠ 0) :
     p ^ n ∣ a ↔ n ≤ padicValNat p a := by
   rw [pow_dvd_iff_le_emultiplicity, padicValNat_def' hp ha.bot_lt]
-  exact ⟨fun h ↦ Finite.le_multiplicity_of_le_emultiplicity (Nat.multiplicity_finite_iff.2
+  exact ⟨fun h ↦ FiniteMultiplicity.le_multiplicity_of_le_emultiplicity
+    (Nat.finiteMultiplicity_iff.2
     ⟨hp, Nat.zero_lt_of_ne_zero ha⟩) h, fun h ↦ le_emultiplicity_of_le_multiplicity h⟩
 
 theorem padicValNat_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℕ) :

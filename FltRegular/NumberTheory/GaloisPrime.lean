@@ -224,8 +224,7 @@ def Ideal.ramificationIdxIn (p : Ideal R) : ℕ :=
 open scoped Classical in
 noncomputable
 def Ideal.inertiaDegIn (p : Ideal R) [p.IsMaximal] : ℕ :=
-  if h : (primesOver S p).Nonempty then
-    Ideal.inertiaDeg (algebraMap R S) p h.choose else 0
+  if h : (primesOver S p).Nonempty then Ideal.inertiaDeg p h.choose else 0
 
 variable (R)
 
@@ -268,7 +267,7 @@ lemma Ideal.ramificationIdxIn_eq_ramificationIdx [IsGalois K L] (p : Ideal R) (P
 
 lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S)
     (hP : P ∈ primesOver S p) [p.IsMaximal] :
-    p.inertiaDegIn S = Ideal.inertiaDeg (algebraMap R S) p P := by
+    p.inertiaDegIn S = Ideal.inertiaDeg p P := by
   delta inertiaDegIn
   have : (primesOver S p).Nonempty := ⟨P, hP⟩
   rw [dif_pos this]

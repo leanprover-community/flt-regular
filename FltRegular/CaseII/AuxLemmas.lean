@@ -11,14 +11,14 @@ open Polynomial
 
 lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero M] [WfDvdMonoid M]
     {x y : M} :
-  multiplicity.Finite x y ↔ ¬IsUnit x ∧ y ≠ 0 := by
+  FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 := by
   constructor
   · rw [← not_imp_not, Ne, ← not_or, not_not]
     rintro (hx|hy)
     · exact fun ⟨n, hn⟩ ↦ hn (hx.pow _).dvd
     · simp [hy]
   · intro ⟨hx, hy⟩
-    exact multiplicity.finite_of_not_isUnit hx hy
+    exact FiniteMultiplicity.of_not_isUnit hx hy
 
 lemma dvd_iff_emultiplicity_le {M : Type*}
     [CancelCommMonoidWithZero M] [DecidableRel (fun a b : M ↦ a ∣ b)] [UniqueFactorizationMonoid M]
@@ -44,12 +44,12 @@ lemma dvd_iff_emultiplicity_le {M : Type*}
       rw [← pow_one q, pow_dvd_iff_le_emultiplicity]
       have := H q hq
       rw [emultiplicity_mul hq, emultiplicity_mul hq,
-        multiplicity.Finite.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
-          ⟨hq.not_unit, hb.2⟩), multiplicity.Finite.emultiplicity_eq_multiplicity
-          (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, ha.2⟩), multiplicity.Finite.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
+        FiniteMultiplicity.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
+          ⟨hq.not_unit, hb.2⟩), FiniteMultiplicity.emultiplicity_eq_multiplicity
+          (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, ha.2⟩), FiniteMultiplicity.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
           ⟨hq.not_unit, hq.ne_zero⟩), multiplicity_self, ← Nat.cast_add, ← Nat.cast_add,
           Nat.cast_le, add_comm, add_le_add_iff_left] at this
-      rwa [multiplicity.Finite.emultiplicity_eq_multiplicity
+      rwa [FiniteMultiplicity.emultiplicity_eq_multiplicity
         (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, hb.2⟩), Nat.cast_one,
         Nat.one_le_cast]
 
@@ -64,25 +64,25 @@ lemma pow_dvd_pow_iff_dvd {M : Type*} [CancelCommMonoidWithZero M] [UniqueFactor
   rw [dvd_iff_emultiplicity_le ha, dvd_iff_emultiplicity_le ha']
   refine forall₂_congr (fun p hp ↦ ⟨fun h ↦ ?_, fun h ↦  ?_⟩)
   · rw [emultiplicity_pow hp, emultiplicity_pow hp,
-      multiplicity.Finite.emultiplicity_eq_multiplicity
+      FiniteMultiplicity.emultiplicity_eq_multiplicity
       (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-      multiplicity.Finite.emultiplicity_eq_multiplicity
+      FiniteMultiplicity.emultiplicity_eq_multiplicity
       (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), ← Nat.cast_mul, ← Nat.cast_mul,
       Nat.cast_le] at h
-    rw [multiplicity.Finite.emultiplicity_eq_multiplicity
+    rw [FiniteMultiplicity.emultiplicity_eq_multiplicity
       (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-      multiplicity.Finite.emultiplicity_eq_multiplicity
+      FiniteMultiplicity.emultiplicity_eq_multiplicity
       (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), Nat.cast_le]
     exact le_of_nsmul_le_nsmul_right h' h
   · rw [emultiplicity_pow hp, emultiplicity_pow hp,
-      multiplicity.Finite.emultiplicity_eq_multiplicity
+      FiniteMultiplicity.emultiplicity_eq_multiplicity
       (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-      multiplicity.Finite.emultiplicity_eq_multiplicity
+      FiniteMultiplicity.emultiplicity_eq_multiplicity
       (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), ← Nat.cast_mul, ← Nat.cast_mul,
       Nat.cast_le]
-    rw [multiplicity.Finite.emultiplicity_eq_multiplicity
+    rw [FiniteMultiplicity.emultiplicity_eq_multiplicity
       (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-      multiplicity.Finite.emultiplicity_eq_multiplicity
+      FiniteMultiplicity.emultiplicity_eq_multiplicity
       (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩),
       Nat.cast_le] at h
     exact Nat.mul_le_mul_left x h
@@ -173,8 +173,8 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
   by_cases h : s = 0
   · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
     exact hI' ha
-  obtain ⟨n, hn⟩ := multiplicity.finite_of_not_isUnit hx.not_unit h
-  obtain ⟨m, hm⟩ := multiplicity.finite_of_not_isUnit hx.not_unit (nonZeroDivisors.ne_zero t.prop)
+  obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hx.not_unit h
+  obtain ⟨m, hm⟩ := FiniteMultiplicity.of_not_isUnit hx.not_unit (nonZeroDivisors.ne_zero t.prop)
   rw [IsFractionRing.mk'_eq_div] at ha
   refine this (n + m + 1) (Nat.le_add_left 1 (n + m)) ⟨s, t, ?_, ?_, ha.symm⟩
   · intro hs

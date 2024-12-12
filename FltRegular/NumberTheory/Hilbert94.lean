@@ -18,6 +18,7 @@ variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Al
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
     [IsIntegralClosure B A L]
 
+set_option synthInstance.maxHeartbeats 160000 in
 include hσ in
 lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K L B σ) β = β)
     (σ' : L ≃ₐ[K] L) :
