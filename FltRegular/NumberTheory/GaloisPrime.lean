@@ -1,7 +1,6 @@
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.Data.Set.Card
 import Mathlib.FieldTheory.PurelyInseparable
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.RingTheory.SimpleRing.Basic
@@ -12,7 +11,6 @@ import Mathlib.Algebra.Lie.OfAssociative
 # Galois action on primes
 
 ## Main Definition
-- `primesOver`: The set of primes over an ideal `I`.
 - `galRestrict`: The restriction of `Gal(L/K)` into `Aut(B/A)`.
 
 ## Main Result
@@ -22,81 +20,25 @@ import Mathlib.Algebra.Lie.OfAssociative
 - `prod_smul_primesOver`: `∏_σ σ • P = p ^ f`
 
 -/
-open BigOperators UniqueFactorizationMonoid
+open BigOperators UniqueFactorizationMonoid Ideal
 
 section primesOver
-variable {R S} [CommRing R] [CommRing S] [Algebra R S]
-
-variable (S)
-
-def primesOver (p : Ideal R) : Set (Ideal S) :=
-  { P : Ideal S | P.IsPrime ∧ P.comap (algebraMap R S) = p }
-
-open scoped Classical in
-noncomputable
-def primesOverFinset [IsDedekindDomain S] (p : Ideal R) :
-    Finset (Ideal S) :=
-  (factors (p.map (algebraMap R S))).toFinset
-
-variable {S}
-
-lemma primesOver_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S]
-  [Algebra.IsIntegral R S] :
-    primesOver S (⊥ : Ideal R) = {⊥} := by
-  ext p
-  simp only [primesOver, Set.mem_setOf_eq, Set.mem_singleton_iff]
-  refine ⟨fun H ↦ Ideal.eq_bot_of_comap_eq_bot H.2, ?_⟩
-  rintro rfl
-  rw [← RingHom.ker_eq_comap_bot, ← RingHom.injective_iff_ker_eq_bot]
-  exact ⟨Ideal.bot_prime, NoZeroSMulDivisors.algebraMap_injective _ _⟩
-
-variable (S)
-
-lemma coe_primesOverFinset [Ring.DimensionLEOne R] [IsDedekindDomain S]
-    [NoZeroSMulDivisors R S] (p : Ideal R) (hp : p ≠ ⊥) [hp' : p.IsPrime] :
-    primesOverFinset S p = primesOver S p := by
-  classical
-  ext P
-  have : p.map (algebraMap R S) ≠ ⊥ := by
-    rwa [Ne, Ideal.map_eq_bot_iff_of_injective (NoZeroSMulDivisors.algebraMap_injective R S)]
-  simp only [Finset.mem_coe, Multiset.mem_toFinset, Ideal.mem_normalizedFactors_iff this,
-    factors_eq_normalizedFactors, Ideal.map_le_iff_le_comap, primesOverFinset]
-  exact ⟨fun H ↦ ⟨H.1, ((hp'.isMaximal hp).eq_of_le (H.1.comap _).ne_top H.2).symm⟩,
-    fun H ↦ ⟨H.1, H.2.ge⟩⟩
-
-lemma primesOver_eq_empty_of_not_isPrime (p : Ideal R) (hp : ¬ p.IsPrime) :
-    primesOver S p = ∅ := by
-  rw [← Set.not_nonempty_iff_eq_empty]
-  rintro ⟨P, hP⟩
-  exact hp (hP.2 ▸ hP.1.comap _)
-
-lemma primesOver_finite [Ring.DimensionLEOne R] [IsDedekindDomain S] [NoZeroSMulDivisors R S]
-    (p : Ideal R) (hp : p ≠ ⊥) : (primesOver S p).Finite := by
-  by_cases h: p.IsPrime
-  · classical
-    rw [← coe_primesOverFinset S p hp]
-    exact Finset.finite_toSet _
-  · rw [primesOver_eq_empty_of_not_isPrime S p h]
-    exact Set.finite_empty
-
-variable {S}
+variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
 
 lemma ne_bot_of_mem_primesOver [IsDedekindDomain S] [NoZeroSMulDivisors R S] {p : Ideal R}
-    (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver S p) :
-    P ≠ ⊥ :=
-  fun hP' ↦ hp <| by
-    rw [← hP.2, hP', ← RingHom.ker_eq_comap_bot, ← RingHom.injective_iff_ker_eq_bot]
-    exact NoZeroSMulDivisors.algebraMap_injective R S
+    (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver p S) :
+    P ≠ ⊥ := by
+  have :  P.LiesOver p := hP.2
+  exact Ideal.ne_bot_of_liesOver_of_ne_bot hp _
 
 lemma isMaximal_of_mem_primesOver [IsDedekindDomain S] [NoZeroSMulDivisors R S] {p : Ideal R}
-    (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver S p) :
+    (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver p S) :
     P.IsMaximal :=
   hP.1.isMaximal (ne_bot_of_mem_primesOver hp hP)
 
 lemma prime_of_mem_primesOver [IsDedekindDomain S] [NoZeroSMulDivisors R S] {p : Ideal R}
-    (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver S p) :
-    Prime P :=
-  Ideal.prime_of_isPrime (ne_bot_of_mem_primesOver hp hP) hP.1
+    (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver p S) :
+    Prime P := prime_of_isPrime (ne_bot_of_mem_primesOver hp hP) hP.1
 
 end primesOver
 
@@ -115,32 +57,32 @@ lemma prod_galRestrictHom_eq_norm [IsDedekindDomain R] [IsGalois K L] (x) :
     Algebra.norm_eq_prod_automorphisms, AlgHom.coe_coe, RingHom.coe_comp, Function.comp_apply]
 
 noncomputable
-instance (p : Ideal R) : MulAction (L ≃ₐ[K] L) (primesOver S p) where
-  smul := fun σ P ↦ ⟨Ideal.comap (galRestrict R K L S σ⁻¹) P, P.2.1.comap _, by
-    refine Eq.trans ?_ P.2.2
-    rw [← Ideal.comap_coe (galRestrict R K L S _), Ideal.comap_comap,
-      ← AlgEquiv.toAlgHom_toRingHom, AlgHom.comp_algebraMap]⟩
+instance (p : Ideal R) : MulAction (L ≃ₐ[K] L) (primesOver p S) where
+  smul := fun σ P ↦ ⟨comap (galRestrict R K L S σ⁻¹) P, P.2.1.comap _, ⟨by
+    rw [← comap_coe (galRestrict R K L S _), under, comap_comap,
+      ← AlgEquiv.toAlgHom_toRingHom, AlgHom.comp_algebraMap]
+    exact P.2.2.1⟩⟩
   one_smul := by
     intro p
     ext1
-    show Ideal.comap _ _ = _
+    show comap _ _ = _
     rw [inv_one, map_one]
     rfl
   mul_smul := by
     intro σ₁ σ₂ p
     ext1
-    show Ideal.comap _ _ = Ideal.comap _ (Ideal.comap _ _)
-    rw [← Ideal.comap_coe (galRestrict R K L S _), ← Ideal.comap_coe (galRestrict R K L S _),
-      ← Ideal.comap_coe (galRestrict R K L S _), Ideal.comap_comap, mul_inv_rev, map_mul]
+    show comap _ _ = comap _ (comap _ _)
+    rw [← comap_coe (galRestrict R K L S _), ← comap_coe (galRestrict R K L S _),
+      ← comap_coe (galRestrict R K L S _), comap_comap, mul_inv_rev, _root_.map_mul]
     rfl
 
-lemma coe_smul_primesOver {p : Ideal R} (σ : L ≃ₐ[K] L) (P : primesOver S p) :
-  (↑(σ • P) : Ideal S) = Ideal.comap (galRestrict R K L S σ⁻¹) P := rfl
+-- lemma coe_smul_primesOver {p : Ideal R} (σ : L ≃ₐ[K] L) (P : primesOver p S) :
+--   (↑(σ • P) : Ideal S) = comap (galRestrict R K L S σ⁻¹) P := rfl
 
 open BigOperators
 
 instance [IsDedekindDomain R] [IsGalois K L] (p : Ideal R) :
-    MulAction.IsPretransitive (L ≃ₐ[K] L) (primesOver S p) := by
+    MulAction.IsPretransitive (L ≃ₐ[K] L) (primesOver p S) := by
   -- Set up instances.
   have : IsDomain S :=
     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
@@ -156,7 +98,7 @@ instance [IsDedekindDomain R] [IsGalois K L] (p : Ideal R) :
   -- We first rule out the trivial case where `p = ⊥`.
   by_cases hp : p = ⊥
   · subst hp
-    have : Subsingleton (primesOver S (⊥ : Ideal R)) := by
+    have : Subsingleton (primesOver (⊥ : Ideal R) S) := by
       have : Algebra.IsIntegral R S := (IsIntegralClosure.isIntegral_algebra R L)
       rw [primesOver_bot]; infer_instance
     exact ⟨1, Subsingleton.elim _ _⟩
@@ -169,15 +111,14 @@ instance [IsDedekindDomain R] [IsGalois K L] (p : Ideal R) :
   have : I ⊔ ↑P = ⊤ := by
     by_contra h
     have := hP.eq_of_le h le_sup_right
-    rw [right_eq_sup, ← Ideal.dvd_iff_le,
+    rw [right_eq_sup, ← dvd_iff_le,
       (prime_of_mem_primesOver hp P.prop).dvd_finset_prod_iff] at this
     obtain ⟨σ, _, hσ⟩ := this
     apply H (σ⁻¹)
     rw [inv_smul_eq_iff]
     ext1
-    exact ((isMaximal_of_mem_primesOver hp (σ • Q).prop).eq_of_le hP.ne_top
-      (Ideal.dvd_iff_le.mp hσ)).symm
-  rw [Ideal.eq_top_iff_one, Submodule.mem_sup] at this
+    exact ((isMaximal_of_mem_primesOver hp (σ • Q).prop).eq_of_le hP.ne_top (dvd_iff_le.mp hσ)).symm
+  rw [eq_top_iff_one, Submodule.mem_sup] at this
   -- In particular we may find some `x ∈ I` and `y ∈ p` such that `x + y = 1`.
   have ⟨x, hx, y, hy, hxy⟩ := this
   have hQ := Q.prop.1
@@ -187,20 +128,22 @@ instance [IsDedekindDomain R] [IsGalois K L] (p : Ideal R) :
     apply prod_mem (S := (Q : Ideal S).primeCompl)
     intro σ _ hσ
     apply (isMaximal_of_mem_primesOver hp (σ⁻¹ • Q).prop).ne_top
-    rw [Ideal.eq_top_iff_one, ← hxy]
+    rw [eq_top_iff_one, ← hxy]
     apply add_mem
-    · suffices ↑(σ⁻¹ • Q) ∣ I from (Ideal.dvd_iff_le.mp this) hx
+    · suffices ↑(σ⁻¹ • Q) ∣ I from (dvd_iff_le.mp this) hx
       exact Finset.dvd_prod_of_mem _ (Finset.mem_univ _)
     · show galRestrictHom R K L S ↑(σ⁻¹⁻¹) y ∈ (Q : Ideal S)
       rwa [inv_inv]
   -- OTOH we show that `∏ σ y ∈ Q`.
   -- Since `∏ σ y` is the norm of `y ∈ P`, it falls in `R ∩ Q = p = R ∩ P` as desired.
   apply this
-  rw [prod_galRestrictHom_eq_norm, ← Ideal.mem_comap, Q.prop.2, ← P.prop.2,
-    Ideal.mem_comap, ← prod_galRestrictHom_eq_norm]
-  rw [← SetLike.mem_coe, ← Set.singleton_subset_iff, ← Ideal.span_le] at hy
+  have hQ := Q.prop.2.1
+  have hP := P.prop.2.1
+  rw [under_def] at hQ hP
+  rw [prod_galRestrictHom_eq_norm, ← mem_comap, ← hQ, hP, mem_comap, ← prod_galRestrictHom_eq_norm]
+  rw [← SetLike.mem_coe, ← Set.singleton_subset_iff, ← span_le] at hy
   apply hy
-  rw [Ideal.mem_span_singleton]
+  rw [mem_span_singleton]
   refine dvd_trans ?_ (Finset.dvd_prod_of_mem _ (Finset.mem_univ 1))
   show y ∣ galRestrictHom R K L S 1 y
   rw [map_one]
@@ -208,197 +151,197 @@ instance [IsDedekindDomain R] [IsGalois K L] (p : Ideal R) :
   -- Which gives a contradiction and hence there is some `σ` such that `σ • P = Q`.
 
 lemma exists_comap_galRestrict_eq [IsDedekindDomain R] [IsGalois K L] {p : Ideal R}
-    {P₁ P₂ : Ideal S} (hP₁ : P₁ ∈ primesOver S p) (hP₂ : P₂ ∈ primesOver S p) :
+    {P₁ P₂ : Ideal S} (hP₁ : P₁ ∈ primesOver p S) (hP₂ : P₂ ∈ primesOver p S) :
     ∃ σ, P₁.comap (galRestrict R K L S σ) = P₂ :=
 ⟨_, congr_arg Subtype.val (MulAction.exists_smul_eq (L ≃ₐ[K] L)
-  (⟨P₁, hP₁⟩ : primesOver S p) ⟨P₂, hP₂⟩).choose_spec⟩
+  (⟨P₁, hP₁⟩ : primesOver p S) ⟨P₂, hP₂⟩).choose_spec⟩
 
-variable {R}
+-- variable {R}
 
-open scoped Classical in
-noncomputable
-def Ideal.ramificationIdxIn (p : Ideal R) : ℕ :=
-  if h : (primesOver S p).Nonempty then
-    Ideal.ramificationIdx (algebraMap R S) p h.choose else 0
+-- open scoped Classical in
+-- noncomputable
+-- def Ideal.ramificationIdxIn (p : Ideal R) : ℕ :=
+--   if h : (primesOver p S).Nonempty then
+--     ramificationIdx (algebraMap R S) p h.choose else 0
 
-open scoped Classical in
-noncomputable
-def Ideal.inertiaDegIn (p : Ideal R) [p.IsMaximal] : ℕ :=
-  if h : (primesOver S p).Nonempty then Ideal.inertiaDeg p h.choose else 0
-
-variable (R)
-
-lemma Ideal.ramificationIdxIn_bot : (⊥ : Ideal R).ramificationIdxIn S = 0 := by
-  delta ramificationIdxIn
-  by_cases h : (primesOver S (⊥ : Ideal R)).Nonempty
-  · rw [dif_pos h, ramificationIdx_bot]
-  · exact dif_neg h
-
-lemma Ideal.inertiaDegIn_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S] [IsNoetherian R S]
-    [Algebra.IsIntegral R S] [H : (⊥ : Ideal R).IsMaximal] :
-    (⊥ : Ideal R).inertiaDegIn S = Module.finrank R S := by
-  dsimp [inertiaDegIn]
-  rw [primesOver_bot]
-  have : ({⊥} : Set (Ideal S)).Nonempty := by simp
-  rw [dif_pos this, this.choose_spec]
-  have hR := not_imp_not.mp (Ring.ne_bot_of_isMaximal_of_not_isField H) rfl
-  have hS := isField_of_isIntegral_of_isField' (S := S) hR
-  letI : Field R := hR.toField
-  letI : Field S := hS.toField
-  rw [← Ideal.map_bot (f := algebraMap R S), ← finrank_quotient_map (R := R) (S := S) ⊥ R S]
-  convert inertiaDeg_algebraMap _ _
-  simp only [map_bot]
-  exact ⟨(comap_bot_of_injective _
-    (NoZeroSMulDivisors.iff_algebraMap_injective.1 inferInstance)).symm⟩
-
-variable {R S}
-
-variable [IsDedekindDomain R]
-
-lemma Ideal.ramificationIdxIn_eq_ramificationIdx [IsGalois K L] (p : Ideal R) (P : Ideal S)
-    (hP : P ∈ primesOver S p) :
-    p.ramificationIdxIn S = Ideal.ramificationIdx (algebraMap R S) p P := by
-  delta ramificationIdxIn
-  have : (primesOver S p).Nonempty := ⟨P, hP⟩
-  rw [dif_pos this]
-  have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
-  rw [← hσ]
-  exact Ideal.ramificationIdx_comap_eq _ (galRestrict R K L S σ) P
-
-lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S)
-    (hP : P ∈ primesOver S p) [p.IsMaximal] :
-    p.inertiaDegIn S = Ideal.inertiaDeg p P := by
-  delta inertiaDegIn
-  have : (primesOver S p).Nonempty := ⟨P, hP⟩
-  rw [dif_pos this]
-  have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
-  rw [← hσ]
-  exact Ideal.inertiaDeg_comap_eq p (galRestrict R K L S σ) P
-
-open Module
-
-lemma Ideal.ramificationIdxIn_mul_inertiaDegIn_mul_ncard_primesOver
-    [IsGalois K L] (p : Ideal R) (hp : p ≠ ⊥) [p.IsMaximal] :
-    p.ramificationIdxIn S * p.inertiaDegIn S * (primesOver S p).ncard = finrank K L := by
-  classical
-  have : IsDomain S :=
-    (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
-  have := IsIntegralClosure.isDedekindDomain R K L S
-  have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  have := IsIntegralClosure.isNoetherian R K L S
-  have hRS : Function.Injective (algebraMap R S) := by
-    refine Function.Injective.of_comp (f := algebraMap S L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
-  rw [← Ideal.sum_ramification_inertia (S := S) p K L hp, ← coe_primesOverFinset S p hp,
-    Set.ncard_coe_Finset, mul_comm, ← smul_eq_mul, ← Finset.sum_const]
-  apply Finset.sum_congr rfl
-  simp_rw [← Finset.mem_coe, coe_primesOverFinset S p hp]
-  intro P hP
-  rw [Ideal.ramificationIdxIn_eq_ramificationIdx K L p P hP,
-    Ideal.inertiaDegIn_eq_inertiaDeg K L p P hP]
-
-open scoped Classical in
-lemma ramificationIdxIn_smul_primesOverFinset [IsDedekindDomain S]
-    [IsGalois K L] (p : Ideal R) [p.IsPrime] :
-    (p.ramificationIdxIn S) • (primesOverFinset S p).val = factors (p.map (algebraMap R S)) := by
-  have hRS : Function.Injective (algebraMap R S) := by
-    refine Function.Injective.of_comp (f := algebraMap S L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
-  by_cases hp : p = ⊥
-  · subst hp
-    rw [Ideal.ramificationIdxIn_bot, zero_smul, Ideal.map_bot]
-    exact factors_zero.symm
-  ext P
-  by_cases hP : P ∈ primesOverFinset S p; swap
-  · rw [Multiset.count_nsmul, Multiset.count_eq_zero_of_not_mem hP, mul_zero,
-      Multiset.count_eq_zero_of_not_mem]
-    rwa [primesOverFinset, Multiset.mem_toFinset] at hP
-  have hP' := hP
-  rw [primesOverFinset, Multiset.mem_toFinset] at hP
-  rw [← Finset.mem_coe, coe_primesOverFinset S p hp] at hP'
-  rw [Ideal.ramificationIdxIn_eq_ramificationIdx K L p P hP', Multiset.count_nsmul,
-    Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count _ hP'.1
-    (ne_bot_of_mem_primesOver hp hP'), primesOverFinset,
-    Multiset.toFinset_val, Multiset.count_dedup, if_pos hP, mul_one]
-  rwa [Ne, Ideal.map_eq_bot_iff_of_injective (NoZeroSMulDivisors.algebraMap_injective _ _)]
-
-lemma prod_primesOverFinset_pow_ramificationIdxIn [IsDedekindDomain S] [IsGalois K L] (p : Ideal R)
-    (hp : p ≠ ⊥) [p.IsMaximal] :
-    (∏ P in primesOverFinset S p, P) ^ p.ramificationIdxIn S = p.map (algebraMap R S) := by
-  classical
-  have hRS : Function.Injective (algebraMap R S) := by
-    refine Function.Injective.of_comp (f := algebraMap S L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  delta Finset.prod
-  simp only [Multiset.toFinset_val, Multiset.map_id', ← Multiset.prod_nsmul,
-    ramificationIdxIn_smul_primesOverFinset K L, ← associated_iff_eq]
-  apply factors_prod
-  rwa [Ne, Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective hRS]
-
-lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver S p) [p.IsMaximal] :
-    ∏ σ : L ≃ₐ[K] L, (↑(σ • P) : Ideal S) = (p.map (algebraMap R S)) ^ (p.inertiaDegIn S) := by
-  classical
-  have : IsDomain S :=
-    (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
-  have := IsIntegralClosure.isDedekindDomain R K L S
-  have hRS : Function.Injective (algebraMap R S) := by
-    refine Function.Injective.of_comp (f := algebraMap S L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
-  have := IsIntegralClosure.isNoetherian R K L S
-  by_cases hp : p = ⊥
-  · subst hp
-    have := P.prop
-    have hRS : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
-    simp_rw [primesOver_bot (S := S),
-      Set.mem_singleton_iff] at this
-    simp_rw [coe_smul_primesOver, this,
-      Ideal.comap_bot_of_injective _ (galRestrict R K L S _).injective, Finset.prod_const,
-      Ideal.map_bot, Ideal.inertiaDegIn_bot R S]
-    refine (zero_pow ?_).trans (zero_pow ?_).symm
-    · rw [Finset.card_univ, Ne, Fintype.card_eq_zero_iff]
-      simp only [not_isEmpty_of_nonempty, not_false_eq_true]
-    · have hR := not_imp_not.mp (Ring.ne_bot_of_isMaximal_of_not_isField ‹_›) rfl
-      letI : Field R := hR.toField
-      exact finrank_pos.ne'
-  rw [← prod_primesOverFinset_pow_ramificationIdxIn K L p hp]
-  delta Finset.prod
-  rw [← pow_mul, ← Multiset.prod_nsmul, Multiset.map_id']
-  congr
-  ext P'
-  rw [Multiset.count_nsmul, primesOverFinset, Multiset.toFinset_val, Multiset.count_dedup]
-  simp_rw [← Multiset.mem_toFinset, ← Finset.mem_coe]
-  rw [← primesOverFinset]
-  simp_rw [coe_primesOverFinset S p hp]
-  by_cases hP' : P' ∈ primesOver S p
-  · rw [if_pos hP', mul_one, Multiset.count_map]
-    have : Fintype (primesOver S p) := (primesOver_finite S p hp).fintype
-    apply mul_left_injective₀ (Set.ncard_ne_zero_of_mem P.prop)
-    dsimp only
-    rw [Ideal.ramificationIdxIn_mul_inertiaDegIn_mul_ncard_primesOver K L p hp,
-      ← IsGalois.card_aut_eq_finrank, ← MulAction.card_orbit_mul_card_stabilizer_eq_card_group
-        (L ≃ₐ[K] L) P, MulAction.orbit_eq_univ, mul_comm]
-    simp only [Fintype.card_ofFinset, Set.mem_univ, Finset.mem_univ, forall_true_left,
-      Subtype.forall, implies_true, forall_const, Finset.filter_true_of_mem,
-      MulAction.mem_stabilizer_iff, Finset.card_univ, ← Set.Nat.card_coe_set_eq,
-      Nat.card_eq_fintype_card]
-    congr 1
-    rw [← Finset.filter_val, ← Finset.card, ← Fintype.card_subtype]
-    obtain ⟨σ, hσ⟩ := MulAction.exists_smul_eq (L ≃ₐ[K] L) P ⟨P', hP'⟩
-    have : P' = ↑(σ • P) := by rw [hσ]
-    simp_rw [this, ← Subtype.ext_iff, ← eq_inv_smul_iff (g := σ), ← mul_smul, eq_comm (a := P)]
-    exact Fintype.card_congr
-      { toFun := fun x ↦ ⟨σ⁻¹ * x, x.prop⟩,
-        invFun := fun x ↦ ⟨σ * x, (inv_mul_cancel_left σ x).symm ▸ x.prop⟩,
-        left_inv := fun x ↦ Subtype.ext (mul_inv_cancel_left σ x),
-        right_inv := fun x ↦ Subtype.ext (inv_mul_cancel_left σ x) }
-  · rw [if_neg hP', mul_zero, Multiset.count_eq_zero]
-    simp only [Multiset.mem_map, Finset.mem_val, Finset.mem_univ, true_and, not_exists]
-    rintro σ rfl
-    exact hP' (σ • P).2
+-- open scoped Classical in
+-- noncomputable
+-- def Ideal.inertiaDegIn (p : Ideal R) [p.IsMaximal] : ℕ :=
+--   if h : (primesOver p S).Nonempty then inertiaDeg p h.choose else 0
+--
+-- variable (R)
+--
+-- lemma Ideal.ramificationIdxIn_bot : (⊥ : Ideal R).ramificationIdxIn S = 0 := by
+--   delta ramificationIdxIn
+--   by_cases h : (primesOver (⊥ : Ideal R) S).Nonempty
+--   · rw [dif_pos h, ramificationIdx_bot]
+--   · exact dif_neg h
+--
+-- lemma Ideal.inertiaDegIn_bot [Nontrivial R] [IsDomain S] [NoZeroSMulDivisors R S] [IsNoetherian R S]
+--     [Algebra.IsIntegral R S] [H : (⊥ : Ideal R).IsMaximal] :
+--     (⊥ : Ideal R).inertiaDegIn S = Module.finrank R S := by
+--   dsimp [inertiaDegIn]
+--   rw [primesOver_bot]
+--   have : ({⊥} : Set (Ideal S)).Nonempty := by simp
+--   rw [dif_pos this, this.choose_spec]
+--   have hR := not_imp_not.mp (Ring.ne_bot_of_isMaximal_of_not_isField H) rfl
+--   have hS := isField_of_isIntegral_of_isField' (S := S) hR
+--   letI : Field R := hR.toField
+--   letI : Field S := hS.toField
+--   rw [← map_bot (f := algebraMap R S), ← finrank_quotient_map (R := R) (S := S) ⊥ R S]
+--   convert inertiaDeg_algebraMap _ _
+--   simp only [map_bot]
+--   exact ⟨(comap_bot_of_injective _
+--     (NoZeroSMulDivisors.iff_algebraMap_injective.1 inferInstance)).symm⟩
+--
+-- variable {S}
+--
+-- variable [IsDedekindDomain R]
+--
+-- lemma Ideal.ramificationIdxIn_eq_ramificationIdx [IsGalois K L] (p : Ideal R) (P : Ideal S)
+--     (hP : P ∈ primesOver p S) :
+--     p.ramificationIdxIn S = ramificationIdx (algebraMap R S) p P := by
+--   delta ramificationIdxIn
+--   have : (primesOver p S).Nonempty := ⟨P, hP⟩
+--   rw [dif_pos this]
+--   have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
+--   rw [← hσ]
+--   exact ramificationIdx_comap_eq _ (galRestrict R K L S σ) P
+--
+-- lemma Ideal.inertiaDegIn_eq_inertiaDeg [IsGalois K L] (p : Ideal R) (P : Ideal S)
+--     (hP : P ∈ primesOver p S) [p.IsMaximal] :
+--     p.inertiaDegIn S = inertiaDeg p P := by
+--   delta inertiaDegIn
+--   have : (primesOver p S).Nonempty := ⟨P, hP⟩
+--   rw [dif_pos this]
+--   have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S hP this.choose_spec
+--   rw [← hσ]
+--   exact inertiaDeg_comap_eq p (galRestrict R K L S σ) P
+--
+-- open Module
+--
+-- lemma Ideal.ramificationIdxIn_mul_inertiaDegIn_mul_ncard_primesOver
+--     [IsGalois K L] (p : Ideal R) (hp : p ≠ ⊥) [p.IsMaximal] :
+--     p.ramificationIdxIn S * p.inertiaDegIn S * (primesOver p S).ncard = finrank K L := by
+--   classical
+--   have : IsDomain S :=
+--     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
+--   have := IsIntegralClosure.isDedekindDomain R K L S
+--   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
+--   have := IsIntegralClosure.isNoetherian R K L S
+--   have hRS : Function.Injective (algebraMap R S) := by
+--     refine Function.Injective.of_comp (f := algebraMap S L) ?_
+--     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
+--     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
+--   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
+--   rw [← sum_ramification_inertia (S := S) p K L hp, ← coe_primesOverFinset hp,
+--     Set.ncard_coe_Finset, mul_comm, ← smul_eq_mul, ← Finset.sum_const]
+--   apply Finset.sum_congr rfl
+--   simp_rw [← Finset.mem_coe, coe_primesOverFinset hp]
+--   intro P hP
+--   rw [ramificationIdxIn_eq_ramificationIdx K L p P hP, inertiaDegIn_eq_inertiaDeg K L p P hP]
+--
+-- open scoped Classical in
+-- lemma ramificationIdxIn_smul_primesOverFinset [IsDedekindDomain S]
+--     [IsGalois K L] (p : Ideal R) [p.IsPrime] :
+--     (p.ramificationIdxIn S) • (primesOverFinset p S).val = factors (p.map (algebraMap R S)) := by
+--   have hRS : Function.Injective (algebraMap R S) := by
+--     refine Function.Injective.of_comp (f := algebraMap S L) ?_
+--     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
+--     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
+--   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
+--   by_cases hp : p = ⊥
+--   · subst hp
+--     rw [ramificationIdxIn_bot, zero_smul, Ideal.map_bot]
+--     exact factors_zero.symm
+--   ext P
+--   by_cases hP : P ∈ primesOverFinset p S; swap
+--   · rw [Multiset.count_nsmul, Multiset.count_eq_zero_of_not_mem hP, mul_zero,
+--       Multiset.count_eq_zero_of_not_mem]
+--     rwa [primesOverFinset, Multiset.mem_toFinset] at hP
+--   have hP' := hP
+--   rw [primesOverFinset, Multiset.mem_toFinset] at hP
+--   have : p.IsMaximal := Ring.DimensionLEOne.maximalOfPrime hp ‹_›
+--   rw [← Finset.mem_coe, coe_primesOverFinset hp] at hP'
+--   rw [ramificationIdxIn_eq_ramificationIdx K L p P hP', Multiset.count_nsmul,
+--     IsDedekindDomain.ramificationIdx_eq_factors_count _ hP'.1
+--     (ne_bot_of_mem_primesOver hp hP'), primesOverFinset,
+--     Multiset.toFinset_val, Multiset.count_dedup, if_pos hP, mul_one]
+--   rwa [Ne, map_eq_bot_iff_of_injective (NoZeroSMulDivisors.algebraMap_injective _ _)]
+--
+-- lemma prod_primesOverFinset_pow_ramificationIdxIn [IsDedekindDomain S] [IsGalois K L] (p : Ideal R)
+--     (hp : p ≠ ⊥) [p.IsMaximal] :
+--     (∏ P in primesOverFinset p S, P) ^ p.ramificationIdxIn S = p.map (algebraMap R S) := by
+--   classical
+--   have hRS : Function.Injective (algebraMap R S) := by
+--     refine Function.Injective.of_comp (f := algebraMap S L) ?_
+--     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
+--     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
+--   delta Finset.prod
+--   rw [Multiset.map_id', ← Multiset.prod_nsmul, ← associated_iff_eq,
+--     ramificationIdxIn_smul_primesOverFinset K L]
+--   apply factors_prod
+--   rwa [Ne, zero_eq_bot, map_eq_bot_iff_of_injective hRS]
+--
+-- lemma prod_smul_primesOver [IsGalois K L] (p : Ideal R) (P : primesOver p S) [p.IsMaximal] :
+--     ∏ σ : L ≃ₐ[K] L, (↑(σ • P) : Ideal S) = (p.map (algebraMap R S)) ^ (p.inertiaDegIn S) := by
+--   classical
+--   have : IsDomain S :=
+--     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
+--   have := IsIntegralClosure.isDedekindDomain R K L S
+--   have hRS : Function.Injective (algebraMap R S) := by
+--     refine Function.Injective.of_comp (f := algebraMap S L) ?_
+--     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
+--     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
+--   rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hRS
+--   have := IsIntegralClosure.isNoetherian R K L S
+--   by_cases hp : p = ⊥
+--   · subst hp
+--     have := P.prop
+--     have hRS : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
+--     simp_rw [primesOver_bot R S,
+--       Set.mem_singleton_iff] at this
+--     simp_rw [coe_smul_primesOver, this,
+--       comap_bot_of_injective _ (galRestrict R K L S _).injective, Finset.prod_const,
+--       Ideal.map_bot, inertiaDegIn_bot R S]
+--     refine (zero_pow ?_).trans (zero_pow ?_).symm
+--     · rw [Finset.card_univ, Ne, Fintype.card_eq_zero_iff]
+--       simp only [not_isEmpty_of_nonempty, not_false_eq_true]
+--     · have hR := not_imp_not.mp (Ring.ne_bot_of_isMaximal_of_not_isField ‹_›) rfl
+--       letI : Field R := hR.toField
+--       exact finrank_pos.ne'
+--   rw [← prod_primesOverFinset_pow_ramificationIdxIn K L p hp]
+--   delta Finset.prod
+--   rw [← pow_mul, ← Multiset.prod_nsmul, Multiset.map_id']
+--   congr
+--   ext P'
+--   rw [Multiset.count_nsmul, primesOverFinset, Multiset.toFinset_val, Multiset.count_dedup]
+--   simp_rw [← Multiset.mem_toFinset, ← Finset.mem_coe]
+--   rw [← primesOverFinset]
+--   simp_rw [coe_primesOverFinset hp]
+--   by_cases hP' : P' ∈ primesOver p S
+--   · rw [if_pos hP', mul_one, Multiset.count_map]
+--     have : Fintype (primesOver p S) := (primesOver_finite p S).fintype
+--     apply mul_left_injective₀ (Set.ncard_ne_zero_of_mem P.prop)
+--     dsimp only
+--     rw [ramificationIdxIn_mul_inertiaDegIn_mul_ncard_primesOver K L p hp,
+--       ← IsGalois.card_aut_eq_finrank, ← MulAction.card_orbit_mul_card_stabilizer_eq_card_group
+--         (L ≃ₐ[K] L) P, MulAction.orbit_eq_univ, mul_comm]
+--     simp only [Fintype.card_ofFinset, Set.mem_univ, Finset.mem_univ, forall_true_left,
+--       Subtype.forall, implies_true, forall_const, Finset.filter_true_of_mem,
+--       MulAction.mem_stabilizer_iff, Finset.card_univ, ← Set.Nat.card_coe_set_eq,
+--       Nat.card_eq_fintype_card]
+--     congr 1
+--     rw [← Finset.filter_val, ← Finset.card, ← Fintype.card_subtype]
+--     obtain ⟨σ, hσ⟩ := MulAction.exists_smul_eq (L ≃ₐ[K] L) P ⟨P', hP'⟩
+--     have : P' = ↑(σ • P) := by rw [hσ]
+--     simp_rw [this, ← Subtype.ext_iff, ← eq_inv_smul_iff (g := σ), ← mul_smul, eq_comm (a := P)]
+--     exact Fintype.card_congr
+--       { toFun := fun x ↦ ⟨σ⁻¹ * x, x.prop⟩,
+--         invFun := fun x ↦ ⟨σ * x, (inv_mul_cancel_left σ x).symm ▸ x.prop⟩,
+--         left_inv := fun x ↦ Subtype.ext (mul_inv_cancel_left σ x),
+--         right_inv := fun x ↦ Subtype.ext (inv_mul_cancel_left σ x) }
+--   · rw [if_neg hP', mul_zero, Multiset.count_eq_zero]
+--     simp only [Multiset.mem_map, Finset.mem_val, Finset.mem_univ, true_and, not_exists]
+--     rintro σ rfl
+--     exact hP' (σ • P).2

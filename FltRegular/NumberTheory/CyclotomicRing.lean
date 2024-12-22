@@ -56,7 +56,7 @@ lemma equiv_zeta : equiv p (zeta p) = (IsCyclotomicExtension.zeta_spec
 lemma prime_one_sub_zeta :
     Prime (1 - zeta p) := by
   rw [← prime_units_mul (a := -1), Units.val_neg, Units.val_one, neg_mul, one_mul, neg_sub]
-  apply (equiv p).toMulEquiv.prime_iff.mpr
+  apply (MulEquiv.prime_iff (equiv p)).1
   simp only [RingEquiv.toMulEquiv_eq_coe, RingEquiv.coe_toMulEquiv,
     (equiv p).map_sub, (equiv p).map_one, equiv_zeta]
   letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
