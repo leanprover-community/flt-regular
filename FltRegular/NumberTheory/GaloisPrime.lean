@@ -2,10 +2,9 @@ import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.Data.Set.Card
 import Mathlib.FieldTheory.PurelyInseparable
 import Mathlib.RingTheory.DedekindDomain.Dvr
-import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.RingTheory.SimpleRing.Basic
-import Mathlib.NumberTheory.RamificationInertia.Basic
 import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.RingTheory.DedekindDomain.Ideal
 
 /-!
 # Galois action on primes
