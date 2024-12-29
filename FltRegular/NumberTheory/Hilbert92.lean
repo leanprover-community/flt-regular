@@ -130,7 +130,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
   let a' := a.comapDomain (Fin.succAbove i) Fin.succAbove_right_injective.injOn
   have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i := by
     ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
-      Function.update_noteq]
+      Function.update_of_ne]
   have ha' :
       Finsupp.linearCombination A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g := by
     rw [hS', Finsupp.linearCombination_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
@@ -158,11 +158,11 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
     · rw [add_comm, ← eq_sub_iff_add_eq] at ha'
       rw [← hij, ha']
       apply sub_mem
-      · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, Function.update_same _ _ _⟩)
+      · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, Function.update_self _ _ _⟩)
       · rw [← Finsupp.range_linearCombination, Finsupp.linearCombination_comp, LinearMap.comp_apply]
         exact ⟨_, rfl⟩
-    · exact Submodule.subset_span ⟨j, Function.update_noteq (Ne.symm hij) _ _⟩
-  · refine ⟨g, Submodule.subset_span ⟨i, Function.update_same _ _ _⟩, ?_⟩
+    · exact Submodule.subset_span ⟨j, Function.update_of_ne (Ne.symm hij) _ _⟩
+  · refine ⟨g, Submodule.subset_span ⟨i, Function.update_self _ _ _⟩, ?_⟩
     rw [← Finsupp.range_linearCombination]
     rintro ⟨l, rfl⟩
     letI := (Algebra.id A).toModule
