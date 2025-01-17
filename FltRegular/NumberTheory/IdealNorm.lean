@@ -269,11 +269,7 @@ theorem spanIntNorm_mul [Module.Free R S] (I J : Ideal S) :
     (by rw [RingHom.algebraMap_toAlgebra, IsLocalization.map_comp, RingHom.comp_id])
   letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization
     P' Sₚ (FractionRing S)
-  haveI : Algebra.IsSeparable (FractionRing Rₚ) (FractionRing Sₚ) := by
-    haveI : IsScalarTower R Rₚ (FractionRing R) := IsScalarTower.of_algebraMap_eq'
-      (by rw [RingHom.algebraMap_toAlgebra, IsLocalization.lift_comp])
-    letI := IsFractionRing.isFractionRing_of_isDomain_of_isLocalization
-      P.primeCompl Rₚ (FractionRing R)
+  have : Algebra.IsSeparable (FractionRing Rₚ) (FractionRing Sₚ) := by
     apply Algebra.IsSeparable.of_equiv_equiv
       (FractionRing.algEquiv Rₚ (FractionRing R)).symm.toRingEquiv
       (FractionRing.algEquiv Sₚ (FractionRing S)).symm.toRingEquiv
@@ -281,9 +277,9 @@ theorem spanIntNorm_mul [Module.Free R S] (I J : Ideal S) :
     ext
     simp only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_comp,
       RingHom.coe_coe, Function.comp_apply, ← IsScalarTower.algebraMap_apply]
-    simp only [IsScalarTower.algebraMap_apply R Rₚ (FractionRing R), AlgEquiv.coe_ringEquiv,
+    rw [IsScalarTower.algebraMap_apply R Rₚ (FractionRing R), AlgEquiv.coe_ringEquiv,
       AlgEquiv.commutes, IsScalarTower.algebraMap_apply R S L,
-      IsScalarTower.algebraMap_apply S Sₚ L]
+      IsScalarTower.algebraMap_apply S Sₚ L, AlgEquiv.coe_ringEquiv, AlgEquiv.commutes]
     simp only [← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply R Rₚ (FractionRing Rₚ),
       ← IsScalarTower.algebraMap_apply Rₚ, ← IsScalarTower.algebraMap_apply]
@@ -349,9 +345,9 @@ theorem spanIntNorm_map (I : Ideal R) :
     ext
     simp only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_comp,
       RingHom.coe_coe, Function.comp_apply, ← IsScalarTower.algebraMap_apply]
-    simp only [IsScalarTower.algebraMap_apply R Rₚ (FractionRing R), AlgEquiv.coe_ringEquiv,
+    rw [IsScalarTower.algebraMap_apply R Rₚ (FractionRing R), AlgEquiv.coe_ringEquiv,
       AlgEquiv.commutes, IsScalarTower.algebraMap_apply R S L,
-      IsScalarTower.algebraMap_apply S Sₚ L]
+      IsScalarTower.algebraMap_apply S Sₚ L, AlgEquiv.coe_ringEquiv, AlgEquiv.commutes]
     simp only [← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply R Rₚ (FractionRing Rₚ), ← IsScalarTower.algebraMap_apply Rₚ,
       ← IsScalarTower.algebraMap_apply]

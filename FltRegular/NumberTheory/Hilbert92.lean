@@ -130,7 +130,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
   let a' := a.comapDomain (Fin.succAbove i) Fin.succAbove_right_injective.injOn
   have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i := by
     ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
-      Function.update_of_ne]
+      Function.update_of_ne, S']
   have ha' :
       Finsupp.linearCombination A (S'.units ∘ Fin.succAbove i) a' + S.units i = (1 - zeta p) • g := by
     rw [hS', Finsupp.linearCombination_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
@@ -441,7 +441,8 @@ lemma exists_pow_smul_eq_and_not_dvd
   have : (p : ℤ) ^ (n + 1) ∣ f i := by
     rw [hf', pow_succ, Nat.cast_pow]
     exact _root_.mul_dvd_mul_left _ hi
-  simp [hfi, padicValInt_dvd_iff' hp] at this
+  simp only [padicValInt_dvd_iff' hp, hfi, false_or] at this
+  omega
 
 include hp in
 lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
