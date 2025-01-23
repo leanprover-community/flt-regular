@@ -39,7 +39,7 @@ theorem not_for_all_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
   have := KummersLemma.isUnramified hp hζ u hcong hu L
   have := dvd_card_classGroup_of_isUnramified_isCyclic K L (hKL.symm ▸ hpri.out)
     (hKL.symm ▸ PNat.coe_injective.ne hp)
-  rw [hKL, ← Int.ofNat_dvd, (Nat.prime_iff_prime_int.mp hpri.out).irreducible.dvd_iff_not_coprime,
+  rw [hKL, ← Int.ofNat_dvd, (Nat.prime_iff_prime_int.mp hpri.out).irreducible.dvd_iff_not_isCoprime,
     Nat.isCoprime_iff_coprime] at this
   exact this (by convert hreg)
 

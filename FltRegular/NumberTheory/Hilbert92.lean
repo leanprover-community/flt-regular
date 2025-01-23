@@ -288,14 +288,13 @@ def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) 
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
     rw [relativeUnitsMap]
     erw [QuotientGroup.lift_mk']
-    simp only [map_one, MonoidHom.coe_comp, QuotientGroup.coe_mk', Function.comp_apply,
-      Monoid.coe_one, id_eq]
+    simp only [map_one, MonoidHom.coe_comp, QuotientGroup.coe_mk', Function.comp_apply]
     rfl
   map_mul' := by
     intros f g
     refine DFunLike.ext _ _ (fun x ↦ ?_)
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
-    simp only [relativeUnitsMap, map_mul, Monoid.coe_mul, Function.comp_apply]
+    simp only [relativeUnitsMap, map_mul, Function.comp_apply]
     rfl
 
 @[simps! apply]
