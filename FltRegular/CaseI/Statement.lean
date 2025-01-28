@@ -67,7 +67,7 @@ end CaseI
 
 theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) : IsCoprime a b := by
-  rw [← gcd_eq_one_iff_coprime]
+  rw [isCoprime_iff_gcd_eq_one]
   by_contra! h
   obtain ⟨q, hqpri, hq⟩ := exists_prime_and_dvd h
   replace hqpri : Prime (q : ℤ) := prime_iff_natAbs_prime.2 (by simp [hqpri])
