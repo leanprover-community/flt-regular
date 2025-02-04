@@ -103,8 +103,8 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I
     simpa only [Cardinal.toNat_lift] using congr_arg Cardinal.toNat
       (Algebra.lift_rank_eq_of_equiv_equiv (FractionRing.algEquiv A K).symm.toRingEquiv
         (FractionRing.algEquiv B L).symm.toRingEquiv H).symm
-  rw [← hLK, ← Ideal.spanIntNorm_map, ← (I.map (algebraMap A B)).span_singleton_generator,
-    Ideal.spanIntNorm_singleton]
+  rw [← hLK, ← Ideal.spanNorm_map, ← (I.map (algebraMap A B)).span_singleton_generator,
+    Ideal.spanNorm_singleton]
   exact ⟨⟨_, rfl⟩⟩
 
 /-- This is the first part of **Hilbert Theorem 94**, which states that if `L/K` is an unramified

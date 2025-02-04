@@ -232,7 +232,7 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
   have hζ := zeta_spec P ℤ R
   intro H
   obtain ⟨k₁, k₂, hcong, hdiv⟩ := ex_fin_div hp5 hreg hζ hgcd caseI H
-  have key : ↑(p : ℤ) ∣ ∑ j in range p, f a b k₁ k₂ j • ζ ^ j := by
+  have key : ↑(p : ℤ) ∣ ∑ j ∈ range p, f a b k₁ k₂ j • ζ ^ j := by
     convert hdiv using 1
     have h01 : 0 ≠ 1 := zero_ne_one
     have h0k₁ := aux0k₁ hpri.out hp5 hζ caseI hcong hdiv

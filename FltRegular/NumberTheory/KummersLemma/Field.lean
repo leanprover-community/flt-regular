@@ -175,7 +175,7 @@ theorem splits_poly {L : Type*} [Field L] [Algebra K L] (α : L)
 theorem map_poly_eq_prod {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ (p : ℕ) = algebraMap K L u) :
     (poly hp hζ u hcong).map (algebraMap (𝓞 K) (𝓞 L)) =
-      ∏ i in Finset.range (p : ℕ), (X - C (polyRoot hp hζ u hcong α e i)) := by
+      ∏ i ∈ Finset.range (p : ℕ), (X - C (polyRoot hp hζ u hcong α e i)) := by
   apply map_injective (algebraMap (𝓞 L) L) Subtype.coe_injective
   have : (algebraMap (𝓞 L) L).comp (algebraMap (𝓞 K) (𝓞 L)) = algebraMap (𝓞 K) L := by
     ext; rfl

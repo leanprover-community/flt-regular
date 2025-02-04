@@ -41,7 +41,7 @@ variable {R} {S}
 
 lemma prod_primesOverFinset_of_isUnramified [IsUnramified R S] [IsDedekindDomain S]
     [NoZeroSMulDivisors R S] (p : Ideal R) [p.IsPrime] (hp : p ≠ ⊥) :
-    ∏ P in primesOverFinset p S, P = p.map (algebraMap R S) := by
+    ∏ P ∈ primesOverFinset p S, P = p.map (algebraMap R S) := by
   classical
   have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective
     (NoZeroSMulDivisors.iff_algebraMap_injective.mp ‹_›)).not.mpr hp
@@ -76,7 +76,7 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
     obtain ⟨P, hP1, hP2, hP3⟩ := Ideal.exists_ideal_over_prime_of_isIntegral _ _ hp₂
     exact ⟨P, hP1, hP2, ⟨hP3.symm⟩⟩
   choose 𝔓 h𝔓 h𝔓' using this
-  suffices I = ∏ p in (factors (I.comap <| algebraMap R S)).toFinset,
+  suffices I = ∏ p ∈ (factors (I.comap <| algebraMap R S)).toFinset,
     (p.map (algebraMap R S)) ^ (if h : _ then (factors I).count (𝔓 p h) else 0) by
     simp_rw [← Ideal.mapHom_apply, ← map_pow, ← map_prod, Ideal.mapHom_apply] at this
     rw [this, Ideal.map_comap_map]

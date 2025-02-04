@@ -15,10 +15,10 @@ lemma hφ : ∀ (n : ℕ), φ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n �
 
 variable (η) in
 noncomputable
-def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i in range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) η
+def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i ∈ range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) η
 
 include hσ hη in
-lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) : ∏ i in range a, (σ ^ i) η = 1 := by
+lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a, (σ ^ i) η = 1 := by
   obtain ⟨n, hn⟩ := Nat.dvd_iff_mod_eq_zero.2 h
   rw [hn]
   revert a
@@ -44,7 +44,7 @@ lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) : ∏ i in range a, 
 
 include hσ hη in
 lemma aux2 [IsGalois K L] {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
-    ∏ i in range a, (σ ^ i) η = ∏ i in range b, (σ ^ i) η := by
+    ∏ i ∈ range a, (σ ^ i) η = ∏ i ∈ range b, (σ ^ i) η := by
   wlog hab : b ≤ a generalizing a b
   · exact (this h.symm (not_le.1 hab).le).symm
   obtain ⟨c, hc⟩ := Nat.dvd_iff_mod_eq_zero.2 (Nat.sub_mod_eq_zero_of_mod_eq h)

@@ -116,7 +116,7 @@ lemma nontrivial {p} (hp : p ≠ 0) : Nontrivial (CyclotomicIntegers p) := by
 
 lemma charZero {p} (hp : p ≠ 0) : CharZero (CyclotomicIntegers p) :=
   letI := nontrivial hp
-  ⟨(NoZeroSMulDivisors.algebraMap_injective _ _).comp (algebraMap ℕ ℤ).injective_nat⟩
+  ⟨(FaithfulSMul.algebraMap_injective _ _).comp (algebraMap ℕ ℤ).injective_nat⟩
 
 instance : CharZero (CyclotomicIntegers p) := charZero hpri.out.ne_zero
 

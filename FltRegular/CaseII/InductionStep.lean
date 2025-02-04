@@ -88,7 +88,7 @@ lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   have h := zeta_sub_one_dvd hζ e
-  replace h : ∏ _η in nthRootsFinset p (𝓞 K), Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0 := by
+  replace h : ∏ _η ∈ nthRootsFinset p (𝓞 K), Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0 := by
     rw [hζ.unit'_coe.pow_add_pow_eq_prod_add_mul _ _ <| Nat.odd_iff.2 <|
       hpri.out.eq_two_or_odd.resolve_left
       (PNat.coe_injective.ne hp), ← Ideal.Quotient.eq_zero_iff_dvd, map_prod] at h
@@ -247,7 +247,7 @@ lemma exists_ideal_pow_eq_c_aux :
     add_mul, one_mul, pow_add, mul_assoc, mul_assoc, mul_assoc]
 
 /- The ∏_η,  𝔠 η = (𝔷' 𝔭^m)^p with 𝔷 = 𝔪 𝔷' -/
-lemma prod_c : ∏ η in Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (𝔷' * 𝔭 ^ m) ^ (p : ℕ) := by
+lemma prod_c : ∏ η ∈ Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (𝔷' * 𝔭 ^ m) ^ (p : ℕ) := by
   have e' := span_pow_add_pow_eq hζ e
   rw [hζ.unit'_coe.pow_add_pow_eq_prod_add_mul _ _ <| Nat.odd_iff.2 <|
     hpri.out.eq_two_or_odd.resolve_left (PNat.coe_injective.ne hp)] at e'
@@ -314,7 +314,7 @@ lemma p_dvd_c_iff : 𝔭 ∣ (𝔠 η) ↔ η = η₀ := by
 
 /- All the others 𝔠 η are coprime to 𝔭...basically-/
 lemma p_pow_dvd_c_eta_zero_aux [DecidableEq (𝓞 K)] :
-  gcd (𝔭 ^ (m * p)) (∏ η in Finset.attach (nthRootsFinset p (𝓞 K)) \ {η₀}, 𝔠 η) = 1 := by
+  gcd (𝔭 ^ (m * p)) (∏ η ∈ Finset.attach (nthRootsFinset p (𝓞 K)) \ {η₀}, 𝔠 η) = 1 := by
     rw [← Ideal.isCoprime_iff_gcd]
     apply IsCoprime.pow_left
     rw [Ideal.isCoprime_iff_gcd, hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff,

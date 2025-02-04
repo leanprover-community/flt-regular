@@ -224,7 +224,7 @@ lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a) :
 lemma norm_eq_prod_pow_gen
     [IsGalois k K] [FiniteDimensional k K]
     (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (η : K) :
-    algebraMap k K (Algebra.norm k η) = (∏ i in Finset.range (orderOf σ), (σ ^ i) η)   := by
+    algebraMap k K (Algebra.norm k η) = (∏ i ∈ Finset.range (orderOf σ), (σ ^ i) η)   := by
   let _ : Fintype (Subgroup.zpowers σ) := inferInstance
   rw [Algebra.norm_eq_prod_automorphisms, ← Fin.prod_univ_eq_prod_range,
     ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
@@ -369,7 +369,7 @@ lemma unit_to_U_div (x y) : mkG (x / y) = mkG x - mkG y := by
   rw [div_eq_mul_inv, unit_to_U_mul, unit_to_U_inv, sub_eq_add_neg]
 
 lemma unit_to_U_prod {ι} (s : Finset ι) (f : ι → _) :
-    mkG (∏ i in s, f i) = ∑ i in s, mkG (f i) := by
+    mkG (∏ i ∈ s, f i) = ∑ i ∈ s, mkG (f i) := by
   classical
   induction s using Finset.induction with
   | empty => simp only [prod_empty, sum_empty, unit_to_U_one]
