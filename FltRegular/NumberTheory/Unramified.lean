@@ -20,7 +20,7 @@ import Mathlib.NumberTheory.RamificationInertia.Basic
   is separable for some ideal `p` of `R` (with `f` being the minpoly of `α` over `R`), then `S/R` is
   unramified at `p`.
 -/
-open BigOperators UniqueFactorizationMonoid
+open BigOperators UniqueFactorizationMonoid Ideal
 
 attribute [local instance] FractionRing.liftAlgebra
 
@@ -150,8 +150,8 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
   have := aeval_derivative_mem_differentIdeal R K L x hx'
   have H : RingHom.comp (algebraMap (FractionRing R) (FractionRing S))
-    ↑(FractionRing.algEquiv R K).symm.toRingEquiv =
-      RingHom.comp ↑(FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L) := by
+    (FractionRing.algEquiv R K).symm.toRingEquiv =
+      RingHom.comp (FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L) := by
     apply IsLocalization.ringHom_ext R⁰
     ext
     simp only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_comp, RingHom.coe_coe,
@@ -177,12 +177,12 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
     have := hP.2.1
     rw [Ideal.under_def] at this
     have := (separable_map (Ideal.quotientMap P (algebraMap R S) this.symm.ge)).mpr h
-    rw [map_map, Ideal.quotientMap_comp_mk] at this
+    rw [Polynomial.map_map, Ideal.quotientMap_comp_mk] at this
     obtain ⟨a, b, e⟩ := this
     apply_fun (aeval (Ideal.Quotient.mk P x)) at e
-    simp_rw [← Ideal.Quotient.algebraMap_eq, ← map_map, derivative_map, map_add, map_mul,
-      aeval_map_algebraMap, aeval_algebraMap_apply, minpoly.aeval, hxP, map_zero, mul_zero,
-      zero_add, map_one, zero_ne_one] at e
+    simp_rw [← Ideal.Quotient.algebraMap_eq, ← Polynomial.map_map, derivative_map, map_add,
+      _root_.map_mul, aeval_map_algebraMap, aeval_algebraMap_apply, minpoly.aeval, hxP, map_zero,
+      mul_zero, zero_add, map_one, zero_ne_one] at e
   · rwa [Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count _
       (isMaximal_of_mem_primesOver hpbot hP).isPrime (ne_bot_of_mem_primesOver hpbot hP),
       Multiset.one_le_count_iff_mem, ← Multiset.mem_toFinset, ← primesOverFinset,
