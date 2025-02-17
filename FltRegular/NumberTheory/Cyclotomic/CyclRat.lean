@@ -114,8 +114,9 @@ open IsPrimitiveRoot
 
 theorem nth_roots_prim [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p R) (hne1 : η ≠ 1) :
     IsPrimitiveRoot η p := by
+  classical
   have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe
-  rw [nthRoots_one_eq_biUnion_primitiveRoots hζ'] at hη
+  rw [nthRoots_one_eq_biUnion_primitiveRoots] at hη
   simp only [mem_biUnion] at hη
   obtain ⟨a, ha, h2⟩ := hη
   have ha2 : a = p := by
