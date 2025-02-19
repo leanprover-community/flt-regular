@@ -1,8 +1,0 @@
-CyclotomicIntegers.equiv_symm_apply
-Ideal.spanIntNorm_mul
-Monoid.EndAdditive_apply
-fermatLastTheoremFive
-isRegularPrime_three
-isRegularPrime_two
-relativeUnitsMapHom_apply
-relativeUnitsMap_mk

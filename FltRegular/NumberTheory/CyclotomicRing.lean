@@ -102,8 +102,6 @@ def powerBasis : PowerBasis ℤ (CyclotomicIntegers p) :=
 lemma powerBasis_dim : (powerBasis p).dim = p - 1 := by
   simp [powerBasis, Nat.totient_prime hpri.out, natDegree_cyclotomic]
 
-instance : NoZeroSMulDivisors ℤ (CyclotomicIntegers p) := (powerBasis p).basis.noZeroSMulDivisors
-
 instance : Module.Free ℤ (CyclotomicIntegers p) := ⟨_, (powerBasis p).basis⟩
 
 lemma nontrivial {p} (hp : p ≠ 0) : Nontrivial (CyclotomicIntegers p) := by

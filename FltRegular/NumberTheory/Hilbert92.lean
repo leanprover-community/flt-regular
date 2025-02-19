@@ -297,16 +297,11 @@ def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) 
     simp only [relativeUnitsMap, map_mul, Function.comp_apply]
     rfl
 
-@[simps! apply]
-def Monoid.EndAdditive {M} [Monoid M] : Monoid.End M ≃* AddMonoid.End (Additive M) where
-  __ := MonoidHom.toAdditive
-  map_mul' := fun _ _ ↦ rfl
-
 include σ hp hKL hσ in
 open Polynomial in
 lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
     (Module.AEval' (addMonoidEndRingEquivInt _
-      (Monoid.EndAdditive <| relativeUnitsMap <| ((AlgEquiv.algHomUnitsEquiv _ _).symm σ).val)))
+      (MulEquiv.Monoid.End <| relativeUnitsMap <| ((AlgEquiv.algHomUnitsEquiv _ _).symm σ).val)))
     (Ideal.span {cyclotomic p ℤ}) := by
   classical
   have := Fact.mk hp
@@ -319,7 +314,7 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   simp_rw [LinearMap.smul_def, Polynomial.cyclotomic_prime ℤ p, EmbeddingLike.map_eq_zero_iff,
     map_sum, map_pow, aeval_X, LinearMap.coeFn_sum, sum_apply, ← relativeUnitsMapHom_apply,
     ← map_pow, ← Units.val_pow_eq_pow_val, ← map_pow, AlgEquiv.val_algHomUnitsEquiv_symm_apply,
-    relativeUnitsMapHom_apply, Monoid.EndAdditive_apply,
+    relativeUnitsMapHom_apply, MulEquiv.Monoid.End_apply,
     addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
     LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, AddMonoidHom.coe_toIntLinearMap,
     AddMonoidHom.coe_mk, ZeroHom.coe_mk, toMul_ofMul, relativeUnitsMap_mk]
@@ -584,11 +579,11 @@ instance relativeUnitsModule : Module A G := by
 lemma relativeUnitsModule_zeta_smul (x) :
     (zeta p) • mkG x = mkG (Units.map (galRestrictHom (𝓞 k) k K (𝓞 K) σ) x) := by
   let φ := (addMonoidEndRingEquivInt _
-      (Monoid.EndAdditive <| relativeUnitsMap <| ((AlgEquiv.algHomUnitsEquiv _ _).symm σ).val))
+      (MulEquiv.Monoid.End <| relativeUnitsMap <| ((AlgEquiv.algHomUnitsEquiv _ _).symm σ).val))
   show QuotientAddGroup.mk ((Module.AEval'.of φ).symm <|
     Polynomial.X (R := ℤ) • Module.AEval'.of φ (Additive.ofMul (QuotientGroup.mk x))) = _
-  simp only [AlgEquiv.val_algHomUnitsEquiv_symm_apply, Monoid.EndAdditive_apply, Equiv.toFun_as_coe,
-    addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
+  simp only [AlgEquiv.val_algHomUnitsEquiv_symm_apply, MulEquiv.Monoid.End_apply,
+    Equiv.toFun_as_coe, addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
     LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, Module.AEval.of_symm_smul, Polynomial.aeval_X,
     LinearEquiv.symm_apply_apply, LinearMap.smul_def, AddMonoidHom.coe_toIntLinearMap,
     MonoidHom.toAdditive_apply_apply, toMul_ofMul, unit_to_U]
