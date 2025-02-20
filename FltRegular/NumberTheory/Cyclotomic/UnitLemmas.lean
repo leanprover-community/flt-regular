@@ -73,11 +73,11 @@ theorem contains_two_primitive_roots {p q : ℕ} {x y : K} [FiniteDimensional �
     exact (hy.pow_eq_one_iff_dvd _).2 (dvd_lcm_right _ _)
   have hxuord : orderOf (⟨xu, hxmem⟩ : rootsOfUnity k K) = p := by
     rw [← orderOf_injective (rootsOfUnity k K).subtype Subtype.coe_injective,
-      Subgroup.coeSubtype, Subgroup.coe_mk, ← orderOf_units, IsUnit.unit_spec]
+     Subgroup.coe_subtype, Subgroup.coe_mk, ← orderOf_units, IsUnit.unit_spec]
     exact hx.eq_orderOf.symm
   have hyuord : orderOf (⟨yu, hymem⟩ : rootsOfUnity k K) = q := by
     rw [← orderOf_injective (rootsOfUnity k K).subtype Subtype.coe_injective,
-      Subgroup.coeSubtype, Subgroup.coe_mk, ← orderOf_units, IsUnit.unit_spec]
+      Subgroup.coe_subtype, Subgroup.coe_mk, ← orderOf_units, IsUnit.unit_spec]
     exact hy.eq_orderOf.symm
   have : NeZero k := ⟨hkpos.ne'⟩
   obtain ⟨g : rootsOfUnity k K, hg⟩ := IsCyclic.exists_monoid_generator (α := rootsOfUnity k K)

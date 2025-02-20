@@ -91,7 +91,7 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
   simp only [Subalgebra.algebraMap_eq, Algebra.id.map_eq_id, RingHomCompTriple.comp_eq, coeff_map,
     RingHom.coe_coe, Subalgebra.coe_val, one_div, map_sub, map_one, coeff_add, coeff_sub,
     PNat.pos, pow_eq_zero_iff, this, mul_add]
-  simp_rw [← smul_eq_mul K, ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
+  simp_rw [← smul_eq_mul (α := K), ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
   rw [smul_C, smul_eq_mul, ← _root_.smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub,
     smul_C, smul_eq_mul, mul_inv_cancel₀, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub,
     map_one]
