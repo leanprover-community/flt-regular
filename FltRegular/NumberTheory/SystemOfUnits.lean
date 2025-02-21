@@ -52,7 +52,7 @@ lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
   classical
   letI := Fact.mk hp
   have := finrank_span_set_eq_card' (R := A) (Set.range f)
-    ((linearIndependent_subtype_range hf.injective).mpr hf)
+    ((linearIndepOn_id_range_iff hf.injective).mpr hf)
   simp only [Set.toFinset_range, Finset.card_image_of_injective _ hf.injective, card_fin] at this
   rw [← CyclotomicIntegers.powerBasis_dim, ← PowerBasis.finrank']
   conv_rhs => rw [← this]
