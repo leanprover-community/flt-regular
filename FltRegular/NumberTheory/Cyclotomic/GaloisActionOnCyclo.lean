@@ -47,8 +47,8 @@ theorem galConj_zeta_runity_pow (n : ℕ) : galConj K p (ζ ^ n) = ζ⁻¹ ^ n :
 
 open scoped ComplexConjugate
 
-theorem conj_norm_one (x : ℂ) (h : Complex.abs x = 1) : conj x = x⁻¹ := by
-  rw [← Complex.abs_mul_exp_arg_mul_I x, h, Complex.ofReal_one, one_mul, ← Complex.exp_conj, ←
+theorem conj_norm_one (x : ℂ) (h : ‖x‖ = 1) : conj x = x⁻¹ := by
+  rw [← Complex.norm_mul_exp_arg_mul_I x, h, Complex.ofReal_one, one_mul, ← Complex.exp_conj, ←
     Complex.exp_neg, map_mul, Complex.conj_I, mul_neg, Complex.conj_ofReal]
 
 include hζ in
@@ -94,11 +94,8 @@ theorem unitGalConj_spec (u : RRˣ) : galConj K p u = unitGalConj K p u := rfl
 variable {K}
 
 theorem unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :
-    Complex.abs (φ (u * (unitGalConj K p u)⁻¹)) = 1 := by
-  rw [map_mul, IsAbsoluteValue.abv_mul Complex.abs, ← zpow_neg_one, NumberField.Units.coe_zpow,
+    ‖φ (u * (unitGalConj K p u)⁻¹)‖ = 1 := by
+  rw [map_mul, norm_mul, ← zpow_neg_one, NumberField.Units.coe_zpow,
     zpow_neg_one, map_inv₀, ← unitGalConj_spec,
     ← embedding_conj <| zeta_spec p ℚ K]
-  simp only [map_inv₀, Complex.abs_conj]
-  rw [mul_inv_eq_one₀]
-  intro h
-  simp at h
+  simp
