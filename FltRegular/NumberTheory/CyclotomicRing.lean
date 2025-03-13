@@ -31,7 +31,7 @@ def AdjoinRoot.equivOfMinpolyEq {R S} [CommRing R] [CommRing S] [Algebra R S]
 
 namespace CyclotomicIntegers
 
-@[simps! (config := .lemmasOnly)]
+@[simps! -isSimp]
 def equiv :
     CyclotomicIntegers p ≃+* 𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) := by
   letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
