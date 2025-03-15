@@ -217,9 +217,9 @@ lemma RingOfInteger.coe_algebraMap_apply {x : 𝓞 k} :
   (algebraMap (𝓞 k) (𝓞 K) x : K) = algebraMap k K x := rfl
 
 -- TODO move Mathlib.GroupTheory.OrderOfElement
-lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a) :
-    x ^ ((finEquivZPowers x hx).symm a : ℕ) = a :=
-  congr_arg Subtype.val ((finEquivZPowers x hx).apply_symm_apply a)
+lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a : Subgroup.zpowers x) :
+    x ^ ((finEquivZPowers hx).symm a : ℕ) = a :=
+  congr_arg Subtype.val ((finEquivZPowers hx).apply_symm_apply a)
 
 lemma norm_eq_prod_pow_gen
     [IsGalois k K] [FiniteDimensional k K]
@@ -227,7 +227,7 @@ lemma norm_eq_prod_pow_gen
     algebraMap k K (Algebra.norm k η) = (∏ i ∈ Finset.range (orderOf σ), (σ ^ i) η)   := by
   let _ : Fintype (Subgroup.zpowers σ) := inferInstance
   rw [Algebra.norm_eq_prod_automorphisms, ← Fin.prod_univ_eq_prod_range,
-    ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
+    ← (finEquivZPowers <| isOfFinOrder_of_finite _).symm.prod_comp]
   simp only [pow_finEquivZPowers_symm_apply]
   rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i η) (Subgroup.zpowers σ)]
   congr; ext; simp [hσ]

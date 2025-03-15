@@ -8,10 +8,10 @@ variable {K L : Type*} [Field K] [Field L] [Algebra K L] [FiniteDimensional K L]
 variable {σ : L ≃ₐ[K] L} (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 variable {η : Lˣ} (hη : Algebra.norm K η.1 = 1)
 
-local notation3 "φ" => (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm
+local notation3 "φ" => (finEquivZPowers (isOfFinOrder_of_finite σ)).symm
 
 lemma hφ : ∀ (n : ℕ), φ ⟨σ ^ n, hσ _⟩ = n % (orderOf σ) := fun n ↦ by
-  simpa [Fin.ext_iff] using finEquivZPowers_symm_apply _ (isOfFinOrder_of_finite σ) n
+  simpa [Fin.ext_iff] using finEquivZPowers_symm_apply (isOfFinOrder_of_finite σ) n
 
 variable (η) in
 noncomputable
@@ -35,8 +35,8 @@ lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a,
       (fun a ha b hb hab ↦ ?_) (fun τ _ ↦ ?_) (fun _ _ ↦ by rfl)
     · rwa [pow_inj_mod, Nat.mod_eq_of_lt (mem_range.1 ha),
         Nat.mod_eq_of_lt (mem_range.1 hb)] at hab
-    · refine ⟨(finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
-      have := Equiv.symm_apply_apply (finEquivZPowers _ (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
+    · refine ⟨(finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
+      have := Equiv.symm_apply_apply (finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
       simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
       rw [← this]
       simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]

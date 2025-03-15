@@ -47,7 +47,7 @@ theorem zeta_runity_pow_even (hpo : Odd (p : ℕ)) (n : ℕ) :
 
 variable [NumberField K]
 
-theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot (hζ.unit' : R) p := by
+theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot hζ.unit'.1 p := by
   have z1 := hζ
   have : (algebraMap R K) (hζ.unit' : R) = ζ := rfl
   rw [← this] at z1
@@ -125,7 +125,6 @@ theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type*} [CommRing A] [IsDomain
   rw [map_pow, eq_one_mod_one_sub, one_pow]
 
 set_option synthInstance.maxHeartbeats 80000 in
-set_option maxHeartbeats 400000 in
 theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot μ p)
     (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral p.pos⟩ : 𝓞 K) ^ (x : ℕ) = l) :
     algebraMap (𝓞 K) (𝓞 K ⧸ I) l = ∑ x : Fin t, (f x : 𝓞 K ⧸ I) := by
@@ -141,6 +140,7 @@ theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot
   have := hζ.unit'_coe.eq_one_mod_sub_of_pow this
   simp only [map_pow (algebraMap (𝓞 K) (𝓞 K ⧸ I)), this, one_pow, zsmul_one]
 
+set_option synthInstance.maxHeartbeats 80000 in
 theorem IsPrimitiveRoot.p_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] : (p : 𝓞 K) ∈ I := by
   classical
   have key : _ = (p : 𝓞 K) := @Polynomial.eval_one_cyclotomic_prime _ _ _ hp
@@ -258,6 +258,7 @@ theorem norm_cast_ne_two (h : p ≠ 2) : (p : ℕ) ≠ 2 := by
   contrapose! h
   exact PNat.coe_injective h
 
+set_option synthInstance.maxHeartbeats 80000 in
 theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] :
     (I : Ideal (𝓞 K)).IsPrime := by
   rw [Ideal.span_singleton_prime]
@@ -270,6 +271,7 @@ theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] :
   simp only [map_sub, map_one, map_zero, sub_eq_zero] at h
   exact h
 
+set_option synthInstance.maxHeartbeats 80000 in
 theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h : p ≠ 2) :
     (2 : 𝓞 K) ∉ I := by
   have hpm := hζ.p_mem_one_sub_zeta
@@ -327,7 +329,6 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
     rw [this a]
   exact (aux hζ hζ hu).trans (aux hζ hζ.inv hu').symm
 
-set_option maxHeartbeats 400000 in
 set_option synthInstance.maxHeartbeats 80000 in
 theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp : (p : ℕ).Prime) :
     u * (unitGalConj K p u)⁻¹ ≠ -hζ.unit' ^ n := by
