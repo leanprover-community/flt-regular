@@ -312,12 +312,15 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
   rw [← Module.AEval.of_aeval_smul]
   simp_rw [LinearMap.smul_def, Polynomial.cyclotomic_prime ℤ p, EmbeddingLike.map_eq_zero_iff,
-    map_sum, map_pow, aeval_X, LinearMap.coeFn_sum, sum_apply, ← relativeUnitsMapHom_apply,
-    ← map_pow, ← Units.val_pow_eq_pow_val, ← map_pow, AlgEquiv.val_algHomUnitsEquiv_symm_apply,
-    relativeUnitsMapHom_apply, MulEquiv.Monoid.End_apply,
-    addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
-    LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, AddMonoidHom.coe_toIntLinearMap,
-    AddMonoidHom.coe_mk, ZeroHom.coe_mk, toMul_ofMul, relativeUnitsMap_mk]
+    map_sum, map_pow, aeval_X, LinearMap.coeFn_sum, sum_apply]
+  conv =>
+    enter [1, 2, c]
+    rw [← relativeUnitsMapHom_apply, ← map_pow, ← map_pow, ← map_pow, ← Units.val_pow_eq_pow_val,
+      ← map_pow, AlgEquiv.val_algHomUnitsEquiv_symm_apply, relativeUnitsMapHom_apply,
+      MulEquiv.Monoid.End_apply, addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe,
+      LinearMap.coe_toAddHom, LinearEquiv.coe_coe, addMonoidHomLequivInt_apply,
+      AddMonoidHom.coe_toIntLinearMap, AddMonoidHom.coe_mk, ZeroHom.coe_mk, toMul_ofMul,
+      relativeUnitsMap_mk]
   rw [← ofMul_prod, ← QuotientGroup.mk_prod, ofMul_eq_zero, QuotientGroup.eq_one_iff]
   use Units.map (RingOfIntegers.norm k) x
   ext
@@ -326,7 +329,7 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
     Subalgebra.coe_toSubsemiring, Algebra.norm_eq_prod_automorphisms]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank, Fintype.card_eq_nat_card,
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
-    ← (finEquivZPowers σ <| isOfFinOrder_of_finite _).symm.prod_comp]
+    ← (finEquivZPowers <| isOfFinOrder_of_finite _).symm.prod_comp]
   simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe, map_prod]
   rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i ↑x) (Subgroup.zpowers σ)]
   congr
@@ -834,7 +837,7 @@ lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
       -- check this equality in the quotient, removes the ν, just asks that the reduction of E is zero
       simp only [Fin.snoc_castSucc, toMul_zsmul, unit_to_U_zpow, unitlifts_spec, Fin.snoc_last,
         toMul_ofMul, RingHom.toMonoidHom_eq_coe, zpow_neg, unit_to_U_inv, Function.comp_apply,
-        unit_to_U_map, smul_zero, neg_zero, add_zero, add_right_eq_self, NE, η, H2, J, N, H]
+        unit_to_U_map, smul_zero, neg_zero, add_zero, add_eq_left, NE, η, H2, J, N, H]
       apply_fun mkG at NE_p_pow
       simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map, unit_to_U_pow] at NE_p_pow
       rw [eq_comm, smul_eq_zero] at NE_p_pow

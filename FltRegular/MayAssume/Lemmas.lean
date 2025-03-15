@@ -1,6 +1,6 @@
 import Mathlib.Algebra.GCDMonoid.Finset
 import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.Analysis.Normed.Field.Lemmas
+import Mathlib.Analysis.Normed.Ring.Lemmas
 
 open Int Finset
 
