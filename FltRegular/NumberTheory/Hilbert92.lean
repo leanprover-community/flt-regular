@@ -229,8 +229,8 @@ lemma norm_eq_prod_pow_gen
   rw [Algebra.norm_eq_prod_automorphisms, ← Fin.prod_univ_eq_prod_range,
     ← (finEquivZPowers <| isOfFinOrder_of_finite _).symm.prod_comp]
   simp only [pow_finEquivZPowers_symm_apply]
-  rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i η) (Subgroup.zpowers σ)]
-  congr; ext; simp [hσ]
+  rw [prod_subtype]
+  simp [hσ]
 
 include hKL in
 lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k) (p ^ h))
@@ -330,11 +330,10 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank, Fintype.card_eq_nat_card,
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
     ← (finEquivZPowers <| isOfFinOrder_of_finite _).symm.prod_comp]
-  simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe, map_prod]
-  rw [Finset.prod_set_coe (α := K ≃ₐ[k] K) (β := K) (f := fun i ↦ i ↑x) (Subgroup.zpowers σ)]
-  congr
-  ext x
-  simpa using hσ x
+  simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe, map_prod,
+    NumberField.RingOfIntegers.coe_eq_algebraMap]
+  rw [prod_subtype]
+  simp only [mem_univ, hσ, implies_true]
 
 @[nolint unusedArguments]
 def relativeUnitsWithGenerator (_hp : Nat.Prime p)
