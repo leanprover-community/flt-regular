@@ -49,11 +49,8 @@ variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Fi
 lemma prod_galRestrictHom_eq_norm [IsDedekindDomain R] [IsGalois K L] (x) :
     (∏ σ : L ≃ₐ[K] L, galRestrictHom R K L S σ x) =
     algebraMap R S (IsIntegralClosure.mk' (R := R) R (Algebra.norm K <| algebraMap S L x)
-      (Algebra.isIntegral_norm K (IsIntegralClosure.isIntegral R L x).algebraMap)) := by
-  apply IsIntegralClosure.algebraMap_injective S R L
-  rw [← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_eq R K L]
-  simp only [map_prod, algebraMap_galRestrictHom_apply, IsIntegralClosure.algebraMap_mk',
-    Algebra.norm_eq_prod_automorphisms, AlgHom.coe_coe, RingHom.coe_comp, Function.comp_apply]
+      (Algebra.isIntegral_norm K (IsIntegralClosure.isIntegral R L x).algebraMap)) :=
+  prod_galRestrict_eq_norm ..
 
 noncomputable
 instance (p : Ideal R) : MulAction (L ≃ₐ[K] L) (primesOver p S) where

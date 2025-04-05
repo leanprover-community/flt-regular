@@ -86,15 +86,8 @@ theorem aux_cong0k₂ {k : Fin p} (hcong : k ≡ 1 [ZMOD p]) : k = ⟨1, hpri.on
   haveI : Fact p.Prime := ⟨hpri⟩
   simp [ZMod.val_one]
 
-theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin P, f0k₂ a b (i : ℕ) = 0 := by
-  refine ⟨⟨2, two_lt hp5⟩, ?_⟩
-  have h1 : ((⟨2, two_lt hp5⟩ : Fin p) : ℕ) ≠ 1 := by
-    intro h
-    simp only [Fin.ext_iff, Fin.val_mk] at h; contradiction
-  have hzero : ((⟨2, two_lt hp5⟩ : Fin p) : ℕ) ≠ 0 := by
-    intro h
-    simp [Fin.ext_iff, Fin.val_mk] at h
-  simp only [f0k₂, h1, if_false, hzero, one_lt_two.ne']
+theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin P, f0k₂ a b (i : ℕ) = 0 :=
+  ⟨⟨2, two_lt hp5⟩, rfl⟩
 
 theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p) (hab : ¬a ≡ b [ZMOD p])
     {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
