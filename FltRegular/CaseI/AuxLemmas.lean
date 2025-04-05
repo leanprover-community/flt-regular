@@ -158,11 +158,8 @@ theorem aux_cong1k₂ {k : Fin p} (hpri : p.Prime) (hp5 : 5 ≤ p) (hcong : k �
     Nat.mod_eq_of_lt]
   linarith
 
-theorem auxf1k₂ (a : ℤ) : ∃ i : Fin P, f1k₂ a (i : ℕ) = 0 := by
-  refine ⟨⟨1, hpri.one_lt⟩, ?_⟩
-  have h2 : ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) ≠ 2 := fun h ↦ by simp at h
-  have hzero : ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) ≠ 0 := fun h ↦ by simp at h
-  simp only [f1k₂, h2, if_false, hzero, one_lt_two.ne]
+theorem auxf1k₂ (a : ℤ) : ∃ i : Fin P, f1k₂ a (i : ℕ) = 0 :=
+  ⟨⟨1, hpri.one_lt⟩, rfl⟩
 
 theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
