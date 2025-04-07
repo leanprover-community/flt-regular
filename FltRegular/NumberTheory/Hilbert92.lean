@@ -238,21 +238,15 @@ lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k)
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ν : (𝓞 K)ˣ)
   use η ^ ((p : ℕ) ^ (h - 1))
-  constructor
-  · simp only [ge_iff_le, Units.val_pow_eq_pow_val, Units.coe_map,
-      MonoidHom.coe_coe, SubmonoidClass.coe_pow, map_pow]
-    show (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
-    rw [Algebra.norm_algebraMap, hKL, ← pow_mul]
-    nth_rewrite 1 [← pow_one (p : ℕ)]
-    rw [← pow_add]
-    apply (hν.pow_eq_one_iff_dvd _).2
-    cases h <;> simp [add_comm]
-  · intro ε hε
-    apply H ε
-    rw [← hε]
-    simp only [ge_iff_le, Units.val_pow_eq_pow_val, Units.coe_map, MonoidHom.coe_coe,
-      SubmonoidClass.coe_pow]
-    rfl
+  refine ⟨?_, fun ε => H ε⟩
+  simp only [ge_iff_le, Units.val_pow_eq_pow_val, Units.coe_map,
+    MonoidHom.coe_coe, SubmonoidClass.coe_pow, map_pow]
+  show (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
+  rw [Algebra.norm_algebraMap, hKL, ← pow_mul]
+  nth_rewrite 1 [← pow_one (p : ℕ)]
+  rw [← pow_add]
+  apply (hν.pow_eq_one_iff_dvd _).2
+  cases h <;> simp [add_comm]
 
 variable [NumberField K]
 

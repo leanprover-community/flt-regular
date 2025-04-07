@@ -47,10 +47,6 @@ theorem galConj_zeta_runity_pow (n : ℕ) : galConj K p (ζ ^ n) = ζ⁻¹ ^ n :
 
 open scoped ComplexConjugate
 
-theorem conj_norm_one (x : ℂ) (h : ‖x‖ = 1) : conj x = x⁻¹ := by
-  rw [← Complex.norm_mul_exp_arg_mul_I x, h, Complex.ofReal_one, one_mul, ← Complex.exp_conj, ←
-    Complex.exp_neg, map_mul, Complex.conj_I, mul_neg, Complex.conj_ofReal]
-
 include hζ in
 @[simp]
 theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K p x) := by
@@ -62,7 +58,7 @@ theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K 
     congr 1
     apply (hζ.powerBasis ℚ).algHom_ext
     exact this.symm
-  rw [conj_norm_one, galConj_zeta_runity hζ, map_inv₀]
+  rw [← Complex.inv_eq_conj, galConj_zeta_runity hζ, map_inv₀]
   exact Complex.norm_eq_one_of_pow_eq_one (by rw [← map_pow, hζ.pow_eq_one, map_one]) p.ne_zero
 
 variable (p)

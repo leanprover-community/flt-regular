@@ -49,9 +49,7 @@ lemma dvd_iff_emultiplicity_le {M : Type*}
           (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, ha.2⟩), FiniteMultiplicity.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
           ⟨hq.not_unit, hq.ne_zero⟩), multiplicity_self, ← Nat.cast_add, ← Nat.cast_add,
           Nat.cast_le, add_comm, add_le_add_iff_left] at this
-      rwa [FiniteMultiplicity.emultiplicity_eq_multiplicity
-        (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, hb.2⟩), Nat.cast_one,
-        Nat.one_le_cast]
+      exact le_emultiplicity_of_le_multiplicity this
 
 lemma pow_dvd_pow_iff_dvd {M : Type*} [CancelCommMonoidWithZero M] [UniqueFactorizationMonoid M]
     {a b : M} {x : ℕ} (h' : x ≠ 0) : a ^ x ∣ b ^ x ↔ a ∣ b := by
