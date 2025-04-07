@@ -23,24 +23,6 @@ open NumberField
 
 open scoped Classical NumberField
 
-section SafeInstances
-
-/- The idea of `open_locale cyclotomic` is that it provides some of these instances when needed,
-but sadly its implementation is so unsafe that using it here creates a lot of diamonds.
-We instead put some safe specialised instances here, and we can maybe look at generalising them
-later, when this is needed. Most results from here on genuinely only work for ℚ, so this is
-very fine for the moment. -/
-instance safe {p : ℕ+} : NumberField (CyclotomicField p ℚ) :=
-  IsCyclotomicExtension.numberField {p} ℚ <| CyclotomicField p ℚ
-
-instance safe' {p : ℕ+} : FiniteDimensional ℚ (CyclotomicField p ℚ) :=
-  IsCyclotomicExtension.finiteDimensional {p} ℚ <| CyclotomicField p ℚ
-
-instance CyclotomicField.classGroupFinite {p : ℕ+} :
-    Fintype (ClassGroup <| 𝓞 (CyclotomicField p ℚ)) :=
-  ClassGroup.fintypeOfAdmissibleOfFinite ℚ (CyclotomicField p ℚ) AbsoluteValue.absIsAdmissible
-
-end SafeInstances
 
 variable (n p : ℕ) [Fact p.Prime]
 
