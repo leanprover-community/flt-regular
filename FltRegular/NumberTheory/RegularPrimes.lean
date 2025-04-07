@@ -39,9 +39,9 @@ def IsRegularPrime : Prop :=
 
 section TwoRegular
 
-variable (A K : Type _) [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFractionRing A K]
+variable (A K : Type*) [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFractionRing A K]
 
-variable (L : Type _) [Field L] [Algebra K L]
+variable (L : Type*) [Field L] [Algebra K L]
 
 /-- The second cyclotomic field is equivalent to the base field. -/
 def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := by
