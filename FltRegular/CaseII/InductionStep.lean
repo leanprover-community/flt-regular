@@ -8,9 +8,6 @@ variable {K : Type*} {p : ℕ+} [Field K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
 
-attribute [local instance 2000] Semiring.toNonUnitalSemiring
-  NonUnitalSemiring.toNonUnitalNonAssocSemiring
-
 local notation3 "π" => Units.val (IsPrimitiveRoot.unit' hζ) - 1
 local notation3 "𝔭" => Ideal.span {π}
 local notation3 "𝔦" η => Ideal.span {(x + y * η : 𝓞 K)}
@@ -20,7 +17,7 @@ local notation3 "𝔷" => Ideal.span {z}
 
 variable {m : ℕ} (e : x ^ (p : ℕ) + y ^ (p : ℕ) = ε * ((hζ.unit'.1 - 1) ^ (m + 1) * z) ^ (p : ℕ))
 variable (hy : ¬ hζ.unit'.1 - 1 ∣ y) (hz : ¬ hζ.unit'.1 - 1 ∣ z)
-variable (η : nthRootsFinset p (𝓞 K))
+variable (η : nthRootsFinset p (1 : 𝓞 K))
 
 /- We have `x,y,z` elements of `O_K` and we assume that we have $$x^p+y^p= ε * ((ζ-1)^(m+1)*z)^p$$-/
 
@@ -54,7 +51,8 @@ lemma m_ne_zero : 𝔪 ≠ 0 := by
 
 variable [hpri : Fact p.Prime]
 
-lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ η₂) : (𝔦 η₁) ⊔ (𝔦 η₂) ∣ 𝔪 * 𝔭 := by
+lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) (hη : η₁ ≠ η₂) :
+    (𝔦 η₁) ⊔ (𝔦 η₂) ∣ 𝔪 * 𝔭 := by
   have : 𝔭 = Ideal.span (singleton <| (η₁ : 𝓞 K) - η₂) := by
     rw [Ideal.span_singleton_eq_span_singleton]
     exact hζ.unit'_coe.associated_sub_one hpri.out η₁.prop η₂.prop (Subtype.coe_injective.ne hη)
@@ -83,12 +81,11 @@ variable [IsCyclotomicExtension {p} ℚ K]
 
 include e hp in
 /- Let π = ζ -1, then π divides x+yη with η a primivite root of unity. -/
-set_option synthInstance.maxHeartbeats 40000 in
 lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   letI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   have h := zeta_sub_one_dvd hζ e
-  replace h : ∏ _η ∈ nthRootsFinset p (𝓞 K), Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0 := by
+  replace h : ∏ _η ∈ nthRootsFinset p (1 : 𝓞 K), Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0 := by
     rw [hζ.unit'_coe.pow_add_pow_eq_prod_add_mul _ _ <| Nat.odd_iff.2 <|
       hpri.out.eq_two_or_odd.resolve_left
       (PNat.coe_injective.ne hp), ← Ideal.Quotient.eq_zero_iff_dvd, map_prod] at h
@@ -108,7 +105,7 @@ lemma div_one_sub_zeta_mem : IsIntegral ℤ ((x + y * η : 𝓞 K) / (ζ - 1)) :
   rwa [mul_div_cancel_right₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
 
 /- Make (x+yη)/(ζ-1) into an element of O_K -/
-def div_zeta_sub_one : nthRootsFinset p (𝓞 K) → 𝓞 K :=
+def div_zeta_sub_one : nthRootsFinset p (1 : 𝓞 K) → 𝓞 K :=
 fun η ↦ ⟨(x + y * η.1) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
 
 /-Check that if you multiply by π = ζ -1 you get back the original-/
@@ -134,7 +131,6 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
 
 include hy in
 /- sending η to (x+yη)/(ζ-1) mod (π) = 𝔭 is injective. -/
-set_option synthInstance.maxHeartbeats 40000 in
 lemma div_zeta_sub_one_Injective :
     Function.Injective (fun η ↦ Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η)) := by
   letI : AddGroup (𝓞 K ⧸ 𝔭) := inferInstance
@@ -210,7 +206,7 @@ lemma p_ne_zero : 𝔭 ≠ 0 := by
   rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
   exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
-lemma coprime_c (η₁ η₂ : nthRootsFinset p (𝓞 K)) (hη : η₁ ≠ η₂) : IsCoprime (𝔠 η₁) (𝔠 η₂) := by
+lemma coprime_c (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) (hη : η₁ ≠ η₂) : IsCoprime (𝔠 η₁) (𝔠 η₂) := by
   rw [Ideal.isCoprime_iff_codisjoint, codisjoint_iff_le_sup, ← Ideal.dvd_iff_le]
   rw [← mul_dvd_mul_iff_left (m_ne_zero hζ hy), ← mul_dvd_mul_iff_right (p_ne_zero hζ)]
   rw [Ideal.mul_sup, Ideal.sup_mul, m_mul_c_mul_p, m_mul_c_mul_p, Ideal.mul_top]
@@ -247,7 +243,7 @@ lemma exists_ideal_pow_eq_c_aux :
     add_mul, one_mul, pow_add, mul_assoc, mul_assoc, mul_assoc]
 
 /- The ∏_η,  𝔠 η = (𝔷' 𝔭^m)^p with 𝔷 = 𝔪 𝔷' -/
-lemma prod_c : ∏ η ∈ Finset.attach (nthRootsFinset p (𝓞 K)), 𝔠 η = (𝔷' * 𝔭 ^ m) ^ (p : ℕ) := by
+lemma prod_c : ∏ η ∈ Finset.attach (nthRootsFinset p (1 : 𝓞 K)), 𝔠 η = (𝔷' * 𝔭 ^ m) ^ (p : ℕ) := by
   have e' := span_pow_add_pow_eq hζ e
   rw [hζ.unit'_coe.pow_add_pow_eq_prod_add_mul _ _ <| Nat.odd_iff.2 <|
     hpri.out.eq_two_or_odd.resolve_left (PNat.coe_injective.ne hp)] at e'
@@ -265,7 +261,7 @@ lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ (p : ℕ) 
   letI inst1 : @IsDomain (Ideal (𝓞 K)) CommSemiring.toSemiring := @Ideal.isDomain (𝓞 K) _ _
   letI inst2 := @Ideal.instNormalizedGCDMonoid (𝓞 K) _ _
   letI inst3 := @NormalizedGCDMonoid.toGCDMonoid _ _ inst2
-  exact @Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (nthRootsFinset p (𝓞 K)) (Ideal (𝓞 K)) _
+  exact @Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (nthRootsFinset p (1 : 𝓞 K)) (Ideal (𝓞 K)) _
     (by convert inst1) (by convert inst3) _ _ _ _ _
     (λ η₁ _ η₂ _ hη ↦ coprime_c hp hζ e hy η₁ η₂ hη)
     (prod_c hp hζ e hy) η (Finset.mem_attach _ _)
@@ -280,7 +276,7 @@ lemma root_div_zeta_sub_one_dvd_gcd_spec : (𝔞 η) ^ (p : ℕ) = 𝔠 η :=
 (exists_ideal_pow_eq_c hp hζ e hy η).choose_spec.symm
 
 /-x+yη₁ / (x+yη₂) = 𝔠 η₁/ 𝔠 η₂ -/
-lemma c_div_principal_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
+lemma c_div_principal_aux (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) :
     ((𝔦 η₁) / (𝔦 η₂) : FractionalIdeal (𝓞 K)⁰ K) = 𝔠 η₁ / 𝔠 η₂ := by
   simp_rw [← m_mul_c_mul_p hp hζ e hy, FractionalIdeal.coeIdeal_mul]
   rw [mul_div_mul_right, mul_div_mul_left]
@@ -289,7 +285,7 @@ lemma c_div_principal_aux (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
   · rw [← FractionalIdeal.coeIdeal_bot, (FractionalIdeal.coeIdeal_injective' le_rfl).ne_iff]
     exact p_ne_zero hζ
 
-lemma c_div_principal (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
+lemma c_div_principal (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) :
     Submodule.IsPrincipal ((𝔠 η₁ / 𝔠 η₂ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) := by
   rw [← c_div_principal_aux, FractionalIdeal.coeIdeal_span_singleton,
     FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.spanSingleton_div_spanSingleton,
@@ -297,7 +293,7 @@ lemma c_div_principal (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
   exact ⟨⟨_, rfl⟩⟩
 
 noncomputable
-def zeta_sub_one_dvd_root : nthRootsFinset p (𝓞 K) :=
+def zeta_sub_one_dvd_root : nthRootsFinset p (1 : 𝓞 K) :=
 (Equiv.ofBijective _ (div_zeta_sub_one_Bijective hp hζ e hy)).symm 0
 
 /- This is the η₀ such that (x+yη₀)/(ζ-1) is zero mod 𝔭. which is unique-/
@@ -314,7 +310,7 @@ lemma p_dvd_c_iff : 𝔭 ∣ (𝔠 η) ↔ η = η₀ := by
 
 /- All the others 𝔠 η are coprime to 𝔭...basically-/
 lemma p_pow_dvd_c_eta_zero_aux [DecidableEq (𝓞 K)] :
-  gcd (𝔭 ^ (m * p)) (∏ η ∈ Finset.attach (nthRootsFinset p (𝓞 K)) \ {η₀}, 𝔠 η) = 1 := by
+  gcd (𝔭 ^ (m * p)) (∏ η ∈ Finset.attach (nthRootsFinset p (1 : 𝓞 K)) \ {η₀}, 𝔠 η) = 1 := by
     rw [← Ideal.isCoprime_iff_gcd]
     apply IsCoprime.pow_left
     rw [Ideal.isCoprime_iff_gcd, hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff,
@@ -398,7 +394,7 @@ lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
 variable [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
 include hreg in
-lemma a_div_principal (η₁ η₂ : nthRootsFinset p (𝓞 K)) :
+lemma a_div_principal (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) :
     Submodule.IsPrincipal ((𝔞 η₁ / 𝔞 η₂ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) := by
   apply isPrincipal_of_isPrincipal_pow_of_Coprime' _ hreg
   /- the line above is where we use the p is regular.-/
@@ -516,29 +512,31 @@ lemma exists_solution :
     ∃ (x' y' z' : 𝓞 K) (ε₁ ε₂ ε₃ : (𝓞 K)ˣ), ¬ π ∣ x' ∧ ¬ π ∣ y' ∧ ¬ π ∣ z' ∧
       ε₁ * x' ^ (p : ℕ) + ε₂ * y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
   letI : Fact (Nat.Prime p) := hpri
-  let η₁ : nthRootsFinset p (𝓞 K) := ⟨η₀ * hζ.unit', mul_mem_nthRootsFinset
-    (η₀ : _).prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)⟩
-  let η₂ : nthRootsFinset p (𝓞 K) := ⟨η₀ * hζ.unit' * hζ.unit', mul_mem_nthRootsFinset
-    η₁.prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)⟩
+  have h₁ := mul_mem_nthRootsFinset (η₀ : _).prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)
+  rw [one_mul] at h₁
+  let η₁ : nthRootsFinset p (1 : 𝓞 K) := ⟨η₀ * hζ.unit', h₁⟩
+  have h₂ := mul_mem_nthRootsFinset (η₁ : _).prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)
+  rw [one_mul] at h₂
+  let η₂ : nthRootsFinset p (1 : 𝓞 K) := ⟨η₀ * hζ.unit' * hζ.unit', h₂⟩
   have hη₁ : η₁ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' : 𝓞 K) ≠ η₀
     rw [Ne, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
-      ne_zero_of_mem_nthRootsFinset (η₀ : _).prop⟩
+      ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop⟩
   have hη₂ : η₂ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀
     rw [Ne, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.pow_ne_one_of_pos_of_lt zero_lt_two
       (hpri.out.two_le.lt_or_eq.resolve_right (PNat.coe_injective.ne hp.symm)),
-      ne_zero_of_mem_nthRootsFinset (η₀ : _).prop⟩
+      ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop⟩
   have hη : η₂ ≠ η₁ := by
     rw [← Subtype.coe_injective.ne_iff]
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀ * hζ.unit'
     rw [Ne, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
-      mul_ne_zero (ne_zero_of_mem_nthRootsFinset (η₀ : _).prop)
+      mul_ne_zero (ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop)
       (hζ.unit'_coe.ne_zero hpri.out.ne_zero)⟩
   obtain ⟨u₁, hu₁⟩ := hζ.unit'_coe.associated_sub_one hpri.out η₂.prop (η₀ : _).prop
     (Subtype.coe_injective.ne_iff.mpr hη₂)
@@ -563,7 +561,6 @@ lemma exists_solution :
       (a_div_a_zero_denom_spec hp hζ e hy hz η₂ hreg hη₂)
 
 include hp hreg e hy hz in
-set_option synthInstance.maxHeartbeats 40000 in
 lemma exists_solution' :
     ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
       ¬ π ∣ y' ∧ ¬ π ∣ z' ∧ x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by

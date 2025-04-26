@@ -133,7 +133,7 @@ local notation "R" => 𝓞 K
 
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1)
-    (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p R) :
+    (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p 1) :
     ∃ I, span ({a + ζ * b} : Set R) = I ^ p := by
   classical
   have H₁ := congr_arg (algebraMap ℤ R) H

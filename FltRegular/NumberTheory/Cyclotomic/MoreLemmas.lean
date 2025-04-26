@@ -48,7 +48,6 @@ lemma isCoprime_of_not_zeta_sub_one_dvd {x : 𝓞 K} (hx : ¬ (hζ.unit' : 𝓞 
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
-set_option synthInstance.maxHeartbeats 40000 in
 lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1 : 𝓞 K) ∣ a - b := by
   letI : Fact (Nat.Prime p) := hpri
   simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.Quotient.mk_eq_mk, Submodule.Quotient.mk_sub,
@@ -97,13 +96,12 @@ lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ �
 
 lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
     {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A}
-    (hη₁ : η₁ ∈ nthRootsFinset p A) {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p A) :
+    (hη₁ : η₁ ∈ nthRootsFinset p 1) {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p 1) :
     ζ - 1 ∣ η₁ - η₂ := by
   by_cases h : η₁ = η₂
   · rw [h, sub_self]; exact dvd_zero _
   · exact (hζ.associated_sub_one hp hη₁ hη₂ h).dvd
 
-set_option synthInstance.maxHeartbeats 40000 in
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.unit' : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
   have : Fact (Nat.Prime p) := hpri
@@ -124,7 +122,6 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
   · rw [mem_nthRootsFinset p.pos, ← map_pow, hζ.unit'_coe.pow_eq_one, map_one]
   · rw [mem_nthRootsFinset p.pos, hζ.unit'_coe.pow_eq_one]
 
-set_option maxHeartbeats 400000 in
 set_option synthInstance.maxHeartbeats 80000 in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1 : ℕ) • x := by

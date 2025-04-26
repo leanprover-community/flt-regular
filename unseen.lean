@@ -75,13 +75,13 @@ def allFiles (env : Environment) : List Name :=
 
 def allDecls (env : Environment) : Elab.Command.CommandElabM NameSet :=
   (fun l => RBTree.ofList (l.map (fun a => a.toList)).flatten) <$>
-    (mapM allDeclsIn (allFiles env))
+    (List.mapM allDeclsIn (allFiles env))
 
 /-- `#index` computes an index of the declations in the project and saves it to `index.csv`. -/
 elab "#index " : command => do
   let env ← getEnv
   let allDecls ← allDecls env
-  let result ← mapM (fun decl => do
+  let result ← List.mapM (fun decl => do
     let ranges ← findDeclarationRanges? decl
     let mod ← findModuleOf? decl
     match (ranges, mod) with

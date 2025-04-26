@@ -258,7 +258,6 @@ theorem norm_cast_ne_two (h : p ≠ 2) : (p : ℕ) ≠ 2 := by
   contrapose! h
   exact PNat.coe_injective h
 
-set_option synthInstance.maxHeartbeats 80000 in
 theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] :
     (I : Ideal (𝓞 K)).IsPrime := by
   rw [Ideal.span_singleton_prime]
@@ -271,7 +270,6 @@ theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact (p : ℕ).Prime] :
   simp only [map_sub, map_one, map_zero, sub_eq_zero] at h
   exact h
 
-set_option synthInstance.maxHeartbeats 80000 in
 theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact (p : ℕ).Prime] (h : p ≠ 2) :
     (2 : 𝓞 K) ∉ I := by
   have hpm := hζ.p_mem_one_sub_zeta
@@ -296,7 +294,6 @@ lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [FunLike F M N]
     ↑((Units.map (f : M →* N) m)⁻¹) = f ↑(m⁻¹ : Mˣ) :=
   m.coe_map_inv (f : M →* N)
 
-set_option synthInstance.maxHeartbeats 40000 in
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : (p : ℕ).Prime) :
   algebraMap (𝓞 K) (𝓞 K ⧸ I) ((u * (unitGalConj K p u)⁻¹) : _) = 1 := by
   have := Units.coe_map_inv' (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitGalConj K p u)
@@ -373,7 +370,7 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : (p : ℕ).Prime) (u :
   · exact unit_lemma_val_one p u
 
 lemma IsPrimitiveRoot.eq_one_mod_one_sub' {A : Type*} [CommRing A] [IsDomain A]
-    {n : ℕ+} {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n A) :
+    {n : ℕ+} {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n 1) :
     Ideal.Quotient.mk (Ideal.span ({ζ - 1} : Set A)) η = 1 := by
-  obtain ⟨i, ⟨_, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset n.2).1 hη)
+  obtain ⟨i, ⟨_, rfl⟩⟩ := hζ.eq_pow_of_pow_eq_one ((Polynomial.mem_nthRootsFinset n.2 1).1 hη)
   rw [map_pow, ← Ideal.Quotient.algebraMap_eq, eq_one_mod_one_sub, one_pow]
