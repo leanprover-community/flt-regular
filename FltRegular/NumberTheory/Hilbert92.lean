@@ -305,7 +305,7 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   obtain ⟨x, rfl⟩ := Additive.ofMul.surjective x
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
   rw [← Module.AEval.of_aeval_smul]
-  simp_rw [LinearMap.smul_def, Polynomial.cyclotomic_prime ℤ p, EmbeddingLike.map_eq_zero_iff,
+  simp_rw [Module.End.smul_def, Polynomial.cyclotomic_prime ℤ p, EmbeddingLike.map_eq_zero_iff,
     map_sum, map_pow, aeval_X, LinearMap.coeFn_sum, sum_apply]
   conv =>
     enter [1, 2, c]
@@ -581,7 +581,7 @@ lemma relativeUnitsModule_zeta_smul (x) :
   simp only [AlgEquiv.val_algHomUnitsEquiv_symm_apply, MulEquiv.Monoid.End_apply,
     Equiv.toFun_as_coe, addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
     LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, Module.AEval.of_symm_smul, Polynomial.aeval_X,
-    LinearEquiv.symm_apply_apply, LinearMap.smul_def, AddMonoidHom.coe_toIntLinearMap,
+    LinearEquiv.symm_apply_apply, Module.End.smul_def, AddMonoidHom.coe_toIntLinearMap,
     MonoidHom.toAdditive_apply_apply, toMul_ofMul, unit_to_U]
   rfl
 
