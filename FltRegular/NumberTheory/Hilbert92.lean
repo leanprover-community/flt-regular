@@ -9,6 +9,7 @@ import Mathlib.RingTheory.Henselian
 import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
 import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
 import Mathlib.GroupTheory.FiniteAbelian.Basic
+import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
 
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional NumberField
@@ -215,11 +216,6 @@ section
 
 lemma RingOfInteger.coe_algebraMap_apply {x : 𝓞 k} :
   (algebraMap (𝓞 k) (𝓞 K) x : K) = algebraMap k K x := rfl
-
--- TODO move Mathlib.GroupTheory.OrderOfElement
-lemma pow_finEquivZPowers_symm_apply {M} [Group M] (x : M) (hx) (a : Subgroup.zpowers x) :
-    x ^ ((finEquivZPowers hx).symm a : ℕ) = a :=
-  congr_arg Subtype.val ((finEquivZPowers hx).apply_symm_apply a)
 
 lemma norm_eq_prod_pow_gen
     [IsGalois k K] [FiniteDimensional k K]

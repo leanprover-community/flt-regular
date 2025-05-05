@@ -259,7 +259,6 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
 
 include hu in
 open scoped KummerExtension in
-set_option synthInstance.maxHeartbeats 40000 in
 attribute [local instance] Ideal.Quotient.field in
 lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     Separable ((poly hp hζ u hcong).map (Ideal.Quotient.mk I)) := by

@@ -198,9 +198,9 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.out.ne_zero]
   refine ⟨⟨(2 * k % p).natAbs, ?_⟩, ⟨((2 * k - 1) % p).natAbs, ?_⟩, ?_, ?_⟩
   repeat'
-    rw [← natAbs_ofNat p]
+    rw [← natAbs_natCast p]
     refine natAbs_lt_natAbs_of_nonneg_of_lt (emod_nonneg _ hpcoe) ?_
-    rw [natAbs_ofNat]
+    rw [natAbs_natCast]
     exact emod_lt_of_pos _ (by simp [hpri.out.pos])
   · simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_eq_intCast_iff,
       ZMod.intCast_mod, Int.cast_sub, Int.cast_mul, Int.cast_natCast, Int.cast_one]
