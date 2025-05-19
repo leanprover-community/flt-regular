@@ -94,11 +94,11 @@ theorem isRegularPrime_three :
 
 end TwoRegular
 
-theorem IsPrincipal_of_IsPrincipal_pow_of_Coprime
-  (A : Type*) [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
-  (p : ℕ) [Fact p.Prime]
-  (H : p.Coprime <| Fintype.card <| ClassGroup A) (I : Ideal A)
-  (hI : (I ^ p).IsPrincipal) : I.IsPrincipal := by
+theorem isPrincipal_of_isPrincipal_pow_of_coprime
+    {A : Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
+    {p : ℕ} [Fact p.Prime]
+    (H : p.Coprime <| Fintype.card <| ClassGroup A) {I : Ideal A}
+    (hI : (I ^ p).IsPrincipal) : I.IsPrincipal := by
   by_cases Izero : I = 0
   · rw [Izero]
     exact bot_isPrincipal

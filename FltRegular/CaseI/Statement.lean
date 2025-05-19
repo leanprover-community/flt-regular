@@ -155,7 +155,7 @@ theorem is_principal_aux (K' : Type*) [Field K'] [CharZero K'] [IsCyclotomicExte
   ∃ (u : (𝓞 K')ˣ) (α : 𝓞 K'), ↑u * α ^ p = ↑a + ζ * ↑b := by
   letI : NumberField K' := IsCyclotomicExtension.numberField { P } ℚ K'
   obtain ⟨α, hα⟩ : I.IsPrincipal := by
-    apply IsPrincipal_of_IsPrincipal_pow_of_Coprime (𝓞 K') _ hreg I
+    apply isPrincipal_of_isPrincipal_pow_of_coprime hreg
     constructor
     use ↑a + ζ * ↑b
     rw [submodule_span_eq, hI]
