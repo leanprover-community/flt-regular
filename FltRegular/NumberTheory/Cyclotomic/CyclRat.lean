@@ -123,12 +123,12 @@ theorem isPrimitiveRoot_of_mem_nthRootsFinset [Fact (p : ℕ).Prime] {η : R}
   have ha2 : a = p := by
     rw [Nat.Prime.divisors (Fact.out : Nat.Prime p), mem_insert, mem_singleton] at ha
     cases' ha with ha ha
-    exfalso
-    rw [ha] at h2
-    simp at h2
-    rw [h2] at hne1
-    exact hne1 rfl
-    exact ha
+    · exfalso
+      rw [ha] at h2
+      simp at h2
+      rw [h2] at hne1
+      exact hne1 rfl
+    · exact ha
   rw [ha2] at h2
   have hn : 0 < (p : ℕ) := by norm_num
   rw [mem_primitiveRoots hn] at h2
