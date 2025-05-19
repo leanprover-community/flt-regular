@@ -132,7 +132,6 @@ theorem dvd_card_classGroup_of_isUnramified_isCyclic (K L : Type*)
     finrank K L ∣ Fintype.card (ClassGroup (𝓞 K)) := by
   obtain ⟨I, hI, hI'⟩ := exists_not_isPrincipal_and_isPrincipal_map K L hKL hKL'
   have := Fact.mk hKL
-  rw [← Int.ofNat_dvd, (Nat.prime_iff_prime_int.mp hKL).irreducible.dvd_iff_not_isCoprime,
-    Nat.isCoprime_iff_coprime]
+  rw [hKL.dvd_iff_not_coprime]
   exact fun h ↦ hI (isPrincipal_of_isPrincipal_pow_of_coprime h
     (Ideal.isPrincipal_pow_finrank_of_isPrincipal_map _ hI'))
