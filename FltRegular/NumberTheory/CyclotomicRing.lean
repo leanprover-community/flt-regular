@@ -35,8 +35,8 @@ namespace CyclotomicIntegers
 def equiv :
     CyclotomicIntegers p ≃+* 𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) := by
   letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
-  letI : Fact (Nat.Prime p') := hpri
-  letI H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
+  have : Fact (Nat.Prime p') := hpri
+  have H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
   exact (AdjoinRoot.equivOfMinpolyEq (cyclotomic p ℤ) H.integralPowerBasis'
     (H.integralPowerBasis'_gen ▸ IsPrimitiveRoot.cyclotomic_eq_minpoly p H.toInteger H)).toRingEquiv
 
@@ -49,7 +49,7 @@ def zeta : CyclotomicIntegers p := AdjoinRoot.root _
 lemma equiv_zeta : equiv p (zeta p) = (IsCyclotomicExtension.zeta_spec
     ⟨p, hpri.out.pos⟩ ℚ (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)).toInteger := by
   letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
-  letI : Fact (Nat.Prime p') := hpri
+  have : Fact (Nat.Prime p') := hpri
   rw [equiv_apply, zeta]
   simp only [AdjoinRoot.liftHom_root, IsPrimitiveRoot.integralPowerBasis'_gen]
 
@@ -60,8 +60,8 @@ lemma prime_one_sub_zeta :
   simp only [RingEquiv.toMulEquiv_eq_coe, RingEquiv.coe_toMulEquiv,
     (equiv p).map_sub, (equiv p).map_one, equiv_zeta]
   letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
-  letI : Fact (Nat.Prime p') := hpri
-  letI H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
+  have : Fact (Nat.Prime p') := hpri
+  have H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
   exact H.zeta_sub_one_prime'
 
 lemma one_sub_zeta_mem_nonZeroDivisors :
@@ -74,8 +74,8 @@ lemma not_isUnit_one_sub_zeta :
 
 lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
   letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
-  letI : Fact (PNat.Prime p') := hpri
-  letI H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
+  have : Fact (PNat.Prime p') := hpri
+  have H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
   rw [← map_dvd_iff (equiv p), map_sub, map_one, equiv_zeta, map_intCast,
     ← neg_dvd, neg_sub]
   exact zeta_sub_one_dvd_Int_iff H
@@ -113,7 +113,7 @@ lemma nontrivial {p} (hp : p ≠ 0) : Nontrivial (CyclotomicIntegers p) := by
   exact this.not_gt (Nat.totient_pos.2 <| Nat.zero_lt_of_ne_zero hp)
 
 lemma charZero {p} (hp : p ≠ 0) : CharZero (CyclotomicIntegers p) :=
-  letI := nontrivial hp
+  have := nontrivial hp
   ⟨(FaithfulSMul.algebraMap_injective _ _).comp (algebraMap ℕ ℤ).injective_nat⟩
 
 instance : CharZero (CyclotomicIntegers p) := charZero hpri.out.ne_zero

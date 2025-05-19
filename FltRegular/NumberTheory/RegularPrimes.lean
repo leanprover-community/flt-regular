@@ -46,7 +46,7 @@ variable (L : Type*) [Field L] [Algebra K L]
 /-- The second cyclotomic field is equivalent to the base field. -/
 def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := by
   suffices IsSplittingField K K (cyclotomic 2 K) by
-    letI : IsSplittingField K L (cyclotomic 2 K) :=
+    have : IsSplittingField K L (cyclotomic 2 K) :=
       IsCyclotomicExtension.splitting_field_cyclotomic 2 K L
     exact
       (IsSplittingField.algEquiv L (cyclotomic 2 K)).trans

@@ -263,7 +263,7 @@ attribute [local instance] Ideal.Quotient.field in
 lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     Separable ((poly hp hζ u hcong).map (Ideal.Quotient.mk I)) := by
   let L := K[(p : ℕ)√(u : K)]
-  letI := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
+  have := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
   let J := I.map (algebraMap (𝓞 K) (𝓞 L))
   let i : 𝓞 K ⧸ I →+* 𝓞 L ⧸ J := Ideal.quotientMap _
     (algebraMap (𝓞 K) (𝓞 L)) Ideal.le_comap_map

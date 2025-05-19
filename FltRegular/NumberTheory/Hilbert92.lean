@@ -124,7 +124,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
   cases' s with s
   · exact isEmptyElim i
   intro g hg
-  letI := Fact.mk hp
+  have := Fact.mk hp
   let S' : systemOfUnits p G (s + 1) := ⟨Function.update S.units i g,
     LinearIndependent.update _ _ _ _ _ _ (CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
     hg (ha ▸ one_mem A⁰) S.linearIndependent⟩
@@ -182,7 +182,7 @@ lemma corollary [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental) (a
     ∀ g : G, (1 - zeta p) • g ≠ ∑ i, a i • S.units i := by
   intro g hg
   obtain ⟨i, hi⟩ := ha
-  letI := Fact.mk hp
+  have := Fact.mk hp
   obtain ⟨x, y, e⟩ := CyclotomicIntegers.isCoprime_one_sub_zeta p (a i) hi
   let b' : Fin s → A := fun j ↦ x * (1 - zeta ↑p) + y * (a j)
   let b := Finsupp.ofSupportFinite b' (Set.toFinite (Function.support _))
@@ -839,8 +839,8 @@ lemma Hilbert92 [Algebra k K] [IsGalois k K] [NumberField k] [NumberField K]
     (hKL : Nat.Prime (finrank k K)) (hpodd : finrank k K ≠ 2)
     (σ : K ≃ₐ[k] K) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) :=
-  haveI := IsUnramifiedAtInfinitePlaces_of_odd_finrank (hKL.odd_of_ne_two hpodd)
-  letI : IsCyclic (K ≃ₐ[k] K) := ⟨σ, hσ⟩
+  have := IsUnramifiedAtInfinitePlaces_of_odd_finrank (hKL.odd_of_ne_two hpodd)
+  have : IsCyclic (K ≃ₐ[k] K) := ⟨σ, hσ⟩
   almostHilbert92 ⟨finrank k K, finrank_pos⟩ hKL rfl σ hσ hpodd
 
 end thm91

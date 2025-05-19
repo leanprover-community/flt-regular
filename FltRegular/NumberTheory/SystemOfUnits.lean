@@ -50,7 +50,7 @@ include hp
 lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
     finrank ℤ (Submodule.span A (Set.range f)) = (p - 1) * R := by
   classical
-  letI := Fact.mk hp
+  have := Fact.mk hp
   have := finrank_span_set_eq_card' (R := A) (Set.range f)
     ((linearIndepOn_id_range_iff hf.injective).mpr hf)
   simp only [Set.toFinset_range, Finset.card_image_of_injective _ hf.injective, card_fin] at this
@@ -89,7 +89,7 @@ lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < s) :
     refine ⟨⟨Fin.cases g S.units, ?_⟩⟩
     refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
     by_contra! ha
-    letI := Fact.mk hp
+    have := Fact.mk hp
     obtain ⟨n, h0, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha
     replace hy := congr_arg (f • ·) hy
     simp only at hy

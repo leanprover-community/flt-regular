@@ -21,7 +21,7 @@ include hp hreg
 theorem not_for_all_zeta_sub_one_pow_dvd_sub_one_of_pow_ne (u : (𝓞 K)ˣ)
     (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (u : 𝓞 K) - 1) : ¬∀ v : K, v ^ (p : ℕ) ≠ u := by
   intro hu
-  letI := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
+  have := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
   let L := AdjoinRoot (Polynomial.X ^ (p : ℕ) - Polynomial.C (u : K))
   haveI := isSplittingField_AdjoinRoot_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
     (X_pow_sub_C_irreducible_of_prime hpri.out hu)
