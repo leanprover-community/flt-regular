@@ -74,7 +74,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
   · rw [hβ']
     exact ⟨⟨_, rfl⟩⟩
 
-theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] (I : Ideal A)
+theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I : Ideal A}
     (hI : (I.map (algebraMap A B)).IsPrincipal) : (I ^ finrank K L).IsPrincipal := by
   haveI : IsDomain B :=
     (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
@@ -134,4 +134,4 @@ theorem dvd_card_classGroup_of_isUnramified_isCyclic (K L : Type*)
   have := Fact.mk hKL
   rw [hKL.dvd_iff_not_coprime]
   exact fun h ↦ hI (isPrincipal_of_isPrincipal_pow_of_coprime h
-    (Ideal.isPrincipal_pow_finrank_of_isPrincipal_map _ hI'))
+    (Ideal.isPrincipal_pow_finrank_of_isPrincipal_map hI'))
