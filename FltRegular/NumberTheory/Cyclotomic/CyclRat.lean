@@ -112,7 +112,8 @@ instance a3 : NumberField (CyclotomicField p ℚ) :=
 
 open IsPrimitiveRoot
 
-theorem nth_roots_prim [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
+theorem isPrimitiveRoot_of_mem_nthRootsFinset [Fact (p : ℕ).Prime] {η : R}
+    (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
     IsPrimitiveRoot η p := by
   classical
   have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe
@@ -144,7 +145,7 @@ theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη :
     apply neg_dvd
   rw [h00]
   have : IsPrimitiveRoot (η : CyclotomicField p ℚ) p := by
-    apply prim_coe η (nth_roots_prim hη hne1)
+    apply prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset hη hne1)
   have h0 : p ≠ 2 := by
     intro hP
     rw [hP] at ph
@@ -159,14 +160,14 @@ theorem zeta_sub_one_dvb_p [Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η : R} (hη :
 
 theorem one_sub_zeta_prime [Fact (p : ℕ).Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : Prime (1 - η) := by
-  have h := prim_coe η (nth_roots_prim hη hne1)
+  have h := prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset hη hne1)
   simpa using h.zeta_sub_one_prime'.neg
 
 theorem diff_of_roots [hp : Fact (p : ℕ).Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1) (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂)
     (hwlog : η₁ ≠ 1) : ∃ u : Rˣ, η₁ - η₂ = u * (1 - η₁) := by
   replace ph : 2 ≤ p := le_trans (by decide) ph
-  have h := nth_roots_prim hη₁ hwlog
+  have h := isPrimitiveRoot_of_mem_nthRootsFinset hη₁ hwlog
   obtain ⟨i, ⟨H, hi⟩⟩ := h.eq_pow_of_pow_eq_one ((mem_nthRootsFinset hp.out.pos 1).1 hη₂)
   have hi1 : 1 ≠ i := by
     intro hi1
