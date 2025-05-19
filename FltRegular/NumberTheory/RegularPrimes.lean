@@ -9,7 +9,7 @@ import Mathlib.NumberTheory.Cyclotomic.PID
 
 ## Main definitions
 
-* `is_regular_number`: a natural number `n` is regular if `n` is coprime with the cardinal of the
+* `IsRegularNumber`: a natural number `n` is regular if `n` is coprime with the cardinal of the
   class group.
 
 -/
