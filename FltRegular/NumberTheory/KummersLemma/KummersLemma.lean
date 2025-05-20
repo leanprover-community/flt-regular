@@ -1,46 +1,35 @@
 import FltRegular.NumberTheory.KummersLemma.Field
 import FltRegular.NumberTheory.Hilbert94
 
+open Polynomial
 open scoped NumberField
 
 variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
   [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))]
   (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
-
-variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
-  (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ (p : ℕ) ≠ u)
-
-open Polynomial
-
-variable {L} [Field L] [Algebra K L] [FiniteDimensional K L]
-variable [IsSplittingField K L (X ^ (p : ℕ) - C (u : K))]
-variable (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
+  {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
 include hp hreg
 
 theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
     (hcong : (hζ.unit' - 1 : 𝓞 K) ^ (p : ℕ) ∣ (u : 𝓞 K) - 1) : ∃ v : K, v ^ (p : ℕ) = u := by
   by_contra! hu
-  have := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
-  let L := AdjoinRoot (Polynomial.X ^ (p : ℕ) - Polynomial.C (u : K))
-  haveI := isSplittingField_AdjoinRoot_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
-    (X_pow_sub_C_irreducible_of_prime hpri.out hu)
-  haveI := isGalois_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
-    (X_pow_sub_C_irreducible_of_prime hpri.out hu) L
-  have := Polynomial.IsSplittingField.finiteDimensional L
-    (Polynomial.X ^ (p : ℕ) - Polynomial.C (u : K))
-  have := isCyclic_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩
-      (X_pow_sub_C_irreducible_of_prime hpri.out hu) L
+  have hirr := X_pow_sub_C_irreducible_of_prime hpri.out hu
+  have := Fact.mk hirr
+  let L := AdjoinRoot (X ^ (p : ℕ) - C (u : K))
+  have := isSplittingField_AdjoinRoot_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ hirr
+  have := isGalois_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ hirr L
+  have := IsSplittingField.finiteDimensional L (X ^ (p : ℕ) - C (u : K))
+  have := isCyclic_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ hirr L
   have : CharZero L := charZero_of_injective_algebraMap (algebraMap K L).injective
   have : FiniteDimensional ℚ L := Module.Finite.trans K L
   have : NumberField L := ⟨⟩
-  have hKL : Module.finrank K L = p := (finrank_of_isSplittingField_X_pow_sub_C
-    ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu) L)
+  have hKL : Module.finrank K L = p :=
+    finrank_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots p.pos).mpr hζ⟩ hirr L
   have := KummersLemma.isUnramified hp hζ u hcong hu L
   have := dvd_card_classGroup_of_isUnramified_isCyclic K L (hKL.symm ▸ hpri.out)
     (hKL.symm ▸ PNat.coe_injective.ne hp)
-  rw [hKL, ← Int.ofNat_dvd, (Nat.prime_iff_prime_int.mp hpri.out).irreducible.dvd_iff_not_isCoprime,
-    Nat.isCoprime_iff_coprime] at this
+  rw [hKL, hpri.out.dvd_iff_not_coprime] at this
   exact this (by convert hreg)
 
 -- Let 𝑝 be a regular prime (i.e. an odd prime which does not divide the class number off
@@ -49,21 +38,20 @@ theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
 theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     (hcong : ∃ n : ℤ, (p : 𝓞 K) ∣ (u - n : 𝓞 K)) :
     ∃ v, u = v ^ (p : ℕ) := by
-  haveI : Fact (Nat.Prime p) := hpri
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root (S := {p}) ℚ (B := K) (n := p) rfl
+  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root ℚ (B := K) (Set.mem_singleton p)
   obtain ⟨x, hx⟩ : (p : 𝓞 K) ∣ (↑(u ^ (p - 1 : ℕ)) : 𝓞 K) - 1 := by
     obtain ⟨n, hn⟩ := hcong
     have hn' : (p : ℤ) ∣ n ^ (p - 1 : ℕ) - 1 := by
       refine Int.modEq_iff_dvd.mp (Int.ModEq.pow_card_sub_one_eq_one hpri.out ?_).symm
       rw [isCoprime_comm, (Nat.prime_iff_prime_int.mp hpri.out).coprime_iff_not_dvd]
       intro h
-      replace h := _root_.map_dvd (Int.castRingHom (𝓞 K)) h
-      simp only [map_natCast, eq_intCast, ← dvd_iff_dvd_of_dvd_sub hn] at h
+      replace h := Int.cast_dvd_cast (α := 𝓞 K) _ _ h
+      simp only [Int.cast_natCast, ← dvd_iff_dvd_of_dvd_sub hn] at h
       refine hζ.zeta_sub_one_prime'.not_unit ((isUnit_pow_iff ?_).mp
         (isUnit_of_dvd_unit ((associated_zeta_sub_one_pow_prime hζ).dvd.trans h) u.isUnit))
-      simpa only [ge_iff_le, ne_eq, tsub_eq_zero_iff_le, not_le] using hpri.out.one_lt
-    replace hn' := _root_.map_dvd (Int.castRingHom (𝓞 K)) hn'
-    simp only [map_natCast, eq_intCast, Int.cast_sub, Int.cast_pow, Int.cast_one] at hn'
+      simpa only [ne_eq, tsub_eq_zero_iff_le, not_le] using hpri.out.one_lt
+    replace hn' := Int.cast_dvd_cast (α := 𝓞 K) _ _ hn'
+    simp only [Int.cast_natCast, Int.cast_sub, Int.cast_pow, Int.cast_one] at hn'
     rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq_zero_iff_mem,
       RingHom.map_sub, sub_eq_zero] at hn hn' ⊢
     rw [Units.val_pow_eq_pow_val, RingHom.map_pow, hn, ← RingHom.map_pow, hn']
