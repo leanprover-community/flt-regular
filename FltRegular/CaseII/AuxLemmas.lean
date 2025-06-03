@@ -1,6 +1,6 @@
 import Mathlib.RingTheory.ClassGroup
 
-variable {K : Type*} {p : ℕ+} [Field K] [CharZero K]
+variable {K : Type*} {p : ℕ} [Field K] [CharZero K]
 
 variable {ζ : K}
 

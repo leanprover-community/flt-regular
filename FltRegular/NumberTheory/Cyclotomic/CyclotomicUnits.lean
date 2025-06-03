@@ -15,7 +15,7 @@ open Polynomial Finset Module Units Submodule
 
 universe u v w z
 
-variable (n : ℕ+) (K : Type u) (L : Type v) (A : Type w) (B : Type z)
+variable (n : ℕ) (K : Type u) (L : Type v) (A : Type w) (B : Type z)
 
 variable [CommRing A] [CommRing B] [Algebra A B]
 
@@ -58,7 +58,7 @@ theorem associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
   rw [← geom_sum_mul_neg, mul_comm]
 
 theorem IsPrimitiveRoot.sum_pow_unit {n k : ℕ} {ζ : A} (hn : 2 ≤ n) (hk : k.Coprime n)
-    (hζ : IsPrimitiveRoot ζ n) : IsUnit (∑ i ∈ range k, ζ ^ (i : ℕ)) := by
+    (hζ : IsPrimitiveRoot ζ n) : IsUnit (∑ i ∈ range k, ζ ^ i) := by
   have h1 : (1 : ℕ).Coprime n := Nat.coprime_one_left n
   have := associated_one_sub_pow_primitive_root_of_coprime _ hζ hk h1
   simp at this
@@ -100,7 +100,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     rw [hj]
     simp only [tsub_zero]
     exact hi
-  have h3 : IsUnit (-ζ ^ j * ∑ k ∈ range (i - j), ζ ^ (k : ℕ)) := by
+  have h3 : IsUnit (-ζ ^ j * ∑ k ∈ range (i - j), ζ ^ k) := by
     apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hic hζ); apply IsUnit.neg
     apply IsUnit.pow; apply hζ.isUnit hp.pos
   obtain ⟨v, hv⟩ := h3
@@ -128,7 +128,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     rw [hii]
     simp only [tsub_zero]
     exact hj
-  have h3 : IsUnit (ζ ^ i * ∑ k ∈ range (j - i), ζ ^ (k : ℕ)) := by
+  have h3 : IsUnit (ζ ^ i * ∑ k ∈ range (j - i), ζ ^ k) := by
     apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hjc hζ); apply IsUnit.pow
     apply hζ.isUnit hp.pos
   obtain ⟨v, hv⟩ := h3

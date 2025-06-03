@@ -4,7 +4,7 @@ import FltRegular.NumberTheory.KummersLemma.KummersLemma
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
 
-variable {K : Type*} {p : ℕ+} [Field K] (hp : p ≠ 2)
+variable {K : Type*} {p : ℕ} [NeZero p] [Field K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
 
@@ -15,7 +15,7 @@ local notation3 "𝔵" => Ideal.span {x}
 local notation3 "𝔶" => Ideal.span {y}
 local notation3 "𝔷" => Ideal.span {z}
 
-variable {m : ℕ} (e : x ^ (p : ℕ) + y ^ (p : ℕ) = ε * ((hζ.unit'.1 - 1) ^ (m + 1) * z) ^ (p : ℕ))
+variable {m : ℕ} (e : x ^ p + y ^ p = ε * ((hζ.unit'.1 - 1) ^ (m + 1) * z) ^ p)
 variable (hy : ¬ hζ.unit'.1 - 1 ∣ y) (hz : ¬ hζ.unit'.1 - 1 ∣ z)
 variable (η : nthRootsFinset p (1 : 𝓞 K))
 
@@ -23,17 +23,17 @@ variable (η : nthRootsFinset p (1 : 𝓞 K))
 
 include e in
 /- Let π = ζ -1, then π divides x^p+y^p. -/
-lemma zeta_sub_one_dvd : π ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
+lemma zeta_sub_one_dvd : π ∣ x ^ p + y ^ p := by
   rw [e, mul_pow, ← pow_mul]
   apply dvd_mul_of_dvd_right
   apply dvd_mul_of_dvd_left
   apply dvd_pow_self
-  simp
+  simp [NeZero.ne]
 
 include e in
 /- x^p+y^p = 𝔭^((m+1)*p) * (z)^p, here 𝔷 = (z) (the ideal gen by z)-/
 lemma span_pow_add_pow_eq :
-    Ideal.span {x ^ (p : ℕ) + y ^ (p : ℕ)} = (𝔭 ^ (m + 1) * 𝔷) ^ (p : ℕ) := by
+    Ideal.span {x ^ p + y ^ p} = (𝔭 ^ (m + 1) * 𝔷) ^ p := by
   simp only [e, ← Ideal.span_singleton_pow, ← Ideal.span_singleton_mul_span_singleton]
   convert one_mul _
   rw [Ideal.one_eq_top, Ideal.span_singleton_eq_top]
@@ -66,13 +66,13 @@ lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) (hη : η₁ �
 include hp hζ e hz in
 lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
   intro hη
-  have : x + y * η ∣ x ^ (p : ℕ) + y ^ (p : ℕ) := by
+  have : x + y * η ∣ x ^ p + y ^ p := by
     rw [hζ.unit'_coe.pow_add_pow_eq_prod_add_mul _ _ <| Nat.odd_iff.2 <|
-      hpri.out.eq_two_or_odd.resolve_left (PNat.coe_injective.ne hp)]
+      hpri.out.eq_two_or_odd.resolve_left hp]
     simp_rw [mul_comm _ y]
     exact Finset.dvd_prod_of_mem _ η.prop
   rw [hη, zero_dvd_iff, e] at this
-  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff p.ne_zero, add_pos_iff, or_true, false_or]
+  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff (NeZero.ne p), add_pos_iff, or_true, false_or]
     at this
   rw [this.resolve_left (pow_ne_zero (m + 1) (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt))] at hz
   exact hz (dvd_zero _)
@@ -87,8 +87,7 @@ lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
   have h := zeta_sub_one_dvd hζ e
   replace h : ∏ _η ∈ nthRootsFinset p (1 : 𝓞 K), Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0 := by
     rw [hζ.unit'_coe.pow_add_pow_eq_prod_add_mul _ _ <| Nat.odd_iff.2 <|
-      hpri.out.eq_two_or_odd.resolve_left
-      (PNat.coe_injective.ne hp), ← Ideal.Quotient.eq_zero_iff_dvd, map_prod] at h
+      hpri.out.eq_two_or_odd.resolve_left hp, ← Ideal.Quotient.eq_zero_iff_dvd, map_prod] at h
     convert h using 2 with η' hη'
     rw [map_add, map_add, map_mul, map_mul, IsPrimitiveRoot.eq_one_mod_one_sub' hζ.unit'_coe hη',
       IsPrimitiveRoot.eq_one_mod_one_sub' hζ.unit'_coe η.prop, one_mul, mul_one]
@@ -225,8 +224,8 @@ lemma m_dvd_z : 𝔪 ∣ 𝔷 := by
   rw [← pow_dvd_pow_iff_dvd hpri.out.ne_zero, ← span_pow_add_pow_eq hζ e,
     Ideal.dvd_span_singleton]
   apply add_mem
-  · exact Ideal.pow_mem_pow (Ideal.mem_sup_left (Ideal.mem_span_singleton_self x)) (p : ℕ)
-  · exact Ideal.pow_mem_pow (Ideal.mem_sup_right (Ideal.mem_span_singleton_self y)) (p : ℕ)
+  · exact Ideal.pow_mem_pow (Ideal.mem_sup_left (Ideal.mem_span_singleton_self x)) p
+  · exact Ideal.pow_mem_pow (Ideal.mem_sup_right (Ideal.mem_span_singleton_self y)) p
 
 noncomputable
 def z_div_m : Ideal (𝓞 K) :=
@@ -238,15 +237,15 @@ lemma z_div_m_spec : 𝔷 = 𝔪 * 𝔷' :=
 (m_dvd_z hζ e hy).choose_spec
 
 lemma exists_ideal_pow_eq_c_aux :
-    𝔪 ^ (p : ℕ) * (𝔷' * 𝔭 ^ m) ^ (p : ℕ) * 𝔭 ^ (p : ℕ) = (𝔭 ^ (m + 1) * 𝔷) ^ (p : ℕ) := by
+    𝔪 ^ p * (𝔷' * 𝔭 ^ m) ^ p * 𝔭 ^ p = (𝔭 ^ (m + 1) * 𝔷) ^ p := by
   rw [mul_comm _ 𝔷, mul_pow, z_div_m_spec hζ e hy, mul_pow, mul_pow, ← pow_mul, ← pow_mul,
     add_mul, one_mul, pow_add, mul_assoc, mul_assoc, mul_assoc]
 
 /- The ∏_η,  𝔠 η = (𝔷' 𝔭^m)^p with 𝔷 = 𝔪 𝔷' -/
-lemma prod_c : ∏ η ∈ Finset.attach (nthRootsFinset p (1 : 𝓞 K)), 𝔠 η = (𝔷' * 𝔭 ^ m) ^ (p : ℕ) := by
+lemma prod_c : ∏ η ∈ Finset.attach (nthRootsFinset p (1 : 𝓞 K)), 𝔠 η = (𝔷' * 𝔭 ^ m) ^ p := by
   have e' := span_pow_add_pow_eq hζ e
   rw [hζ.unit'_coe.pow_add_pow_eq_prod_add_mul _ _ <| Nat.odd_iff.2 <|
-    hpri.out.eq_two_or_odd.resolve_left (PNat.coe_injective.ne hp)] at e'
+    hpri.out.eq_two_or_odd.resolve_left hp] at e'
   rw [← Ideal.prod_span_singleton, ← Finset.prod_attach] at e'
   simp_rw [mul_comm _ y, ← m_mul_c_mul_p hp hζ e hy,
     Finset.prod_mul_distrib, Finset.prod_const, Finset.card_attach,
@@ -257,7 +256,7 @@ lemma prod_c : ∏ η ∈ Finset.attach (nthRootsFinset p (1 : 𝓞 K)), 𝔠 η
     exists_ideal_pow_eq_c_aux]
 
 /-each 𝔠 η is a pth power, which will be denoted by 𝔞 η below. -/
-lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ (p : ℕ) := by
+lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ p := by
   letI inst1 : @IsDomain (Ideal (𝓞 K)) CommSemiring.toSemiring := @Ideal.isDomain (𝓞 K) _ _
   letI inst2 := @Ideal.instNormalizedGCDMonoid (𝓞 K) _ _
   letI inst3 := @NormalizedGCDMonoid.toGCDMonoid _ _ inst2
@@ -272,7 +271,7 @@ def root_div_zeta_sub_one_dvd_gcd : Ideal (𝓞 K) :=
 
 local notation "𝔞" => root_div_zeta_sub_one_dvd_gcd hp hζ e hy
 
-lemma root_div_zeta_sub_one_dvd_gcd_spec : (𝔞 η) ^ (p : ℕ) = 𝔠 η :=
+lemma root_div_zeta_sub_one_dvd_gcd_spec : (𝔞 η) ^ p = 𝔠 η :=
 (exists_ideal_pow_eq_c hp hζ e hy η).choose_spec.symm
 
 /-x+yη₁ / (x+yη₂) = 𝔠 η₁/ 𝔠 η₂ -/
@@ -376,22 +375,22 @@ lemma one_le_m : 1 ≤ m := by
 
 include hp in
 lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
-    (h : (p : 𝓞 K) ∣ ε₁ * x ^ (p : ℕ) + ε₂ * y ^ (p : ℕ)) :
-    ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ (p : ℕ) := by
+    (h : (p : 𝓞 K) ∣ ε₁ * x ^ p + ε₂ * y ^ p) :
+    ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ p := by
   letI : Fact (Nat.Prime p) := hpri
   obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hx
   have : (p : 𝓞 K) ∣ b * x - 1 := by use -a ; rw [← e]; ring
   have := (this.trans (sub_one_dvd_pow_sub_one _ p)).trans (dvd_mul_left _ ↑(ε₁ / ε₂))
   use - y * b
-  replace h := (h.trans (dvd_mul_right _ (b ^ (p : ℕ)))).trans (dvd_mul_left _ ↑(ε₂⁻¹))
+  replace h := (h.trans (dvd_mul_right _ (b ^ p))).trans (dvd_mul_left _ ↑(ε₂⁻¹))
   rw [add_mul, mul_assoc, mul_assoc, ← mul_pow, ← mul_pow, mul_add] at h
   simp_rw [← mul_assoc, ← Units.val_mul] at h
   rw [← mul_comm ε₁, ← div_eq_mul_inv, inv_mul_cancel, Units.val_one, one_mul] at h
   convert dvd_sub h this using 1
-  rw [neg_mul, (Nat.Prime.odd_of_ne_two hpri.out (PNat.coe_injective.ne hp)).neg_pow,
-    sub_neg_eq_add, mul_sub, mul_one, mul_comm x b, add_sub_sub_cancel, add_comm]
+  rw [neg_mul, (Nat.Prime.odd_of_ne_two hpri.out hp).neg_pow, sub_neg_eq_add, mul_sub, mul_one,
+    mul_comm x b, add_sub_sub_cancel, add_comm]
 
-variable [Fintype (ClassGroup (𝓞 K))] (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
+variable [Fintype (ClassGroup (𝓞 K))] (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
 include hreg in
 lemma a_div_principal (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) :
@@ -473,14 +472,14 @@ lemma a_mul_denom_eq_a_zero_mul_num (hη : η ≠ η₀) :
 
 /- eqn 7.9 of BS -/
 lemma associated_eta_zero (hη : η ≠ η₀) :
-    Associated ((x + y * η₀) * α η hη ^ (p : ℕ))
-      ((x + y * η) * π ^ (m * p) * β η hη ^ (p : ℕ)) := by
+    Associated ((x + y * η₀) * α η hη ^ p)
+      ((x + y * η) * π ^ (m * p) * β η hη ^ p) := by
   simp_rw [← Ideal.span_singleton_eq_span_singleton,
     ← Ideal.span_singleton_mul_span_singleton, ← Ideal.span_singleton_pow,
     ← m_mul_c_mul_p hp hζ e hy, ← root_div_zeta_sub_one_dvd_gcd_spec, ← a_eta_zero_dvd_p_pow_spec]
   rw [mul_comm _ 𝔞₀, mul_pow]
   simp only [mul_assoc, mul_left_comm _ 𝔭]
-  rw [mul_left_comm (𝔞 η ^ (p : ℕ)), mul_left_comm (𝔞₀ ^ (p : ℕ)), ← pow_mul, ← mul_pow, ← mul_pow,
+  rw [mul_left_comm (𝔞 η ^ p), mul_left_comm (𝔞₀ ^ p), ← pow_mul, ← mul_pow, ← mul_pow,
     a_mul_denom_eq_a_zero_mul_num]
 
 noncomputable
@@ -490,14 +489,14 @@ def associated_eta_zero_unit (hη : η ≠ η₀) : (𝓞 K)ˣ :=
 local notation "ε" => fun η ↦ associated_eta_zero_unit hp hζ e hy hz η hreg
 
 lemma associated_eta_zero_unit_spec (η) (hη : η ≠ η₀) :
-    ε η hη * (x + y * η₀) * α η hη ^ (p : ℕ) = (x + y * η) * π ^ (m * p) * β η hη ^ (p : ℕ) := by
+    ε η hη * (x + y * η₀) * α η hη ^ p = (x + y * η) * π ^ (m * p) * β η hη ^ p := by
   rw [mul_assoc, mul_comm (ε η hη : 𝓞 K)]
   exact (associated_eta_zero hp hζ e hy hz η hreg hη).choose_spec
 
 lemma formula (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η₀) :
-  (η₂ - η₀ : 𝓞 K) * ε η₁ hη₁ * (α η₁ hη₁ * β η₂ hη₂) ^ (p : ℕ) +
-    (η₀ - η₁) * ε η₂ hη₂ * (α η₂ hη₂ * β η₁ hη₁) ^ (p : ℕ) =
-    (η₂ - η₁) * (π ^ m * (β η₁ hη₁ * β η₂ hη₂)) ^ (p : ℕ) := by
+  (η₂ - η₀ : 𝓞 K) * ε η₁ hη₁ * (α η₁ hη₁ * β η₂ hη₂) ^ p +
+    (η₀ - η₁) * ε η₂ hη₂ * (α η₂ hη₂ * β η₁ hη₁) ^ p =
+    (η₂ - η₁) * (π ^ m * (β η₁ hη₁ * β η₂ hη₂)) ^ p := by
   rw [← mul_right_inj' (x_plus_y_mul_ne_zero hp hζ e hz η₀), mul_add]
   simp_rw [mul_left_comm (x + y * η₀), mul_pow, mul_assoc, mul_left_comm (η₂ - η₀ : 𝓞 K),
     mul_left_comm (η₀ - η₁ : 𝓞 K), ← mul_assoc,
@@ -510,7 +509,7 @@ lemma formula (η₁) (hη₁ : η₁ ≠ η₀) (η₂) (hη₂ : η₂ ≠ η�
 include hreg e hy hz hp in
 lemma exists_solution :
     ∃ (x' y' z' : 𝓞 K) (ε₁ ε₂ ε₃ : (𝓞 K)ˣ), ¬ π ∣ x' ∧ ¬ π ∣ y' ∧ ¬ π ∣ z' ∧
-      ε₁ * x' ^ (p : ℕ) + ε₂ * y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
+      ε₁ * x' ^ p + ε₂ * y' ^ p = ε₃ * (π ^ m * z') ^ p := by
   letI : Fact (Nat.Prime p) := hpri
   have h₁ := mul_mem_nthRootsFinset (η₀ : _).prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)
   rw [one_mul] at h₁
@@ -529,7 +528,7 @@ lemma exists_solution :
     show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀
     rw [Ne, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.pow_ne_one_of_pos_of_lt zero_lt_two
-      (hpri.out.two_le.lt_or_eq.resolve_right (PNat.coe_injective.ne hp.symm)),
+      (hpri.out.two_le.lt_or_eq.resolve_right hp.symm),
       ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop⟩
   have hη : η₂ ≠ η₁ := by
     rw [← Subtype.coe_injective.ne_iff]
@@ -563,15 +562,15 @@ lemma exists_solution :
 include hp hreg e hy hz in
 lemma exists_solution' :
     ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
-      ¬ π ∣ y' ∧ ¬ π ∣ z' ∧ x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (π ^ m * z') ^ (p : ℕ) := by
+      ¬ π ∣ y' ∧ ¬ π ∣ z' ∧ x' ^ p + y' ^ p = ε₃ * (π ^ m * z') ^ p := by
   obtain ⟨x', y', z', ε₁, ε₂, ε₃, hx', hy', hz', e'⟩ := exists_solution hp hζ e hy hz hreg
-  obtain ⟨ε', hε'⟩ : ∃ ε', ε₁ / ε₂ = ε' ^ (p : ℕ) := by
+  obtain ⟨ε', hε'⟩ : ∃ ε', ε₁ / ε₂ = ε' ^ p := by
     apply eq_pow_prime_of_unit_of_congruent hp hreg --this is Kummers
     have : p - 1 ≤ m * p := (Nat.sub_le _ _).trans
       ((le_of_eq (one_mul _).symm).trans (Nat.mul_le_mul_right p (one_le_m hp hζ e hy hz)))
     obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime hζ).symm
     rw [mul_pow, ← pow_mul, mul_comm (ε₃ : 𝓞 K), mul_assoc, ← Nat.sub_add_cancel this,
-      add_comm _ (p - 1 : ℕ), pow_add, mul_assoc] at e'
+      add_comm _ (p - 1), pow_add, mul_assoc] at e'
     apply_fun Ideal.Quotient.mk (Ideal.span <| singleton (p : 𝓞 K)) at e'
     rw [map_mul, (Ideal.Quotient.eq_zero_iff_dvd _ _).mpr
       (associated_zeta_sub_one_pow_prime hζ).symm.dvd, zero_mul,
@@ -580,7 +579,7 @@ lemma exists_solution' :
     obtain ⟨b, hb⟩ := exists_dvd_pow_sub_Int_pow hp a
     have := dvd_add ha hb
     rw [sub_add_sub_cancel, ← Int.cast_pow] at this
-    exact ⟨b ^ (p : ℕ), this⟩
+    exact ⟨b ^ p, this⟩
   refine ⟨ε' * x', y', z', ε₃ / ε₂, hy', hz', ?_⟩
   rwa [mul_pow, ← Units.val_pow_eq_pow_val, ← hε', ← mul_right_inj' ε₂.isUnit.ne_zero,
     mul_add, ← mul_assoc, ← Units.val_mul, mul_div_cancel,

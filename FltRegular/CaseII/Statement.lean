@@ -3,9 +3,9 @@ import FltRegular.CaseII.InductionStep
 open scoped BigOperators nonZeroDivisors NumberField
 open Polynomial
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K] [NumberField K]
+variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K]
   [IsCyclotomicExtension {p} ℚ K]  (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))]
-  (hreg : (p : ℕ).Coprime <| Fintype.card <| ClassGroup (𝓞 K))
+  (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K))
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
@@ -15,7 +15,7 @@ include hp hreg in
 lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
   ¬∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
     ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
-    x' ^ (p : ℕ) + y' ^ (p : ℕ) = ε₃ * (((hζ.unit' : 𝓞 K) - 1) ^ m * z') ^ (p : ℕ) := by
+    x' ^ p + y' ^ p = ε₃ * (((hζ.unit' : 𝓞 K) - 1) ^ m * z') ^ p := by
   induction' m, hm using Nat.le_induction with m' _ IH
   · rintro ⟨x, y, z, ε₃, hy, hz, e⟩
     exact zero_lt_one.not_le (one_le_m hp hζ e hy hz)
@@ -25,7 +25,7 @@ lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
 include hp hreg in
 lemma not_exists_solution' :
   ¬∃ (x y z : 𝓞 K), ¬(hζ.unit' : 𝓞 K) - 1 ∣ y ∧ (hζ.unit' : 𝓞 K) - 1 ∣ z ∧ z ≠ 0 ∧
-    x ^ (p : ℕ) + y ^ (p : ℕ) = z ^ (p : ℕ) := by
+    x ^ p + y ^ p = z ^ p := by
   letI : Fact (Nat.Prime p) := hpri
   letI : WfDvdMonoid (𝓞 K) := IsNoetherianRing.wfDvdMonoid
   rintro ⟨x, y, z, hy, hz, hz', e⟩
@@ -49,17 +49,14 @@ lemma not_exists_solution' :
 
 lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p)
     (hodd : p ≠ 2) : ¬∃ (x y z : ℤ), ¬↑p ∣ y ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
-  haveI : Fact (PNat.Prime ⟨p, hpri.out.pos⟩) := hpri
-  haveI := CyclotomicField.isCyclotomicExtension ⟨p, hpri.out.pos⟩ ℚ
+  haveI := CyclotomicField.isCyclotomicExtension p ℚ
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot
-    ℚ (B := (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)) (Set.mem_singleton (⟨p, hpri.out.pos⟩ : ℕ+))
-  have hodd' : (⟨p, hpri.out.pos⟩ : ℕ+) ≠ (2 : ℕ+) := by
-    rwa [← PNat.coe_injective.ne_iff]
-  have := fun n ↦ zeta_sub_one_dvd_Int_iff (K := CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) hζ (n := n)
+    ℚ (B := (CyclotomicField p ℚ)) (Set.mem_singleton p) hpri.1.ne_zero
+  have := fun n ↦ zeta_sub_one_dvd_Int_iff (K := CyclotomicField p ℚ) hζ (n := n)
   simp only [PNat.mk_coe] at this
   simp_rw [← this]
   rintro ⟨x, y, z, hy, hz, hz', e⟩
-  refine not_exists_solution' (K := CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) hodd' ?_
+  refine not_exists_solution' (K := CyclotomicField p ℚ) hodd ?_
     hζ ⟨x, y, z, hy, hz, ?_, ?_⟩
   · convert hreg
   · rwa [ne_eq, Int.cast_eq_zero]

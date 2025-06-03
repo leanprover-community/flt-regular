@@ -6,7 +6,7 @@ open FiniteDimensional
 open scoped NumberField
 
 
-variable (K : Type*) (p : ℕ+) [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
+variable (K : Type*) (p : ℕ) [NeZero p] [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
@@ -20,7 +20,7 @@ noncomputable section
 
 /-- complex conjugation as a Galois automorphism -/
 def galConj : K ≃ₐ[ℚ] K :=
-  (autEquivPow K (cyclotomic.irreducible_rat p.pos)).symm (-1)
+  (autEquivPow K (cyclotomic.irreducible_rat (NeZero.pos p))).symm (-1)
 
 variable {K p}
 
@@ -32,8 +32,8 @@ theorem galConj_zeta : galConj K p (zeta p ℚ K) = (zeta p ℚ K)⁻¹ := by
   simp only [galConj, Units.coe_neg_one, autEquivPow_symm_apply, AlgEquiv.coe_algHom,
     PowerBasis.equivOfMinpoly_apply]
   convert (hζ.powerBasis ℚ).lift_gen (S' := K) _ _
-  rw [IsPrimitiveRoot.powerBasis_gen, ZMod.val_neg_one' p.pos,
-    pow_sub₀ _ (hζ.ne_zero p.ne_zero) p.pos, pow_one, hζ.pow_eq_one, one_mul]
+  rw [IsPrimitiveRoot.powerBasis_gen, ZMod.val_neg_one' (NeZero.pos p),
+    pow_sub₀ _ (hζ.ne_zero (NeZero.ne p)) (NeZero.pos p), pow_one, hζ.pow_eq_one, one_mul]
 
 include hζ in
 @[simp]
@@ -59,7 +59,7 @@ theorem embedding_conj (x : K) (φ : K →+* ℂ) : conj (φ x) = φ (galConj K 
     apply (hζ.powerBasis ℚ).algHom_ext
     exact this.symm
   rw [← Complex.inv_eq_conj, galConj_zeta_runity hζ, map_inv₀]
-  exact Complex.norm_eq_one_of_pow_eq_one (by rw [← map_pow, hζ.pow_eq_one, map_one]) p.ne_zero
+  exact Complex.norm_eq_one_of_pow_eq_one (by rw [← map_pow, hζ.pow_eq_one, map_one]) (NeZero.ne p)
 
 variable (p)
 

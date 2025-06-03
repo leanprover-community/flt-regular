@@ -124,10 +124,7 @@ theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f 
 
 variable [hpri : Fact p.Prime]
 
-set_option quotPrecheck false
-local notation "P" => (⟨p, hpri.out.pos⟩ : ℕ+)
-
-local notation "K" => CyclotomicField P ℚ
+local notation "K" => CyclotomicField p ℚ
 
 local notation "R" => 𝓞 K
 
@@ -138,7 +135,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   classical
   have H₁ := congr_arg (algebraMap ℤ R) H
   simp only [eq_intCast, Int.cast_add, Int.cast_pow] at H₁
-  have hζ' := (zeta_spec P ℚ K).unit'_coe
+  have hζ' := (zeta_spec p ℚ K).unit'_coe
   rw [hζ'.pow_add_pow_eq_prod_add_mul _ _ <|
     odd_iff.2 <| hpri.1.eq_two_or_odd.resolve_left fun h ↦ by simp [h] at h5p] at H₁
   replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
@@ -148,12 +145,12 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   · exact hpri.out
   · exact h5p
 
-theorem is_principal_aux (K' : Type*) [Field K'] [CharZero K'] [IsCyclotomicExtension {P} ℚ K']
+theorem is_principal_aux (K' : Type*) [Field K'] [CharZero K'] [IsCyclotomicExtension {p} ℚ K']
   [Fintype (ClassGroup (𝓞 K'))]
   {a b : ℤ} {ζ : 𝓞 K'} (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K'))
   (I : Ideal (𝓞 K')) (hI : span ({↑a + ζ * ↑b} : Set (𝓞 K')) = I ^ p) :
   ∃ (u : (𝓞 K')ˣ) (α : 𝓞 K'), ↑u * α ^ p = ↑a + ζ * ↑b := by
-  letI : NumberField K' := IsCyclotomicExtension.numberField { P } ℚ K'
+  letI : NumberField K' := IsCyclotomicExtension.numberField {p} ℚ K'
   obtain ⟨α, hα⟩ : I.IsPrincipal := by
     apply isPrincipal_of_isPrincipal_pow_of_coprime hreg
     constructor
@@ -170,7 +167,7 @@ theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 �
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
     (H : a ^ p + b ^ p = c ^ p) (hζ : IsPrimitiveRoot ζ p) :
     ∃ (u : Rˣ) (α : R), ↑u * α ^ p = ↑a + ζ * ↑b := by
-  haveI := CyclotomicField.isCyclotomicExtension P ℚ
+  haveI := CyclotomicField.isCyclotomicExtension p ℚ
   replace hζ := hζ.mem_nthRootsFinset hpri.out.pos
   obtain ⟨I, hI⟩ := exists_ideal hp5 H hgcd caseI hζ
   apply is_principal_aux
@@ -183,14 +180,12 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     ∃ k₁ k₂ : Fin p,
       k₂ ≡ k₁ - 1 [ZMOD p] ∧ ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) := by
   let ζ' := (ζ : K)
-  have hζ' : IsPrimitiveRoot ζ' P := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
+  have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
   have h : ζ = (hζ'.unit' : R) := by rfl
-  have hP : P ≠ (2 : ℕ+) := by
+  have hP : p ≠ 2 := by
     intro hP
-    rw [← PNat.coe_inj, PNat.mk_coe] at hP
     rw [hP] at hp5
     contradiction
-  haveI := (⟨hpri.out⟩ : Fact (P : ℕ).Prime)
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ
   rw [h, mul_comm _ (↑b : R), ← pow_one hζ'.unit'] at hu
   obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' hP hpri.out a b 1 hu.symm
@@ -226,10 +221,10 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
 theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬↑p ∣ a * b * c) :
     a ^ p + b ^ p ≠ c ^ p := by
-  have hcycl : IsCyclotomicExtension {P} ℤ (𝓞 (CyclotomicField P ℚ)) := by
+  have hcycl : IsCyclotomicExtension {p} ℤ (𝓞 (CyclotomicField p ℚ)) := by
     apply @IsCyclotomicExtension.ring_of_integers' _ _ _ (by exact hpri) _
-  set ζ := zeta P ℤ R
-  have hζ := zeta_spec P ℤ R
+  set ζ := zeta p ℤ R
+  have hζ := zeta_spec p ℤ R
   intro H
   obtain ⟨k₁, k₂, hcong, hdiv⟩ := ex_fin_div hp5 hreg hζ hgcd caseI H
   have key : ↑(p : ℤ) ∣ ∑ j ∈ range p, f a b k₁ k₂ j • ζ ^ j := by

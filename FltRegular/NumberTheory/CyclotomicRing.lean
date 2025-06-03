@@ -14,14 +14,14 @@ instance : CommRing (CyclotomicIntegers p) := by delta CyclotomicIntegers; infer
 
 open Polynomial in
 lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
-    (x : 𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)) (hx : IsPrimitiveRoot x.1 p) :
+    (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot x.1 p) :
       minpoly ℤ x = cyclotomic p ℤ := by
   apply Polynomial.map_injective (algebraMap ℤ ℚ) (RingHom.injective_int (algebraMap ℤ ℚ))
-  rw [← minpoly.isIntegrallyClosed_eq_field_fractions ℚ (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ),
+  rw [← minpoly.isIntegrallyClosed_eq_field_fractions ℚ (CyclotomicField p ℚ),
     ← cyclotomic_eq_minpoly_rat (n := p), map_cyclotomic]
   · exact hx
   · exact hpri.out.pos
-  · exact IsIntegralClosure.isIntegral _ (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) _
+  · exact IsIntegralClosure.isIntegral _ (CyclotomicField p ℚ) _
 
 lemma AdjoinRoot.aeval_root {R} [CommRing R] (P : R[X]) : aeval (root P) P = 0 := by simp
 
@@ -33,10 +33,8 @@ namespace CyclotomicIntegers
 
 @[simps! -isSimp]
 def equiv :
-    CyclotomicIntegers p ≃+* 𝓞 (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ) := by
-  letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
-  have : Fact (Nat.Prime p') := hpri
-  have H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
+    CyclotomicIntegers p ≃+* 𝓞 (CyclotomicField p ℚ) := by
+  have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
   exact (AdjoinRoot.equivOfMinpolyEq (cyclotomic p ℤ) H.integralPowerBasis'
     (H.integralPowerBasis'_gen ▸ IsPrimitiveRoot.cyclotomic_eq_minpoly p H.toInteger H)).toRingEquiv
 
@@ -47,9 +45,7 @@ instance : IsDomain (CyclotomicIntegers p) :=
 def zeta : CyclotomicIntegers p := AdjoinRoot.root _
 
 lemma equiv_zeta : equiv p (zeta p) = (IsCyclotomicExtension.zeta_spec
-    ⟨p, hpri.out.pos⟩ ℚ (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)).toInteger := by
-  letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
-  have : Fact (Nat.Prime p') := hpri
+    p ℚ (CyclotomicField p ℚ)).toInteger := by
   rw [equiv_apply, zeta]
   simp only [AdjoinRoot.liftHom_root, IsPrimitiveRoot.integralPowerBasis'_gen]
 
@@ -59,9 +55,7 @@ lemma prime_one_sub_zeta :
   apply (MulEquiv.prime_iff (equiv p)).1
   simp only [RingEquiv.toMulEquiv_eq_coe, RingEquiv.coe_toMulEquiv,
     (equiv p).map_sub, (equiv p).map_one, equiv_zeta]
-  letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
-  have : Fact (Nat.Prime p') := hpri
-  have H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
+  have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
   exact H.zeta_sub_one_prime'
 
 lemma one_sub_zeta_mem_nonZeroDivisors :
@@ -73,9 +67,7 @@ lemma not_isUnit_one_sub_zeta :
     ¬ IsUnit (1 - zeta p) := (prime_one_sub_zeta p).irreducible.1
 
 lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
-  letI p' : ℕ+ := ⟨p, hpri.out.pos⟩
-  have : Fact (PNat.Prime p') := hpri
-  have H := IsCyclotomicExtension.zeta_spec p' ℚ (CyclotomicField p' ℚ)
+  have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
   rw [← map_dvd_iff (equiv p), map_sub, map_one, equiv_zeta, map_intCast,
     ← neg_dvd, neg_sub]
   exact zeta_sub_one_dvd_Int_iff H

@@ -9,10 +9,7 @@ namespace FltRegular
 
 variable {p : ℕ} (hpri : p.Prime)
 
-set_option quotPrecheck false
-local notation "P" => (⟨p, hpri.pos⟩ : ℕ+)
-
-local notation "K" => CyclotomicField P ℚ
+local notation "K" => CyclotomicField p ℚ
 
 local notation "R" => 𝓞 K
 
@@ -37,7 +34,7 @@ theorem aux_cong0k₁ {k : Fin p} (hcong : k ≡ -1 [ZMOD p]) :
 /-- Auxiliary function. -/
 def f0k₁ (b : ℤ) (p : ℕ) : ℕ → ℤ := fun x => if x = 1 then b else if x = p.pred then -b else 0
 
-theorem auxf0k₁ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : Fin P, f0k₁ b p (i : ℕ) = 0 := by
+theorem auxf0k₁ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : Fin p, f0k₁ b p (i : ℕ) = 0 := by
   refine ⟨⟨2, two_lt hp5⟩, ?_⟩
   have hpred : ((⟨2, two_lt hp5⟩ : Fin p) : ℕ) ≠ p.pred := by
     intro h
@@ -51,9 +48,10 @@ theorem auxf0k₁ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : Fin P, f0k₁ b p (i : ℕ
   apply hpred
   simp [h2]
 
+include hpri in
 theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
-    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : 0 ≠ (↑k₁ : ℕ) := by
+    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : 0 ≠ (k₁ : ℕ) := by
   symm
   intro habs
   rw [show (k₁ : ℤ) = 0 by simpa using habs, zero_sub] at hcong
@@ -67,8 +65,8 @@ theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
     simp [hpri.one_lt, Nat.sub_lt hpri.pos, sub_eq_add_neg]
   rw [sum_range] at key
   refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_left ?_ _) _)
-  replace hpri : (P : ℕ).Prime := hpri
-  simpa [f0k₁] using dvd_coeff_cycl_integer hpri hζ (auxf0k₁ hpri hp5 b) key ⟨1, hpri.one_lt⟩
+  have : NeZero p := ⟨hpri.ne_zero⟩
+  simpa [f0k₁] using dvd_coeff_cycl_integer hpri hζ (auxf0k₁ hp5 b) key ⟨1, hpri.one_lt⟩
 
 end Zerok₁
 
@@ -86,13 +84,13 @@ theorem aux_cong0k₂ {k : Fin p} (hcong : k ≡ 1 [ZMOD p]) : k = ⟨1, hpri.on
   haveI : Fact p.Prime := ⟨hpri⟩
   simp [ZMod.val_one]
 
-theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin P, f0k₂ a b (i : ℕ) = 0 :=
+theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin p, f0k₂ a b (i : ℕ) = 0 :=
   ⟨⟨2, two_lt hp5⟩, rfl⟩
 
+include hpri in
 theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p) (hab : ¬a ≡ b [ZMOD p])
     {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
     (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (0 : ℕ) ≠ ↑k₂ := by
-  haveI := (⟨hpri⟩ : Fact (P : ℕ).Prime)
   symm
   intro habs
   replace hcong := hcong.symm
@@ -110,8 +108,8 @@ theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ 
   refine hab ?_
   symm
   rw [← ZMod.intCast_eq_intCast_iff, ZMod.intCast_eq_intCast_iff_dvd_sub]
-  have hpri₁ : (P : ℕ).Prime := hpri
-  simpa [f0k₂] using dvd_coeff_cycl_integer hpri₁ hζ (auxf0k₂ hpri hp5 a b) key ⟨0, hpri.pos⟩
+  have : NeZero p := ⟨hpri.ne_zero⟩
+  simpa [f0k₂] using dvd_coeff_cycl_integer hpri hζ (auxf0k₂ hp5 a b) key ⟨0, hpri.pos⟩
 
 end Zerok₂
 
@@ -126,9 +124,10 @@ theorem aux_cong1k₁ {k : Fin p} (hcong : k ≡ 0 [ZMOD p]) : k = ⟨0, hpri.po
   haveI : Fact p.Prime := ⟨hpri⟩
   simp
 
+include hpri in
 theorem aux1k₁ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p) (hab : ¬a ≡ b [ZMOD p])
     {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
-    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (1 : ℕ) ≠ ↑k₁ := by
+    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (1 : ℕ) ≠ k₁ := by
   intro habs
   have h := aux0k₂ hpri hp5 hζ hab hcong hdiv
   rw [show (k₁ : ℤ) = 1 by simpa using habs.symm, sub_self] at hcong
@@ -158,13 +157,14 @@ theorem aux_cong1k₂ {k : Fin p} (hpri : p.Prime) (hp5 : 5 ≤ p) (hcong : k �
     Nat.mod_eq_of_lt]
   linarith
 
-theorem auxf1k₂ (a : ℤ) : ∃ i : Fin P, f1k₂ a (i : ℕ) = 0 :=
+include hpri in
+theorem auxf1k₂ (a : ℤ) : ∃ i : Fin p, f1k₂ a i = 0 :=
   ⟨⟨1, hpri.one_lt⟩, rfl⟩
 
+include hpri in
 theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
-    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (1 : ℕ) ≠ ↑k₂ := by
-  haveI := (⟨hpri⟩ : Fact (P : ℕ).Prime)
+    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (1 : ℕ) ≠ k₂ := by
   symm
   intro habs
   replace hcong := hcong.symm
@@ -183,8 +183,8 @@ theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
     ring
   rw [sum_range] at key
   refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ?_ _) _)
-  have hpri₁ : (P : ℕ).Prime := hpri
-  simpa [f1k₂] using dvd_coeff_cycl_integer hpri₁ hζ (auxf1k₂ hpri a) key ⟨0, hpri.pos⟩
+  have : NeZero p := ⟨hpri.ne_zero⟩
+  simpa [f1k₂] using dvd_coeff_cycl_integer hpri hζ (auxf1k₂ hpri a) key ⟨0, hpri.pos⟩
 
 end OnekTwo
 

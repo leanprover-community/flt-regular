@@ -7,7 +7,7 @@ import Mathlib.NumberTheory.NumberField.ClassNumber
 
 open scoped NumberField
 
-variable {K : Type*} {p : ℕ+} [hpri : Fact p.Prime] [Field K]
+variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K]
 
 open Polynomial Module
 

@@ -14,7 +14,7 @@ import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional NumberField
 
-variable {s r : ℕ} (p : ℕ+) {K : Type*} [Field K]
+variable {s r : ℕ} (p : ℕ) {K : Type*} [Field K]
 variable {k : Type*} [Field k] (hp : Nat.Prime p)
 
 open Module BigOperators Finset
@@ -26,7 +26,7 @@ variable (G : Type*) [AddCommGroup G]
 local notation3 "A" => CyclotomicIntegers p
 
 /-The system of units is maximal if the quotient by its span leaves a torsion module (i.e. finite) -/
-abbrev systemOfUnits.IsMaximal {p : ℕ+} {G : Type*} [AddCommGroup G]
+abbrev systemOfUnits.IsMaximal {p : ℕ} {G : Type*} [AddCommGroup G]
     [Module (CyclotomicIntegers p) G] (sys : systemOfUnits (G := G) p s) :=
   Fintype (G ⧸ Submodule.span (CyclotomicIntegers p) (Set.range sys.units))
 
@@ -230,16 +230,16 @@ lemma norm_eq_prod_pow_gen
 
 include hKL in
 lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k) (p ^ h))
-  (H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ν ^ ((p : ℕ) ^ (h - 1)) ≠ ε / (σ ε : K)) :
+  (H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ν ^ (p ^ (h - 1)) ≠ ε / (σ ε : K)) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ν : (𝓞 K)ˣ)
-  use η ^ ((p : ℕ) ^ (h - 1))
+  use η ^ (p ^ (h - 1))
   refine ⟨?_, fun ε => H ε⟩
   simp only [ge_iff_le, Units.val_pow_eq_pow_val, Units.coe_map,
     MonoidHom.coe_coe, SubmonoidClass.coe_pow, map_pow]
   show (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
   rw [Algebra.norm_algebraMap, hKL, ← pow_mul]
-  nth_rewrite 1 [← pow_one (p : ℕ)]
+  nth_rewrite 1 [← pow_one p]
   rw [← pow_add]
   apply (hν.pow_eq_one_iff_dvd _).2
   cases h <;> simp [add_comm]
@@ -390,7 +390,7 @@ theorem padicValNat_dvd_iff_le' {p : ℕ} (hp : p ≠ 1) {a n : ℕ} (ha : a ≠
     (Nat.finiteMultiplicity_iff.2
     ⟨hp, Nat.zero_lt_of_ne_zero ha⟩) h, fun h ↦ le_emultiplicity_of_le_multiplicity h⟩
 
-theorem padicValNat_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n : ℕ) (a : ℕ) :
+theorem padicValNat_dvd_iff' {p : ℕ} (hp : p ≠ 1) (n a : ℕ) :
     p ^ n ∣ a ↔ a = 0 ∨ n ≤ padicValNat p a := by
   rcases eq_or_ne a 0 with (rfl | ha)
   · exact iff_of_true (dvd_zero _) (Or.inl rfl)
@@ -432,7 +432,7 @@ lemma exists_pow_smul_eq_and_not_dvd
 
 include hp in
 lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
-    (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ν ^ i = ε)
+    (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n) = 1 → ∃ i, ν ^ i = ε)
     (r) (hr : finrank ℤ (Additive M) < r) (η : Fin r → Additive M) :
     ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
       ∑ i, ι i • η i = a • (Additive.ofMul ν) ∧ ¬ ↑p ∣ ι i := by
@@ -448,7 +448,7 @@ lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M
 
 include hp in
 lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
-    (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ν ^ i = ε)
+    (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n) = 1 → ∃ i, ν ^ i = ε)
     (r) (hr : finrank ℤ (Additive M) + 1 < r) (η : Fin r → Additive M) :
     ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
       ∑ i, ι i • (η i) = (a * p) • (Additive.ofMul ν) ∧ ¬ ↑p ∣ ι i ∧ (ν = 1 → ↑i ≠ r - 1) := by
@@ -506,7 +506,7 @@ lemma NumberField.Units.finrank_eq : finrank ℤ (Additive (𝓞 k)ˣ) = NumberF
 
 include hp in
 lemma lh_pow_free [FiniteDimensional k K] (ν: (𝓞 k)ˣ)
-    (hk : ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ν ^ i = ε)
+    (hk : ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n) = 1 → ∃ i, ν ^ i = ε)
     (η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ) :
     ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ) (i₀ : Fin (NumberField.Units.rank k + 2)),
       ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ν) ∧ ¬ ((p : ℤ) ∣ ι i₀) ∧
@@ -546,8 +546,8 @@ lemma Hilbert92_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ν : (𝓞 k
   rw [← map_zpow, Units.coe_map_inv]
   simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe]
   have hcoe1 :
-      algebraMap (𝓞 k) k (((ν ^ (p : ℕ)) ^ a)⁻¹).1 = ((((ν : 𝓞 k) : k) ^ (p : ℕ)) ^ a)⁻¹ := by
-    convert (Units.coe_map_inv ((algebraMap (𝓞 k) k) : (𝓞 k) →* k) ((ν ^ (p : ℕ)) ^ a)).symm
+      algebraMap (𝓞 k) k (((ν ^ p) ^ a)⁻¹).1 = ((((ν : 𝓞 k) : k) ^ p) ^ a)⁻¹ := by
+    convert (Units.coe_map_inv ((algebraMap (𝓞 k) k) : (𝓞 k) →* k) ((ν ^ p) ^ a)).symm
     simp
   rw [hcoe, RingOfInteger.coe_algebraMap_apply, Algebra.norm_algebraMap, hKL, ← map_pow,
     ← Units.val_pow_eq_pow_val, inv_pow, ← zpow_natCast, ← zpow_mul, mul_comm a, zpow_mul,
@@ -621,8 +621,8 @@ lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) : (mkG u) = (1 - zet
 include hKL hσ hp in
 /- If ν = E/σ E, then the norm of E is E^p -/
 lemma Hilbert92_aux2 (E : (𝓞 K)ˣ) (ν : k) (hE : algebraMap k K ν = E / σ E)
-  (hν : (ν : k) ^ (p : ℕ) = 1) (hpodd : (p : ℕ) ≠ 2) :
-    algebraMap k K (Algebra.norm k (S := K) E) = E ^ (p : ℕ) := by
+  (hν : (ν : k) ^ p = 1) (hpodd : p ≠ 2) :
+    algebraMap k K (Algebra.norm k (S := K) E) = E ^ p := by
   have h1 : ∀ (i : ℕ), (σ ^ i) E = ((algebraMap k K ν)⁻¹)^i * E := by
     intro i
     induction i with
@@ -631,7 +631,7 @@ lemma Hilbert92_aux2 (E : (𝓞 K)ˣ) (ν : k) (hE : algebraMap k K ν = E / σ 
     | succ n ih =>
       rw [pow_succ', AlgEquiv.mul_apply, ih, pow_succ']
       simp only [inv_pow, map_mul, map_inv₀, map_pow, AlgEquiv.commutes]
-      have h0 : (algebraMap k K) ν ≠ 0 := fun h ↦ by simp [(map_eq_zero _).1 h] at hν
+      have h0 : (algebraMap k K) ν ≠ 0 := fun h ↦ by simp [(map_eq_zero _).1 h, hp.ne_zero] at hν
       field_simp [h0]
       rw [← mul_assoc]
       congr
@@ -691,15 +691,16 @@ lemma IsPrimitiveRoot.coe_coe_iff {ν : (𝓞 k)ˣ} {n} :
 include hp in
 lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),
     IsPrimitiveRoot (ν : k) (p ^ h) ∧
-    ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n : ℕ) = 1 → ∃ i, ν ^ i = ε := by
+    ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n) = 1 → ∃ i, ν ^ i = ε := by
+  have : NeZero p := ⟨hp.ne_zero⟩
   classical
   let H := Subgroup.toAddSubgroup.symm
-    (Submodule.torsion' ℤ (Additive (𝓞 k)ˣ) (Submonoid.powers (p : ℕ))).toAddSubgroup
+    (Submodule.torsion' ℤ (Additive (𝓞 k)ˣ) (Submonoid.powers p)).toAddSubgroup
   have : H ≤ NumberField.Units.torsion k := by
-    rintro x ⟨⟨_, i, rfl⟩, hnx : x ^ (p ^ i : ℕ) = 1⟩
+    rintro x ⟨⟨_, i, rfl⟩, hnx : x ^ (p ^ i) = 1⟩
     exact isOfFinOrder_iff_pow_eq_one.mpr ⟨p ^ i, Fin.pos', hnx⟩
   obtain ⟨ν, hν⟩ := Subgroup.isCyclic_of_le this
-  obtain ⟨⟨_, i, rfl⟩, hiν : (ν : (𝓞 k)ˣ) ^ (p ^ i : ℕ) = 1⟩ := ν.prop
+  obtain ⟨⟨_, i, rfl⟩, hiν : (ν : (𝓞 k)ˣ) ^ (p ^ i) = 1⟩ := ν.prop
   obtain ⟨j, _, hj'⟩ := (Nat.dvd_prime_pow hp).mp (orderOf_dvd_of_pow_eq_one hiν)
   refine ⟨j, ν, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ν.1),
     fun ε n hn ↦ ?_⟩
@@ -718,19 +719,19 @@ lemma IsPrimitiveRoot.one_left_iff {M} [CommMonoid M] {n : ℕ} :
 
 include hp hKL hσ in
 -- TODO : remove `p ≠ 2`. The offending case is when `K = k[i]`.
-lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
+lemma almostHilbert92 (hpodd : p ≠ 2) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   classical
   obtain ⟨h, ν, hν, hν'⟩ := h_exists' p (k := k) hp
-  by_cases H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ν ^ ((p : ℕ)^(h - 1)) ≠ ε / (σ ε : K)
-  /- ν is ζ' in Hilbert, so their ζ is our ν ^ ((p : ℕ)^(h - 1))  -/
+  by_cases H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ν ^ (p^(h - 1)) ≠ ε / (σ ε : K)
+  /- ν is ζ' in Hilbert, so their ζ is our ν ^ (p^(h - 1))  -/
   · exact Hilbert92_aux0 p hKL σ h ν hν H
   simp only [ne_eq, not_forall, not_not] at H
   obtain ⟨E, hE⟩ := H
   let NE := Units.map (RingOfIntegers.norm k) E
   have hNE : (NE : k) = Algebra.norm k (E : K) := rfl
   obtain ⟨S, hS⟩ := Hilbert91 p (K := K) (k := k) hp hKL σ hσ
-  have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ (p : ℕ) := by
+  have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ p := by
     ext
     simp only [RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
       RingOfInteger.coe_algebraMap_apply, Units.val_pow_eq_pow_val, map_pow]
@@ -783,7 +784,7 @@ lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
         ext
         simpa only [Units.val_one, map_one, pow_zero, IsPrimitiveRoot.one_right_iff] using hν
       -- general case, h ≠ 0
-      obtain ⟨ε', hε'⟩ : ∃ ε' : (𝓞 k)ˣ, ε' ^ (p : ℕ) = NE := by
+      obtain ⟨ε', hε'⟩ : ∃ ε' : (𝓞 k)ˣ, ε' ^ p = NE := by
         --the norm of E now has to be a p-th power of a unit.
         rw [← (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd] at ha'
         obtain ⟨α, β, hαβ⟩ := ha'
@@ -796,7 +797,8 @@ lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
         conv_rhs at ha => rw [smul_comm β, ← smul_add]
         rw [smul_smul, smul_smul, ← add_smul, mul_comm _ α, hαβ, one_smul] at ha
         exact ⟨_, ha.symm⟩
-      have hν'' := (hν.pow (p ^ h.succ).pos (pow_succ _ _)).map_of_injective
+      have hpos: 0 < p ^ h.succ := pow_pos hp.pos _
+      have hν'' := (hν.pow hpos (pow_succ _ _)).map_of_injective
         (algebraMap k K).injective
       obtain ⟨ε'', hε''⟩ : -- now it means the E must be a unit in k (Not just K).
           ∃ ε'' : (𝓞 k)ˣ, E = Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ε'' := by
@@ -806,16 +808,16 @@ lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
           Units.coe_map_inv, MonoidHom.coe_coe, SubmonoidClass.coe_pow, Submonoid.coe_mul,
           Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, Units.val_one,
           OneMemClass.coe_one, RingOfInteger.coe_algebraMap_apply] at NE_p_pow
-        have : NeZero p.1 := ⟨hp.pos.ne'⟩
+        have : NeZero p := ⟨hp.pos.ne'⟩
         obtain ⟨i, -, e⟩ := hν''.eq_pow_of_pow_eq_one NE_p_pow
-        use ((ν ^ (p : ℕ) ^ h) ^ i * ε')
+        use ((ν ^ p ^ h) ^ i * ε')
         rw [map_mul, ← mul_inv_eq_iff_eq_mul]
         ext
         simpa using e.symm
       simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, ← map_pow, hε'', RingHom.toMonoidHom_eq_coe,
         Units.coe_map, MonoidHom.coe_coe, RingOfInteger.coe_algebraMap_apply,
         AlgEquiv.commutes] at hE
-      replace hE : (algebraMap k K) (((ν : 𝓞 k) : k) ^ (p : ℕ) ^ h) = 1 := by
+      replace hE : (algebraMap k K) (((ν : 𝓞 k) : k) ^ p ^ h) = 1 := by
        rwa [div_self (by simp)] at hE
       erw [hE] at hν'' --why?
       rw [IsPrimitiveRoot.one_left_iff] at hν''
@@ -830,7 +832,7 @@ lemma almostHilbert92 (hpodd : (p : ℕ) ≠ 2) :
       apply_fun mkG at NE_p_pow
       simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map, unit_to_U_pow] at NE_p_pow
       rw [eq_comm, smul_eq_zero] at NE_p_pow
-      simp only [Nat.cast_eq_zero, PNat.ne_zero, false_or] at NE_p_pow
+      simp only [hp.ne_zero, false_or] at NE_p_pow
       rw [NE_p_pow, smul_zero]
 
 end application
@@ -841,6 +843,6 @@ lemma Hilbert92 [Algebra k K] [IsGalois k K] [NumberField k] [NumberField K]
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) :=
   have := IsUnramifiedAtInfinitePlaces_of_odd_finrank (hKL.odd_of_ne_two hpodd)
   have : IsCyclic (K ≃ₐ[k] K) := ⟨σ, hσ⟩
-  almostHilbert92 ⟨finrank k K, finrank_pos⟩ hKL rfl σ hσ hpodd
+  almostHilbert92 (finrank k K) hKL rfl σ hσ hpodd
 
 end thm91

@@ -14,24 +14,17 @@ import Mathlib.NumberTheory.Cyclotomic.PID
 
 -/
 
-
 noncomputable section
 
-open Nat Polynomial
+open Nat Polynomial NumberField
 
-open NumberField
+open scoped NumberField
 
-open scoped Classical NumberField
-
-
-variable (n p : ℕ) [Fact p.Prime]
-
-instance {p : ℕ} [hp : Fact p.Prime] : Fact (0 < p) :=
-  ⟨hp.out.pos⟩
+variable (n p : ℕ) [hp : Fact p.Prime]
 
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
-def IsRegularNumber [hn : Fact (0 < n)] : Prop :=
-  n.Coprime <| Fintype.card <| ClassGroup (𝓞 <| CyclotomicField ⟨n, hn.out⟩ ℚ)
+def IsRegularNumber [NeZero n] : Prop :=
+  n.Coprime <| Fintype.card <| ClassGroup (𝓞 <| CyclotomicField n ℚ)
 
 /-- The definition of regular primes. -/
 def IsRegularPrime : Prop :=
@@ -54,7 +47,6 @@ def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := b
   exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (RingHom.id K) (-1),
     by simp [eq_iff_true_of_subsingleton]⟩
 
-
 instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
   (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
     IsPrincipalIdealRing (𝓞 L) := by
@@ -71,17 +63,17 @@ instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
   let F : 𝓞 L ≃+* ℤ := NumberField.RingOfIntegers.equiv _
   exact IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
 
-instance : IsCyclotomicExtension {2} ℚ (CyclotomicField (⟨2, two_pos⟩ : ℕ+) ℚ) :=
+instance : IsCyclotomicExtension {2} ℚ (CyclotomicField 2 ℚ) :=
 CyclotomicField.isCyclotomicExtension 2 ℚ
 
-instance : IsPrincipalIdealRing (𝓞 (CyclotomicField (⟨2, two_pos⟩ : ℕ+) ℚ)) :=
+instance : IsPrincipalIdealRing (𝓞 (CyclotomicField 2 ℚ)) :=
 IsPrincipalIdealRing_of_IsCyclotomicExtension_two _
 
 theorem isRegularPrime_two : IsRegularPrime 2 := by
   rw [IsRegularPrime, IsRegularNumber]
   convert coprime_one_right _
   dsimp
-  apply (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField (⟨2, two_pos⟩ : ℕ+) ℚ))).2
+  apply (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField 2 ℚ))).2
   infer_instance
 
 theorem isRegularPrime_three :
@@ -103,8 +95,8 @@ theorem isPrincipal_of_isPrincipal_pow_of_coprime
   · rw [Izero]
     exact bot_isPrincipal
   rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero _)] at hI ⊢
-  swap; · exact Izero
-  swap; · exact pow_ne_zero p Izero
+  swap; exact Izero
+  swap; exact pow_ne_zero p Izero
   rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
   refine ⟨?_, orderOf_dvd_card⟩
   rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]

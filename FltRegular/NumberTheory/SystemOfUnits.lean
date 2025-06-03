@@ -6,7 +6,7 @@ import Mathlib.LinearAlgebra.Dimension.Localization
 open FiniteDimensional
 open NumberField
 
-variable (p : ℕ+) {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
+variable (p : ℕ) {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
 variable {k : Type*} [Field k] [NumberField k] (hp : Nat.Prime p)
 
 open Module BigOperators Finset
@@ -16,7 +16,7 @@ variable
   (G : Type*) {H : Type*} [AddCommGroup G] (s : ℕ)
   (hf : finrank ℤ G = s * (p - 1))
 
-local notation "A" => (CyclotomicIntegers (PNat.val p))
+local notation "A" => (CyclotomicIntegers p)
 
 section
 
@@ -30,7 +30,7 @@ structure systemOfUnits (s : ℕ)
 namespace systemOfUnits
 
 lemma existence0 : Nonempty (systemOfUnits p G 0) := by
-    exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
+  exact ⟨⟨fun _ => 0, linearIndependent_empty_type⟩⟩
 
 theorem _root_.PowerBasis.finrank' {R S} [CommRing R] [Nontrivial R] [CommRing S] [Algebra R S]
     (pb : PowerBasis R S) : finrank R S = pb.dim := by
