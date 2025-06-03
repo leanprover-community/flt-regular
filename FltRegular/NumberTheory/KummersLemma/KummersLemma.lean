@@ -38,7 +38,7 @@ theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
 theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     (hcong : ∃ n : ℤ, (p : 𝓞 K) ∣ (u - n : 𝓞 K)) :
     ∃ v, u = v ^ (p : ℕ) := by
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root ℚ (B := K) (Set.mem_singleton p)
+  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot ℚ (B := K) (Set.mem_singleton p)
   obtain ⟨x, hx⟩ : (p : 𝓞 K) ∣ (↑(u ^ (p - 1 : ℕ)) : 𝓞 K) - 1 := by
     obtain ⟨n, hn⟩ := hcong
     have hn' : (p : ℤ) ∣ n ^ (p - 1 : ℕ) - 1 := by

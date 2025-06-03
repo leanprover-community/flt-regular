@@ -51,7 +51,7 @@ lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRe
     (hodd : p ≠ 2) : ¬∃ (x y z : ℤ), ¬↑p ∣ y ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
   haveI : Fact (PNat.Prime ⟨p, hpri.out.pos⟩) := hpri
   haveI := CyclotomicField.isCyclotomicExtension ⟨p, hpri.out.pos⟩ ℚ
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_prim_root
+  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot
     ℚ (B := (CyclotomicField ⟨p, hpri.out.pos⟩ ℚ)) (Set.mem_singleton (⟨p, hpri.out.pos⟩ : ℕ+))
   have hodd' : (⟨p, hpri.out.pos⟩ : ℕ+) ≠ (2 : ℕ+) := by
     rwa [← PNat.coe_injective.ne_iff]
