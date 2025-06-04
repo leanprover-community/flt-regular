@@ -329,7 +329,7 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
 
 @[nolint unusedArguments]
 def relativeUnitsWithGenerator (_hp : Nat.Prime p)
-  (_hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (_hσ : ∀ x, x ∈ Subgroup.zpowers σ) : Type _ :=
+  (_hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (_hσ : ∀ x, x ∈ Subgroup.zpowers σ) :=
   RelativeUnits k K
 
 instance : CommGroup (relativeUnitsWithGenerator p hp hKL σ hσ) := by

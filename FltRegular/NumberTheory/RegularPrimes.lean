@@ -48,7 +48,7 @@ def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := b
     by simp [eq_iff_true_of_subsingleton]⟩
 
 instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
-  (L : Type _) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
+  (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
     IsPrincipalIdealRing (𝓞 L) := by
   haveI : IsIntegralClosure ℤ ℤ L :=
     { algebraMap_injective' := (algebraMap ℤ L).injective_int
