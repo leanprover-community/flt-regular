@@ -95,8 +95,10 @@ theorem isPrincipal_of_isPrincipal_pow_of_coprime
   · rw [Izero]
     exact bot_isPrincipal
   rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero _)] at hI ⊢
-  swap; exact Izero
-  swap; exact pow_ne_zero p Izero
-  rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
-  refine ⟨?_, orderOf_dvd_card⟩
-  rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]
+  swap
+  · exact Izero
+  swap
+  · exact pow_ne_zero p Izero
+  · rw [← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
+    refine ⟨?_, orderOf_dvd_card⟩
+    rwa [orderOf_dvd_iff_pow_eq_one, ← map_pow, SubmonoidClass.mk_pow]

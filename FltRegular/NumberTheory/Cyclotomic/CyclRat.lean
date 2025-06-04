@@ -77,28 +77,28 @@ theorem mem_fltIdeals [Fact p.Prime] (x y : ℤ) {η : R} (hη : η ∈ nthRoots
 
 theorem Ideal.le_add {S : Type*} [CommRing S] (a b c d : Ideal S) (hab : a ≤ b) (hcd : c ≤ d) :
     a + c ≤ b + d := by
-  simp at *
+  simp only [Submodule.add_eq_sup, sup_le_iff]
   constructor
-  apply le_trans hab (@le_sup_left _ _ _ _)
-  apply le_trans hcd (@le_sup_right _ _ _ _)
+  · apply le_trans hab (@le_sup_left _ _ _ _)
+  · apply le_trans hcd (@le_sup_right _ _ _ _)
 
 theorem not_coprime_not_top {S : Type*} [CommRing S] (a b : Ideal S) :
     ¬IsCoprime a b ↔ a + b ≠ ⊤ := by
   apply not_congr
   rw [IsCoprime]
   constructor
-  intro h
-  obtain ⟨x, y, hxy⟩ := h
-  rw [eq_top_iff_one]
-  have h2 : x * a + y * b ≤ a + b := by apply Ideal.le_add; all_goals apply mul_le_left
-  apply h2
-  rw [hxy]
-  simp
-  intro h
-  refine ⟨1, 1, ?_⟩
-  simp only [one_eq_top, top_mul, Submodule.add_eq_sup, ge_iff_le]
-  rw [← h]
-  rfl
+  · intro h
+    obtain ⟨x, y, hxy⟩ := h
+    rw [eq_top_iff_one]
+    have h2 : x * a + y * b ≤ a + b := by apply Ideal.le_add; all_goals apply mul_le_left
+    apply h2
+    rw [hxy]
+    simp
+  · intro h
+    refine ⟨1, 1, ?_⟩
+    simp only [one_eq_top, top_mul, Submodule.add_eq_sup, ge_iff_le]
+    rw [← h]
+    rfl
 
 open IsPrimitiveRoot
 
@@ -136,10 +136,10 @@ theorem isPrimitiveRoot_of_mem_nthRootsFinset [Fact p.Prime] {η : R}
   obtain ⟨a, ha, h2⟩ := hη
   have ha2 : a = p := by
     rw [Nat.Prime.divisors (Fact.out : Nat.Prime p), mem_insert, mem_singleton] at ha
-    cases' ha with ha ha
+    rcases ha with ha | ha
     · exfalso
       rw [ha] at h2
-      simp at h2
+      simp only [primitiveRoots_one, mem_singleton] at h2
       rw [h2] at hne1
       exact hne1 rfl
     · exact ha
@@ -262,7 +262,7 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
         rw [← hηP]
         apply le_comap_of_map_le _
         rw [map_span]
-        simp
+        simp only [eq_intCast, Set.image_singleton, Int.cast_natCast]
         rw [span_singleton_le_span_singleton]
         apply zeta_sub_one_dvb_p ph hη₁ hwlog
       have H2 : IsPrime (P.comap (Int.castRingHom R)) := by
@@ -284,19 +284,19 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
     have hxyinP2 : x + y ∈ Ideal.span ({(p : ℤ)} : Set ℤ) := by rw [← hcapZ]; simp [hxyinP]
     rw [mem_span_singleton] at hxyinP2
     apply absurd hxyinP2 hp2
-  cases' hprime2 with hprime2 hprime2
-  cases' hprime3 with hprime3 hprime3
-  obtain ⟨a, b, hab⟩ := hp
-  have hone := P.add_mem (Ideal.mul_mem_left P a hprime3) (Ideal.mul_mem_left P b hprime2)
-  norm_cast at hone
-  rw [hab] at hone
-  norm_cast at hone
-  rw [← eq_top_iff_one] at hone
-  have hcontra := IsPrime.ne_top hPrime
-  rw [hone] at hcontra
-  simp only [Ne, eq_self_iff_true, not_true] at hcontra
-  apply HC hprime3
-  apply HC hprime2
+  rcases hprime2 with hprime2 | hprime2
+  · rcases hprime3 with hprime3 | hprime3
+    · obtain ⟨a, b, hab⟩ := hp
+      have hone := P.add_mem (Ideal.mul_mem_left P a hprime3) (Ideal.mul_mem_left P b hprime2)
+      norm_cast at hone
+      rw [hab] at hone
+      norm_cast at hone
+      rw [← eq_top_iff_one] at hone
+      have hcontra := IsPrime.ne_top hPrime
+      rw [hone] at hcontra
+      simp only [Ne, eq_self_iff_true, not_true] at hcontra
+    apply HC hprime3
+  · apply HC hprime2
 
 theorem fltIdeals_coprime2 [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1)
@@ -315,14 +315,14 @@ theorem fltIdeals_coprime (hpri : p.Prime) (p5 : 5 ≤ p) {x y z : ℤ}
     IsCoprime (fltIdeals p x y hη₁) (fltIdeals p x y hη₂) := by
   have : Fact p.Prime := ⟨hpri⟩
   by_cases h : η₁ ≠ 1
-  apply fltIdeals_coprime2 p5 hη₁ hη₂ hdiff hxy (aux_lem_flt H caseI) h
-  have h2 : η₂ ≠ 1 := by
-    simp at h
-    rw [h] at hdiff
-    exact hdiff.symm
-  have := fltIdeals_coprime2 p5 hη₂ hη₁ hdiff.symm hxy (aux_lem_flt H caseI) h2
-  apply IsCoprime.symm
-  exact this
+  · apply fltIdeals_coprime2 p5 hη₁ hη₂ hdiff hxy (aux_lem_flt H caseI) h
+  · have h2 : η₂ ≠ 1 := by
+      simp only [ne_eq, not_not] at h
+      rw [h] at hdiff
+      exact hdiff.symm
+    have := fltIdeals_coprime2 p5 hη₂ hη₁ hdiff.symm hxy (aux_lem_flt H caseI) h2
+    apply IsCoprime.symm
+    exact this
 
 variable {L}
 

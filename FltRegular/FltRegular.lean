@@ -13,5 +13,5 @@ theorem flt_regular {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) (hodd : p
   obtain ⟨e', hgcd, hprod'⟩ := MayAssume.coprime e hprod
   let d := ({a, b, c} : Finset ℤ).gcd id
   by_cases case : ↑p ∣ (a / d) * (b / d) * (c / d)
-  exact caseII hreg hodd hprod' hgcd case e'
-  exact caseI hreg case e'
+  · exact caseII hreg hodd hprod' hgcd case e'
+  · exact caseI hreg case e'

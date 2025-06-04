@@ -87,22 +87,22 @@ theorem caseII {a b c : ℤ} {p : ℕ} [hpri : Fact p.Prime] (hreg : IsRegularPr
   simp only [ne_eq, mul_eq_zero, not_or] at hprod
   obtain ⟨⟨a0, b0⟩, c0⟩ := hprod
   have hodd' := Nat.Prime.odd_of_ne_two hpri.out hodd
-  obtain (hab|hc) := (Nat.prime_iff_prime_int.mp hpri.out).dvd_or_dvd caseII
-  obtain (ha|hb) := (Nat.prime_iff_prime_int.mp hpri.out).dvd_or_dvd hab
-  · refine not_exists_Int_solution' hreg hodd ⟨b, -c, -a, ?_, ?_, ?_, ?_⟩
-    · simp only [← hgcd, Finset.mem_singleton, Finset.mem_insert, neg_inj, Finset.gcd_insert, id_eq,
-        ← Int.coe_gcd, Int.neg_gcd, Nat.cast_inj, ← LawfulSingleton.insert_empty_eq,
-          Finset.gcd_empty, Int.gcd_left_comm _ a]
-    · rwa [dvd_neg]
-    · rwa [ne_eq, neg_eq_zero]
-    · simp [hodd'.neg_pow, ← e]
-  · refine not_exists_Int_solution' hreg hodd ⟨-c, a, -b, ?_, ?_, ?_, ?_⟩
-    · simp only [← hgcd, Finset.mem_singleton, Finset.mem_insert, neg_inj, Finset.gcd_insert, id_eq,
-        ← Int.coe_gcd, Int.neg_gcd, Nat.cast_inj, ← LawfulSingleton.insert_empty_eq,
+  obtain hab | hc := (Nat.prime_iff_prime_int.mp hpri.out).dvd_or_dvd caseII
+  · obtain ha| hb := (Nat.prime_iff_prime_int.mp hpri.out).dvd_or_dvd hab
+    · refine not_exists_Int_solution' hreg hodd ⟨b, -c, -a, ?_, ?_, ?_, ?_⟩
+      · simp only [← hgcd, Finset.mem_singleton, Finset.mem_insert, neg_inj, Finset.gcd_insert,
+          id_eq, ← Int.coe_gcd, Int.neg_gcd, Nat.cast_inj, ← LawfulSingleton.insert_empty_eq,
+            Finset.gcd_empty, Int.gcd_left_comm _ a]
+      · rwa [dvd_neg]
+      · rwa [ne_eq, neg_eq_zero]
+      · simp [hodd'.neg_pow, ← e]
+    · refine not_exists_Int_solution' hreg hodd ⟨-c, a, -b, ?_, ?_, ?_, ?_⟩
+      · simp only [← hgcd, Finset.mem_singleton, Finset.mem_insert, neg_inj, Finset.gcd_insert,
+          id_eq, ← Int.coe_gcd, Int.neg_gcd, Nat.cast_inj, ← LawfulSingleton.insert_empty_eq,
           Finset.gcd_empty, Int.gcd_left_comm _ c]
-    · rwa [dvd_neg]
-    · rwa [ne_eq, neg_eq_zero]
-    · simp [hodd'.neg_pow, ← e]
+      · rwa [dvd_neg]
+      · rwa [ne_eq, neg_eq_zero]
+      · simp [hodd'.neg_pow, ← e]
   · exact not_exists_Int_solution' hreg hodd ⟨a, b, c, hgcd, hc, c0, e⟩
 
 end FltRegular

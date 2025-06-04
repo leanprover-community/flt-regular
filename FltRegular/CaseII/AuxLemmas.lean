@@ -46,7 +46,8 @@ lemma dvd_iff_emultiplicity_le {M : Type*}
       rw [emultiplicity_mul hq, emultiplicity_mul hq,
         FiniteMultiplicity.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
           ⟨hq.not_unit, hb.2⟩), FiniteMultiplicity.emultiplicity_eq_multiplicity
-          (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, ha.2⟩), FiniteMultiplicity.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
+          (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, ha.2⟩),
+          FiniteMultiplicity.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
           ⟨hq.not_unit, hq.ne_zero⟩), multiplicity_self, ← Nat.cast_add, ← Nat.cast_add,
           Nat.cast_le, add_comm, add_le_add_iff_left] at this
       exact le_emultiplicity_of_le_multiplicity this

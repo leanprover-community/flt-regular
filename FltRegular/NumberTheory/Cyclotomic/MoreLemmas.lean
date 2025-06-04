@@ -123,6 +123,7 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
   · rw [mem_nthRootsFinset (NeZero.pos p), hζ.unit'_coe.pow_eq_one]
 
 set_option synthInstance.maxHeartbeats 80000 in
+-- Needed for `AddMonoidHomClass (𝓞 K →+* 𝓞 K ⧸ Ideal.span {↑hζ.unit' - 1}) ? ?`
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1) • x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K

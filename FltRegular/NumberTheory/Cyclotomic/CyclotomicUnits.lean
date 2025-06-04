@@ -61,82 +61,81 @@ theorem IsPrimitiveRoot.sum_pow_unit {n k : ℕ} {ζ : A} (hn : 2 ≤ n) (hk : k
     (hζ : IsPrimitiveRoot ζ n) : IsUnit (∑ i ∈ range k, ζ ^ i) := by
   have h1 : (1 : ℕ).Coprime n := Nat.coprime_one_left n
   have := associated_one_sub_pow_primitive_root_of_coprime _ hζ hk h1
-  simp at this
+  simp only [pow_one] at this
   rw [Associated] at this
   have h2 := mul_neg_geom_sum ζ k
   obtain ⟨u, hu⟩ := this
   have := u.isUnit
   convert this
   rw [← hu] at h2
-  simp at h2
-  cases' h2 with h2 h2
-  exact h2
-  exfalso
-  have hn1 : 1 < n := by linarith
-  have hp := IsPrimitiveRoot.pow_ne_one_of_pos_of_lt hζ one_pos hn1
-  simp at *
-  rw [sub_eq_zero] at h2
-  rw [← h2] at hp
-  simp only [eq_self_iff_true, not_true] at hp
+  simp only [mul_eq_mul_left_iff] at h2
+  rcases h2 with h2 | h2
+  · exact h2
+  · exfalso
+    have hn1 : 1 < n := by linarith
+    have hp := IsPrimitiveRoot.pow_ne_one_of_pos_of_lt hζ one_pos hn1
+    rw [sub_eq_zero] at h2
+    rw [← h2] at hp
+    simp at hp
 
 theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A} (hn : 2 ≤ p)
     (hp : p.Prime) (hi : i < p) (hj : j < p) (hij : i ≠ j) (hζ : IsPrimitiveRoot ζ p) :
     ∃ u : Aˣ, ζ ^ i - ζ ^ j = u * (1 - ζ) := by
   by_cases hilj : j < i
-  have h1 : ζ ^ i - ζ ^ j = ζ ^ j * (ζ ^ (i - j) - 1) := by
-    ring_nf
-    rw [pow_mul_pow_sub _ hilj.le]
-    rw [add_comm]
+  · have h1 : ζ ^ i - ζ ^ j = ζ ^ j * (ζ ^ (i - j) - 1) := by
+      ring_nf
+      rw [pow_mul_pow_sub _ hilj.le]
+      rw [add_comm]
+      ring
+    rw [h1]
+    have h2 := mul_neg_geom_sum ζ (i - j)
+    have hic : (i - j).Coprime p := by
+      rw [Nat.coprime_comm]; apply Nat.coprime_of_lt_prime _ _ hp
+      apply Nat.sub_pos_of_lt hilj
+      by_cases hj : 0 < j
+      apply lt_trans _ hi
+      apply Nat.sub_lt_of_pos_le hj hilj.le
+      simp only [not_lt, _root_.le_zero_iff] at hj
+      rw [hj]
+      simp only [tsub_zero]
+      exact hi
+    have h3 : IsUnit (-ζ ^ j * ∑ k ∈ range (i - j), ζ ^ k) := by
+      apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hic hζ); apply IsUnit.neg
+      apply IsUnit.pow; apply hζ.isUnit hp.pos
+    obtain ⟨v, hv⟩ := h3
+    use v
+    rw [hv]
+    rw [mul_comm] at h2
+    rw [mul_assoc]
+    rw [h2]
     ring
-  rw [h1]
-  have h2 := mul_neg_geom_sum ζ (i - j)
-  have hic : (i - j).Coprime p := by
-    rw [Nat.coprime_comm]; apply Nat.coprime_of_lt_prime _ _ hp
-    apply Nat.sub_pos_of_lt hilj
-    by_cases hj : 0 < j
-    apply lt_trans _ hi
-    apply Nat.sub_lt_of_pos_le hj hilj.le
-    simp only [not_lt, _root_.le_zero_iff] at hj
-    rw [hj]
-    simp only [tsub_zero]
-    exact hi
-  have h3 : IsUnit (-ζ ^ j * ∑ k ∈ range (i - j), ζ ^ k) := by
-    apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hic hζ); apply IsUnit.neg
-    apply IsUnit.pow; apply hζ.isUnit hp.pos
-  obtain ⟨v, hv⟩ := h3
-  use v
-  rw [hv]
-  rw [mul_comm] at h2
-  rw [mul_assoc]
-  rw [h2]
-  ring
-  simp at *
-  have h1 : ζ ^ i - ζ ^ j = ζ ^ i * (1 - ζ ^ (j - i)) := by
-    ring_nf
-    simp; rw [pow_mul_pow_sub _ hilj]
-  rw [h1]
-  have h2 := mul_neg_geom_sum ζ (j - i)
-  have hjc : (j - i).Coprime p := by
-    rw [Nat.coprime_comm]
-    apply Nat.coprime_of_lt_prime _ _ hp
-    have hilj' : i < j := by rw [lt_iff_le_and_ne]; simp [hij, hilj]
-    apply Nat.sub_pos_of_lt hilj'
-    by_cases hii : 0 < i
-    apply lt_trans _ hj
-    apply Nat.sub_lt_of_pos_le hii hilj
-    simp only [not_lt, _root_.le_zero_iff] at hii
-    rw [hii]
-    simp only [tsub_zero]
-    exact hj
-  have h3 : IsUnit (ζ ^ i * ∑ k ∈ range (j - i), ζ ^ k) := by
-    apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hjc hζ); apply IsUnit.pow
-    apply hζ.isUnit hp.pos
-  obtain ⟨v, hv⟩ := h3
-  use v
-  rw [hv]
-  rw [mul_comm] at h2
-  rw [mul_assoc]
-  rw [h2]
+  · simp only [ne_eq, not_lt] at hij hilj
+    have h1 : ζ ^ i - ζ ^ j = ζ ^ i * (1 - ζ ^ (j - i)) := by
+      ring_nf
+      rw [sub_right_inj, pow_mul_pow_sub _ hilj]
+    rw [h1]
+    have h2 := mul_neg_geom_sum ζ (j - i)
+    have hjc : (j - i).Coprime p := by
+      rw [Nat.coprime_comm]
+      apply Nat.coprime_of_lt_prime _ _ hp
+      have hilj' : i < j := by rw [lt_iff_le_and_ne]; simp [hij, hilj]
+      apply Nat.sub_pos_of_lt hilj'
+      by_cases hii : 0 < i
+      apply lt_trans _ hj
+      apply Nat.sub_lt_of_pos_le hii hilj
+      simp only [not_lt, _root_.le_zero_iff] at hii
+      rw [hii]
+      simp only [tsub_zero]
+      exact hj
+    have h3 : IsUnit (ζ ^ i * ∑ k ∈ range (j - i), ζ ^ k) := by
+      apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hjc hζ); apply IsUnit.pow
+      apply hζ.isUnit hp.pos
+    obtain ⟨v, hv⟩ := h3
+    use v
+    rw [hv]
+    rw [mul_comm] at h2
+    rw [mul_assoc]
+    rw [h2]
 
 end CyclotomicUnit
 

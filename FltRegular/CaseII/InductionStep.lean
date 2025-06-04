@@ -72,8 +72,8 @@ lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
     simp_rw [mul_comm _ y]
     exact Finset.dvd_prod_of_mem _ η.prop
   rw [hη, zero_dvd_iff, e] at this
-  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff (NeZero.ne p), add_pos_iff, or_true, false_or]
-    at this
+  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff (NeZero.ne p), add_pos_iff, or_true,
+    false_or] at this
   rw [this.resolve_left (pow_ne_zero (m + 1) (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt))] at hz
   exact hz (dvd_zero _)
 
@@ -257,12 +257,11 @@ lemma prod_c : ∏ η ∈ Finset.attach (nthRootsFinset p (1 : 𝓞 K)), 𝔠 η
 
 /-each 𝔠 η is a pth power, which will be denoted by 𝔞 η below. -/
 lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ p := by
-  letI inst1 : @IsDomain (Ideal (𝓞 K)) CommSemiring.toSemiring := @Ideal.isDomain (𝓞 K) _ _
-  letI inst2 := @Ideal.instNormalizedGCDMonoid (𝓞 K) _ _
-  letI inst3 := @NormalizedGCDMonoid.toGCDMonoid _ _ inst2
+  let inst1 : @IsDomain (Ideal (𝓞 K)) CommSemiring.toSemiring := @Ideal.isDomain (𝓞 K) _ _
+  let inst2 := @Ideal.instNormalizedGCDMonoid (𝓞 K) _ _
+  let inst3 := @NormalizedGCDMonoid.toGCDMonoid _ _ inst2
   exact @Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (nthRootsFinset p (1 : 𝓞 K)) (Ideal (𝓞 K)) _
-    (by convert inst1) (by convert inst3) _ _ _ _ _
-    (λ η₁ _ η₂ _ hη ↦ coprime_c hp hζ e hy η₁ η₂ hη)
+    inst1 inst3 _ _ _ _ _ (fun η₁ _ η₂ _ hη ↦ coprime_c hp hζ e hy η₁ η₂ hη)
     (prod_c hp hζ e hy) η (Finset.mem_attach _ _)
 
 noncomputable
@@ -356,9 +355,9 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
   have := this.trans (Finset.dvd_prod_of_mem 𝔠 (Finset.mem_attach _ η₀))
   rw [prod_c, mul_pow, mul_pow, mul_comm, mul_dvd_mul_iff_right,
     pow_dvd_pow_iff_dvd hpri.out.ne_zero] at this
-  apply hz
-  rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton, z_div_m_spec hζ e hy]
-  exact this.trans (dvd_mul_left _ _)
+  · apply hz
+    rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton, z_div_m_spec hζ e hy]
+    exact this.trans (dvd_mul_left _ _)
   · apply mt pow_eq_zero
     apply mt pow_eq_zero
     rw [Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
@@ -410,8 +409,8 @@ lemma isPrincipal_a_div_a_zero :
   obtain ⟨a, ha⟩ := this
   rw [div_eq_iff, Ideal.span_singleton_pow, FractionalIdeal.coeIdeal_span_singleton,
     FractionalIdeal.spanSingleton_mul_spanSingleton] at ha
-  rw [FractionalIdeal.isPrincipal_iff]
-  exact ⟨_, ha⟩
+  · rw [FractionalIdeal.isPrincipal_iff]
+    exact ⟨_, ha⟩
   · rw [← FractionalIdeal.coeIdeal_bot,
       (FractionalIdeal.coeIdeal_injective' (le_rfl : (𝓞 K)⁰ ≤ (𝓞 K)⁰)).ne_iff]
     apply mt pow_eq_zero

@@ -83,41 +83,42 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
   conv_lhs => rw [← associated_iff_eq.mp (factors_pow_count_prod hIbot)]
   rw [← Finset.prod_fiberwise_of_maps_to (g := (Ideal.comap (algebraMap R S) : Ideal S → Ideal R))
     (t := (factors (I.comap (algebraMap R S))).toFinset)]
-  apply Finset.prod_congr rfl
-  intros p hp
-  simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
-    Ideal.mem_normalizedFactors_iff hIbot'] at hp
-  have hpbot : p ≠ ⊥ := fun hp' ↦ hIbot' (eq_bot_iff.mpr (hp.2.trans_eq hp'))
-  have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective hRS).not.mpr hpbot
-  have := hp.1
-  rw [← prod_primesOverFinset_of_isUnramified p hpbot, ← Finset.prod_pow]
-  have : p.IsMaximal := Ring.DimensionLEOne.maximalOfPrime hpbot this
-  apply Finset.prod_congr
-  · ext P
-    rw [factors_eq_normalizedFactors, Finset.mem_filter, Multiset.mem_toFinset,
-      Ideal.mem_normalizedFactors_iff hIbot, ← Finset.mem_coe, coe_primesOverFinset hpbot S]
-    refine ⟨fun H ↦ ⟨H.1.1, ⟨H.2.symm⟩⟩, fun H ↦ ⟨⟨H.1, ?_⟩, ?_⟩⟩
-    · have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) H
-      rw [← hσ, ← hI σ]
-      exact Ideal.comap_mono (h𝔓 _ hp)
-    · have := H.2.1
-      rw [Ideal.under_def] at this
-      exact this.symm
-  · intro P hP
-    rw [← Finset.mem_coe, coe_primesOverFinset hpbot S] at hP
-    congr
-    rw [dif_pos hp, ← Nat.cast_inj (R := ENat), ← normalize_eq P, factors_eq_normalizedFactors,
-      ← emultiplicity_eq_count_normalizedFactors
-        (prime_of_mem_primesOver hpbot hP).irreducible hIbot,
-      ← normalize_eq (𝔓 p hp), ← emultiplicity_eq_count_normalizedFactors
-        (prime_of_mem_primesOver hpbot <| h𝔓' p hp).irreducible hIbot,
-      emultiplicity_eq_emultiplicity_iff]
-    intro n
-    have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) hP
-    rw [Ideal.dvd_iff_le, Ideal.dvd_iff_le]
-    conv_lhs => rw [← hI σ, ← hσ,
-      Ideal.comap_le_iff_le_map _ (AlgEquiv.bijective _), Ideal.map_pow,
-      Ideal.map_comap_of_surjective _ (AlgEquiv.surjective _)]
+  · apply Finset.prod_congr rfl
+    intros p hp
+    simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
+      Ideal.mem_normalizedFactors_iff hIbot'] at hp
+    have hpbot : p ≠ ⊥ := fun hp' ↦ hIbot' (eq_bot_iff.mpr (hp.2.trans_eq hp'))
+    have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective hRS).not.mpr
+      hpbot
+    have := hp.1
+    rw [← prod_primesOverFinset_of_isUnramified p hpbot, ← Finset.prod_pow]
+    have : p.IsMaximal := Ring.DimensionLEOne.maximalOfPrime hpbot this
+    apply Finset.prod_congr
+    · ext P
+      rw [factors_eq_normalizedFactors, Finset.mem_filter, Multiset.mem_toFinset,
+        Ideal.mem_normalizedFactors_iff hIbot, ← Finset.mem_coe, coe_primesOverFinset hpbot S]
+      refine ⟨fun H ↦ ⟨H.1.1, ⟨H.2.symm⟩⟩, fun H ↦ ⟨⟨H.1, ?_⟩, ?_⟩⟩
+      · have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) H
+        rw [← hσ, ← hI σ]
+        exact Ideal.comap_mono (h𝔓 _ hp)
+      · have := H.2.1
+        rw [Ideal.under_def] at this
+        exact this.symm
+    · intro P hP
+      rw [← Finset.mem_coe, coe_primesOverFinset hpbot S] at hP
+      congr
+      rw [dif_pos hp, ← Nat.cast_inj (R := ENat), ← normalize_eq P, factors_eq_normalizedFactors,
+        ← emultiplicity_eq_count_normalizedFactors
+          (prime_of_mem_primesOver hpbot hP).irreducible hIbot,
+        ← normalize_eq (𝔓 p hp), ← emultiplicity_eq_count_normalizedFactors
+          (prime_of_mem_primesOver hpbot <| h𝔓' p hp).irreducible hIbot,
+          emultiplicity_eq_emultiplicity_iff]
+      intro n
+      have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) hP
+      rw [Ideal.dvd_iff_le, Ideal.dvd_iff_le]
+      conv_lhs => rw [← hI σ, ← hσ,
+        Ideal.comap_le_iff_le_map _ (AlgEquiv.bijective _), Ideal.map_pow,
+        Ideal.map_comap_of_surjective _ (AlgEquiv.surjective _)]
   · intro P hP
     simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
       Ideal.mem_normalizedFactors_iff hIbot] at hP

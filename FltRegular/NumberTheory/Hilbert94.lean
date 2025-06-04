@@ -62,14 +62,14 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     rw [hγ, Ideal.map_span, Set.image_singleton, Ideal.span_singleton_eq_span_singleton] at hβ'
     obtain ⟨a, rfl⟩ := hβ'
     rw [map_mul, AlgEquiv.commutes, mul_left_comm, (mul_right_injective₀ _).eq_iff] at hβ
-    apply hη'
-    use a
-    conv_rhs => enter [1]; rw [← hβ]
-    rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K L B σ a]
-    refine (mul_div_cancel_right₀ _ ?_).symm
-    · rw [ne_eq, (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
-        (injective_iff_map_eq_zero' _).mp (galRestrict A K L B σ).injective]
-      exact a.isUnit.ne_zero
+    · apply hη'
+      use a
+      conv_rhs => enter [1]; rw [← hβ]
+      rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K L B σ a]
+      refine (mul_div_cancel_right₀ _ ?_).symm
+      · rw [ne_eq, (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
+          (injective_iff_map_eq_zero' _).mp (galRestrict A K L B σ).injective]
+        exact a.isUnit.ne_zero
     · exact (mul_ne_zero_iff.mp hβ_zero).1
   · rw [hβ']
     exact ⟨⟨_, rfl⟩⟩

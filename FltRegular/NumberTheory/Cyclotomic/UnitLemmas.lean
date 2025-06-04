@@ -16,9 +16,9 @@ universe u
 
 noncomputable section
 
-/-- zeta now as a unit in the ring of integers. This way there are no coe issues-/
-def IsPrimitiveRoot.unit' {p : ℕ} [NeZero p] {K : Type*} [Field K] {ζ : K} (hζ : IsPrimitiveRoot ζ p) :
-    (𝓞 K)ˣ where
+/-- zeta now as a unit in the ring of integers. This way there are no coe issues. -/
+def IsPrimitiveRoot.unit' {p : ℕ} [NeZero p] {K : Type*} [Field K] {ζ : K}
+    (hζ : IsPrimitiveRoot ζ p) : (𝓞 K)ˣ where
   val := (⟨ζ, hζ.isIntegral (NeZero.pos p)⟩ : 𝓞 K)
   inv := (⟨ζ⁻¹, hζ.inv.isIntegral (NeZero.pos p)⟩ : 𝓞 K)
   val_inv := Subtype.ext <| mul_inv_cancel₀ <| hζ.ne_zero (NeZero.ne p)
@@ -53,9 +53,9 @@ theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot hζ.unit'.1 p := by
   exact z1.of_map_of_injective (IsFractionRing.injective _ _)
 
 theorem totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 := by
-  cases' Nat.totient_eq_one_iff.1 (show a.totient = 1 by linarith [Nat.totient_pos.2 han]) with h
-      h <;>
-    simp [h]
+  rcases Nat.totient_eq_one_iff.1 (show a.totient = 1 by linarith [Nat.totient_pos.2 han]) with
+    h | h <;>
+  simp [h]
 
 theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
     algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 :=
@@ -73,6 +73,7 @@ theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type*} [CommRing A] [IsDomain
   rw [map_pow, eq_one_mod_one_sub, one_pow]
 
 set_option synthInstance.maxHeartbeats 40000 in
+-- needed for `AddMonoidHomClass (𝓞 K →+* 𝓞 K ⧸ Ideal.span {↑hζ.unit' - 1}) ? ?`
 theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot μ p)
     (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral (NeZero.pos p)⟩ : 𝓞 K) ^ (x : ℕ) = l) :
     algebraMap (𝓞 K) (𝓞 K ⧸ I) l = ∑ x : Fin t, (f x : 𝓞 K ⧸ I) := by
@@ -88,7 +89,6 @@ theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot
   have := hζ.unit'_coe.eq_one_mod_sub_of_pow this
   simp only [map_pow (algebraMap (𝓞 K) (𝓞 K ⧸ I)), this, one_pow, zsmul_one]
 
-set_option synthInstance.maxHeartbeats 40000 in
 theorem IsPrimitiveRoot.p_mem_one_sub_zeta [hp : Fact p.Prime] : (p : 𝓞 K) ∈ I := by
   classical
   have key : _ = (p : 𝓞 K) := @Polynomial.eval_one_cyclotomic_prime _ _ _ hp
@@ -123,7 +123,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsInt
   have hrank := IsCyclotomicExtension.finrank K hirr
   rw [hrank] at KEY
   have pdivlcm : p ∣ lcm l p := dvd_lcm_right l p
-  cases' pdivlcm with pdivlcm_w pdivlcm_h
+  rcases pdivlcm with ⟨pdivlcm_w, pdivlcm_h⟩
   have ineq1 := Nat.totient_super_multiplicative p pdivlcm_w
   rw [← pdivlcm_h] at ineq1
   have KEY3 := (mul_le_iff_le_one_right (Nat.totient_pos.2 (NeZero.pos p))).mp (le_trans ineq1 KEY)
@@ -134,18 +134,18 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsInt
     simp only [MulZeroClass.mul_zero, lcm_eq_zero_iff, PNat.ne_zero, or_false] at pdivlcm_h
     aesop
   have K5 := (Nat.dvd_prime Nat.prime_two).1 (totient_le_one_dvd_two pdiv_ne_zero KEY3)
-  cases' K5 with K5 K5
-  rw [K5] at pdivlcm_h
-  simp only [mul_one] at pdivlcm_h
-  rw [lcm_eq_right_iff] at pdivlcm_h
-  have K6 : p ∣ 2 * p := dvd_mul_left p 2
-  apply absurd (dvd_trans pdivlcm_h K6) h
-  simp only [eq_self_iff_true, normalize_eq, PNat.coe_inj]
-  rw [K5] at pdivlcm_h
-  rw [mul_comm] at pdivlcm_h
-  have := dvd_lcm_left l p
-  simp_rw [pdivlcm_h] at this
-  apply absurd this h
+  rcases K5 with K5 | K5
+  · rw [K5] at pdivlcm_h
+    simp only [mul_one] at pdivlcm_h
+    rw [lcm_eq_right_iff] at pdivlcm_h
+    · have K6 : p ∣ 2 * p := dvd_mul_left p 2
+      apply absurd (dvd_trans pdivlcm_h K6) h
+    simp only [eq_self_iff_true, normalize_eq, PNat.coe_inj]
+  · rw [K5] at pdivlcm_h
+    rw [mul_comm] at pdivlcm_h
+    have := dvd_lcm_left l p
+    simp_rw [pdivlcm_h] at this
+    apply absurd this h
 
 --do more generally
 theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
@@ -167,18 +167,18 @@ theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
       simp only [Nat.mem_divisors, dvd_refl, Ne, true_and]
       apply pos_iff_ne_zero.1 (Nat.pos_of_ne_zero hl)
     have hxp' : (⟨x, hx⟩ : R) ^ (2 * p) = 1 := by
-      cases' hlp with hlp_w hlp_h
+      rcases hlp with ⟨hlp_w, hlp_h⟩
       rw [hlp_h, pow_mul, hxl]; simp only [one_pow]
     have hxp'' : (⟨x, hx⟩ : R) ^ p = 1 ∨ (⟨x, hx⟩ : R) ^ p = -1 := by
       rw [mul_comm] at hxp' ; rw [pow_mul] at hxp'
       suffices (⟨x, hx⟩ : 𝓞 K) ^ p = 1 ∨ (⟨x, hx⟩ : 𝓞 K) ^ p = -1 by
-        · cases' this with h1 h2
+        · rcases this with h1 | h2
           · left; simp only [h1]
           · right; simp only [h2]
       apply eq_or_eq_neg_of_sq_eq_sq
       simp only [one_pow]
       apply hxp'
-    cases' hxp'' with hxp'' hxp''
+    rcases hxp'' with hxp'' | hxp''
     · obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp''
       refine ⟨i, 2, ?_⟩
       rw [← Subtype.val_inj] at Hi
@@ -249,9 +249,8 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : p.Prime) :
   let φn := hζ.integralPowerBasis'.dim
   simp_rw [PowerBasis.basis_eq_pow, IsPrimitiveRoot.integralPowerBasis'_gen] at hu
   have hu' := congr_arg (intGal ↑(galConj K p)) hu
-  replace hu' :
-      ∑ x : Fin φn, (a u) x • (intGal ↑(galConj K p)) (⟨ζ, hζ.isIntegral (NeZero.pos p)⟩ ^ (x : ℕ)) =
-      unitGalConj K p u := by
+  replace hu' : ∑ x : Fin φn, (a u) x • (intGal ↑(galConj K p))
+      (⟨ζ, hζ.isIntegral (NeZero.pos p)⟩ ^ (x : ℕ)) = unitGalConj K p u := by
     refine Eq.trans ?_ hu'
     rw [map_sum]
     congr 1
@@ -272,6 +271,7 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : Rˣ) (hp : p.Prime) :
   exact (aux hζ hζ hu).trans (aux hζ hζ.inv hu').symm
 
 set_option synthInstance.maxHeartbeats 40000 in
+-- Needed for `AddMonoidHomClass (𝓞 K →+* 𝓞 K ⧸ Ideal.span {↑hζ.unit' - 1}) ? ?`
 theorem unit_inv_conj_not_neg_zeta_runity (h : p ≠ 2) (u : Rˣ) (n : ℕ) (hp : p.Prime) :
     u * (unitGalConj K p u)⁻¹ ≠ -hζ.unit' ^ n := by
   by_contra H
@@ -293,22 +293,22 @@ theorem unit_inv_conj_is_root_of_unity (h : p ≠ 2) (hp : p.Prime) (u : Rˣ) :
   have :=
     @NumberField.Embeddings.pow_eq_one_of_norm_eq_one K _ _ ℂ _ _ _ (u * (unitGalConj K p u)⁻¹ : K)
       ?_ ?_
-  have H := roots_of_unity_in_cyclo hζ hpo (u * (unitGalConj K p u)⁻¹ : K) this
-  obtain ⟨n, k, hz⟩ := H
-  simp_rw [← pow_mul]
-  have hk := Nat.even_or_odd k
-  cases' hk with hk hk
-  · simp only [hk.neg_one_pow, one_mul] at hz
-    rw [← map_mul, ← Units.val_mul, ← map_pow, ← Units.val_pow_eq_pow_val] at hz
-    norm_cast at hz
-    rw [hz]
-    refine (exists_congr fun a => ?_).mp (zeta_runity_pow_even hζ hpo n)
-    · rw [mul_comm]
-  · by_contra
-    simp only [hk.neg_one_pow, neg_mul, one_mul] at hz
-    rw [← map_mul, ← Units.val_mul, ← map_pow, ←  Units.val_pow_eq_pow_val, ← map_neg] at hz
-    norm_cast at hz
-    simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ h u n hp
+  · have H := roots_of_unity_in_cyclo hζ hpo (u * (unitGalConj K p u)⁻¹ : K) this
+    obtain ⟨n, k, hz⟩ := H
+    simp_rw [← pow_mul]
+    have hk := Nat.even_or_odd k
+    rcases hk with hk | hk
+    · simp only [hk.neg_one_pow, one_mul] at hz
+      rw [← map_mul, ← Units.val_mul, ← map_pow, ← Units.val_pow_eq_pow_val] at hz
+      norm_cast at hz
+      rw [hz]
+      refine (exists_congr fun a => ?_).mp (zeta_runity_pow_even hζ hpo n)
+      · rw [mul_comm]
+    · by_contra
+      simp only [hk.neg_one_pow, neg_mul, one_mul] at hz
+      rw [← map_mul, ← Units.val_mul, ← map_pow, ←  Units.val_pow_eq_pow_val, ← map_neg] at hz
+      norm_cast at hz
+      simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ h u n hp
   · apply RingHom.IsIntegralElem.mul
     · exact NumberField.RingOfIntegers.isIntegral_coe _
     · exact NumberField.RingOfIntegers.isIntegral_coe _

@@ -66,7 +66,7 @@ variable (p)
 theorem gal_map_mem_subtype (σ : K →ₐ[ℚ] K) (x : RR) : IsIntegral ℤ (σ x) :=
   map_isIntegral_int _ x.2
 
-/-- Restriction of `σ : K →ₐ[ℚ] K` to the ring of integers.  -/
+/-- Restriction of `σ : K →ₐ[ℚ] K` to the ring of integers. -/
 def intGal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
   ((σ.restrictScalars ℤ).restrictDomain RR).codRestrict (integralClosure ℤ K)
   (gal_map_mem_subtype σ)
@@ -75,7 +75,7 @@ def intGal (σ : K →ₐ[ℚ] K) : RR →ₐ[ℤ] RR :=
 theorem intGal_apply_coe (σ : K →ₐ[ℚ] K) (x : RR) : (intGal σ x : K) = σ x :=
   rfl
 
-/-- Restriction of `σ : K →ₐ[ℚ] K` to the units of the ring of integers.  -/
+/-- Restriction of `σ : K →ₐ[ℚ] K` to the units of the ring of integers. -/
 def unitsGal (σ : K →ₐ[ℚ] K) : RRˣ →* RRˣ :=
   Units.map <| intGal σ
 

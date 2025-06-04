@@ -41,9 +41,9 @@ lemma monic_poly_aux :
     convert add_zero _ using 2
     rw [natDegree_poly_aux hζ, coeff_C, if_neg (NeZero.pos p).ne.symm]
   · rw [leadingCoeff_pow, ← C.map_one, leadingCoeff, natDegree_sub_C, natDegree_mul_X]
-    simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C, ite_true,
-      coeff_one, ite_false, sub_zero, one_ne_zero, ↓reduceIte]
-    exact C_ne_zero.mpr (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
+    · simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C, ite_true,
+        coeff_one, ite_false, sub_zero, one_ne_zero, ↓reduceIte]
+    · exact C_ne_zero.mpr (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
 
 
 variable [IsCyclotomicExtension {p} ℚ K]
@@ -222,8 +222,8 @@ lemma minpoly_polyRoot' {L : Type*} [Field L] [Algebra K L] (α : L)
     minpoly (𝓞 K) (polyRoot hp hζ u hcong α e i : L) = (poly hp hζ u hcong) := by
   apply map_injective (algebraMap (𝓞 K) K) Subtype.coe_injective
   rw [← minpoly.isIntegrallyClosed_eq_field_fractions' K]
-  exact minpoly_polyRoot'' hp hζ u hcong hu α e i
-  exact IsIntegral.tower_top (polyRoot hp hζ u hcong α e i).prop
+  · exact minpoly_polyRoot'' hp hζ u hcong hu α e i
+  · exact IsIntegral.tower_top (polyRoot hp hζ u hcong α e i).prop
 
 lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) : Separable ((poly hp hζ u hcong).map

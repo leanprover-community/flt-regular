@@ -150,15 +150,15 @@ lemma Hilbert90_integral [IsGalois K L] {η : B} (hη : Algebra.norm K (algebraM
     rw [hε, Algebra.norm_zero] at hη
     exact zero_ne_one hη
   · rw [eq_div_iff_mul_eq] at hε
-    replace hε := congr_arg (t • ·) hε
-    simp only at hε
-    rw [Algebra.smul_def, mul_left_comm, ← Algebra.smul_def t] at hε
-    change (algebraMap B L) η * t • σ.toAlgHom _ = _ at hε
-    rw [← AlgHom.map_smul_of_tower, this] at hε
-    apply IsIntegralClosure.algebraMap_injective B A L
-    rw [map_mul, ← hε]
-    congr 1
-    · exact algebraMap_galRestrictHom_apply A K L B σ x
+    · replace hε := congr_arg (t • ·) hε
+      simp only at hε
+      rw [Algebra.smul_def, mul_left_comm, ← Algebra.smul_def t] at hε
+      change (algebraMap B L) η * t • σ.toAlgHom _ = _ at hε
+      rw [← AlgHom.map_smul_of_tower, this] at hε
+      apply IsIntegralClosure.algebraMap_injective B A L
+      rw [map_mul, ← hε]
+      congr 1
+      · exact algebraMap_galRestrictHom_apply A K L B σ x
     · intro e
       rw [(map_eq_zero _).mp e, zero_div] at hε
       rw [hε, Algebra.norm_zero] at hη
