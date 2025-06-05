@@ -170,7 +170,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
       rcases hlp with ⟨hlp_w, hlp_h⟩
       rw [hlp_h, pow_mul, hxl]; simp only [one_pow]
     have hxp'' : (⟨x, hx⟩ : R) ^ p = 1 ∨ (⟨x, hx⟩ : R) ^ p = -1 := by
-      rw [mul_comm] at hxp' ; rw [pow_mul] at hxp'
+      rw [mul_comm] at hxp'; rw [pow_mul] at hxp'
       suffices (⟨x, hx⟩ : 𝓞 K) ^ p = 1 ∨ (⟨x, hx⟩ : 𝓞 K) ^ p = -1 by
         · rcases this with h1 | h2
           · left; simp only [h1]

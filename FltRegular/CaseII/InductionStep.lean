@@ -378,7 +378,7 @@ lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
     ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ p := by
   letI : Fact (Nat.Prime p) := hpri
   obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hx
-  have : (p : 𝓞 K) ∣ b * x - 1 := by use -a ; rw [← e]; ring
+  have : (p : 𝓞 K) ∣ b * x - 1 := by use -a; rw [← e]; ring
   have := (this.trans (sub_one_dvd_pow_sub_one _ p)).trans (dvd_mul_left _ ↑(ε₁ / ε₂))
   use - y * b
   replace h := (h.trans (dvd_mul_right _ (b ^ p))).trans (dvd_mul_left _ ↑(ε₂⁻¹))
