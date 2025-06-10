@@ -124,7 +124,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type*)
 /-- This is the second part of **Hilbert Theorem 94**, which states that if `L/K` is an unramified
   cyclic finite extension of number fields of odd prime degree,
   then the degree divides the class number of `K`. -/
-theorem dvd_card_classGroup_of_isUnramified_isCyclic (K L : Type*)
+theorem dvd_card_classGroup_of_isUnramified_isCyclic {K L : Type*}
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [IsUnramified (𝓞 K) (𝓞 L)] [IsCyclic (L ≃ₐ[K] L)]
     (hKL : Nat.Prime (finrank K L))

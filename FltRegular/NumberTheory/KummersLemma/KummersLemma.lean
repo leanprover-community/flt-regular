@@ -30,7 +30,7 @@ theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
   have hKL : Module.finrank K L = p :=
     finrank_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩ hirr L
   have := KummersLemma.isUnramified hp hζ u hcong hu L
-  have := dvd_card_classGroup_of_isUnramified_isCyclic K L (hKL.symm ▸ hpri.out) (hKL.symm ▸ hp)
+  have := dvd_card_classGroup_of_isUnramified_isCyclic (hKL.symm ▸ hpri.out) (hKL.symm ▸ hp)
   rw [hKL, hpri.out.dvd_iff_not_coprime] at this
   exact this (by convert hreg)
 
