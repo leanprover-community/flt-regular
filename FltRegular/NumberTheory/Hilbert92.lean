@@ -151,7 +151,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
     suffices Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units) by
       have : (Submodule.span A (Set.range S.units)).toAddSubgroup.FiniteIndex :=
         ⟨AddSubgroup.index_ne_zero_of_finite (hH := (S.isMaximal _ hp _ hf).finite)⟩
-      exact (hs.maximal' _ _ _ S').not_lt <| AddSubgroup.index_strictAnti ‹_›
+      exact (hs.maximal' _ _ _ S').not_gt <| AddSubgroup.index_strictAnti ‹_›
     rw [SetLike.lt_iff_le_and_exists]
     constructor
     · rw [Submodule.span_le]
@@ -440,7 +440,7 @@ lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M
       ∑ i, ι i • η i = a • (Additive.ofMul ν) ∧ ¬ ↑p ∣ ι i := by
   obtain ⟨f, hf, hf'⟩ := Fintype.not_linearIndependent_iff.mp
     (mt (LinearIndependent.fintype_card_le_finrank (R := ℤ) (b := η))
-      ((hr.trans_eq (Fintype.card_fin r).symm).not_le))
+      ((hr.trans_eq (Fintype.card_fin r).symm).not_ge))
   obtain ⟨n, f', hf', i, hi⟩ := exists_pow_smul_eq_and_not_dvd f
     (Function.ne_iff.mpr hf') p hp.ne_one
   simp_rw [hf', Pi.smul_apply, smul_assoc, ← smul_sum] at hf
