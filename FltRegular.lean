@@ -4,6 +4,9 @@ import FltRegular.CaseII.AuxLemmas
 import FltRegular.CaseII.InductionStep
 import FltRegular.CaseII.Statement
 import FltRegular.FLT5
+import FltRegular.FLT7
+import FltRegular.FLT11
+import FltRegular.FLT13
 import FltRegular.FltRegular
 import FltRegular.MayAssume.Lemmas
 import FltRegular.NumberTheory.Cyclotomic.CaseI
