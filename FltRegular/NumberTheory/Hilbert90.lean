@@ -1,5 +1,5 @@
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
-import Mathlib.RepresentationTheory.GroupCohomology.Hilbert90
+import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
 
 open scoped nonZeroDivisors
 open FiniteDimensional Finset BigOperators Submodule groupCohomology Submonoid
