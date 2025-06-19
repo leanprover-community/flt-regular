@@ -87,7 +87,7 @@ lemma pow_dvd_pow_iff_dvd {M : Type*} [CancelCommMonoidWithZero M] [UniqueFactor
     exact Nat.mul_le_mul_left x h
 
 theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
-    {A K: Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
+    {A K : Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
     [Field K] [Algebra A K] [IsFractionRing A K] (p : ℕ)
     (H : p.Coprime <| Fintype.card <| ClassGroup A) (I : FractionalIdeal A⁰ K)
     (hI : (↑(I ^ p) : Submodule A K).IsPrincipal) : (I : Submodule A K).IsPrincipal := by

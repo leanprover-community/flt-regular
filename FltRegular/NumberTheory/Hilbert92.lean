@@ -605,7 +605,7 @@ local instance : Module.Finite ℤ G := Module.Finite.of_surjective
 local instance : Module.Free ℤ G := Module.free_of_finite_type_torsion_free'
 
 noncomputable
-def unitlifts (S : systemOfUnits p G (NumberField.Units.rank k + 1))  :
+def unitlifts (S : systemOfUnits p G (NumberField.Units.rank k + 1)) :
     Fin (NumberField.Units.rank k + 1) → Additive (𝓞 K)ˣ :=
   fun i ↦ Additive.ofMul (Additive.toMul (S.units i).out).out
 
