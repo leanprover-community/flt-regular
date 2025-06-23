@@ -126,8 +126,8 @@ set_option synthInstance.maxHeartbeats 80000 in
 -- Needed for `AddMonoidHomClass (𝓞 K →+* 𝓞 K ⧸ Ideal.span {↑hζ.unit' - 1}) ? ?`
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1) • x := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  letI := IsCyclotomicExtension.isGalois p ℚ K
+  let _ := IsCyclotomicExtension.numberField {p} ℚ K
+  let _ := IsCyclotomicExtension.isGalois {p} ℚ K
   have : (Algebra.trace ℤ _ x : 𝓞 K) = ∑ σ : K ≃ₐ[ℚ] K, (intGal σ).toRingHom x := by
     apply (show Function.Injective (algebraMap (𝓞 K) K) from Subtype.val_injective)
     rw [← eq_intCast (algebraMap ℤ (𝓞 K)), ← IsScalarTower.algebraMap_apply,

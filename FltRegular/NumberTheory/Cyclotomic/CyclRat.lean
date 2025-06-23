@@ -118,7 +118,7 @@ theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
 variable [NeZero p]
 
 instance : IsGalois ℚ (CyclotomicField p ℚ) :=
-  IsCyclotomicExtension.isGalois p _ _
+  IsCyclotomicExtension.isGalois {p} _ _
 
 instance : FiniteDimensional ℚ (CyclotomicField p ℚ) :=
   IsCyclotomicExtension.finiteDimensional {p} _ _
