@@ -177,14 +177,11 @@ theorem map_poly_eq_prod {L : Type*} [Field L] [Algebra K L] (α : L)
     (poly hp hζ u hcong).map (algebraMap (𝓞 K) (𝓞 L)) =
       ∏ i ∈ Finset.range p, (X - C (polyRoot hp hζ u hcong α e i)) := by
   apply map_injective (algebraMap (𝓞 L) L) Subtype.coe_injective
-  have : (algebraMap (𝓞 L) L).comp (algebraMap (𝓞 K) (𝓞 L)) = algebraMap (𝓞 K) L := by
-    ext; rfl
-  rw [← coe_mapRingHom, map_prod, coe_mapRingHom, map_map, this]
-  rw [eq_prod_roots_of_monic_of_splits_id ((monic_poly hp hζ u hcong).map _)
-    ((splits_id_iff_splits _).mpr (splits_poly hp hζ u hcong α e)), roots_poly hp hζ u hcong α e,
-    Multiset.map_map]
-  simp only [Polynomial.map_sub, map_X, map_C]
-  rfl
+  rw [← coe_mapRingHom, map_prod, coe_mapRingHom, map_map, ← IsScalarTower.algebraMap_eq,
+    eq_prod_roots_of_monic_of_splits_id ((monic_poly hp hζ u hcong).map _)
+      ((splits_id_iff_splits _).mpr (splits_poly hp hζ u hcong α e)),
+    roots_poly hp hζ u hcong α e, Multiset.map_map, ← Finset.prod_eq_multiset_prod]
+  simp [polyRoot]
 
 lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [CommRing K]
     [CommRing L] [CommRing B] [Algebra R K] [Algebra A K] [Algebra R L] [Algebra B L]

@@ -143,7 +143,6 @@ lemma div_zeta_sub_one_Injective :
 
 /- quot by ideal is finite since we are in a number field.-/
 instance : Finite (𝓞 K ⧸ 𝔭) := by
-  haveI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [← Ideal.absNorm_ne_zero_iff, Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
   exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
@@ -152,7 +151,6 @@ include hy in
 /- sending η to (x+yη)/(ζ-1) mod (π) = 𝔭 is bijective. -/
 lemma div_zeta_sub_one_Bijective :
     Function.Bijective (fun η ↦ Ideal.Quotient.mk 𝔭 (div_zeta_sub_one hp hζ e η)) := by
-  haveI : Fact (Nat.Prime p) := hpri
   letI := Fintype.ofFinite (𝓞 K ⧸ 𝔭)
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [Fintype.bijective_iff_injective_and_card]
@@ -165,7 +163,6 @@ lemma div_zeta_sub_one_Bijective :
 include hy in
 /- the gcd of x y called 𝔪 is coprime to 𝔭-/
 lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by
-  have : Fact (Nat.Prime p) := hpri
   rw [gcd_assoc]
   convert gcd_one_right 𝔵 using 2
   rwa [gcd_comm, Irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton, Ideal.mem_span_singleton]
@@ -175,7 +172,6 @@ lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by
 include hy in
 /- the ideal (x+yη)/(ζ -1) is divisible by 𝔪 -/
 lemma gcd_div_div_zeta_sub_one (η) : 𝔪 ∣ Ideal.span {div_zeta_sub_one hp hζ e η} := by
-  have : Fact (Nat.Prime p) := hpri
   rw [← mul_one (Ideal.span {div_zeta_sub_one hp hζ e η}),
     ← gcd_zeta_sub_one_eq_one hζ hy (x := x) (y := y)]
   apply dvd_mul_gcd_of_dvd_mul
@@ -234,7 +230,7 @@ def z_div_m : Ideal (𝓞 K) :=
 local notation "𝔷'" => z_div_m hζ e hy
 
 lemma z_div_m_spec : 𝔷 = 𝔪 * 𝔷' :=
-(m_dvd_z hζ e hy).choose_spec
+  (m_dvd_z hζ e hy).choose_spec
 
 lemma exists_ideal_pow_eq_c_aux :
     𝔪 ^ p * (𝔷' * 𝔭 ^ m) ^ p * 𝔭 ^ p = (𝔭 ^ (m + 1) * 𝔷) ^ p := by
@@ -256,17 +252,14 @@ lemma prod_c : ∏ η ∈ Finset.attach (nthRootsFinset p (1 : 𝓞 K)), 𝔠 η
     exists_ideal_pow_eq_c_aux]
 
 /-each 𝔠 η is a pth power, which will be denoted by 𝔞 η below. -/
-lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ p := by
-  let inst1 : @IsDomain (Ideal (𝓞 K)) CommSemiring.toSemiring := @Ideal.isDomain (𝓞 K) _ _
-  let inst2 := @Ideal.instNormalizedGCDMonoid (𝓞 K) _ _
-  let inst3 := @NormalizedGCDMonoid.toGCDMonoid _ _ inst2
-  exact @Finset.exists_eq_pow_of_mul_eq_pow_of_coprime (nthRootsFinset p (1 : 𝓞 K)) (Ideal (𝓞 K)) _
-    inst1 inst3 _ _ _ _ _ (fun η₁ _ η₂ _ hη ↦ coprime_c hp hζ e hy η₁ η₂ hη)
+lemma exists_ideal_pow_eq_c : ∃ I : Ideal (𝓞 K), (𝔠 η) = I ^ p :=
+  Finset.exists_eq_pow_of_mul_eq_pow_of_coprime
+    (fun η₁ _ η₂ _ hη ↦ coprime_c hp hζ e hy η₁ η₂ hη)
     (prod_c hp hζ e hy) η (Finset.mem_attach _ _)
 
 noncomputable
 def root_div_zeta_sub_one_dvd_gcd : Ideal (𝓞 K) :=
-(exists_ideal_pow_eq_c hp hζ e hy η).choose
+  (exists_ideal_pow_eq_c hp hζ e hy η).choose
 
 local notation "𝔞" => root_div_zeta_sub_one_dvd_gcd hp hζ e hy
 
@@ -339,13 +332,13 @@ lemma p_pow_dvd_a_eta_zero : 𝔭 ^ m ∣ 𝔞 η₀ := by
 
 noncomputable
 def a_eta_zero_dvd_p_pow : Ideal (𝓞 K) :=
-(p_pow_dvd_a_eta_zero hp hζ e hy).choose
+  (p_pow_dvd_a_eta_zero hp hζ e hy).choose
 
 /-𝔞₀ is the coprime to 𝔭 bit of 𝔞 η₀-/
 local notation "𝔞₀" => a_eta_zero_dvd_p_pow hp hζ e hy
 
 lemma a_eta_zero_dvd_p_pow_spec : 𝔭 ^ m * 𝔞₀ = 𝔞 η₀ :=
-(p_pow_dvd_a_eta_zero hp hζ e hy).choose_spec.symm
+  (p_pow_dvd_a_eta_zero hp hζ e hy).choose_spec.symm
 
 include hz in
 lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
@@ -376,7 +369,6 @@ include hp in
 lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
     (h : (p : 𝓞 K) ∣ ε₁ * x ^ p + ε₂ * y ^ p) :
     ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ p := by
-  letI : Fact (Nat.Prime p) := hpri
   obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hx
   have : (p : 𝓞 K) ∣ b * x - 1 := by use -a; rw [← e]; ring
   have := (this.trans (sub_one_dvd_pow_sub_one _ p)).trans (dvd_mul_left _ ↑(ε₁ / ε₂))
@@ -421,34 +413,33 @@ include hz hreg in
 lemma exists_not_dvd_spanSingleton_eq_a_div_a_zero (hη : η ≠ η₀) :
     ∃ a b : 𝓞 K, ¬ π ∣ a ∧ ¬ π ∣ b ∧
       FractionalIdeal.spanSingleton (𝓞 K)⁰ (a / b : K) = 𝔞 η / 𝔞₀ := by
-  haveI : Fact (Nat.Prime p) := hpri
   exact exists_not_dvd_spanSingleton_eq hζ.zeta_sub_one_prime'
     _ _ ((p_dvd_a_iff hp hζ e hy η).not.mpr hη) (not_p_div_a_zero hp hζ e hy hz)
       (isPrincipal_a_div_a_zero hp hζ e hy η hreg)
 
 noncomputable
 def a_div_a_zero_num (hη : η ≠ η₀) : 𝓞 K :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose
+  (exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose
 
 noncomputable
 def a_div_a_zero_denom (hη : η ≠ η₀) : 𝓞 K :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose
+  (exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose
 
 local notation "α" => fun η ↦ a_div_a_zero_num hp hζ e hy hz η hreg
 local notation "β" => fun η ↦ a_div_a_zero_denom hp hζ e hy hz η hreg
 
 include hreg in
 lemma a_div_a_zero_num_spec (hη : η ≠ η₀) : ¬ π ∣ α η hη :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.1
+  (exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.1
 
 include hreg in
 lemma a_div_a_zero_denom_spec (hη : η ≠ η₀) : ¬ π ∣ β η hη :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.2.1
+  (exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.2.1
 
 /- eqn 7.8 of Borevich-Shafarevich-/
 lemma a_div_a_zero_eq (hη : η ≠ η₀) :
     FractionalIdeal.spanSingleton (𝓞 K)⁰ (α η hη / β η hη : K) = 𝔞 η / 𝔞₀ :=
-(exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.2.2
+  (exists_not_dvd_spanSingleton_eq_a_div_a_zero hp hζ e hy hz η hreg hη).choose_spec.choose_spec.2.2
 
 lemma a_mul_denom_eq_a_zero_mul_num (hη : η ≠ η₀) :
     𝔞 η * Ideal.span {β η hη} = 𝔞₀ * Ideal.span {α η hη} := by
@@ -509,7 +500,6 @@ include hreg e hy hz hp in
 lemma exists_solution :
     ∃ (x' y' z' : 𝓞 K) (ε₁ ε₂ ε₃ : (𝓞 K)ˣ), ¬ π ∣ x' ∧ ¬ π ∣ y' ∧ ¬ π ∣ z' ∧
       ε₁ * x' ^ p + ε₂ * y' ^ p = ε₃ * (π ^ m * z') ^ p := by
-  letI : Fact (Nat.Prime p) := hpri
   have h₁ := mul_mem_nthRootsFinset (η₀ : _).prop (hζ.unit'_coe.mem_nthRootsFinset hpri.out.pos)
   rw [one_mul] at h₁
   let η₁ : nthRootsFinset p (1 : 𝓞 K) := ⟨η₀ * hζ.unit', h₁⟩

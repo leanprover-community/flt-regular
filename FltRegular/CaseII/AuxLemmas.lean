@@ -1,8 +1,6 @@
 import Mathlib.RingTheory.ClassGroup
 
-variable {K : Type*} {p : ℕ} [Field K] [CharZero K]
-
-variable {ζ : K}
+variable {K : Type*} {p : ℕ} [Field K] [CharZero K] {ζ : K}
 
 open scoped BigOperators nonZeroDivisors
 open Polynomial
@@ -11,9 +9,9 @@ open Polynomial
 
 lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero M] [WfDvdMonoid M]
     {x y : M} :
-  FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 := by
+    FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 := by
   constructor
-  · rw [← not_imp_not, Ne, ← not_or, not_not]
+  · rw [Ne, ← not_or, imp_not_comm]
     rintro (hx|hy)
     · exact fun ⟨n, hn⟩ ↦ hn (hx.pow _).dvd
     · simp [hy]
