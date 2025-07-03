@@ -121,8 +121,8 @@ theorem spanNorm_map (I : Ideal R) :
       IsScalarTower.algebraMap_apply S Sₚ L, AlgEquiv.coe_ringEquiv, AlgEquiv.commutes]
     simp only [← IsScalarTower.algebraMap_apply]
   have : Module.Free Rₚ Sₚ := Module.free_of_finite_type_torsion_free'
-  simp only [Ideal.map_mul, ← spanIntNorm_localization (R := R) (S := S)
-    (Rₘ := Localization.AtPrime P) (Sₘ := Localization P') _ _ P.primeCompl_le_nonZeroDivisors]
+  simp only [← spanIntNorm_localization (R := R) (S := S) (Rₘ := Localization.AtPrime P)
+    (Sₘ := Localization P') _ _ P.primeCompl_le_nonZeroDivisors]
   rw [Ideal.map_pow, I.map_map, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R Rₚ Sₚ,
     ← I.map_map, ← (I.map _).span_singleton_generator, Ideal.map_span, Set.image_singleton,
     spanNorm_singleton, Ideal.span_singleton_pow]

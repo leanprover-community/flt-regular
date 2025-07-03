@@ -84,7 +84,7 @@ lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ �
     have := hζ'.norm_toInteger_pow_sub_one_of_two
     rw [pow_zero, pow_one, pow_one (-2)] at this
     replace this : (Algebra.norm ℤ) (hζ.toInteger - 1) = -2 := this
-    simp only [PNat.val_ofNat, Nat.cast_ofNat]
+    simp only [Nat.cast_ofNat]
     rw [← neg_dvd (a := (2 : ℤ)), ← this, Ideal.norm_dvd_iff]
     · rfl
     · rw [this]
@@ -113,8 +113,7 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     simp only [IsPrimitiveRoot.integralPowerBasis'_gen]
     rfl
   rw [h]
-  simp only [RingHom.toIntAlgHom, RingHom.toMonoidHom_eq_coe, AlgHom.coe_mk, RingHom.coe_mk,
-    MonoidHom.coe_coe, RingHom.coe_comp, RingHom.coe_coe, Function.comp_apply]
+  simp only [RingHom.toIntAlgHom, AlgHom.coe_mk, RingHom.coe_comp, Function.comp_apply]
   rw [← sub_eq_zero, ← Ideal.Quotient.mk_eq_mk, ← Ideal.Quotient.mk_eq_mk,
     ← Submodule.Quotient.mk_sub, Ideal.Quotient.mk_eq_mk, Ideal.Quotient.eq_zero_iff_mem,
     Ideal.mem_span_singleton]

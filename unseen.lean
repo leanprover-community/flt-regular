@@ -70,7 +70,8 @@ partial def allDeclsIn (module : Name) : Elab.Command.CommandElabM (Array Name) 
   return decls
 
 def allFiles (env : Environment) : List Name :=
-  (env.importGraph.fold (fun xs k _ => if (`FltRegular).isPrefixOf k then k :: xs else xs) []).mergeSort
+  (env.importGraph.fold (fun xs k _ => if (`FltRegular).isPrefixOf k then
+    k :: xs else xs) []).mergeSort
     (toString · < toString ·)
 
 def allDecls (env : Environment) : Elab.Command.CommandElabM NameSet :=

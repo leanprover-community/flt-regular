@@ -72,8 +72,7 @@ lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
     simp_rw [mul_comm _ y]
     exact Finset.dvd_prod_of_mem _ η.prop
   rw [hη, zero_dvd_iff, e] at this
-  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff (NeZero.ne p), add_pos_iff, or_true,
-    false_or] at this
+  simp only [mul_eq_zero, Units.ne_zero, pow_eq_zero_iff (NeZero.ne p), false_or] at this
   rw [this.resolve_left (pow_ne_zero (m + 1) (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt))] at hz
   exact hz (dvd_zero _)
 
@@ -155,7 +154,7 @@ lemma div_zeta_sub_one_Bijective :
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [Fintype.bijective_iff_injective_and_card]
   use div_zeta_sub_one_Injective hp hζ e hy
-  simp only [PNat.pos, mem_nthRootsFinset, Fintype.card_coe]
+  simp only [Fintype.card_coe]
   rw [hζ.unit'_coe.card_nthRootsFinset, ← Nat.card_eq_fintype_card, ← Submodule.cardQuot_apply,
     ← Ideal.absNorm_apply, Ideal.absNorm_span_singleton]
   simp [show Algebra.norm ℤ π = _ from hζ.norm_toInteger_sub_one_of_prime_ne_two' hp]
@@ -508,20 +507,20 @@ lemma exists_solution :
   let η₂ : nthRootsFinset p (1 : 𝓞 K) := ⟨η₀ * hζ.unit' * hζ.unit', h₂⟩
   have hη₁ : η₁ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
-    show (η₀ * hζ.unit' : 𝓞 K) ≠ η₀
+    change (η₀ * hζ.unit' : 𝓞 K) ≠ η₀
     rw [Ne, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
       ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop⟩
   have hη₂ : η₂ ≠ η₀ := by
     rw [← Subtype.coe_injective.ne_iff]
-    show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀
+    change (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀
     rw [Ne, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.pow_ne_one_of_pos_of_lt zero_lt_two
       (hpri.out.two_le.lt_or_eq.resolve_right hp.symm),
       ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop⟩
   have hη : η₂ ≠ η₁ := by
     rw [← Subtype.coe_injective.ne_iff]
-    show (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀ * hζ.unit'
+    change (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀ * hζ.unit'
     rw [Ne, mul_right_eq_self₀, not_or]
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
       mul_ne_zero (ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop)

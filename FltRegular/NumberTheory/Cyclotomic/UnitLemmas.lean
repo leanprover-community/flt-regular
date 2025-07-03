@@ -131,7 +131,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsInt
     by_contra h
     simp only [not_lt, le_zero_iff] at h
     rw [h] at pdivlcm_h
-    simp only [MulZeroClass.mul_zero, lcm_eq_zero_iff, PNat.ne_zero, or_false] at pdivlcm_h
+    simp only [MulZeroClass.mul_zero, lcm_eq_zero_iff] at pdivlcm_h
     aesop
   have K5 := (Nat.dvd_prime Nat.prime_two).1 (totient_le_one_dvd_two pdiv_ne_zero KEY3)
   rcases K5 with K5 | K5
@@ -140,7 +140,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsInt
     rw [lcm_eq_right_iff] at pdivlcm_h
     · have K6 : p ∣ 2 * p := dvd_mul_left p 2
       apply absurd (dvd_trans pdivlcm_h K6) h
-    simp only [eq_self_iff_true, normalize_eq, PNat.coe_inj]
+    simp only [normalize_eq]
   · rw [K5] at pdivlcm_h
     rw [mul_comm] at pdivlcm_h
     have := dvd_lcm_left l p
@@ -182,8 +182,8 @@ theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
     · obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp''
       refine ⟨i, 2, ?_⟩
       rw [← Subtype.val_inj] at Hi
-      simp only [SubmonoidClass.coe_pow] at Hi
-      simp only [PNat.val_ofNat, even_two, Even.neg_pow, one_pow, one_mul]
+      simp only at Hi
+      simp only [even_two, Even.neg_pow, one_pow, one_mul]
       rw [← Hi]
       rfl
     · have hone : (-1 : R) ^ p = (-1 : R) := by apply Odd.neg_one_pow hpo
@@ -192,11 +192,9 @@ theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
         ring
       obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp3
       refine ⟨i, 1, ?_⟩
-      simp only [PNat.one_coe, pow_one, neg_mul, one_mul, neg_neg]
+      simp only [pow_one, neg_mul, one_mul]
       rw [← Subtype.val_inj] at Hi
-      simp only [SubmonoidClass.coe_pow, Submonoid.coe_mul,
-        Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, InvMemClass.coe_inv,
-        OneMemClass.coe_one, neg_mul, one_mul] at Hi
+      simp only [neg_mul, one_mul] at Hi
       exact Iff.mp neg_eq_iff_eq_neg (id (Eq.symm (by simpa using Hi)))
   obtain ⟨m, k, hmk⟩ := H
   refine ⟨m, k, ?_⟩
@@ -212,7 +210,7 @@ theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact p.Prime] :
   intro h
   refine hp.1.ne_one (hζ.unique ?_)
   simp only [one_right_iff]
-  simp only [map_sub, map_one, map_zero, sub_eq_zero] at h
+  simp only [sub_eq_zero] at h
   exact h
 
 theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact p.Prime] (h : p ≠ 2) :

@@ -189,7 +189,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ
   rw [h, mul_comm _ (↑b : R), ← pow_one hζ'.unit'] at hu
   obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' hP hpri.out a b 1 hu.symm
-  simp only [zpow_one, zpow_neg, PNat.mk_coe, mem_span_singleton, ← h] at hk
+  simp only [zpow_one, zpow_neg, mem_span_singleton, ← h] at hk
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.out.ne_zero]
   refine ⟨⟨(2 * k % p).natAbs, ?_⟩, ⟨((2 * k - 1) % p).natAbs, ?_⟩, ?_, ?_⟩
   repeat'
@@ -198,24 +198,24 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     rw [natAbs_natCast]
     exact emod_lt_of_pos _ (by simp [hpri.out.pos])
   · simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_eq_intCast_iff,
-      ZMod.intCast_mod, Int.cast_sub, Int.cast_mul, Int.cast_natCast, Int.cast_one]
+      ZMod.intCast_mod, Int.cast_sub, Int.cast_mul, Int.cast_one]
   simp only [add_sub_assoc, sub_sub] at hk ⊢
   convert hk using 3
   rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R), mul_assoc (↑b : R)]
   congr 2
   · ext
-    simp only [Fin.val_mk, map_pow, NumberField.Units.coe_zpow, ← h]
+    simp only [map_pow, NumberField.Units.coe_zpow, ← h]
     refine eq_of_div_eq_one ?_
     rw [← zpow_natCast, ← zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,
-      Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, Int.cast_natCast, sub_self]
+      Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, sub_self]
   · ext
-    simp only [Fin.val_mk, map_pow, _root_.map_mul, NumberField.Units.coe_zpow, map_units_inv, ← h]
+    simp only [map_pow, _root_.map_mul, NumberField.Units.coe_zpow, map_units_inv, ← h]
     refine eq_of_div_eq_one ?_
     rw [← zpow_natCast, ← zpow_sub_one₀ (hζ'.ne_zero hpri.out.ne_zero), ←
       zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,
-      Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, Int.cast_natCast, Int.cast_one, sub_self]
+      Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, Int.cast_one, sub_self]
 
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)

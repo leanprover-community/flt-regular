@@ -47,14 +47,13 @@ def zeta : CyclotomicIntegers p := AdjoinRoot.root _
 lemma equiv_zeta : equiv p (zeta p) = (IsCyclotomicExtension.zeta_spec
     p ℚ (CyclotomicField p ℚ)).toInteger := by
   rw [equiv_apply, zeta]
-  simp only [AdjoinRoot.liftHom_root, IsPrimitiveRoot.integralPowerBasis'_gen]
+  simp only [AdjoinRoot.liftHom_root]
 
 lemma prime_one_sub_zeta :
     Prime (1 - zeta p) := by
   rw [← prime_units_mul (a := -1), Units.val_neg, Units.val_one, neg_mul, one_mul, neg_sub]
   apply (MulEquiv.prime_iff (equiv p)).1
-  simp only [RingEquiv.toMulEquiv_eq_coe, RingEquiv.coe_toMulEquiv,
-    (equiv p).map_sub, (equiv p).map_one, equiv_zeta]
+  simp only [(equiv p).map_sub, (equiv p).map_one, equiv_zeta]
   have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
   exact H.zeta_sub_one_prime'
 
@@ -72,9 +71,8 @@ lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
     ← neg_dvd, neg_sub]
   exact zeta_sub_one_dvd_Int_iff H
 
-lemma one_sub_zeta_dvd : 1 - zeta p ∣ p := by
-  show 1 - zeta p ∣ (p : ℤ)
-  rw [one_sub_zeta_dvd_int_iff]
+lemma one_sub_zeta_dvd : 1 - zeta p ∣ p :=
+  (one_sub_zeta_dvd_int_iff _ _).2 dvd_rfl
 
 lemma isCoprime_one_sub_zeta (n : ℤ) (hn : ¬ (p : ℤ) ∣ n) : IsCoprime (1 - zeta p) n := by
   apply (((Nat.prime_iff_prime_int.mp hpri.out).coprime_iff_not_dvd.mpr hn).map

@@ -37,7 +37,7 @@ lemma dvd_iff_emultiplicity_le {M : Type*}
         rw [emultiplicity_mul hp]
         exact le_add_self
       rw [mul_comm]
-      simp only [ne_eq, mul_eq_zero, not_or] at hb
+      simp only [mul_eq_zero, not_or] at hb
       refine mul_dvd_mul_left _ ?_
       rw [← pow_one q, pow_dvd_iff_le_emultiplicity]
       have := H q hq
@@ -93,7 +93,7 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   · rw [Izero, FractionalIdeal.coe_zero]
     exact bot_isPrincipal
   rw [← Ne, ← isUnit_iff_ne_zero] at Izero
-  show Submodule.IsPrincipal ((Izero.unit' : FractionalIdeal A⁰ K) : Submodule A K)
+  change Submodule.IsPrincipal ((Izero.unit' : FractionalIdeal A⁰ K) : Submodule A K)
   rw [← ClassGroup.mk_eq_one_iff, ← orderOf_eq_one_iff, ← Nat.dvd_one, ← H, Nat.dvd_gcd_iff]
   refine ⟨?_, orderOf_dvd_card⟩
   rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]

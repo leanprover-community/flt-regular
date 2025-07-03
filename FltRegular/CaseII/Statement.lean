@@ -53,7 +53,6 @@ lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRe
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot
     ℚ (B := (CyclotomicField p ℚ)) (Set.mem_singleton p) hpri.1.ne_zero
   have := fun n ↦ zeta_sub_one_dvd_Int_iff (K := CyclotomicField p ℚ) hζ (n := n)
-  simp only [PNat.mk_coe] at this
   simp_rw [← this]
   rintro ⟨x, y, z, hy, hz, hz', e⟩
   refine not_exists_solution' (K := CyclotomicField p ℚ) hodd ?_
@@ -90,16 +89,14 @@ theorem caseII {a b c : ℤ} {p : ℕ} [hpri : Fact p.Prime] (hreg : IsRegularPr
   obtain hab | hc := (Nat.prime_iff_prime_int.mp hpri.out).dvd_or_dvd caseII
   · obtain ha| hb := (Nat.prime_iff_prime_int.mp hpri.out).dvd_or_dvd hab
     · refine not_exists_Int_solution' hreg hodd ⟨b, -c, -a, ?_, ?_, ?_, ?_⟩
-      · simp only [← hgcd, Finset.mem_singleton, Finset.mem_insert, neg_inj, Finset.gcd_insert,
-          id_eq, ← Int.coe_gcd, Int.neg_gcd, Nat.cast_inj, ← LawfulSingleton.insert_empty_eq,
-            Finset.gcd_empty, Int.gcd_left_comm _ a]
+      · simp only [← hgcd, Finset.gcd_insert,id_eq, ← Int.coe_gcd, Int.neg_gcd,
+          ← LawfulSingleton.insert_empty_eq, Finset.gcd_empty, Int.gcd_left_comm _ a]
       · rwa [dvd_neg]
       · rwa [ne_eq, neg_eq_zero]
       · simp [hodd'.neg_pow, ← e]
     · refine not_exists_Int_solution' hreg hodd ⟨-c, a, -b, ?_, ?_, ?_, ?_⟩
-      · simp only [← hgcd, Finset.mem_singleton, Finset.mem_insert, neg_inj, Finset.gcd_insert,
-          id_eq, ← Int.coe_gcd, Int.neg_gcd, Nat.cast_inj, ← LawfulSingleton.insert_empty_eq,
-          Finset.gcd_empty, Int.gcd_left_comm _ c]
+      · simp only [← hgcd, Finset.gcd_insert, id_eq, ← Int.coe_gcd, Int.neg_gcd,
+          ← LawfulSingleton.insert_empty_eq, Finset.gcd_empty, Int.gcd_left_comm _ c]
       · rwa [dvd_neg]
       · rwa [ne_eq, neg_eq_zero]
       · simp [hodd'.neg_pow, ← e]

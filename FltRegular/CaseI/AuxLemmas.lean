@@ -38,8 +38,7 @@ theorem auxf0k₁ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : Fin p, f0k₁ b p (i : ℕ
   refine ⟨⟨2, two_lt hp5⟩, ?_⟩
   have hpred : ((⟨2, two_lt hp5⟩ : Fin p) : ℕ) ≠ p.pred := by
     intro h
-    simp only [Fin.ext_iff, Fin.val_mk] at h
-    replace h := h.symm
+    simp only at h
     rw [Nat.pred_eq_sub_one] at h
     omega
   simp only [f0k₁, OfNat.ofNat_ne_one, ite_false, ite_eq_right_iff, neg_eq_zero]
@@ -103,7 +102,7 @@ theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ 
     simp_rw [f0k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right zero_ne_one,
       Finset.range_filter_eq]
     simp only [hpri.pos, hpri.one_lt, if_true, zsmul_eq_mul, Int.cast_sub, sum_singleton,
-      _root_.pow_zero, mul_one, pow_one, Ne, zero_smul, sum_const_zero, add_zero, Fin.val_mk]
+      _root_.pow_zero, mul_one, pow_one, Ne, zero_smul, sum_const_zero, add_zero]
   rw [sum_range] at key
   refine hab ?_
   symm
@@ -132,7 +131,7 @@ theorem aux1k₁ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ 
   have h := aux0k₂ hpri hp5 hζ hab hcong hdiv
   rw [show (k₁ : ℤ) = 1 by simpa using habs.symm, sub_self] at hcong
   have := aux_cong1k₁ hpri hcong
-  simp only [← Fin.val_eq_val, Fin.val_mk] at this
+  simp only [← Fin.val_eq_val] at this
   exact h.symm this
 
 end OnekOne
@@ -149,7 +148,7 @@ theorem aux_cong1k₂ {k : Fin p} (hpri : p.Prime) (hp5 : 5 ≤ p) (hcong : k �
   suffices ((k : ℤ) : ZMod p).val = 2 by simpa
   rw [← ZMod.intCast_eq_intCast_iff] at hcong
   rw [hcong]
-  simp only [Int.cast_add, algebraMap.coe_one]
+  simp only [Int.cast_add]
   haveI : Fact p.Prime := ⟨hpri⟩
   have := congr_arg Nat.succ (Nat.succ_pred_eq_of_pos hpri.pred_pos)
   rw [succ_pred_prime hpri] at this
@@ -178,8 +177,7 @@ theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
     simp_rw [f1k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right
       (show 0 ≠ 2 by norm_num), Finset.range_filter_eq]
     simp only [hpri.pos, ite_true, zsmul_eq_mul, sum_singleton, _root_.pow_zero, mul_one,
-      two_lt hp5,neg_smul, sum_neg_distrib, ne_eq, mem_range, not_and, not_not, zero_smul,
-      sum_const_zero, add_zero]
+      two_lt hp5,neg_smul, sum_neg_distrib, ne_eq, zero_smul, sum_const_zero, add_zero]
     ring
   rw [sum_range] at key
   refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ?_ _) _)

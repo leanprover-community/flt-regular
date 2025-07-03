@@ -174,8 +174,8 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
       rw [← LinearMap.map_smul, ← sub_eq_zero,
         ← (Finsupp.linearCombination A S.units).map_sub] at hg
       have := DFunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
-      simp only [algebraMap_int_eq, Int.coe_castRingHom, Finsupp.coe_sub, Finsupp.coe_smul, ha,
-        Pi.sub_apply, Finsupp.mapRange_apply, Finsupp.coe_zero, Pi.zero_apply, sub_eq_zero] at this
+      simp only [Finsupp.coe_sub, Finsupp.coe_smul, ha, Pi.sub_apply, Finsupp.coe_zero,
+        Pi.zero_apply, sub_eq_zero] at this
       exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
         (isUnit_of_mul_eq_one _ _ this)
 
@@ -237,9 +237,8 @@ lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k)
   let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ν : (𝓞 K)ˣ)
   use η ^ (p ^ (h - 1))
   refine ⟨?_, fun ε => H ε⟩
-  simp only [ge_iff_le, Units.val_pow_eq_pow_val, Units.coe_map,
-    MonoidHom.coe_coe, SubmonoidClass.coe_pow, map_pow]
-  show (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
+  simp only [Units.val_pow_eq_pow_val, map_pow]
+  change (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
   rw [Algebra.norm_algebraMap, hKL, ← pow_mul]
   nth_rewrite 1 [← pow_one p]
   rw [← pow_add]
@@ -286,7 +285,7 @@ def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) 
     intros f g
     refine DFunLike.ext _ _ (fun x ↦ ?_)
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
-    simp only [relativeUnitsMap, map_mul, Function.comp_apply]
+    simp only [relativeUnitsMap, map_mul]
     rfl
 
 include σ hp hKL hσ in
@@ -316,16 +315,15 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   rw [← ofMul_prod, ← QuotientGroup.mk_prod, ofMul_eq_zero, QuotientGroup.eq_one_iff]
   use Units.map (RingOfIntegers.norm k) x
   ext
-  simp only [Units.coe_map, MonoidHom.coe_coe, RingOfIntegers.coe_algebraMap_norm, map_pow,
-    Units.coe_prod, Submonoid.coe_finset_prod, Subsemiring.coe_toSubmonoid,
-    Subalgebra.coe_toSubsemiring, Algebra.norm_eq_prod_automorphisms]
+  simp only [Units.coe_map, MonoidHom.coe_coe, RingOfIntegers.coe_algebraMap_norm, Units.coe_prod,
+    Algebra.norm_eq_prod_automorphisms]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank, Fintype.card_eq_nat_card,
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
     ← (finEquivZPowers <| isOfFinOrder_of_finite _).symm.prod_comp]
   simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe, map_prod,
     NumberField.RingOfIntegers.coe_eq_algebraMap]
   rw [prod_subtype]
-  simp only [mem_univ, hσ, implies_true]
+  simp [mem_univ, hσ]
 
 @[nolint unusedArguments]
 def relativeUnitsWithGenerator (_hp : Nat.Prime p)
@@ -457,7 +455,7 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
   cases r with
   | zero => exact (not_lt_zero' hr).elim
   | succ r =>
-    simp only [Nat.succ_eq_add_one, add_lt_add_iff_right] at hr
+    simp only [add_lt_add_iff_right] at hr
     obtain ⟨a₁, ι₁, i₁, e₁, hi₁⟩ := lh_pow_free_aux p hp ν hk r hr (η ∘ Fin.castSucc)
     obtain ⟨a₂, ι₂, i₂, e₂, hi₂⟩ := lh_pow_free_aux p hp ν hk r hr (η ∘ Fin.succAbove i₁.castSucc)
     by_cases hν' : ν = 1
@@ -488,13 +486,13 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
         (Fin.succAbove i₁.castSucc) ι₂ 0, i₁.castSucc, ?_, ?_, fun H ↦ (hν' H).elim⟩
     · rw [sub_mul, eq_sub_iff_add_eq.mpr h₁, eq_sub_iff_add_eq.mpr h₂]
       simp only [zsmul_eq_mul, Pi.intCast_def, Int.cast_id, Pi.sub_apply, Pi.mul_apply,
-        Fin.succAbove_of_le_castSucc, ne_eq, not_not, not_exists, sub_sub_sub_cancel_left]
+        sub_sub_sub_cancel_left]
       simp only [sub_smul, mul_smul, ← e₁, ← e₂, sum_sub_distrib]
       rw [Fin.sum_univ_castSucc, Fin.sum_univ_succAbove _ i₁.castSucc]
       simp [(Fin.castSucc_injective r).extend_apply, Fin.succAbove_right_injective.extend_apply,
         (Fin.castSucc_lt_last _).ne, smul_sum]
     · simp only [zsmul_eq_mul, Pi.intCast_def, Int.cast_id, Pi.sub_apply, Pi.mul_apply,
-        exists_apply_eq_apply, not_true_eq_false, (Fin.castSucc_injective r).extend_apply,
+        not_true_eq_false, (Fin.castSucc_injective r).extend_apply,
         Fin.exists_succAbove_eq_iff, ne_eq, not_false_eq_true, Function.extend_apply',
         Pi.zero_apply, mul_zero, sub_zero, (Nat.prime_iff_prime_int.mp hp).dvd_mul, hi₁, not_or,
         and_true]
@@ -504,7 +502,7 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
 
 lemma NumberField.Units.finrank_eq : finrank ℤ (Additive (𝓞 k)ˣ) = NumberField.Units.rank k := by
   rw [← rank_modTorsion]
-  show _ = finrank ℤ (Additive (𝓞 k)ˣ ⧸ (AddCommGroup.torsion <| Additive (𝓞 k)ˣ))
+  change _ = finrank ℤ (Additive (𝓞 k)ˣ ⧸ (AddCommGroup.torsion <| Additive (𝓞 k)ˣ))
   rw [← Submodule.torsion_int]
   exact (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).symm
 
@@ -516,8 +514,7 @@ lemma lh_pow_free [FiniteDimensional k K] (ν: (𝓞 k)ˣ)
       (i₀ : Fin (NumberField.Units.rank k + 2)), ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ν) ∧
         ¬ ((p : ℤ) ∣ ι i₀) ∧ (ν = 1 → i₀ ≠ Fin.last _) := by
   convert lh_pow_free' p hp ν hk _ ?_ η
-  · simp only [ge_iff_le, Nat.succ_sub_succ_eq_sub, nonpos_iff_eq_zero, add_eq_zero, one_ne_zero,
-      and_false, tsub_zero, Fin.ext_iff, Fin.val_last]
+  · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, Fin.ext_iff, Fin.val_last]
   · rw [NumberField.Units.finrank_eq]
     exact Nat.lt.base _
 
@@ -546,7 +543,7 @@ lemma Hilbert92_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ν : (𝓞 k
   have hcoe : ((algebraMap (𝓞 K) K) ((algebraMap (𝓞 k) (𝓞 K)) ((ν ^ a)⁻¹).1)) =
     algebraMap (𝓞 k) (𝓞 K) ((ν ^ a)⁻¹).1 := rfl
   simp only [toMul_sum, toMul_zsmul, zpow_neg, Units.val_mul, Units.coe_prod, map_mul, map_prod,
-    Units.coe_zpow, map_mul, map_prod, norm_map_zpow, Units.coe_map]
+    Units.coe_zpow, map_mul, map_prod, norm_map_zpow]
   rw [← map_zpow, Units.coe_map_inv]
   simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe]
   have hcoe1 :
@@ -576,18 +573,17 @@ lemma relativeUnitsModule_zeta_smul (x) :
     (zeta p) • mkG x = mkG (Units.map (galRestrictHom (𝓞 k) k K (𝓞 K) σ) x) := by
   let φ := (addMonoidEndRingEquivInt _
       (MulEquiv.Monoid.End <| relativeUnitsMap <| ((AlgEquiv.algHomUnitsEquiv _ _).symm σ).val))
-  show QuotientAddGroup.mk ((Module.AEval'.of φ).symm <|
+  change QuotientAddGroup.mk ((Module.AEval'.of φ).symm <|
     Polynomial.X (R := ℤ) • Module.AEval'.of φ (Additive.ofMul (QuotientGroup.mk x))) = _
   simp only [AlgEquiv.val_algHomUnitsEquiv_symm_apply, MulEquiv.Monoid.End_apply,
-    Equiv.toFun_as_coe, addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
+    addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
     LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, Module.AEval.of_symm_smul, Polynomial.aeval_X,
-    LinearEquiv.symm_apply_apply, Module.End.smul_def, AddMonoidHom.coe_toIntLinearMap,
-    MonoidHom.toAdditive_apply_apply, toMul_ofMul, unit_to_U]
+    LinearEquiv.symm_apply_apply, Module.End.smul_def, unit_to_U]
   rfl
 
 local instance {M} [AddCommGroup M] : NoZeroSMulDivisors ℤ (M ⧸ AddCommGroup.torsion M) := by
   rw [← Submodule.torsion_int]
-  show NoZeroSMulDivisors ℤ (M ⧸ Submodule.torsion ℤ M)
+  change NoZeroSMulDivisors ℤ (M ⧸ Submodule.torsion ℤ M)
   infer_instance
 
 local instance : Module.Finite ℤ (Additive <| RelativeUnits k K) :=
@@ -665,10 +661,10 @@ lemma NumberField.Units.rank_of_isUnramified :
 lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
   rw [← Submodule.torsion_int]
   refine (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).trans ?_
-  show finrank ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
+  change finrank ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
     (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))))) = _
   rw [Submodule.finrank_quotient]
-  show _ - finrank ℤ (LinearMap.range <| AddMonoidHom.toIntLinearMap <|
+  change _ - finrank ℤ (LinearMap.range <| AddMonoidHom.toIntLinearMap <|
     MonoidHom.toAdditive <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))) = _
   rw [LinearMap.finrank_range_of_inj, NumberField.Units.finrank_eq, NumberField.Units.finrank_eq,
     NumberField.Units.rank_of_isUnramified (k := k), add_mul, one_mul, mul_tsub, mul_one, mul_comm,
@@ -743,9 +739,8 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
     refine Hilbert92_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
     rw [← pow_mul, ← pow_succ]
     apply (hν.pow_eq_one_iff_dvd _).2
-    cases h <;> simp only [Nat.zero_eq, pow_zero, zero_le, tsub_eq_zero_of_le,
-      zero_add, pow_one, one_dvd, Nat.succ_sub_succ_eq_sub,
-      nonpos_iff_eq_zero, tsub_zero, dvd_refl]
+    cases h <;> simp only [pow_zero, zero_le, tsub_eq_zero_of_le, zero_add, pow_one, one_dvd,
+      Nat.succ_sub_succ_eq_sub, tsub_zero, dvd_refl]
   let H := unitlifts p hp hKL σ hσ S
   -- the list of norms of fundamental units
   let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
@@ -767,7 +762,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
       simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE, η, H2]
     | cast i =>
       simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE,
-        η, H2, J, N, H]
+        η, H2, N, H]
   · intro ε hε
     --going to show that if not this would contradict our corollary.
     refine hS.corollary p hp _ _ (finrank_G p hp hKL σ hσ) _ (ι ∘ Fin.castSucc) ?_ (mkG ε) ?_
@@ -810,9 +805,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
               rw [← hε', map_pow, eq_comm, ← mul_inv_eq_one, ← inv_pow, ← mul_pow] at NE_p_pow
               apply_fun ((↑) : (𝓞 K)ˣ → K) at NE_p_pow
               simp only [RingHom.toMonoidHom_eq_coe, Units.val_pow_eq_pow_val, Units.val_mul,
-                Units.coe_map_inv, MonoidHom.coe_coe, SubmonoidClass.coe_pow, Submonoid.coe_mul,
-                Subsemiring.coe_toSubmonoid, Subalgebra.coe_toSubsemiring, Units.val_one,
-                OneMemClass.coe_one, RingOfInteger.coe_algebraMap_apply] at NE_p_pow
+                Units.coe_map_inv, MonoidHom.coe_coe, Units.val_one] at NE_p_pow
               have : NeZero p := ⟨hp.pos.ne'⟩
               obtain ⟨i, -, e⟩ := hν''.eq_pow_of_pow_eq_one NE_p_pow
               use ((ν ^ p ^ h) ^ i * ε')
@@ -833,7 +826,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
 -- check this equality in the quotient, removes the ν, just asks that the reduction of E is zero
       simp only [Fin.snoc_castSucc, toMul_zsmul, unit_to_U_zpow, unitlifts_spec, Fin.snoc_last,
         toMul_ofMul, RingHom.toMonoidHom_eq_coe, zpow_neg, unit_to_U_inv, Function.comp_apply,
-        unit_to_U_map, smul_zero, neg_zero, add_zero, add_eq_left, NE, η, H2, J, N, H]
+        unit_to_U_map, smul_zero, neg_zero, add_zero, add_eq_left, H2, H]
       apply_fun mkG at NE_p_pow
       simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map, unit_to_U_pow] at NE_p_pow
       rw [eq_comm, smul_eq_zero] at NE_p_pow

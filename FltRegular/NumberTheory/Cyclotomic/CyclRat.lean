@@ -96,7 +96,7 @@ theorem not_coprime_not_top {S : Type*} [CommRing S] (a b : Ideal S) :
     simp
   · intro h
     refine ⟨1, 1, ?_⟩
-    simp only [one_eq_top, top_mul, Submodule.add_eq_sup, ge_iff_le]
+    simp only [one_eq_top, top_mul, Submodule.add_eq_sup]
     rw [← h]
     rfl
 
@@ -294,7 +294,7 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
       rw [← eq_top_iff_one] at hone
       have hcontra := IsPrime.ne_top hPrime
       rw [hone] at hcontra
-      simp only [Ne, eq_self_iff_true, not_true] at hcontra
+      simp only [Ne, not_true] at hcontra
     apply HC hprime3
   · apply HC hprime2
 
@@ -334,8 +334,6 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
   have hlast :
     (Fin.castOrderIso (succ_pred_prime hp.out)) (Fin.last p.pred) =
     ⟨p.pred, pred_lt hp.out.ne_zero⟩ := Fin.ext rfl
-  have h : ∀ x, (Fin.castOrderIso (succ_pred_prime hp.out)) (Fin.castSuccEmb x) =
-    ⟨x, lt_trans x.2 (pred_lt hp.out.ne_zero)⟩ := fun x => Fin.ext rfl
   let ζ' := (ζ : L)
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
   set b := hζ'.integralPowerBasis' with hb
@@ -349,11 +347,10 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
   obtain ⟨y, hy⟩ := hdiv
   rw [← Equiv.sum_comp (Fin.castOrderIso (succ_pred_prime hp.out)).toEquiv,
     Fin.sum_univ_castSucc] at hy
-  simp only [hlast, h, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
+  simp only [hlast, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
     ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
-  simp only [RelIso.coe_fn_toEquiv, Fin.coe_cast, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
-    Fin.coe_orderIso_apply] at hy
+  simp only [RelIso.coe_fn_toEquiv, Fin.coe_castSucc, Fin.coe_orderIso_apply] at hy
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [smul_neg]
@@ -384,8 +381,6 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
   have hlast : (Fin.castOrderIso (succ_pred_prime hp)) (Fin.last p.pred) =
       ⟨p.pred, pred_lt hp.ne_zero⟩ := Fin.ext rfl
-  have h : ∀ x, (Fin.castOrderIso (succ_pred_prime hp)) (Fin.castSuccEmb x) =
-    ⟨x, lt_trans x.2 (pred_lt hp.ne_zero)⟩ := fun x => Fin.ext rfl
   set b := hζ'.integralPowerBasis' with hb
   have hdim : b.dim = p.pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp,
     pred_eq_sub_one]
@@ -398,11 +393,10 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
     simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt j))] at H
   obtain ⟨y, hy⟩ := hdiv
   rw [← Equiv.sum_comp (Fin.castOrderIso (succ_pred_prime hp)).toEquiv, Fin.sum_univ_castSucc] at hy
-  simp only [hlast, h, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
+  simp only [hlast, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
     ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
-  simp only [RelIso.coe_fn_toEquiv, Fin.coe_cast, mul_neg, ← Subtype.coe_inj, Fin.coe_castSucc,
-    Fin.coe_orderIso_apply] at hy
+  simp only [RelIso.coe_fn_toEquiv, Fin.coe_castSucc, Fin.coe_orderIso_apply] at hy
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [smul_neg]

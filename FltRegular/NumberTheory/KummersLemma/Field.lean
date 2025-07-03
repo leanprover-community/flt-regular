@@ -41,8 +41,8 @@ lemma monic_poly_aux :
     convert add_zero _ using 2
     rw [natDegree_poly_aux hζ, coeff_C, if_neg (NeZero.pos p).ne.symm]
   · rw [leadingCoeff_pow, ← C.map_one, leadingCoeff, natDegree_sub_C, natDegree_mul_X]
-    · simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C, ite_true,
-        coeff_one, ite_false, sub_zero, one_ne_zero, ↓reduceIte]
+    · simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C, coeff_one,
+        sub_zero, one_ne_zero, ↓reduceIte]
     · exact C_ne_zero.mpr (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
 
 
@@ -58,8 +58,7 @@ lemma poly_spec :
 lemma monic_poly : Monic (poly hp hζ u hcong) := by
   haveI : Fact (Nat.Prime p) := hpri
   have := congr_arg leadingCoeff (poly_spec hp hζ u hcong)
-  simp only [map_pow, leadingCoeff_mul, leadingCoeff_pow, leadingCoeff_C, ne_eq, PNat.pos,
-    pow_eq_zero_iff, monic_poly_aux hζ] at this
+  simp only [map_pow, leadingCoeff_mul, leadingCoeff_pow, leadingCoeff_C, monic_poly_aux hζ] at this
   refine mul_right_injective₀ ?_ (this.trans (mul_one _).symm)
   exact pow_ne_zero _ (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
 
@@ -82,15 +81,13 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
         Polynomial.map_sub, Polynomial.map_mul, map_C,
         Polynomial.map_one, map_X, coeff_add] at this
       convert this
-      simp only [NumberField.RingOfIntegers.coe_eq_algebraMap, ← Polynomial.coeff_map]
+      simp only [← Polynomial.coeff_map]
       simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
         Polynomial.map_one]
       rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
       simp [show hζ.unit'.1 = ζ from rfl]
   apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
-  simp only [Subalgebra.algebraMap_eq, Algebra.id.map_eq_id, RingHomCompTriple.comp_eq, coeff_map,
-    RingHom.coe_coe, Subalgebra.coe_val, one_div, map_sub, map_one, coeff_add, coeff_sub,
-    PNat.pos, pow_eq_zero_iff, this, mul_add]
+  simp only [coeff_map, one_div, coeff_add, this, mul_add]
   simp_rw [← smul_eq_mul (α := K), ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
   rw [smul_C, smul_eq_mul, ← _root_.smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub,
     smul_C, smul_eq_mul, mul_inv_cancel₀, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub,
@@ -123,10 +120,9 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
   -- also add to mathlib
   have hcoe : (algebraMap (𝓞 K) L) (↑hζ.unit') = algebraMap K L ζ := rfl
   have hcoe1 : (algebraMap (𝓞 K) L) ↑u = algebraMap K L ↑↑u := rfl
-  simp only [map_sub, map_one, map_pow, map_mul, aeval_C, Subalgebra.algebraMap_eq, _root_.smul_pow,
-    hcoe, RingHom.coe_comp, RingHom.coe_coe, Subalgebra.coe_val, Function.comp_apply, e, hcoe1,
-    map_add, aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ',
-    sub_sub_cancel_left, (hpri.out.odd_of_ne_two hp).neg_pow] at this
+  simp only [map_sub, map_one, map_pow, map_mul, aeval_C, _root_.smul_pow, hcoe, e, hcoe1, map_add,
+    aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ', sub_sub_cancel_left,
+    (hpri.out.odd_of_ne_two hp).neg_pow] at this
   rw [← pow_mul, mul_comm m, pow_mul, hζ.pow_eq_one, one_pow, one_smul, neg_add_cancel,
     mul_eq_zero] at this
   exact this.resolve_left (pow_ne_zero _ hζ')

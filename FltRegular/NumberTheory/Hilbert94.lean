@@ -36,7 +36,7 @@ lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRe
   rw [map_pow]
   induction n with
   | zero =>
-    simp only [Nat.zero_eq, pow_zero, AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe]
+    simp only [pow_zero, AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe]
     exact Ideal.map_id _
   | succ n IH =>
     simp only [AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe, pow_succ] at IH ⊢

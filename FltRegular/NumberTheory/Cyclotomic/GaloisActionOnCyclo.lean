@@ -29,8 +29,7 @@ theorem ZMod.val_neg_one' : ∀ {n : ℕ}, 0 < n → (-1 : ZMod n).val = n - 1
 
 theorem galConj_zeta : galConj K p (zeta p ℚ K) = (zeta p ℚ K)⁻¹ := by
   let hζ := zeta_spec p ℚ K
-  simp only [galConj, Units.coe_neg_one, autEquivPow_symm_apply, AlgEquiv.coe_algHom,
-    PowerBasis.equivOfMinpoly_apply]
+  simp only [galConj, Units.coe_neg_one, autEquivPow_symm_apply, PowerBasis.equivOfMinpoly_apply]
   convert (hζ.powerBasis ℚ).lift_gen (S' := K) _ _
   rw [IsPrimitiveRoot.powerBasis_gen, ZMod.val_neg_one' (NeZero.pos p),
     pow_sub₀ _ (hζ.ne_zero (NeZero.ne p)) (NeZero.pos p), pow_one, hζ.pow_eq_one, one_mul]

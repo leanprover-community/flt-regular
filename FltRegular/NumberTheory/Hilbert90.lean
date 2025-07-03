@@ -37,9 +37,9 @@ lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a,
         Nat.mod_eq_of_lt (mem_range.1 hb)] at hab
     · refine ⟨(finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
       have := Equiv.symm_apply_apply (finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
-      simp only [SetLike.coe_sort_coe, Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
+      simp only [Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
       rw [← this]
-      simp only [SetLike.coe_sort_coe, Subtype.coe_eta, Equiv.symm_apply_apply]
+      simp only [Subtype.coe_eta, Equiv.symm_apply_apply]
       rfl
 
 include hσ hη in
@@ -67,10 +67,10 @@ lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ η) σ = η := by
     rw [show 0 = Nat.pred 1 by rfl] at h
     apply hone
     exact Nat.pred_inj (Nat.pos_of_ne_zero nezero.1) zero_lt_one h
-  simp [this]
+  simp
   have horder :=  hφ hσ 1
-  simp only [SetLike.coe_sort_coe, pow_one] at horder
-  simp only [cocycle, SetLike.coe_sort_coe, horder, this, range_one, prod_singleton, pow_zero]
+  simp only [pow_one] at horder
+  simp only [cocycle, horder, this, range_one, prod_singleton, pow_zero]
   rfl
 
 include hη in
@@ -84,9 +84,7 @@ lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle h�
   have Hab := hφ hσ (a + b)
   have Ha := hφ hσ a
   have Hb := hφ hσ b
-  simp only [SetLike.coe_sort_coe, Nat.cast_add, Fin.ext_iff, Fin.mod_val, Fin.coe_ofNat_eq_mod,
-    Nat.mod_self, Nat.mod_zero, cocycle, Units.coe_prod, Units.coe_map, MonoidHom.coe_coe,
-    map_prod] at Hab Ha Hb ⊢
+  simp only [cocycle, Units.coe_prod, Units.coe_map, MonoidHom.coe_coe, map_prod] at Hab Ha Hb ⊢
   rw [Hab, Ha, Hb, mul_comm]
   have H : ∀ n, σ ^ (a + n) = σ ^ (a % orderOf σ + n) := fun n ↦ by simp [pow_inj_mod]
   conv =>
@@ -96,7 +94,7 @@ lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle h�
   simpa using aux2 hσ hη (by simp)
 
 include hη in
-lemma is_cocycle [IsGalois K L] : IsMulOneCocycle (cocycle hσ η) := by
+lemma is_cocycle [IsGalois K L] : IsMulCocycle₁ (cocycle hσ η) := by
   intro α β
   simp [← Units.eq_iff, is_cocycle_aux hσ hη α β]
 
@@ -113,7 +111,7 @@ lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
     refine ⟨σ, fun τ ↦ ?_⟩
     simp only [orderOf_eq_one_iff.1 hone, Subgroup.zpowers_one_eq_bot, Subgroup.mem_bot] at hσ
     rw [orderOf_eq_one_iff.1 hone, hσ τ]
-  obtain ⟨ε, hε⟩ := isMulOneCoboundary_of_isMulOneCocycle_of_aut_to_units _ (is_cocycle hσ hη)
+  obtain ⟨ε, hε⟩ := isMulCoboundary₁_of_isMulCocycle₁_of_aut_to_units _ (is_cocycle hσ hη)
   use ε⁻¹
   simp only [map_inv₀, div_inv_eq_mul]
   specialize hε σ
@@ -146,7 +144,7 @@ lemma Hilbert90_integral [IsGalois K L] {η : B} (hη : Algebra.norm K (algebraM
     rw [Algebra.smul_def, IsScalarTower.algebraMap_apply A B L, ht', IsLocalization.mk'_spec']
   refine ⟨x, ?_, ?_⟩
   · rintro rfl
-    simp only [IsLocalization.mk'_zero, _root_.map_zero, ne_eq, not_true, div_zero] at hε
+    simp only [IsLocalization.mk'_zero, _root_.map_zero, div_zero] at hε
     rw [hε, Algebra.norm_zero] at hη
     exact zero_ne_one hη
   · rw [eq_div_iff_mul_eq] at hε
