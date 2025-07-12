@@ -180,7 +180,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
         (isUnit_of_mul_eq_one _ _ this)
 
 lemma corollary [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental) (a : Fin s → ℤ)
-    (ha : ∃ i , ¬ (p : ℤ) ∣ a i) :
+    (ha : ∃ i, ¬ (p : ℤ) ∣ a i) :
     ∀ g : G, (1 - zeta p) • g ≠ ∑ i, a i • S.units i := by
   intro g hg
   obtain ⟨i, hi⟩ := ha
@@ -507,7 +507,7 @@ lemma NumberField.Units.finrank_eq : finrank ℤ (Additive (𝓞 k)ˣ) = NumberF
   exact (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).symm
 
 include hp in
-lemma lh_pow_free [FiniteDimensional k K] (ν: (𝓞 k)ˣ)
+lemma lh_pow_free [FiniteDimensional k K] (ν : (𝓞 k)ˣ)
     (hk : ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n) = 1 → ∃ i, ν ^ i = ε)
     (η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ) :
     ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ)

@@ -18,7 +18,7 @@ noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i ∈ range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) η
 
 include hσ hη in
-lemma aux1 [IsGalois K L] {a: ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a, (σ ^ i) η = 1 := by
+lemma aux1 [IsGalois K L] {a : ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a, (σ ^ i) η = 1 := by
   obtain ⟨n, hn⟩ := Nat.dvd_iff_mod_eq_zero.2 h
   rw [hn]
   revert a

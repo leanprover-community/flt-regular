@@ -224,7 +224,7 @@ theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact p.Prime] (h : p ≠ 
   rw [sub_eq_of_eq_add hk] at this
   exact hζ.isPrime_one_sub_zeta.ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
-lemma map_two {S T F: Type*} [NonAssocSemiring S] [NonAssocSemiring T] [FunLike F S T]
+lemma map_two {S T F : Type*} [NonAssocSemiring S] [NonAssocSemiring T] [FunLike F S T]
   [RingHomClass F S T] (f : F) : f 2 = 2 := by
   rw [← one_add_one_eq_two, map_add, map_one]
   exact one_add_one_eq_two

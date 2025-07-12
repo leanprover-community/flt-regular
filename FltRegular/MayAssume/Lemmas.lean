@@ -50,7 +50,7 @@ theorem p_dvd_c_of_ab_of_anegc {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp : p 
   simp only [Int.cast_neg, Int.cast_mul, Int.cast_ofNat, neg_eq_zero, mul_eq_zero] at h
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
   refine Or.resolve_right h fun h3 => ?_
-  rw [show (3 : ZMod p) = ((3 : ℕ) : ZMod p) by simp, ZMod.natCast_zmod_eq_zero_iff_dvd,
+  rw [show (3 : ZMod p) = ((3 : ℕ) : ZMod p) by simp, ZMod.natCast_eq_zero_iff,
     Nat.dvd_prime Nat.prime_three] at h3
   rcases h3 with H₁ | H₂
   · exact hpri.ne_one H₁
