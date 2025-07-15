@@ -686,7 +686,7 @@ lemma IsPrimitiveRoot.coe_coe_iff {ν : (𝓞 k)ˣ} {n} :
     IsPrimitiveRoot (ν : k) n ↔ IsPrimitiveRoot ν n :=
   IsPrimitiveRoot.map_iff_of_injective
     (f := (algebraMap (𝓞 k) k).toMonoidHom.comp (Units.coeHom (𝓞 k)))
-    ((IsFractionRing.injective (𝓞 k) k).comp Units.ext)
+    ((IsFractionRing.injective (𝓞 k) k).comp Units.coeHom_injective)
 
 include hp in
 lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),

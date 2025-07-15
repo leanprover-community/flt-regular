@@ -96,7 +96,7 @@ lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle h�
 include hη in
 lemma is_cocycle [IsGalois K L] : IsMulCocycle₁ (cocycle hσ η) := by
   intro α β
-  simp [← Units.eq_iff, is_cocycle_aux hσ hη α β]
+  simp [← Units.val_inj, is_cocycle_aux hσ hη α β]
 
 include hη hσ in
 lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
@@ -117,7 +117,7 @@ lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
   specialize hε σ
   nth_rewrite 2 [← inv_inv ε] at hε
   rw [div_inv_eq_mul, cocycle_spec hσ hone, mul_inv_eq_iff_eq_mul, mul_comm,
-    ← Units.eq_iff] at hε
+    ← Units.val_inj] at hε
   simp only [AlgEquiv.smul_units_def, Units.coe_map, MonoidHom.coe_coe, Units.val_mul] at hε
   symm
   rw [inv_mul_eq_iff_eq_mul₀ ε.ne_zero, hε]
