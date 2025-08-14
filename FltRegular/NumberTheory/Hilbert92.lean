@@ -89,10 +89,11 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
     intro j
     exact DFunLike.congr_fun (hf _ hl') j
   simp only [Finsupp.single_apply] at hl'
-  have : l' i = 0 := hl _ (by simpa using hl' i)
+  simp only [mem_nonZeroDivisors_iff] at hl hσ
+  have : l' i = 0 := hl.2 _ (by simpa using hl' i)
   simp only [this, zero_mul, add_zero, mul_zero, ite_self, sub_zero] at hl'
   ext j
-  exact hσ _ ((mul_comm _ _).trans (hl' j))
+  exact hσ.2 _ ((mul_comm _ _).trans (hl' j))
 
 namespace systemOfUnits.IsFundamental
 
@@ -317,7 +318,7 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   ext
   simp only [Units.coe_map, MonoidHom.coe_coe, RingOfIntegers.coe_algebraMap_norm, Units.coe_prod,
     Algebra.norm_eq_prod_automorphisms]
-  rw [← hKL, ← IsGalois.card_aut_eq_finrank, Fintype.card_eq_nat_card,
+  rw [← hKL, ← IsGalois.card_aut_eq_finrank,
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
     ← (finEquivZPowers <| isOfFinOrder_of_finite _).symm.prod_comp]
   simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe, map_prod,
@@ -382,10 +383,9 @@ lemma unit_to_U_map (x : (𝓞 k)ˣ) : mkG (Units.map (algebraMap (𝓞 k) (𝓞
 
 variable [NumberField k]
 
-open multiplicity in
 theorem padicValNat_dvd_iff_le' {p : ℕ} (hp : p ≠ 1) {a n : ℕ} (ha : a ≠ 0) :
     p ^ n ∣ a ↔ n ≤ padicValNat p a := by
-  rw [pow_dvd_iff_le_emultiplicity, padicValNat_def' hp ha.bot_lt]
+  rw [pow_dvd_iff_le_emultiplicity, padicValNat_def' hp ha]
   exact ⟨fun h ↦ FiniteMultiplicity.le_multiplicity_of_le_emultiplicity
     (Nat.finiteMultiplicity_iff.2
     ⟨hp, Nat.zero_lt_of_ne_zero ha⟩) h, fun h ↦ le_emultiplicity_of_le_multiplicity h⟩
@@ -638,7 +638,7 @@ lemma Hilbert92_aux2 (E : (𝓞 K)ˣ) (ν : k) (hE : algebraMap k K ν = E / σ 
       rw [hE]
       field_simp
   rw [norm_eq_prod_pow_gen σ hσ, orderOf_eq_card_of_forall_mem_zpowers hσ,
-    ← Fintype.card_eq_nat_card, IsGalois.card_aut_eq_finrank, hKL]
+    IsGalois.card_aut_eq_finrank, hKL]
   conv =>
     enter [1, 2, i]
     rw [h1 i, mul_comm]

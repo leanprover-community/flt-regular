@@ -107,7 +107,7 @@ lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
       rw [← Algebra.algebraMap_eq_smul_one] at ha
       rw [← ha, Algebra.norm_algebraMap, this, pow_one] at hη
       exact ⟨1, by simp [← ha, hη]⟩
-    rw [← IsGalois.card_aut_eq_finrank, Fintype.card_eq_one_iff]
+    rw [← IsGalois.card_aut_eq_finrank, Nat.card_eq_fintype_card, Fintype.card_eq_one_iff]
     refine ⟨σ, fun τ ↦ ?_⟩
     simp only [orderOf_eq_one_iff.1 hone, Subgroup.zpowers_one_eq_bot, Subgroup.mem_bot] at hσ
     rw [orderOf_eq_one_iff.1 hone, hσ τ]

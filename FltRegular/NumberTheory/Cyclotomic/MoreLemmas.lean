@@ -136,7 +136,8 @@ lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
   rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq_zero_iff_mem, map_sub, this,
     map_sum]
   simp_rw [← RingHom.comp_apply, quotient_zero_sub_one_comp_aut]
-  rw [Finset.sum_const, map_nsmul, sub_eq_zero, Finset.card_univ, IsGalois.card_aut_eq_finrank,
+  rw [Finset.sum_const, map_nsmul, sub_eq_zero, Finset.card_univ, ← Nat.card_eq_fintype_card,
+    IsGalois.card_aut_eq_finrank,
     IsCyclotomicExtension.finrank K (cyclotomic.irreducible_rat (NeZero.pos p)),
     Nat.totient_prime hpri.out]
 

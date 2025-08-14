@@ -1,4 +1,4 @@
-import Mathlib.RingTheory.DedekindDomain.Ideal
+import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.RingTheory.Localization.NormTrace
 import Mathlib.RingTheory.Localization.LocalizationLocalization

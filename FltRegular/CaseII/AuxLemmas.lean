@@ -1,4 +1,5 @@
 import Mathlib.RingTheory.ClassGroup
+import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 
 variable {K : Type*} {p : ℕ} [Field K] [CharZero K] {ζ : K}
 
