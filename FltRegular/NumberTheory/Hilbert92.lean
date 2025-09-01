@@ -632,9 +632,6 @@ lemma Hilbert92_aux2 (E : (𝓞 K)ˣ) (ν : k) (hE : algebraMap k K ν = E / σ 
       rw [pow_succ', AlgEquiv.mul_apply, ih, pow_succ']
       simp only [inv_pow, map_mul, map_inv₀, map_pow, AlgEquiv.commutes]
       have h0 : (algebraMap k K) ν ≠ 0 := fun h ↦ by simp [(map_eq_zero _).1 h, hp.ne_zero] at hν
-      field_simp [h0]
-      rw [← mul_assoc]
-      congr
       rw [hE]
       field_simp
   rw [norm_eq_prod_pow_gen σ hσ, orderOf_eq_card_of_forall_mem_zpowers hσ,

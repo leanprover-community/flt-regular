@@ -17,7 +17,6 @@ import FltRegular.NumberTheory.GaloisPrime
 import FltRegular.NumberTheory.Hilbert90
 import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.Hilbert94
-import FltRegular.NumberTheory.IdealNorm
 import FltRegular.NumberTheory.KummersLemma.Field
 import FltRegular.NumberTheory.KummersLemma.KummersLemma
 import FltRegular.NumberTheory.RegularPrimes
