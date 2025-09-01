@@ -26,8 +26,8 @@ def group (name : Name) : Name :=
   (name.eraseSuffix? name.componentsRev.head!).get!
 
 def groups (imports : NameMap (Array Name)) : NameMap Unit :=
-  RBMap.fromList (imports.fold (fun xs k _ =>
-    if (`FltRegular).isPrefixOf k then (group k, ()) :: xs else xs) []) _
+  imports.foldl (fun xs k _ =>
+    if (`FltRegular).isPrefixOf k then xs.insert (group k) () else xs) ∅
 
 /-- `#deptree` outputs a graphviz dependency graph to `depgraph.dot`. Build it with
 `dot -Tpdf -Gnewrank=true -Goverlaps=false -Gsplines=ortho depgraph.dot > depgraph.pdf`. -/
@@ -70,12 +70,12 @@ partial def allDeclsIn (module : Name) : Elab.Command.CommandElabM (Array Name) 
   return decls
 
 def allFiles (env : Environment) : List Name :=
-  (env.importGraph.fold (fun xs k _ => if (`FltRegular).isPrefixOf k then
+  (env.importGraph.foldl (fun xs k _ => if (`FltRegular).isPrefixOf k then
     k :: xs else xs) []).mergeSort
     (toString · < toString ·)
 
 def allDecls (env : Environment) : Elab.Command.CommandElabM NameSet :=
-  (fun l => RBTree.ofList (l.map (fun a => a.toList)).flatten) <$>
+  (fun l => NameSet.ofList (l.map (fun a => a.toList)).flatten) <$>
     (List.mapM allDeclsIn (allFiles env))
 
 /-- `#index` computes an index of the declations in the project and saves it to `index.csv`. -/
@@ -96,8 +96,8 @@ elab "#index " : command => do
         ranges.range.pos.line.repr ++ ", " ++ ranges.range.pos.column.repr ++ "\n").toUTF8)
 
 def seenIn (env : Environment) (allDecls : NameSet) (decl : Name) : NameSet :=
-  (getVisited env decl).fold
-    (fun decls x => if allDecls.contains x then decls.insert x else decls) RBTree.empty
+  (getVisited env decl).foldl
+    (fun decls x => if allDecls.contains x then decls.insert x else decls) ∅
 
 /-- `#unseen` computes a list of the declarations in the project that are
 defined but not used in the current file. The list is stored in `unseen_defs.txt`.
