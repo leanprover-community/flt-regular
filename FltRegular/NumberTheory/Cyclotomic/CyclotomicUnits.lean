@@ -91,6 +91,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
     have h2 := mul_neg_geom_sum ζ (i - j)
     have hic : (i - j).Coprime p := by
       rw [Nat.coprime_comm]; apply Nat.coprime_of_lt_prime _ _ hp
+      rw [← Nat.pos_iff_ne_zero]
       apply Nat.sub_pos_of_lt hilj
       by_cases hj : 0 < j
       apply lt_trans _ hi
@@ -119,6 +120,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
       rw [Nat.coprime_comm]
       apply Nat.coprime_of_lt_prime _ _ hp
       have hilj' : i < j := by rw [lt_iff_le_and_ne]; simp [hij, hilj]
+      rw [← Nat.pos_iff_ne_zero]
       apply Nat.sub_pos_of_lt hilj'
       by_cases hii : 0 < i
       apply lt_trans _ hj

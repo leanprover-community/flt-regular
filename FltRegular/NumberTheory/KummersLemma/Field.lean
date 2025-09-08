@@ -184,7 +184,7 @@ lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [
     [Algebra A L] [Algebra R A] [IsScalarTower R A K] [IsScalarTower R A L]
     [IsIntegralClosure A R K] [IsIntegralClosure B R L] :
     IsIntegralClosure B A L where
-  algebraMap_injective' := IsIntegralClosure.algebraMap_injective B R L
+  algebraMap_injective := IsIntegralClosure.algebraMap_injective B R L
   isIntegral_iff := fun {x} ↦ by
     refine Iff.trans ?_ (IsIntegralClosure.isIntegral_iff (R := R) (A := B) (B := L))
     have := (IsIntegralClosure.isIntegral_algebra R (A := A) K)

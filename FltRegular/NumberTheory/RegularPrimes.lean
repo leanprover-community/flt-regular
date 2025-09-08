@@ -51,7 +51,7 @@ instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
   (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
     IsPrincipalIdealRing (𝓞 L) := by
   haveI : IsIntegralClosure ℤ ℤ L :=
-    { algebraMap_injective' := (algebraMap ℤ L).injective_int
+    { algebraMap_injective := (algebraMap ℤ L).injective_int
       isIntegral_iff := fun {x} => by
         let f := cyclotomicFieldTwoEquiv ℚ L
         refine
