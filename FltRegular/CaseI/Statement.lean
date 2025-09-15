@@ -24,8 +24,7 @@ def Statement : Prop :=
   ∀ ⦃a b c : ℤ⦄ {p : ℕ} [Fact p.Prime], IsRegularPrime p → ¬↑p ∣ a * b * c → a ^ p + b ^ p ≠ c ^ p
 
 theorem may_assume : SlightlyEasier → Statement := by
-  intro Heasy
-  intro a b c p hpri hreg hI H
+  intro Heasy a b c p hpri hreg hI H
   have hodd : p ≠ 2 := by
     intro h
     rw [h] at H hI
