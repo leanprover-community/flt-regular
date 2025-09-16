@@ -16,11 +16,13 @@ lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
   ¬∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
     ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
     x' ^ p + y' ^ p = ε₃ * (((hζ.unit' : 𝓞 K) - 1) ^ m * z') ^ p := by
-  induction' m, hm using Nat.le_induction with m' _ IH
-  · rintro ⟨x, y, z, ε₃, hy, hz, e⟩
-    exact zero_lt_one.not_ge (one_le_m hp hζ e hy hz)
-  · rintro ⟨x, y, z, ε₃, hy, hz, e⟩
-    exact IH (exists_solution' hp hζ e hy hz hreg)
+  induction m, hm using Nat.le_induction with
+  | base =>
+      rintro ⟨x, y, z, ε₃, hy, hz, e⟩
+      exact zero_lt_one.not_ge (one_le_m hp hζ e hy hz)
+  | succ m' _ IH =>
+      rintro ⟨x, y, z, ε₃, hy, hz, e⟩
+      exact IH (exists_solution' hp hζ e hy hz hreg)
 
 include hp hreg in
 lemma not_exists_solution' :

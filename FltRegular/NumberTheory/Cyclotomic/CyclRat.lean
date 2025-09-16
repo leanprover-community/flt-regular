@@ -414,7 +414,9 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
   simp only [Fin.castOrderIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta,
     Module.Basis.coord_apply, sub_eq_iff_eq_add] at hy
   obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.cast hdim.symm) ⟨j, hj⟩) y m
-  rw [hy, ← smul_eq_mul, Int.cast_smul_eq_zsmul, ← b.basis.coord_apply, ← Fin.cast_mk, hn]
+  rw [hy, ← smul_eq_mul, Int.cast_smul_eq_zsmul, ← b.basis.coord_apply, ← Fin.cast_mk hdim.symm _
+    hj, hn]
   exact dvd_add (dvd_mul_right _ _) last_dvd
+
 
 end IntFacts
