@@ -1,5 +1,4 @@
 import FltRegular.NumberTheory.GaloisPrime
-import Mathlib.NumberTheory.KummerDedekind
 import Mathlib.RingTheory.DedekindDomain.Different
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.NumberTheory.RamificationInertia.Basic

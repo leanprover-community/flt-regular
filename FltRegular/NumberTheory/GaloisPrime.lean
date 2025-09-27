@@ -12,12 +12,6 @@ open Ideal
 section primesOver
 variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
 
-lemma ne_bot_of_mem_primesOver [IsDedekindDomain S] [NoZeroSMulDivisors R S] {p : Ideal R}
-    (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver p S) :
-    P ≠ ⊥ := by
-  have :  P.LiesOver p := hP.2
-  exact Ideal.ne_bot_of_liesOver_of_ne_bot hp _
-
 lemma isMaximal_of_mem_primesOver [IsDedekindDomain S] [NoZeroSMulDivisors R S] {p : Ideal R}
     (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver p S) : P.IsMaximal :=
   hP.1.isMaximal (ne_bot_of_mem_primesOver hp hP)
