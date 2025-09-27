@@ -29,13 +29,6 @@ variable {n}
 
 namespace CyclotomicUnit
 
--- I don't want to bother Leo, but I wonder if this can be automated in Lean4
--- (if they were 0 < n → 1 < n, it would work already!)
-theorem Nat.one_lt_of_ne : ∀ n : ℕ, n ≠ 0 → n ≠ 1 → 1 < n
-  | 0, h, _ => absurd rfl h
-  | 1, _, h => absurd rfl h
-  | n + 2, _, _ => n.one_lt_succ_succ
-
 -- this result holds for all primitive roots; dah.
 theorem associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
     (hζ : IsPrimitiveRoot ζ n) (hk : k.Coprime n) (hj : j.Coprime n) :
@@ -46,11 +39,11 @@ theorem associated_one_sub_pow_primitive_root_of_coprime {n j k : ℕ} {ζ : A}
   intro j hj
   refine associated_of_dvd_dvd ⟨∑ i ∈ range j, ζ ^ i, by rw [← geom_sum_mul_neg, mul_comm]⟩ ?_
   -- is there an easier way to do this?
-  rcases eq_or_ne n 0 with (rfl | hn')
+  rcases eq_or_ne n 0 with rfl | hn'
   · simp [j.coprime_zero_right.mp hj]
-  rcases eq_or_ne n 1 with (rfl | hn)
+  rcases eq_or_ne n 1 with rfl | hn
   · simp [IsPrimitiveRoot.one_right_iff.mp hζ]
-  replace hn := Nat.one_lt_of_ne n hn' hn
+  replace hn : 1 < n := by omega
   obtain ⟨m, hm⟩ := Nat.exists_mul_emod_eq_one_of_coprime hj hn
   use ∑ i ∈ range m, (ζ ^ j) ^ i
   have : ζ = (ζ ^ j) ^ m := by rw [← pow_mul, ←pow_mod_orderOf, ← hζ.eq_orderOf, hm, pow_one]
@@ -123,21 +116,17 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
       rw [← Nat.pos_iff_ne_zero]
       apply Nat.sub_pos_of_lt hilj'
       by_cases hii : 0 < i
-      apply lt_trans _ hj
-      apply Nat.sub_lt_of_pos_le hii hilj
-      simp only [not_lt, _root_.le_zero_iff] at hii
-      rw [hii]
-      simp only [tsub_zero]
-      exact hj
+      · apply lt_trans _ hj
+        apply Nat.sub_lt_of_pos_le hii hilj
+      · simp only [not_lt, _root_.le_zero_iff] at hii
+        simpa [hii]
     have h3 : IsUnit (ζ ^ i * ∑ k ∈ range (j - i), ζ ^ k) := by
       apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hjc hζ); apply IsUnit.pow
       apply hζ.isUnit hp.pos
     obtain ⟨v, hv⟩ := h3
     use v
-    rw [hv]
     rw [mul_comm] at h2
-    rw [mul_assoc]
-    rw [h2]
+    rw [hv, mul_assoc, h2]
 
 end CyclotomicUnit
 
