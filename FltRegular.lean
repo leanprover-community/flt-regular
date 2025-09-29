@@ -3,7 +3,6 @@ import FltRegular.CaseI.Statement
 import FltRegular.CaseII.AuxLemmas
 import FltRegular.CaseII.InductionStep
 import FltRegular.CaseII.Statement
-import FltRegular.FLT5
 import FltRegular.FltRegular
 import FltRegular.MayAssume.Lemmas
 import FltRegular.NumberTheory.Cyclotomic.CaseI
@@ -22,3 +21,4 @@ import FltRegular.NumberTheory.KummersLemma.KummersLemma
 import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.NumberTheory.SystemOfUnits
 import FltRegular.NumberTheory.Unramified
+import FltRegular.SmallNumbers.FLT5
