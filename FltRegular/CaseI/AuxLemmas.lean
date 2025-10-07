@@ -20,7 +20,7 @@ theorem two_lt (hp5 : 5 ≤ p) : 2 < p := by linarith
 section Zerok₁
 
 theorem aux_cong0k₁ {k : Fin p} (hcong : k ≡ -1 [ZMOD p]) :
-  k = ⟨p.pred, pred_lt hpri.ne_zero⟩ := by
+    k = ⟨p.pred, pred_lt hpri.ne_zero⟩ := by
   refine Fin.ext ?_
   rw [Fin.val_mk, ← ZMod.val_cast_of_lt (Fin.is_lt k)]
   suffices ((k : ℤ) : ZMod p).val = p.pred by simpa

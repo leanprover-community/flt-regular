@@ -27,12 +27,8 @@ theorem exists_int_sub_pow_prime_dvd {A : Type*} [CommRing A] [IsCyclotomicExten
   have : a ∈ Algebra.adjoin ℤ _ := @adjoin_roots {p} ℤ A _ _ _ _ a
   refine Algebra.adjoin_induction ?_ ?_ ?_ ?_ this
   · intro x hx
-    rcases hx with ⟨hx_w, hx_m, hx_p⟩
-    simp only [Set.mem_singleton_iff] at hx_m
-    rw [hx_m] at hx_p
-    simp only [hx_p]
     use 1
-    simp
+    simp_all
   · intro r
     use r ^ p
     simp
@@ -96,9 +92,7 @@ theorem not_coprime_not_top {S : Type*} [CommRing S] (a b : Ideal S) :
     simp
   · intro h
     refine ⟨1, 1, ?_⟩
-    simp only [one_eq_top, top_mul, Submodule.add_eq_sup]
-    rw [← h]
-    rfl
+    simpa
 
 open IsPrimitiveRoot
 
@@ -134,19 +128,12 @@ theorem isPrimitiveRoot_of_mem_nthRootsFinset [Fact p.Prime] {η : R}
   rw [nthRoots_one_eq_biUnion_primitiveRoots] at hη
   simp only [mem_biUnion] at hη
   obtain ⟨a, ha, h2⟩ := hη
-  have ha2 : a = p := by
+  obtain rfl : a = p := by
     rw [Nat.Prime.divisors (Fact.out : Nat.Prime p), mem_insert, mem_singleton] at ha
-    rcases ha with ha | ha
-    · exfalso
-      rw [ha] at h2
-      simp only [primitiveRoots_one, mem_singleton] at h2
-      rw [h2] at hne1
-      exact hne1 rfl
-    · exact ha
-  rw [ha2] at h2
-  have hn : 0 < p := NeZero.pos p
-  rw [mem_primitiveRoots hn] at h2
-  exact h2
+    apply ha.resolve_left
+    rintro rfl
+    simp [hne1] at h2
+  exact isPrimitiveRoot_of_mem_primitiveRoots h2
 
 theorem zeta_sub_one_dvb_p [Fact p.Prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : 1 - η ∣ (p : R) := by
@@ -370,7 +357,7 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
   rw [hn] at hy
   simp only [Fin.castOrderIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub,
     neg_eq_iff_eq_neg] at hy
-  erw [hy]
+  rw [hy]
   simp [dvd_neg]
 
 theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRoot ζ p)

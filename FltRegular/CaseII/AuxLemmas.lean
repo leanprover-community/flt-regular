@@ -59,32 +59,21 @@ lemma pow_dvd_pow_iff_dvd {M : Type*} [CancelCommMonoidWithZero M] [UniqueFactor
   · simp [ha, h']
   by_cases hb : b = 0
   · simp [hb, h']
-  have ha' : a ^ x ≠ 0 := (pow_ne_zero_iff h').mpr ha
-  rw [dvd_iff_emultiplicity_le ha, dvd_iff_emultiplicity_le ha']
-  refine forall₂_congr (fun p hp ↦ ⟨fun h ↦ ?_, fun h ↦  ?_⟩)
-  · rw [emultiplicity_pow hp, emultiplicity_pow hp,
-      FiniteMultiplicity.emultiplicity_eq_multiplicity
-      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-      FiniteMultiplicity.emultiplicity_eq_multiplicity
-      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), ← Nat.cast_mul, ← Nat.cast_mul,
-      Nat.cast_le] at h
-    rw [FiniteMultiplicity.emultiplicity_eq_multiplicity
-      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-      FiniteMultiplicity.emultiplicity_eq_multiplicity
-      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), Nat.cast_le]
-    exact le_of_nsmul_le_nsmul_right h' h
-  · rw [emultiplicity_pow hp, emultiplicity_pow hp,
-      FiniteMultiplicity.emultiplicity_eq_multiplicity
-      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-      FiniteMultiplicity.emultiplicity_eq_multiplicity
-      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), ← Nat.cast_mul, ← Nat.cast_mul,
-      Nat.cast_le]
-    rw [FiniteMultiplicity.emultiplicity_eq_multiplicity
-      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-      FiniteMultiplicity.emultiplicity_eq_multiplicity
-      (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩),
-      Nat.cast_le] at h
-    exact Nat.mul_le_mul_left x h
+  refine ⟨?_, fun h ↦ pow_dvd_pow_of_dvd h x⟩
+  rw [dvd_iff_emultiplicity_le ha, dvd_iff_emultiplicity_le (pow_ne_zero x ha)]
+  intro h p hp
+  specialize h p hp
+  rw [emultiplicity_pow hp, emultiplicity_pow hp,
+    FiniteMultiplicity.emultiplicity_eq_multiplicity
+    (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
+    FiniteMultiplicity.emultiplicity_eq_multiplicity
+    (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), ← Nat.cast_mul, ← Nat.cast_mul,
+    Nat.cast_le] at h
+  rw [FiniteMultiplicity.emultiplicity_eq_multiplicity
+    (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
+    FiniteMultiplicity.emultiplicity_eq_multiplicity
+    (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), Nat.cast_le]
+  exact Nat.le_of_mul_le_mul_left h (Nat.pos_of_ne_zero h')
 
 theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
     {A K : Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
@@ -100,8 +89,6 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   refine ⟨?_, orderOf_dvd_card⟩
   rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]
   simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
-
-variable (hp : p ≠ 2)
 
 open FractionalIdeal in
 lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
@@ -119,7 +106,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
   have : ∀ n : ℕ, (1 ≤ n) → ¬∃ a b : R, ¬(x ^ n ∣ a) ∧ ¬(x ^ n ∣ b) ∧
     spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
     intro n hn
-    induction n, hn using Nat.le_induction with --n' hn' IH
+    induction n, hn using Nat.le_induction with
     | base =>
         simp_rw [pow_one]
         exact H1

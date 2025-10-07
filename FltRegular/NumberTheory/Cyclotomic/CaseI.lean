@@ -13,9 +13,6 @@ variable (i : ℤ)
 
 namespace FltRegular.CaseI
 
-lemma coe_unitGalConj (x : (𝓞 K)ˣ) : ↑(unitGalConj K p x) = intGal (galConj K p) (x : 𝓞 K) :=
-rfl
-
 theorem pow_sub_intGalConj_mem (hp : p.Prime) (α : 𝓞 K) :
     (α ^ p - intGal (galConj K p) (α ^ p)) ∈ Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
   have : Fact p.Prime := ⟨hp⟩
@@ -61,7 +58,6 @@ theorem exists_int_sum_eq_zero (hpodd : p ≠ 2) (hp : p.Prime) (x y i : ℤ) {u
   obtain ⟨k, hk⟩ := exists_int_sum_eq_zero' hζ hpodd hp x y i h
   use k
   convert hk
-  rw [mul_comm, zpow_mul, zpow_ofNat]
-  rfl
+  rw [mul_comm, zpow_mul, zpow_ofNat, zpow_natCast]
 
 end FltRegular.CaseI

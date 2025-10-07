@@ -17,30 +17,33 @@ variable (η) in
 noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i ∈ range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) η
 
+-- Mathlib.Algebra.BigOperators.Group.Finset.Basic
+variable {α : Type*} [CommMonoid α]
+lemma Finset.prod_range_mul {m n : ℕ} {f : ℕ → α} :
+    ∏ i ∈ range (m * n), f i = ∏ i ∈ range m, ∏ j ∈ range n, f (i * n + j) := by
+  induction m with
+  | zero => simp
+  | succ m ih => simp [Nat.add_one_mul, prod_range_add, ih]
+
 include hσ hη in
 lemma aux1 [IsGalois K L] {a : ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a, (σ ^ i) η = 1 := by
   obtain ⟨n, hn⟩ := Nat.dvd_iff_mod_eq_zero.2 h
-  rw [hn]
-  revert a
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    intro a _ _
-    rw [Nat.mul_succ, prod_range_add, ih (Nat.mul_mod_right (orderOf σ) n) rfl, one_mul]
-    simp only [pow_add, pow_mul, pow_orderOf_eq_one, one_pow, one_mul]
-    have := Algebra.norm_eq_prod_automorphisms K η.1
-    simp only [hη, map_one] at this
-    convert this.symm
-    refine prod_bij (fun n (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp)
-      (fun a ha b hb hab ↦ ?_) (fun τ _ ↦ ?_) (fun _ _ ↦ by rfl)
-    · rwa [pow_inj_mod, Nat.mod_eq_of_lt (mem_range.1 ha),
-        Nat.mod_eq_of_lt (mem_range.1 hb)] at hab
-    · refine ⟨(finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
-      have := Equiv.symm_apply_apply (finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
-      simp only [Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
-      rw [← this]
-      simp only [Subtype.coe_eta, Equiv.symm_apply_apply]
-      rfl
+  rw [hn, mul_comm, Finset.prod_range_mul]
+  simp only [pow_add, pow_mul', pow_orderOf_eq_one, one_pow, one_mul]
+  apply prod_eq_one
+  intro i hi
+  have := Algebra.norm_eq_prod_automorphisms K η.1
+  simp only [hη, map_one] at this
+  convert this.symm
+  refine prod_bij (fun n (_ : n ∈ range (orderOf σ)) ↦ σ ^ n) (by simp)
+    (fun a ha b hb hab ↦ ?_) (fun τ _ ↦ ?_) (fun _ _ ↦ by rfl)
+  · rwa [pow_inj_mod, Nat.mod_eq_of_lt (mem_range.1 ha),
+      Nat.mod_eq_of_lt (mem_range.1 hb)] at hab
+  · refine ⟨(finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
+    have := Equiv.symm_apply_apply (finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
+    simp only [Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
+    rw [← this]
+    simp_rw [Subtype.coe_eta, Equiv.symm_apply_apply, finEquivZPowers_apply]
 
 include hσ hη in
 lemma aux2 [IsGalois K L] {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
@@ -52,26 +55,16 @@ lemma aux2 [IsGalois K L] {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
   rw [hc, prod_range_add, aux1 hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
   simp [pow_add, pow_mul, pow_orderOf_eq_one]
 
-lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ η) σ = η := by
-  haveI nezero : NeZero (orderOf σ) :=
-    ⟨fun hzero ↦ orderOf_eq_zero_iff.1 hzero (isOfFinOrder_of_finite σ)⟩
-  conv =>
-    enter [1, 3]
-    rw [← pow_one σ]
-  have : 1 % orderOf σ = 1 := by
-    suffices (orderOf σ).pred.pred + 2 = orderOf σ by
-      rw [← this]
-      exact Nat.one_mod _
-    rw [← Nat.succ_eq_add_one, ← Nat.succ_eq_add_one, Nat.succ_pred, Nat.succ_pred nezero.1]
-    intro h
-    rw [show 0 = Nat.pred 1 by rfl] at h
-    apply hone
-    exact Nat.pred_inj (Nat.pos_of_ne_zero nezero.1) zero_lt_one h
-  simp
-  have horder :=  hφ hσ 1
-  simp only [pow_one] at horder
-  simp only [cocycle, horder, this, range_one, prod_singleton, pow_zero]
+-- Mathlib.Algebra.Algebra.Equiv
+@[simp]
+lemma AlgEquiv.refl_toMonoidHom {R A₁ : Type*} [CommSemiring R] [Semiring A₁] [Algebra R A₁] :
+    ((.refl : A₁ ≃ₐ[R] A₁) : A₁ →* A₁) = .id _ :=
   rfl
+
+lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ η) σ = η := by
+  have horder := hφ hσ 1
+  simp only [pow_one, Nat.one_mod_eq_one.mpr hone] at horder
+  simp [cocycle, horder, AlgEquiv.aut_one]
 
 include hη in
 lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ η) (α * β) =
@@ -119,8 +112,7 @@ lemma Hilbert90 [IsGalois K L] : ∃ ε : L, η = ε / σ ε := by
   rw [div_inv_eq_mul, cocycle_spec hσ hone, mul_inv_eq_iff_eq_mul, mul_comm,
     ← Units.val_inj] at hε
   simp only [AlgEquiv.smul_units_def, Units.coe_map, MonoidHom.coe_coe, Units.val_mul] at hε
-  symm
-  rw [inv_mul_eq_iff_eq_mul₀ ε.ne_zero, hε]
+  rw [hε, inv_mul_cancel_left₀ ε.ne_zero]
 
 variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
 variable [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K] [IsDomain A]
@@ -134,8 +126,7 @@ lemma Hilbert90_integral [IsGalois K L] {η : B} (hη : Algebra.norm K (algebraM
     exact (algebraMap K L).injective.comp (IsFractionRing.injective A K)
   have : IsLocalization (Algebra.algebraMapSubmonoid B A⁰) L :=
     IsIntegralClosure.isLocalization A K L B
-  let η' : Lˣ := IsUnit.unit (a := (algebraMap B L η)) (isUnit_iff_ne_zero.2
-    (fun h ↦ by simp [h] at hη))
+  let η' : Lˣ := Units.mk0 (algebraMap B L η) (fun h ↦ by simp [h] at hη)
   replace hη : Algebra.norm K η'.1 = 1 := hη
   obtain ⟨ε, hε⟩ := Hilbert90 hσ hη
   obtain ⟨x, y, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid B A⁰) ε

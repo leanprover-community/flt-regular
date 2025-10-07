@@ -26,41 +26,37 @@ def Statement : Prop :=
 theorem may_assume : SlightlyEasier → Statement := by
   intro Heasy a b c p hpri hreg hI H
   have hodd : p ≠ 2 := by
-    intro h
-    rw [h] at H hI
+    rintro rfl
     refine hI <| Dvd.dvd.mul_left ?_ _
-    simp only [Nat.cast_ofNat] at hI ⊢
-    rw [← even_iff_two_dvd, Int.not_even_iff_odd] at hI
-    rw [← even_iff_two_dvd, ← Int.even_pow' (show 2 ≠ 0 by norm_num), ← H]
-    exact (Int.Odd.of_mul_left (Odd.of_mul_left hI)).pow.add_odd
-      (Int.Odd.of_mul_right (Odd.of_mul_left hI)).pow
+    simp only [Nat.cast_ofNat, ← even_iff_two_dvd] at hI ⊢
+    rw [Int.not_even_iff_odd] at hI
+    rw [← Int.even_pow' two_ne_zero, ← H]
+    exact (Odd.of_mul_left (Odd.of_mul_left hI)).pow.add_odd
+      (Odd.of_mul_right (Odd.of_mul_left hI)).pow
   have hprod : a * b * c ≠ 0 := by
     intro h
     simp [h] at hI
   have hp5 : 5 ≤ p := by
     by_contra! habs
-    have : p ∈ Finset.Ioo 2 5 :=
-      (Finset.mem_Ioo).2 ⟨Nat.lt_of_le_of_ne hpri.out.two_le hodd.symm, by linarith⟩
-    fin_cases this
+    have : 2 < p := Nat.lt_of_le_of_ne hpri.out.two_le hodd.symm
+    interval_cases p
     · exact fermatLastTheoremFor_iff_int.1 fermatLastTheoremThree a b c
         (fun ha ↦ hprod <| by simp [ha]) (fun hb ↦ hprod <| by simp [hb])
         (fun hc ↦ hprod <| by simp [hc]) H
-    · rw [show 2 + 1 + 1 = 2 * 2 from rfl] at hpri
-      exact Nat.not_prime_mul one_lt_two.ne' one_lt_two.ne' hpri.out
+    · exact Nat.not_prime_mul one_lt_two.ne' one_lt_two.ne' hpri.out
   let d := ({a, b, c} : Finset ℤ).gcd id
+  have hd : d ≠ 0 := Finset.gcd_ne_zero_iff.mpr ⟨c, by simp, fun hc ↦ hprod <| by simp_all⟩
   have hdiv : ¬↑p ∣ a / d * (b / d) * (c / d) := by
+    contrapose! hI with hdiv
     have hadiv : d ∣ a := gcd_dvd (by simp)
     have hbdiv : d ∣ b := gcd_dvd (by simp)
     have hcdiv : d ∣ c := gcd_dvd (by simp)
-    intro hdiv
-    replace hdiv := dvd_mul_of_dvd_right hdiv (d * d * d)
-    rw [mul_assoc, ← mul_assoc d, ← mul_assoc d, Int.mul_ediv_cancel' hadiv, mul_assoc, mul_comm a,
-      mul_assoc (b / d), ← mul_assoc _ (b / d), Int.mul_ediv_cancel' hbdiv, mul_comm, mul_assoc,
-      mul_assoc, Int.ediv_mul_cancel hcdiv, mul_comm, mul_assoc, mul_comm c, ← mul_assoc] at hdiv
-    exact hI hdiv
+    rw [← Int.ediv_mul_cancel hadiv, ← Int.ediv_mul_cancel hbdiv, ← Int.ediv_mul_cancel hcdiv]
+    convert dvd_mul_of_dvd_right hdiv (d * d * d) using 1
+    grind
   rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
   obtain ⟨X, Y, Z, H1, H2, H3, _, H5⟩ := a_not_cong_b hpri.out hp5 hprodxyx Hxyz hunit hdiv
-  exact Heasy hreg hp5 H2 H3 (fun hfin => H5 hfin) H1
+  exact Heasy hreg hp5 H2 H3 H5 H1
 
 end CaseI
 
@@ -72,10 +68,10 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   replace hqpri : Prime (q : ℤ) := prime_iff_natAbs_prime.2 (by simp [hqpri])
   obtain ⟨n, hn⟩ := hq
   have haq : ↑q ∣ a := by
-    obtain ⟨m, hm⟩ := @Int.gcd_dvd_left a b
+    obtain ⟨m, hm⟩ := Int.gcd_dvd_left a b
     exact ⟨n * m, by rw [hm, hn]; simp [mul_assoc]⟩
   have hbq : ↑q ∣ b := by
-    obtain ⟨m, hm⟩ := @Int.gcd_dvd_right a b
+    obtain ⟨m, hm⟩ := Int.gcd_dvd_right a b
     exact ⟨n * m, by rw [hm, hn]; simp [mul_assoc]⟩
   have hcq : ↑q ∣ c := by
     suffices ↑q ∣ c ^ p by exact hqpri.dvd_of_dvd_pow this
@@ -116,8 +112,7 @@ theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
   have hik₂ : i ≠ k₂ := fun h => by simp [h, s] at hi
   simp [f, hi0, hi1, hik₁, hik₂]
 
-theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f a b k₁ k₂ (i : ℕ) = 0 :=
-  by
+theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f a b k₁ k₂ (i : ℕ) = 0 := by
   obtain ⟨i, hrange, hi⟩ := auxf' hp5 a b k₁ k₂
   exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
 
@@ -132,8 +127,8 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p 1) :
     ∃ I, span ({a + ζ * b} : Set R) = I ^ p := by
   classical
-  have H₁ := congr_arg (algebraMap ℤ R) H
-  simp only [eq_intCast, Int.cast_add, Int.cast_pow] at H₁
+  have H₁ := congr_arg (@Int.cast R _) H
+  simp only [Int.cast_add, Int.cast_pow] at H₁
   have hζ' := (zeta_spec p ℚ K).unit'_coe
   rw [hζ'.pow_add_pow_eq_prod_add_mul _ _ <|
     odd_iff.2 <| hpri.1.eq_two_or_odd.resolve_left fun h ↦ by simp [h] at h5p] at H₁
@@ -144,12 +139,12 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   · exact hpri.out
   · exact h5p
 
-theorem is_principal_aux (K' : Type*) [Field K'] [CharZero K'] [IsCyclotomicExtension {p} ℚ K']
-  [Fintype (ClassGroup (𝓞 K'))]
-  {a b : ℤ} {ζ : 𝓞 K'} (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K'))
-  (I : Ideal (𝓞 K')) (hI : span ({↑a + ζ * ↑b} : Set (𝓞 K')) = I ^ p) :
-  ∃ (u : (𝓞 K')ˣ) (α : 𝓞 K'), ↑u * α ^ p = ↑a + ζ * ↑b := by
-  letI : NumberField K' := IsCyclotomicExtension.numberField {p} ℚ K'
+theorem is_principal_aux {K' : Type*} [Field K'] [CharZero K'] [IsCyclotomicExtension {p} ℚ K']
+    [Fintype (ClassGroup (𝓞 K'))]
+    {a b : ℤ} {ζ : 𝓞 K'} (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K'))
+    {I : Ideal (𝓞 K')} (hI : span ({↑a + ζ * ↑b} : Set (𝓞 K')) = I ^ p) :
+    ∃ (u : (𝓞 K')ˣ) (α : 𝓞 K'), ↑u * α ^ p = ↑a + ζ * ↑b := by
+  let : NumberField K' := IsCyclotomicExtension.numberField {p} ℚ K'
   obtain ⟨α, hα⟩ : I.IsPrincipal := by
     apply isPrincipal_of_isPrincipal_pow_of_coprime hreg
     constructor
@@ -159,19 +154,15 @@ theorem is_principal_aux (K' : Type*) [Field K'] [CharZero K'] [IsCyclotomicExte
   simp only [← hI, submodule_span_eq, span_singleton_pow, span_singleton_eq_span_singleton] at hα
   obtain ⟨u, hu⟩ := hα
   refine ⟨u⁻¹, α, ?_⟩
-  rw [← hu, mul_comm ((_ + ζ * _)), ← mul_assoc]
-  simp only [Units.inv_mul, one_mul]
+  rw [← hu, mul_comm ((_ + ζ * _)), Units.inv_mul_cancel_left]
 
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
     (H : a ^ p + b ^ p = c ^ p) (hζ : IsPrimitiveRoot ζ p) :
     ∃ (u : Rˣ) (α : R), ↑u * α ^ p = ↑a + ζ * ↑b := by
-  haveI := CyclotomicField.isCyclotomicExtension p ℚ
   replace hζ := hζ.mem_nthRootsFinset hpri.out.pos
   obtain ⟨I, hI⟩ := exists_ideal hp5 H hgcd caseI hζ
-  apply is_principal_aux
-  · rwa [IsRegularPrime, IsRegularNumber] at hreg
-  · exact hI
+  exact is_principal_aux hreg hI
 
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime p)
     (hζ : IsPrimitiveRoot ζ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)

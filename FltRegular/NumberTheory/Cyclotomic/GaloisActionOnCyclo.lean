@@ -86,6 +86,9 @@ def unitGalConj : RRˣ →* RRˣ :=
 
 theorem unitGalConj_spec (u : RRˣ) : galConj K p u = unitGalConj K p u := rfl
 
+lemma coe_unitGalConj (x : RRˣ) : ↑(unitGalConj K p x) = intGal (galConj K p) (x : RR) :=
+  rfl
+
 variable {K}
 
 theorem unit_lemma_val_one (u : RRˣ) (φ : K →+* ℂ) :

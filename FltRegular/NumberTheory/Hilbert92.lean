@@ -63,14 +63,6 @@ def Finsupp.ltotal (α M R) [CommSemiring R] [AddCommMonoid M] [Module R M] :
   map_add' := fun u v ↦ by ext f; simp
   map_smul' := fun r v ↦ by ext f; simp
 
-lemma Finsupp.total_pi_single {α M R} [CommSemiring R] [AddCommMonoid M] [Module R M]
-    [DecidableEq α] (i : α) (m : M) (f : α →₀ R) :
-    Finsupp.linearCombination R (Pi.single i m) f = f i • m := by
-  simp only [Finsupp.linearCombination, ne_eq, Pi.single_apply, coe_lsum, LinearMap.coe_smulRight,
-    LinearMap.id_coe, id_eq, smul_ite, smul_zero, sum_ite_eq', mem_support_iff, ite_eq_left_iff,
-    not_not]
-  exact fun e ↦ e ▸ (zero_smul R m).symm
-
 lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
     (f : ι → G) (l : ι →₀ R) (i : ι) (g : G) (σ : R)
     (hσ : σ ∈ nonZeroDivisors R) (hg : σ • g = Finsupp.linearCombination R f l)
@@ -82,7 +74,7 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
   apply_fun (σ • ·) at hl'
   rw [Pi.update_eq_sub_add_single, ← Finsupp.ltotal_apply, map_add, map_sub] at hl'
   simp only [Finsupp.ltotal_apply, LinearMap.add_apply, LinearMap.sub_apply,
-    Finsupp.total_pi_single, smul_add, smul_sub, smul_zero] at hl'
+    Finsupp.linearCombination_single_index, smul_add, smul_sub, smul_zero] at hl'
   rw [smul_comm σ (l' i) g, hg, ← LinearMap.map_smul, ← LinearMap.map_smul, smul_smul,
     ← Finsupp.linearCombination_single, ← (Finsupp.linearCombination R f).map_sub, ← map_add] at hl'
   replace hl' : ∀ j, (σ * l' j - (Finsupp.single i (σ * l' i)) j) + l' i * l j = 0 := by
@@ -218,7 +210,7 @@ instance : IsScalarTower (𝓞 k) (𝓞 K) K := IsScalarTower.of_algebraMap_eq (
 section
 
 lemma RingOfInteger.coe_algebraMap_apply {x : 𝓞 k} :
-  (algebraMap (𝓞 k) (𝓞 K) x : K) = algebraMap k K x := rfl
+    (algebraMap (𝓞 k) (𝓞 K) x : K) = algebraMap k K x := rfl
 
 lemma norm_eq_prod_pow_gen
     [IsGalois k K] [FiniteDimensional k K]
@@ -233,7 +225,7 @@ lemma norm_eq_prod_pow_gen
 
 include hKL in
 lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k) (p ^ h))
-  (H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ν ^ (p ^ (h - 1)) ≠ ε / (σ ε : K)) :
+    (H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ν ^ (p ^ (h - 1)) ≠ ε / (σ ε : K)) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧ ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
   let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ν : (𝓞 K)ˣ)
   use η ^ (p ^ (h - 1))
