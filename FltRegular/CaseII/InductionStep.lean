@@ -515,7 +515,7 @@ lemma exists_solution :
     rw [← Subtype.coe_injective.ne_iff]
     change (η₀ * hζ.unit' * hζ.unit' : 𝓞 K) ≠ η₀
     rw [Ne, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
-    exact ⟨hζ.unit'_coe.pow_ne_one_of_pos_of_lt zero_lt_two
+    exact ⟨hζ.unit'_coe.pow_ne_one_of_pos_of_lt (by omega)
       (hpri.out.two_le.lt_or_eq.resolve_right hp.symm),
       ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop⟩
   have hη : η₂ ≠ η₁ := by

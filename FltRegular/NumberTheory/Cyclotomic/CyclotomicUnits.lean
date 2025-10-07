@@ -66,7 +66,7 @@ theorem IsPrimitiveRoot.sum_pow_unit {n k : ℕ} {ζ : A} (hn : 2 ≤ n) (hk : k
   · exact h2
   · exfalso
     have hn1 : 1 < n := by linarith
-    have hp := IsPrimitiveRoot.pow_ne_one_of_pos_of_lt hζ one_pos hn1
+    have hp := IsPrimitiveRoot.pow_ne_one_of_pos_of_lt hζ (by omega) hn1
     rw [sub_eq_zero] at h2
     rw [← h2] at hp
     simp at hp
@@ -95,7 +95,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
       exact hi
     have h3 : IsUnit (-ζ ^ j * ∑ k ∈ range (i - j), ζ ^ k) := by
       apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hic hζ); apply IsUnit.neg
-      apply IsUnit.pow; apply hζ.isUnit hp.pos
+      apply IsUnit.pow; apply hζ.isUnit hp.ne_zero
     obtain ⟨v, hv⟩ := h3
     use v
     rw [hv]
@@ -122,7 +122,7 @@ theorem IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one {p i j : ℕ} {ζ : A}
         simpa [hii]
     have h3 : IsUnit (ζ ^ i * ∑ k ∈ range (j - i), ζ ^ k) := by
       apply IsUnit.mul _ (IsPrimitiveRoot.sum_pow_unit _ hn hjc hζ); apply IsUnit.pow
-      apply hζ.isUnit hp.pos
+      apply hζ.isUnit hp.ne_zero
     obtain ⟨v, hv⟩ := h3
     use v
     rw [mul_comm] at h2
