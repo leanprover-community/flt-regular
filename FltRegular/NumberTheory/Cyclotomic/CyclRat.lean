@@ -173,7 +173,7 @@ theorem diff_of_roots [hp : Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     rw [← hi1, pow_one] at hi
     exact hdiff hi
   obtain ⟨u, hu⟩ :=
-    CyclotomicUnit.IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one R ph hp.out hp.out.one_lt H
+    CyclotomicUnit.IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one ph hp.out hp.out.one_lt H
       hi1 h
   exact ⟨u, by rw [← hu, hi, pow_one]⟩
 
