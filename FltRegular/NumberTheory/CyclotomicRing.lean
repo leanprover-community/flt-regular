@@ -1,4 +1,4 @@
-import Mathlib.NumberTheory.Cyclotomic.Rat
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 

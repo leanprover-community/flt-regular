@@ -1,5 +1,4 @@
 import FltRegular.FltRegular
-import Mathlib.NumberTheory.Cyclotomic.PID
 
 open Nat NumberField IsCyclotomicExtension
 

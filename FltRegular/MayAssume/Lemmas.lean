@@ -22,7 +22,7 @@ theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a *
   have hcdiv : d ∣ c := gcd_dvd (by simp [s])
   have hdzero : d ≠ 0 := fun hdzero => by
     simpa [ha] using Finset.gcd_eq_zero_iff.1 hdzero a (by simp [s])
-  have hdp : d ^ n ≠ 0 := fun hdn => hdzero (pow_eq_zero hdn)
+  have hdp : d ^ n ≠ 0 := fun hdn => hdzero (eq_zero_of_pow_eq_zero hdn)
   refine ⟨?_, ?_, fun habs => ?_⟩
   · obtain ⟨na, hna⟩ := hadiv; obtain ⟨nb, hnb⟩ := hbdiv; obtain ⟨nc, hnc⟩ := hcdiv
     rwa [← mul_left_inj' hdp, add_mul, ← mul_pow, ← mul_pow, ← mul_pow, hna, hnb, hnc,

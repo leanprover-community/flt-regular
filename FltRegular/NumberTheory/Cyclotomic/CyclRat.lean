@@ -1,9 +1,9 @@
 import Mathlib.RingTheory.Polynomial.Eisenstein.IsIntegral
 import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
-import Mathlib.NumberTheory.Cyclotomic.Rat
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
-import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 import Mathlib.Algebra.CharP.Quotient
 
 universe u
@@ -172,10 +172,8 @@ theorem diff_of_roots [hp : Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     intro hi1
     rw [← hi1, pow_one] at hi
     exact hdiff hi
-  obtain ⟨u, hu⟩ :=
-    CyclotomicUnit.IsPrimitiveRoot.zeta_pow_sub_eq_unit_zeta_sub_one ph hp.out hp.out.one_lt H
-      hi1 h
-  exact ⟨u, by rw [← hu, hi, pow_one]⟩
+  rcases h.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hp.out hη₁ hη₂ hdiff with ⟨u, hu⟩
+  refine ⟨-u, by grind [Units.val_neg]⟩
 
 theorem diff_of_roots2 [Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nthRootsFinset p 1)
     (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂) (hwlog : η₁ ≠ 1) :

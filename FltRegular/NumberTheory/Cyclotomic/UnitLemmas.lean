@@ -1,5 +1,5 @@
 import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
-import Mathlib.NumberTheory.Cyclotomic.Rat
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 
 variable {p : ℕ} [NeZero p] {K : Type*} [Field K]
 

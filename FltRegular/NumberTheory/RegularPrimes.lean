@@ -2,7 +2,7 @@ import Mathlib.FieldTheory.SplittingField.Construction
 import Mathlib.NumberTheory.ClassNumber.Finite
 import Mathlib.NumberTheory.ClassNumber.AdmissibleAbs
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.NumberTheory.Cyclotomic.PID
+import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
 
 /-!
 # Regular primes

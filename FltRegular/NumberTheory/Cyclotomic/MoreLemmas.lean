@@ -1,4 +1,4 @@
-import Mathlib.NumberTheory.Cyclotomic.Rat
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import Mathlib.RingTheory.Ideal.Norm.AbsNorm
@@ -26,17 +26,16 @@ lemma IsPrimitiveRoot.prime_span_sub_one :
 
 lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^ (p - 1)) p := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
-  haveI : Fact (Nat.Prime p) := hpri
   rw [← eval_one_cyclotomic_prime (R := 𝓞 K) (p := p),
     cyclotomic_eq_prod_X_sub_primitiveRoots hζ.unit'_coe, eval_prod]
   simp only [eval_sub, eval_X, eval_C]
-  rw [← Nat.totient_prime this.out, ← hζ.unit'_coe.card_primitiveRoots, ← Finset.prod_const]
+  rw [← Nat.totient_prime hpri.out, ← hζ.unit'_coe.card_primitiveRoots, ← Finset.prod_const]
   apply Associated.prod
   intro η hη
-  exact hζ.unit'_coe.associated_sub_one hpri.out
-    (one_mem_nthRootsFinset this.out.pos)
-    ((isPrimitiveRoot_of_mem_primitiveRoots hη).mem_nthRootsFinset hpri.out.pos)
-      ((isPrimitiveRoot_of_mem_primitiveRoots hη).ne_one hpri.out.one_lt).symm
+  refine hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
+    (one_mem_nthRootsFinset hpri.out.pos) ?_ ?_
+  · exact ((isPrimitiveRoot_of_mem_primitiveRoots hη).mem_nthRootsFinset hpri.out.pos)
+  · exact ((isPrimitiveRoot_of_mem_primitiveRoots hη).ne_one hpri.out.one_lt).symm
 
 lemma isCoprime_of_not_zeta_sub_one_dvd {x : 𝓞 K} (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x) :
     IsCoprime ↑p x := by
@@ -100,7 +99,7 @@ lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
     ζ - 1 ∣ η₁ - η₂ := by
   by_cases h : η₁ = η₂
   · rw [h, sub_self]; exact dvd_zero _
-  · exact (hζ.associated_sub_one hp hη₁ hη₂ h).dvd
+  · exact (hζ.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hp hη₁ hη₂ h).dvd
 
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.unit' : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by

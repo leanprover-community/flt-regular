@@ -1,4 +1,3 @@
-import Mathlib.NumberTheory.Cyclotomic.Rat
 import Mathlib.FieldTheory.KummerExtension
 import FltRegular.NumberTheory.Unramified
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
@@ -229,11 +228,11 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   apply isCoprime_X_sub_C_of_isUnit_sub
   obtain ⟨v, hv⟩ :
       Associated (hζ.unit' - 1 : 𝓞 K) ((hζ.unit' : 𝓞 K) ^ j - (hζ.unit' : 𝓞 K) ^ i) := by
-    refine hζ.unit'_coe.associated_sub_one hpri.out ?_ ?_ ?_
-    · rw [mem_nthRootsFinset (NeZero.pos p), ← pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one,
-        one_pow]
-    · rw [mem_nthRootsFinset (NeZero.pos p), ← pow_mul, mul_comm, pow_mul, hζ.unit'_coe.pow_eq_one,
-        one_pow]
+    refine hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out ?_ ?_ ?_
+    · rw [Finset.mem_coe, mem_nthRootsFinset (NeZero.pos p), ← pow_mul, mul_comm, pow_mul,
+        hζ.unit'_coe.pow_eq_one, one_pow]
+    · rw [Finset.mem_coe, mem_nthRootsFinset (NeZero.pos p), ← pow_mul, mul_comm, pow_mul,
+        hζ.unit'_coe.pow_eq_one, one_pow]
     · exact mt (hζ.unit'_coe.injOn_pow hj hi) hij.symm
   rw [NumberField.RingOfIntegers.ext_iff] at hv
   have hcoe : (algebraMap (𝓞 K) K) (↑hζ.unit') = ζ := rfl

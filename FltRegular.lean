@@ -7,7 +7,6 @@ import FltRegular.FltRegular
 import FltRegular.MayAssume.Lemmas
 import FltRegular.NumberTheory.Cyclotomic.CaseI
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import FltRegular.NumberTheory.Cyclotomic.CyclotomicUnits
 import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
@@ -22,3 +21,4 @@ import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.NumberTheory.SystemOfUnits
 import FltRegular.NumberTheory.Unramified
 import FltRegular.SmallNumbers.FLT5
+import FltRegular.SmallNumbers.Minkowski

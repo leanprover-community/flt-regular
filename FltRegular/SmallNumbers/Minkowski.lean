@@ -1,5 +1,5 @@
-import Mathlib.NumberTheory.Cyclotomic.Embeddings
-import Mathlib.NumberTheory.Cyclotomic.Rat
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Embeddings
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.Tactic.NormNum.NatFactorial
 import Mathlib.Analysis.Real.Pi.Bounds
 

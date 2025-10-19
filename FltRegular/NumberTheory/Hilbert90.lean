@@ -55,16 +55,11 @@ lemma aux2 [IsGalois K L] {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
   rw [hc, prod_range_add, aux1 hσ hη (Nat.mul_mod_right (orderOf σ) c), one_mul]
   simp [pow_add, pow_mul, pow_orderOf_eq_one]
 
--- Mathlib.Algebra.Algebra.Equiv
-@[simp]
-lemma AlgEquiv.refl_toMonoidHom {R A₁ : Type*} [CommSemiring R] [Semiring A₁] [Algebra R A₁] :
-    ((.refl : A₁ ≃ₐ[R] A₁) : A₁ →* A₁) = .id _ :=
-  rfl
-
 lemma cocycle_spec (hone : orderOf σ ≠ 1) : (cocycle hσ η) σ = η := by
   have horder := hφ hσ 1
   simp only [pow_one, Nat.one_mod_eq_one.mpr hone] at horder
-  simp [cocycle, horder, AlgEquiv.aut_one]
+  simp only [cocycle, horder, range_one, prod_singleton, pow_zero, AlgEquiv.aut_one]
+  rfl
 
 include hη in
 lemma is_cocycle_aux [IsGalois K L] : ∀ (α β : (L ≃ₐ[K] L)), (cocycle hσ η) (α * β) =

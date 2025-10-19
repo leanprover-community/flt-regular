@@ -55,7 +55,8 @@ lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) (hη : η₁ �
     (𝔦 η₁) ⊔ (𝔦 η₂) ∣ 𝔪 * 𝔭 := by
   have : 𝔭 = Ideal.span (singleton <| (η₁ : 𝓞 K) - η₂) := by
     rw [Ideal.span_singleton_eq_span_singleton]
-    exact hζ.unit'_coe.associated_sub_one hpri.out η₁.prop η₂.prop (Subtype.coe_injective.ne hη)
+    exact hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out η₁.prop
+      η₂.prop (Subtype.coe_injective.ne hη)
   rw [(gcd_mul_right' 𝔭 𝔵 𝔶).symm.dvd_iff_dvd_right, dvd_gcd_iff]
   simp_rw [this, Ideal.span_singleton_mul_span_singleton, Ideal.dvd_span_singleton,
     Ideal.mem_span_singleton_sup, Ideal.mem_span_singleton]
@@ -123,7 +124,7 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
   · rw [sub_mul, div_zeta_sub_one_mul_zeta_sub_one, div_zeta_sub_one_mul_zeta_sub_one]
     ring
   apply Associated.mul_left
-  apply hζ.unit'_coe.associated_sub_one hpri.out η₁.prop η₂.prop
+  apply hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out η₁.prop η₂.prop
   rw [Ne, ← Subtype.ext_iff.not]
   exact hη
 
@@ -350,8 +351,8 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
   · apply hz
     rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton, z_div_m_spec hζ e hy]
     exact this.trans (dvd_mul_left _ _)
-  · apply mt pow_eq_zero
-    apply mt pow_eq_zero
+  · apply mt eq_zero_of_pow_eq_zero
+    apply mt eq_zero_of_pow_eq_zero
     rw [Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
     exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
@@ -404,7 +405,7 @@ lemma isPrincipal_a_div_a_zero :
     exact ⟨_, ha⟩
   · rw [← FractionalIdeal.coeIdeal_bot,
       (FractionalIdeal.coeIdeal_injective' (le_rfl : (𝓞 K)⁰ ≤ (𝓞 K)⁰)).ne_iff]
-    apply mt pow_eq_zero
+    apply mt eq_zero_of_pow_eq_zero
     rw [Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
     exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
@@ -525,12 +526,12 @@ lemma exists_solution :
     exact ⟨hζ.unit'_coe.ne_one hpri.out.one_lt,
       mul_ne_zero (ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop)
       (hζ.unit'_coe.ne_zero hpri.out.ne_zero)⟩
-  obtain ⟨u₁, hu₁⟩ := hζ.unit'_coe.associated_sub_one hpri.out η₂.prop (η₀ : _).prop
-    (Subtype.coe_injective.ne_iff.mpr hη₂)
-  obtain ⟨u₂, hu₂⟩ := hζ.unit'_coe.associated_sub_one hpri.out (η₀ : _).prop η₁.prop
-    (Subtype.coe_injective.ne_iff.mpr hη₁.symm)
-  obtain ⟨u₃, hu₃⟩ := hζ.unit'_coe.associated_sub_one hpri.out η₂.prop (η₁ : _).prop
-    (Subtype.coe_injective.ne_iff.mpr hη)
+  obtain ⟨u₁, hu₁⟩ := hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
+    η₂.prop (η₀ : _).prop (Subtype.coe_injective.ne_iff.mpr hη₂)
+  obtain ⟨u₂, hu₂⟩ := hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
+    (η₀ : _).prop η₁.prop (Subtype.coe_injective.ne_iff.mpr hη₁.symm)
+  obtain ⟨u₃, hu₃⟩ := hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
+    η₂.prop (η₁ : _).prop (Subtype.coe_injective.ne_iff.mpr hη)
   have := formula hp hζ e hy hz hreg η₁ hη₁ η₂ hη₂
   rw [← hu₁, ← hu₂, ← hu₃, mul_assoc _ (u₁ : 𝓞 K), mul_assoc _ (u₂ : 𝓞 K), mul_assoc _ (u₃ : 𝓞 K),
     mul_assoc (π), mul_assoc (π), ← mul_add,
