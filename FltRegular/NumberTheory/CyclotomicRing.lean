@@ -46,8 +46,7 @@ def zeta : CyclotomicIntegers p := AdjoinRoot.root _
 
 lemma equiv_zeta : equiv p (zeta p) = (IsCyclotomicExtension.zeta_spec
     p ℚ (CyclotomicField p ℚ)).toInteger := by
-  rw [equiv_apply, zeta]
-  simp only [AdjoinRoot.liftHom_root]
+  simp [equiv_apply, zeta]
 
 lemma prime_one_sub_zeta :
     Prime (1 - zeta p) := by
