@@ -122,11 +122,12 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
 
 set_option synthInstance.maxHeartbeats 80000 in
 -- Needed for `AddMonoidHomClass (𝓞 K →+* 𝓞 K ⧸ Ideal.span {↑hζ.unit' - 1}) ? ?`
+open NumberField.RingOfIntegers in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1) • x := by
   let _ := IsCyclotomicExtension.numberField {p} ℚ K
   let _ := IsCyclotomicExtension.isGalois {p} ℚ K
-  have : (Algebra.trace ℤ _ x : 𝓞 K) = ∑ σ : K ≃ₐ[ℚ] K, (intGal σ).toRingHom x := by
+  have : (Algebra.trace ℤ _ x : 𝓞 K) = ∑ σ : K ≃ₐ[ℚ] K, (mapAlgHom σ).toRingHom x := by
     apply (show Function.Injective (algebraMap (𝓞 K) K) from Subtype.val_injective)
     rw [← eq_intCast (algebraMap ℤ (𝓞 K)), ← IsScalarTower.algebraMap_apply,
       IsScalarTower.algebraMap_apply ℤ ℚ K, eq_intCast, Algebra.coe_trace_int,
