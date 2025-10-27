@@ -1,5 +1,4 @@
 import Mathlib.RingTheory.Polynomial.Eisenstein.IsIntegral
-import FltRegular.NumberTheory.Cyclotomic.GaloisActionOnCyclo
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
