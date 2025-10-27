@@ -263,7 +263,8 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     (algebraMap (𝓞 K) (𝓞 L)) Ideal.le_comap_map
   haveI : Nontrivial (𝓞 L ⧸ J) := by
     apply Ideal.Quotient.nontrivial
-    rw [ne_eq, Ideal.map_eq_top_iff]; exact Ideal.IsMaximal.ne_top ‹_›
+    rw [ne_eq, Ideal.map_eq_top_iff]
+    · exact Ideal.IsMaximal.ne_top ‹_›
     · intros x y e; ext; exact (algebraMap K L).injective (congr_arg Subtype.val e)
     · intros x; exact IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ L x)
   rw [← Polynomial.separable_map i, map_map, Ideal.quotientMap_comp_mk, ← map_map]
