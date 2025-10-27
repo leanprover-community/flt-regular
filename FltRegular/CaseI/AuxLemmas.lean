@@ -1,4 +1,3 @@
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
 
 open Finset Nat IsCyclotomicExtension Ideal Polynomial Int Basis

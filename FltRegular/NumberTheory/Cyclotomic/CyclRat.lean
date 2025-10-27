@@ -1,15 +1,13 @@
 import Mathlib.RingTheory.Polynomial.Eisenstein.IsIntegral
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 import Mathlib.Algebra.CharP.Quotient
-
-universe u
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 open FiniteDimensional Polynomial Algebra Nat Finset Fintype
 
-variable (p : ℕ) (L : Type u) [Field L] [CharZero L] [IsCyclotomicExtension {p} ℚ L]
+variable (p : ℕ) (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {p} ℚ L]
 
 instance Ring.toSubtractionMonoid {S : Type*} [Ring S] : SubtractionMonoid S := inferInstance
 
@@ -123,7 +121,6 @@ theorem isPrimitiveRoot_of_mem_nthRootsFinset [Fact p.Prime] {η : R}
     (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
     IsPrimitiveRoot η p := by
   classical
-  have hζ' := (zeta_spec p ℚ (CyclotomicField p ℚ)).unit'_coe
   rw [nthRoots_one_eq_biUnion_primitiveRoots] at hη
   simp only [mem_biUnion] at hη
   obtain ⟨a, ha, h2⟩ := hη
@@ -134,26 +131,15 @@ theorem isPrimitiveRoot_of_mem_nthRootsFinset [Fact p.Prime] {η : R}
     simp [hne1] at h2
   exact isPrimitiveRoot_of_mem_primitiveRoots h2
 
-theorem zeta_sub_one_dvb_p [Fact p.Prime] (ph : 5 ≤ p) {η : R} (hη : η ∈ nthRootsFinset p 1)
+theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : 1 - η ∣ (p : R) := by
-  have h00 : 1 - η ∣ (p : R) ↔ η - 1 ∣ (p : R) :=  by
-    have hh : -(η - 1) = 1 - η := by ring
-    simp_rw [← hh]
-    apply neg_dvd
-  rw [h00]
-  have : IsPrimitiveRoot (η : CyclotomicField p ℚ) p := by
-    apply prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset hη hne1)
-  have h0 : p ≠ 2 := by
-    intro hP
-    rw [hP] at ph
-    contradiction
-  have h := RingOfIntegers.dvd_norm ℚ (η - 1 : R)
-  have h2 := IsPrimitiveRoot.norm_sub_one_of_prime_ne_two' this
-    (cyclotomic.irreducible_rat (NeZero.pos p)) h0
-  convert h
+  have hη : IsPrimitiveRoot (η : CyclotomicField p ℚ) (p ^ 1) := by
+    simpa using prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset hη hne1)
+  have : IsCyclotomicExtension {p ^ (0 + 1)} ℚ (CyclotomicField p ℚ) := by
+    simp only [zero_add, pow_one]
+    infer_instance
+  convert neg_dvd.2 <| mem_span_singleton.1 <| Rat.p_mem_span_zeta_sub_one p 0 hη using 1
   ext
-  rw [show (η : CyclotomicField p ℚ) - 1 = (η - 1 : _) by simp] at h2
-  rw [RingOfIntegers.coe_algebraMap_norm, h2]
   simp
 
 theorem one_sub_zeta_prime [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
@@ -185,7 +171,6 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
     (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
     (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) :
     (fltIdeals p x y hη₁) ⊔ (fltIdeals p x y hη₂) = ⊤ := by
-  -- Note: `by_contra h` was extremely slow here.
   apply by_contradiction
   intro h
   let I := fltIdeals p x y hη₁ ⊔ fltIdeals p x y hη₂
@@ -248,7 +233,7 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
         rw [map_span]
         simp only [eq_intCast, Set.image_singleton, Int.cast_natCast]
         rw [span_singleton_le_span_singleton]
-        apply zeta_sub_one_dvb_p ph hη₁ hwlog
+        apply zeta_sub_one_dvb_p hη₁ hwlog
       have H2 : IsPrime (P.comap (Int.castRingHom R)) := by
         exact IsPrime.comap _
       have H4 : Ideal.span ({(p : ℤ)} : Set ℤ) ≠ ⊥ := by simp [NeZero.ne p]
