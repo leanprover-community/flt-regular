@@ -10,9 +10,6 @@ open scoped BigOperators nonZeroDivisors NumberField
 
 open IsCyclotomicExtension NumberField Polynomial IsCMField
 
---The whole file is now for a generic primitive root ζ, quite a lot of names should be changed.
-universe u
-
 noncomputable section
 
 /-- zeta now as a unit in the ring of integers. This way there are no coe issues. -/
@@ -22,9 +19,6 @@ def IsPrimitiveRoot.unit' {p : ℕ} [NeZero p] {K : Type*} [Field K] {ζ : K}
   inv := (⟨ζ⁻¹, hζ.inv.isIntegral (NeZero.pos p)⟩ : 𝓞 K)
   val_inv := Subtype.ext <| mul_inv_cancel₀ <| hζ.ne_zero (NeZero.ne p)
   inv_val := Subtype.ext <| inv_mul_cancel₀ <| hζ.ne_zero (NeZero.ne p)
-
-set_option quotPrecheck false
-local notation "ζ1" => (hζ.unit' - 1 : 𝓞 K)
 
 set_option quotPrecheck false
 local notation "I" => (Ideal.span ({(hζ.unit' - 1 : 𝓞 K)} : Set (𝓞 K)) : Ideal (𝓞 K))
@@ -96,7 +90,7 @@ theorem IsPrimitiveRoot.p_mem_one_sub_zeta [hp : Fact p.Prime] : (p : 𝓞 K) �
   have : {↑hζ.unit'} ⊆ primitiveRoots p (𝓞 K) := by simpa [NeZero.pos p] using hζ.unit'_coe
   rw [← Finset.prod_sdiff this, Finset.prod_singleton] at key
   rw [← key]
-  have := (Ideal.neg_mem_iff I).mpr (Ideal.subset_span (Set.mem_singleton ζ1))
+  have := (Ideal.neg_mem_iff I).mpr (Ideal.subset_span (Set.mem_singleton (hζ.unit' - 1 : 𝓞 K)))
   rw [neg_sub] at this
   exact Ideal.mul_mem_left _ _ this
 
@@ -237,23 +231,15 @@ lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [FunLike F M N]
   m.coe_map_inv (f : M →* N)
 
 variable (K) in
-theorem IsCyclotomicExtension.IsTotallyComplex [Fact (p.Prime)] (hp : 2 < p) :
-    IsTotallyComplex K :=
-  nrRealPlaces_eq_zero_iff.1 (Rat.nrRealPlaces_eq_zero K hp)
-
-variable (K) in
 theorem IsCyclotomicExtension.IsCMField [Fact (p.Prime)] (hp : 2 < p) :
-    haveI := IsCyclotomicExtension.IsTotallyComplex K hp
     IsCMField K :=
-  have := IsCyclotomicExtension.isAbelianGalois {p} ℚ K
-  haveI := IsCyclotomicExtension.IsTotallyComplex K hp
-  inferInstance
+  haveI := IsCyclotomicExtension.isAbelianGalois {p} ℚ K
+  haveI := nrRealPlaces_eq_zero_iff.1 (Rat.nrRealPlaces_eq_zero K hp)
+  ⟨⟩
 
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (hp : 2 < p) :
-    haveI := IsCyclotomicExtension.IsTotallyComplex K hp
     haveI := IsCyclotomicExtension.IsCMField K hp
     algebraMap (𝓞 K) (𝓞 K ⧸ I) (unitsMulComplexConjInv K u).1 = 1 := by
-  haveI := IsCyclotomicExtension.IsTotallyComplex K hp
   haveI := IsCyclotomicExtension.IsCMField K hp
   have := Units.coe_map_inv' (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitsComplexConj K u)
   rw [unitsMulComplexConjInv_apply, Units.val_mul, map_mul, ← this, Units.mul_inv_eq_one,
@@ -298,7 +284,6 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
 set_option synthInstance.maxHeartbeats 40000 in
 -- Needed for `AddMonoidHomClass (𝓞 K →+* 𝓞 K ⧸ Ideal.span {↑hζ.unit' - 1}) ? ?`
 theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Prime)] (hp : 2 < p) :
-    haveI := IsCyclotomicExtension.IsTotallyComplex K hp
     haveI := IsCyclotomicExtension.IsCMField K hp
     u * (unitsComplexConj K u)⁻¹ ≠ -hζ.unit' ^ n := by
   by_contra H
@@ -312,12 +297,9 @@ theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Pr
   apply hζ.two_not_mem_one_sub_zeta hp
   rw [← Ideal.Quotient.eq_zero_iff_mem, map_two, ← neg_one_eq_one_iff_two_eq_zero, ← hμ', hμ]
 
--- this proof has mild coe annoyances rn
 theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp : 2 < p) :
-    haveI := IsCyclotomicExtension.IsTotallyComplex K hp
     haveI := IsCyclotomicExtension.IsCMField K hp
     ∃ m : ℕ, u * (unitsComplexConj K u)⁻¹ = (hζ.unit' ^ m) ^ 2 := by
-  haveI := IsCyclotomicExtension.IsTotallyComplex K hp
   haveI := IsCyclotomicExtension.IsCMField K hp
   have hpo : Odd p := H.out.odd_of_ne_two hp.ne'
   haveI : NormedAlgebra ℚ ℂ := normedAlgebraRat
