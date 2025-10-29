@@ -157,7 +157,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
           rwa [← e, mul_comm, ← dvd_gcd_mul_iff_dvd_mul, this, one_mul] at hb
   rw [isPrincipal_iff] at h
   obtain ⟨a, ha⟩ := h
-  obtain ⟨s, t, rfl⟩ := IsLocalization.mk'_surjective R⁰ a
+  obtain ⟨s, t, rfl⟩ := IsLocalization.exists_mk'_eq R⁰ a
   by_cases h : s = 0
   · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
     exact hI' ha

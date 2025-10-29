@@ -124,7 +124,7 @@ lemma Hilbert90_integral [IsGalois K L] {η : B} (hη : Algebra.norm K (algebraM
   let η' : Lˣ := Units.mk0 (algebraMap B L η) (fun h ↦ by simp [h] at hη)
   replace hη : Algebra.norm K η'.1 = 1 := hη
   obtain ⟨ε, hε⟩ := Hilbert90 hσ hη
-  obtain ⟨x, y, rfl⟩ := IsLocalization.mk'_surjective (Algebra.algebraMapSubmonoid B A⁰) ε
+  obtain ⟨x, y, rfl⟩ := IsLocalization.exists_mk'_eq (Algebra.algebraMapSubmonoid B A⁰) ε
   obtain ⟨t, ht, ht'⟩ := y.prop
   have : t • IsLocalization.mk' L x y = algebraMap _ _ x := by
     rw [Algebra.smul_def, IsScalarTower.algebraMap_apply A B L, ht', IsLocalization.mk'_spec']
