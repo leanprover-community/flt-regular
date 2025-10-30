@@ -19,5 +19,15 @@ import FltRegular.NumberTheory.KummersLemma.KummersLemma
 import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.NumberTheory.SystemOfUnits
 import FltRegular.NumberTheory.Unramified
-import FltRegular.SmallNumbers.FLT5
+import FltRegular.SmallNumbers.Cyclotomic
+import FltRegular.SmallNumbers.Eleven.Eleven
+import FltRegular.SmallNumbers.Eleven.FLT11
+import FltRegular.SmallNumbers.Five.FLT5
 import FltRegular.SmallNumbers.Minkowski
+import FltRegular.SmallNumbers.OrderOf
+import FltRegular.SmallNumbers.PID
+import FltRegular.SmallNumbers.Seven.FLT7
+import FltRegular.SmallNumbers.Seven.Seven
+import FltRegular.SmallNumbers.SmallNumbers
+import FltRegular.SmallNumbers.Thirteen.FLT13
+import FltRegular.SmallNumbers.Thirteen.Thirteen

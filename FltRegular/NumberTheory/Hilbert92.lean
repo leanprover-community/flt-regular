@@ -2,7 +2,6 @@ import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.SystemOfUnits
 import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Data.Int.Star
 import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
