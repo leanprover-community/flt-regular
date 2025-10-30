@@ -17,9 +17,6 @@ local notation "M " K:70 => (4 / π) ^ nrComplexPlaces K *
 instance Nat.fact_prime_seven : Fact (Nat.Prime 7) :=
   ⟨prime_seven⟩
 
-instance PNat.fact_prime_seven : Fact (7 : ℕ+).Prime :=
-  ⟨prime_seven⟩
-
 lemma crazy7 : ⌊(4 / π) ^ 3 * (6! / 6 ^ 6 * √16807)⌋₊ = 4 := by
   refine (floor_eq_iff (by positivity)).mpr ⟨?_, ?_⟩
   · calc

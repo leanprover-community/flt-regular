@@ -11,22 +11,6 @@ local notation "M " K:70 => (4 / π) ^ nrComplexPlaces K *
 
 namespace RingOfIntegers
 
-theorem PID {θ : 𝓞 K} (hθ : exponent θ = 1)
-  (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) →
-    haveI : Fact (p.Prime) := ⟨hp⟩
-      ∀ P, (hP : P ∈ monicFactorsMod θ p) → p ^ P.natDegree ≤ ⌊(M K)⌋₊ →
-        Submodule.IsPrincipal ((Ideal.primesOverSpanEquivMonicFactorsMod (hθ ▸ hp.not_dvd_one)).symm
-          ⟨P, hP⟩).1) : IsPrincipalIdealRing (𝓞 K) := by
-  refine isPrincipalIdealRing_of_isPrincipal_of_pow_le_of_mem_primesOver_of_mem_Icc
-    (fun p hpmem hp I hI hple ↦ ?_)
-  have : Fact (p.Prime) := ⟨hp⟩
-  let P := Ideal.primesOverSpanEquivMonicFactorsMod (hθ ▸ hp.not_dvd_one) ⟨I, hI⟩
-  convert h p hpmem hp P P.2 ?_
-  · simp [P]
-  · convert hple
-    rw [← Ideal.inertiaDeg_primesOverSpanEquivMonicFactorsMod_symm_apply' (hθ ▸ hp.not_dvd_one) P.2]
-    simp [P]
-
 theorem PIDGalois [IsGalois ℚ K] {θ : 𝓞 K} (hθ : exponent θ = 1)
   (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) →
     haveI : Fact (p.Prime) := ⟨hp⟩
