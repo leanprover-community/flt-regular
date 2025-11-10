@@ -62,9 +62,10 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b
   obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime hζ).symm
   rw [(Nat.Prime.odd_of_ne_two hpri.out hp).neg_pow, ← sub_eq_add_neg, e,
     mul_pow, ← sub_eq_add_neg] at hr
-  use b, ↑u * ((hζ.unit' - 1 : 𝓞 K) * k ^ p) - r
+  use b, ↑u * ((hζ.unit' - 1 : 𝓞 K) * k ^ p) - r * a * (-b)
   rw [← sub_eq_iff_eq_add.mpr hr, mul_sub, ← mul_assoc, ← mul_assoc, hu, ← pow_succ,
     Nat.sub_add_cancel (n := p) (m := 1) hpri.out.one_lt.le]
+  ring
 
 section
 

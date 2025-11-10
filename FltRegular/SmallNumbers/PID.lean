@@ -29,8 +29,8 @@ theorem PIDGalois [IsGalois ℚ K] {θ : 𝓞 K} (hθ : exponent θ = 1)
   by_cases h : ⌊(M K)⌋₊ < p ^ ((span ({↑p} : Set ℤ)).inertiaDeg I)
   · linarith
   rw [← Ideal.inertiaDeg_primesOverSpanEquivMonicFactorsMod_symm_apply'
-    (hθ ▸ hp.not_dvd_one) hQ, inertiaDeg_eq_of_isGalois _ J I ℚ K] at H
-  obtain ⟨σ, rfl⟩ := exists_map_eq_of_isGalois (span ({↑p} : Set ℤ)) J I ℚ K
-  exact (H.resolve_left h).map_ringHom σ
+    (hθ ▸ hp.not_dvd_one) hQ, inertiaDeg_eq_of_isGaloisGroup _ J I Gal(K/ℚ)] at H
+  obtain ⟨σ, rfl⟩ := exists_smul_eq_of_isGaloisGroup (span ({↑p} : Set ℤ)) J I Gal(K/ℚ)
+  exact (H.resolve_left h).map_ringHom _
 
 end RingOfIntegers

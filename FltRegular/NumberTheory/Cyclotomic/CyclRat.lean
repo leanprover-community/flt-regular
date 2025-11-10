@@ -30,10 +30,11 @@ theorem exists_int_sub_pow_prime_dvd {A : Type*} [CommRing A] [IsCyclotomicExten
     simp
   · rintro x y _ _ ⟨b, hb⟩ ⟨c, hc⟩
     obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hp.out x y
+    rw [mul_assoc, mul_assoc] at hr
     rw [hr]
     use c + b
     push_cast
-    rw [sub_add_eq_sub_sub, sub_eq_add_neg, sub_eq_add_neg, add_comm _ (↑↑p * r), add_assoc,
+    rw [sub_add_eq_sub_sub, sub_eq_add_neg, sub_eq_add_neg, add_comm (x ^ p + _), add_assoc,
       add_assoc]
     apply Ideal.add_mem _ _
     · convert Ideal.add_mem _ hb hc using 1

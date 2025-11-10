@@ -39,7 +39,7 @@ lemma exists_comap_galRestrict_eq [IsDedekindDomain R] [IsGalois K L] {p : Ideal
   have := hP₂.1
   have := hP₂.2
   have : IsFractionRing S L := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  obtain ⟨σ, hσ⟩ := exists_map_eq_of_isGalois p P₂ P₁ K L
-  refine ⟨(galRestrict R K L S).symm σ, ?_⟩
-  simp only [MulEquiv.apply_symm_apply, ← hσ]
-  refine comap_map_of_bijective _ (AlgEquiv.bijective σ)
+  let :  MulSemiringAction Gal(L/K) S := IsIntegralClosure.MulSemiringAction R K L S
+  have : IsGaloisGroup Gal(L/K) R S := IsGaloisGroup.of_isFractionRing _ _ _ K L
+  obtain ⟨σ, hσ⟩ := exists_smul_eq_of_isGaloisGroup p P₂ P₁ Gal(L/K)
+  exact ⟨σ, hσ ▸ comap_map_of_bijective _ (((galRestrict R K L S) σ).bijective)⟩
