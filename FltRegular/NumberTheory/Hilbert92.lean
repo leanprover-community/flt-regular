@@ -169,7 +169,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
       simp only [Finsupp.coe_sub, Finsupp.coe_smul, ha, Pi.sub_apply, Finsupp.coe_zero,
         Pi.zero_apply, sub_eq_zero] at this
       exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
-        (isUnit_of_mul_eq_one _ _ this)
+        (IsUnit.of_mul_eq_one _ this)
 
 lemma corollary [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental) (a : Fin s → ℤ)
     (ha : ∃ i, ¬ (p : ℤ) ∣ a i) :
