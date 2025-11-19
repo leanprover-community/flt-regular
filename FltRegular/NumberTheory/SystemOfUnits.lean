@@ -104,7 +104,7 @@ lemma existence'' [Module A G] {R : ℕ} (hR : R ≤ s) :  Nonempty (systemOfUni
     | zero => exact existence0 p G
     | succ n ih =>
         obtain ⟨S⟩ := ih (le_trans (Nat.le_succ n) hR)
-        exact existence' p hp G s hf S (lt_of_lt_of_le (Nat.lt.base n) hR)
+        exact existence' p hp G s hf S (lt_of_lt_of_le (Nat.lt_add_one n) hR)
 
 lemma existence [Module A G] : Nonempty (systemOfUnits p G s) := existence'' p hp G s hf rfl.le
 

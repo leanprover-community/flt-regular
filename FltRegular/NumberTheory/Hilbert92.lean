@@ -507,7 +507,7 @@ lemma lh_pow_free [FiniteDimensional k K] (ν : (𝓞 k)ˣ)
   convert lh_pow_free' p hp ν hk _ ?_ η
   · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, Fin.ext_iff, Fin.val_last]
   · rw [NumberField.Units.finrank_eq]
-    exact Nat.lt.base _
+    exact Nat.lt_add_one _
 
 noncomputable
 def Algebra.normZeroHom (R S) [CommRing R] [Ring S] [Nontrivial S] [Algebra R S]
