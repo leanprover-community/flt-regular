@@ -231,7 +231,7 @@ lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [FunLike F M N]
   m.coe_map_inv (f : M →* N)
 
 variable (K) in
-theorem IsCyclotomicExtension.IsCMField [Fact (p.Prime)] (hp : 2 < p) :
+theorem IsCyclotomicExtension.IsCMField (hp : 2 < p) :
     IsCMField K :=
   haveI := IsCyclotomicExtension.isAbelianGalois {p} ℚ K
   haveI := nrRealPlaces_eq_zero_iff.1 (Rat.nrRealPlaces_eq_zero K hp)

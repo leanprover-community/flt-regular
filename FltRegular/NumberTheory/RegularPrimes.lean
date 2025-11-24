@@ -23,7 +23,7 @@ open scoped NumberField
 variable (n p : ℕ) [hp : Fact p.Prime]
 
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
-def IsRegularNumber [NeZero n] : Prop :=
+def IsRegularNumber [_inst : NeZero n] : Prop :=
   n.Coprime <| Fintype.card <| ClassGroup (𝓞 <| CyclotomicField n ℚ)
 
 /-- The definition of regular primes. -/
@@ -88,7 +88,7 @@ end TwoRegular
 
 theorem isPrincipal_of_isPrincipal_pow_of_coprime
     {A : Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
-    {p : ℕ} [Fact p.Prime]
+    {p : ℕ}
     (H : p.Coprime <| Fintype.card <| ClassGroup A) {I : Ideal A}
     (hI : (I ^ p).IsPrincipal) : I.IsPrincipal := by
   by_cases Izero : I = 0

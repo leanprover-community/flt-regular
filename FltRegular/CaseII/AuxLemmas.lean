@@ -20,7 +20,7 @@ lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero 
     exact FiniteMultiplicity.of_not_isUnit hx hy
 
 lemma dvd_iff_emultiplicity_le {M : Type*}
-    [CancelCommMonoidWithZero M] [DecidableRel (fun a b : M ↦ a ∣ b)] [UniqueFactorizationMonoid M]
+    [CancelCommMonoidWithZero M] [UniqueFactorizationMonoid M]
     {a b : M} (ha : a ≠ 0) : a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
   constructor
   · intro hab p _
