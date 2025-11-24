@@ -162,8 +162,8 @@ theorem roots_poly {L : Type*} [Field L] [Algebra K L] (α : L)
 
 theorem splits_poly {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) :
-    (poly hp hζ u hcong).Splits (algebraMap (𝓞 K) L) := by
-  rw [← splits_id_iff_splits, splits_iff_card_roots, roots_poly hp hζ u hcong α e,
+    ((poly hp hζ u hcong).map (algebraMap (𝓞 K) L)).Splits := by
+  rw [splits_iff_card_roots, roots_poly hp hζ u hcong α e,
     (monic_poly hp hζ u hcong).natDegree_map, natDegree_poly hp hζ,
     Finset.range_val, Multiset.card_map, Multiset.card_range]
 
@@ -174,8 +174,8 @@ theorem map_poly_eq_prod {L : Type*} [Field L] [Algebra K L] (α : L)
   apply map_injective (algebraMap (𝓞 L) L) Subtype.coe_injective
   rw [← coe_mapRingHom, map_prod, coe_mapRingHom, map_map, ← IsScalarTower.algebraMap_eq,
     eq_prod_roots_of_monic_of_splits_id ((monic_poly hp hζ u hcong).map _)
-      ((splits_id_iff_splits _).mpr (splits_poly hp hζ u hcong α e)),
-    roots_poly hp hζ u hcong α e, Multiset.map_map, ← Finset.prod_eq_multiset_prod]
+      (splits_poly hp hζ u hcong α e), roots_poly hp hζ u hcong α e, Multiset.map_map,
+      ← Finset.prod_eq_multiset_prod]
   simp [polyRoot]
 
 lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [CommRing K]

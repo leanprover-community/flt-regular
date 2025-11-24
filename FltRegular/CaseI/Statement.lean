@@ -116,28 +116,9 @@ theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f 
   obtain ⟨i, hrange, hi⟩ := auxf' hp5 a b k₁ k₂
   exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
 
-variable [hpri : Fact p.Prime]
-
 local notation "K" => CyclotomicField p ℚ
 
 local notation "R" => 𝓞 K
-
-theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
-    (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1)
-    (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p 1) :
-    ∃ I, span ({a + ζ * b} : Set R) = I ^ p := by
-  classical
-  have H₁ := congr_arg (@Int.cast R _) H
-  simp only [Int.cast_add, Int.cast_pow] at H₁
-  have hζ' := (zeta_spec p ℚ K).unit'_coe
-  rw [hζ'.pow_add_pow_eq_prod_add_mul _ _ <|
-    odd_iff.2 <| hpri.1.eq_two_or_odd.resolve_left fun h ↦ by simp [h] at h5p] at H₁
-  replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
-  simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
-  refine exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη => ?_) H₁ ζ hζ
-  refine fltIdeals_coprime ?_ ?_ H (ab_coprime H hpri.out.ne_zero hgcd) hη₁ hη₂ hη caseI
-  · exact hpri.out
-  · exact h5p
 
 theorem is_principal_aux {K' : Type*} [Field K'] [CharZero K'] [IsCyclotomicExtension {p} ℚ K']
     [Fintype (ClassGroup (𝓞 K'))]
@@ -155,6 +136,25 @@ theorem is_principal_aux {K' : Type*} [Field K'] [CharZero K'] [IsCyclotomicExte
   obtain ⟨u, hu⟩ := hα
   refine ⟨u⁻¹, α, ?_⟩
   rw [← hu, mul_comm ((_ + ζ * _)), Units.inv_mul_cancel_left]
+
+variable [hpri : Fact p.Prime]
+
+theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
+    (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1)
+    (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p 1) :
+    ∃ I, span ({a + ζ * b} : Set R) = I ^ p := by
+  classical
+  have H₁ := congr_arg (@Int.cast R _) H
+  simp only [Int.cast_add, Int.cast_pow] at H₁
+  have hζ' := (zeta_spec p ℚ K).unit'_coe
+  rw [hζ'.pow_add_pow_eq_prod_add_mul _ _ <|
+    odd_iff.2 <| hpri.1.eq_two_or_odd.resolve_left fun h ↦ by simp [h] at h5p] at H₁
+  replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
+  simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
+  refine exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη => ?_) H₁ ζ hζ
+  refine fltIdeals_coprime ?_ ?_ H (ab_coprime H hpri.out.ne_zero hgcd) hη₁ hη₂ hη caseI
+  · exact hpri.out
+  · exact h5p
 
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)

@@ -137,31 +137,6 @@ theorem pid4 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → (hpn
       exact add_mem (mul_mem_left _ _ (subset_span (by simp)))
         (mul_mem_left _ _ (subset_span (by simp)))
 
-variable {n} in
-theorem isMaximal {p : ℕ} [hp : Fact (p.Prime)] (hpn : p ≠ n) (P Q A : ℤ[X]) (hPmo : P.Monic)
-    (hdeg : orderOf (ZMod.unitOfCoprime p (uff hn.1 hpn)) = P.natDegree)
-    (hQA : P * Q + ↑p * A = cyclotomic n ℤ) :
-    (span {↑p, (aeval θ) P}).IsMaximal := by
-  have hdvd : P.map (Int.castRingHom (ZMod p)) ∣ cyclotomic n (ZMod p) := by
-    refine ⟨Q.map (Int.castRingHom (ZMod p)), ?_⟩
-    simp [← map_cyclotomic _ (Int.castRingHom (ZMod p)), ← hQA]
-  have hP : P.map (Int.castRingHom (ZMod p)) ∈ monicFactorsMod θ p := by
-    simp only [mem_toFinset, minpoly, map_cyclotomic,
-      Polynomial.mem_normalizedFactors_iff (cyclotomic_ne_zero _ _)]
-    refine ⟨?_, ?_, hdvd⟩
-    · replace hdeg : (P.map (Int.castRingHom (ZMod p))).natDegree =
-        orderOf (ZMod.unitOfCoprime p (uff hn.1 hpn)) := by
-          rw [hPmo.natDegree_map, hdeg]
-      refine ZMod.irreducible_of_dvd_cyclotomic_of_natDegree (fun h ↦ ?_) hdvd hdeg
-      exact hp.1.ne_one <| ((Nat.dvd_prime hn.1).1 h).resolve_right hpn
-    · exact hPmo.map (Int.castRingHom (ZMod p))
-  refine Ideal.IsPrime.isMaximal ?_ (fun h ↦ hp.1.ne_zero ?_)
-  · rw [← primesOverSpanEquivMonicFactorsMod_symm_apply_eq_span (ne_dvd_exponent p) hP]
-    apply Ideal.primesOver.isPrime
-  · apply CharZero.cast_injective (R := 𝓞 K)
-    rw [cast_zero, ← Ideal.mem_bot, ← h]
-    exact subset_span (by simp)
-
 theorem pid5 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → (hpn : p ≠ n) →
     haveI : Fact (p.Prime) := ⟨hp⟩
     ⌊(M K)⌋₊ < p ^ orderOf (ZMod.unitOfCoprime _ (uff hn.1 hpn)) ∨
