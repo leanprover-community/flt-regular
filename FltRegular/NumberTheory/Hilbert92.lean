@@ -498,7 +498,7 @@ lemma NumberField.Units.finrank_eq : finrank ℤ (Additive (𝓞 k)ˣ) = NumberF
   exact (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).symm
 
 include hp in
-lemma lh_pow_free [FiniteDimensional k K] (ν : (𝓞 k)ˣ)
+lemma lh_pow_free (ν : (𝓞 k)ˣ)
     (hk : ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n) = 1 → ∃ i, ν ^ i = ε)
     (η : Fin (NumberField.Units.rank k + 2) → Additive (𝓞 k)ˣ) :
     ∃ (a : ℤ) (ι : Fin (NumberField.Units.rank k + 2) → ℤ)
@@ -735,7 +735,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
     fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
   --append the norm of E to the end of the list of norms of fundamental units
   let η : Fin (r + 2) → Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
-  obtain ⟨a, ι, i, ha, ha', ha''⟩ := lh_pow_free p hp ν (k := k) (K := K) hν' η
+  obtain ⟨a, ι, i, ha, ha', ha''⟩ := lh_pow_free p hp ν (k := k) hν' η
   --append E to the end of the list of fundamental units
   let H2 : Fin (r + 2) → Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul E)
   --J = (∏_i H_i^a_i)*E^{a_{r+2}}*ν^{-a}
