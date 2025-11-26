@@ -35,7 +35,7 @@ lemma crazy11 : ⌊(4 / π) ^ 5 * (10! / 10 ^ 10 * √2357947691)⌋₊ = 58 := 
 variable [IsCyclotomicExtension {11} ℚ K]
 
 theorem M11 : ⌊(M K)⌋₊ = 58 := by
-  rw [absdiscr_prime 11 K, IsCyclotomicExtension.finrank (n := 11) K
+  rw [discr_prime 11 K, IsCyclotomicExtension.finrank (n := 11) K
     (irreducible_rat (by norm_num)), nrComplexPlaces_eq_totient_div_two 11, totient_prime
       Nat.prime_eleven]
   simp only [Nat.add_one_sub_one, reduceDiv, cast_ofNat, Int.reduceNeg, Int.reducePow,

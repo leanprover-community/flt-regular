@@ -245,10 +245,10 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
   rw [unitsMulComplexConjInv_apply, Units.val_mul, map_mul, ← this, Units.mul_inv_eq_one,
     Units.coe_map , MonoidHom.coe_coe]
   haveI := Fact.mk hp
-  have hu := hζ.integralPowerBasis'.basis.sum_repr u
-  let a := hζ.integralPowerBasis'.basis.repr
-  let φn := hζ.integralPowerBasis'.dim
-  simp_rw [PowerBasis.basis_eq_pow, IsPrimitiveRoot.integralPowerBasis'_gen] at hu
+  have hu := hζ.integralPowerBasis.basis.sum_repr u
+  let a := hζ.integralPowerBasis.basis.repr
+  let φn := hζ.integralPowerBasis.dim
+  simp_rw [PowerBasis.basis_eq_pow, IsPrimitiveRoot.integralPowerBasis_gen] at hu
   have hu' := congr_arg (ringOfIntegersComplexConj K) hu
   replace hu' : ∑ x : Fin φn, (a u) x • (ringOfIntegersComplexConj K)
       (⟨ζ, hζ.isIntegral (NeZero.pos p)⟩ ^ (x : ℕ)) = unitsComplexConj K u := by

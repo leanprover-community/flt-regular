@@ -35,7 +35,7 @@ lemma crazy7 : ⌊(4 / π) ^ 3 * (6! / 6 ^ 6 * √16807)⌋₊ = 4 := by
 variable [IsCyclotomicExtension {7} ℚ K]
 
 theorem M7 : ⌊(M K)⌋₊ = 4 := by
-  rw [absdiscr_prime 7 K, IsCyclotomicExtension.finrank (n := 7) K
+  rw [discr_prime 7 K, IsCyclotomicExtension.finrank (n := 7) K
     (irreducible_rat (by norm_num)), nrComplexPlaces_eq_totient_div_two 7, totient_prime
       Nat.prime_seven]
   simp only [Nat.add_one_sub_one, reduceDiv, cast_ofNat, Int.reduceNeg, Int.reducePow,

@@ -25,11 +25,9 @@ lemma minpoly : minpoly ℤ θ = cyclotomic n ℤ := by
   rw [← (zeta_spec n ℚ K).coe_toInteger] at this
   simpa [this] using (minpoly.algebraMap_eq RingOfIntegers.coe_injective θ).symm
 
-variable [hn : Fact (Nat.Prime n)]
-
 variable (n) in
 lemma exponent : exponent θ = 1 := by
-  simp [exponent_eq_one_iff, ← ((zeta_spec n ℚ K).integralPowerBasis').adjoin_gen_eq_top]
+  simp [exponent_eq_one_iff, ← ((zeta_spec n ℚ K).integralPowerBasis).adjoin_gen_eq_top]
 
 lemma ne_dvd_exponent (p : ℕ) [hp : Fact p.Prime] : ¬ (p ∣ RingOfIntegers.exponent θ) := by
   rw [exponent, dvd_one]
@@ -88,6 +86,8 @@ theorem pid2 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → p �
       simp [hPmo.leadingCoeff]
     · right
       simpa [primesOverSpanEquivMonicFactorsMod_symm_apply_eq_span (ne_dvd_exponent p) hP]
+
+variable [hn : Fact (Nat.Prime n)]
 
 theorem pid3 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → (hpn : p ≠ n) →
     haveI : Fact (p.Prime) := ⟨hp⟩

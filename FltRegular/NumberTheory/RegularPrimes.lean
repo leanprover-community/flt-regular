@@ -44,7 +44,7 @@ def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := b
     exact
       (IsSplittingField.algEquiv L (cyclotomic 2 K)).trans
         (IsSplittingField.algEquiv K <| cyclotomic 2 K).symm
-  exact ⟨by simpa using @splits_X_sub_C _ _ _ _ (RingHom.id K) (-1),
+  exact ⟨by simpa using Splits.X_sub_C (-1 : K),
     by simp [eq_iff_true_of_subsingleton]⟩
 
 instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two

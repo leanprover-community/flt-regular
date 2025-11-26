@@ -32,7 +32,7 @@ lemma crazy7 : ⌊(4 / π) ^ 3 * (6! / 6 ^ 6 * √16807)⌋₊ = 4 := by
       _ ≤ _ := by norm_num
 
 theorem M7 [IsCyclotomicExtension {7} ℚ K] : ⌊(M K)⌋₊ = 4 := by
-  rw [absdiscr_prime 7 K, IsCyclotomicExtension.finrank (n := 7) K
+  rw [discr_prime 7 K, IsCyclotomicExtension.finrank (n := 7) K
     (irreducible_rat (by norm_num)), nrComplexPlaces_eq_totient_div_two 7, totient_prime
       Nat.prime_seven]
   simp only [Nat.add_one_sub_one, reduceDiv, cast_ofNat, Int.reduceNeg, Int.reducePow,
@@ -62,7 +62,7 @@ lemma crazy11 : ⌊(4 / π) ^ 5 * (10! / 10 ^ 10 * √2357947691)⌋₊ = 58 := 
       _ ≤ 58 + 1 := by norm_num
 
 theorem M11 [IsCyclotomicExtension {11} ℚ K] : ⌊(M K)⌋₊ = 58 := by
-  rw [absdiscr_prime 11 K, IsCyclotomicExtension.finrank (n := 11) K
+  rw [discr_prime 11 K, IsCyclotomicExtension.finrank (n := 11) K
     (irreducible_rat (by norm_num)), nrComplexPlaces_eq_totient_div_two 11, totient_prime
       Nat.prime_eleven]
   simp only [Nat.add_one_sub_one, reduceDiv, cast_ofNat, Int.reduceNeg, Int.reducePow,
@@ -94,7 +94,7 @@ lemma crazy13 : ⌊(4 / π) ^ 6 * (12! / 12 ^ 12 * √1792160394037)⌋₊ = 306
       _ ≤ _ := by norm_num
 
 theorem M13 [IsCyclotomicExtension {13} ℚ K] : ⌊(M K)⌋₊ = 306 := by
-  rw [absdiscr_prime 13 K, IsCyclotomicExtension.finrank (n := 13) K
+  rw [discr_prime 13 K, IsCyclotomicExtension.finrank (n := 13) K
     (irreducible_rat (by norm_num)), nrComplexPlaces_eq_totient_div_two 13, totient_prime
       Nat.prime_thirteen]
   simp only [Nat.add_one_sub_one, reduceDiv, cast_ofNat, Int.reduceNeg, Int.reducePow,
@@ -126,7 +126,7 @@ lemma crazy17 : ⌊(4 / π) ^ 8 * (16! / 16 ^ 16 * √2862423051509815793)⌋₊
       _ ≤ _ := by norm_num
 
 theorem M17 [IsCyclotomicExtension {17} ℚ K] : ⌊(M K)⌋₊ = 13254 := by
-  rw [absdiscr_prime 17 K, IsCyclotomicExtension.finrank (n := 17) K
+  rw [discr_prime 17 K, IsCyclotomicExtension.finrank (n := 17) K
     (irreducible_rat (by norm_num)), nrComplexPlaces_eq_totient_div_two 17, totient_prime
       Nat.prime_seventeen]
   simp only [Nat.add_one_sub_one, reduceDiv, cast_ofNat, Int.reduceNeg, Int.reducePow,
@@ -158,7 +158,7 @@ lemma crazy19 : ⌊(4 / π) ^ 9 * (18! / 18 ^ 18 * √5480386857784802185939)⌋
       _ ≤ _ := by norm_num
 
 theorem M19 [IsCyclotomicExtension {19} ℚ K] : ⌊(M K)⌋₊ = 105933 := by
-  rw [absdiscr_prime 19 K, IsCyclotomicExtension.finrank (n := 19) K
+  rw [discr_prime 19 K, IsCyclotomicExtension.finrank (n := 19) K
     (irreducible_rat (by norm_num)), nrComplexPlaces_eq_totient_div_two 19, totient_prime
       Nat.prime_nineteen]
   simp only [Nat.add_one_sub_one, reduceDiv, cast_ofNat, Int.reduceNeg, Int.reducePow,

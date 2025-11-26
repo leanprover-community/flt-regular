@@ -38,7 +38,7 @@ lemma crazy13 : ⌊(4 / π) ^ 6 * (12! / 12 ^ 12 * √1792160394037)⌋₊ = 306
 variable [IsCyclotomicExtension {13} ℚ K]
 
 theorem M13 : ⌊(M K)⌋₊ = 306 := by
-  rw [absdiscr_prime 13 K, IsCyclotomicExtension.finrank (n := 13) K
+  rw [discr_prime 13 K, IsCyclotomicExtension.finrank (n := 13) K
     (irreducible_rat (by norm_num)), nrComplexPlaces_eq_totient_div_two 13, totient_prime
       Nat.prime_thirteen]
   simp only [Nat.add_one_sub_one, reduceDiv, cast_ofNat, Int.reduceNeg, Int.reducePow, reduceSub,

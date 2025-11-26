@@ -211,8 +211,6 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
 theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬↑p ∣ a * b * c) :
     a ^ p + b ^ p ≠ c ^ p := by
-  have hcycl : IsCyclotomicExtension {p} ℤ (𝓞 (CyclotomicField p ℚ)) := by
-    apply @IsCyclotomicExtension.ring_of_integers' _ _ _ (by exact hpri) _
   set ζ := zeta p ℤ R
   have hζ := zeta_spec p ℤ R
   intro H

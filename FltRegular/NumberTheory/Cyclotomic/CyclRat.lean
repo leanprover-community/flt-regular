@@ -303,8 +303,8 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
     ⟨p.pred, pred_lt hp.out.ne_zero⟩ := Fin.ext rfl
   let ζ' := (ζ : L)
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
-  set b := hζ'.integralPowerBasis' with hb
-  have hdim : b.dim = p.pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp.out,
+  set b := hζ'.integralPowerBasis with hb
+  have hdim : b.dim = p.pred := by rw [hζ'.integralPowerBasis_dim, totient_prime hp.out,
     pred_eq_sub_one]
   by_cases H : i = ⟨p - 1, pred_lt hp.out.ne_zero⟩
   · simp [H.symm, Hi]
@@ -322,9 +322,9 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
     congr; rfl; ext x
     rw [smul_neg]
     congr; congr; rfl; congr
-    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis'_gen, ← hb]
+    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis_gen, ← hb]
     rfl; rfl; congr; congr; rfl; congr
-    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis'_gen, ← hb]
+    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis_gen, ← hb]
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
@@ -348,8 +348,8 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
   have hlast : (Fin.castOrderIso (succ_pred_prime hp)) (Fin.last p.pred) =
       ⟨p.pred, pred_lt hp.ne_zero⟩ := Fin.ext rfl
-  set b := hζ'.integralPowerBasis' with hb
-  have hdim : b.dim = p.pred := by rw [hζ'.power_basis_int'_dim, totient_prime hp,
+  set b := hζ'.integralPowerBasis with hb
+  have hdim : b.dim = p.pred := by rw [hζ'.integralPowerBasis_dim, totient_prime hp,
     pred_eq_sub_one]
   have last_dvd := dvd_last_coeff_cycl_integer hζ hf hdiv
   intro j
@@ -368,9 +368,9 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
     congr; rfl; ext x
     rw [smul_neg]
     congr; congr; rfl; congr
-    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis'_gen, ← hb]
+    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis_gen, ← hb]
     rfl; rfl; congr; congr; rfl; congr
-    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis'_gen, ← hb]
+    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis_gen, ← hb]
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
