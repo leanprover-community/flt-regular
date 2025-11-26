@@ -51,7 +51,10 @@ lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1
   letI : Fact (Nat.Prime p) := hpri
   simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.Quotient.mk_eq_mk, Submodule.Quotient.mk_sub,
     sub_eq_zero, ← SModEq.def]
-  exact hζ.subOneIntegralPowerBasis'_gen ▸ hζ.subOneIntegralPowerBasis'.exists_smodEq a
+  obtain ⟨n, hn⟩ := hζ.subOneIntegralPowerBasis.exists_smodEq a
+  refine ⟨n, ?_⟩
+  rw [hζ.subOneIntegralPowerBasis_gen] at hn
+  exact hn
 
 include hp in
 lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b : 𝓞 K) ^ p := by
@@ -108,9 +111,9 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.unit' - 1: 𝓞 K))) := inferInstance
   apply RingHom.toIntAlgHom_injective
-  apply hζ.integralPowerBasis'.algHom_ext
-  have h : hζ.integralPowerBasis'.gen = hζ.unit' := by
-    simp only [IsPrimitiveRoot.integralPowerBasis'_gen]
+  apply hζ.integralPowerBasis.algHom_ext
+  have h : hζ.integralPowerBasis.gen = hζ.unit' := by
+    simp only [IsPrimitiveRoot.integralPowerBasis_gen]
     rfl
   rw [h]
   simp only [RingHom.toIntAlgHom, AlgHom.coe_mk, RingHom.coe_comp, Function.comp_apply]

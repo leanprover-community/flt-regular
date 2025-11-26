@@ -35,8 +35,8 @@ namespace CyclotomicIntegers
 def equiv :
     CyclotomicIntegers p ≃+* 𝓞 (CyclotomicField p ℚ) := by
   have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
-  exact (AdjoinRoot.equivOfMinpolyEq (cyclotomic p ℤ) H.integralPowerBasis'
-    (H.integralPowerBasis'_gen ▸ IsPrimitiveRoot.cyclotomic_eq_minpoly p H.toInteger H)).toRingEquiv
+  exact (AdjoinRoot.equivOfMinpolyEq (cyclotomic p ℤ) H.integralPowerBasis
+    (H.integralPowerBasis_gen ▸ IsPrimitiveRoot.cyclotomic_eq_minpoly p H.toInteger H)).toRingEquiv
 
 instance : IsDomain (CyclotomicIntegers p) :=
   AdjoinRoot.isDomain_of_prime (UniqueFactorizationMonoid.irreducible_iff_prime.mp
@@ -94,7 +94,7 @@ lemma powerBasis_dim : (powerBasis p).dim = p - 1 := by
 instance : Module.Free ℤ (CyclotomicIntegers p) := ⟨_, (powerBasis p).basis⟩
 
 lemma nontrivial {p} (hp : p ≠ 0) : Nontrivial (CyclotomicIntegers p) := by
-  apply Ideal.Quotient.nontrivial
+  apply Ideal.Quotient.nontrivial_iff.mpr
   simp only [ne_eq, Ideal.span_singleton_eq_top]
   intro h
   have := natDegree_eq_zero_of_isUnit h

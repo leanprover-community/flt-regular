@@ -262,7 +262,7 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
   let i : 𝓞 K ⧸ I →+* 𝓞 L ⧸ J := Ideal.quotientMap _
     (algebraMap (𝓞 K) (𝓞 L)) Ideal.le_comap_map
   haveI : Nontrivial (𝓞 L ⧸ J) := by
-    apply Ideal.Quotient.nontrivial
+    apply Ideal.Quotient.nontrivial_iff.mpr
     rw [ne_eq, Ideal.map_eq_top_iff]
     · exact Ideal.IsMaximal.ne_top ‹_›
     · intros x y e; ext; exact (algebraMap K L).injective (congr_arg Subtype.val e)
