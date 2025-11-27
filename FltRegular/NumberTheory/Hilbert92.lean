@@ -295,7 +295,7 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
   rw [← Module.AEval.of_aeval_smul]
   simp_rw [Module.End.smul_def, Polynomial.cyclotomic_prime ℤ p, EmbeddingLike.map_eq_zero_iff,
-    map_sum, map_pow, aeval_X, LinearMap.coeFn_sum, sum_apply]
+    map_sum, map_pow, aeval_X, LinearMap.coe_sum, sum_apply]
   conv =>
     enter [1, 2, c]
     rw [← relativeUnitsMapHom_apply, ← map_pow, ← map_pow, ← map_pow, ← Units.val_pow_eq_pow_val,
