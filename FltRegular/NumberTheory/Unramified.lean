@@ -163,7 +163,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
   have := hp.isMaximal hpbot
   intro P hP
   letI : IsScalarTower S (S ⧸ P) (S ⧸ P) := IsScalarTower.right
-  have := isMaximal_of_mem_primesOver hpbot hP
+  have := primesOver.isMaximal ⟨P, hP⟩
   apply le_antisymm
   · rw [← tsub_eq_zero_iff_le]
     by_contra H
@@ -184,7 +184,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
       _root_.map_mul, aeval_map_algebraMap, aeval_algebraMap_apply, minpoly.aeval, hxP, map_zero,
       mul_zero, zero_add, map_one, zero_ne_one] at e
   · rwa [Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count _
-      (isMaximal_of_mem_primesOver hpbot hP).isPrime (ne_bot_of_mem_primesOver hpbot hP),
+      (primesOver.isMaximal ⟨P, hP⟩).isPrime (ne_bot_of_mem_primesOver hpbot hP),
       Multiset.one_le_count_iff_mem, ← Multiset.mem_toFinset, ← primesOverFinset,
       ← Finset.mem_coe, coe_primesOverFinset hpbot]
     rwa [ne_eq, Ideal.map_eq_bot_iff_of_injective hRS]
