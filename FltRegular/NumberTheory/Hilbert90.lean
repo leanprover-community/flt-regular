@@ -30,8 +30,7 @@ lemma aux1 [IsGalois K L] {a : ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a
   obtain ⟨n, hn⟩ := Nat.dvd_iff_mod_eq_zero.2 h
   rw [hn, mul_comm, Finset.prod_range_mul]
   simp only [pow_add, pow_mul', pow_orderOf_eq_one, one_pow, one_mul]
-  apply prod_eq_one
-  intro i hi
+  refine prod_eq_one (fun i hi ↦ ?_)
   have := Algebra.norm_eq_prod_automorphisms K η.1
   simp only [hη, map_one] at this
   convert this.symm
@@ -42,8 +41,7 @@ lemma aux1 [IsGalois K L] {a : ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a
   · refine ⟨(finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩, by simp, ?_⟩
     have := Equiv.symm_apply_apply (finEquivZPowers (isOfFinOrder_of_finite σ)).symm ⟨τ, hσ τ⟩
     simp only [Equiv.symm_symm, ← Subtype.coe_inj] at this ⊢
-    rw [← this]
-    simp_rw [Subtype.coe_eta, Equiv.symm_apply_apply, finEquivZPowers_apply]
+    rw [← this, Equiv.symm_apply_apply, finEquivZPowers_apply]
 
 include hσ hη in
 lemma aux2 [IsGalois K L] {a b : ℕ} (h : a % orderOf σ = b % orderOf σ) :
@@ -142,7 +140,7 @@ lemma Hilbert90_integral [IsGalois K L] {η : B} (hη : Algebra.norm K (algebraM
       apply IsIntegralClosure.algebraMap_injective B A L
       rw [map_mul, ← hε]
       congr 1
-      · exact algebraMap_galRestrictHom_apply A K L B σ x
+      exact algebraMap_galRestrictHom_apply A K L B σ x
     · intro e
       rw [(map_eq_zero _).mp e, zero_div] at hε
       rw [hε, Algebra.norm_zero] at hη
