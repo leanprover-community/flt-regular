@@ -212,11 +212,6 @@ theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact p.Prime] (h : 2 < p)
   rw [sub_eq_of_eq_add hk] at this
   exact hζ.isPrime_one_sub_zeta.ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
-lemma map_two {S T F : Type*} [NonAssocSemiring S] [NonAssocSemiring T] [FunLike F S T]
-  [RingHomClass F S T] (f : F) : f 2 = 2 := by
-  rw [← one_add_one_eq_two, map_add, map_one]
-  exact one_add_one_eq_two
-
 lemma neg_one_eq_one_iff_two_eq_zero {M : Type*} [AddGroupWithOne M] :
     (-1 : M) = 1 ↔ (2 : M) = 0 := by rw [neg_eq_iff_add_eq_zero, one_add_one_eq_two]
 
@@ -290,7 +285,7 @@ theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Pr
     apply unit_inv_conj_not_neg_zeta_runity_aux hζ u hp
   haveI := Fact.mk hp
   apply hζ.two_not_mem_one_sub_zeta hp
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_two, ← neg_one_eq_one_iff_two_eq_zero, ← hμ', hμ]
+  rw [← Ideal.Quotient.eq_zero_iff_mem, map_ofNat, ← neg_one_eq_one_iff_two_eq_zero, ← hμ', hμ]
 
 theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.IsCMField K hp
