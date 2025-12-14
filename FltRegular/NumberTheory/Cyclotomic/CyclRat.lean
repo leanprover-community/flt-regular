@@ -73,22 +73,6 @@ theorem Ideal.le_add {S : Type*} [CommRing S] (a b c d : Ideal S) (hab : a ≤ b
   · apply le_trans hab (@le_sup_left _ _ _ _)
   · apply le_trans hcd (@le_sup_right _ _ _ _)
 
-theorem not_coprime_not_top {S : Type*} [CommRing S] (a b : Ideal S) :
-    ¬IsCoprime a b ↔ a + b ≠ ⊤ := by
-  apply not_congr
-  rw [IsCoprime]
-  constructor
-  · intro h
-    obtain ⟨x, y, hxy⟩ := h
-    rw [eq_top_iff_one]
-    have h2 : x * a + y * b ≤ a + b := by apply Ideal.le_add; all_goals apply mul_le_left
-    apply h2
-    rw [hxy]
-    simp
-  · intro h
-    refine ⟨1, 1, ?_⟩
-    simpa
-
 open IsPrimitiveRoot
 
 theorem prim_coe (ζ : R) (hζ : IsPrimitiveRoot ζ p) : IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p :=
@@ -268,11 +252,10 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
 theorem fltIdeals_coprime2 [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1)
     (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
-    (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) : IsCoprime (fltIdeals p x y hη₁)
-    (fltIdeals p x y hη₂) := by
-  apply not_not.mp
-  rw [not_coprime_not_top, not_not]
-  exact fltIdeals_coprime2_lemma ph hη₁ hη₂ hdiff hp hp2 hwlog
+    (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) :
+    IsCoprime (fltIdeals p x y hη₁) (fltIdeals p x y hη₂) := by
+  rw [Ideal.isCoprime_iff_add]
+  simpa using fltIdeals_coprime2_lemma ph hη₁ hη₂ hdiff hp hp2 hwlog
 
 theorem fltIdeals_coprime (hpri : p.Prime) (p5 : 5 ≤ p) {x y z : ℤ}
     (H : x ^ p + y ^ p = z ^ p) {η₁ η₂ : R} (hxy : IsCoprime x y)
