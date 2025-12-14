@@ -45,11 +45,6 @@ theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot hζ.unit'.1 p := by
   rw [← this] at z1
   exact z1.of_map_of_injective (IsFractionRing.injective _ _)
 
-theorem totient_le_one_dvd_two {a : ℕ} (han : 0 < a) (ha : a.totient ≤ 1) : a ∣ 2 := by
-  rcases Nat.totient_eq_one_iff.1 (show a.totient = 1 by linarith [Nat.totient_pos.2 han]) with
-    h | h <;>
-  simp [h]
-
 theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
     algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 :=
   by
@@ -126,7 +121,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsInt
     rw [h] at pdivlcm_h
     simp only [MulZeroClass.mul_zero, lcm_eq_zero_iff] at pdivlcm_h
     aesop
-  have K5 := (Nat.dvd_prime Nat.prime_two).1 (totient_le_one_dvd_two pdiv_ne_zero KEY3)
+  have K5 := (Nat.dvd_prime Nat.prime_two).1 (Nat.dvd_two_of_totient_le_one pdiv_ne_zero KEY3)
   rcases K5 with K5 | K5
   · rw [K5] at pdivlcm_h
     simp only [mul_one] at pdivlcm_h
