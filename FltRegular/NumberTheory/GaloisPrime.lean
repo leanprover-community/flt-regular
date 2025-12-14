@@ -9,15 +9,6 @@ import Mathlib.NumberTheory.RamificationInertia.Galois
 -/
 open Ideal
 
-section primesOver
-variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
-
-lemma prime_of_mem_primesOver [IsDedekindDomain S] [NoZeroSMulDivisors R S] {p : Ideal R}
-    (hp : p ≠ ⊥) {P : Ideal S} (hP : P ∈ primesOver p S) : Prime P :=
-  prime_of_isPrime (ne_bot_of_mem_primesOver hp hP) hP.1
-
-end primesOver
-
 variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
     [Algebra R K] [IsFractionRing R K] [Algebra S L]
     [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L]
