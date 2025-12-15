@@ -178,7 +178,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     contradiction
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ
   rw [h, mul_comm _ (↑b : R), ← pow_one hζ'.unit'] at hu
-  obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' a b 1 hu.symm (by cutsat)
+  obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' a b 1 hu.symm (by lia)
   simp only [zpow_one, zpow_neg, mem_span_singleton, ← h] at hk
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.out.ne_zero]
   refine ⟨⟨(2 * k % p).natAbs, ?_⟩, ⟨((2 * k - 1) % p).natAbs, ?_⟩, ?_, ?_⟩

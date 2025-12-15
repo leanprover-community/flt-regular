@@ -259,7 +259,7 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
         RingOfIntegers.mapRingEquiv_apply, this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv,
         map_units_inv] at H
       simp [H]
-    refine (CommGroup.mem_torsion _ _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by cutsat, ?_⟩)
+    refine (CommGroup.mem_torsion _ _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
     ext
     exact hζ.pow_eq_one
   conv_lhs at hu' =>

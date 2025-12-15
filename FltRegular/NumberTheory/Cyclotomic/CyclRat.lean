@@ -300,7 +300,7 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
   simp only [hlast, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
     ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
-  simp only [RelIso.coe_fn_toEquiv, Fin.coe_castSucc, Fin.coe_orderIso_apply] at hy
+  simp only [RelIso.coe_fn_toEquiv, Fin.val_castSucc, Fin.coe_orderIso_apply] at hy
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [smul_neg]
@@ -346,7 +346,7 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
   simp only [hlast, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
   rw [hζ.pow_sub_one_eq hp.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
     ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
-  simp only [RelIso.coe_fn_toEquiv, Fin.coe_castSucc, Fin.coe_orderIso_apply] at hy
+  simp only [RelIso.coe_fn_toEquiv, Fin.val_castSucc, Fin.coe_orderIso_apply] at hy
   conv_lhs at hy =>
     congr; rfl; ext x
     rw [smul_neg]
