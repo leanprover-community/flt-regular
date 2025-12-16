@@ -9,19 +9,16 @@ namespace FltRegular
 namespace MayAssume
 
 theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a * b * c ≠ 0) :
-    let d := ({a, b, c} : Finset ℤ).gcd id
+    letI d := ({a, b, c} : Finset ℤ).gcd id
     (a / d) ^ n + (b / d) ^ n = (c / d) ^ n ∧
       ({a / d, b / d, c / d} : Finset ℤ).gcd id = 1 ∧ a / d * (b / d) * (c / d) ≠ 0 := by
-  have ha : a ≠ 0 := fun ha => by simp [ha] at hprod
-  have hb : b ≠ 0 := fun hb => by simp [hb] at hprod
-  have hc : c ≠ 0 := fun hc => by simp [hc] at hprod
+  have ha : a ≠ 0 := by grind
   let s : Finset ℤ := {a, b, c}
   set d : ℤ := s.gcd id
-  have hadiv : d ∣ a := gcd_dvd (by simp [s])
-  have hbdiv : d ∣ b := gcd_dvd (by simp [s])
-  have hcdiv : d ∣ c := gcd_dvd (by simp [s])
-  have hdzero : d ≠ 0 := fun hdzero => by
-    simpa [ha] using Finset.gcd_eq_zero_iff.1 hdzero a (by simp [s])
+  have hadiv : d ∣ a := gcd_dvd (by grind)
+  have hbdiv : d ∣ b := gcd_dvd (by grind)
+  have hcdiv : d ∣ c := gcd_dvd (by grind)
+  have hdzero : d ≠ 0 := fun hdzero ↦ by grind [Finset.gcd_eq_zero_iff.1 hdzero a (by grind)]
   have hdp : d ^ n ≠ 0 := fun hdn => hdzero (eq_zero_of_pow_eq_zero hdn)
   refine ⟨?_, ?_, fun habs => ?_⟩
   · obtain ⟨na, hna⟩ := hadiv; obtain ⟨nb, hnb⟩ := hbdiv; obtain ⟨nc, hnc⟩ := hcdiv
@@ -31,10 +28,8 @@ theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a *
   · simpa [gcd_eq_gcd_image, d] using
       Finset.gcd_div_id_eq_one (show a ∈ ({a, b, c} : Finset ℤ) by simp) ha
   · simp only [mul_eq_zero] at habs
-    rcases habs with ((Ha | Hb) | Hc)
-    · exact ha (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp [s])) Ha)
-    · exact hb (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp [s])) Hb)
-    · exact hc (Int.eq_zero_of_ediv_eq_zero (gcd_dvd (by simp [s])) Hc)
+    rcases habs with ((Ha | Hb) | Hc) <;>
+    grind [Int.eq_zero_of_ediv_eq_zero]
 
 end MayAssume
 
