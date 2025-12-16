@@ -1,7 +1,6 @@
-import FltRegular.NumberTheory.GaloisPrime
 import Mathlib.RingTheory.DedekindDomain.Different
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.NumberTheory.RamificationInertia.Basic
+import Mathlib.NumberTheory.RamificationInertia.Galois
 
 /-!
 # Unramified extensions

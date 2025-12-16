@@ -66,13 +66,6 @@ theorem mem_fltIdeals [Fact p.Prime] (x y : ℤ) {η : R} (hη : η ∈ nthRoots
     ↑x + η * ↑y ∈ fltIdeals p x y hη :=
   mem_span_singleton.mpr dvd_rfl
 
-theorem Ideal.le_add {S : Type*} [CommRing S] (a b c d : Ideal S) (hab : a ≤ b) (hcd : c ≤ d) :
-    a + c ≤ b + d := by
-  simp only [Submodule.add_eq_sup, sup_le_iff]
-  constructor
-  · apply le_trans hab (@le_sup_left _ _ _ _)
-  · apply le_trans hcd (@le_sup_right _ _ _ _)
-
 open IsPrimitiveRoot
 
 theorem prim_coe (ζ : R) (hζ : IsPrimitiveRoot ζ p) : IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p :=
