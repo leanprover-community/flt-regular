@@ -81,6 +81,8 @@ theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
     ZMod.intCast_zmod_eq_zero_iff_dvd] at H
   exact caseI (Dvd.dvd.mul_left H _)
 
+section NeZero
+
 variable [NeZero p]
 
 instance : IsGalois ℚ (CyclotomicField p ℚ) :=
@@ -91,6 +93,8 @@ instance : FiniteDimensional ℚ (CyclotomicField p ℚ) :=
 
 instance : NumberField (CyclotomicField p ℚ) :=
   IsCyclotomicExtension.numberField {p} ℚ _
+
+end NeZero
 
 theorem isPrimitiveRoot_of_mem_nthRootsFinset [Fact p.Prime] {η : R}
     (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
