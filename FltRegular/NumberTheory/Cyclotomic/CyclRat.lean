@@ -5,6 +5,29 @@ import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 import Mathlib.Algebra.CharP.Quotient
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
+section Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+
+open Polynomial IsPrimitiveRoot
+
+variable {R : Type*} [CommRing R] [IsDomain R] {p : ℕ}
+
+theorem nthRootsFinset_eq_of_prime [DecidableEq R] (hp : p.Prime) :
+    nthRootsFinset p 1 = primitiveRoots p R ∪ {1} := by
+  simp [nthRoots_one_eq_biUnion_primitiveRoots, hp.divisors]
+
+theorem mem_primitiveRoots_of_mem_nthRootsFinset (hp : p.Prime) {η : R}
+    (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
+    η ∈ primitiveRoots p R := by
+  classical
+  simpa [nthRootsFinset_eq_of_prime hp, hne1] using hη
+
+theorem isPrimitiveRoot_of_mem_nthRootsFinset (hp : p.Prime) {η : R}
+    (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
+    IsPrimitiveRoot η p :=
+  isPrimitiveRoot_of_mem_primitiveRoots <| mem_primitiveRoots_of_mem_nthRootsFinset hp hη hne1
+
+end Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+
 open FiniteDimensional Polynomial Algebra Nat Finset Fintype
 
 variable (p : ℕ) (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {p} ℚ L]
@@ -96,24 +119,10 @@ instance : NumberField (CyclotomicField p ℚ) :=
 
 end NeZero
 
-theorem isPrimitiveRoot_of_mem_nthRootsFinset [Fact p.Prime] {η : R}
-    (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
-    IsPrimitiveRoot η p := by
-  classical
-  rw [nthRoots_one_eq_biUnion_primitiveRoots] at hη
-  simp only [mem_biUnion] at hη
-  obtain ⟨a, ha, h2⟩ := hη
-  obtain rfl : a = p := by
-    rw [Nat.Prime.divisors (Fact.out : Nat.Prime p), mem_insert, mem_singleton] at ha
-    apply ha.resolve_left
-    rintro rfl
-    simp [hne1] at h2
-  exact isPrimitiveRoot_of_mem_primitiveRoots h2
-
 theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : 1 - η ∣ (p : R) := by
   have hη : IsPrimitiveRoot (η : CyclotomicField p ℚ) (p ^ 1) := by
-    simpa using prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset hη hne1)
+    simpa using prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1)
   have : IsCyclotomicExtension {p ^ (0 + 1)} ℚ (CyclotomicField p ℚ) := by
     simp only [zero_add, pow_one]
     infer_instance
@@ -123,14 +132,14 @@ theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset 
 
 theorem one_sub_zeta_prime [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : Prime (1 - η) := by
-  have h := prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset hη hne1)
+  have h := prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1)
   simpa using h.zeta_sub_one_prime'.neg
 
 theorem diff_of_roots [hp : Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1) (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂)
     (hwlog : η₁ ≠ 1) : ∃ u : Rˣ, η₁ - η₂ = u * (1 - η₁) := by
   replace ph : 2 ≤ p := le_trans (by decide) ph
-  have h := isPrimitiveRoot_of_mem_nthRootsFinset hη₁ hwlog
+  have h := isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη₁ hwlog
   obtain ⟨i, ⟨H, hi⟩⟩ := h.eq_pow_of_pow_eq_one ((mem_nthRootsFinset hp.out.pos 1).1 hη₂)
   have hi1 : 1 ≠ i := by
     intro hi1
