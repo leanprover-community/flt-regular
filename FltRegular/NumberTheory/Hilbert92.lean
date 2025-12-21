@@ -206,8 +206,12 @@ instance : CommGroup (RelativeUnits k K) := by delta RelativeUnits; infer_instan
 
 section
 
-lemma RingOfInteger.coe_algebraMap_apply {x : 𝓞 k} :
+section Mathlib.NumberTheory.NumberField.Basic
+
+lemma NumberField.RingOfIntegers.coe_algebraMap_apply {x : 𝓞 k} :
     (algebraMap (𝓞 k) (𝓞 K) x : K) = algebraMap k K x := rfl
+
+end Mathlib.NumberTheory.NumberField.Basic
 
 lemma norm_eq_prod_pow_gen
     [IsGalois k K] [FiniteDimensional k K]
@@ -533,7 +537,7 @@ lemma Hilbert92_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ν : (𝓞 k
       algebraMap (𝓞 k) k (((ν ^ p) ^ a)⁻¹).1 = ((((ν : 𝓞 k) : k) ^ p) ^ a)⁻¹ := by
     convert (Units.coe_map_inv ((algebraMap (𝓞 k) k) : (𝓞 k) →* k) ((ν ^ p) ^ a)).symm
     simp
-  rw [hcoe, RingOfInteger.coe_algebraMap_apply, Algebra.norm_algebraMap, hKL, ← map_pow,
+  rw [hcoe, RingOfIntegers.coe_algebraMap_apply, Algebra.norm_algebraMap, hKL, ← map_pow,
     ← Units.val_pow_eq_pow_val, inv_pow, ← zpow_natCast, ← zpow_mul, mul_comm a, zpow_mul,
       zpow_natCast, hcoe1]
   apply_fun Additive.toMul at ha
@@ -714,7 +718,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
   have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ p := by
     ext
     simp only [RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
-      RingOfInteger.coe_algebraMap_apply, Units.val_pow_eq_pow_val, map_pow]
+      RingOfIntegers.coe_algebraMap_apply, Units.val_pow_eq_pow_val, map_pow]
     rw [← map_pow] at hE
     refine Hilbert92_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
     rw [← pow_mul, ← pow_succ]
@@ -794,7 +798,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
               simpa using e.symm
           simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, ← map_pow, hε'',
             RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
-            RingOfInteger.coe_algebraMap_apply, AlgEquiv.commutes] at hE
+            RingOfIntegers.coe_algebraMap_apply, AlgEquiv.commutes] at hE
           replace hE : (algebraMap k K) (((ν : 𝓞 k) : k) ^ p ^ h) = 1 := by
             rwa [div_self (by simp)] at hE
           rw [hE] at hν''
