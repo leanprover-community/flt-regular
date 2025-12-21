@@ -204,8 +204,6 @@ def RelativeUnits (k K : Type*) [Field k] [Field K] [Algebra k K] :=
 
 instance : CommGroup (RelativeUnits k K) := by delta RelativeUnits; infer_instance
 
-instance : IsScalarTower (𝓞 k) (𝓞 K) K := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
-
 section
 
 lemma RingOfInteger.coe_algebraMap_apply {x : 𝓞 k} :
@@ -237,13 +235,7 @@ lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k)
   apply (hν.pow_eq_one_iff_dvd _).2
   cases h <;> simp [add_comm]
 
-variable [NumberField K]
-
-instance : IsIntegralClosure (𝓞 K) (𝓞 k) K := by
-  have : Algebra.IsIntegral (𝓞 k) (𝓞 K) := ⟨fun _ ↦ .tower_top (IsIntegralClosure.isIntegral ℤ K _)⟩
-  apply IsIntegralClosure.of_isIntegrallyClosed
-
-variable [NumberField k]
+variable [NumberField K] [NumberField k]
 
 lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
     (galRestrictHom (𝓞 k) k K (𝓞 K) σ x : K) = σ x :=
