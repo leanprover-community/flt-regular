@@ -245,6 +245,24 @@ lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
     (galRestrictHom (𝓞 k) k K (𝓞 K) σ x : K) = σ x :=
   algebraMap_galRestrictHom_apply (𝓞 k) k K (𝓞 K) σ x
 
+section Mathlib.Algebra.Algebra.Hom
+
+variable {R A' : Type*} [CommSemiring R] [Semiring A'] [Algebra R A'] (φ ψ : A' →ₐ[R] A')
+
+@[simp]
+theorem AlgHom.toMonoidHom_one : MonoidHomClass.toMonoidHom (1 : A' →ₐ[R] A') = MonoidHom.id _ :=
+  rfl
+
+@[simp]
+theorem AlgHom.toMonoidHom_comp :
+    MonoidHomClass.toMonoidHom (φ.comp ψ) =
+      (MonoidHomClass.toMonoidHom φ).comp (MonoidHomClass.toMonoidHom ψ) :=
+  rfl
+
+theorem AlgHom.mul_def : φ * ψ = φ.comp ψ := rfl
+
+end Mathlib.Algebra.Algebra.Hom
+
 noncomputable
 def relativeUnitsMap (σ : K →ₐ[k] K) : RelativeUnits k K →* RelativeUnits k K := by
   apply QuotientGroup.lift _
@@ -258,29 +276,69 @@ lemma relativeUnitsMap_mk (σ : K →ₐ[k] K) (x : (𝓞 K)ˣ) :
     relativeUnitsMap σ (QuotientGroup.mk x) =
       QuotientGroup.mk (Units.map (galRestrictHom (𝓞 k) k K (𝓞 K) σ) x) := rfl
 
-@[simps]
+@[simp]
+theorem relativeUnitsMap_one (x : RelativeUnits k K) :
+    relativeUnitsMap (1 : K →ₐ[k] K) x = x := by
+  obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
+  simp [relativeUnitsMap_mk]
+
+@[simp]
+theorem coe_relativeUnitsMap_one : ⇑(relativeUnitsMap (1 : K →ₐ[k] K)) = id := by
+  ext; simp
+
+@[simp]
+theorem relativeUnitsMap_mul_apply {f g} (x : RelativeUnits k K) :
+    (relativeUnitsMap (f * g)) x = (relativeUnitsMap f (relativeUnitsMap g x)) := by
+  obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
+  simp_rw [relativeUnitsMap_mk, map_mul, AlgHom.mul_def]
+  simp
+
+@[simp]
+theorem relativeUnitsMap_mul {f g : K →ₐ[k] K} :
+    (relativeUnitsMap (f * g)) = (relativeUnitsMap f).comp (relativeUnitsMap g) := by
+  ext; simp
+
+section Mathlib.Algebra.Group.Hom.Defs
+
+variable {M : Type*} [MulOne M]
+
+@[ext]
+theorem Monoid.End.ext {f g : Monoid.End M} (h : ∀ x : M, f x = g x) :
+    f = g :=
+  DFunLike.ext _ _ h
+
+variable (M) in
+def Monoid.End.equiv : Monoid.End M ≃ (M →* M) where
+  toFun := id
+  invFun := id
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+@[simp]
+theorem Monoid.End.equiv_apply_apply {f} {x : M} : (Monoid.End.equiv M) f x = f x := rfl
+
+@[simp]
+theorem Monoid.End.equiv_symm_apply_apply {f} {x : M} : (Monoid.End.equiv M).symm f x = f x := rfl
+
+end Mathlib.Algebra.Group.Hom.Defs
+
 noncomputable
 def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) where
-  toFun := relativeUnitsMap
-  map_one' := by
-    refine DFunLike.ext _ _ (fun x ↦ ?_)
-    obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
-    rw [relativeUnitsMap]
-    erw [QuotientGroup.lift_mk']
-    simp only [map_one, MonoidHom.coe_comp, QuotientGroup.coe_mk', Function.comp_apply]
-    rfl
-  map_mul' := by
-    intros f g
-    refine DFunLike.ext _ _ (fun x ↦ ?_)
-    obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
-    simp only [relativeUnitsMap, map_mul]
-    rfl
+  toFun := (Monoid.End.equiv (RelativeUnits k K)).symm ∘ relativeUnitsMap
+  map_one' := by ext; simp
+  map_mul' f g := by ext; simp
+
+@[simp]
+theorem relativeUnitsMapHom_apply (σ : K →ₐ[k] K) :
+    relativeUnitsMapHom σ = (Monoid.End.equiv (RelativeUnits k K)).symm (relativeUnitsMap σ) :=
+  rfl
 
 include σ hp hKL hσ in
 open Polynomial in
 lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
     (Module.AEval' (addMonoidEndRingEquivInt _
-      (MulEquiv.Monoid.End <| relativeUnitsMap <| ((AlgEquiv.algHomUnitsEquiv _ _).symm σ).val)))
+      (MulEquiv.Monoid.End <| ((Monoid.End.equiv (RelativeUnits k K)).symm ∘ relativeUnitsMap) <|
+        ((AlgEquiv.algHomUnitsEquiv _ _).symm σ).val)))
     (Ideal.span {cyclotomic p ℤ}) := by
   classical
   have := Fact.mk hp
@@ -294,12 +352,13 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
     map_sum, map_pow, aeval_X, LinearMap.coe_sum, sum_apply]
   conv =>
     enter [1, 2, c]
-    rw [← relativeUnitsMapHom_apply, ← map_pow, ← map_pow, ← map_pow, ← Units.val_pow_eq_pow_val,
+    rw [Function.comp_apply, ← relativeUnitsMapHom_apply, ← map_pow, ← map_pow, ← map_pow,
+      ← Units.val_pow_eq_pow_val,
       ← map_pow, AlgEquiv.val_algHomUnitsEquiv_symm_apply, relativeUnitsMapHom_apply,
       MulEquiv.Monoid.End_apply, addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe,
       LinearMap.coe_toAddHom, LinearEquiv.coe_coe, addMonoidHomLequivInt_apply,
       AddMonoidHom.coe_toIntLinearMap, AddMonoidHom.coe_mk, ZeroHom.coe_mk, toMul_ofMul,
-      relativeUnitsMap_mk]
+      Monoid.End.equiv_symm_apply_apply, relativeUnitsMap_mk]
   rw [← ofMul_prod, ← QuotientGroup.mk_prod, ofMul_eq_zero, QuotientGroup.eq_one_iff]
   use Units.map (RingOfIntegers.norm k) x
   ext
