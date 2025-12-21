@@ -6,7 +6,7 @@ variable {p : ℕ} [NeZero p] {K : Type*} [Field K]
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
-open scoped BigOperators nonZeroDivisors NumberField
+open scoped nonZeroDivisors NumberField
 
 open IsCyclotomicExtension NumberField Polynomial IsCMField
 

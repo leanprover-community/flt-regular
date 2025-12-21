@@ -36,7 +36,7 @@ instance Ring.toSubtractionMonoid {S : Type*} [Ring S] : SubtractionMonoid S := 
 
 section IntFacts
 
-open scoped NumberField BigOperators
+open scoped NumberField
 
 instance {K : Type*} [Field K] : Module (𝓞 K) (𝓞 K) := Semiring.toModule
 

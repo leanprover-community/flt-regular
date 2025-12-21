@@ -1,6 +1,6 @@
 import FltRegular.CaseII.InductionStep
 
-open scoped BigOperators nonZeroDivisors NumberField
+open scoped nonZeroDivisors NumberField
 open Polynomial
 
 variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K]

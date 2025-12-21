@@ -18,7 +18,7 @@ import Mathlib.NumberTheory.RamificationInertia.Galois
   is separable for some ideal `p` of `R` (with `f` being the minpoly of `α` over `R`), then `S/R` is
   unramified at `p`.
 -/
-open BigOperators UniqueFactorizationMonoid Ideal
+open UniqueFactorizationMonoid Ideal
 
 attribute [local instance] FractionRing.liftAlgebra
 

@@ -2,7 +2,7 @@ import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
 
 open scoped nonZeroDivisors
-open FiniteDimensional Finset BigOperators Submodule groupCohomology Submonoid
+open FiniteDimensional Finset Submodule groupCohomology Submonoid
 
 variable {K L : Type*} [Field K] [Field L] [Algebra K L] [FiniteDimensional K L]
 variable {σ : L ≃ₐ[K] L} (hσ : ∀ x, x ∈ Subgroup.zpowers σ)

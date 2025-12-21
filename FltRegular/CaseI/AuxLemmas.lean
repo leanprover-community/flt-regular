@@ -2,7 +2,7 @@ import FltRegular.NumberTheory.Cyclotomic.CyclRat
 
 open Finset Nat IsCyclotomicExtension Ideal Polynomial Int Basis
 
-open scoped BigOperators NumberField
+open scoped NumberField
 
 namespace FltRegular
 

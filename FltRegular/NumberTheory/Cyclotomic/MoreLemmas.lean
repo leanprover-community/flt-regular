@@ -9,7 +9,7 @@ variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [CharZero K]
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
-open scoped BigOperators nonZeroDivisors NumberField
+open scoped nonZeroDivisors NumberField
 open Polynomial
 
 variable (hp : p ≠ 2)

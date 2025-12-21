@@ -2,7 +2,7 @@ import Mathlib.FieldTheory.KummerExtension
 import FltRegular.NumberTheory.Unramified
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
-open scoped NumberField BigOperators
+open scoped NumberField
 
 variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K] (hp : p ≠ 2)
 

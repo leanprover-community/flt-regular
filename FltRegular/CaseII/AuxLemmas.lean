@@ -3,7 +3,7 @@ import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 
 variable {K : Type*} {p : ℕ} [Field K] [CharZero K] {ζ : K}
 
-open scoped BigOperators nonZeroDivisors
+open scoped nonZeroDivisors
 open Polynomial
 
 --TODO: fix the following proofs using new multiplicity API

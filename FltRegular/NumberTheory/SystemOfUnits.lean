@@ -9,7 +9,7 @@ open NumberField
 variable (p : ℕ) {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
 variable {k : Type*} [Field k] [NumberField k] (hp : Nat.Prime p)
 
-open Module BigOperators Finset
+open Module Finset
 open CyclotomicIntegers(zeta)
 
 variable

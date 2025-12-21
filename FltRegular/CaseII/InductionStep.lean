@@ -1,7 +1,7 @@
 import FltRegular.CaseII.AuxLemmas
 import FltRegular.NumberTheory.KummersLemma.KummersLemma
 
-open scoped BigOperators nonZeroDivisors NumberField
+open scoped nonZeroDivisors NumberField
 open Polynomial
 
 variable {K : Type*} {p : ℕ} [NeZero p] [Field K] (hp : p ≠ 2)

@@ -16,7 +16,7 @@ open FiniteDimensional NumberField
 variable {s r : ℕ} (p : ℕ) {K : Type*} [Field K]
 variable {k : Type*} [Field k] (hp : Nat.Prime p)
 
-open Module BigOperators Finset
+open Module Finset
 open CyclotomicIntegers (zeta)
 
 section thm91
