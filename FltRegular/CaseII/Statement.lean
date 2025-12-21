@@ -77,8 +77,12 @@ lemma not_exists_Int_solution' {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsR
   rw [isUnit_iff_dvd_one, ← hgcd]
   simp [dvd_gcd_iff, hz, hy, this]
 
+section Mathlib.Data.Int.Init
+
 lemma Int.gcd_left_comm (a b c : ℤ) : Int.gcd a (Int.gcd b c) = Int.gcd b (Int.gcd a c) := by
   rw [← Int.gcd_assoc, ← Int.gcd_assoc, Int.gcd_comm a b]
+
+end Mathlib.Data.Int.Init
 
 /-- CaseII. -/
 theorem caseII {a b c : ℤ} {p : ℕ} [hpri : Fact p.Prime] (hreg : IsRegularPrime p) (hodd : p ≠ 2)

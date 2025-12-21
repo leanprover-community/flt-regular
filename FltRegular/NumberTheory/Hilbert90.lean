@@ -17,13 +17,16 @@ variable (η) in
 noncomputable
 def cocycle : (L ≃ₐ[K] L) → Lˣ := fun τ ↦ ∏ i ∈ range (φ ⟨τ, hσ τ⟩), Units.map (σ ^ i) η
 
--- Mathlib.Algebra.BigOperators.Group.Finset.Basic
+section Mathlib.Algebra.BigOperators.Group.Finset.Basic
+
 variable {α : Type*} [CommMonoid α]
 lemma Finset.prod_range_mul {m n : ℕ} {f : ℕ → α} :
     ∏ i ∈ range (m * n), f i = ∏ i ∈ range m, ∏ j ∈ range n, f (i * n + j) := by
   induction m with
   | zero => simp
   | succ m ih => simp [Nat.add_one_mul, prod_range_add, ih]
+
+end Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 include hσ hη in
 lemma aux1 [IsGalois K L] {a : ℕ} (h : a % orderOf σ = 0) : ∏ i ∈ range a, (σ ^ i) η = 1 := by

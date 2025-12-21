@@ -241,9 +241,13 @@ lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k)
 
 variable [NumberField K] [NumberField k]
 
+section Mathlib.RingTheory.IntegralClosure.IntegralRestrict
+
 lemma coe_galRestrictHom_apply (σ : K →ₐ[k] K) (x) :
     (galRestrictHom (𝓞 k) k K (𝓞 K) σ x : K) = σ x :=
   algebraMap_galRestrictHom_apply (𝓞 k) k K (𝓞 K) σ x
+
+end Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 
 section Mathlib.Algebra.Algebra.Hom
 
