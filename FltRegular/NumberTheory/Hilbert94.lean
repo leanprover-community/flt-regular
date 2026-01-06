@@ -1,17 +1,15 @@
 import FltRegular.NumberTheory.Unramified
 import FltRegular.NumberTheory.Hilbert92
-import FltRegular.NumberTheory.Hilbert90
 import FltRegular.NumberTheory.RegularPrimes
-import Mathlib.NumberTheory.NumberField.ClassNumber
-import Mathlib.RingTheory.Ideal.Norm.RelNorm
+import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
 
 open scoped NumberField
 
-variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K]
+variable {K : Type} {p : ℕ} [hpri : Fact p.Prime] [Field K]
 
 open Polynomial Module
 
-variable {L} [Field L] [Algebra K L] [FiniteDimensional K L]
+variable {L : Type} [Field L] [Algebra K L] [FiniteDimensional K L]
   (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hKL : finrank K L = p)
 
 variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
@@ -52,7 +50,9 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     (hη : Algebra.norm K (algebraMap B L η) = 1)
     (hη' : ¬∃ α : Bˣ, algebraMap B L η = (algebraMap B L α) / σ (algebraMap B L α)) :
     ∃ I : Ideal A, ¬I.IsPrincipal ∧ (I.map (algebraMap A B)).IsPrincipal := by
-  obtain ⟨β, hβ_zero, hβ⟩ := Hilbert90_integral (A := A) (B := B) hσ hη
+  have := isCyclic_iff_exists_zpowers_eq_top.2 ⟨σ, (Subgroup.eq_top_iff' _).2 hσ⟩
+  obtain ⟨β, hβ_zero, hβ⟩ := groupCohomology.exists_mul_galRestrict_of_norm_eq_one (A := A)
+    (B := B) hσ hη
   haveI : IsDomain B :=
     (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
   have hβ' := comap_map_eq_of_isUnramified K L _
@@ -111,7 +111,7 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
 /-- This is the first part of **Hilbert Theorem 94**, which states that if `L/K` is an unramified
   cyclic finite extension of number fields of odd prime degree,
   then there is an ideal that capitulates in `K`. -/
-theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type*)
+theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type)
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [IsUnramified (𝓞 K) (𝓞 L)] [h : IsCyclic (L ≃ₐ[K] L)]
     (hKL : Nat.Prime (finrank K L))
@@ -124,7 +124,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type*)
 /-- This is the second part of **Hilbert Theorem 94**, which states that if `L/K` is an unramified
   cyclic finite extension of number fields of odd prime degree,
   then the degree divides the class number of `K`. -/
-theorem dvd_card_classGroup_of_isUnramified_isCyclic {K L : Type*}
+theorem dvd_card_classGroup_of_isUnramified_isCyclic {K L : Type}
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [IsUnramified (𝓞 K) (𝓞 L)] [IsCyclic (L ≃ₐ[K] L)]
     (hKL : Nat.Prime (finrank K L))

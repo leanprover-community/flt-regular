@@ -4,7 +4,7 @@ import FltRegular.NumberTheory.Hilbert94
 open Polynomial
 open scoped NumberField
 
-variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K]
+variable {K : Type} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K]
   [IsCyclotomicExtension {p} ℚ K] (hp : p ≠ 2) [Fintype (ClassGroup (𝓞 K))]
   (hreg : p.Coprime <| Fintype.card <| ClassGroup (𝓞 K))
   {ζ : K} (hζ : IsPrimitiveRoot ζ p)

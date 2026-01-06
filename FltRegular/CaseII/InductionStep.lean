@@ -4,7 +4,7 @@ import FltRegular.NumberTheory.KummersLemma.KummersLemma
 open scoped nonZeroDivisors NumberField
 open Polynomial
 
-variable {K : Type*} {p : ℕ} [NeZero p] [Field K] (hp : p ≠ 2)
+variable {K : Type} {p : ℕ} [NeZero p] [Field K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
 

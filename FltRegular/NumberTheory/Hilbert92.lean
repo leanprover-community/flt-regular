@@ -253,18 +253,6 @@ section Mathlib.Algebra.Algebra.Hom
 
 variable {R A' : Type*} [CommSemiring R] [Semiring A'] [Algebra R A'] (φ ψ : A' →ₐ[R] A')
 
-@[simp]
-theorem AlgHom.toMonoidHom_one : MonoidHomClass.toMonoidHom (1 : A' →ₐ[R] A') = MonoidHom.id _ :=
-  rfl
-
-@[simp]
-theorem AlgHom.toMonoidHom_comp :
-    MonoidHomClass.toMonoidHom (φ.comp ψ) =
-      (MonoidHomClass.toMonoidHom φ).comp (MonoidHomClass.toMonoidHom ψ) :=
-  rfl
-
-theorem AlgHom.mul_def : φ * ψ = φ.comp ψ := rfl
-
 end Mathlib.Algebra.Algebra.Hom
 
 noncomputable
@@ -284,18 +272,15 @@ lemma relativeUnitsMap_mk (σ : K →ₐ[k] K) (x : (𝓞 K)ˣ) :
 theorem relativeUnitsMap_one (x : RelativeUnits k K) :
     relativeUnitsMap (1 : K →ₐ[k] K) x = x := by
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
-  simp [relativeUnitsMap_mk]
-
-@[simp]
-theorem coe_relativeUnitsMap_one : ⇑(relativeUnitsMap (1 : K →ₐ[k] K)) = id := by
-  ext; simp
+  simp only [relativeUnitsMap_mk, map_one]
+  rfl
 
 @[simp]
 theorem relativeUnitsMap_mul_apply {f g} (x : RelativeUnits k K) :
     (relativeUnitsMap (f * g)) x = (relativeUnitsMap f (relativeUnitsMap g x)) := by
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective x
-  simp_rw [relativeUnitsMap_mk, map_mul, AlgHom.mul_def]
-  simp
+  simp_rw [relativeUnitsMap_mk, map_mul]
+  rfl
 
 @[simp]
 theorem relativeUnitsMap_mul {f g : K →ₐ[k] K} :
@@ -317,9 +302,6 @@ def Monoid.End.equiv : Monoid.End M ≃ (M →* M) where
   invFun := id
   left_inv _ := rfl
   right_inv _ := rfl
-
-@[simp]
-theorem Monoid.End.equiv_apply_apply {f} {x : M} : (Monoid.End.equiv M) f x = f x := rfl
 
 @[simp]
 theorem Monoid.End.equiv_symm_apply_apply {f} {x : M} : (Monoid.End.equiv M).symm f x = f x := rfl
