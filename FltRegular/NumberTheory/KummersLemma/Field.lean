@@ -274,7 +274,7 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
 lemma polyRoot_spec {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) (i) :
     α = (ζ ^ i)⁻¹ • (1 - (ζ - 1) • (polyRoot hp hζ u hcong α e i : L)) := by
-  apply smul_right_injective (M := L) (c := ζ ^ i) (pow_ne_zero _ <| hζ.ne_zero
+  apply smul_right_injective (M := L) (r := ζ ^ i) (pow_ne_zero _ <| hζ.ne_zero
     (NeZero.pos p).ne.symm)
   simp only [polyRoot, map_sub, map_one, NumberField.RingOfIntegers.map_mk,
     Algebra.smul_def (ζ - 1), ← mul_div_assoc,
