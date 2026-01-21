@@ -8,14 +8,8 @@ open Polynomial
 
 lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
     [WfDvdMonoid M] {x y : M} :
-    FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 := by
-  constructor
-  · rw [Ne, ← not_or, imp_not_comm]
-    rintro (hx|hy)
-    · exact fun ⟨n, hn⟩ ↦ hn (hx.pow _).dvd
-    · simp [hy]
-  · intro ⟨hx, hy⟩
-    exact FiniteMultiplicity.of_not_isUnit hx hy
+    FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 :=
+  ⟨fun h => ⟨h.not_unit, h.ne_zero⟩, and_imp.mpr FiniteMultiplicity.of_not_isUnit⟩
 
 lemma dvd_iff_emultiplicity_le {M : Type*}
     [CommMonoidWithZero M] [IsCancelMulZero M] [UniqueFactorizationMonoid M]
