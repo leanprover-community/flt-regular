@@ -613,11 +613,6 @@ lemma relativeUnitsModule_zeta_smul (x) :
     LinearEquiv.symm_apply_apply, Module.End.smul_def, unit_to_U]
   rfl
 
-local instance {M} [AddCommGroup M] : NoZeroSMulDivisors ℤ (M ⧸ AddCommGroup.torsion M) := by
-  rw [← Submodule.torsion_int]
-  change NoZeroSMulDivisors ℤ (M ⧸ Submodule.torsion ℤ M)
-  infer_instance
-
 local instance : Module.Finite ℤ (Additive <| RelativeUnits k K) :=
   inferInstanceAs
     (Module.Finite ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
@@ -629,8 +624,6 @@ local instance : Module.Finite ℤ (Additive <| relativeUnitsWithGenerator p hp 
 local instance : Module.Finite ℤ G := Module.Finite.of_surjective
   (M := Additive (relativeUnitsWithGenerator p hp hKL σ hσ))
   (QuotientAddGroup.mk' _).toIntLinearMap (QuotientAddGroup.mk'_surjective _)
-
-local instance : Module.Free ℤ G := Module.free_of_finite_type_torsion_free'
 
 noncomputable
 def unitlifts (S : systemOfUnits p G (NumberField.Units.rank k + 1)) :

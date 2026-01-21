@@ -6,10 +6,8 @@ variable {K : Type*} {p : ℕ} [Field K] [CharZero K] {ζ : K}
 open scoped nonZeroDivisors
 open Polynomial
 
---TODO: fix the following proofs using new multiplicity API
-
-lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero M] [WfDvdMonoid M]
-    {x y : M} :
+lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
+    [WfDvdMonoid M] {x y : M} :
     FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 := by
   constructor
   · rw [Ne, ← not_or, imp_not_comm]
@@ -20,7 +18,7 @@ lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CancelCommMonoidWithZero 
     exact FiniteMultiplicity.of_not_isUnit hx hy
 
 lemma dvd_iff_emultiplicity_le {M : Type*}
-    [CancelCommMonoidWithZero M] [UniqueFactorizationMonoid M]
+    [CommMonoidWithZero M] [IsCancelMulZero M] [UniqueFactorizationMonoid M]
     {a b : M} (ha : a ≠ 0) : a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
   constructor
   · intro hab p _
@@ -52,8 +50,8 @@ lemma dvd_iff_emultiplicity_le {M : Type*}
           Nat.cast_le, add_comm, add_le_add_iff_left] at this
         exact le_emultiplicity_of_le_multiplicity this
 
-lemma pow_dvd_pow_iff_dvd {M : Type*} [CancelCommMonoidWithZero M] [UniqueFactorizationMonoid M]
-    {a b : M} {x : ℕ} (h' : x ≠ 0) : a ^ x ∣ b ^ x ↔ a ∣ b := by
+lemma pow_dvd_pow_iff_dvd {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
+    [UniqueFactorizationMonoid M] {a b : M} {x : ℕ} (h' : x ≠ 0) : a ^ x ∣ b ^ x ↔ a ∣ b := by
   classical
   by_cases ha : a = 0
   · simp [ha, h']
@@ -164,9 +162,6 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsD
   obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hx.not_unit h
   obtain ⟨m, hm⟩ := FiniteMultiplicity.of_not_isUnit hx.not_unit (nonZeroDivisors.ne_zero t.prop)
   rw [IsFractionRing.mk'_eq_div] at ha
-  refine this (n + m + 1) (Nat.le_add_left 1 (n + m)) ⟨s, t, ?_, ?_, ha.symm⟩
-  · intro hs
-    refine hn (dvd_trans (pow_dvd_pow _ ?_) hs)
-    linarith
-  · intro ht
-    refine hm (dvd_trans (pow_dvd_pow _ (Nat.le_add_left _ _)) ht)
+  refine this (n + m + 1) (Nat.le_add_left 1 (n + m)) ⟨s, t, (fun hs ↦ ?_), (fun ht ↦ ?_), ha.symm⟩
+  · exact hn (dvd_trans (pow_dvd_pow _ (by linarith)) hs)
+  · exact hm (dvd_trans (pow_dvd_pow _ (Nat.le_add_left _ _)) ht)

@@ -38,11 +38,11 @@ class IsUnramified (R S : Type*) [CommRing R] [CommRing S] [Algebra R S] : Prop 
 variable {R} {S}
 
 lemma prod_primesOverFinset_of_isUnramified [IsUnramified R S] [IsDedekindDomain S]
-    [NoZeroSMulDivisors R S] (p : Ideal R) [p.IsPrime] (hp : p ≠ ⊥) :
+    [Module.IsTorsionFree R S] (p : Ideal R) [p.IsPrime] (hp : p ≠ ⊥) :
     ∏ P ∈ primesOverFinset p S, P = p.map (algebraMap R S) := by
   classical
   have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective
-    (NoZeroSMulDivisors.iff_algebraMap_injective.mp ‹_›)).not.mpr hp
+      (NoZeroSMulDivisors.iff_algebraMap_injective.mp inferInstance)).not.mpr hp
   rw [← associated_iff_eq.mp (factors_pow_count_prod hpbot')]
   apply Finset.prod_congr rfl
   intros P hP
