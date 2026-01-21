@@ -33,16 +33,14 @@ lemma dvd_iff_emultiplicity_le {M : Type*}
         rw [mul_comm]
         simp only [mul_eq_zero, not_or] at hb
         refine mul_dvd_mul_left _ ?_
-        rw [← pow_one q, pow_dvd_iff_le_emultiplicity]
+        rw [← pow_one q]
+        apply pow_dvd_of_le_multiplicity
         have := H q hq
-        rw [emultiplicity_mul hq, emultiplicity_mul hq,
-          FiniteMultiplicity.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
-          ⟨hq.not_unit, hb.2⟩), FiniteMultiplicity.emultiplicity_eq_multiplicity
-          (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hq.not_unit, ha.2⟩),
-          FiniteMultiplicity.emultiplicity_eq_multiplicity (WfDvdMonoid.multiplicity_finite_iff.2
-          ⟨hq.not_unit, hq.ne_zero⟩), multiplicity_self, ← Nat.cast_add, ← Nat.cast_add,
-          Nat.cast_le, add_comm, add_le_add_iff_left] at this
-        exact le_emultiplicity_of_le_multiplicity this
+        rwa [emultiplicity_mul hq, emultiplicity_mul hq,
+          (FiniteMultiplicity.of_not_isUnit hq.not_unit hb.2).emultiplicity_eq_multiplicity,
+          (FiniteMultiplicity.of_not_isUnit hq.not_unit ha.2).emultiplicity_eq_multiplicity,
+          (FiniteMultiplicity.of_not_isUnit hq.not_unit hq.ne_zero).emultiplicity_self,
+          add_comm, add_le_add_iff_right_of_ne_top (ENat.coe_ne_top _), Nat.one_le_cast] at this
 
 lemma pow_dvd_pow_iff_dvd {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
     [UniqueFactorizationMonoid M] {a b : M} {x : ℕ} (h' : x ≠ 0) : a ^ x ∣ b ^ x ↔ a ∣ b := by
@@ -56,15 +54,12 @@ lemma pow_dvd_pow_iff_dvd {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
   intro h p hp
   specialize h p hp
   rw [emultiplicity_pow hp, emultiplicity_pow hp,
-    FiniteMultiplicity.emultiplicity_eq_multiplicity
-    (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-    FiniteMultiplicity.emultiplicity_eq_multiplicity
-    (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), ← Nat.cast_mul, ← Nat.cast_mul,
-    Nat.cast_le] at h
-  rw [FiniteMultiplicity.emultiplicity_eq_multiplicity
-    (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, ha⟩),
-    FiniteMultiplicity.emultiplicity_eq_multiplicity
-    (WfDvdMonoid.multiplicity_finite_iff.2 ⟨hp.not_unit, hb⟩), Nat.cast_le]
+    (FiniteMultiplicity.of_not_isUnit hp.not_unit ha).emultiplicity_eq_multiplicity,
+    (FiniteMultiplicity.of_not_isUnit hp.not_unit hb).emultiplicity_eq_multiplicity,
+    ← Nat.cast_mul, ← Nat.cast_mul, Nat.cast_le] at h
+  rw [(FiniteMultiplicity.of_not_isUnit hp.not_unit ha).emultiplicity_eq_multiplicity,
+    (FiniteMultiplicity.of_not_isUnit hp.not_unit hb).emultiplicity_eq_multiplicity,
+    Nat.cast_le]
   exact Nat.le_of_mul_le_mul_left h (Nat.pos_of_ne_zero h')
 
 theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
