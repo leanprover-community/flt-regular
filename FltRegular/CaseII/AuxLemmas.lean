@@ -1,19 +1,16 @@
 import Mathlib.RingTheory.ClassGroup
 import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 
-variable {K : Type*} {p : ℕ} [Field K] [CharZero K] {ζ : K}
+section Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
 
-open scoped nonZeroDivisors
-open Polynomial
+variable {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
 
-lemma WfDvdMonoid.multiplicity_finite_iff {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
-    [WfDvdMonoid M] {x y : M} :
+lemma WfDvdMonoid.multiplicity_finite_iff [WfDvdMonoid M] {x y : M} :
     FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 :=
   ⟨fun h => ⟨h.not_unit, h.ne_zero⟩, and_imp.mpr FiniteMultiplicity.of_not_isUnit⟩
 
-lemma dvd_iff_emultiplicity_le {M : Type*}
-    [CommMonoidWithZero M] [IsCancelMulZero M] [UniqueFactorizationMonoid M]
-    {a b : M} (ha : a ≠ 0) : a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
+lemma dvd_iff_emultiplicity_le [UniqueFactorizationMonoid M] {a b : M} (ha : a ≠ 0) :
+    a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
   constructor
   · intro hab p _
     exact emultiplicity_le_emultiplicity_of_dvd_right hab
@@ -42,8 +39,8 @@ lemma dvd_iff_emultiplicity_le {M : Type*}
           (FiniteMultiplicity.of_not_isUnit hq.not_unit hq.ne_zero).emultiplicity_self,
           add_comm, add_le_add_iff_right_of_ne_top (ENat.coe_ne_top _), Nat.one_le_cast] at this
 
-lemma pow_dvd_pow_iff_dvd {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
-    [UniqueFactorizationMonoid M] {a b : M} {x : ℕ} (h' : x ≠ 0) : a ^ x ∣ b ^ x ↔ a ∣ b := by
+lemma pow_dvd_pow_iff_dvd [UniqueFactorizationMonoid M] {a b : M} {x : ℕ} (h' : x ≠ 0) :
+    a ^ x ∣ b ^ x ↔ a ∣ b := by
   classical
   by_cases ha : a = 0
   · simp [ha, h']
@@ -61,6 +58,13 @@ lemma pow_dvd_pow_iff_dvd {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
     (FiniteMultiplicity.of_not_isUnit hp.not_unit hb).emultiplicity_eq_multiplicity,
     Nat.cast_le]
   exact Nat.le_of_mul_le_mul_left h (Nat.pos_of_ne_zero h')
+
+end Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
+
+variable {K : Type*} {p : ℕ} [Field K] [CharZero K] {ζ : K}
+
+open scoped nonZeroDivisors
+open Polynomial
 
 theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
     {A K : Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
