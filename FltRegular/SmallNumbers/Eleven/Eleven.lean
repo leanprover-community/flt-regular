@@ -1,10 +1,13 @@
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Embeddings
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import FltRegular.SmallNumbers.Cyclotomic
-import FltRegular.SmallNumbers.OrderOf
-import Mathlib.Tactic.NormNum.NatFactorial
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.Prime
+module
+
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Embeddings
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import FltRegular.SmallNumbers.Cyclotomic
+public import FltRegular.SmallNumbers.OrderOf
+public import Mathlib.Tactic.NormNum.NatFactorial
+public import Mathlib.Tactic.NormNum.Prime
+
+@[expose] public section
 
 open NumberField Module NumberField.InfinitePlace Nat Real RingOfIntegers Finset Multiset
   IsCyclotomicExtension.Rat Polynomial cyclotomic UniqueFactorizationMonoid

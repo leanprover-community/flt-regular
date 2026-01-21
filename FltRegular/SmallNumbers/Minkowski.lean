@@ -1,7 +1,11 @@
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Embeddings
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import Mathlib.Tactic.NormNum.NatFactorial
-import Mathlib.Analysis.Real.Pi.Bounds
+module
+
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Embeddings
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import Mathlib.Tactic.NormNum.NatFactorial
+public import Mathlib.Analysis.Real.Pi.Bounds
+
+@[expose] public section
 
 open Ideal NumberField Module NumberField.InfinitePlace Nat Real
   IsCyclotomicExtension.Rat Polynomial.cyclotomic

@@ -1,8 +1,10 @@
-import Mathlib.FieldTheory.SplittingField.Construction
-import Mathlib.NumberTheory.ClassNumber.Finite
-import Mathlib.NumberTheory.ClassNumber.AdmissibleAbs
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
+module
+
+public import Mathlib.FieldTheory.SplittingField.Construction
+public import Mathlib.NumberTheory.ClassNumber.Finite
+public import Mathlib.NumberTheory.ClassNumber.AdmissibleAbs
+public import FltRegular.NumberTheory.Cyclotomic.CyclRat
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
 
 /-!
 # Regular primes
@@ -13,6 +15,8 @@ import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
   class group.
 
 -/
+
+@[expose] public section
 
 noncomputable section
 

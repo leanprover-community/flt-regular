@@ -1,7 +1,11 @@
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.CyclotomicRing
-import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
-import Mathlib.LinearAlgebra.Dimension.Localization
+module
+
+public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+public import FltRegular.NumberTheory.CyclotomicRing
+public import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
+public import Mathlib.LinearAlgebra.Dimension.Localization
+
+@[expose] public section
 
 open FiniteDimensional
 open NumberField

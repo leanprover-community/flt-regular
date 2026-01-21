@@ -1,8 +1,12 @@
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.RingTheory.Ideal.Norm.AbsNorm
-import Mathlib.RingTheory.NormTrace
+module
+
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+public import FltRegular.NumberTheory.Cyclotomic.CyclRat
+public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
+public import Mathlib.RingTheory.NormTrace
+
+@[expose] public section
 
 variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [CharZero K]
   [IsCyclotomicExtension {p} ℚ K]

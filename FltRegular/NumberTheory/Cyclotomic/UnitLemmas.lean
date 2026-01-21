@@ -1,6 +1,10 @@
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Embeddings
-import Mathlib.NumberTheory.NumberField.CMField
+module
+
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Embeddings
+public import Mathlib.NumberTheory.NumberField.CMField
+
+@[expose] public section
 
 variable {p : ℕ} [NeZero p] {K : Type*} [Field K]
 

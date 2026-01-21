@@ -1,6 +1,10 @@
-import FltRegular.CaseI.Statement
-import FltRegular.CaseII.Statement
-import Mathlib.NumberTheory.FLT.Basic
+module
+
+public import FltRegular.CaseI.Statement
+public import FltRegular.CaseII.Statement
+public import Mathlib.NumberTheory.FLT.Basic
+
+@[expose] public section
 
 open FltRegular
 

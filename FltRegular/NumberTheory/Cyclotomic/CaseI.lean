@@ -1,6 +1,10 @@
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.NumberTheory.NumberField.CMField
+module
+
+public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+public import FltRegular.NumberTheory.Cyclotomic.CyclRat
+public import Mathlib.NumberTheory.NumberField.CMField
+
+@[expose] public section
 
 open scoped NumberField nonZeroDivisors
 

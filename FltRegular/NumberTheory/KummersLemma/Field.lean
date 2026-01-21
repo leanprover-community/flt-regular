@@ -1,6 +1,10 @@
-import Mathlib.FieldTheory.KummerExtension
-import FltRegular.NumberTheory.Unramified
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+module
+
+public import Mathlib.FieldTheory.KummerExtension
+public import FltRegular.NumberTheory.Unramified
+public import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+
+@[expose] public section
 
 open scoped NumberField
 

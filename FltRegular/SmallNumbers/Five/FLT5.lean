@@ -1,4 +1,8 @@
-import FltRegular.FltRegular
+module
+
+public import FltRegular.FltRegular
+
+@[expose] public section
 
 open Nat NumberField IsCyclotomicExtension
 

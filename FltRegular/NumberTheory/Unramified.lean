@@ -1,6 +1,8 @@
-import Mathlib.RingTheory.DedekindDomain.Different
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.NumberTheory.RamificationInertia.Galois
+module
+
+public import Mathlib.RingTheory.DedekindDomain.Different
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.NumberTheory.RamificationInertia.Galois
 
 /-!
 # Unramified extensions
@@ -18,6 +20,8 @@ import Mathlib.NumberTheory.RamificationInertia.Galois
   is separable for some ideal `p` of `R` (with `f` being the minpoly of `α` over `R`), then `S/R` is
   unramified at `p`.
 -/
+
+@[expose] public section
 open UniqueFactorizationMonoid Ideal
 
 attribute [local instance] FractionRing.liftAlgebra

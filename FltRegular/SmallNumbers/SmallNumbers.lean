@@ -1,8 +1,12 @@
-import FltRegular.SmallNumbers.Five.FLT5
-import FltRegular.SmallNumbers.Seven.FLT7
-import FltRegular.SmallNumbers.Eleven.FLT11
-import FltRegular.SmallNumbers.Thirteen.FLT13
-import Mathlib.NumberTheory.FLT.Four
+module
+
+public import FltRegular.SmallNumbers.Five.FLT5
+public import FltRegular.SmallNumbers.Seven.FLT7
+public import FltRegular.SmallNumbers.Eleven.FLT11
+public import FltRegular.SmallNumbers.Thirteen.FLT13
+public import Mathlib.NumberTheory.FLT.Four
+
+@[expose] public section
 
 theorem FLT_small {n : ℕ} (hn : n ∈ Finset.Icc 3 16) : FermatLastTheoremFor n := by
   fin_cases hn

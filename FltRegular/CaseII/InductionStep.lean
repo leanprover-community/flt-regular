@@ -1,5 +1,9 @@
-import FltRegular.CaseII.AuxLemmas
-import FltRegular.NumberTheory.KummersLemma.KummersLemma
+module
+
+public import FltRegular.CaseII.AuxLemmas
+public import FltRegular.NumberTheory.KummersLemma.KummersLemma
+
+@[expose] public section
 
 open scoped nonZeroDivisors NumberField
 open Polynomial

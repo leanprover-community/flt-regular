@@ -1,4 +1,8 @@
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
+module
+
+public import FltRegular.NumberTheory.Cyclotomic.CyclRat
+
+@[expose] public section
 
 open Finset Nat IsCyclotomicExtension Ideal Polynomial Int Basis
 

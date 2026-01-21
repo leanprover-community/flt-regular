@@ -1,5 +1,9 @@
-import Mathlib.RingTheory.ClassGroup
-import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
+module
+
+public import Mathlib.RingTheory.ClassGroup
+public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
+
+@[expose] public section
 
 section Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
 

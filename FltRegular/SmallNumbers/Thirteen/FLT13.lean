@@ -1,5 +1,9 @@
-import FltRegular.FltRegular
-import FltRegular.SmallNumbers.Thirteen.Thirteen
+module
+
+public import FltRegular.FltRegular
+public import FltRegular.SmallNumbers.Thirteen.Thirteen
+
+@[expose] public section
 
 open Nat NumberField IsCyclotomicExtension
 

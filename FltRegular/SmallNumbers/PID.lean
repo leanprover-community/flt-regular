@@ -1,6 +1,10 @@
-import Mathlib.NumberTheory.NumberField.ClassNumber
-import Mathlib.NumberTheory.RamificationInertia.Galois
-import Mathlib.NumberTheory.NumberField.Ideal.KummerDedekind
+module
+
+public import Mathlib.NumberTheory.NumberField.ClassNumber
+public import Mathlib.NumberTheory.RamificationInertia.Galois
+public import Mathlib.NumberTheory.NumberField.Ideal.KummerDedekind
+
+@[expose] public section
 
 open Ideal NumberField Module NumberField.InfinitePlace Nat Real
 

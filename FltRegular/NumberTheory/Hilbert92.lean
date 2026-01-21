@@ -1,14 +1,18 @@
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.SystemOfUnits
-import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Henselian
-import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
-import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
-import Mathlib.GroupTheory.FiniteAbelian.Basic
-import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
+module
+
+public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+public import FltRegular.NumberTheory.SystemOfUnits
+public import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
+public import Mathlib.Algebra.Lie.OfAssociative
+public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.RingTheory.Henselian
+public import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
+public import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
+public import Mathlib.GroupTheory.FiniteAbelian.Basic
+public import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
+
+@[expose] public section
 
 open scoped NumberField nonZeroDivisors
 open FiniteDimensional NumberField
@@ -546,7 +550,7 @@ lemma lh_pow_free (ν : (𝓞 k)ˣ)
       (i₀ : Fin (NumberField.Units.rank k + 2)), ∑ i, ι i • (η i) = (a*p) • (Additive.ofMul ν) ∧
         ¬ ((p : ℤ) ∣ ι i₀) ∧ (ν = 1 → i₀ ≠ Fin.last _) := by
   convert lh_pow_free' p hp ν hk _ ?_ η
-  · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, Fin.ext_iff, Fin.val_last]
+  · simp [Fin.ext_iff]
   · rw [NumberField.Units.finrank_eq]
     exact Nat.lt_add_one _
 

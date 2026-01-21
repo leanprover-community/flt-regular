@@ -1,6 +1,10 @@
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+module
+
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
+public import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+
+@[expose] public section
 
 noncomputable section
 

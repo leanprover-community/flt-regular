@@ -1,4 +1,8 @@
-import Mathlib.FieldTheory.Finite.Basic
+module
+
+public import Mathlib.FieldTheory.Finite.Basic
+
+@[expose] public section
 
 lemma orderOf_lt_of {a b n : ℕ} [hn : Fact (b.Prime)] (h : a.Coprime b)
       (H : ∀ i ≤ n, 1 ≤ i → a ^ i % b ≠ 1) :

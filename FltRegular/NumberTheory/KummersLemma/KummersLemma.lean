@@ -1,5 +1,9 @@
-import FltRegular.NumberTheory.KummersLemma.Field
-import FltRegular.NumberTheory.Hilbert94
+module
+
+public import FltRegular.NumberTheory.KummersLemma.Field
+public import FltRegular.NumberTheory.Hilbert94
+
+@[expose] public section
 
 open Polynomial
 open scoped NumberField

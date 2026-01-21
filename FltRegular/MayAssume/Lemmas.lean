@@ -1,5 +1,9 @@
-import Mathlib.Algebra.GCDMonoid.Finset
-import Mathlib.FieldTheory.Finite.Basic
+module
+
+public import Mathlib.Algebra.GCDMonoid.Finset
+public import Mathlib.FieldTheory.Finite.Basic
+
+@[expose] public section
 
 open Int Finset
 

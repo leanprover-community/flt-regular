@@ -1,4 +1,8 @@
-import FltRegular.CaseII.InductionStep
+module
+
+public import FltRegular.CaseII.InductionStep
+
+@[expose] public section
 
 open scoped nonZeroDivisors NumberField
 open Polynomial

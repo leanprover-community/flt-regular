@@ -1,31 +1,33 @@
-import FltRegular.CaseI.AuxLemmas
-import FltRegular.CaseI.Statement
-import FltRegular.CaseII.AuxLemmas
-import FltRegular.CaseII.InductionStep
-import FltRegular.CaseII.Statement
-import FltRegular.FltRegular
-import FltRegular.MayAssume.Lemmas
-import FltRegular.NumberTheory.Cyclotomic.CaseI
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
-import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.CyclotomicRing
-import FltRegular.NumberTheory.Hilbert92
-import FltRegular.NumberTheory.Hilbert94
-import FltRegular.NumberTheory.KummersLemma.Field
-import FltRegular.NumberTheory.KummersLemma.KummersLemma
-import FltRegular.NumberTheory.RegularPrimes
-import FltRegular.NumberTheory.SystemOfUnits
-import FltRegular.NumberTheory.Unramified
-import FltRegular.SmallNumbers.Cyclotomic
-import FltRegular.SmallNumbers.Eleven.Eleven
-import FltRegular.SmallNumbers.Eleven.FLT11
-import FltRegular.SmallNumbers.Five.FLT5
-import FltRegular.SmallNumbers.Minkowski
-import FltRegular.SmallNumbers.OrderOf
-import FltRegular.SmallNumbers.PID
-import FltRegular.SmallNumbers.Seven.FLT7
-import FltRegular.SmallNumbers.Seven.Seven
-import FltRegular.SmallNumbers.SmallNumbers
-import FltRegular.SmallNumbers.Thirteen.FLT13
-import FltRegular.SmallNumbers.Thirteen.Thirteen
+module
+
+public import FltRegular.CaseI.AuxLemmas
+public import FltRegular.CaseI.Statement
+public import FltRegular.CaseII.AuxLemmas
+public import FltRegular.CaseII.InductionStep
+public import FltRegular.CaseII.Statement
+public import FltRegular.FltRegular
+public import FltRegular.MayAssume.Lemmas
+public import FltRegular.NumberTheory.Cyclotomic.CaseI
+public import FltRegular.NumberTheory.Cyclotomic.CyclRat
+public import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+public import FltRegular.NumberTheory.CyclotomicRing
+public import FltRegular.NumberTheory.Hilbert92
+public import FltRegular.NumberTheory.Hilbert94
+public import FltRegular.NumberTheory.KummersLemma.Field
+public import FltRegular.NumberTheory.KummersLemma.KummersLemma
+public import FltRegular.NumberTheory.RegularPrimes
+public import FltRegular.NumberTheory.SystemOfUnits
+public import FltRegular.NumberTheory.Unramified
+public import FltRegular.SmallNumbers.Cyclotomic
+public import FltRegular.SmallNumbers.Eleven.Eleven
+public import FltRegular.SmallNumbers.Eleven.FLT11
+public import FltRegular.SmallNumbers.Five.FLT5
+public import FltRegular.SmallNumbers.Minkowski
+public import FltRegular.SmallNumbers.OrderOf
+public import FltRegular.SmallNumbers.PID
+public import FltRegular.SmallNumbers.Seven.FLT7
+public import FltRegular.SmallNumbers.Seven.Seven
+public import FltRegular.SmallNumbers.SmallNumbers
+public import FltRegular.SmallNumbers.Thirteen.FLT13
+public import FltRegular.SmallNumbers.Thirteen.Thirteen

@@ -1,7 +1,11 @@
-import FltRegular.NumberTheory.Unramified
-import FltRegular.NumberTheory.Hilbert92
-import FltRegular.NumberTheory.RegularPrimes
-import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
+module
+
+public import FltRegular.NumberTheory.Unramified
+public import FltRegular.NumberTheory.Hilbert92
+public import FltRegular.NumberTheory.RegularPrimes
+public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
+
+@[expose] public section
 
 open scoped NumberField
 

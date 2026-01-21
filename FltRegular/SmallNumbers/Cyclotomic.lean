@@ -1,7 +1,11 @@
-import FltRegular.SmallNumbers.PID
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import Mathlib.NumberTheory.NumberField.Ideal.KummerDedekind
-import Mathlib.RingTheory.Polynomial.Cyclotomic.Factorization
+module
+
+public import FltRegular.SmallNumbers.PID
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import Mathlib.NumberTheory.NumberField.Ideal.KummerDedekind
+public import Mathlib.RingTheory.Polynomial.Cyclotomic.Factorization
+
+@[expose] public section
 
 lemma uff {n p : ℕ} [hp : Fact p.Prime] (hn : n.Prime) (hpn : p ≠ n) : p.Coprime n :=
   hp.1.coprime_iff_not_dvd.mpr (fun h ↦ hpn <|

@@ -1,9 +1,13 @@
-import Mathlib.RingTheory.Polynomial.Eisenstein.IsIntegral
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
-import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
-import Mathlib.Algebra.CharP.Quotient
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+module
+
+public import Mathlib.RingTheory.Polynomial.Eisenstein.IsIntegral
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
+public import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
+public import Mathlib.Algebra.CharP.Quotient
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+
+@[expose] public section
 
 section Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
