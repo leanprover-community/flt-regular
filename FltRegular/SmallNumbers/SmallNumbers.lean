@@ -20,7 +20,7 @@ theorem FLT_small {n : ℕ} (hn : n ∈ Finset.Icc 3 16) : FermatLastTheoremFor 
   · apply FermatLastTheoremFor.mono (show 3 ∣ 6 by decide)
     exact fermatLastTheoremThree
   · exact fermatLastTheoremSeven
-  · apply FermatLastTheoremFor.mono (show 4 ∣ _ by decide)
+  · apply FermatLastTheoremFor.mono (show 4 ∣ 8 by decide)
     exact fermatLastTheoremFour
   · apply FermatLastTheoremFor.mono (show 3 ∣ 9 by decide)
     exact fermatLastTheoremThree
