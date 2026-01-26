@@ -1,6 +1,7 @@
 module
 
-public import Mathlib.FieldTheory.Finite.Basic
+public import Mathlib.Data.ZMod.Basic
+import Mathlib.FieldTheory.Finite.Basic
 
 @[expose] public section
 

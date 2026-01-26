@@ -1,8 +1,10 @@
 module
 
-public import FltRegular.CaseI.Statement
-public import FltRegular.CaseII.Statement
 public import Mathlib.NumberTheory.FLT.Basic
+public import FltRegular.NumberTheory.RegularPrimes
+import FltRegular.CaseI.Statement
+import FltRegular.CaseII.Statement
+import FltRegular.MayAssume.Lemmas
 
 @[expose] public section
 

@@ -23,7 +23,6 @@ public import FltRegular.SmallNumbers.Cyclotomic
 public import FltRegular.SmallNumbers.Eleven.Eleven
 public import FltRegular.SmallNumbers.Eleven.FLT11
 public import FltRegular.SmallNumbers.Five.FLT5
-public import FltRegular.SmallNumbers.Minkowski
 public import FltRegular.SmallNumbers.OrderOf
 public import FltRegular.SmallNumbers.PID
 public import FltRegular.SmallNumbers.Seven.FLT7
@@ -31,3 +30,5 @@ public import FltRegular.SmallNumbers.Seven.Seven
 public import FltRegular.SmallNumbers.SmallNumbers
 public import FltRegular.SmallNumbers.Thirteen.FLT13
 public import FltRegular.SmallNumbers.Thirteen.Thirteen
+import Mathlib.Tactic.NormNum.NatFactorial
+import Mathlib.Tactic.NormNum.Prime

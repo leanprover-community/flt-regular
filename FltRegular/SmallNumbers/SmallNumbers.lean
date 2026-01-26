@@ -1,10 +1,14 @@
 module
 
-public import FltRegular.SmallNumbers.Five.FLT5
-public import FltRegular.SmallNumbers.Seven.FLT7
-public import FltRegular.SmallNumbers.Eleven.FLT11
-public import FltRegular.SmallNumbers.Thirteen.FLT13
-public import Mathlib.NumberTheory.FLT.Four
+public import Mathlib.NumberTheory.FLT.Basic
+import FltRegular.SmallNumbers.Eleven.FLT11
+import FltRegular.SmallNumbers.Five.FLT5
+import FltRegular.SmallNumbers.Seven.FLT7
+import FltRegular.SmallNumbers.Thirteen.FLT13
+import Mathlib.NumberTheory.FLT.Four
+import Mathlib.NumberTheory.FLT.Three
+import Mathlib.Tactic.NormNum.NatFactorial
+import Mathlib.Tactic.NormNum.Prime
 
 @[expose] public section
 

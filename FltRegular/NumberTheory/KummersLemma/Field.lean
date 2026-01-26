@@ -1,8 +1,12 @@
 module
 
-public import Mathlib.FieldTheory.KummerExtension
 public import FltRegular.NumberTheory.Unramified
-public import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+import FltRegular.NumberTheory.Cyclotomic.CyclRat
+import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+import Mathlib.FieldTheory.KummerExtension
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 
 @[expose] public section
 

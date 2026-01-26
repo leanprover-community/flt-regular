@@ -1,9 +1,6 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 public import FltRegular.NumberTheory.CyclotomicRing
-public import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
-public import Mathlib.LinearAlgebra.Dimension.Localization
 
 @[expose] public section
 

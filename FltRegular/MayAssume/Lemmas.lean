@@ -1,7 +1,10 @@
 module
 
 public import Mathlib.Algebra.GCDMonoid.Finset
-public import Mathlib.FieldTheory.Finite.Basic
+public import Mathlib.Algebra.GCDMonoid.Nat
+public import Mathlib.Data.Int.ModEq
+public import Mathlib.Data.Nat.Prime.Defs
+import Mathlib.FieldTheory.Finite.Basic
 
 @[expose] public section
 

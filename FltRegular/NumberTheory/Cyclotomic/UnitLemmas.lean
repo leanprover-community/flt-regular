@@ -1,8 +1,7 @@
 module
 
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Embeddings
 public import Mathlib.NumberTheory.NumberField.CMField
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 
 @[expose] public section
 

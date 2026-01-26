@@ -1,8 +1,9 @@
 module
 
-public import Mathlib.NumberTheory.NumberField.ClassNumber
-public import Mathlib.NumberTheory.RamificationInertia.Galois
 public import Mathlib.NumberTheory.NumberField.Ideal.KummerDedekind
+public import Mathlib.NumberTheory.NumberField.Discriminant.Defs
+public import Mathlib.NumberTheory.NumberField.InfinitePlace.Basic
+import Mathlib.NumberTheory.NumberField.ClassNumber
 
 @[expose] public section
 

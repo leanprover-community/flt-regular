@@ -1,7 +1,11 @@
 module
 
-public import FltRegular.FltRegular
+public import FltRegular.NumberTheory.RegularPrimes
+public import Mathlib.NumberTheory.FLT.Basic
 public import FltRegular.SmallNumbers.Thirteen.Thirteen
+import FltRegular.FltRegular
+import Mathlib.Tactic.NormNum.NatFactorial
+import Mathlib.Tactic.NormNum.Prime
 
 @[expose] public section
 

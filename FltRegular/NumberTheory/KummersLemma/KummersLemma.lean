@@ -1,7 +1,12 @@
 module
 
-public import FltRegular.NumberTheory.KummersLemma.Field
-public import FltRegular.NumberTheory.Hilbert94
+public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+public import Mathlib.RingTheory.ClassGroup
+import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+import FltRegular.NumberTheory.Hilbert92
+import FltRegular.NumberTheory.Hilbert94
+import FltRegular.NumberTheory.KummersLemma.Field
+import Mathlib.FieldTheory.KummerExtension
 
 @[expose] public section
 

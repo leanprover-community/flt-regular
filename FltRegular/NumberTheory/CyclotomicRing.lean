@@ -1,8 +1,8 @@
 module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
-public import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+import FltRegular.NumberTheory.Cyclotomic.CyclRat
+import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
 @[expose] public section
 

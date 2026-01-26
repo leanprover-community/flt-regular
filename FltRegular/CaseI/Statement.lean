@@ -1,10 +1,10 @@
 module
 
-public import FltRegular.MayAssume.Lemmas
-public import FltRegular.NumberTheory.Cyclotomic.CaseI
-public import FltRegular.CaseI.AuxLemmas
 public import FltRegular.NumberTheory.RegularPrimes
-public import Mathlib.NumberTheory.FLT.Three
+import FltRegular.CaseI.AuxLemmas
+import FltRegular.MayAssume.Lemmas
+import FltRegular.NumberTheory.Cyclotomic.CaseI
+import Mathlib.NumberTheory.FLT.Three
 
 @[expose] public section
 

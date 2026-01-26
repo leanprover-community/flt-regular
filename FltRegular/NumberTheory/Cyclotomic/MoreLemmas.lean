@@ -1,10 +1,10 @@
 module
 
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-public import FltRegular.NumberTheory.Cyclotomic.CyclRat
-public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
-public import Mathlib.RingTheory.NormTrace
+import FltRegular.NumberTheory.Cyclotomic.CyclRat
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import Mathlib.RingTheory.NormTrace
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 
 @[expose] public section
 

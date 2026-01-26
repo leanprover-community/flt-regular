@@ -1,8 +1,10 @@
 module
 
-public import Mathlib.RingTheory.DedekindDomain.Different
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.NumberTheory.RamificationInertia.Galois
+public import Mathlib.NumberTheory.RamificationInertia.Basic
+public import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
+import Mathlib.NumberTheory.RamificationInertia.Galois
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.RingTheory.DedekindDomain.Different
 
 /-!
 # Unramified extensions

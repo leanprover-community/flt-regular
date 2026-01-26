@@ -1,9 +1,10 @@
 module
 
-public import FltRegular.SmallNumbers.PID
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 public import Mathlib.NumberTheory.NumberField.Ideal.KummerDedekind
-public import Mathlib.RingTheory.Polynomial.Cyclotomic.Factorization
+import FltRegular.SmallNumbers.PID
+import Mathlib.NumberTheory.NumberField.ClassNumber
+import Mathlib.RingTheory.Polynomial.Cyclotomic.Factorization
 
 @[expose] public section
 

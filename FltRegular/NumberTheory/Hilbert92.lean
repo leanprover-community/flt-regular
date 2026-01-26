@@ -1,16 +1,16 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 public import FltRegular.NumberTheory.SystemOfUnits
-public import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 public import Mathlib.Algebra.Lie.OfAssociative
 public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
-public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.Henselian
-public import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
-public import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
 public import Mathlib.GroupTheory.FiniteAbelian.Basic
-public import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
+public import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
+import FltRegular.NumberTheory.Cyclotomic.CyclRat
+import Mathlib.GroupTheory.FiniteAbelian.Basic
+import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
+import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
+import Mathlib.Order.CompletePartialOrder
 
 @[expose] public section
 

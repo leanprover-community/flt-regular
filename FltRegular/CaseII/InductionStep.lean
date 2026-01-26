@@ -1,7 +1,15 @@
 module
 
-public import FltRegular.CaseII.AuxLemmas
-public import FltRegular.NumberTheory.KummersLemma.KummersLemma
+public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+public import Mathlib.Algebra.Lie.OfAssociative
+public import Mathlib.RingTheory.ClassGroup
+import FltRegular.CaseII.AuxLemmas
+import FltRegular.NumberTheory.Cyclotomic.CyclRat
+import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+import FltRegular.NumberTheory.Hilbert92
+import FltRegular.NumberTheory.KummersLemma.KummersLemma
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 
 @[expose] public section
 

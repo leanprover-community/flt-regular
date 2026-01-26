@@ -1,6 +1,9 @@
 module
 
-public import FltRegular.FltRegular
+public import FltRegular.NumberTheory.RegularPrimes
+public import Mathlib.NumberTheory.FLT.Basic
+import FltRegular.FltRegular
+import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
 
 @[expose] public section
 

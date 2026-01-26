@@ -1,6 +1,10 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.CyclRat
+public import Mathlib.NumberTheory.Cyclotomic.Basic
+import FltRegular.NumberTheory.Cyclotomic.CyclRat
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
 
 @[expose] public section
 
