@@ -48,7 +48,7 @@ lemma prod_primesOverFinset_of_isUnramified [IsUnramified R S] [IsDedekindDomain
     ∏ P ∈ primesOverFinset p S, P = p.map (algebraMap R S) := by
   classical
   have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective
-      (NoZeroSMulDivisors.iff_algebraMap_injective.mp inferInstance)).not.mpr hp
+      (Module.isTorsionFree_iff_algebraMap_injective.mp inferInstance)).not.mpr hp
   rw [← associated_iff_eq.mp (factors_pow_count_prod hpbot')]
   apply Finset.prod_congr rfl
   intros P hP
@@ -70,7 +70,7 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
     refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  have := NoZeroSMulDivisors.iff_algebraMap_injective.mpr hRS
+  have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
   by_cases hIbot : I = ⊥
   · rw [hIbot, Ideal.comap_bot_of_injective _ hRS, Ideal.map_bot]
   have h1 : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
@@ -149,7 +149,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
     refine Function.Injective.of_comp (f := algebraMap S L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  have := NoZeroSMulDivisors.iff_algebraMap_injective.mpr hRS
+  have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
   have := IsIntegralClosure.isNoetherian R K L S
   have := IsIntegralClosure.isDedekindDomain R K L S
   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S

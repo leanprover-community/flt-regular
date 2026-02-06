@@ -91,7 +91,7 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
     refine Function.Injective.of_comp (f := algebraMap B L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq A K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  rw [← NoZeroSMulDivisors.iff_algebraMap_injective] at hAB
+  rw [← Module.isTorsionFree_iff_algebraMap_injective] at hAB
   letI : Algebra (FractionRing A) (FractionRing B) := FractionRing.liftAlgebra _ _
   have : IsScalarTower A (FractionRing A) (FractionRing B) :=
     FractionRing.isScalarTower_liftAlgebra _ _
