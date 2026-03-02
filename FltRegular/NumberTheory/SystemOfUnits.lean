@@ -63,6 +63,7 @@ lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
 
 include hf
 
+set_option backward.isDefEq.respectTransparency false in
 lemma ex_not_mem [Module.Free ℤ G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < s) :
     ∃ g, ∀ (k : ℤ), k ≠ 0 → ¬(k • g ∈ Submodule.span A (Set.range S.units)) := by
   have := Fact.mk hp

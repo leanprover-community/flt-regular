@@ -30,5 +30,3 @@ public import FltRegular.SmallNumbers.Seven.Seven
 public import FltRegular.SmallNumbers.SmallNumbers
 public import FltRegular.SmallNumbers.Thirteen.FLT13
 public import FltRegular.SmallNumbers.Thirteen.Thirteen
-import Mathlib.Tactic.NormNum.NatFactorial
-import Mathlib.Tactic.NormNum.Prime

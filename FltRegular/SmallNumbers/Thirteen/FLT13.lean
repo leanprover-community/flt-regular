@@ -11,6 +11,7 @@ import Mathlib.Tactic.NormNum.Prime
 
 open Nat NumberField IsCyclotomicExtension
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isRegularPrime_thirteen :
     haveI : Fact (Nat.Prime 13) := ⟨Nat.prime_thirteen⟩
     IsRegularPrime 13 := by

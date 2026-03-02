@@ -19,6 +19,7 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
 
 open Polynomial
 
+set_option backward.isDefEq.respectTransparency false in
 include hcong hp in
 lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
     C ((hζ.unit' - 1 : 𝓞 K) ^ p) ∣
@@ -258,6 +259,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     mul_div_cancel_left₀ _ hζ']
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 include hu in
 open scoped KummerExtension in
 attribute [local instance] Ideal.Quotient.field in

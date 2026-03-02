@@ -99,7 +99,6 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p) (h
     ring
   · convert hprod using 1
     ring
-  · ring_nf at caseI ⊢
-    exact caseI
+  · grind
 
 end FltRegular

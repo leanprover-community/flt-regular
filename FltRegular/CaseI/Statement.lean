@@ -143,6 +143,7 @@ theorem is_principal_aux {K' : Type*} [Field K'] [CharZero K'] [IsCyclotomicExte
 
 variable [hpri : Fact p.Prime]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1)
     (caseI : ¬↑p ∣ a * b * c) {ζ : R} (hζ : ζ ∈ nthRootsFinset p 1) :
@@ -160,6 +161,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   · exact hpri.out
   · exact h5p
 
+set_option backward.isDefEq.respectTransparency false in
 theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({ a, b, c } : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
     (H : a ^ p + b ^ p = c ^ p) (hζ : IsPrimitiveRoot ζ p) :
@@ -168,6 +170,7 @@ theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 �
   obtain ⟨I, hI⟩ := exists_ideal hp5 H hgcd caseI hζ
   exact is_principal_aux hreg hI
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime p)
     (hζ : IsPrimitiveRoot ζ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
     (H : a ^ p + b ^ p = c ^ p) :
@@ -211,6 +214,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,
       Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, Int.cast_one, sub_self]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬↑p ∣ a * b * c) :

@@ -108,17 +108,21 @@ section NeZero
 
 variable [NeZero p]
 
+set_option backward.isDefEq.respectTransparency false in
 instance : IsGalois ℚ (CyclotomicField p ℚ) :=
   IsCyclotomicExtension.isGalois {p} _ _
 
+set_option backward.isDefEq.respectTransparency false in
 instance : FiniteDimensional ℚ (CyclotomicField p ℚ) :=
   IsCyclotomicExtension.finiteDimensional {p} _ _
 
+set_option backward.isDefEq.respectTransparency false in
 instance : NumberField (CyclotomicField p ℚ) :=
   IsCyclotomicExtension.numberField {p} ℚ _
 
 end NeZero
 
+set_option backward.isDefEq.respectTransparency false in
 theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : 1 - η ∣ (p : R) := by
   have hη : IsPrimitiveRoot (η : CyclotomicField p ℚ) (p ^ 1) := by
@@ -130,6 +134,7 @@ theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset 
   ext
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 theorem one_sub_zeta_prime [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : Prime (1 - η) := by
   have h := prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1)
@@ -282,6 +287,7 @@ theorem fltIdeals_coprime (hpri : p.Prime) (p5 : 5 ≤ p) {x y z : ℤ}
 
 variable {L}
 
+set_option backward.isDefEq.respectTransparency false in
 theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
     (hζ : IsPrimitiveRoot ζ p) {f : Fin p → ℤ}
     (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
@@ -329,6 +335,7 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
   rw [hy]
   simp [dvd_neg]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRoot ζ p)
     {f : Fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
     ∀ j, m ∣ f j := by

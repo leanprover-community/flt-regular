@@ -9,6 +9,7 @@ import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
 
 open Nat NumberField IsCyclotomicExtension
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isRegularPrime_five :
     haveI : Fact (Nat.Prime 5) := ⟨Nat.prime_five⟩
     IsRegularPrime 5 := by

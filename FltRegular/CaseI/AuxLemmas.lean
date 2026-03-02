@@ -54,6 +54,7 @@ theorem auxf0k₁ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : Fin p, f0k₁ b p (i : ℕ
   apply hpred
   simp [h2]
 
+set_option backward.isDefEq.respectTransparency false in
 include hpri in
 theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
@@ -93,6 +94,7 @@ theorem aux_cong0k₂ {k : Fin p} (hcong : k ≡ 1 [ZMOD p]) : k = ⟨1, hpri.on
 theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin p, f0k₂ a b (i : ℕ) = 0 :=
   ⟨⟨2, two_lt hp5⟩, rfl⟩
 
+set_option backward.isDefEq.respectTransparency false in
 include hpri in
 theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p) (hab : ¬a ≡ b [ZMOD p])
     {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
@@ -167,6 +169,7 @@ include hpri in
 theorem auxf1k₂ (a : ℤ) : ∃ i : Fin p, f1k₂ a i = 0 :=
   ⟨⟨1, hpri.one_lt⟩, rfl⟩
 
+set_option backward.isDefEq.respectTransparency false in
 include hpri in
 theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])

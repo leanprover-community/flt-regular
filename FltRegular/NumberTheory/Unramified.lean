@@ -59,6 +59,7 @@ lemma prod_primesOverFinset_of_isUnramified [IsUnramified R S] [IsDedekindDomain
     (ne_bot_of_mem_primesOver hp hP)]
   exact IsUnramified.isUnramifiedAt _ hp _ hP
 
+set_option backward.isDefEq.respectTransparency false in
 lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal S)
     (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
     (I.comap (algebraMap R S)).map (algebraMap R S) = I := by
@@ -136,6 +137,7 @@ end KummerDedekind
 
 open nonZeroDivisors Polynomial
 
+set_option backward.isDefEq.respectTransparency false in
 attribute [local instance] Ideal.Quotient.field in
 lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
     (p : Ideal R) [hp : p.IsPrime] (hpbot : p ≠ ⊥) (x : S)

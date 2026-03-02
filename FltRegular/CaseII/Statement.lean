@@ -33,6 +33,7 @@ lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
       rintro ⟨x, y, z, ε₃, hy, hz, e⟩
       exact IH (exists_solution' hp hζ e hy hz hreg)
 
+set_option backward.isDefEq.respectTransparency false in
 include hp hreg in
 lemma not_exists_solution' :
   ¬∃ (x y z : 𝓞 K), ¬(hζ.unit' : 𝓞 K) - 1 ∣ y ∧ (hζ.unit' : 𝓞 K) - 1 ∣ z ∧ z ≠ 0 ∧
@@ -58,6 +59,7 @@ lemma not_exists_solution' :
   refine not_exists_solution hp hreg hζ hm ⟨x, y, z, 1, hy, hz'', ?_⟩
   rwa [Units.val_one, one_mul]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p)
     (hodd : p ≠ 2) : ¬∃ (x y z : ℤ), ¬↑p ∣ y ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
   haveI := CyclotomicField.isCyclotomicExtension p ℚ

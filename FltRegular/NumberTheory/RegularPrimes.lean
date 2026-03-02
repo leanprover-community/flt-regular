@@ -78,6 +78,7 @@ theorem isRegularPrime_two : IsRegularPrime 2 := by
   apply (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField 2 ℚ))).2
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isRegularPrime_three :
     haveI : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
     IsRegularPrime 3 := by

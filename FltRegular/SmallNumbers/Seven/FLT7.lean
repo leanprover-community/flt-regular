@@ -11,6 +11,7 @@ import Mathlib.Tactic.NormNum.Prime
 
 open Nat NumberField IsCyclotomicExtension
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isRegularPrime_seven :
     haveI : Fact (Nat.Prime 7) := ⟨Nat.prime_seven⟩
     IsRegularPrime 7 := by

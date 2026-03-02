@@ -91,6 +91,7 @@ lemma x_plus_y_mul_ne_zero : x + y * η ≠ 0 := by
 
 variable [IsCyclotomicExtension {p} ℚ K]
 
+set_option backward.isDefEq.respectTransparency false in
 include e hp in
 /- Let π = ζ -1, then π divides x+yη with η a primivite root of unity. -/
 lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
@@ -140,6 +141,7 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
   rw [Ne, ← Subtype.ext_iff.not]
   exact hη
 
+set_option backward.isDefEq.respectTransparency false in
 include hy in
 /- sending η to (x+yη)/(ζ-1) mod (π) = 𝔭 is injective. -/
 lemma div_zeta_sub_one_Injective :
@@ -159,6 +161,7 @@ instance : Finite (𝓞 K ⧸ 𝔭) := by
   rw [← Ideal.absNorm_ne_zero_iff, Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
   exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
 
+set_option backward.isDefEq.respectTransparency false in
 include hy in
 /- sending η to (x+yη)/(ζ-1) mod (π) = 𝔭 is bijective. -/
 lemma div_zeta_sub_one_Bijective :
@@ -331,8 +334,8 @@ lemma p_dvd_a_iff : 𝔭 ∣ 𝔞 η ↔ η = η₀ := by
 lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
   classical
   rw [← one_mul (𝔠 η₀), ← p_pow_dvd_c_eta_zero_aux hp hζ e hy, dvd_gcd_mul_iff_dvd_mul,
-    mul_comm _ (𝔠 η₀), ← Finset.prod_eq_mul_prod_diff_singleton (Finset.mem_attach _ η₀) 𝔠,
-    prod_c, mul_pow]
+    mul_comm _ (𝔠 η₀)]
+  rw [← Finset.prod_eq_mul_prod_diff_singleton_of_mem (Finset.mem_attach _ η₀) 𝔠,prod_c, mul_pow]
   apply dvd_mul_of_dvd_right
   rw [pow_mul]
 
@@ -560,6 +563,7 @@ lemma exists_solution :
       (a_div_a_zero_denom_spec hp hζ e hy hz η₁ hreg hη₁)
       (a_div_a_zero_denom_spec hp hζ e hy hz η₂ hreg hη₂)
 
+set_option backward.isDefEq.respectTransparency false in
 include hp hreg e hy hz in
 lemma exists_solution' :
     ∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),

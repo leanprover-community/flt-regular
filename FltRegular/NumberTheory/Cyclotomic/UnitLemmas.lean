@@ -48,6 +48,7 @@ theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot hζ.unit'.1 p := by
   rw [← this] at z1
   exact z1.of_map_of_injective (IsFractionRing.injective _ _)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
     algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 :=
   by
@@ -56,6 +57,7 @@ theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
   apply Ideal.subset_span
   exact Set.mem_singleton _
 
+set_option backward.isDefEq.respectTransparency false in
 theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type*} [CommRing A] [IsDomain A] {ζ : A}
     (hζ : IsPrimitiveRoot ζ p) {μ : A} (hμ : μ ^ p = 1) :
     (@DFunLike.coe _ A (fun _ => A ⧸ Ideal.span {ζ - 1}) _
@@ -63,6 +65,7 @@ theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type*} [CommRing A] [IsDomain
   obtain ⟨k, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ
   rw [map_pow, eq_one_mod_one_sub, one_pow]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot μ p)
     (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral (NeZero.pos p)⟩ : 𝓞 K) ^ (x : ℕ) = l) :
     algebraMap (𝓞 K) (𝓞 K ⧸ I) l = ∑ x : Fin t, (f x : 𝓞 K ⧸ I) := by
@@ -92,6 +95,7 @@ theorem IsPrimitiveRoot.p_mem_one_sub_zeta [hp : Fact p.Prime] : (p : 𝓞 K) �
 
 variable [IsCyclotomicExtension {p} ℚ K]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsIntegral ℤ x)
     (hhl : (cyclotomic l (𝓞 K)).IsRoot ⟨x, hx⟩) {ζ : K} (hζ : IsPrimitiveRoot ζ p) : l ∣ 2 * p := by
   by_contra h
@@ -136,7 +140,7 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsInt
     simp_rw [pdivlcm_h] at this
     apply absurd this h
 
---do more generally
+set_option backward.isDefEq.respectTransparency false in
 theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
     (h : ∃ (n : ℕ) (_ : 0 < n), x ^ n = 1) :
     ∃ (m k : ℕ), x = (-1) ^ k * (hζ.unit'.1 : K) ^ m :=  by
@@ -228,6 +232,7 @@ theorem IsCyclotomicExtension.IsCMField (hp : 2 < p) :
   haveI := nrRealPlaces_eq_zero_iff.1 (Rat.nrRealPlaces_eq_zero K hp)
   ⟨⟩
 
+set_option backward.isDefEq.respectTransparency false in
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.IsCMField K hp
     algebraMap (𝓞 K) (𝓞 K ⧸ I) (unitsMulComplexConjInv K u).1 = 1 := by
@@ -272,6 +277,7 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
     rw [this a]
   exact (aux hζ hζ hu).trans (aux hζ hζ.inv hu').symm
 
+set_option backward.isDefEq.respectTransparency false in
 theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.IsCMField K hp
     u * (unitsComplexConj K u)⁻¹ ≠ -hζ.unit' ^ n := by
@@ -316,6 +322,7 @@ theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp
     · exact NumberField.RingOfIntegers.isIntegral_coe _
   · simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma IsPrimitiveRoot.eq_one_mod_one_sub' {A : Type*} [CommRing A] [IsDomain A]
     {n : ℕ} [NeZero n] {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n 1) :
     Ideal.Quotient.mk (Ideal.span ({ζ - 1} : Set A)) η = 1 := by

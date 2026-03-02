@@ -43,6 +43,7 @@ theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
   rw [hKL, hpri.out.dvd_iff_not_coprime] at this
   exact this (by convert hreg)
 
+set_option backward.isDefEq.respectTransparency false in
 -- Let 𝑝 be a regular prime (i.e. an odd prime which does not divide the class number off
 -- the 𝑝-th cyclotomic field) and 𝜉 a primitive 𝑝-th root of unity;
 -- if a unit 𝑢∈𝐐(𝜉) is congruent to an integer modulo 𝑝, then 𝑢 is a 𝑝-th power in 𝐐(𝜉).

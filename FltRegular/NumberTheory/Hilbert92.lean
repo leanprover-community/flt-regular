@@ -33,6 +33,7 @@ abbrev systemOfUnits.IsMaximal {p : ℕ} {G : Type*} [AddCommGroup G]
     [Module (CyclotomicIntegers p) G] (sys : systemOfUnits (G := G) p s) :=
   Fintype (G ⧸ Submodule.span (CyclotomicIntegers p) (Set.range sys.units))
 
+set_option backward.isDefEq.respectTransparency false in
 noncomputable
 def systemOfUnits.isMaximal [Module.Finite ℤ G] (hf : finrank ℤ G = s * (p - 1))
   [Module A G] (sys : systemOfUnits (G := G) p s) : sys.IsMaximal := by
@@ -323,6 +324,7 @@ theorem relativeUnitsMapHom_apply (σ : K →ₐ[k] K) :
     relativeUnitsMapHom σ = (Monoid.End.equiv (RelativeUnits k K)).symm (relativeUnitsMap σ) :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 include σ hp hKL hσ in
 open Polynomial in
 lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
@@ -380,9 +382,11 @@ def unit_to_U (u : (𝓞 K)ˣ) : G := QuotientAddGroup.mk (Additive.ofMul <| Quo
 
 local notation "mkG" => unit_to_U p hp hKL σ hσ
 
+set_option backward.isDefEq.respectTransparency false in
 lemma unit_to_U_one : mkG 1 = 0 := by
   rw [unit_to_U, QuotientGroup.mk_one, ofMul_one, QuotientAddGroup.mk_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma unit_to_U_mul (x y) : mkG (x * y) = mkG x + mkG y := by
   rw [unit_to_U, unit_to_U, unit_to_U, QuotientGroup.mk_mul, ofMul_mul, QuotientAddGroup.mk_add]
 
@@ -410,6 +414,7 @@ lemma unit_to_U_zpow (x) (n : ℤ) : mkG (x ^ n) = n • (mkG x) := by
   | ofNat n => simp [unit_to_U_pow]
   | negSucc n => simp [unit_to_U_inv, unit_to_U_pow]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma unit_to_U_map (x : (𝓞 k)ˣ) : mkG (Units.map (algebraMap (𝓞 k) (𝓞 K)) x) = 0 := by
   delta unit_to_U
   rw [QuotientAddGroup.eq_zero_iff]
@@ -598,6 +603,7 @@ lemma Hilbert92_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ν : (𝓞 k
 
 variable [IsGalois k K]
 
+set_option backward.isDefEq.respectTransparency false in
 include hKL in
 noncomputable
 instance relativeUnitsModule : Module A G := by
@@ -611,12 +617,11 @@ lemma relativeUnitsModule_zeta_smul (x) :
       (MulEquiv.Monoid.End <| relativeUnitsMap <| ((AlgEquiv.algHomUnitsEquiv _ _).symm σ).val))
   change QuotientAddGroup.mk ((Module.AEval'.of φ).symm <|
     Polynomial.X (R := ℤ) • Module.AEval'.of φ (Additive.ofMul (QuotientGroup.mk x))) = _
-  simp only [AlgEquiv.val_algHomUnitsEquiv_symm_apply, MulEquiv.Monoid.End_apply,
-    addMonoidEndRingEquivInt_apply, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom,
-    LinearEquiv.coe_coe, addMonoidHomLequivInt_apply, Module.AEval.of_symm_smul, Polynomial.aeval_X,
+  simp only [Module.AEval.of_symm_smul, Polynomial.aeval_X,
     LinearEquiv.symm_apply_apply, Module.End.smul_def, unit_to_U]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 local instance : Module.Finite ℤ (Additive <| RelativeUnits k K) :=
   inferInstanceAs
     (Module.Finite ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
@@ -684,6 +689,7 @@ lemma NumberField.Units.rank_of_isUnramified :
   rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, Fintype.card_pos_iff]
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
   rw [← Submodule.torsion_int]
   refine (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).trans ?_
