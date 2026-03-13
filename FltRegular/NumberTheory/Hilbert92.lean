@@ -34,6 +34,7 @@ abbrev systemOfUnits.IsMaximal {p : ℕ} {G : Type*} [AddCommGroup G]
   Fintype (G ⧸ Submodule.span (CyclotomicIntegers p) (Set.range sys.units))
 
 set_option backward.isDefEq.respectTransparency false in
+@[reducible]
 noncomputable
 def systemOfUnits.isMaximal [Module.Finite ℤ G] (hf : finrank ℤ G = s * (p - 1))
   [Module A G] (sys : systemOfUnits (G := G) p s) : sys.IsMaximal := by
