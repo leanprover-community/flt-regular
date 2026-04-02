@@ -34,7 +34,7 @@ variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Fi
     [IsIntegralClosure S R L] [FiniteDimensional K L]
 
 def IsUnramifiedAt {R} (S : Type*) [CommRing R] [CommRing S] [Algebra R S] (p : Ideal R) : Prop :=
-  ∀ P ∈ primesOver p S, Ideal.ramificationIdx (algebraMap R S) p P = 1
+  ∀ P ∈ primesOver p S, Ideal.ramificationIdx p P = 1
 
 /-- TODO: Link this to `FormallyUnramified`. -/
 -- Should we name this `IsUnramifiedAtFinitePrimes`?
