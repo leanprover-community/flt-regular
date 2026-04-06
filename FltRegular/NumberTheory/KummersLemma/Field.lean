@@ -19,7 +19,6 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
 
 open Polynomial
 
-set_option backward.isDefEq.respectTransparency false in
 include hcong hp in
 lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
     C ((hζ.unit' - 1 : 𝓞 K) ^ p) ∣

@@ -322,7 +322,6 @@ theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp
     · exact NumberField.RingOfIntegers.isIntegral_coe _
   · simp
 
-set_option backward.isDefEq.respectTransparency false in
 lemma IsPrimitiveRoot.eq_one_mod_one_sub' {A : Type*} [CommRing A] [IsDomain A]
     {n : ℕ} [NeZero n] {ζ : A} (hζ : IsPrimitiveRoot ζ n) {η : A} (hη : η ∈ nthRootsFinset n 1) :
     Ideal.Quotient.mk (Ideal.span ({ζ - 1} : Set A)) η = 1 := by
