@@ -51,7 +51,6 @@ lemma isCoprime_of_not_zeta_sub_one_dvd {x : 𝓞 K} (hx : ¬ (hζ.unit' : 𝓞 
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
-set_option backward.isDefEq.respectTransparency false in
 lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1 : 𝓞 K) ∣ a - b := by
   letI : Fact (Nat.Prime p) := hpri
   simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.Quotient.mk_eq_mk, Submodule.Quotient.mk_sub,
@@ -110,7 +109,6 @@ lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
   · rw [h, sub_self]; exact dvd_zero _
   · exact (hζ.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hp hη₁ hη₂ h).dvd
 
-set_option backward.isDefEq.respectTransparency false in
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.unit' : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
   have : Fact (Nat.Prime p) := hpri
@@ -130,7 +128,6 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
   · rw [mem_nthRootsFinset (NeZero.pos p), ← map_pow, hζ.unit'_coe.pow_eq_one, map_one]
   · rw [mem_nthRootsFinset (NeZero.pos p), hζ.unit'_coe.pow_eq_one]
 
-set_option backward.isDefEq.respectTransparency false in
 open NumberField.RingOfIntegers in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1) • x := by
@@ -150,7 +147,6 @@ lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     IsCyclotomicExtension.finrank K (cyclotomic.irreducible_rat (NeZero.pos p)),
     Nat.totient_prime hpri.out]
 
-set_option backward.isDefEq.respectTransparency false in
 lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ^ p ∣ (Algebra.norm ℤ (1 + p • x) : 𝓞 K) - 1 + p • x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -173,7 +169,6 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
     zify [(Nat.Prime.one_lt hpri.out).le]
     linarith only [Nat.Prime.two_le hpri.out]
 
-set_option backward.isDefEq.respectTransparency false in
 lemma norm_add_one_smul_of_isUnit {K} [Field K] [NumberField K] {p : ℕ} (hpri : p.Prime)
     (hp : p ≠ 2) (x : 𝓞 K)
     (hx : IsUnit (1 + p • x)) : Algebra.norm ℤ (1 + p • x) = 1 := by

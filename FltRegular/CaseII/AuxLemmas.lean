@@ -13,7 +13,6 @@ lemma WfDvdMonoid.multiplicity_finite_iff [WfDvdMonoid M] {x y : M} :
     FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 :=
   ⟨fun h => ⟨h.not_unit, h.ne_zero⟩, and_imp.mpr FiniteMultiplicity.of_not_isUnit⟩
 
-set_option backward.isDefEq.respectTransparency false in
 lemma dvd_iff_emultiplicity_le [UniqueFactorizationMonoid M] {a b : M} (ha : a ≠ 0) :
     a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
   constructor
@@ -44,7 +43,6 @@ lemma dvd_iff_emultiplicity_le [UniqueFactorizationMonoid M] {a b : M} (ha : a �
           (FiniteMultiplicity.of_not_isUnit hq.not_unit hq.ne_zero).emultiplicity_self,
           add_comm, add_le_add_iff_right_of_ne_top (ENat.coe_ne_top _), Nat.one_le_cast] at this
 
-set_option backward.isDefEq.respectTransparency false in
 lemma pow_dvd_pow_iff_dvd [UniqueFactorizationMonoid M] {a b : M} {x : ℕ} (h' : x ≠ 0) :
     a ^ x ∣ b ^ x ↔ a ∣ b := by
   classical

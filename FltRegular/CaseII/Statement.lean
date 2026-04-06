@@ -33,7 +33,6 @@ lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
       rintro ⟨x, y, z, ε₃, hy, hz, e⟩
       exact IH (exists_solution' hp hζ e hy hz hreg)
 
-set_option backward.isDefEq.respectTransparency false in
 include hp hreg in
 lemma not_exists_solution' :
   ¬∃ (x y z : 𝓞 K), ¬(hζ.unit' : 𝓞 K) - 1 ∣ y ∧ (hζ.unit' : 𝓞 K) - 1 ∣ z ∧ z ≠ 0 ∧

@@ -287,7 +287,6 @@ theorem fltIdeals_coprime (hpri : p.Prime) (p5 : 5 ≤ p) {x y z : ℤ}
 
 variable {L}
 
-set_option backward.isDefEq.respectTransparency false in
 theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
     (hζ : IsPrimitiveRoot ζ p) {f : Fin p → ℤ}
     (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
@@ -335,7 +334,6 @@ theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
   rw [hy]
   simp [dvd_neg]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRoot ζ p)
     {f : Fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ} (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
     ∀ j, m ∣ f j := by

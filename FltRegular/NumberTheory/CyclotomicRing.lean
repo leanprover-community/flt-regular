@@ -87,7 +87,6 @@ lemma isCoprime_one_sub_zeta (n : ℤ) (hn : ¬ (p : ℤ) ∣ n) : IsCoprime (1 
     (algebraMap ℤ <| CyclotomicIntegers p)).of_isCoprime_of_dvd_left
   exact one_sub_zeta_dvd p
 
-set_option backward.isDefEq.respectTransparency false in
 lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) : ∃ m : ℤ, m ≠ 0 ∧ n ∣ m := by
   refine ⟨Algebra.norm ℤ ((equiv p) n), by simpa, ?_⟩
   rw [← map_dvd_iff (equiv p), map_intCast]

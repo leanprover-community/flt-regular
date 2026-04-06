@@ -49,7 +49,6 @@ lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRe
 
 variable [IsGalois K L]
 
-set_option backward.isDefEq.respectTransparency false in
 include hσ in
 open FiniteDimensional in
 theorem exists_not_isPrincipal_and_isPrincipal_map_aux
@@ -81,7 +80,6 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
   · rw [hβ']
     exact ⟨⟨_, rfl⟩⟩
 
-set_option backward.isDefEq.respectTransparency false in
 theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I : Ideal A}
     (hI : (I.map (algebraMap A B)).IsPrincipal) : (I ^ finrank K L).IsPrincipal := by
   haveI : IsDomain B :=
