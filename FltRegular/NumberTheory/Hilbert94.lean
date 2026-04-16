@@ -40,10 +40,10 @@ lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRe
   rw [map_pow]
   induction n with
   | zero =>
-    simp only [pow_zero, AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe]
+    simp only [pow_zero, RingEquiv.toRingHom_eq_coe]
     exact Ideal.map_id _
   | succ n IH =>
-    simp only [AlgEquiv.toRingEquiv_eq_coe, RingEquiv.toRingHom_eq_coe, pow_succ] at IH ⊢
+    simp only [RingEquiv.toRingHom_eq_coe, pow_succ] at IH ⊢
     conv_lhs at IH => rw [← hβ, Ideal.map_map]
     exact IH
 
@@ -100,9 +100,8 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
       RingHom.comp (FractionRing.algEquiv B L).symm.toRingEquiv (algebraMap K L) := by
     apply IsLocalization.ringHom_ext (nonZeroDivisors A)
     ext
-    simp only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_comp, RingHom.coe_coe,
-      AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
-      ← IsScalarTower.algebraMap_apply]
+    simp only [RingHom.coe_comp, RingHom.coe_coe, AlgEquiv.coe_ringEquiv, Function.comp_apply,
+      AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply A B L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
   have : Algebra.IsSeparable (FractionRing A) (FractionRing B) :=
     Algebra.IsSeparable.of_equiv_equiv _ _ H

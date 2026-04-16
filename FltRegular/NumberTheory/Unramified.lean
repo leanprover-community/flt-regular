@@ -159,9 +159,8 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
       RingHom.comp (FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L) := by
     apply IsLocalization.ringHom_ext R⁰
     ext
-    simp only [AlgEquiv.toRingEquiv_eq_coe, RingHom.coe_comp, RingHom.coe_coe,
-      AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
-      ← IsScalarTower.algebraMap_apply]
+    simp only [RingHom.coe_comp, RingHom.coe_coe, AlgEquiv.coe_ringEquiv, Function.comp_apply,
+      AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
     rw [IsScalarTower.algebraMap_apply R S L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
   have : Algebra.IsSeparable (FractionRing R) (FractionRing S) :=
     Algebra.IsSeparable.of_equiv_equiv _ _ H

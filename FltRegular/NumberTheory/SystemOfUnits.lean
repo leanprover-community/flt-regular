@@ -89,17 +89,17 @@ lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < s) :
         Nonempty (systemOfUnits p G (R + 1)) := by
     obtain ⟨g, hg⟩ := ex_not_mem p hp G s hf S hR
     refine ⟨⟨Fin.cases g S.units, ?_⟩⟩
-    refine LinearIndependent.fin_cons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
+    refine LinearIndependent.finCons' g S.units S.linearIndependent (fun a y hy ↦ ?_)
     by_contra! ha
     have := Fact.mk hp
-    obtain ⟨n, h0, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha
-    replace hy := congr_arg (f • ·) hy
-    simp only at hy
+    obtain ⟨n, h0, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha.2
+    have hy' := congr_arg (f • ·) ha.1
+    simp only at hy'
     rw [smul_zero, smul_add, smul_smul, mul_comm f,
-      ← Hf, ← eq_neg_iff_add_eq_zero, Int.cast_smul_eq_zsmul] at hy
+      ← Hf, ← eq_neg_iff_add_eq_zero, Int.cast_smul_eq_zsmul] at hy'
     apply hg _ h0
-    rw [hy]
-    exact Submodule.neg_mem _ (Submodule.smul_mem _ _ y.2)
+    rw [hy']
+    exact Submodule.neg_mem _ (Submodule.smul_mem _ _ hy)
 
 lemma existence'' [Module A G] {R : ℕ} (hR : R ≤ s) :  Nonempty (systemOfUnits p G R) := by
     induction R with

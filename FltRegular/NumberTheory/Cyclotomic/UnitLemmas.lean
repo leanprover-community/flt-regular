@@ -260,9 +260,8 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
       have H := RingOfIntegers.ext_iff.1 <|
         Units.ext_iff.1 <| unitsComplexConj_torsion K ⟨hζ.unit', ‹_›⟩
       have : ↑↑hζ.unit' = ζ := rfl
-      simp only [Units.coe_mapEquiv, AlgEquiv.toRingEquiv_eq_coe, RingEquiv.coe_toMulEquiv,
-        RingOfIntegers.mapRingEquiv_apply, this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv,
-        map_units_inv] at H
+      simp only [Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv, RingOfIntegers.mapRingEquiv_apply,
+        this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv, map_units_inv] at H
       simp [H]
     refine (CommGroup.mem_torsion _ _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
     ext

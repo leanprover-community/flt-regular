@@ -46,9 +46,8 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) 
     have H := RingOfIntegers.ext_iff.1 <|
         Units.ext_iff.1 <| unitsComplexConj_torsion K ⟨hζ.unit', ‹_›⟩
     have : ↑↑hζ.unit' = ζ := rfl
-    simp only [Units.coe_mapEquiv, AlgEquiv.toRingEquiv_eq_coe, RingEquiv.coe_toMulEquiv,
-      RingOfIntegers.mapRingEquiv_apply, this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv,
-      map_units_inv] at H
+    simp only [Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv, RingOfIntegers.mapRingEquiv_apply,
+      this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv, map_units_inv] at H
     have h : (algebraMap (𝓞 K) K) ↑hζ.unit' = ζ := rfl
     simp [h, H]
   refine (CommGroup.mem_torsion _ _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
