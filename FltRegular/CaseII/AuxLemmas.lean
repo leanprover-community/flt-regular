@@ -9,55 +9,35 @@ section Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
 
 variable {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
 
+open UniqueFactorizationMonoid in
 lemma dvd_iff_emultiplicity_le [UniqueFactorizationMonoid M] {a b : M} (ha : a ≠ 0) :
     a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
-  constructor
-  · intro hab p _
-    exact emultiplicity_le_emultiplicity_of_dvd_right hab
-  · intro H
-    by_cases hb : b = 0
-    · exact hb ▸ dvd_zero a
-    induction a using WfDvdMonoid.induction_on_irreducible with
-    | zero => exact (ha rfl).elim
-    | unit u hu => exact hu.dvd
-    | mul a q _ hq IH =>
-        simp only [ne_eq, mul_eq_zero, not_or] at ha
-        rw [UniqueFactorizationMonoid.irreducible_iff_prime] at hq
-        obtain ⟨c, rfl⟩ : a ∣ b := by
-          refine IH ha.2 (fun p hp ↦ (le_trans ?_ (H p hp)))
-          rw [emultiplicity_mul hp]
-          exact le_add_self
-        rw [mul_comm]
-        simp only [mul_eq_zero, not_or] at hb
-        refine mul_dvd_mul_left _ ?_
-        rw [← pow_one q]
-        apply pow_dvd_of_le_multiplicity
-        have := H q hq
-        rwa [emultiplicity_mul hq, emultiplicity_mul hq,
-          (FiniteMultiplicity.of_not_isUnit hq.not_unit hb.2).emultiplicity_eq_multiplicity,
-          (FiniteMultiplicity.of_not_isUnit hq.not_unit ha.2).emultiplicity_eq_multiplicity,
-          (FiniteMultiplicity.of_not_isUnit hq.not_unit hq.ne_zero).emultiplicity_self,
-          add_comm, add_le_add_iff_right_of_ne_top (ENat.coe_ne_top _), Nat.one_le_cast] at this
+  classical
+  refine ⟨fun h _ _ ↦ emultiplicity_le_emultiplicity_of_dvd_right h, fun h ↦ ?_⟩
+  by_cases hb : b = 0
+  · simp_all
+  letI : NormalizationMonoid M := UniqueFactorizationMonoid.normalizationMonoid
+  rw [dvd_iff_normalizedFactors_le_normalizedFactors ha hb, Multiset.le_iff_count]
+  intro q
+  by_cases hq : q ∈ normalizedFactors a
+  · have hqprime : Prime q := prime_of_normalized_factor q hq
+    have h1 := emultiplicity_eq_count_normalizedFactors hqprime.irreducible ha
+    have h2 := emultiplicity_eq_count_normalizedFactors hqprime.irreducible hb
+    rw [normalize_normalized_factor q hq] at h1 h2
+    simpa [h1, h2] using h q hqprime
+  · simp [Multiset.count_eq_zero_of_notMem hq]
 
 lemma pow_dvd_pow_iff_dvd [UniqueFactorizationMonoid M] {a b : M} {x : ℕ} (h' : x ≠ 0) :
     a ^ x ∣ b ^ x ↔ a ∣ b := by
   classical
   by_cases ha : a = 0
   · simp [ha, h']
-  by_cases hb : b = 0
-  · simp [hb, h']
   refine ⟨?_, fun h ↦ pow_dvd_pow_of_dvd h x⟩
-  rw [dvd_iff_emultiplicity_le ha, dvd_iff_emultiplicity_le (pow_ne_zero x ha)]
-  intro h p hp
-  specialize h p hp
-  rw [emultiplicity_pow hp, emultiplicity_pow hp,
-    (FiniteMultiplicity.of_not_isUnit hp.not_unit ha).emultiplicity_eq_multiplicity,
-    (FiniteMultiplicity.of_not_isUnit hp.not_unit hb).emultiplicity_eq_multiplicity,
-    ← Nat.cast_mul, ← Nat.cast_mul, Nat.cast_le] at h
-  rw [(FiniteMultiplicity.of_not_isUnit hp.not_unit ha).emultiplicity_eq_multiplicity,
-    (FiniteMultiplicity.of_not_isUnit hp.not_unit hb).emultiplicity_eq_multiplicity,
-    Nat.cast_le]
-  exact Nat.le_of_mul_le_mul_left h (Nat.pos_of_ne_zero h')
+  rw [dvd_iff_emultiplicity_le (pow_ne_zero x ha), dvd_iff_emultiplicity_le ha]
+  intro H p hp
+  have := H p hp
+  rwa [emultiplicity_pow hp, emultiplicity_pow hp,
+    ENat.mul_le_mul_left_iff (by exact_mod_cast h') (ENat.coe_ne_top _)] at this
 
 end Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
 
