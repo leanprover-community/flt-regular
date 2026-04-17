@@ -9,10 +9,6 @@ section Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
 
 variable {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
 
-lemma WfDvdMonoid.multiplicity_finite_iff [WfDvdMonoid M] {x y : M} :
-    FiniteMultiplicity x y ↔ ¬IsUnit x ∧ y ≠ 0 :=
-  ⟨fun h => ⟨h.not_unit, h.ne_zero⟩, and_imp.mpr FiniteMultiplicity.of_not_isUnit⟩
-
 lemma dvd_iff_emultiplicity_le [UniqueFactorizationMonoid M] {a b : M} (ha : a ≠ 0) :
     a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
   constructor
