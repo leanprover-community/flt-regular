@@ -45,7 +45,7 @@ variable {R} {S}
 
 lemma prod_primesOverFinset_of_isUnramified [IsUnramified R S] [IsDedekindDomain S]
     [Module.IsTorsionFree R S] (p : Ideal R) [p.IsPrime] (hp : p ≠ ⊥) :
-    ∏ P ∈ primesOverFinset p S, P = p.map (algebraMap R S) := by
+    ∏ P ∈ IsDedekindDomain.primesOverFinset p S, P = p.map (algebraMap R S) := by
   classical
   have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective
       (Module.isTorsionFree_iff_algebraMap_injective.mp inferInstance)).not.mpr hp
@@ -54,7 +54,7 @@ lemma prod_primesOverFinset_of_isUnramified [IsUnramified R S] [IsDedekindDomain
   intros P hP
   convert (pow_one _).symm
   have : p.IsMaximal := Ring.DimensionLEOne.maximalOfPrime hp ‹_›
-  rw [← Finset.mem_coe, coe_primesOverFinset hp] at hP
+  rw [← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset hp] at hP
   rw [← Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count hpbot' hP.1
     (ne_bot_of_mem_primesOver hp hP)]
   exact IsUnramified.isUnramifiedAt _ hp _ hP
@@ -100,7 +100,8 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
     apply Finset.prod_congr
     · ext P
       rw [factors_eq_normalizedFactors, Finset.mem_filter, Multiset.mem_toFinset,
-        Ideal.mem_normalizedFactors_iff hIbot, ← Finset.mem_coe, coe_primesOverFinset hpbot S]
+        Ideal.mem_normalizedFactors_iff hIbot, ← Finset.mem_coe,
+          IsDedekindDomain.coe_primesOverFinset hpbot S]
       refine ⟨fun H ↦ ⟨H.1.1, ⟨H.2.symm⟩⟩, fun H ↦ ⟨⟨H.1, ?_⟩, ?_⟩⟩
       · have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) H
         rw [← hσ, ← hI σ]
@@ -109,7 +110,7 @@ lemma comap_map_eq_of_isUnramified [IsGalois K L] [IsUnramified R S] (I : Ideal 
         rw [Ideal.under_def] at this
         exact this.symm
     · intro P hP
-      rw [← Finset.mem_coe, coe_primesOverFinset hpbot S] at hP
+      rw [← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset hpbot S] at hP
       congr
       rw [dif_pos hp, ← Nat.cast_inj (R := ENat), ← normalize_eq P, factors_eq_normalizedFactors,
         ← emultiplicity_eq_count_normalizedFactors
@@ -189,8 +190,8 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
       mul_zero, zero_add, map_one, zero_ne_one] at e
   · rwa [Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count _
       (primesOver.isMaximal ⟨P, hP⟩).isPrime (ne_bot_of_mem_primesOver hpbot hP),
-      Multiset.one_le_count_iff_mem, ← Multiset.mem_toFinset, ← primesOverFinset,
-      ← Finset.mem_coe, coe_primesOverFinset hpbot]
+      Multiset.one_le_count_iff_mem, ← Multiset.mem_toFinset, ← IsDedekindDomain.primesOverFinset,
+      ← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset hpbot]
     rwa [ne_eq, Ideal.map_eq_bot_iff_of_injective hRS]
 
 lemma isUnramifiedAt_of_Separable_minpoly [Algebra.IsSeparable K L]

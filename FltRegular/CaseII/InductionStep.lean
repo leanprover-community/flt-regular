@@ -229,7 +229,7 @@ include hζ m hy e in
 lemma m_dvd_z : 𝔪 ∣ 𝔷 := by
   rw [← one_mul 𝔷, ← gcd_m_p_pow_eq_one hζ hy (x := x) (m := m)]
   apply dvd_gcd_mul_of_dvd_mul
-  rw [← pow_dvd_pow_iff_dvd hpri.out.ne_zero, ← span_pow_add_pow_eq hζ e,
+  rw [← UniqueFactorizationMonoid.pow_dvd_pow_iff_dvd hpri.out.ne_zero, ← span_pow_add_pow_eq hζ e,
     Ideal.dvd_span_singleton]
   apply add_mem
   · exact Ideal.pow_mem_pow (Ideal.mem_sup_left (Ideal.mem_span_singleton_self x)) p
@@ -339,7 +339,8 @@ lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
 /- since the is only one 𝔞 η which is divisble by 𝔭 it has to be the η₀ one and it has to divide
 to 𝔭^m power.-/
 lemma p_pow_dvd_a_eta_zero : 𝔭 ^ m ∣ 𝔞 η₀ := by
-  rw [← pow_dvd_pow_iff_dvd hpri.out.ne_zero, root_div_zeta_sub_one_dvd_gcd_spec, ← pow_mul]
+  rw [← UniqueFactorizationMonoid.pow_dvd_pow_iff_dvd hpri.out.ne_zero,
+    root_div_zeta_sub_one_dvd_gcd_spec, ← pow_mul]
   exact p_pow_dvd_c_eta_zero hp hζ e hy
 
 noncomputable
@@ -359,7 +360,7 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
   rw [a_eta_zero_dvd_p_pow_spec, root_div_zeta_sub_one_dvd_gcd_spec] at this
   have := this.trans (Finset.dvd_prod_of_mem 𝔠 (Finset.mem_attach _ η₀))
   rw [prod_c, mul_pow, mul_pow, mul_comm, mul_dvd_mul_iff_right,
-    pow_dvd_pow_iff_dvd hpri.out.ne_zero] at this
+    UniqueFactorizationMonoid.pow_dvd_pow_iff_dvd hpri.out.ne_zero] at this
   · apply hz
     rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton, z_div_m_spec hζ e hy]
     exact this.trans (dvd_mul_left _ _)

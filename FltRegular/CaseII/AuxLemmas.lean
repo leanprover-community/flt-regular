@@ -5,42 +5,6 @@ import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 
 @[expose] public section
 
-section Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
-
-variable {M : Type*} [CommMonoidWithZero M] [IsCancelMulZero M]
-
-open UniqueFactorizationMonoid in
-lemma dvd_iff_emultiplicity_le [UniqueFactorizationMonoid M] {a b : M} (ha : a ≠ 0) :
-    a ∣ b ↔ ∀ p : M, Prime p → emultiplicity p a ≤ emultiplicity p b := by
-  classical
-  refine ⟨fun h _ _ ↦ emultiplicity_le_emultiplicity_of_dvd_right h, fun h ↦ ?_⟩
-  by_cases hb : b = 0
-  · simp_all
-  letI : NormalizationMonoid M := UniqueFactorizationMonoid.normalizationMonoid
-  rw [dvd_iff_normalizedFactors_le_normalizedFactors ha hb, Multiset.le_iff_count]
-  intro q
-  by_cases hq : q ∈ normalizedFactors a
-  · have hqprime : Prime q := prime_of_normalized_factor q hq
-    have h1 := emultiplicity_eq_count_normalizedFactors hqprime.irreducible ha
-    have h2 := emultiplicity_eq_count_normalizedFactors hqprime.irreducible hb
-    rw [normalize_normalized_factor q hq] at h1 h2
-    simpa [h1, h2] using h q hqprime
-  · simp [Multiset.count_eq_zero_of_notMem hq]
-
-lemma pow_dvd_pow_iff_dvd [UniqueFactorizationMonoid M] {a b : M} {x : ℕ} (h' : x ≠ 0) :
-    a ^ x ∣ b ^ x ↔ a ∣ b := by
-  classical
-  by_cases ha : a = 0
-  · simp [ha, h']
-  refine ⟨?_, fun h ↦ pow_dvd_pow_of_dvd h x⟩
-  rw [dvd_iff_emultiplicity_le (pow_ne_zero x ha), dvd_iff_emultiplicity_le ha]
-  intro H p hp
-  have := H p hp
-  rwa [emultiplicity_pow hp, emultiplicity_pow hp,
-    ENat.mul_le_mul_left_iff (by exact_mod_cast h') (ENat.coe_ne_top _)] at this
-
-end Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
-
 variable {K : Type*} {p : ℕ} [Field K] [CharZero K] {ζ : K}
 
 open scoped nonZeroDivisors

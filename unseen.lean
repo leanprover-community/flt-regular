@@ -53,13 +53,6 @@ elab "#deptree " : command => do
       printDeps₂ k v (fun s => h.write s.toUTF8)
   h.write "}\n".toUTF8
 
-/-- Extracts the names of the declarations in `env` on which `decl` depends. -/
--- source:
--- https://leanprover.zulipchat.com/#narrow/stream/287929-mathlib4/topic/Counting.20prerequisites.20of.20a.20theorem/near/425370265
-def getVisited (env : Environment) (decl : Name) :=
-  let (_, { visited, .. }) := Lean.CollectAxioms.collect decl |>.run env |>.run {}
-  visited.erase decl
-
 partial def allDeclsIn (module : Name) : Elab.Command.CommandElabM (Array Name) := do
   let mFile ← findOLean module
   unless (← mFile.pathExists) do
@@ -95,23 +88,15 @@ elab "#index " : command => do
       h.write (decl.toString ++ ", " ++ mod.toString ++ ", " ++
         ranges.range.pos.line.repr ++ ", " ++ ranges.range.pos.column.repr ++ "\n").toUTF8)
 
-def seenIn (env : Environment) (allDecls : NameSet) (decl : Name) : NameSet :=
-  (getVisited env decl).foldl
-    (fun decls x => if allDecls.contains x then decls.insert x else decls) ∅
-
 /-- `#unseen` computes a list of the declarations in the project that are
-defined but not used in the current file. The list is stored in `unseen_defs.txt`.
-The average runtime on my computer is 1 minute, with 16 threads. -/
+defined but not used. The list is stored in `unseen_defs.txt`. -/
 elab "#unseen " : command => do
   let env ← getEnv
   let allDecls ← allDecls env
-  let mut unseen := allDecls
   let timeStart ← IO.monoMsNow
-  let tasks := (fun l => Task.spawn (fun _ => seenIn env allDecls l)) <$>
-    allDecls.toList.mergeSort (toString · < toString ·)
-  for task in tasks do
-    for v in task.get do
-      unseen := unseen.erase v
+  let unseen := env.constants.fold (init := allDecls) fun unseen name info =>
+    info.getUsedConstantsAsSet.foldl (init := unseen) fun unseen x =>
+      if x = name then unseen else unseen.erase x
   IO.FS.withFile "docs/unseen_defs.txt" IO.FS.Mode.write (fun h => do
     for v in unseen.toList.mergeSort (toString · < toString ·) do
       h.write (v.toString ++ "\n").toUTF8)
