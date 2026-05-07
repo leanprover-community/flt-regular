@@ -71,7 +71,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     · apply hη'
       use a
       conv_rhs => enter [1]; rw [← hβ]
-      rw [map_mul, ← AlgHom.coe_coe σ, ← algebraMap_galRestrictHom_apply A K L B σ a]
+      rw [map_mul, ← algebraMap_galRestrict_apply A]
       refine (mul_div_cancel_right₀ _ ?_).symm
       · rw [ne_eq, (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
           (injective_iff_map_eq_zero' _).mp (galRestrict A K L B σ).injective]

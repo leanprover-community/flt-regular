@@ -317,7 +317,7 @@ lemma p_pow_dvd_c_eta_zero_aux [DecidableEq (𝓞 K)] :
     rw [← Ideal.isCoprime_iff_gcd]
     apply IsCoprime.pow_left
     rw [Ideal.isCoprime_iff_gcd, hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff,
-      hζ.prime_span_sub_one.dvd_finset_prod_iff]
+      hζ.prime_span_sub_one.dvd_finsetProd_iff]
     rintro ⟨η, hη, h⟩
     rw [p_dvd_c_iff] at h
     simp only [Finset.mem_sdiff, Finset.mem_singleton] at hη

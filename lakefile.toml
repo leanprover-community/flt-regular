@@ -9,6 +9,7 @@ maxSynthPendingDepth = 3 # same as mathlib, changes behaviour of typeclass infer
 # Enable all mathlib linters: automatically matches what mathlib uses.
 linter.mathlibStandardSet = true
 linter.flexible = true
+linter.style.header = false
 
 [[require]]
 name = "mathlib"

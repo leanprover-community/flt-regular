@@ -38,8 +38,6 @@ section IntFacts
 
 open scoped NumberField
 
-instance {K : Type*} [Field K] : Module (𝓞 K) (𝓞 K) := Semiring.toModule
-
 open Ideal IsCyclotomicExtension
 
 theorem exists_int_sub_pow_prime_dvd {A : Type*} [CommRing A] [IsCyclotomicExtension {p} ℤ A]

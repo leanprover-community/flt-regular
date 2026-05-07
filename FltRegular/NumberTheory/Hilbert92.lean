@@ -297,11 +297,6 @@ section Mathlib.Algebra.Group.Hom.Defs
 
 variable {M : Type*} [MulOne M]
 
-@[ext]
-theorem Monoid.End.ext {f g : Monoid.End M} (h : ∀ x : M, f x = g x) :
-    f = g :=
-  DFunLike.ext _ _ h
-
 variable (M) in
 def Monoid.End.equiv : Monoid.End M ≃ (M →* M) where
   toFun := id
@@ -360,8 +355,8 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank,
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
     ← (finEquivZPowers <| isOfFinOrder_of_finite _).symm.prod_comp]
-  simp only [pow_finEquivZPowers_symm_apply, coe_galRestrictHom_apply, AlgHom.coe_coe, map_prod,
-    NumberField.RingOfIntegers.coe_eq_algebraMap]
+  simp only [RingOfIntegers.coe_eq_algebraMap, pow_finEquivZPowers_symm_apply, map_prod,
+    algebraMap_galRestrictHom_apply, AlgEquiv.coe_algHom]
   rw [prod_subtype]
   simp [mem_univ, hσ]
 
