@@ -20,5 +20,4 @@ theorem isRegularPrime_eleven :
   exact classNumber_eq_one_iff.2 (Rat.eleven_pid (CyclotomicField _ ℚ))
 
 theorem fermatLastTheoremEleven : FermatLastTheoremFor 11 := by
-  have : Fact (Nat.Prime 11) := ⟨Nat.prime_eleven⟩
-  exact flt_regular isRegularPrime_eleven (by omega)
+  exact @flt_regular 11 ⟨Nat.prime_eleven⟩ isRegularPrime_eleven (by omega)

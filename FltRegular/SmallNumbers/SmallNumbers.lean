@@ -17,22 +17,14 @@ theorem FLT_small {n : ℕ} (hn : n ∈ Finset.Icc 3 16) : FermatLastTheoremFor 
   · exact fermatLastTheoremThree
   · exact fermatLastTheoremFour
   · exact fermatLastTheoremFive
-  · apply FermatLastTheoremFor.mono (show 3 ∣ 6 by decide)
-    exact fermatLastTheoremThree
+  · exact fermatLastTheoremThree.mono (show 3 ∣ 6 by decide)
   · exact fermatLastTheoremSeven
-  · apply FermatLastTheoremFor.mono (show 4 ∣ 8 by decide)
-    exact fermatLastTheoremFour
-  · apply FermatLastTheoremFor.mono (show 3 ∣ 9 by decide)
-    exact fermatLastTheoremThree
-  · apply FermatLastTheoremFor.mono (show 5 ∣ 10 by decide)
-    exact fermatLastTheoremFive
+  · exact fermatLastTheoremFour.mono (show 4 ∣ 8 by decide)
+  · exact fermatLastTheoremThree.mono (show 3 ∣ 9 by decide)
+  · exact fermatLastTheoremFive.mono (show 5 ∣ 10 by decide)
   · exact fermatLastTheoremEleven
-  · apply FermatLastTheoremFor.mono (show 4 ∣ 12 by decide)
-    exact fermatLastTheoremFour
+  · exact fermatLastTheoremFour.mono (show 4 ∣ 12 by decide)
   · exact fermatLastTheoremThirteen
-  · apply FermatLastTheoremFor.mono (show 7 ∣ 14 by decide)
-    exact fermatLastTheoremSeven
-  · apply FermatLastTheoremFor.mono (show 5 ∣ 15 by decide)
-    exact fermatLastTheoremFive
-  · apply FermatLastTheoremFor.mono (show 4 ∣ 16 by decide)
-    exact fermatLastTheoremFour
+  · exact fermatLastTheoremSeven.mono (show 7 ∣ 14 by decide)
+  · exact fermatLastTheoremFive.mono (show 5 ∣ 15 by decide)
+  · exact fermatLastTheoremFour.mono (show 4 ∣ 16 by decide)

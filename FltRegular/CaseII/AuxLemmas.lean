@@ -26,7 +26,7 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
 
 open FractionalIdeal in
-lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDomain R] [IsDedekindDomain R]
+lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain R]
     {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
     {x : R} (hx : Prime x) (I J : Ideal R)
     (hI : ¬ (Ideal.span <| singleton x) ∣ I) (hJ : ¬ (Ideal.span <| singleton x) ∣ J)

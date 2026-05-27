@@ -280,8 +280,7 @@ theorem fltIdeals_coprime (hpri : p.Prime) (p5 : 5 ≤ p) {x y z : ℤ}
       rw [h] at hdiff
       exact hdiff.symm
     have := fltIdeals_coprime2 p5 hη₂ hη₁ hdiff.symm hxy (aux_lem_flt H caseI) h2
-    apply IsCoprime.symm
-    exact this
+    exact this.symm
 
 variable {L}
 

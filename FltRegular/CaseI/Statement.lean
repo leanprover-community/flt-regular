@@ -78,9 +78,7 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
     obtain ⟨m, hm⟩ := Int.gcd_dvd_right a b
     exact ⟨n * m, by rw [hm, hn]; simp [mul_assoc]⟩
   have hcq : ↑q ∣ c := by
-    suffices ↑q ∣ c ^ p by exact hqpri.dvd_of_dvd_pow this
-    rw [← H]
-    exact dvd_add (dvd_pow haq hpzero) (dvd_pow hbq hpzero)
+    exact hqpri.dvd_of_dvd_pow (H ▸ dvd_add (dvd_pow haq hpzero) (dvd_pow hbq hpzero))
   have Hq : ↑q ∣ ({a, b, c} : Finset ℤ).gcd id := by
     refine dvd_gcd fun x hx ↦ ?_
     simp only [mem_insert, mem_singleton] at hx
@@ -240,7 +238,7 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     ring
   rw [sum_range] at key
   refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ?_ _) _)
-  simpa [f] using dvd_coeff_cycl_integer (by exact hpri.out) hζ (auxf hp5 a b k₁ k₂) key
+  exact dvd_coeff_cycl_integer hpri.out hζ (auxf hp5 a b k₁ k₂) key
     ⟨0, hpri.out.pos⟩
 
 /-- CaseI. -/

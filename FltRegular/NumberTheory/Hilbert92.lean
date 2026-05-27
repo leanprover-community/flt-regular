@@ -490,7 +490,7 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
     ∃ (a : ℤ) (ι : Fin r → ℤ) (i : Fin r),
       ∑ i, ι i • (η i) = (a * p) • (Additive.ofMul ν) ∧ ¬ ↑p ∣ ι i ∧ (ν = 1 → ↑i ≠ r - 1) := by
   cases r with
-  | zero => exact (not_lt_zero' hr).elim
+  | zero => exact (not_lt_zero hr).elim
   | succ r =>
     simp only [add_lt_add_iff_right] at hr
     obtain ⟨a₁, ι₁, i₁, e₁, hi₁⟩ := lh_pow_free_aux p hp ν hk r hr (η ∘ Fin.castSucc)
@@ -562,8 +562,8 @@ def Algebra.normZeroHom (R S) [CommRing R] [Ring S] [Nontrivial S] [Algebra R S]
   __ := Algebra.norm R
   map_zero' := Algebra.norm_zero
 
-lemma norm_map_zpow {R S} [Field R] [DivisionRing S] [Nontrivial S] [Algebra R S]
-    [Module.Free R S] [Module.Finite R S] (s : S) (n : ℤ) :
+lemma norm_map_zpow {R S} [Field R] [DivisionRing S] [Algebra R S] [Module.Free R S]
+  [Module.Finite R S] (s : S) (n : ℤ) :
     Algebra.norm R (s ^ n) = (Algebra.norm R s) ^ n := map_zpow₀ (Algebra.normZeroHom R S) s n
 
 variable [NumberField K]
@@ -733,7 +733,7 @@ lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),
   refine ⟨j, ν, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ν.1),
     fun ε n hn ↦ ?_⟩
   let _ : Fintype (Units.torsion k) := inferInstance
-  have : Fintype H := Set.fintypeSubset (NumberField.Units.torsion k) (by exact this)
+  have : Fintype H := Set.fintypeSubset (NumberField.Units.torsion k) this
   obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hν ⟨ε, ⟨_, n, rfl⟩, hn⟩)
   exact ⟨i, congr_arg Subtype.val hi⟩
 

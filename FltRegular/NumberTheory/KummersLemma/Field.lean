@@ -276,9 +276,8 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     · intros x y e; ext; exact (algebraMap K L).injective (congr_arg Subtype.val e)
     · intros x; exact IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ L x)
   rw [← Polynomial.separable_map i, map_map, Ideal.quotientMap_comp_mk, ← map_map]
-  apply Separable.map
-  apply separable_poly_aux hp hζ u hcong
-  exact root_X_pow_sub_C_pow _ _
+  exact Separable.map <|
+    separable_poly_aux hp hζ u hcong (AdjoinRoot.root _) (root_X_pow_sub_C_pow _ _)
 
 lemma polyRoot_spec {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) (i) :

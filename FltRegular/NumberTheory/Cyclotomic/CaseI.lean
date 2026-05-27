@@ -50,7 +50,7 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) 
       this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv, map_units_inv] at H
     have h : (algebraMap (𝓞 K) K) ↑hζ.unit' = ζ := rfl
     simp [h, H]
-  refine (CommGroup.mem_torsion _ _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
+  refine (CommGroup.mem_torsion _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
   ext
   exact hζ.pow_eq_one
 

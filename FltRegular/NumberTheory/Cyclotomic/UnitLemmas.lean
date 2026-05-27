@@ -53,8 +53,7 @@ theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
   by
   rw [← map_one <| algebraMap A <| A ⧸ Ideal.span ({t - 1} : Set A), ← sub_eq_zero, ← map_sub,
     Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem]
-  apply Ideal.subset_span
-  exact Set.mem_singleton _
+  exact Ideal.subset_span (Set.mem_singleton _)
 
 theorem IsPrimitiveRoot.eq_one_mod_sub_of_pow {A : Type*} [CommRing A] [IsDomain A] {ζ : A}
     (hζ : IsPrimitiveRoot ζ p) {μ : A} (hμ : μ ^ p = 1) :
@@ -263,7 +262,7 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
       simp only [Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv, RingOfIntegers.mapRingEquiv_apply,
         this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv, map_units_inv] at H
       simp [H]
-    refine (CommGroup.mem_torsion _ _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
+    refine (CommGroup.mem_torsion _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
     ext
     exact hζ.pow_eq_one
   conv_lhs at hu' =>

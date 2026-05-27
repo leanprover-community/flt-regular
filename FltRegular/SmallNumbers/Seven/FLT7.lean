@@ -20,5 +20,4 @@ theorem isRegularPrime_seven :
   exact classNumber_eq_one_iff.2 (Rat.seven_pid (CyclotomicField _ ℚ))
 
 theorem fermatLastTheoremSeven : FermatLastTheoremFor 7 := by
-  have : Fact (Nat.Prime 7) := ⟨Nat.prime_seven⟩
-  exact flt_regular isRegularPrime_seven (by omega)
+  exact @flt_regular 7 ⟨Nat.prime_seven⟩ isRegularPrime_seven (by omega)
