@@ -2,7 +2,7 @@ module
 
 public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 public import Mathlib.Algebra.Lie.OfAssociative
-public import Mathlib.RingTheory.ClassGroup
+public import Mathlib.RingTheory.ClassGroup.Basic
 import FltRegular.CaseII.AuxLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas

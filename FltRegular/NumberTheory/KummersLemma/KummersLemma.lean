@@ -1,7 +1,7 @@
 module
 
 public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-public import Mathlib.RingTheory.ClassGroup
+public import Mathlib.RingTheory.ClassGroup.Basic
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.Hilbert94

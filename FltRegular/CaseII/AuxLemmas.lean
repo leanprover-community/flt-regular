@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.RingTheory.ClassGroup
+public import Mathlib.RingTheory.ClassGroup.Basic
 import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 
 @[expose] public section
