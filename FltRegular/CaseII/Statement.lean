@@ -71,8 +71,7 @@ lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRe
     hζ ⟨x, y, z, hy, hz, ?_, ?_⟩
   · convert hreg
   · rwa [ne_eq, Int.cast_eq_zero]
-  · dsimp
-    simp_rw [← Int.cast_pow, ← Int.cast_add, e]
+  · simp_rw [← Int.cast_pow, ← Int.cast_add, e]
 
 lemma not_exists_Int_solution' {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p)
     (hodd : p ≠ 2) :

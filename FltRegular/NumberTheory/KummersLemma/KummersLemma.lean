@@ -85,7 +85,7 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     rw [← isUnit_pow_iff (NeZero.pos p).ne.symm]; convert (u ^ (p - 1) : (𝓞 K)ˣ).isUnit; ext
     exact hv
   have hv'' : this.unit ^ p = u ^ (p - 1) := by
-    ext; simpa only [Units.val_pow_eq_pow_val, IsUnit.unit_spec, SubmonoidClass.coe_pow] using hv
+    ext; simpa using! hv
   use u / this.unit
   rw [div_pow, hv'', div_eq_mul_inv, ← pow_sub _ tsub_le_self,
     tsub_tsub_cancel_of_le (Nat.Prime.one_lt hpri.out).le, pow_one]

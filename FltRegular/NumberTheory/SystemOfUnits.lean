@@ -94,7 +94,6 @@ lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < s) :
     have := Fact.mk hp
     obtain ⟨n, h0, f, Hf⟩ := CyclotomicIntegers.exists_dvd_int p _ ha.2
     have hy' := congr_arg (f • ·) ha.1
-    simp only at hy'
     rw [smul_zero, smul_add, smul_smul, mul_comm f,
       ← Hf, ← eq_neg_iff_add_eq_zero, Int.cast_smul_eq_zsmul] at hy'
     apply hg _ h0

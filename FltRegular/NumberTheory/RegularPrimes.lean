@@ -61,7 +61,7 @@ instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
         · convert IsIntegralClosure.algebraMap_mk' ℤ (f x) (map_isIntegral_int f hx)
           simp
         · rintro ⟨y, hy⟩
-          simpa [← hy] using isIntegral_algebraMap }
+          simpa [← hy] using! isIntegral_algebraMap }
   let F : 𝓞 L ≃+* ℤ := NumberField.RingOfIntegers.equiv _
   exact IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
 
@@ -74,7 +74,6 @@ IsPrincipalIdealRing_of_IsCyclotomicExtension_two _
 theorem isRegularPrime_two : IsRegularPrime 2 := by
   rw [IsRegularPrime, IsRegularNumber]
   convert coprime_one_right _
-  dsimp
   apply (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField 2 ℚ))).2
   infer_instance
 

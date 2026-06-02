@@ -839,7 +839,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
               use ((ν ^ p ^ h) ^ i * ε')
               rw [map_mul, ← mul_inv_eq_iff_eq_mul]
               ext
-              simpa using e.symm
+              simpa using! e.symm
           simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, ← map_pow, hε'',
             RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_coe,
             RingOfIntegers.coe_algebraMap_apply, AlgEquiv.commutes] at hE

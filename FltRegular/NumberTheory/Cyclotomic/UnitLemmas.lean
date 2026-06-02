@@ -27,7 +27,7 @@ set_option quotPrecheck false
 local notation "I" => (Ideal.span ({(hζ.unit' - 1 : 𝓞 K)} : Set (𝓞 K)) : Ideal (𝓞 K))
 
 theorem IsPrimitiveRoot.unit'_pow : hζ.unit' ^ p = 1 := by
-  ext; simpa using hζ.pow_eq_one
+  ext; simpa using! hζ.pow_eq_one
 
 theorem zeta_runity_pow_even (hpo : Odd p) (n : ℕ) :
     ∃ m : ℕ, hζ.unit' ^ n = hζ.unit' ^ (2 * m) := by
@@ -185,7 +185,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
       simp only [pow_one, neg_mul, one_mul]
       rw [← Subtype.val_inj] at Hi
       simp only [neg_mul, one_mul] at Hi
-      exact Iff.mp neg_eq_iff_eq_neg (id (Eq.symm (by simpa using Hi)))
+      exact Iff.mp neg_eq_iff_eq_neg (id (Eq.symm (by simpa using! Hi)))
   obtain ⟨m, k, hmk⟩ := H
   refine ⟨m, k, ?_⟩
   have eq : ((⟨x, hx⟩ : 𝓞 K) : K) = x := rfl

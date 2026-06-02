@@ -106,7 +106,7 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
   have : Algebra.IsSeparable (FractionRing A) (FractionRing B) :=
     Algebra.IsSeparable.of_equiv_equiv _ _ H
   have hLK : finrank (FractionRing A) (FractionRing B) = finrank K L := by
-    simpa only [Cardinal.toNat_lift] using congr_arg Cardinal.toNat
+    simpa only [Cardinal.toNat_lift] using! congr_arg Cardinal.toNat
       (Algebra.lift_rank_eq_of_equiv_equiv (FractionRing.algEquiv A K).symm.toRingEquiv
         (FractionRing.algEquiv B L).symm.toRingEquiv H).symm
   rw [← hLK, ← Ideal.relNorm_algebraMap, ← (I.map (algebraMap A B)).span_singleton_generator,
