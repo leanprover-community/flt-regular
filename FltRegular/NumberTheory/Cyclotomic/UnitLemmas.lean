@@ -198,27 +198,13 @@ theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact p.Prime] (h : 2 < p)
   rw [sub_eq_of_eq_add hk] at this
   exact hζ.isPrime_one_sub_zeta.ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
-lemma Units.coe_map_inv' {M N F : Type*} [Monoid M] [Monoid N] [FunLike F M N]
-    [MonoidHomClass F M N] (f : F) (m : Mˣ) :
-    ↑((Units.map (f : M →* N) m)⁻¹) = f ↑(m⁻¹ : Mˣ) :=
-  m.coe_map_inv (f : M →* N)
-
-omit [NumberField K] in
-variable (K) in
-theorem IsCyclotomicExtension.IsCMField (hp : 2 < p) :
-    IsCMField K :=
-  haveI := IsCyclotomicExtension.numberField {p} ℚ K
-  haveI := IsCyclotomicExtension.isAbelianGalois {p} ℚ K
-  haveI := nrRealPlaces_eq_zero_iff.1 (Rat.nrRealPlaces_eq_zero K hp)
-  ⟨⟩
-
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (hp : 2 < p) :
-    haveI := IsCyclotomicExtension.IsCMField K hp
+    haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     algebraMap (𝓞 K) (𝓞 K ⧸ I) (unitsMulComplexConjInv K u).1 = 1 := by
-  haveI := IsCyclotomicExtension.IsCMField K hp
-  have := Units.coe_map_inv' (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitsComplexConj K u)
-  rw [unitsMulComplexConjInv_apply, Units.val_mul, map_mul, ← this, Units.mul_inv_eq_one,
-    Units.coe_map, MonoidHom.coe_coe]
+  haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
+  have := Units.coe_map_inv (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitsComplexConj K u)
+  rw [unitsMulComplexConjInv_apply, Units.val_mul, map_mul, ← MonoidHom.coe_coe, ← this,
+    Units.mul_inv_eq_one, Units.coe_map, MonoidHom.coe_coe]
   haveI := Fact.mk hp
   have hu := hζ.integralPowerBasis.basis.sum_repr u
   let a := hζ.integralPowerBasis.basis.repr
@@ -256,7 +242,7 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
   exact (aux hζ hζ hu).trans (aux hζ hζ.inv hu').symm
 
 theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Prime)] (hp : 2 < p) :
-    haveI := IsCyclotomicExtension.IsCMField K hp
+    haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     u * (unitsComplexConj K u)⁻¹ ≠ -η ^ n := by
   by_contra H
   have hμ : algebraMap (𝓞 K) (𝓞 K ⧸ I) ((η : 𝓞 K) ^ n) = 1 := by
@@ -276,9 +262,9 @@ theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Pr
     ← hμ', hμ]
 
 theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp : 2 < p) :
-    haveI := IsCyclotomicExtension.IsCMField K hp
+    haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     ∃ m : ℕ, u * (unitsComplexConj K u)⁻¹ = (η ^ m) ^ 2 := by
-  haveI := IsCyclotomicExtension.IsCMField K hp
+  haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
   have hpo : Odd p := H.out.odd_of_ne_two hp.ne'
   haveI : NormedAlgebra ℚ ℂ := normedAlgebraRat
   have :=
