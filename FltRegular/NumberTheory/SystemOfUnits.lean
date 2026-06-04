@@ -35,29 +35,16 @@ namespace systemOfUnits
 lemma existence0 : Nonempty (systemOfUnits p G 0) := by
   exact ⟨⟨fun _ ↦ 0, linearIndependent_empty_type⟩⟩
 
-theorem _root_.PowerBasis.finrank' {R S} [CommRing R] [Nontrivial R] [CommRing S] [Algebra R S]
-    (pb : PowerBasis R S) : finrank R S = pb.dim := by
-  rw [finrank_eq_card_basis pb.basis, Fintype.card_fin]
-
-open Cardinal Submodule in
-theorem _root_.finrank_span_set_eq_card' {R M} [CommRing R] [AddCommGroup M] [Module R M]
-    [Nontrivial R] (s : Set M) [Fintype s] (hs : LinearIndependent R ((↑) : s → M)) :
-    finrank R (span R s) = s.toFinset.card :=
-  finrank_eq_of_rank_eq
-    (by
-      have : Module.rank R (span R s) = #s := rank_span_set hs
-      rwa [Cardinal.mk_fintype, ← Set.toFinset_card] at this)
-
 include hp
 
 lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
     finrank ℤ (Submodule.span A (Set.range f)) = (p - 1) * R := by
   classical
   have := Fact.mk hp
-  have := finrank_span_set_eq_card' (R := A) (Set.range f)
+  have := finrank_span_set_eq_card (R := A) (s := Set.range f)
     ((linearIndepOn_id_range_iff hf.injective).mpr hf)
   simp only [Set.toFinset_range, Finset.card_image_of_injective _ hf.injective, card_fin] at this
-  rw [← CyclotomicIntegers.powerBasis_dim, ← PowerBasis.finrank']
+  rw [← CyclotomicIntegers.powerBasis_dim, ← PowerBasis.finrank]
   conv_rhs => rw [← this]
   have := Module.Free.of_basis (Basis.span hf)
   have := Module.Finite.of_basis (Basis.span hf)

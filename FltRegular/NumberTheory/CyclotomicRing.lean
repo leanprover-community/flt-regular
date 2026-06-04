@@ -29,14 +29,6 @@ lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
   · exact hpri.out.pos
   · exact IsIntegralClosure.isIntegral _ (CyclotomicField p ℚ) _
 
-lemma AdjoinRoot.aeval_root {R} [CommRing R] (P : R[X]) : aeval (root P) P = 0 := by simp
-
-/-- The equivalence from an adjoining root to a power basis with the same minimal polynomial. -/
-def AdjoinRoot.equivOfMinpolyEq {R S} [CommRing R] [CommRing S] [Algebra R S]
-    (P : R[X]) (pb : PowerBasis R S) (hpb : minpoly R pb.gen = P) :
-    AdjoinRoot P ≃ₐ[R] S :=
-  AdjoinRoot.equiv' P pb (hpb ▸ aeval_root _) (hpb ▸ minpoly.aeval _ _)
-
 namespace CyclotomicIntegers
 
 set_option backward.isDefEq.respectTransparency false in
@@ -46,9 +38,11 @@ set_option backward.isDefEq.respectTransparency false in
 def equiv :
     CyclotomicIntegers p ≃+* 𝓞 (CyclotomicField p ℚ) := by
   have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
-  exact (AdjoinRoot.equivOfMinpolyEq (cyclotomic p ℤ) H.integralPowerBasis
-    (H.integralPowerBasis_gen ▸
-      IsPrimitiveRoot.cyclotomic_eq_minpoly p H.toInteger H)).toRingEquiv
+  have hH : minpoly ℤ H.integralPowerBasis.gen = cyclotomic p ℤ :=
+    H.integralPowerBasis_gen ▸ IsPrimitiveRoot.cyclotomic_eq_minpoly p H.toInteger H
+  exact (AdjoinRoot.equiv' (cyclotomic p ℤ) H.integralPowerBasis
+    (hH ▸ ((AdjoinRoot.aeval_eq _).trans AdjoinRoot.mk_self))
+    (hH ▸ minpoly.aeval _ _)).toRingEquiv
 
 instance : IsDomain (CyclotomicIntegers p) :=
   AdjoinRoot.isDomain_of_prime (UniqueFactorizationMonoid.irreducible_iff_prime.mp

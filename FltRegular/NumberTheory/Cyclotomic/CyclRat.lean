@@ -32,8 +32,6 @@ open FiniteDimensional Polynomial Algebra Nat Finset Fintype
 
 variable (p : ℕ) (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {p} ℚ L]
 
-instance Ring.toSubtractionMonoid {S : Type*} [Ring S] : SubtractionMonoid S := inferInstance
-
 section IntFacts
 
 open scoped NumberField
