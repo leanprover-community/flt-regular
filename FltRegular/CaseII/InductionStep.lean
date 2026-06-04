@@ -177,7 +177,7 @@ lemma gcd_zeta_sub_one_eq_one : gcd 𝔪 𝔭 = 1 := by
   convert gcd_one_right 𝔵 using 2
   rwa [gcd_comm, Irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton, Ideal.mem_span_singleton]
   · rw [irreducible_iff_prime]
-    exact hζ.prime_span_sub_one
+    exact Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime'
 
 include hy in
 lemma gcd_div_div_zeta_sub_one (η) : 𝔪 ∣ Ideal.span {divZetaSubOne hp hζ e η} := by
@@ -315,8 +315,9 @@ lemma p_pow_dvd_c_eta_zero_aux [DecidableEq (𝓞 K)] :
       (∏ η ∈ Finset.attach (nthRootsFinset p (1 : 𝓞 K)) \ {η₀}, 𝔠 η) = 1 := by
   rw [← Ideal.isCoprime_iff_gcd]
   apply IsCoprime.pow_left
-  rw [Ideal.isCoprime_iff_gcd, hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff,
-    hζ.prime_span_sub_one.dvd_finsetProd_iff]
+  rw [Ideal.isCoprime_iff_gcd,
+    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').irreducible.gcd_eq_one_iff,
+    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').dvd_finsetProd_iff]
   rintro ⟨η, hη, h⟩
   rw [p_dvd_c_iff] at h
   simp only [Finset.mem_sdiff, Finset.mem_singleton] at hη
@@ -324,7 +325,7 @@ lemma p_pow_dvd_c_eta_zero_aux [DecidableEq (𝓞 K)] :
 
 lemma p_dvd_a_iff : 𝔭 ∣ 𝔞 η ↔ η = η₀ := by
   rw [← p_dvd_c_iff hp hζ e hy, ← root_div_zeta_sub_one_dvd_gcd_spec,
-    hζ.prime_span_sub_one.dvd_pow_iff_dvd hpri.out.ne_zero]
+    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').dvd_pow_iff_dvd hpri.out.ne_zero]
 
 lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
   classical
@@ -369,11 +370,13 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
 include hp hζ e hy hz in
 lemma one_le_m : 1 ≤ m := by
   have ha := not_p_div_a_zero hp hζ e hy hz
-  rw [← hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff] at ha
+  have hprime := Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime'
+  rw [← hprime.irreducible.gcd_eq_one_iff] at ha
   have := (p_dvd_a_iff hp hζ e hy η₀).mpr rfl
   rw [← a_eta_zero_dvd_p_pow_spec, mul_comm, ← dvd_gcd_mul_iff_dvd_mul, ha, one_mul] at this
   nth_rw 1 [← pow_one 𝔭] at this
-  rwa [← pow_dvd_pow_iff (p_ne_zero hζ) hζ.prime_span_sub_one.not_unit]
+  rwa [← pow_dvd_pow_iff (p_ne_zero hζ)
+    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').not_unit]
 
 include hp in
 lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)

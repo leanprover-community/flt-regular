@@ -18,17 +18,6 @@ open Polynomial
 
 variable (hp : p ≠ 2)
 
-lemma IsPrimitiveRoot.prime_span_sub_one :
-    Prime (Ideal.span <| singleton <| (hζ.toInteger - 1 : 𝓞 K)) := by
-  haveI : Fact (Nat.Prime p) := hpri
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  change Prime (Ideal.span <| singleton <| (hζ.toInteger - 1 : 𝓞 K))
-  rw [Ideal.prime_iff_isPrime,
-    Ideal.span_singleton_prime (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)]
-  · exact hζ.zeta_sub_one_prime'
-  · rw [Ne, Ideal.span_singleton_eq_bot]
-    exact hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt
-
 omit [CharZero K] [IsCyclotomicExtension {p} ℚ K] in
 lemma associated_zeta_sub_one_pow_prime :
     Associated ((hζ.toInteger - 1 : 𝓞 K) ^ (p - 1)) p := by
@@ -50,7 +39,8 @@ lemma isCoprime_of_not_zeta_sub_one_dvd {x : 𝓞 K} (hx : ¬ (hζ.toInteger : �
   rwa [← Ideal.isCoprime_span_singleton_iff,
     ← Ideal.span_singleton_eq_span_singleton.mpr (associated_zeta_sub_one_pow_prime hζ),
     ← Ideal.span_singleton_pow, IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd,
-    hζ.prime_span_sub_one.irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton,
+    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').irreducible.gcd_eq_one_iff,
+    Ideal.dvd_span_singleton,
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
