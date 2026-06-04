@@ -19,29 +19,32 @@ open Polynomial
 variable (hp : p ≠ 2)
 
 lemma IsPrimitiveRoot.prime_span_sub_one :
-    Prime (Ideal.span <| singleton <| (hζ.unit' - 1 : 𝓞 K)) := by
+    Prime (Ideal.span <| singleton <| (hζ.toInteger - 1 : 𝓞 K)) := by
   haveI : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
+  change Prime (Ideal.span <| singleton <| (hζ.toInteger - 1 : 𝓞 K))
   rw [Ideal.prime_iff_isPrime,
-    Ideal.span_singleton_prime (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)]
+    Ideal.span_singleton_prime (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)]
   · exact hζ.zeta_sub_one_prime'
   · rw [Ne, Ideal.span_singleton_eq_bot]
-    exact hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt
+    exact hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt
 
-lemma associated_zeta_sub_one_pow_prime : Associated ((hζ.unit' - 1 : 𝓞 K) ^ (p - 1)) p := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
+omit [CharZero K] [IsCyclotomicExtension {p} ℚ K] in
+lemma associated_zeta_sub_one_pow_prime :
+    Associated ((hζ.toInteger - 1 : 𝓞 K) ^ (p - 1)) p := by
   rw [← eval_one_cyclotomic_prime (R := 𝓞 K) (p := p),
-    cyclotomic_eq_prod_X_sub_primitiveRoots hζ.unit'_coe, eval_prod]
+    cyclotomic_eq_prod_X_sub_primitiveRoots hζ.toInteger_isPrimitiveRoot, eval_prod]
   simp only [eval_sub, eval_X, eval_C]
-  rw [← Nat.totient_prime hpri.out, ← hζ.unit'_coe.card_primitiveRoots, ← Finset.prod_const]
+  rw [← Nat.totient_prime hpri.out, ← hζ.toInteger_isPrimitiveRoot.card_primitiveRoots,
+    ← Finset.prod_const]
   apply Associated.prod
   intro η hη
-  refine hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
-    (one_mem_nthRootsFinset hpri.out.pos) ?_ ?_
+  refine hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime
+    hpri.out (one_mem_nthRootsFinset hpri.out.pos) ?_ ?_
   · exact ((isPrimitiveRoot_of_mem_primitiveRoots hη).mem_nthRootsFinset hpri.out.pos)
   · exact ((isPrimitiveRoot_of_mem_primitiveRoots hη).ne_one hpri.out.one_lt).symm
 
-lemma isCoprime_of_not_zeta_sub_one_dvd {x : 𝓞 K} (hx : ¬ (hζ.unit' : 𝓞 K) - 1 ∣ x) :
+lemma isCoprime_of_not_zeta_sub_one_dvd {x : 𝓞 K} (hx : ¬ (hζ.toInteger : 𝓞 K) - 1 ∣ x) :
     IsCoprime ↑p x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   rwa [← Ideal.isCoprime_span_singleton_iff,
@@ -51,7 +54,7 @@ lemma isCoprime_of_not_zeta_sub_one_dvd {x : 𝓞 K} (hx : ¬ (hζ.unit' : 𝓞 
     Ideal.mem_span_singleton]
   · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
-lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.unit' - 1 : 𝓞 K) ∣ a - b := by
+lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.toInteger - 1 : 𝓞 K) ∣ a - b := by
   letI : Fact (Nat.Prime p) := hpri
   simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.Quotient.mk_eq_mk, Submodule.Quotient.mk_sub,
     sub_eq_zero, ← SModEq.def]
@@ -69,7 +72,7 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b
   obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime hζ).symm
   rw [(Nat.Prime.odd_of_ne_two hpri.out hp).neg_pow, ← sub_eq_add_neg, e,
     mul_pow, ← sub_eq_add_neg] at hr
-  use b, ↑u * ((hζ.unit' - 1 : 𝓞 K) * k ^ p) - r * a * (-b)
+  use b, ↑u * ((hζ.toInteger - 1 : 𝓞 K) * k ^ p) - r * a * (-b)
   rw [← sub_eq_iff_eq_add.mpr hr, mul_sub, ← mul_assoc, ← mul_assoc, hu, ← pow_succ,
     Nat.sub_add_cancel (n := p) (m := 1) hpri.out.one_lt.le]
   ring
@@ -82,7 +85,7 @@ theorem prime_units_mul (a : αˣ) (b : α) : Prime (↑a * b) ↔ Prime b := by
 
 end
 
-lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by
+lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.toInteger : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   by_cases hp : p = 2
   · subst hp
@@ -91,15 +94,15 @@ lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ �
     have := hζ'.norm_toInteger_pow_sub_one_of_two
     rw [pow_zero, pow_one, pow_one (-2)] at this
     replace this : (Algebra.norm ℤ) (hζ.toInteger - 1) = -2 := this
+    have hprime : Prime ((Algebra.norm ℤ) (hζ.toInteger - 1)) := by
+      rw [this]
+      exact Prime.neg Int.prime_two
     simp only [Nat.cast_ofNat]
-    rw [← neg_dvd (a := (2 : ℤ)), ← this, Ideal.norm_dvd_iff]
-    · rfl
-    · rw [this]
-      refine Prime.neg Int.prime_two
-  rw [← hζ.norm_toInteger_sub_one_of_prime_ne_two' hp, Ideal.norm_dvd_iff]
-  · rfl
-  · rw [hζ.norm_toInteger_sub_one_of_prime_ne_two' hp, ← Nat.prime_iff_prime_int]
+    rw [← neg_dvd (a := (2 : ℤ)), ← this, Ideal.norm_dvd_iff hprime]
+  have hprime : Prime ((Algebra.norm ℤ) (hζ.toInteger - 1)) := by
+    rw [hζ.norm_toInteger_sub_one_of_prime_ne_two' hp, ← Nat.prime_iff_prime_int]
     exact hpri.1
+  rw [← hζ.norm_toInteger_sub_one_of_prime_ne_two' hp, Ideal.norm_dvd_iff hprime]
 
 lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
     {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A}
@@ -110,27 +113,29 @@ lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
   · exact (hζ.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hp hη₁ hη₂ h).dvd
 
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
-    (Ideal.Quotient.mk (Ideal.span {(hζ.unit' : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
+    (Ideal.Quotient.mk (Ideal.span {(hζ.toInteger : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
   have : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
-  letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.unit' - 1 : 𝓞 K))) := inferInstance
+  letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.toInteger - 1 : 𝓞 K))) := inferInstance
   apply RingHom.toIntAlgHom_injective
   apply hζ.integralPowerBasis.algHom_ext
-  have h : hζ.integralPowerBasis.gen = hζ.unit' := by
+  have h : hζ.integralPowerBasis.gen = hζ.toInteger := by
     simp only [IsPrimitiveRoot.integralPowerBasis_gen]
-    rfl
   rw [h]
   simp only [RingHom.toIntAlgHom, AlgHom.coe_mk, RingHom.coe_comp, Function.comp_apply]
   rw [← sub_eq_zero, ← Ideal.Quotient.mk_eq_mk, ← Ideal.Quotient.mk_eq_mk,
     ← Submodule.Quotient.mk_sub, Ideal.Quotient.mk_eq_mk, Ideal.Quotient.eq_zero_iff_mem,
     Ideal.mem_span_singleton]
-  apply hζ.unit'_coe.sub_one_dvd_sub hpri.out
-  · rw [mem_nthRootsFinset (NeZero.pos p), ← map_pow, hζ.unit'_coe.pow_eq_one, map_one]
-  · rw [mem_nthRootsFinset (NeZero.pos p), hζ.unit'_coe.pow_eq_one]
+  apply hζ.toInteger_isPrimitiveRoot.sub_one_dvd_sub hpri.out
+  · rw [mem_nthRootsFinset (NeZero.pos p), ← map_pow]
+    change σ (hζ.toInteger ^ p) = 1
+    rw [hζ.toInteger_isPrimitiveRoot.pow_eq_one, map_one]
+  · rw [mem_nthRootsFinset (NeZero.pos p)]
+    exact hζ.toInteger_isPrimitiveRoot.pow_eq_one
 
 open NumberField.RingOfIntegers in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
-    (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1) • x := by
+    (hζ.toInteger - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1) • x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   letI := IsCyclotomicExtension.isGalois {p} ℚ K
   have : (Algebra.trace ℤ _ x : 𝓞 K) = ∑ σ : K ≃ₐ[ℚ] K, (mapAlgHom σ).toRingHom x := by
@@ -148,7 +153,7 @@ lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     Nat.totient_prime hpri.out]
 
 lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
-    (hζ.unit' - 1 : 𝓞 K) ^ p ∣ (Algebra.norm ℤ (1 + p • x) : 𝓞 K) - 1 + p • x := by
+    (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (Algebra.norm ℤ (1 + p • x) : 𝓞 K) - 1 + p • x := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
   obtain ⟨s, hs⟩ := zeta_sub_one_dvd_trace_sub_smul hζ x
@@ -157,7 +162,7 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
   simp only [zsmul_eq_mul, Int.cast_natCast] at hr
   simp only [nsmul_eq_mul, hr, Int.cast_add, Int.cast_one, Int.cast_mul, hs, NeZero.pos p,
     Nat.cast_pred, Int.cast_natCast, Int.cast_pow]
-  suffices (hζ.unit' - 1 : 𝓞 K) ^ p ∣ (hζ.unit' - 1) * p * s + (p : 𝓞 K) ^ 2 * (r + x) by
+  suffices (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (hζ.toInteger - 1) * p * s + (p : 𝓞 K) ^ 2 * (r + x) by
     convert this using 1; ring
   apply dvd_add
   · apply dvd_mul_of_dvd_left

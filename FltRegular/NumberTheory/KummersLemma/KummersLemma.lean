@@ -21,7 +21,7 @@ variable {K : Type} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K]
 include hp hreg
 
 theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
-    (hcong : (hζ.unit' - 1 : 𝓞 K) ^ p ∣ (u : 𝓞 K) - 1) : ∃ v : K, v ^ p = u := by
+    (hcong : (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (u : 𝓞 K) - 1) : ∃ v : K, v ^ p = u := by
   by_contra! hu
   have hirr := X_pow_sub_C_irreducible_of_prime hpri.out hu
   have := Fact.mk hirr
@@ -67,7 +67,7 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq_zero_iff_mem,
       RingHom.map_sub, sub_eq_zero] at hn hn' ⊢
     rw [Units.val_pow_eq_pow_val, RingHom.map_pow, hn, ← RingHom.map_pow, hn']
-  have : (hζ.unit' - 1 : 𝓞 K) ^ p ∣ (↑(u ^ (p - 1)) : 𝓞 K) - 1 := by
+  have : (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (↑(u ^ (p - 1)) : 𝓞 K) - 1 := by
     rw [hx]
     rw [sub_eq_iff_eq_add, add_comm] at hx
     have H : Algebra.norm ℤ (1 + p • x) = 1 := norm_add_one_smul_of_isUnit hpri.out

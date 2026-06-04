@@ -23,8 +23,8 @@ namespace FltRegular
 include hp hreg in
 lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
   ¬∃ (x' y' z' : 𝓞 K) (ε₃ : (𝓞 K)ˣ),
-    ¬((hζ.unit' : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
-    x' ^ p + y' ^ p = ε₃ * (((hζ.unit' : 𝓞 K) - 1) ^ m * z') ^ p := by
+    ¬((hζ.toInteger : 𝓞 K) - 1 ∣ y') ∧ ¬((hζ.toInteger : 𝓞 K) - 1 ∣ z') ∧
+    x' ^ p + y' ^ p = ε₃ * (((hζ.toInteger : 𝓞 K) - 1) ^ m * z') ^ p := by
   induction m, hm using Nat.le_induction with
   | base =>
       rintro ⟨x, y, z, ε₃, hy, hz, e⟩
@@ -35,24 +35,24 @@ lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
 
 include hp hreg in
 lemma not_exists_solution' :
-    ¬∃ (x y z : 𝓞 K), ¬(hζ.unit' : 𝓞 K) - 1 ∣ y ∧
-      (hζ.unit' : 𝓞 K) - 1 ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
+    ¬∃ (x y z : 𝓞 K), ¬(hζ.toInteger : 𝓞 K) - 1 ∣ y ∧
+      (hζ.toInteger : 𝓞 K) - 1 ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
   letI : Fact (Nat.Prime p) := hpri
   letI : WfDvdMonoid (𝓞 K) := IsNoetherianRing.wfDvdMonoid
   rintro ⟨x, y, z, hy, hz, hz', e⟩
   obtain ⟨m, z, hm, hz'', rfl⟩ :
-      ∃ m z', 1 ≤ m ∧ ¬((hζ.unit' : 𝓞 K) - 1 ∣ z') ∧
-        z = ((hζ.unit' : 𝓞 K) - 1) ^ m * z' := by
+      ∃ m z', 1 ≤ m ∧ ¬((hζ.toInteger : 𝓞 K) - 1 ∣ z') ∧
+        z = ((hζ.toInteger : 𝓞 K) - 1) ^ m * z' := by
     classical
-    have H : FiniteMultiplicity ((hζ.unit' : 𝓞 K) - 1) z := FiniteMultiplicity.of_not_isUnit
+    have H : FiniteMultiplicity ((hζ.toInteger : 𝓞 K) - 1) z := FiniteMultiplicity.of_not_isUnit
       hζ.zeta_sub_one_prime'.not_unit hz'
-    obtain ⟨z', h⟩ := pow_multiplicity_dvd ((hζ.unit' : 𝓞 K) - 1) z
+    obtain ⟨z', h⟩ := pow_multiplicity_dvd ((hζ.toInteger : 𝓞 K) - 1) z
     refine ⟨_, _, ?_, ?_, h⟩
     · rwa [← Nat.cast_le (α := ENat), ← FiniteMultiplicity.emultiplicity_eq_multiplicity H,
         ← pow_dvd_iff_le_emultiplicity, pow_one]
     · intro h'
       have := mul_dvd_mul_left
-        (((hζ.unit' : 𝓞 K) - 1) ^ (multiplicity ((hζ.unit' : 𝓞 K) - 1) z)) h'
+        (((hζ.toInteger : 𝓞 K) - 1) ^ (multiplicity ((hζ.toInteger : 𝓞 K) - 1) z)) h'
       rw [← pow_succ, ← h] at this
       refine not_pow_dvd_of_emultiplicity_lt ?_ this
       rw [FiniteMultiplicity.emultiplicity_eq_multiplicity H, Nat.cast_lt]

@@ -12,6 +12,8 @@ variable {p : ℕ} [NeZero p] {K : Type*} [Field K] [NumberField K] [IsCyclotomi
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
+local notation3 "zetaUnit" => (hζ.toInteger_isPrimitiveRoot.isUnit (NeZero.ne p)).unit
+
 open FractionalIdeal NumberField IsCMField
 
 namespace FltRegular.CaseI
@@ -29,8 +31,8 @@ theorem pow_sub_intGalConj_mem (α : 𝓞 K) [Fact (p.Prime)] (hp : 2 < p) :
 
 theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.IsCMField K hp
-    ringOfIntegersComplexConj K (x + y * ↑(hζ.unit' ^ i) : 𝓞 K) =
-      x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ) := by
+    ringOfIntegersComplexConj K (x + y * ↑(zetaUnit ^ i) : 𝓞 K) =
+      x + y * (zetaUnit ^ (-i) : (𝓞 K)ˣ) := by
   haveI := IsCyclotomicExtension.IsCMField K hp
   ext1
   simp only [map_add, map_intCast, map_mul, coe_ringOfIntegersComplexConj, zpow_neg, map_units_inv,
@@ -40,24 +42,24 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) 
   simp only [map_zpow₀]
   rw [← inv_zpow]
   congr
-  suffices hζ.unit' ∈ Units.torsion K by
+  suffices zetaUnit ∈ Units.torsion K by
     have H := RingOfIntegers.ext_iff.1 <|
-        Units.ext_iff.1 <| unitsComplexConj_torsion K ⟨hζ.unit', ‹_›⟩
-    have : ↑↑hζ.unit' = ζ := rfl
+        Units.ext_iff.1 <| unitsComplexConj_torsion K ⟨zetaUnit, ‹_›⟩
+    have : ↑↑zetaUnit = ζ := rfl
     simp only [Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv, RingOfIntegers.mapRingEquiv_apply,
       this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv, map_units_inv] at H
-    have h : (algebraMap (𝓞 K) K) ↑hζ.unit' = ζ := rfl
-    simp [h, H]
+    have h : (algebraMap (𝓞 K) K) ↑zetaUnit = ζ := rfl
+    simp [H]
   refine (CommGroup.mem_torsion _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
   ext
   exact hζ.pow_eq_one
 
 theorem exists_int_sum_eq_zero' (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
-    (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ p) [Fact (p.Prime)]
+    (h : (x : 𝓞 K) + y * (zetaUnit ^ i : (𝓞 K)ˣ) = u * α ^ p) [Fact (p.Prime)]
     (hp : 2 < p) :
-    ∃ k : ℕ, (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) -
-      ((hζ.unit' ^ k) ^ 2 : (𝓞 K)ˣ) *
-        (x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ)) ∈
+    ∃ k : ℕ, (x : 𝓞 K) + y * (zetaUnit ^ i : (𝓞 K)ˣ) -
+      ((zetaUnit ^ k) ^ 2 : (𝓞 K)ˣ) *
+        (x + y * (zetaUnit ^ (-i) : (𝓞 K)ˣ)) ∈
       Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
   obtain ⟨k, H⟩ := unit_inv_conj_is_root_of_unity hζ u hp
   refine ⟨k, ?_⟩
@@ -67,11 +69,11 @@ theorem exists_int_sum_eq_zero' (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
   simp
 
 theorem exists_int_sum_eq_zero (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
-    (h : (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) = u * α ^ p) [Fact (p.Prime)]
+    (h : (x : 𝓞 K) + y * (zetaUnit ^ i : (𝓞 K)ˣ) = u * α ^ p) [Fact (p.Prime)]
     (hp : 2 < p) :
-    ∃ k : ℤ, (x : 𝓞 K) + y * (hζ.unit' ^ i : (𝓞 K)ˣ) -
-      (hζ.unit' ^ (2 * k) : (𝓞 K)ˣ) *
-        (x + y * (hζ.unit' ^ (-i) : (𝓞 K)ˣ)) ∈
+    ∃ k : ℤ, (x : 𝓞 K) + y * (zetaUnit ^ i : (𝓞 K)ˣ) -
+      (zetaUnit ^ (2 * k) : (𝓞 K)ˣ) *
+        (x + y * (zetaUnit ^ (-i) : (𝓞 K)ˣ)) ∈
       Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
   obtain ⟨k, hk⟩ := exists_int_sum_eq_zero' hζ x y i h hp
   use k

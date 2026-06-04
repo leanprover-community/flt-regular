@@ -152,7 +152,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   classical
   have H₁ := congr_arg (@Int.cast R _) H
   simp only [Int.cast_add, Int.cast_pow] at H₁
-  have hζ' := (zeta_spec p ℚ K).unit'_coe
+  have hζ' := (zeta_spec p ℚ K).toInteger_isPrimitiveRoot
   rw [hζ'.pow_add_pow_eq_prod_add_mul _ _ <|
     odd_iff.2 <| hpri.1.eq_two_or_odd.resolve_left fun h ↦ by simp [h] at h5p] at H₁
   replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
@@ -181,16 +181,18 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
         ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) := by
   let ζ' := (ζ : K)
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
-  have h : ζ = (hζ'.unit' : R) := by rfl
+  let zetaUnit := (hζ'.toInteger_isPrimitiveRoot.isUnit (NeZero.ne p)).unit
+  have h : ζ = (zetaUnit : R) := by rfl
   have hP : p ≠ 2 := by
     intro hP
     rw [hP] at hp5
     contradiction
   obtain ⟨u, α, hu⟩ := is_principal hreg hp5 hgcd caseI H hζ
-  rw [h, mul_comm _ (↑b : R), ← pow_one hζ'.unit'] at hu
+  rw [h, mul_comm _ (↑b : R), ← pow_one zetaUnit] at hu
   obtain ⟨k, hk⟩ := FltRegular.CaseI.exists_int_sum_eq_zero hζ' a b 1 hu.symm (by lia)
-  simp only [zpow_one, zpow_neg, mem_span_singleton, ← h] at hk
+  simp only [zpow_one, zpow_neg, mem_span_singleton] at hk
   have hpcoe : (p : ℤ) ≠ 0 := by simp [hpri.out.ne_zero]
+  have hζ_map : (algebraMap R K) ζ = ζ' := rfl
   refine ⟨⟨(2 * k % p).natAbs, ?_⟩, ⟨((2 * k - 1) % p).natAbs, ?_⟩, ?_, ?_⟩
   repeat'
     rw [← natAbs_natCast p]
@@ -205,13 +207,15 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
     mul_assoc (↑b : R)]
   congr 2
   · ext
-    simp only [map_pow, NumberField.Units.coe_zpow, ← h]
+    simp only [map_pow, NumberField.Units.coe_zpow, hζ_map]
+    change ζ' ^ ↑(2 * k % ↑p).natAbs = ζ' ^ (2 * k)
     refine eq_of_div_eq_one ?_
     rw [← zpow_natCast, ← zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]
     simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_zmod_eq_zero_iff_dvd,
       Int.cast_sub, ZMod.intCast_mod, Int.cast_mul, sub_self]
   · ext
-    simp only [map_pow, _root_.map_mul, NumberField.Units.coe_zpow, map_units_inv, ← h]
+    simp only [map_pow, _root_.map_mul, NumberField.Units.coe_zpow, map_units_inv, hζ_map]
+    change ζ' ^ ↑((2 * k - 1) % ↑p).natAbs = ζ' ^ (2 * k) * ζ'⁻¹
     refine eq_of_div_eq_one ?_
     rw [← zpow_natCast, ← zpow_sub_one₀ (hζ'.ne_zero hpri.out.ne_zero), ←
       zpow_sub₀ (hζ'.ne_zero hpri.out.ne_zero), hζ'.zpow_eq_one_iff_dvd]

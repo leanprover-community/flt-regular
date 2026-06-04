@@ -14,35 +14,41 @@ open scoped NumberField
 
 variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K] (hp : p ≠ 2)
 
-variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) (u : (𝓞 K)ˣ)
-  (hcong : (hζ.unit' - 1 : 𝓞 K) ^ p ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ p ≠ u)
+variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
+
+variable (u : (𝓞 K)ˣ)
+  (hcong : (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ p ≠ u)
 
 open Polynomial
 
 include hcong hp in
 lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
-    C ((hζ.unit' - 1 : 𝓞 K) ^ p) ∣
-      (C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K) := by
+    C ((hζ.toInteger - 1 : 𝓞 K) ^ p) ∣
+      (C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K) := by
   rw [← dvd_sub_left (_root_.map_dvd C hcong), add_sub_assoc, C.map_sub (u : 𝓞 K), ← sub_add,
     sub_self, map_one, zero_add]
   refine dvd_C_mul_X_sub_one_pow_add_one hpri.out hp _ _ dvd_rfl ?_
-  convert mul_dvd_mul_right (associated_zeta_sub_one_pow_prime hζ).dvd _
+  have hassoc : Associated ((hζ.toInteger - 1 : 𝓞 K) ^ (p - 1)) p := by
+    simpa only using associated_zeta_sub_one_pow_prime hζ
+  convert mul_dvd_mul_right hassoc.dvd _
   rw [← pow_succ, tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le]
 
 namespace KummersLemma
 
+omit [NumberField K] in
 lemma natDegree_poly_aux :
-    natDegree ((C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K)) = p := by
+    natDegree ((C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K)) = p := by
   haveI : Fact (Nat.Prime p) := hpri
   rw [natDegree_add_C, natDegree_pow, ← C.map_one, natDegree_sub_C, natDegree_mul_X, natDegree_C,
     zero_add, mul_one]
-  exact C_ne_zero.mpr (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
+  exact C_ne_zero.mpr (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
 
+omit [NumberField K] in
 lemma monic_poly_aux :
-    leadingCoeff ((C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K)) =
-      (hζ.unit' - 1 : 𝓞 K) ^ p := by
+    leadingCoeff ((C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K)) =
+      (hζ.toInteger - 1 : 𝓞 K) ^ p := by
   haveI : Fact (Nat.Prime p) := hpri
-  trans leadingCoeff ((C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ p)
+  trans leadingCoeff ((C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p)
   · rw [leadingCoeff, leadingCoeff, coeff_add]
     nth_rewrite 1 [natDegree_add_C]
     convert add_zero _ using 2
@@ -50,15 +56,15 @@ lemma monic_poly_aux :
   · rw [leadingCoeff_pow, ← C.map_one, leadingCoeff, natDegree_sub_C, natDegree_mul_X]
     · simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C,
         coeff_one, sub_zero, one_ne_zero, ↓reduceIte]
-    · exact C_ne_zero.mpr (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
+    · exact C_ne_zero.mpr (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
 variable [IsCyclotomicExtension {p} ℚ K]
 
 /-- The monic polynomial used in Kummer's lemma after dividing by `(ζ - 1)^p`. -/
 noncomputable def poly : (𝓞 K)[X] := (zeta_sub_one_pow_dvd_poly hp hζ u hcong).choose
 
 lemma poly_spec :
-    C ((hζ.unit' - 1 : 𝓞 K) ^ p) * poly hp hζ u hcong =
-      (C (hζ.unit' - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K) :=
+    C ((hζ.toInteger - 1 : 𝓞 K) ^ p) * poly hp hζ u hcong =
+      (C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K) :=
   (zeta_sub_one_pow_dvd_poly hp hζ u hcong).choose_spec.symm
 
 lemma monic_poly : Monic (poly hp hζ u hcong) := by
@@ -67,13 +73,13 @@ lemma monic_poly : Monic (poly hp hζ u hcong) := by
   simp only [map_pow, leadingCoeff_mul, leadingCoeff_pow, leadingCoeff_C,
     monic_poly_aux hζ] at this
   refine mul_right_injective₀ ?_ (this.trans (mul_one _).symm)
-  exact pow_ne_zero _ (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
+  exact pow_ne_zero _ (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
 
 lemma natDegree_poly : natDegree (poly hp hζ u hcong) = p := by
   haveI : Fact (Nat.Prime p) := hpri
   have := congr_arg natDegree (poly_spec hp hζ u hcong)
   rwa [natDegree_C_mul, natDegree_poly_aux hζ] at this
-  exact pow_ne_zero _ (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
+  exact pow_ne_zero _ (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
 
 lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
     (X - C (1 / (ζ - 1))) ^ p + C (u / (ζ - 1) ^ p : K) := by
@@ -82,7 +88,7 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
   change _ = algebraMap (𝓞 K) K _ at this
   rw [← coeff_map] at this
   replace this : (ζ - 1) ^ p * ↑((poly hp hζ u hcong).coeff i) =
-    (((C ((algebraMap ((𝓞 K)) K) ↑hζ.unit') - 1) * X - 1) ^ p).coeff i +
+    (((C ζ - 1) * X - 1) ^ p).coeff i +
     (C ((algebraMap ((𝓞 K)) K) ↑u)).coeff i := by
       simp only [map_pow, map_sub, map_one, Polynomial.map_add, Polynomial.map_pow,
         Polynomial.map_sub, Polynomial.map_mul, map_C,
@@ -92,10 +98,10 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
       simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
         Polynomial.map_one]
       rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
-      simp [show hζ.unit'.1 = ζ from rfl]
+      simp
   apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
   simp only [coeff_map, one_div, coeff_add, this, mul_add]
-  simp_rw [← smul_eq_mul (α := K), ← coeff_smul, show hζ.unit'.1 = ζ from rfl]
+  simp_rw [← smul_eq_mul (α := K), ← coeff_smul]
   rw [smul_C, smul_eq_mul, ← _root_.smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub,
     smul_C, smul_eq_mul, mul_inv_cancel₀, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub,
     map_one]
@@ -124,7 +130,7 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
   rw [map_sub, map_one]
   have := congr_arg (aeval ((1 - ζ ^ m • α) / (algebraMap K L (ζ - 1))))
     (poly_spec hp hζ u hcong)
-  have hcoe : (algebraMap (𝓞 K) L) (↑hζ.unit') = algebraMap K L ζ := rfl
+  have hcoe : (algebraMap (𝓞 K) L) (↑hζ.toInteger) = algebraMap K L ζ := rfl
   have hcoe1 : (algebraMap (𝓞 K) L) ↑u = algebraMap K L ↑↑u := rfl
   simp only [map_sub, map_one, map_pow, map_mul, aeval_C, _root_.smul_pow, hcoe, e, hcoe1, map_add,
     aeval_X, ← mul_div_assoc, mul_div_cancel_left₀ _ hζ', sub_sub_cancel_left,
@@ -233,16 +239,17 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   refine separable_prod' ?_ (fun _ _ ↦ separable_X_sub_C)
   intros i hi j hj hij
   apply isCoprime_X_sub_C_of_isUnit_sub
-  obtain ⟨v, hv⟩ : Associated (hζ.unit' - 1 : 𝓞 K)
-      ((hζ.unit' : 𝓞 K) ^ j - (hζ.unit' : 𝓞 K) ^ i) := by
-    refine hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out ?_ ?_ ?_
+  obtain ⟨v, hv⟩ : Associated (hζ.toInteger - 1 : 𝓞 K)
+      ((hζ.toInteger : 𝓞 K) ^ j - (hζ.toInteger : 𝓞 K) ^ i) := by
+    refine hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime
+      hpri.out ?_ ?_ ?_
     · rw [Finset.mem_coe, mem_nthRootsFinset (NeZero.pos p), ← pow_mul, mul_comm, pow_mul,
-        hζ.unit'_coe.pow_eq_one, one_pow]
+        hζ.toInteger_isPrimitiveRoot.pow_eq_one, one_pow]
     · rw [Finset.mem_coe, mem_nthRootsFinset (NeZero.pos p), ← pow_mul, mul_comm, pow_mul,
-        hζ.unit'_coe.pow_eq_one, one_pow]
-    · exact mt (hζ.unit'_coe.injOn_pow hj hi) hij.symm
+        hζ.toInteger_isPrimitiveRoot.pow_eq_one, one_pow]
+    · exact mt (hζ.toInteger_isPrimitiveRoot.injOn_pow hj hi) hij.symm
   rw [NumberField.RingOfIntegers.ext_iff] at hv
-  have hcoe : (algebraMap (𝓞 K) K) (↑hζ.unit') = ζ := rfl
+  have hcoe : (algebraMap (𝓞 K) K) (↑hζ.toInteger) = ζ := rfl
   simp only [map_mul, map_sub, map_one, map_pow, hcoe] at hv
   have hα : IsIntegral (𝓞 K) α := by
     apply IsIntegral.of_pow (NeZero.pos p); rw [e]; exact isIntegral_algebraMap
