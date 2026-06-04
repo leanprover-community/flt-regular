@@ -49,9 +49,7 @@ theorem cyclotomic_7 : cyclotomic 7 ℤ =
   simp [cyclotomic_prime, sum_range_succ]
   ring
 
-set_option linter.unnecessarySeqFocus false in
 set_option linter.flexible false in
-set_option linter.style.longLine false in
 set_option linter.unusedTactic false in
 set_option linter.unreachableTactic false in
 variable (K) in
@@ -59,8 +57,19 @@ theorem Rat.seven_pid : IsPrincipalIdealRing (𝓞 K) := by
   apply IsCyclotomicExtension.Rat.pid6 7
   rw [M7, cyclotomic_7]
   intro p hple hp hpn
-  fin_cases hple; any_goals norm_num at hp
-  · left; simp; norm_num; refine orderOf_lt_of (by norm_num) (fun i hi hipos ↦ ?_)
-    have := Finset.mem_Icc.mpr ⟨hipos, hi⟩; fin_cases this <;> norm_num
-  · left; simp; norm_num; refine orderOf_lt_of (by norm_num) (fun i hi hipos ↦ ?_)
-    have := Finset.mem_Icc.mpr ⟨hipos, hi⟩; fin_cases this <;> norm_num
+  fin_cases hple
+  any_goals norm_num at hp
+  · left
+    simp
+    norm_num
+    refine orderOf_lt_of (by norm_num) (fun i hi hipos ↦ ?_)
+    have := Finset.mem_Icc.mpr ⟨hipos, hi⟩
+    fin_cases this
+    all_goals norm_num
+  · left
+    simp
+    norm_num
+    refine orderOf_lt_of (by norm_num) (fun i hi hipos ↦ ?_)
+    have := Finset.mem_Icc.mpr ⟨hipos, hi⟩
+    fin_cases this
+    all_goals norm_num

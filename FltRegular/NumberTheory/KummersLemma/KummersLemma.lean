@@ -26,31 +26,31 @@ theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
   have hirr := X_pow_sub_C_irreducible_of_prime hpri.out hu
   have := Fact.mk hirr
   let L := AdjoinRoot (X ^ p - C (u : K))
-  have := isSplittingField_AdjoinRoot_X_pow_sub_C ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩
-    hirr
-  have := isGalois_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩
-    hirr L
+  have := isSplittingField_AdjoinRoot_X_pow_sub_C
+    ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩ hirr
+  have := isGalois_of_isSplittingField_X_pow_sub_C
+    ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩ hirr L
   have := IsSplittingField.finiteDimensional L (X ^ p - C (u : K))
-  have := isCyclic_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩
-    hirr L
+  have := isCyclic_of_isSplittingField_X_pow_sub_C
+    ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩ hirr L
   have : CharZero L := charZero_of_injective_algebraMap (algebraMap K L).injective
   have : FiniteDimensional ℚ L := Module.Finite.trans K L
   have : NumberField L := ⟨⟩
   have hKL : Module.finrank K L = p :=
-    finrank_of_isSplittingField_X_pow_sub_C ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩ hirr L
+    finrank_of_isSplittingField_X_pow_sub_C
+      ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩ hirr L
   have := KummersLemma.isUnramified hp hζ u hcong hu L
-  have := dvd_card_classGroup_of_isUnramified_isCyclic (hKL.symm ▸ hpri.out) (hKL.symm ▸ hp)
+  have := dvd_card_classGroup_of_unramified_isCyclic (hKL.symm ▸ hpri.out) (hKL.symm ▸ hp)
   rw [hKL, hpri.out.dvd_iff_not_coprime] at this
   exact this (by convert hreg)
 
--- Let 𝑝 be a regular prime (i.e. an odd prime which does not divide the class number off
--- the 𝑝-th cyclotomic field) and 𝜉 a primitive 𝑝-th root of unity;
--- if a unit 𝑢∈𝐐(𝜉) is congruent to an integer modulo 𝑝, then 𝑢 is a 𝑝-th power in 𝐐(𝜉).
+/-- A regular prime criterion: if a unit of the cyclotomic field is congruent to an integer
+modulo `p`, then it is a `p`-th power. -/
 theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     (hcong : ∃ n : ℤ, (p : 𝓞 K) ∣ (u - n : 𝓞 K)) :
     ∃ v, u = v ^ p := by
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot ℚ (B := K) (Set.mem_singleton p)
-    (NeZero.ne p)
+  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot ℚ (B := K)
+    (Set.mem_singleton p) (NeZero.ne p)
   obtain ⟨x, hx⟩ : (p : 𝓞 K) ∣ (↑(u ^ (p - 1)) : 𝓞 K) - 1 := by
     obtain ⟨n, hn⟩ := hcong
     have hn' : (p : ℤ) ∣ n ^ (p - 1) - 1 := by

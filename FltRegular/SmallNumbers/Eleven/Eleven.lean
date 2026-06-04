@@ -50,7 +50,6 @@ theorem cyclotomic_11 : cyclotomic 11 ℤ =
   ring
 
 set_option linter.flexible false in
-set_option linter.style.longLine false in
 set_option linter.unusedTactic false in
 set_option linter.unreachableTactic false in
 variable (K) in
@@ -58,17 +57,32 @@ theorem Rat.eleven_pid : IsPrincipalIdealRing (𝓞 K) := by
   apply IsCyclotomicExtension.Rat.pid6 11
   rw [M11, cyclotomic_11]
   intro p hple hp hpn
-  fin_cases hple; any_goals norm_num at hp
+  fin_cases hple
+  any_goals norm_num at hp
   on_goal 5 => simp at hpn
   on_goal 8 =>
     right
-    let P : ℤ[X] := X + 5; let d := 1
-    let Q : ℤ[X] := X^9 + 19*X^8 + 21*X^7 + 11*X^6 + 15*X^5 + 18*X^4 + 3*X^3 + 9*X^2 + 2*X + 14
-    let A : ℤ[X] := -X^9 - 5*X^8 - 5*X^7 - 3*X^6 - 4*X^5 - 4*X^4 - X^3 - 2*X^2 - X - 3
-    use P, Q, A
-    use -X^8 - X^7 - X^6 - X^5 - X^4 - X^3 - X - 1, 17*X^9 + X^8 + 12*X^7 + 3*X^6 + 2*X^5 + 7*X^4 + 5*X^3 + 15*X^2 + 11*X + 8, 17*X^7 + X^6 + 12*X^5 + 3*X^4 + 2*X^3 + 7*X^2 - 12*X + 31
-    use 3*X^9 + 2*X^7 + X^4 + X^3 + 3*X^2 + 2*X + 1, 3*X^7 + 2*X^5 + X^2 - 2*X + 6
-    use -X^7 + 4*X^6 - 21*X^5 + 104*X^4 - 521*X^3 + 2604*X^2 - 13020*X + 65099, -14152
+    let P : ℤ[X] := X + 5
+    let d := 1
+    let Q : ℤ[X] :=
+      X^9 + 19*X^8 + 21*X^7 + 11*X^6 + 15*X^5 + 18*X^4 + 3*X^3 +
+        9*X^2 + 2*X + 14
+    let A : ℤ[X] :=
+      -X^9 - 5*X^8 - 5*X^7 - 3*X^6 - 4*X^5 - 4*X^4 - X^3 - 2*X^2 -
+        X - 3
+    let G : ℤ[X] := -X^8 - X^7 - X^6 - X^5 - X^4 - X^3 - X - 1
+    let Qp : ℤ[X] :=
+      17*X^9 + X^8 + 12*X^7 + 3*X^6 + 2*X^5 + 7*X^4 + 5*X^3 +
+        15*X^2 + 11*X + 8
+    let Rp : ℤ[X] :=
+      17*X^7 + X^6 + 12*X^5 + 3*X^4 + 2*X^3 + 7*X^2 - 12*X + 31
+    let QP : ℤ[X] := 3*X^9 + 2*X^7 + X^4 + X^3 + 3*X^2 + 2*X + 1
+    let RP : ℤ[X] := 3*X^7 + 2*X^5 + X^2 - 2*X + 6
+    let C1 : ℤ[X] :=
+      -X^7 + 4*X^6 - 21*X^5 + 104*X^4 - 521*X^3 + 2604*X^2 -
+        13020*X + 65099
+    let C2 : ℤ[X] := -14152
+    use P, Q, A, G, Qp, Rp, QP, RP, C1, C2
     rw [show P.natDegree = d by simp only [P]; compute_degree!]
     refine ⟨by simp only [P]; monicity!, ?_, ?_, ?_⟩
     · rw [orderOf_eq_iff (by norm_num)]
@@ -79,6 +93,10 @@ theorem Rat.eleven_pid : IsPrincipalIdealRing (𝓞 K) := by
       ring
     · simp
       refine ⟨?_, ?_, ?_⟩ <;> ring
-  all_goals {
-    left; simp; norm_num; refine orderOf_lt_of (by norm_num) (fun i hi hipos ↦ ?_)
-    have := Finset.mem_Icc.mpr ⟨hipos, hi⟩; fin_cases this <;> norm_num }
+  all_goals
+    left
+    simp
+    norm_num
+    refine orderOf_lt_of (by norm_num) (fun i hi hipos ↦ ?_)
+    have := Finset.mem_Icc.mpr ⟨hipos, hi⟩
+    fin_cases this <;> norm_num

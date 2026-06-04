@@ -25,8 +25,8 @@ variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Al
 instance : Algebra.IsAlgebraic K L := Algebra.IsAlgebraic.of_finite K L
 
 include hσ in
-lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ) (hβ : η * (galRestrict A K L B σ) β = β)
-    (σ' : L ≃ₐ[K] L) :
+lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ)
+    (hβ : η * (galRestrict A K L B σ) β = β) (σ' : L ≃ₐ[K] L) :
     (Ideal.span {β}).comap (galRestrict A K L B σ') = Ideal.span {β} := by
   suffices (Ideal.span {β}).map
       (galRestrict A K L B σ'⁻¹).toRingEquiv.toRingHom = Ideal.span {β} by
@@ -52,7 +52,7 @@ variable [IsGalois K L]
 include hσ in
 open FiniteDimensional in
 theorem exists_not_isPrincipal_and_isPrincipal_map_aux
-    [IsDedekindDomain A] [IsUnramified A B] (η : Bˣ)
+    [IsDedekindDomain A] [Algebra.Unramified A B] (η : Bˣ)
     (hη : Algebra.norm K (algebraMap B L η) = 1)
     (hη' : ¬∃ α : Bˣ, algebraMap B L η = (algebraMap B L α) / σ (algebraMap B L α)) :
     ∃ I : Ideal A, ¬I.IsPrincipal ∧ (I.map (algebraMap A B)).IsPrincipal := by
@@ -61,7 +61,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     (B := B) hσ hη
   haveI : IsDomain B :=
     (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
-  have hβ' := comap_map_eq_of_isUnramified K L _
+  have hβ' := comap_map_eq_of_unramified K L _
     (comap_span_galRestrict_eq_of_cyclic σ hσ (A := A) (B := B) β η hβ)
   refine ⟨(Ideal.span {β}).comap (algebraMap A B), ?_, ?_⟩
   · rintro ⟨⟨γ, hγ : _ = Ideal.span _⟩⟩
@@ -73,7 +73,8 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
       conv_rhs => enter [1]; rw [← hβ]
       rw [map_mul, ← algebraMap_galRestrict_apply A]
       refine (mul_div_cancel_right₀ _ ?_).symm
-      · rw [ne_eq, (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
+      · rw [ne_eq,
+          (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
           (injective_iff_map_eq_zero' _).mp (galRestrict A K L B σ).injective]
         exact a.isUnit.ne_zero
     · exact (mul_ne_zero_iff.mp hβ_zero).1
@@ -118,10 +119,12 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
   then there is an ideal that capitulates in `K`. -/
 theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type)
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
-    [FiniteDimensional K L] [IsGalois K L] [IsUnramified (𝓞 K) (𝓞 L)] [h : IsCyclic (L ≃ₐ[K] L)]
+    [FiniteDimensional K L] [IsGalois K L] [Algebra.Unramified (𝓞 K) (𝓞 L)]
+    [h : IsCyclic (L ≃ₐ[K] L)]
     (hKL : Nat.Prime (finrank K L))
     (hKL' : finrank K L ≠ 2) :
-    ∃ I : Ideal (𝓞 K), ¬I.IsPrincipal ∧ (I.map (algebraMap (𝓞 K) (𝓞 L))).IsPrincipal := by
+    ∃ I : Ideal (𝓞 K), ¬I.IsPrincipal ∧
+      (I.map (algebraMap (𝓞 K) (𝓞 L))).IsPrincipal := by
   obtain ⟨⟨σ, hσ⟩⟩ := h
   obtain ⟨η, hη, hη'⟩ := Hilbert92 hKL hKL' σ hσ
   exact exists_not_isPrincipal_and_isPrincipal_map_aux σ hσ η hη (not_exists.mpr hη')
@@ -129,9 +132,10 @@ theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type)
 /-- This is the second part of **Hilbert Theorem 94**, which states that if `L/K` is an unramified
   cyclic finite extension of number fields of odd prime degree,
   then the degree divides the class number of `K`. -/
-theorem dvd_card_classGroup_of_isUnramified_isCyclic {K L : Type}
+theorem dvd_card_classGroup_of_unramified_isCyclic {K L : Type}
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
-    [FiniteDimensional K L] [IsGalois K L] [IsUnramified (𝓞 K) (𝓞 L)] [IsCyclic (L ≃ₐ[K] L)]
+    [FiniteDimensional K L] [IsGalois K L] [Algebra.Unramified (𝓞 K) (𝓞 L)]
+    [IsCyclic (L ≃ₐ[K] L)]
     (hKL : Nat.Prime (finrank K L))
     (hKL' : finrank K L ≠ 2) :
     finrank K L ∣ Fintype.card (ClassGroup (𝓞 K)) := by

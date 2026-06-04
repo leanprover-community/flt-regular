@@ -6,7 +6,7 @@ import Mathlib.FieldTheory.Finite.Basic
 @[expose] public section
 
 lemma orderOf_lt_of {a b n : ℕ} [hn : Fact (b.Prime)] (h : a.Coprime b)
-      (H : ∀ i ≤ n, 1 ≤ i → a ^ i % b ≠ 1) :
+    (H : ∀ i ≤ n, 1 ≤ i → a ^ i % b ≠ 1) :
     n < orderOf (ZMod.unitOfCoprime _ h) := by
   by_contra! Habs
   have := orderOf_pos (ZMod.unitOfCoprime _ h)

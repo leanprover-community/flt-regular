@@ -27,7 +27,8 @@ set_option quotPrecheck false
 local notation "I" => (Ideal.span ({(hζ.unit' - 1 : 𝓞 K)} : Set (𝓞 K)) : Ideal (𝓞 K))
 
 theorem IsPrimitiveRoot.unit'_pow : hζ.unit' ^ p = 1 := by
-  ext; simpa using! hζ.pow_eq_one
+  ext
+  simpa using! hζ.pow_eq_one
 
 theorem zeta_runity_pow_even (hpo : Odd p) (n : ℕ) :
     ∃ m : ℕ, hζ.unit' ^ n = hζ.unit' ^ (2 * m) := by
@@ -49,8 +50,7 @@ theorem IsPrimitiveRoot.unit'_coe : IsPrimitiveRoot hζ.unit'.1 p := by
   exact z1.of_map_of_injective (IsFractionRing.injective _ _)
 
 theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
-    algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 :=
-  by
+    algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 := by
   rw [← map_one <| algebraMap A <| A ⧸ Ideal.span ({t - 1} : Set A), ← sub_eq_zero, ← map_sub,
     Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem]
   exact Ideal.subset_span (Set.mem_singleton _)
@@ -104,7 +104,8 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsInt
     apply hhl
   have hpl : IsPrimitiveRoot x l := by
     have : (algebraMap (𝓞 K) K) ⟨x, hx⟩ = x := by rfl
-    have h4 := IsPrimitiveRoot.map_of_injective hpl' (f := algebraMap (𝓞 K) K); rw [← this]
+    have h4 := IsPrimitiveRoot.map_of_injective hpl' (f := algebraMap (𝓞 K) K)
+    rw [← this]
     apply h4
     apply IsFractionRing.injective
   have hirr : Irreducible (cyclotomic p ℚ) := cyclotomic.irreducible_rat (NeZero.pos p)
@@ -140,34 +141,32 @@ theorem roots_of_unity_in_cyclo_aux {x : K} {l : ℕ} (hl : l ≠ 0) (hx : IsInt
 set_option backward.isDefEq.respectTransparency false in
 theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
     (h : ∃ (n : ℕ) (_ : 0 < n), x ^ n = 1) :
-    ∃ (m k : ℕ), x = (-1) ^ k * (hζ.unit'.1 : K) ^ m :=  by
+    ∃ (m k : ℕ), x = (-1) ^ k * (hζ.unit'.1 : K) ^ m := by
   obtain ⟨n, hn0, hn⟩ := h
   have hx : IsIntegral ℤ x := by
     refine ⟨X ^ n - 1, ⟨?_, ?_⟩⟩
     · exact monic_X_pow_sub_C 1 (ne_of_lt hn0).symm
     · simp only [hn, eval₂_one, eval₂_X_pow, eval₂_sub, sub_self]
-  have hxu : (⟨x, hx⟩ : 𝓞 K) ^ n = 1 := by ext; simp [hn]
+  have hxu : (⟨x, hx⟩ : 𝓞 K) ^ n = 1 := by
+    ext
+    simp [hn]
   have H : ∃ (m k : ℕ), (⟨x, hx⟩ : 𝓞 K) = (-1) ^ k * (hζ.unit'.1 : K) ^ m := by
     obtain ⟨l, hl, hhl⟩ := (_root_.isRoot_of_unity_iff hn0 _).1 hxu
     replace hl : l ≠ 0 := fun H ↦ by simp [H] at hl
     have hlp := roots_of_unity_in_cyclo_aux hl hx hhl hζ
     have isPrimRoot : IsPrimitiveRoot (hζ.unit' : 𝓞 K) p := hζ.unit'_coe
-    have hxl : (⟨x, hx⟩ : 𝓞 K) ^ l = 1 :=  by
+    have hxl : (⟨x, hx⟩ : 𝓞 K) ^ l = 1 := by
       apply isRoot_of_unity_of_root_cyclotomic _ hhl
       simp only [Nat.mem_divisors, dvd_refl, Ne, true_and]
       apply pos_iff_ne_zero.1 (Nat.pos_of_ne_zero hl)
     have hxp' : (⟨x, hx⟩ : 𝓞 K) ^ (2 * p) = 1 := by
       rcases hlp with ⟨hlp_w, hlp_h⟩
-      rw [hlp_h, pow_mul, hxl]; simp only [one_pow]
-    have hxp'' : (⟨x, hx⟩ : 𝓞 K) ^ p = 1 ∨ (⟨x, hx⟩ : 𝓞 K) ^ p = -1 := by
-      rw [mul_comm] at hxp'; rw [pow_mul] at hxp'
-      suffices (⟨x, hx⟩ : 𝓞 K) ^ p = 1 ∨ (⟨x, hx⟩ : 𝓞 K) ^ p = -1 by
-        · rcases this with h1 | h2
-          · left; simp only [h1]
-          · right; simp only [h2]
-      apply eq_or_eq_neg_of_sq_eq_sq
+      rw [hlp_h, pow_mul, hxl]
       simp only [one_pow]
-      apply hxp'
+    have hxp'' : (⟨x, hx⟩ : 𝓞 K) ^ p = 1 ∨ (⟨x, hx⟩ : 𝓞 K) ^ p = -1 := by
+      rw [mul_comm, pow_mul] at hxp'
+      apply eq_or_eq_neg_of_sq_eq_sq
+      simpa only [one_pow] using hxp'
     rcases hxp'' with hxp'' | hxp''
     · obtain ⟨i, _, Hi⟩ := IsPrimitiveRoot.eq_pow_of_pow_eq_one isPrimRoot hxp''
       refine ⟨i, 2, ?_⟩
@@ -176,7 +175,7 @@ theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
       simp only [even_two, Even.neg_pow, one_pow, one_mul]
       rw [← Hi]
       rfl
-    · have hone : (-1 : 𝓞 K) ^ p = (-1 : 𝓞 K) := by apply Odd.neg_one_pow hpo
+    · have hone : (-1 : 𝓞 K) ^ p = (-1 : 𝓞 K) := Odd.neg_one_pow hpo
       have hxp3 : (-1 * ⟨x, hx⟩ : 𝓞 K) ^ p = 1 := by
         rw [mul_pow, hone, hxp'']
         ring
@@ -235,7 +234,7 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
   haveI := IsCyclotomicExtension.IsCMField K hp
   have := Units.coe_map_inv' (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitsComplexConj K u)
   rw [unitsMulComplexConjInv_apply, Units.val_mul, map_mul, ← this, Units.mul_inv_eq_one,
-    Units.coe_map , MonoidHom.coe_coe]
+    Units.coe_map, MonoidHom.coe_coe]
   haveI := Fact.mk hp
   have hu := hζ.integralPowerBasis.basis.sum_repr u
   let a := hζ.integralPowerBasis.basis.repr
@@ -308,7 +307,7 @@ theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp
       · rw [mul_comm]
     · by_contra
       simp only [hk.neg_one_pow, neg_mul, one_mul] at hz
-      rw [← map_mul, ← Units.val_mul, ← map_pow, ←  Units.val_pow_eq_pow_val, ← map_neg] at hz
+      rw [← map_mul, ← Units.val_mul, ← map_pow, ← Units.val_pow_eq_pow_val, ← map_neg] at hz
       norm_cast at hz
       simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ u n hp
   · apply RingHom.IsIntegralElem.mul

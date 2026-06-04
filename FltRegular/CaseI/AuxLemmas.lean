@@ -2,9 +2,6 @@ module
 
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 
 @[expose] public section
 
@@ -39,7 +36,8 @@ theorem aux_cong0k₁ {k : Fin p} (hcong : k ≡ -1 [ZMOD p]) :
   simp [ZMod.neg_val, ZMod.val_one]
 
 /-- Auxiliary function. -/
-def f0k₁ (b : ℤ) (p : ℕ) : ℕ → ℤ := fun x => if x = 1 then b else if x = p.pred then -b else 0
+def f0k₁ (b : ℤ) (p : ℕ) : ℕ → ℤ := fun x =>
+  if x = 1 then b else if x = p.pred then -b else 0
 
 theorem auxf0k₁ (hp5 : 5 ≤ p) (b : ℤ) : ∃ i : Fin p, f0k₁ b p (i : ℕ) = 0 := by
   refine ⟨⟨2, two_lt hp5⟩, ?_⟩
@@ -58,7 +56,8 @@ set_option backward.isDefEq.respectTransparency false in
 include hpri in
 theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
-    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : 0 ≠ (k₁ : ℕ) := by
+    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) :
+    0 ≠ (k₁ : ℕ) := by
   symm
   intro habs
   rw [show (k₁ : ℤ) = 0 by simpa using habs, zero_sub] at hcong
@@ -79,7 +78,7 @@ end Zerok₁
 
 section Zerok₂
 
-/-- Auxiliary function -/
+/-- Auxiliary function. -/
 def f0k₂ (a b : ℤ) : ℕ → ℤ := fun x => if x = 0 then a - b else if x = 1 then b - a else 0
 
 theorem aux_cong0k₂ {k : Fin p} (hcong : k ≡ 1 [ZMOD p]) : k = ⟨1, hpri.one_lt⟩ := by
@@ -96,20 +95,23 @@ theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin p, f0k₂ a b (i : �
 
 set_option backward.isDefEq.respectTransparency false in
 include hpri in
-theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p) (hab : ¬a ≡ b [ZMOD p])
+theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
+    (hab : ¬a ≡ b [ZMOD p])
     {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
-    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (0 : ℕ) ≠ ↑k₂ := by
+    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) :
+    (0 : ℕ) ≠ ↑k₂ := by
   symm
   intro habs
   replace hcong := hcong.symm
   rw [show (k₂ : ℤ) = 0 by simpa using habs, ← ZMod.intCast_eq_intCast_iff, Int.cast_sub,
     Int.cast_zero, sub_eq_zero, ZMod.intCast_eq_intCast_iff] at hcong
-  rw [habs, _root_.pow_zero, mul_one, aux_cong0k₂ hpri hcong, Fin.val_mk, pow_one, add_sub_assoc,
-    ← sub_mul, add_sub_right_comm, show ζ = ζ ^ ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) by simp] at hdiv
+  rw [habs, _root_.pow_zero, mul_one, aux_cong0k₂ hpri hcong, Fin.val_mk, pow_one,
+    add_sub_assoc, ← sub_mul, add_sub_right_comm,
+    show ζ = ζ ^ ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) by simp] at hdiv
   have key : ↑(p : ℤ) ∣ ∑ j ∈ range p, f0k₂ a b j • ζ ^ j := by
     convert hdiv using 1
-    simp_rw [f0k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right zero_ne_one,
-      Finset.range_filter_eq]
+    simp_rw [f0k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def,
+      ne_and_eq_iff_right zero_ne_one, Finset.range_filter_eq]
     simp only [hpri.pos, hpri.one_lt, if_true, zsmul_eq_mul, Int.cast_sub, sum_singleton,
       _root_.pow_zero, mul_one, pow_one, Ne, zero_smul, sum_const_zero, add_zero]
   rw [sum_range] at key
@@ -133,9 +135,11 @@ theorem aux_cong1k₁ {k : Fin p} (hcong : k ≡ 0 [ZMOD p]) : k = ⟨0, hpri.po
   simp
 
 include hpri in
-theorem aux1k₁ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p) (hab : ¬a ≡ b [ZMOD p])
+theorem aux1k₁ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
+    (hab : ¬a ≡ b [ZMOD p])
     {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
-    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (1 : ℕ) ≠ k₁ := by
+    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) :
+    (1 : ℕ) ≠ k₁ := by
   intro habs
   have h := aux0k₂ hpri hp5 hζ hab hcong hdiv
   rw [show (k₁ : ℤ) = 1 by simpa using habs.symm, sub_self] at hcong
@@ -147,10 +151,11 @@ end OnekOne
 
 section OnekTwo
 
-/-- Auxiliary function -/
+/-- Auxiliary function. -/
 def f1k₂ (a : ℤ) : ℕ → ℤ := fun x => if x = 0 then a else if x = 2 then -a else 0
 
-theorem aux_cong1k₂ {k : Fin p} (hpri : p.Prime) (hp5 : 5 ≤ p) (hcong : k ≡ 1 + 1 [ZMOD p]) :
+theorem aux_cong1k₂ {k : Fin p} (hpri : p.Prime) (hp5 : 5 ≤ p)
+    (hcong : k ≡ 1 + 1 [ZMOD p]) :
     k = ⟨2, two_lt hp5⟩ := by
   refine Fin.ext ?_
   rw [Fin.val_mk, ← ZMod.val_cast_of_lt (Fin.is_lt k)]
@@ -173,7 +178,8 @@ set_option backward.isDefEq.respectTransparency false in
 include hpri in
 theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ p)
     (caseI : ¬↑p ∣ a * b * c) {k₁ k₂ : Fin p} (hcong : k₂ ≡ k₁ - 1 [ZMOD p])
-    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) : (1 : ℕ) ≠ k₂ := by
+    (hdiv : ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ)) :
+    (1 : ℕ) ≠ k₂ := by
   symm
   intro habs
   replace hcong := hcong.symm
@@ -187,7 +193,7 @@ theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
     simp_rw [f1k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right
       (show 0 ≠ 2 by norm_num), Finset.range_filter_eq]
     simp only [hpri.pos, ite_true, zsmul_eq_mul, sum_singleton, _root_.pow_zero, mul_one,
-      two_lt hp5,neg_smul, sum_neg_distrib, ne_eq, zero_smul, sum_const_zero, add_zero]
+      two_lt hp5, neg_smul, sum_neg_distrib, ne_eq, zero_smul, sum_const_zero, add_zero]
     ring
   rw [sum_range] at key
   refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ?_ _) _)

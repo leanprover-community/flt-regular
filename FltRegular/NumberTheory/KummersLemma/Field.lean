@@ -48,13 +48,12 @@ lemma monic_poly_aux :
     convert add_zero _ using 2
     rw [natDegree_poly_aux hζ, coeff_C, if_neg (NeZero.pos p).ne.symm]
   · rw [leadingCoeff_pow, ← C.map_one, leadingCoeff, natDegree_sub_C, natDegree_mul_X]
-    · simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C, coeff_one,
-        sub_zero, one_ne_zero, ↓reduceIte]
+    · simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C,
+        coeff_one, sub_zero, one_ne_zero, ↓reduceIte]
     · exact C_ne_zero.mpr (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
-
-
 variable [IsCyclotomicExtension {p} ℚ K]
 
+/-- The monic polynomial used in Kummer's lemma after dividing by `(ζ - 1)^p`. -/
 noncomputable def poly : (𝓞 K)[X] := (zeta_sub_one_pow_dvd_poly hp hζ u hcong).choose
 
 lemma poly_spec :
@@ -65,7 +64,8 @@ lemma poly_spec :
 lemma monic_poly : Monic (poly hp hζ u hcong) := by
   haveI : Fact (Nat.Prime p) := hpri
   have := congr_arg leadingCoeff (poly_spec hp hζ u hcong)
-  simp only [map_pow, leadingCoeff_mul, leadingCoeff_pow, leadingCoeff_C, monic_poly_aux hζ] at this
+  simp only [map_pow, leadingCoeff_mul, leadingCoeff_pow, leadingCoeff_C,
+    monic_poly_aux hζ] at this
   refine mul_right_injective₀ ?_ (this.trans (mul_one _).symm)
   exact pow_ne_zero _ (hζ.unit'_coe.sub_one_ne_zero hpri.out.one_lt)
 
@@ -124,7 +124,6 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
   rw [map_sub, map_one]
   have := congr_arg (aeval ((1 - ζ ^ m • α) / (algebraMap K L (ζ - 1))))
     (poly_spec hp hζ u hcong)
-  -- also add to mathlib
   have hcoe : (algebraMap (𝓞 K) L) (↑hζ.unit') = algebraMap K L ζ := rfl
   have hcoe1 : (algebraMap (𝓞 K) L) ↑u = algebraMap K L ↑↑u := rfl
   simp only [map_sub, map_one, map_pow, map_mul, aeval_C, _root_.smul_pow, hcoe, e, hcoe1, map_add,
@@ -134,6 +133,7 @@ theorem aeval_poly {L : Type*} [Field L] [Algebra K L] (α : L)
     mul_eq_zero] at this
   exact this.resolve_left (pow_ne_zero _ hζ')
 
+/-- The integral root obtained by the Kummer transform from a `p`-th root of `u`. -/
 def polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) (m : ℕ) : 𝓞 L :=
   ⟨((1 : L) - ζ ^ m • α) / (algebraMap K L (ζ - 1)), isIntegral_trans _
@@ -230,11 +230,11 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   have hζ' : algebraMap K L ζ - 1 ≠ 0 := by
     simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
   rw [map_poly_eq_prod (e := e)]
-  refine separable_prod' ?_ (fun _ _ => separable_X_sub_C)
+  refine separable_prod' ?_ (fun _ _ ↦ separable_X_sub_C)
   intros i hi j hj hij
   apply isCoprime_X_sub_C_of_isUnit_sub
-  obtain ⟨v, hv⟩ :
-      Associated (hζ.unit' - 1 : 𝓞 K) ((hζ.unit' : 𝓞 K) ^ j - (hζ.unit' : 𝓞 K) ^ i) := by
+  obtain ⟨v, hv⟩ : Associated (hζ.unit' - 1 : 𝓞 K)
+      ((hζ.unit' : 𝓞 K) ^ j - (hζ.unit' : 𝓞 K) ^ i) := by
     refine hζ.unit'_coe.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out ?_ ?_ ?_
     · rw [Finset.mem_coe, mem_nthRootsFinset (NeZero.pos p), ← pow_mul, mul_comm, pow_mul,
         hζ.unit'_coe.pow_eq_one, one_pow]
@@ -288,8 +288,8 @@ lemma polyRoot_spec {L : Type*} [Field L] [Algebra K L] (α : L)
     Algebra.smul_def (ζ - 1), ← mul_div_assoc,
     mul_div_cancel_left₀ _
       ((hζ.map_of_injective (algebraMap K L).injective).sub_one_ne_zero hpri.out.one_lt),
-    sub_sub_cancel, smul_smul, inv_mul_cancel₀ (pow_ne_zero _ <| hζ.ne_zero (NeZero.pos p).ne.symm),
-      one_smul]
+    sub_sub_cancel, smul_smul,
+    inv_mul_cancel₀ (pow_ne_zero _ <| hζ.ne_zero (NeZero.pos p).ne.symm), one_smul]
 
 lemma mem_adjoin_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) (i) :
@@ -301,20 +301,29 @@ lemma mem_adjoin_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
 include hu hp hζ hcong in
 attribute [local instance] Ideal.Quotient.field in
 lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ p - C (u : K))] :
-    IsUnramified (𝓞 K) (𝓞 L) := by
+    Algebra.Unramified (𝓞 K) (𝓞 L) := by
   let α := polyRoot hp hζ u hcong _ (rootOfSplitsXPowSubC_pow _ L) 0
   haveI := Polynomial.IsSplittingField.finiteDimensional L (X ^ p - C (u : K))
+  haveI : Module.Finite (𝓞 K) (𝓞 L) := IsIntegralClosure.finite (𝓞 K) K L (𝓞 L)
   have hα : Algebra.adjoin K {(α : L)} = ⊤ := by
     rw [eq_top_iff, ← Algebra.adjoin_root_eq_top_of_isSplittingField
-      ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩ (X_pow_sub_C_irreducible_of_prime hpri.out hu)
-      (rootOfSplitsXPowSubC_pow (u : K) L), Algebra.adjoin_le_iff, Set.singleton_subset_iff]
+      ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩
+      (X_pow_sub_C_irreducible_of_prime hpri.out hu) (rootOfSplitsXPowSubC_pow (u : K) L),
+      Algebra.adjoin_le_iff, Set.singleton_subset_iff]
     exact mem_adjoin_polyRoot hp hζ u hcong _ _ 0
-  constructor
-  intros I hI hIbot
-  refine isUnramifiedAt_of_Separable_minpoly (R := 𝓞 K) K (S := 𝓞 L) L I hIbot α ?_ hα ?_
+  refine Algebra.unramified_iff_forall.mpr ?_
+  rintro ⟨P, hP⟩
+  letI : P.IsPrime := hP
+  by_cases hPbot : P = ⊥
+  · subst P
+    exact isUnramifiedAt_bot (R := 𝓞 K) (S := 𝓞 L)
+  refine isUnramifiedAt_of_Separable_minpoly (R := 𝓞 K) K (S := 𝓞 L) L P hPbot α ?_
+    hα ?_
   · exact IsIntegral.tower_top α.prop
   · rw [minpoly_polyRoot' hp hζ u hcong hu]
-    haveI := hI.isMaximal hIbot
-    exact separable_poly hp hζ u hcong hu I
+    have hPbot' : P.under (𝓞 K) ≠ ⊥ := Ideal.under_ne_bot (𝓞 K) hPbot
+    haveI : (P.under (𝓞 K)).IsMaximal :=
+      (show (P.under (𝓞 K)).IsPrime from inferInstance).isMaximal hPbot'
+    exact separable_poly hp hζ u hcong hu (P.under (𝓞 K))
 
 end KummersLemma

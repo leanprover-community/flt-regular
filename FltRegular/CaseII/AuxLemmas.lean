@@ -32,12 +32,17 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
     (hI : ¬ (Ideal.span <| singleton x) ∣ I) (hJ : ¬ (Ideal.span <| singleton x) ∣ J)
     (h : Submodule.IsPrincipal ((I / J : FractionalIdeal R⁰ K) : Submodule R K)) :
     ∃ a b : R,
-      ¬(x ∣ a) ∧ ¬(x ∣ b) ∧ spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
+      ¬(x ∣ a) ∧ ¬(x ∣ b) ∧
+        spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
   by_contra H1
-  have hI' : (I : FractionalIdeal R⁰ K) ≠ 0 :=
-    by rw [← coeIdeal_bot, Ne, coeIdeal_inj]; rintro rfl; exact hI (dvd_zero _)
-  have hJ' : (J : FractionalIdeal R⁰ K) ≠ 0 :=
-    by rw [← coeIdeal_bot, Ne, coeIdeal_inj]; rintro rfl; exact hJ (dvd_zero _)
+  have hI' : (I : FractionalIdeal R⁰ K) ≠ 0 := by
+    rw [← coeIdeal_bot, Ne, coeIdeal_inj]
+    rintro rfl
+    exact hI (dvd_zero _)
+  have hJ' : (J : FractionalIdeal R⁰ K) ≠ 0 := by
+    rw [← coeIdeal_bot, Ne, coeIdeal_inj]
+    rintro rfl
+    exact hJ (dvd_zero _)
   have : ∀ n : ℕ, (1 ≤ n) → ¬∃ a b : R, ¬(x ^ n ∣ a) ∧ ¬(x ^ n ∣ b) ∧
     spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
     intro n hn
@@ -51,7 +56,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
         rw [div_eq_mul_inv, ← spanSingleton_mul_spanSingleton,
           ← one_div_spanSingleton, ← mul_div_assoc, mul_one, div_eq_iff,
           ← mul_div_right_comm, eq_div_iff hJ', ← coeIdeal_span_singleton,
-            ← coeIdeal_span_singleton, ← coeIdeal_mul, ← coeIdeal_mul, coeIdeal_inj] at e
+          ← coeIdeal_span_singleton, ← coeIdeal_mul, ← coeIdeal_mul, coeIdeal_inj] at e
         on_goal 2 =>
           rw [Ne, spanSingleton_eq_zero_iff, ← (algebraMap R K).map_zero,
             (IsFractionRing.injective R K).eq_iff]
@@ -97,8 +102,10 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
   · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
     exact hI' ha
   obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hx.not_unit h
-  obtain ⟨m, hm⟩ := FiniteMultiplicity.of_not_isUnit hx.not_unit (nonZeroDivisors.ne_zero t.prop)
+  obtain ⟨m, hm⟩ :=
+    FiniteMultiplicity.of_not_isUnit hx.not_unit (nonZeroDivisors.ne_zero t.prop)
   rw [IsFractionRing.mk'_eq_div] at ha
-  refine this (n + m + 1) (Nat.le_add_left 1 (n + m)) ⟨s, t, (fun hs ↦ ?_), (fun ht ↦ ?_), ha.symm⟩
+  refine this (n + m + 1) (Nat.le_add_left 1 (n + m))
+    ⟨s, t, (fun hs ↦ ?_), (fun ht ↦ ?_), ha.symm⟩
   · exact hn (dvd_trans (pow_dvd_pow _ (by linarith)) hs)
   · exact hm (dvd_trans (pow_dvd_pow _ (Nat.le_add_left _ _)) ht)

@@ -98,7 +98,7 @@ lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.unit' : 𝓞 K) - 1 ∣ n ↔ �
       refine Prime.neg Int.prime_two
   rw [← hζ.norm_toInteger_sub_one_of_prime_ne_two' hp, Ideal.norm_dvd_iff]
   · rfl
-  · rw [hζ.norm_toInteger_sub_one_of_prime_ne_two' hp,  ← Nat.prime_iff_prime_int]
+  · rw [hζ.norm_toInteger_sub_one_of_prime_ne_two' hp, ← Nat.prime_iff_prime_int]
     exact hpri.1
 
 lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
@@ -113,7 +113,7 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.unit' : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
   have : Fact (Nat.Prime p) := hpri
   letI := IsCyclotomicExtension.numberField {p} ℚ K
-  letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.unit' - 1: 𝓞 K))) := inferInstance
+  letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.unit' - 1 : 𝓞 K))) := inferInstance
   apply RingHom.toIntAlgHom_injective
   apply hζ.integralPowerBasis.algHom_ext
   have h : hζ.integralPowerBasis.gen = hζ.unit' := by
@@ -131,8 +131,8 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
 open NumberField.RingOfIntegers in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.unit' - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1) • x := by
-  let _ := IsCyclotomicExtension.numberField {p} ℚ K
-  let _ := IsCyclotomicExtension.isGalois {p} ℚ K
+  letI := IsCyclotomicExtension.numberField {p} ℚ K
+  letI := IsCyclotomicExtension.isGalois {p} ℚ K
   have : (Algebra.trace ℤ _ x : 𝓞 K) = ∑ σ : K ≃ₐ[ℚ] K, (mapAlgHom σ).toRingHom x := by
     apply (show Function.Injective (algebraMap (𝓞 K) K) from Subtype.val_injective)
     rw [← eq_intCast (algebraMap ℤ (𝓞 K)), ← IsScalarTower.algebraMap_apply,
@@ -178,7 +178,8 @@ lemma norm_add_one_smul_of_isUnit {K} [Field K] [NumberField K] {p : ℕ} (hpri 
     simp only [Int.cast_abs, Function.comp_apply, Nat.cast_one, Int.cast_one, ← Int.abs_eq_natAbs,
       Algebra.coe_norm_int, ← NumberField.isUnit_iff_norm.mp hx, RingOfIntegers.coe_norm]
   have : Algebra.norm ℤ (1 + p • x) ≠ -1 := by
-    intro e; apply hp
+    intro e
+    apply hp
     obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
     have : (p : ℤ) * (- Algebra.trace ℤ _ x - r * p) = 2 := by
       rw [zsmul_eq_mul, Int.cast_natCast, ← nsmul_eq_mul, e, eq_comm, ← sub_eq_zero] at hr

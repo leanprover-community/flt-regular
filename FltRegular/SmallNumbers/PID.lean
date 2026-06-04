@@ -17,11 +17,12 @@ local notation "M " K:70 => (4 / π) ^ nrComplexPlaces K *
 namespace RingOfIntegers
 
 theorem PIDGalois [IsGalois ℚ K] {θ : 𝓞 K} (hθ : exponent θ = 1)
-  (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) →
-    haveI : Fact (p.Prime) := ⟨hp⟩
+    (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) →
+      haveI : Fact (p.Prime) := ⟨hp⟩
       ∃ P, ∃ hP : P ∈ monicFactorsMod θ p, ⌊(M K)⌋₊ < p ^ P.natDegree ∨
-        Submodule.IsPrincipal ((Ideal.primesOverSpanEquivMonicFactorsMod (hθ ▸ hp.not_dvd_one)).symm
-          ⟨P, hP⟩).1) : IsPrincipalIdealRing (𝓞 K) := by
+        Submodule.IsPrincipal
+          ((Ideal.primesOverSpanEquivMonicFactorsMod (hθ ▸ hp.not_dvd_one)).symm
+            ⟨P, hP⟩).1) : IsPrincipalIdealRing (𝓞 K) := by
   refine isPrincipalIdealRing_of_isPrincipal_of_pow_le_of_mem_primesOver_of_mem_Icc
     (fun p hpmem hp I hI hple ↦ ?_)
   obtain ⟨Q, hQ, H⟩ := h p hpmem hp

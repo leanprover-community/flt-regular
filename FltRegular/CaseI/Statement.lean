@@ -21,11 +21,13 @@ namespace CaseI
 /-- Statement of case I with additional assumptions. -/
 def SlightlyEasier : Prop :=
   ∀ ⦃a b c : ℤ⦄ {p : ℕ} [Fact p.Prime], IsRegularPrime p → 5 ≤ p →
-    ({a, b, c} : Finset ℤ).gcd id = 1 → ¬a ≡ b [ZMOD p] → ¬↑p ∣ a * b * c → a ^ p + b ^ p ≠ c ^ p
+    ({a, b, c} : Finset ℤ).gcd id = 1 → ¬a ≡ b [ZMOD p] → ¬↑p ∣ a * b * c →
+    a ^ p + b ^ p ≠ c ^ p
 
 /-- Statement of case I. -/
 def Statement : Prop :=
-  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [Fact p.Prime], IsRegularPrime p → ¬↑p ∣ a * b * c → a ^ p + b ^ p ≠ c ^ p
+  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [Fact p.Prime], IsRegularPrime p → ¬↑p ∣ a * b * c →
+    a ^ p + b ^ p ≠ c ^ p
 
 theorem may_assume : SlightlyEasier → Statement := by
   intro Heasy a b c p hpri hreg hI H
@@ -49,7 +51,6 @@ theorem may_assume : SlightlyEasier → Statement := by
         (fun hc ↦ hprod <| by simp [hc]) H
     · exact Nat.not_prime_mul one_lt_two.ne' one_lt_two.ne' hpri.out
   let d := ({a, b, c} : Finset ℤ).gcd id
-  have hd : d ≠ 0 := Finset.gcd_ne_zero_iff.mpr ⟨c, by simp, fun hc ↦ hprod <| by simp_all⟩
   have hdiv : ¬↑p ∣ a / d * (b / d) * (c / d) := by
     contrapose! hI with hdiv
     have hadiv : d ∣ a := gcd_dvd (by simp)
@@ -59,7 +60,8 @@ theorem may_assume : SlightlyEasier → Statement := by
     convert dvd_mul_of_dvd_right hdiv (d * d * d) using 1
     grind
   rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
-  obtain ⟨X, Y, Z, H1, H2, H3, _, H5⟩ := a_not_cong_b hpri.out hp5 hprodxyx Hxyz hunit hdiv
+  obtain ⟨_, _, _, H1, H2, H3, _, H5⟩ :=
+    a_not_cong_b hpri.out hp5 hprodxyx Hxyz hunit hdiv
   exact Heasy hreg hp5 H2 H3 H5 H1
 
 end CaseI
@@ -86,7 +88,7 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   rw [hgcd] at Hq
   exact hqpri.not_unit (isUnit_of_dvd_one Hq)
 
-/-- Auxiliary function -/
+/-- Auxiliary function. -/
 def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>
   if x = 0 then a else if x = 1 then b else if x = k₁ then -a else if x = k₂ then -b else 0
 
@@ -114,7 +116,8 @@ theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
   have hik₂ : i ≠ k₂ := fun h => by simp [h, s] at hi
   simp [f, hi0, hi1, hik₁, hik₂]
 
-theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) : ∃ i : Fin p, f a b k₁ k₂ (i : ℕ) = 0 := by
+theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
+    ∃ i : Fin p, f a b k₁ k₂ (i : ℕ) = 0 := by
   obtain ⟨i, hrange, hi⟩ := auxf' hp5 a b k₁ k₂
   exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
 
@@ -154,7 +157,8 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
     odd_iff.2 <| hpri.1.eq_two_or_odd.resolve_left fun h ↦ by simp [h] at h5p] at H₁
   replace H₁ := congr_arg (fun x => span ({ x } : Set R)) H₁
   simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
-  refine exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη => ?_) H₁ ζ hζ
+  refine exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη => ?_) H₁ ζ
+    hζ
   refine fltIdeals_coprime ?_ ?_ H (ab_coprime H hpri.out.ne_zero hgcd) hη₁ hη₂ hη caseI
   · exact hpri.out
   · exact h5p
@@ -170,10 +174,11 @@ theorem is_principal {a b c : ℤ} {ζ : R} (hreg : IsRegularPrime p) (hp5 : 5 �
 
 set_option backward.isDefEq.respectTransparency false in
 theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime p)
-    (hζ : IsPrimitiveRoot ζ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c)
-    (H : a ^ p + b ^ p = c ^ p) :
+    (hζ : IsPrimitiveRoot ζ p) (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1)
+    (caseI : ¬↑p ∣ a * b * c) (H : a ^ p + b ^ p = c ^ p) :
     ∃ k₁ k₂ : Fin p,
-      k₂ ≡ k₁ - 1 [ZMOD p] ∧ ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) := by
+      k₂ ≡ k₁ - 1 [ZMOD p] ∧
+        ↑p ∣ ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) := by
   let ζ' := (ζ : K)
   have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
   have h : ζ = (hζ'.unit' : R) := by rfl
@@ -196,7 +201,8 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
       ZMod.intCast_mod, Int.cast_sub, Int.cast_mul, Int.cast_one]
   simp only [add_sub_assoc, sub_sub] at hk ⊢
   convert hk using 3
-  rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R), mul_assoc (↑b : R)]
+  rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R),
+    mul_assoc (↑b : R)]
   congr 2
   · ext
     simp only [map_pow, NumberField.Units.coe_zpow, ← h]
@@ -215,7 +221,8 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
 set_option backward.isDefEq.respectTransparency false in
 /-- Case I with additional assumptions. -/
 theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
-    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p]) (caseI : ¬↑p ∣ a * b * c) :
+    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (hab : ¬a ≡ b [ZMOD p])
+    (caseI : ¬↑p ∣ a * b * c) :
     a ^ p + b ^ p ≠ c ^ p := by
   set ζ := zeta p ℤ R
   have hζ := zeta_spec p ℤ R
@@ -241,7 +248,7 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
   exact dvd_coeff_cycl_integer hpri.out hζ (auxf hp5 a b k₁ k₂) key
     ⟨0, hpri.out.pos⟩
 
-/-- CaseI. -/
+/-- Case I. -/
 theorem caseI {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p)
     (caseI : ¬↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
   FltRegular.CaseI.may_assume

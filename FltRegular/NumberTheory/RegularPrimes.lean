@@ -24,8 +24,8 @@ open scoped NumberField
 
 variable (n p : ℕ) [hp : Fact p.Prime]
 
-/-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group -/
-def IsRegularNumber [_inst : NeZero n] : Prop :=
+/-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group. -/
+def IsRegularNumber : Prop :=
   n.Coprime <| Fintype.card <| ClassGroup (𝓞 <| CyclotomicField n ℚ)
 
 /-- The definition of regular primes. -/
@@ -50,14 +50,16 @@ def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := b
     by simp [eq_iff_true_of_subsingleton]⟩
 
 instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
-  (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
+    (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
     IsPrincipalIdealRing (𝓞 L) := by
   haveI : IsIntegralClosure ℤ ℤ L :=
     { algebraMap_injective := (algebraMap ℤ L).injective_int
-      isIntegral_iff := fun {x} => by
+      isIntegral_iff := fun {x} ↦ by
         let f := cyclotomicFieldTwoEquiv ℚ L
         refine
-          ⟨fun hx => ⟨IsIntegralClosure.mk' ℤ (f x) (map_isIntegral_int f hx), f.injective ?_⟩, ?_⟩
+          ⟨fun hx ↦
+            ⟨IsIntegralClosure.mk' ℤ (f x) (map_isIntegral_int f hx), f.injective ?_⟩,
+            ?_⟩
         · convert IsIntegralClosure.algebraMap_mk' ℤ (f x) (map_isIntegral_int f hx)
           simp
         · rintro ⟨y, hy⟩
@@ -66,10 +68,10 @@ instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
   exact IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
 
 instance : IsCyclotomicExtension {2} ℚ (CyclotomicField 2 ℚ) :=
-CyclotomicField.isCyclotomicExtension 2 ℚ
+  CyclotomicField.isCyclotomicExtension 2 ℚ
 
 instance : IsPrincipalIdealRing (𝓞 (CyclotomicField 2 ℚ)) :=
-IsPrincipalIdealRing_of_IsCyclotomicExtension_two _
+  IsPrincipalIdealRing_of_IsCyclotomicExtension_two _
 
 theorem isRegularPrime_two : IsRegularPrime 2 := by
   rw [IsRegularPrime, IsRegularNumber]

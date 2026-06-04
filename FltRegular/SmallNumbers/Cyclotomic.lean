@@ -15,7 +15,8 @@ lemma uff {n p : ℕ} [hp : Fact p.Prime] (hn : n.Prime) (hpn : p ≠ n) : p.Cop
 open NumberField Module NumberField.InfinitePlace Nat Real RingOfIntegers Finset Multiset
   IsCyclotomicExtension.Rat Polynomial cyclotomic UniqueFactorizationMonoid Ideal
 
-variable {n : ℕ} [NeZero n] {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension {n} ℚ K]
+variable {n : ℕ} [NeZero n] {K : Type*} [Field K] [NumberField K]
+  [IsCyclotomicExtension {n} ℚ K]
 
 local notation "M " K:70 => (4 / π) ^ nrComplexPlaces K *
   ((finrank ℚ K)! / (finrank ℚ K) ^ (finrank ℚ K) * √|discr K|)
@@ -52,12 +53,13 @@ theorem pid1 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → p �
   · let Q : ℤ[X] := X - 1
     have hQ : Q.map (Int.castRingHom (ZMod p)) ∈ monicFactorsMod θ p := by
       simp only [Polynomial.map_sub, map_X, Polynomial.map_one, mem_toFinset, Q]
-      refine (Polynomial.mem_normalizedFactors_iff ((Monic.map _ <|
-        minpoly n K ▸ monic ↑n ℤ).ne_zero)).mpr ⟨irreducible_of_degree_eq_one (by compute_degree!),
-        by monicity, ⟨(X - 1) ^ (p - 2), ?_⟩⟩
+      refine (Polynomial.mem_normalizedFactors_iff
+          ((Monic.map _ <| minpoly n K ▸ monic ↑n ℤ).ne_zero)).mpr
+        ⟨irreducible_of_degree_eq_one (by compute_degree!), by monicity,
+          ⟨(X - 1) ^ (p - 2), ?_⟩⟩
       simp only [minpoly n K, map_cyclotomic]
-      rw [← mul_one n, ←pow_one (n : ℕ), ← hpn, cyclotomic_mul_prime_pow_eq (ZMod p) hp.not_dvd_one
-        one_pos]
+      rw [← mul_one n, ← pow_one (n : ℕ), ← hpn,
+        cyclotomic_mul_prime_pow_eq (ZMod p) hp.not_dvd_one one_pos]
       simp only [cyclotomic_one, pow_one, tsub_self, pow_zero]
       rw [← pow_succ' (X - 1)]
       congr
@@ -81,23 +83,24 @@ theorem pid2 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → p �
       ∃ P : ℤ[X], P.Monic ∧ P.map (Int.castRingHom (ZMod p)) ∈ monicFactorsMod θ p ∧
         (⌊(M K)⌋₊ < p ^ P.natDegree ∨
           Submodule.IsPrincipal (span {↑p, aeval θ P}))) : IsPrincipalIdealRing (𝓞 K) := by
-    refine pid1 n (fun p hple hp hpn ↦ ?_)
-    have : Fact (p.Prime) := ⟨hp⟩
-    obtain ⟨P, hPmo, hP, hM⟩ := h p hple hp hpn
-    refine ⟨P.map (Int.castRingHom (ZMod p)), hP, ?_⟩
-    rcases hM with H | H
-    · left
-      convert H
-      simp [hPmo.leadingCoeff]
-    · right
-      simpa [primesOverSpanEquivMonicFactorsMod_symm_apply_eq_span (ne_dvd_exponent p) hP]
+  refine pid1 n (fun p hple hp hpn ↦ ?_)
+  have : Fact (p.Prime) := ⟨hp⟩
+  obtain ⟨P, hPmo, hP, hM⟩ := h p hple hp hpn
+  refine ⟨P.map (Int.castRingHom (ZMod p)), hP, ?_⟩
+  rcases hM with H | H
+  · left
+    convert H
+    simp [hPmo.leadingCoeff]
+  · right
+    simpa [primesOverSpanEquivMonicFactorsMod_symm_apply_eq_span (ne_dvd_exponent p) hP]
 
 variable [hn : Fact (Nat.Prime n)]
 
 theorem pid3 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → (hpn : p ≠ n) →
     haveI : Fact (p.Prime) := ⟨hp⟩
-      ∃ P Q A : ℤ[X], P.Monic ∧ orderOf (ZMod.unitOfCoprime _ (uff hn.1 hpn)) = P.natDegree
-      ∧ P * Q + p * A = cyclotomic n ℤ ∧
+      ∃ P Q A : ℤ[X],
+        P.Monic ∧ orderOf (ZMod.unitOfCoprime _ (uff hn.1 hpn)) = P.natDegree ∧
+          P * Q + p * A = cyclotomic n ℤ ∧
         (⌊(M K)⌋₊ < p ^ P.natDegree ∨
           Submodule.IsPrincipal (span {↑p, aeval θ P}))) : IsPrincipalIdealRing (𝓞 K) := by
   refine pid2 n (fun p hple hp hpn ↦ ?_)
@@ -109,7 +112,8 @@ theorem pid3 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → (hpn
   refine ⟨P, hPmo, mem_toFinset.mpr <| (Polynomial.mem_normalizedFactors_iff
     (((minpoly.monic (isIntegral θ)).map _).ne_zero)).mpr ⟨?_, hPmo.map _,
     by simp [minpoly, ← hQA]⟩, hM⟩
-  refine ZMod.irreducible_of_dvd_cyclotomic_of_natDegree (fun h ↦ ?_) this (by simp [← hP, hPmo])
+  refine ZMod.irreducible_of_dvd_cyclotomic_of_natDegree (fun h ↦ ?_) this
+    (by simp [← hP, hPmo])
   exact hp.ne_one <| ((Nat.dvd_prime hn.1).1 h).resolve_right hpn
 
 theorem pid4 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → (hpn : p ≠ n) →

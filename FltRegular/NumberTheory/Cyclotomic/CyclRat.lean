@@ -89,7 +89,8 @@ theorem mem_fltIdeals [Fact p.Prime] (x y : ℤ) {η : R} (hη : η ∈ nthRoots
 
 open IsPrimitiveRoot
 
-theorem prim_coe (ζ : R) (hζ : IsPrimitiveRoot ζ p) : IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p :=
+theorem prim_coe (ζ : R) (hζ : IsPrimitiveRoot ζ p) :
+    IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p :=
   coe_submonoidClass_iff.mpr hζ
 
 theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
@@ -141,13 +142,8 @@ theorem one_sub_zeta_prime [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset 
 theorem diff_of_roots [hp : Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1) (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂)
     (hwlog : η₁ ≠ 1) : ∃ u : Rˣ, η₁ - η₂ = u * (1 - η₁) := by
-  replace ph : 2 ≤ p := le_trans (by decide) ph
+  have _ : 2 ≤ p := le_trans (by decide) ph
   have h := isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη₁ hwlog
-  obtain ⟨i, ⟨H, hi⟩⟩ := h.eq_pow_of_pow_eq_one ((mem_nthRootsFinset hp.out.pos 1).1 hη₂)
-  have hi1 : 1 ≠ i := by
-    intro hi1
-    rw [← hi1, pow_one] at hi
-    exact hdiff hi
   rcases h.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hp.out hη₁ hη₂ hdiff with ⟨u, hu⟩
   refine ⟨-u, by grind [Units.val_neg]⟩
 
@@ -185,15 +181,13 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
     rw [mul_assoc] at hv
     have hvunit : IsUnit (v : R) := Units.isUnit v
     apply (unit_mul_mem_iff_mem P hvunit).1 _
-    apply hP2
-    apply hv
+    exact hP2 hv
   have hel22 : (x : R) * (1 - η₁) ∈ P := by
     obtain ⟨v, hv⟩ := hel2
     rw [mul_assoc] at hv
     have hvunit : IsUnit (v : R) := Units.isUnit v
     apply (unit_mul_mem_iff_mem P hvunit).1 _
-    apply hP2
-    apply hv
+    exact hP2 hv
   have hPrime := hP1.isPrime
   have hprime2 := IsPrime.mem_or_mem hPrime hel11
   have hprime3 := IsPrime.mem_or_mem hPrime hel22
@@ -211,7 +205,9 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
       rw [span_singleton_prime h2]
       apply h1
     have hηP : Ideal.span ({1 - η₁} : Set R) = P := by
-      have hle : Ideal.span ({1 - η₁} : Set R) ≤ P := by rw [span_le]; simp [h]
+      have hle : Ideal.span ({1 - η₁} : Set R) ≤ P := by
+        rw [span_le]
+        simp [h]
       apply (@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ _ _ _ hηprime hPrime _).1 hle
       intro hbot
       rw [span_eq_bot] at hbot
@@ -225,8 +221,7 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
         simp only [eq_intCast, Set.image_singleton, Int.cast_natCast]
         rw [span_singleton_le_span_singleton]
         apply zeta_sub_one_dvb_p hη₁ hwlog
-      have H2 : IsPrime (P.comap (Int.castRingHom R)) := by
-        exact IsPrime.comap _
+      have H2 : IsPrime (P.comap (Int.castRingHom R)) := IsPrime.comap _
       have H4 : Ideal.span ({(p : ℤ)} : Set ℤ) ≠ ⊥ := by simp [NeZero.ne p]
       apply ((@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ _ _ _ H5 H2 H4).1 H1).symm
     have hxyinP : (x + y : R) ∈ P := by
@@ -238,10 +233,12 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
       have H3 : ↑x + (↑y - ↑y * (1 - η₁)) = ↑x + ↑y + -↑y * (1 - η₁) := by ring
       rw [H3] at H1
       have H4 : -↑y * (1 - η₁) ∈ P := by
-        rw [← hηP]; rw [Ideal.mem_span_singleton']
+        rw [← hηP, Ideal.mem_span_singleton']
         exact ⟨-(y : R), rfl⟩
       apply (Ideal.add_mem_iff_left P H4).1 H1
-    have hxyinP2 : x + y ∈ Ideal.span ({(p : ℤ)} : Set ℤ) := by rw [← hcapZ]; simp [hxyinP]
+    have hxyinP2 : x + y ∈ Ideal.span ({(p : ℤ)} : Set ℤ) := by
+      rw [← hcapZ]
+      simp [hxyinP]
     rw [mem_span_singleton] at hxyinP2
     apply absurd hxyinP2 hp2
   rcases hprime2 with hprime2 | hprime2
@@ -375,6 +372,5 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
   rw [hy, ← smul_eq_mul, Int.cast_smul_eq_zsmul, ← b.basis.coord_apply, ← Fin.cast_mk hdim.symm _
     hj, hn]
   exact dvd_add (dvd_mul_right _ _) last_dvd
-
 
 end IntFacts
