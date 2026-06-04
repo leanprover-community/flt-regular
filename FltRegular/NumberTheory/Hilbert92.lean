@@ -59,15 +59,6 @@ lemma systemOfUnits.IsFundamental.maximal' [Module A G] (S : systemOfUnits p G r
   letI := hs.choose
   convert hs.choose_spec a ‹_› <;> symm <;> exact Nat.card_eq_fintype_card.symm
 
-/-- The linear total map associated to a family of module elements. -/
-@[simps]
-noncomputable
-def Finsupp.ltotal (α M R) [CommSemiring R] [AddCommMonoid M] [Module R M] :
-    (α → M) →ₗ[R] (α →₀ R) →ₗ[R] M where
-  toFun := Finsupp.linearCombination R
-  map_add' := fun u v ↦ by ext f; simp
-  map_smul' := fun r v ↦ by ext f; simp
-
 lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
     (f : ι → G) (l : ι →₀ R) (i : ι) (g : G) (σ : R)
     (hσ : σ ∈ nonZeroDivisors R) (hg : σ • g = Finsupp.linearCombination R f l)
@@ -77,8 +68,9 @@ lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R 
   rw [linearIndependent_iff] at hf ⊢
   intros l' hl'
   apply_fun (σ • ·) at hl'
-  rw [Pi.update_eq_sub_add_single, ← Finsupp.ltotal_apply, map_add, map_sub] at hl'
-  simp only [Finsupp.ltotal_apply, LinearMap.add_apply, LinearMap.sub_apply,
+  rw [Pi.update_eq_sub_add_single, ← Finsupp.bilinearCombination_apply R (S := R), map_add,
+    map_sub] at hl'
+  simp only [Finsupp.bilinearCombination_apply, LinearMap.add_apply, LinearMap.sub_apply,
     Finsupp.linearCombination_single_index, smul_add, smul_sub, smul_zero] at hl'
   rw [smul_comm σ (l' i) g, hg, ← LinearMap.map_smul, ← LinearMap.map_smul, smul_smul,
     ← Finsupp.linearCombination_single,
