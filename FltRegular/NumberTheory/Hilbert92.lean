@@ -269,12 +269,6 @@ theorem relativeUnitsMap_mul_apply {f g} (x : RelativeUnits k K) :
   simp_rw [relativeUnitsMap_mk, map_mul]
   rfl
 
-@[simp]
-theorem relativeUnitsMap_mul {f g : K →ₐ[k] K} :
-    (relativeUnitsMap (f * g)) = (relativeUnitsMap f).comp (relativeUnitsMap g) := by
-  ext x
-  exact relativeUnitsMap_mul_apply x
-
 /-- The monoid homomorphism from algebra endomorphisms to endomorphisms of relative units. -/
 noncomputable
 def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) where
