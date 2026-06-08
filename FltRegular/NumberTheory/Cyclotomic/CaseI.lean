@@ -76,8 +76,10 @@ theorem exists_int_sum_eq_zero (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
         (x + y * (zetaUnit ^ (-i) : (𝓞 K)ˣ)) ∈
       Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
   obtain ⟨k, hk⟩ := exists_int_sum_eq_zero' hζ x y i h hp
-  use k
-  convert hk
-  rw [mul_comm, zpow_mul, zpow_ofNat, zpow_natCast]
+  refine ⟨k, ?_⟩
+  have hz : ((zetaUnit ^ k) ^ 2 : (𝓞 K)ˣ) = (zetaUnit ^ (2 * (k : ℤ)) : (𝓞 K)ˣ) := by
+    rw [← zpow_natCast (zetaUnit ^ k) 2, ← zpow_natCast zetaUnit k, ← zpow_mul]
+    grind
+  grind
 
 end FltRegular.CaseI

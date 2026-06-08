@@ -132,7 +132,7 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   apply Associated.of_mul_right _ (Associated.refl (π))
     (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
-  convert_to Associated _ (y * (η₁ - η₂))
+  convert_to! Associated _ (y * (η₁ - η₂))
   · rw [sub_mul, div_zeta_sub_one_mul_zeta_sub_one, div_zeta_sub_one_mul_zeta_sub_one]
     ring
   apply Associated.mul_left

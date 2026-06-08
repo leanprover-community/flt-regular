@@ -65,6 +65,7 @@ theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
   nth_rw 1 [show ζ = ζ ^ ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) by simp] at hdiv
   have key : ↑(p : ℤ) ∣ ∑ j ∈ range p, f0k₁ b p j • ζ ^ j := by
     convert hdiv using 1
+    · norm_cast
     have h : 1 ≠ p.pred := fun h => by linarith [pred_eq_succ_iff.1 h.symm]
     simp_rw [f0k₁, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right h,
       Finset.range_filter_eq]
@@ -110,6 +111,7 @@ theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ 
     show ζ = ζ ^ ((⟨1, hpri.one_lt⟩ : Fin p) : ℕ) by simp] at hdiv
   have key : ↑(p : ℤ) ∣ ∑ j ∈ range p, f0k₂ a b j • ζ ^ j := by
     convert hdiv using 1
+    · norm_cast
     simp_rw [f0k₂, ite_smul, sum_ite, filter_filter, ← Ne.eq_def,
       ne_and_eq_iff_right zero_ne_one, Finset.range_filter_eq]
     simp only [hpri.pos, hpri.one_lt, if_true, zsmul_eq_mul, Int.cast_sub, sum_singleton,

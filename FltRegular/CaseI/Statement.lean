@@ -57,7 +57,7 @@ theorem may_assume : SlightlyEasier → Statement := by
     have hbdiv : d ∣ b := gcd_dvd (by simp)
     have hcdiv : d ∣ c := gcd_dvd (by simp)
     rw [← Int.ediv_mul_cancel hadiv, ← Int.ediv_mul_cancel hbdiv, ← Int.ediv_mul_cancel hcdiv]
-    convert dvd_mul_of_dvd_right hdiv (d * d * d) using 1
+    convert! dvd_mul_of_dvd_right hdiv (d * d * d) using 1
     grind
   rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
   obtain ⟨_, _, _, H1, H2, H3, _, H5⟩ :=
@@ -202,7 +202,7 @@ theorem ex_fin_div {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hreg : IsRegularPrime
   · simp only [natAbs_of_nonneg (emod_nonneg _ hpcoe), ← ZMod.intCast_eq_intCast_iff,
       ZMod.intCast_mod, Int.cast_sub, Int.cast_mul, Int.cast_one]
   simp only [add_sub_assoc, sub_sub] at hk ⊢
-  convert hk using 3
+  convert! hk using 3
   rw [mul_add, mul_comm (↑a : R), ← mul_assoc _ (↑b : R), mul_comm _ (↑b : R),
     mul_assoc (↑b : R)]
   congr 2
@@ -233,7 +233,7 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
   intro H
   obtain ⟨k₁, k₂, hcong, hdiv⟩ := ex_fin_div hp5 hreg hζ hgcd caseI H
   have key : ↑(p : ℤ) ∣ ∑ j ∈ range p, f a b k₁ k₂ j • ζ ^ j := by
-    convert hdiv using 1
+    convert! hdiv using 1
     have h01 : 0 ≠ 1 := zero_ne_one
     have h0k₁ := aux0k₁ hpri.out hp5 hζ caseI hcong hdiv
     have h0k₂ := aux0k₂ hpri.out hp5 hζ hab hcong hdiv

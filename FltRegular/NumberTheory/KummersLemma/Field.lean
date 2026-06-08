@@ -94,11 +94,12 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
         Polynomial.map_sub, Polynomial.map_mul, map_C,
         Polynomial.map_one, map_X, coeff_add] at this
       convert this
-      simp only [← Polynomial.coeff_map]
-      simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
-        Polynomial.map_one]
-      rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
-      simp
+      · simp only [← Polynomial.coeff_map]
+        simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
+          Polynomial.map_one]
+        rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
+        simp
+      · rfl
   apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
   simp only [coeff_map, one_div, coeff_add, this, mul_add]
   simp_rw [← smul_eq_mul (α := K), ← coeff_smul]
@@ -255,8 +256,10 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     apply IsIntegral.of_pow (NeZero.pos p); rw [e]; exact isIntegral_algebraMap
   have : IsUnit (⟨α, isIntegral_trans _ hα⟩ : 𝓞 L) := by
     rw [← isUnit_pow_iff (NeZero.pos p).ne.symm]
-    convert (algebraMap (𝓞 K) (𝓞 L)).isUnit_map u.isUnit
-    ext; simp only [SubmonoidClass.coe_pow, e]; rfl
+    have hpow : (⟨α, isIntegral_trans _ hα⟩ : 𝓞 L) ^ p = algebraMap (𝓞 K) (𝓞 L) ↑u := by
+      ext; simp only [SubmonoidClass.coe_pow, e]; rfl
+    rw [hpow]
+    exact (algebraMap (𝓞 K) (𝓞 L)).isUnit_map u.isUnit
   convert ((algebraMap (𝓞 K) (𝓞 L)).isUnit_map v.isUnit).mul this using 1
   ext
   simp only [polyRoot, map_sub, map_one, sub_div, one_div, map_sub,

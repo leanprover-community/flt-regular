@@ -485,13 +485,6 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
       exact (Nat.prime_iff_prime_int.mp hp).not_dvd_one
         (h₁ ▸ dvd_add (dvd_mul_left (p : ℤ) α₁) (dvd_mul_of_dvd_left H a₁))
 
-lemma NumberField.Units.finrank_eq :
-    finrank ℤ (Additive (𝓞 k)ˣ) = NumberField.Units.rank k := by
-  rw [← rank_modTorsion]
-  change _ = finrank ℤ (Additive (𝓞 k)ˣ ⧸ (AddCommGroup.torsion <| Additive (𝓞 k)ˣ))
-  rw [← Submodule.torsion_int]
-  exact (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).symm
-
 include hp in
 lemma lh_pow_free (ν : (𝓞 k)ˣ)
     (hk : ∀ (ε : (𝓞 k)ˣ) (n : ℕ), ε ^ (p ^ n) = 1 → ∃ i, ν ^ i = ε)
@@ -532,7 +525,7 @@ lemma Hilbert92_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ν : (𝓞 k
   simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe]
   have hcoe1 :
       algebraMap (𝓞 k) k (((ν ^ p) ^ a)⁻¹).1 = ((((ν : 𝓞 k) : k) ^ p) ^ a)⁻¹ := by
-    convert (Units.coe_map_inv ((algebraMap (𝓞 k) k) : (𝓞 k) →* k) ((ν ^ p) ^ a)).symm
+    change ((Units.map (algebraMap (𝓞 k) k : (𝓞 k) →* k)) _).1 = _
     simp
   have hcoe2 :
       ((algebraMap (𝓞 k) (𝓞 K) ((ν ^ a)⁻¹).1 : 𝓞 K) : K) =
