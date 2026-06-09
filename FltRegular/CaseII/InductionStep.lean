@@ -331,7 +331,7 @@ lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
   classical
   rw [← one_mul (𝔠 η₀), ← p_pow_dvd_c_eta_zero_aux hp hζ e hy, dvd_gcd_mul_iff_dvd_mul,
     mul_comm _ (𝔠 η₀)]
-  rw [← Finset.prod_eq_mul_prod_diff_singleton_of_mem (Finset.mem_attach _ η₀) 𝔠,
+  rw [← Finset.prod_eq_mul_prod_sdiff_singleton_of_mem (Finset.mem_attach _ η₀) 𝔠,
     prod_c, mul_pow]
   apply dvd_mul_of_dvd_right
   rw [pow_mul]
