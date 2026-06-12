@@ -177,15 +177,11 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
   have hel11 : (y : R) * (1 - η₁) ∈ P := by
     obtain ⟨v, hv⟩ := hel1
     rw [mul_assoc] at hv
-    have hvunit : IsUnit (v : R) := Units.isUnit v
-    apply (unit_mul_mem_iff_mem P hvunit).1 _
-    exact hP2 hv
+    exact (unit_mul_mem_iff_mem P v.isUnit).1 (hP2 hv)
   have hel22 : (x : R) * (1 - η₁) ∈ P := by
     obtain ⟨v, hv⟩ := hel2
     rw [mul_assoc] at hv
-    have hvunit : IsUnit (v : R) := Units.isUnit v
-    apply (unit_mul_mem_iff_mem P hvunit).1 _
-    exact hP2 hv
+    exact (unit_mul_mem_iff_mem P v.isUnit).1 (hP2 hv)
   have hPrime := hP1.isPrime
   have hprime2 := IsPrime.mem_or_mem hPrime hel11
   have hprime3 := IsPrime.mem_or_mem hPrime hel22

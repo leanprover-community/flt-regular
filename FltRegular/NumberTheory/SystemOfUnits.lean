@@ -32,8 +32,8 @@ structure systemOfUnits (s : ℕ) where
 
 namespace systemOfUnits
 
-lemma existence0 : Nonempty (systemOfUnits p G 0) := by
-  exact ⟨⟨fun _ ↦ 0, linearIndependent_empty_type⟩⟩
+lemma existence0 : Nonempty (systemOfUnits p G 0) :=
+  ⟨⟨fun _ ↦ 0, linearIndependent_empty_type⟩⟩
 
 include hp
 

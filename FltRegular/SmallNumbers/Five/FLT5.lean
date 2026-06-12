@@ -17,5 +17,5 @@ theorem isRegularPrime_five :
   convert coprime_one_right _
   exact classNumber_eq_one_iff.2 (Rat.five_pid (CyclotomicField _ ℚ))
 
-theorem fermatLastTheoremFive : FermatLastTheoremFor 5 := by
-  exact @flt_regular 5 ⟨Nat.prime_five⟩ isRegularPrime_five (by omega)
+theorem fermatLastTheoremFive : FermatLastTheoremFor 5 :=
+  @flt_regular 5 ⟨Nat.prime_five⟩ isRegularPrime_five (by omega)

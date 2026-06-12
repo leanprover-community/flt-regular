@@ -23,11 +23,10 @@ lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
     (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot x.1 p) :
     minpoly ℤ x = cyclotomic p ℤ := by
   apply Polynomial.map_injective (algebraMap ℤ ℚ) (RingHom.injective_int (algebraMap ℤ ℚ))
-  rw [← minpoly.isIntegrallyClosed_eq_field_fractions ℚ (CyclotomicField p ℚ),
-    ← cyclotomic_eq_minpoly_rat (n := p), map_cyclotomic]
-  · exact hx
-  · exact hpri.out.pos
-  · exact IsIntegralClosure.isIntegral _ (CyclotomicField p ℚ) _
+  rw [← minpoly.isIntegrallyClosed_eq_field_fractions ℚ (CyclotomicField p ℚ)
+    (IsIntegralClosure.isIntegral _ (CyclotomicField p ℚ) _),
+    ← cyclotomic_eq_minpoly_rat (n := p) (hpos := hpri.out.pos), map_cyclotomic]
+  exact hx
 
 namespace CyclotomicIntegers
 
@@ -83,10 +82,9 @@ lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
 lemma one_sub_zeta_dvd : 1 - zeta p ∣ p :=
   (one_sub_zeta_dvd_int_iff _ _).2 dvd_rfl
 
-lemma isCoprime_one_sub_zeta (n : ℤ) (hn : ¬ (p : ℤ) ∣ n) : IsCoprime (1 - zeta p) n := by
-  apply (((Nat.prime_iff_prime_int.mp hpri.out).coprime_iff_not_dvd.mpr hn).map
-    (algebraMap ℤ <| CyclotomicIntegers p)).of_isCoprime_of_dvd_left
-  exact one_sub_zeta_dvd p
+lemma isCoprime_one_sub_zeta (n : ℤ) (hn : ¬ (p : ℤ) ∣ n) : IsCoprime (1 - zeta p) n :=
+  (((Nat.prime_iff_prime_int.mp hpri.out).coprime_iff_not_dvd.mpr hn).map
+    (algebraMap ℤ <| CyclotomicIntegers p)).of_isCoprime_of_dvd_left (one_sub_zeta_dvd p)
 
 lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) :
     ∃ m : ℤ, m ≠ 0 ∧ n ∣ m := by

@@ -19,5 +19,5 @@ theorem isRegularPrime_thirteen :
   convert coprime_one_right _
   exact classNumber_eq_one_iff.2 (Rat.thirteen_pid (CyclotomicField _ ℚ))
 
-theorem fermatLastTheoremThirteen : FermatLastTheoremFor 13 := by
-  exact @flt_regular 13 ⟨Nat.prime_thirteen⟩ isRegularPrime_thirteen (by omega)
+theorem fermatLastTheoremThirteen : FermatLastTheoremFor 13 :=
+  @flt_regular 13 ⟨Nat.prime_thirteen⟩ isRegularPrime_thirteen (by omega)

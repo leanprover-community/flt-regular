@@ -135,11 +135,9 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
   convert_to! Associated _ (y * (η₁ - η₂))
   · rw [sub_mul, div_zeta_sub_one_mul_zeta_sub_one, div_zeta_sub_one_mul_zeta_sub_one]
     ring
-  apply Associated.mul_left
-  apply hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
-    η₁.prop η₂.prop
-  rw [Ne, ← Subtype.ext_iff.not]
-  exact hη
+  exact Associated.mul_left _
+    (hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
+      η₁.prop η₂.prop (Subtype.coe_ne_coe.2 hη))
 
 include hy in
 lemma div_zeta_sub_one_Injective :
@@ -229,9 +227,8 @@ lemma m_dvd_z : 𝔪 ∣ 𝔷 := by
   apply dvd_gcd_mul_of_dvd_mul
   rw [← UniqueFactorizationMonoid.pow_dvd_pow_iff_dvd hpri.out.ne_zero,
     ← span_pow_add_pow_eq hζ e, Ideal.dvd_span_singleton]
-  apply add_mem
-  · exact Ideal.pow_mem_pow (Ideal.mem_sup_left (Ideal.mem_span_singleton_self x)) p
-  · exact Ideal.pow_mem_pow (Ideal.mem_sup_right (Ideal.mem_span_singleton_self y)) p
+  exact add_mem (Ideal.pow_mem_pow (Ideal.mem_sup_left (Ideal.mem_span_singleton_self x)) p)
+    (Ideal.pow_mem_pow (Ideal.mem_sup_right (Ideal.mem_span_singleton_self y)) p)
 
 /-- The ideal quotient witnessing `𝔷 = 𝔪 * zDivM`. -/
 noncomputable
@@ -429,8 +426,8 @@ lemma isPrincipal_a_div_a_zero :
 include hz hreg in
 lemma exists_not_dvd_spanSingleton_eq_a_div_a_zero (hη : η ≠ η₀) :
     ∃ a b : 𝓞 K, ¬ π ∣ a ∧ ¬ π ∣ b ∧
-      FractionalIdeal.spanSingleton (𝓞 K)⁰ (a / b : K) = 𝔞 η / 𝔞₀ := by
-  exact exists_not_dvd_spanSingleton_eq hζ.zeta_sub_one_prime'
+      FractionalIdeal.spanSingleton (𝓞 K)⁰ (a / b : K) = 𝔞 η / 𝔞₀ :=
+  exists_not_dvd_spanSingleton_eq hζ.zeta_sub_one_prime'
     _ _ ((p_dvd_a_iff hp hζ e hy η).not.mpr hη) (not_p_div_a_zero hp hζ e hy hz)
       (isPrincipal_a_div_a_zero hp hζ e hy η hreg)
 

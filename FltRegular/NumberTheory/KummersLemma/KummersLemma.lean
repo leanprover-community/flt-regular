@@ -77,9 +77,8 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
       Nat.cast_pred, zero_sub, IsUnit.mul_iff, ne_eq, tsub_eq_zero_iff_le, not_le, dvd_neg,
       Units.isUnit, and_true, zero_add] using this
   obtain ⟨v, hv⟩ := exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one hp hreg hζ this
-  have hv' : IsIntegral ℤ v := by
-    apply IsIntegral.of_pow (NeZero.pos p); rw [hv]
-    exact NumberField.RingOfIntegers.isIntegral_coe _
+  have hv' : IsIntegral ℤ v :=
+    IsIntegral.of_pow (NeZero.pos p) (hv ▸ NumberField.RingOfIntegers.isIntegral_coe _)
   set w : 𝓞 K := ⟨v, hv'⟩
   have : IsUnit w := by
     rw [← isUnit_pow_iff (NeZero.pos p).ne.symm]; convert (u ^ (p - 1) : (𝓞 K)ˣ).isUnit; ext

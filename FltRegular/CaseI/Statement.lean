@@ -79,8 +79,8 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   have hbq : ↑q ∣ b := by
     obtain ⟨m, hm⟩ := Int.gcd_dvd_right a b
     exact ⟨n * m, by rw [hm, hn]; simp [mul_assoc]⟩
-  have hcq : ↑q ∣ c := by
-    exact hqpri.dvd_of_dvd_pow (H ▸ dvd_add (dvd_pow haq hpzero) (dvd_pow hbq hpzero))
+  have hcq : ↑q ∣ c :=
+    hqpri.dvd_of_dvd_pow (H ▸ dvd_add (dvd_pow haq hpzero) (dvd_pow hbq hpzero))
   have Hq : ↑q ∣ ({a, b, c} : Finset ℤ).gcd id := by
     refine dvd_gcd fun x hx ↦ ?_
     simp only [mem_insert, mem_singleton] at hx
@@ -133,9 +133,7 @@ theorem is_principal_aux {K' : Type*} [Field K'] [CharZero K'] [IsCyclotomicExte
   let : NumberField K' := IsCyclotomicExtension.numberField {p} ℚ K'
   obtain ⟨α, hα⟩ : I.IsPrincipal := by
     apply isPrincipal_of_isPrincipal_pow_of_coprime hreg
-    constructor
-    use ↑a + ζ * ↑b
-    rw [submodule_span_eq, hI]
+    exact ⟨⟨↑a + ζ * ↑b, by rw [submodule_span_eq, hI]⟩⟩
   replace hα := congr_arg (fun (J : Submodule _ _) => J ^ p) hα
   simp only [← hI, submodule_span_eq, span_singleton_pow, span_singleton_eq_span_singleton] at hα
   obtain ⟨u, hu⟩ := hα
