@@ -87,10 +87,6 @@ theorem mem_fltIdeals [Fact p.Prime] (x y : ℤ) {η : R} (hη : η ∈ nthRoots
 
 open IsPrimitiveRoot
 
-theorem prim_coe (ζ : R) (hζ : IsPrimitiveRoot ζ p) :
-    IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p :=
-  coe_submonoidClass_iff.mpr hζ
-
 theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
     (caseI : ¬↑p ∣ x * y * z) : ¬(p : ℤ) ∣ (x + y : ℤ) := by
   intro habs
@@ -104,8 +100,8 @@ theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
 set_option backward.isDefEq.respectTransparency false in
 theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : 1 - η ∣ (p : R) := by
-  have hη : IsPrimitiveRoot (η : CyclotomicField p ℚ) (p ^ 1) := by
-    simpa using prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1)
+  have hη : IsPrimitiveRoot (η : CyclotomicField p ℚ) (p ^ 1) := coe_submonoidClass_iff.mpr <|
+    by simpa using isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1
   have : IsCyclotomicExtension {p ^ (0 + 1)} ℚ (CyclotomicField p ℚ) := by
     simp only [zero_add, pow_one]
     infer_instance
@@ -116,7 +112,7 @@ theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset 
 set_option backward.isDefEq.respectTransparency false in
 theorem one_sub_zeta_prime [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : Prime (1 - η) := by
-  have h := prim_coe η (isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1)
+  have h := coe_submonoidClass_iff.mpr (isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1)
   simpa using! h.zeta_sub_one_prime'.neg
 
 theorem diff_of_roots [hp : Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
