@@ -90,6 +90,9 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) :
     ∃ m : ℤ, m ≠ 0 ∧ n ∣ m := by
   refine ⟨Algebra.norm ℤ ((equiv p) n), by simpa, ?_⟩
   rw [← map_dvd_iff (equiv p), map_intCast]
+  have : IsCyclotomicExtension {p} ℚ (CyclotomicField p ℚ) :=
+    CyclotomicField.instIsCyclotomicExtensionSingletonNatSetOfCharZero p ℚ
+  have : IsGalois ℚ (CyclotomicField p ℚ) := IsCyclotomicExtension.isGalois {p} _ _
   convert RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
   ext1
   exact DFunLike.congr_arg (algebraMap ℚ _) (Algebra.coe_norm_int (equiv p n))

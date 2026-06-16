@@ -101,24 +101,6 @@ theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
     ZMod.intCast_zmod_eq_zero_iff_dvd] at H
   exact caseI (Dvd.dvd.mul_left H _)
 
-section NeZero
-
-variable [NeZero p]
-
-set_option backward.isDefEq.respectTransparency false in
-instance : IsGalois ℚ (CyclotomicField p ℚ) :=
-  IsCyclotomicExtension.isGalois {p} _ _
-
-set_option backward.isDefEq.respectTransparency false in
-instance : FiniteDimensional ℚ (CyclotomicField p ℚ) :=
-  IsCyclotomicExtension.finiteDimensional {p} _ _
-
-set_option backward.isDefEq.respectTransparency false in
-instance : NumberField (CyclotomicField p ℚ) :=
-  IsCyclotomicExtension.numberField {p} ℚ _
-
-end NeZero
-
 set_option backward.isDefEq.respectTransparency false in
 theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : 1 - η ∣ (p : R) := by
