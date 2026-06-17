@@ -498,14 +498,6 @@ lemma lh_pow_free (ν : (𝓞 k)ˣ)
   · rw [NumberField.Units.finrank_eq]
     exact Nat.lt_add_one _
 
-lemma norm_map_zpow {R S} [Field R] [DivisionRing S] [Algebra R S] [Module.Free R S]
-    [Module.Finite R S] (s : S) (n : ℤ) :
-    Algebra.norm R (s ^ n) = (Algebra.norm R s) ^ n := by
-  let normZeroHom : S →*₀ R :=
-    { __ := Algebra.norm R
-      map_zero' := Algebra.norm_zero }
-  exact map_zpow₀ normZeroHom s n
-
 variable [NumberField K]
 
 include hKL in
@@ -520,7 +512,7 @@ lemma Hilbert92_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ν : (𝓞 k
   have hcoe : ((algebraMap (𝓞 K) K) ((algebraMap (𝓞 k) (𝓞 K)) ((ν ^ a)⁻¹).1)) =
     algebraMap (𝓞 k) (𝓞 K) ((ν ^ a)⁻¹).1 := rfl
   simp only [toMul_sum, toMul_zsmul, zpow_neg, Units.val_mul, Units.coe_prod, map_mul, map_prod,
-    Units.coe_zpow, map_mul, map_prod, norm_map_zpow]
+    Units.coe_zpow, map_mul, map_prod, Algebra.norm_zpow]
   rw [← map_zpow, Units.coe_map_inv]
   simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe]
   have hcoe1 :
