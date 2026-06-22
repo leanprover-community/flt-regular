@@ -129,28 +129,6 @@ end KummerDedekind
 
 open nonZeroDivisors Polynomial
 
-omit [IsDedekindDomain R] in
-lemma isUnramifiedAt_bot [IsDomain R] [IsDomain S] [Module.IsTorsionFree R S]
-    [Algebra.IsIntegral R S] [Algebra.EssFiniteType R S] [CharZero R] :
-    Algebra.IsUnramifiedAt R (⊥ : Ideal S) := by
-  letI : Algebra (Localization.AtPrime (⊥ : Ideal R)) (Localization.AtPrime (⊥ : Ideal S)) :=
-    Localization.AtPrime.algebraOfLiesOver (⊥ : Ideal R) (⊥ : Ideal S)
-  rw [Algebra.isUnramifiedAt_iff_map_eq R (⊥ : Ideal R) (⊥ : Ideal S)]
-  constructor
-  · haveI : CharZero (⊥ : Ideal R).ResidueField :=
-      charZero_of_injective_algebraMap (R := R) (A := (⊥ : Ideal R).ResidueField) <| by
-        rw [RingHom.injective_iff_ker_eq_bot, Ideal.ker_algebraMap_residueField]
-    haveI : PerfectField (⊥ : Ideal R).ResidueField := by infer_instance
-    haveI : Algebra.IsAlgebraic (⊥ : Ideal R).ResidueField
-        (⊥ : Ideal S).ResidueField := by infer_instance
-    exact Algebra.IsAlgebraic.isSeparable_of_perfectField
-  · haveI : IsFractionRing S (Localization.AtPrime (⊥ : Ideal S)) := by
-      change IsLocalization (nonZeroDivisors S) (Localization.AtPrime (⊥ : Ideal S))
-      rw [← Ideal.primeCompl_bot]
-      infer_instance
-    letI := IsFractionRing.toField S (K := Localization.AtPrime (⊥ : Ideal S))
-    rw [Ideal.map_bot, IsLocalRing.maximalIdeal_eq_bot]
-
 attribute [local instance] Ideal.Quotient.field in
 lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
     (P : Ideal S) [hP : P.IsPrime] (hPbot : P ≠ ⊥) (x : S)

@@ -326,14 +326,11 @@ lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ p - C 
   letI : P.IsPrime := hP
   by_cases hPbot : P = ⊥
   · subst P
-    exact isUnramifiedAt_bot (R := 𝓞 K) (S := 𝓞 L)
-  refine isUnramifiedAt_of_Separable_minpoly (R := 𝓞 K) K (S := 𝓞 L) L P hPbot α ?_
-    hα ?_
-  · exact IsIntegral.tower_top α.prop
-  · rw [minpoly_polyRoot' hp hζ u hcong hu]
-    have hPbot' : P.under (𝓞 K) ≠ ⊥ := Ideal.under_ne_bot (𝓞 K) hPbot
-    haveI : (P.under (𝓞 K)).IsMaximal :=
-      (show (P.under (𝓞 K)).IsPrime from inferInstance).isMaximal hPbot'
-    exact separable_poly hp hζ u hcong hu (P.under (𝓞 K))
+    exact Algebra.isUnramifiedAt_bot
+  refine isUnramifiedAt_of_Separable_minpoly K L P hPbot α (IsIntegral.tower_top α.prop) hα ?_
+  rw [minpoly_polyRoot' hp hζ u hcong hu]
+  have hPbot' : P.under (𝓞 K) ≠ ⊥ := Ideal.under_ne_bot (𝓞 K) hPbot
+  haveI : (P.under (𝓞 K)).IsMaximal := (inferInstance : (P.under (𝓞 K)).IsPrime).isMaximal hPbot'
+  exact separable_poly hp hζ u hcong hu (P.under (𝓞 K))
 
 end KummersLemma

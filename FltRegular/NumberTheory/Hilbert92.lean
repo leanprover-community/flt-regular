@@ -58,33 +58,6 @@ lemma systemOfUnits.IsFundamental.maximal' [Module A G] (S : systemOfUnits p G r
       (Submodule.span A (Set.range a.units)).toAddSubgroup.index := by
   letI := hs.choose
   convert hs.choose_spec a ‹_› <;> symm <;> exact Nat.card_eq_fintype_card.symm
-
-lemma LinearIndependent.update {ι} [DecidableEq ι] {R} [CommRing R] [Module R G]
-    (f : ι → G) (l : ι →₀ R) (i : ι) (g : G) (σ : R)
-    (hσ : σ ∈ nonZeroDivisors R) (hg : σ • g = Finsupp.linearCombination R f l)
-    (hl : l i ∈ nonZeroDivisors R) (hf : LinearIndependent R f) :
-    LinearIndependent R (Function.update f i g) := by
-  classical
-  rw [linearIndependent_iff] at hf ⊢
-  intros l' hl'
-  apply_fun (σ • ·) at hl'
-  rw [Pi.update_eq_sub_add_single, ← Finsupp.bilinearCombination_apply R (S := R), map_add,
-    map_sub] at hl'
-  simp only [Finsupp.bilinearCombination_apply, LinearMap.add_apply, LinearMap.sub_apply,
-    Finsupp.linearCombination_single_index, smul_add, smul_sub, smul_zero] at hl'
-  rw [smul_comm σ (l' i) g, hg, ← LinearMap.map_smul, ← LinearMap.map_smul, smul_smul,
-    ← Finsupp.linearCombination_single,
-    ← (Finsupp.linearCombination R f).map_sub, ← map_add] at hl'
-  replace hl' : ∀ j, (σ * l' j - (Finsupp.single i (σ * l' i)) j) + l' i * l j = 0 := by
-    intro j
-    exact DFunLike.congr_fun (hf _ hl') j
-  simp only [Finsupp.single_apply] at hl'
-  simp only [mem_nonZeroDivisors_iff] at hl hσ
-  have : l' i = 0 := hl.2 _ (by simpa using hl' i)
-  simp only [this, zero_mul, add_zero, mul_zero, ite_self, sub_zero] at hl'
-  ext j
-  exact hσ.2 _ ((mul_comm _ _).trans (hl' j))
-
 namespace systemOfUnits.IsFundamental
 
 variable {H : Type*} [CommGroup H] [Fintype H] (hCard : Fintype.card H = p)
@@ -117,8 +90,8 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
     intro g hg
     have := Fact.mk hp
     let S' : systemOfUnits p G (s + 1) := ⟨Function.update S.units i g,
-      LinearIndependent.update _ _ _ _ _ _ (CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p)
-      hg (ha ▸ one_mem A⁰) S.linearIndependent⟩
+      LinearIndependent.update S.linearIndependent i g ⟨_,
+        CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p, a, ha ▸ one_mem A⁰, hg⟩⟩
     let a' := a.comapDomain (Fin.succAbove i) Fin.succAbove_right_injective.injOn
     have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i := by
       ext; simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
