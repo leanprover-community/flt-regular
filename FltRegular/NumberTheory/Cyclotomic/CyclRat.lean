@@ -75,18 +75,6 @@ theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
   exact caseI (Dvd.dvd.mul_left H _)
 
 set_option backward.isDefEq.respectTransparency false in
-theorem zeta_sub_one_dvb_p [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
-    (hne1 : η ≠ 1) : 1 - η ∣ (p : R) := by
-  have hη : IsPrimitiveRoot (η : CyclotomicField p ℚ) (p ^ 1) := coe_submonoidClass_iff.mpr <|
-    by simpa using isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1
-  have : IsCyclotomicExtension {p ^ (0 + 1)} ℚ (CyclotomicField p ℚ) := by
-    simp only [zero_add, pow_one]
-    infer_instance
-  convert neg_dvd.2 <| mem_span_singleton.1 <| Rat.p_mem_span_zeta_sub_one p 0 hη using 1
-  ext
-  simp
-
-set_option backward.isDefEq.respectTransparency false in
 theorem one_sub_zeta_prime [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
     (hne1 : η ≠ 1) : Prime (1 - η) := by
   have h := coe_submonoidClass_iff.mpr (isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1)
@@ -168,8 +156,9 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
         apply le_comap_of_map_le _
         rw [map_span]
         simp only [eq_intCast, Set.image_singleton, Int.cast_natCast]
-        rw [span_singleton_le_span_singleton]
-        apply zeta_sub_one_dvb_p hη₁ hwlog
+        rw [span_singleton_le_span_singleton, ← neg_sub, neg_dvd]
+        exact sub_one_dvd_natCast_of_pow_eq_one
+          ((mem_nthRootsFinset (NeZero.pos p) 1).mp hη₁) hwlog
       have H2 : IsPrime (P.comap (Int.castRingHom R)) := IsPrime.comap _
       have H4 : Ideal.span ({(p : ℤ)} : Set ℤ) ≠ ⊥ := by simp [NeZero.ne p]
       apply ((@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ _ _ _ H5 H2 H4).1 H1).symm

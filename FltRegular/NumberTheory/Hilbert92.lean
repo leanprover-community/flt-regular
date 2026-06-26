@@ -618,12 +618,6 @@ theorem Hilbert91 :
   systemOfUnits.IsFundamental.existence p hp G (NumberField.Units.rank k + 1)
     (finrank_G p hp hKL σ hσ)
 
-lemma IsPrimitiveRoot.coe_coe_iff {ν : (𝓞 k)ˣ} {n} :
-    IsPrimitiveRoot (ν : k) n ↔ IsPrimitiveRoot ν n :=
-  IsPrimitiveRoot.map_iff_of_injective
-    (f := (algebraMap (𝓞 k) k).toMonoidHom.comp (Units.coeHom (𝓞 k)))
-    ((IsFractionRing.injective (𝓞 k) k).comp Units.coeHom_injective)
-
 include hp in
 lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),
     IsPrimitiveRoot (ν : k) (p ^ h) ∧
@@ -648,11 +642,6 @@ lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),
 local notation "r" => NumberField.Units.rank k
 
 instance instCommGroupUnitsRingOfIntegersFltRegular : CommGroup ((𝓞 k))ˣ := inferInstance
-
-lemma IsPrimitiveRoot.one_left_iff {M} [CommMonoid M] {n : ℕ} :
-    IsPrimitiveRoot (1 : M) n ↔ n = 1 :=
-  ⟨fun H ↦ Nat.dvd_one.mp (H.dvd_of_pow_eq_one 1 (one_pow _)),
-    fun e ↦ e ▸ IsPrimitiveRoot.one⟩
 
 include hp hKL hσ in
 -- TODO : remove `p ≠ 2`. The offending case is when `K = k[i]`.
