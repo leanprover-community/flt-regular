@@ -1,7 +1,13 @@
 module
 
 public import Mathlib.Data.ZMod.Basic
-import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.Algebra.Field.ZMod
+import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Data.Nat.Totient
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Tactic.ContinuousFunctionalCalculus
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Tactic.Positivity.Finset
 
 @[expose] public section
 

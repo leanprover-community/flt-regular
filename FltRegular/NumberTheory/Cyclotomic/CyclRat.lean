@@ -5,29 +5,6 @@ import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 @[expose] public section
 
-section Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-
-open Polynomial IsPrimitiveRoot
-
-variable {R : Type*} [CommRing R] [IsDomain R] {p : ℕ}
-
-theorem nthRootsFinset_eq_of_prime [DecidableEq R] (hp : p.Prime) :
-    nthRootsFinset p 1 = primitiveRoots p R ∪ {1} := by
-  simp [nthRoots_one_eq_biUnion_primitiveRoots, hp.divisors]
-
-theorem mem_primitiveRoots_of_mem_nthRootsFinset (hp : p.Prime) {η : R}
-    (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
-    η ∈ primitiveRoots p R := by
-  classical
-  simpa [nthRootsFinset_eq_of_prime hp, hne1] using hη
-
-theorem isPrimitiveRoot_of_mem_nthRootsFinset (hp : p.Prime) {η : R}
-    (hη : η ∈ nthRootsFinset p 1) (hne1 : η ≠ 1) :
-    IsPrimitiveRoot η p :=
-  isPrimitiveRoot_of_mem_primitiveRoots <| mem_primitiveRoots_of_mem_nthRootsFinset hp hη hne1
-
-end Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-
 open FiniteDimensional Polynomial Algebra Nat Finset Fintype
 
 variable (p : ℕ) (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {p} ℚ L]
@@ -120,7 +97,7 @@ theorem diff_of_roots [hp : Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     (hwlog : η₁ ≠ 1) : ∃ u : Rˣ, η₁ - η₂ = u * (1 - η₁) := by
   have _ : 2 ≤ p := le_trans (by decide) ph
   have h := isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη₁ hwlog
-  rcases h.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hp.out hη₁ hη₂ hdiff with ⟨u, hu⟩
+  rcases h.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime hp.out hη₁ hη₂ hdiff with ⟨u, hu⟩
   refine ⟨-u, by grind [Units.val_neg]⟩
 
 theorem diff_of_roots2 [Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R} (hη₁ : η₁ ∈ nthRootsFinset p 1)

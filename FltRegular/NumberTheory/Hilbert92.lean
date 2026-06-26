@@ -1,13 +1,10 @@
 module
 
 public import FltRegular.NumberTheory.SystemOfUnits
-public import Mathlib.Algebra.Lie.OfAssociative
 public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 public import Mathlib.RingTheory.Henselian
 public import Mathlib.GroupTheory.FiniteAbelian.Basic
 public import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
 
 @[expose] public section
 
@@ -293,7 +290,7 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
     ← (finEquivZPowers <| isOfFinOrder_of_finite _).symm.prod_comp]
   simp only [RingOfIntegers.coe_eq_algebraMap, pow_finEquivZPowers_symm_apply, map_prod,
-    algebraMap_galRestrictHom_apply, AlgEquiv.coe_algHom]
+    algebraMap_galRestrictHom_apply, AlgEquiv.coe_toAlgHom]
   rw [prod_subtype]
   simp [mem_univ, hσ]
 

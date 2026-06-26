@@ -1,16 +1,17 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 public import Mathlib.RingTheory.ClassGroup.Basic
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.Hilbert94
 import FltRegular.NumberTheory.KummersLemma.Field
 import Mathlib.FieldTheory.KummerExtension
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 @[expose] public section
 
-open Polynomial
+open Polynomial IsCyclotomicExtension.Rat
 open scoped NumberField
 
 variable {K : Type} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K]
@@ -60,7 +61,7 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
       replace h := Int.cast_dvd_cast (α := 𝓞 K) _ _ h
       simp only [Int.cast_natCast, ← dvd_iff_dvd_of_dvd_sub hn] at h
       refine hζ.zeta_sub_one_prime'.not_unit ((isUnit_pow_iff ?_).mp
-        (isUnit_of_dvd_unit ((associated_zeta_sub_one_pow_prime hζ).dvd.trans h) u.isUnit))
+        (isUnit_of_dvd_unit ((associated_zeta_sub_one_pow_prime _ hζ).dvd.trans h) u.isUnit))
       simpa only [ne_eq, tsub_eq_zero_iff_le, not_le] using hpri.out.one_lt
     replace hn' := Int.cast_dvd_cast (α := 𝓞 K) _ _ hn'
     simp only [Int.cast_natCast, Int.cast_sub, Int.cast_pow, Int.cast_one] at hn'

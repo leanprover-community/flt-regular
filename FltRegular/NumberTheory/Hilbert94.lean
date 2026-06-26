@@ -1,11 +1,10 @@
 module
 
-public import FltRegular.NumberTheory.Unramified
-public import Mathlib.Algebra.Lie.OfAssociative
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.RegularPrimes
 import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
+import FltRegular.NumberTheory.Unramified
 
 @[expose] public section
 

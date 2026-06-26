@@ -1,10 +1,9 @@
 module
 
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import FltRegular.SmallNumbers.Cyclotomic
 import FltRegular.SmallNumbers.OrderOf
-import Mathlib.Tactic.NormNum.NatFactorial
 import Mathlib.Tactic.NormNum.Prime
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 
 @[expose] public section
 

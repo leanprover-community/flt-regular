@@ -4,7 +4,6 @@ public import FltRegular.NumberTheory.RegularPrimes
 public import Mathlib.NumberTheory.FLT.Basic
 import FltRegular.FltRegular
 import FltRegular.SmallNumbers.Seven.Seven
-import Mathlib.Tactic.NormNum.NatFactorial
 import Mathlib.Tactic.NormNum.Prime
 
 @[expose] public section

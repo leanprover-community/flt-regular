@@ -1,20 +1,18 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-public import Mathlib.Algebra.Lie.OfAssociative
 public import Mathlib.RingTheory.ClassGroup.Basic
 import FltRegular.CaseII.AuxLemmas
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.KummersLemma.KummersLemma
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 @[expose] public section
 
 open scoped nonZeroDivisors NumberField
-open Polynomial
+open Polynomial IsCyclotomicExtension.Rat
 
 variable {K : Type} {p : ℕ} [NeZero p] [Field K] [NumberField K] (hp : p ≠ 2)
 
@@ -63,7 +61,7 @@ lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) (hη : η₁ �
     (𝔦 η₁) ⊔ (𝔦 η₂) ∣ 𝔪 * 𝔭 := by
   have : 𝔭 = Ideal.span (singleton <| (η₁ : 𝓞 K) - η₂) := by
     rw [Ideal.span_singleton_eq_span_singleton]
-    exact hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime
+    exact hζ.toInteger_isPrimitiveRoot.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime
       hpri.out η₁.prop η₂.prop (Subtype.coe_injective.ne hη)
   rw [(gcd_mul_right' 𝔭 𝔵 𝔶).symm.dvd_iff_dvd_right, dvd_gcd_iff]
   simp_rw [this, Ideal.span_singleton_mul_span_singleton, Ideal.dvd_span_singleton,
@@ -136,7 +134,7 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
   · rw [sub_mul, div_zeta_sub_one_mul_zeta_sub_one, div_zeta_sub_one_mul_zeta_sub_one]
     ring
   exact Associated.mul_left _
-    (hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
+    (hζ.toInteger_isPrimitiveRoot.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
       η₁.prop η₂.prop (Subtype.coe_ne_coe.2 hη))
 
 include hy in
@@ -379,7 +377,7 @@ include hp in
 lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
     (h : (p : 𝓞 K) ∣ ε₁ * x ^ p + ε₂ * y ^ p) :
     ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ p := by
-  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hx
+  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd _ hζ hx
   have : (p : 𝓞 K) ∣ b * x - 1 := by
     use -a
     rw [← e]
@@ -551,13 +549,13 @@ lemma exists_solution :
       mul_ne_zero (ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop)
         (hζ.toInteger_isPrimitiveRoot.ne_zero hpri.out.ne_zero)⟩
   obtain ⟨u₁, hu₁⟩ :=
-    hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime
+    hζ.toInteger_isPrimitiveRoot.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime
       hpri.out η₂.prop (η₀ : _).prop (Subtype.coe_injective.ne_iff.mpr hη₂)
   obtain ⟨u₂, hu₂⟩ :=
-    hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
+    hζ.toInteger_isPrimitiveRoot.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime hpri.out
       (η₀ : _).prop η₁.prop (Subtype.coe_injective.ne_iff.mpr hη₁.symm)
   obtain ⟨u₃, hu₃⟩ :=
-    hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime
+    hζ.toInteger_isPrimitiveRoot.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime
       hpri.out η₂.prop (η₁ : _).prop (Subtype.coe_injective.ne_iff.mpr hη)
   have := formula hp hζ e hy hz hreg η₁ hη₁ η₂ hη₂
   rw [← hu₁, ← hu₂, ← hu₃, mul_assoc _ (u₁ : 𝓞 K), mul_assoc _ (u₂ : 𝓞 K),
@@ -585,12 +583,12 @@ lemma exists_solution' :
     apply eq_pow_prime_of_unit_of_congruent hp hreg
     have : p - 1 ≤ m * p := (Nat.sub_le _ _).trans
       ((le_of_eq (one_mul _).symm).trans (Nat.mul_le_mul_right p (one_le_m hp hζ e hy hz)))
-    obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime hζ).symm
+    obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime _ hζ).symm
     rw [mul_pow, ← pow_mul, mul_comm (ε₃ : 𝓞 K), mul_assoc, ← Nat.sub_add_cancel this,
       add_comm _ (p - 1), pow_add, mul_assoc] at e'
     apply_fun Ideal.Quotient.mk (Ideal.span <| singleton (p : 𝓞 K)) at e'
     rw [map_mul, (Ideal.Quotient.eq_zero_iff_dvd _ _).mpr
-      (associated_zeta_sub_one_pow_prime hζ).symm.dvd, zero_mul,
+      (associated_zeta_sub_one_pow_prime _ hζ).symm.dvd, zero_mul,
       Ideal.Quotient.eq_zero_iff_dvd] at e'
     obtain ⟨a, ha⟩ := exists_solution'_aux hp hζ hx' e'
     obtain ⟨b, hb⟩ := exists_dvd_pow_sub_Int_pow hp a

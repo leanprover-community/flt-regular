@@ -1,12 +1,9 @@
 module
 
-public import FltRegular.NumberTheory.Unramified
-public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import Mathlib.FieldTheory.KummerExtension
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import FltRegular.NumberTheory.Unramified
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 @[expose] public section
 
@@ -19,7 +16,7 @@ variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 variable (u : (𝓞 K)ˣ)
   (hcong : (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (↑u : 𝓞 K) - 1) (hu : ∀ v : K, v ^ p ≠ u)
 
-open Polynomial
+open Polynomial IsCyclotomicExtension.Rat
 
 include hcong hp in
 lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
@@ -29,7 +26,7 @@ lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
     sub_self, map_one, zero_add]
   refine dvd_C_mul_X_sub_one_pow_add_one hpri.out hp _ _ dvd_rfl ?_
   have hassoc : Associated ((hζ.toInteger - 1 : 𝓞 K) ^ (p - 1)) p := by
-    simpa only using associated_zeta_sub_one_pow_prime hζ
+    simpa only using associated_zeta_sub_one_pow_prime _ hζ
   convert mul_dvd_mul_right hassoc.dvd _
   rw [← pow_succ, tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le]
 
@@ -242,7 +239,7 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   apply isCoprime_X_sub_C_of_isUnit_sub
   obtain ⟨v, hv⟩ : Associated (hζ.toInteger - 1 : 𝓞 K)
       ((hζ.toInteger : 𝓞 K) ^ j - (hζ.toInteger : 𝓞 K) ^ i) := by
-    refine hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime
+    refine hζ.toInteger_isPrimitiveRoot.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime
       hpri.out ?_ ?_ ?_
     · rw [Finset.mem_coe, mem_nthRootsFinset (NeZero.pos p), ← pow_mul, mul_comm, pow_mul,
         hζ.toInteger_isPrimitiveRoot.pow_eq_one, one_pow]

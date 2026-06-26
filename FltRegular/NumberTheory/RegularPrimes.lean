@@ -1,8 +1,8 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.CyclRat
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
+public import Mathlib.NumberTheory.Cyclotomic.Basic
 
 /-!
 # Regular primes

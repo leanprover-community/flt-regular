@@ -1,11 +1,10 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 public import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.CaseII.InductionStep
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.Order.CompletePartialOrder
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 
 @[expose] public section
 

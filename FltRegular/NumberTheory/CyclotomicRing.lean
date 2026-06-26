@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
 @[expose] public section
@@ -58,7 +57,7 @@ lemma equiv_zeta : equiv p (zeta p) = (IsCyclotomicExtension.zeta_spec
 set_option backward.isDefEq.respectTransparency false in
 lemma prime_one_sub_zeta :
     Prime (1 - zeta p) := by
-  rw [← prime_units_mul (a := -1), Units.val_neg, Units.val_one, neg_mul, one_mul, neg_sub]
+  rw [← prime_units_mul (u := -1), Units.val_neg, Units.val_one, neg_mul, one_mul, neg_sub]
   apply (MulEquiv.prime_iff (equiv p)).1
   simp only [(equiv p).map_sub, (equiv p).map_one, equiv_zeta]
   have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)

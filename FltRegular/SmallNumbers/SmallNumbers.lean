@@ -7,7 +7,6 @@ import FltRegular.SmallNumbers.Seven.FLT7
 import FltRegular.SmallNumbers.Thirteen.FLT13
 import Mathlib.NumberTheory.FLT.Four
 import Mathlib.NumberTheory.FLT.Three
-import Mathlib.Tactic.NormNum.NatFactorial
 import Mathlib.Tactic.NormNum.Prime
 
 @[expose] public section

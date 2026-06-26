@@ -1,8 +1,9 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import Mathlib.NumberTheory.NumberField.CMField
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
 
 @[expose] public section
 

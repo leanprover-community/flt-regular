@@ -2,6 +2,7 @@ module
 
 public import Mathlib.NumberTheory.NumberField.CMField
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 @[expose] public section
 
@@ -20,17 +21,6 @@ local notation3 "η" => (hζ.toInteger_isPrimitiveRoot.isUnit (NeZero.ne p)).uni
 set_option quotPrecheck false
 local notation "I" => (Ideal.span ({(η - 1 : 𝓞 K)} : Set (𝓞 K)) : Ideal (𝓞 K))
 
-omit [CharZero K] in
-theorem zeta_runity_pow_even (hpo : Odd p) (n : ℕ) :
-    ∃ m : ℕ, η ^ n = η ^ (2 * m) := by
-  rcases eq_or_ne n 0 with (rfl | _)
-  · use 0
-  obtain ⟨r, hr⟩ := hpo
-  have he : 2 * (r + 1) * n = p * n + n := by rw [hr]; ring
-  use (r + 1) * n
-  rw [← mul_assoc, he, pow_add]
-  convert (one_mul (M := (𝓞 K)ˣ) _).symm
-  rw [pow_mul, (hζ.toInteger_isPrimitiveRoot.isUnit_unit (NeZero.ne p)).pow_eq_one, one_pow]
 
 theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
     algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 := by
@@ -58,20 +48,6 @@ theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot
     change (algebraMap (𝓞 K) (𝓞 K ⧸ I) (η : 𝓞 K)) ^ k = 1
     rw [eq_one_mod_one_sub, one_pow]
   simp only [map_pow (algebraMap (𝓞 K) (𝓞 K ⧸ I)), this, one_pow, zsmul_one]
-
-omit [CharZero K] in
-theorem IsPrimitiveRoot.p_mem_one_sub_zeta [hp : Fact p.Prime] : (p : 𝓞 K) ∈ I := by
-  classical
-  have key : _ = (p : 𝓞 K) := @Polynomial.eval_one_cyclotomic_prime _ _ _ hp
-  rw [cyclotomic_eq_prod_X_sub_primitiveRoots hζ.toInteger_isPrimitiveRoot, eval_prod] at key
-  simp only [eval_sub, eval_X, eval_C] at key
-  have : {↑η} ⊆ primitiveRoots p (𝓞 K) := by
-    simpa [NeZero.pos p] using hζ.toInteger_isPrimitiveRoot
-  rw [← Finset.prod_sdiff this, Finset.prod_singleton] at key
-  rw [← key]
-  have := (Ideal.neg_mem_iff I).mpr (Ideal.subset_span (Set.mem_singleton (η - 1 : 𝓞 K)))
-  rw [neg_sub] at this
-  exact Ideal.mul_mem_left _ _ this
 
 variable [NumberField K] [IsCyclotomicExtension {p} ℚ K]
 
@@ -173,30 +149,6 @@ theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
   have eq : ((⟨x, hx⟩ : 𝓞 K) : K) = x := rfl
   rw [← eq, hmk]
 
-omit [NumberField K] in
-theorem IsPrimitiveRoot.isPrime_one_sub_zeta [hp : Fact p.Prime] :
-    (I : Ideal (𝓞 K)).IsPrime := by
-  rw [Ideal.span_singleton_prime]
-  · exact hζ.zeta_sub_one_prime'
-  apply_fun (fun x : 𝓞 K => (x : K))
-  push_cast
-  intro h
-  refine hp.1.ne_one (hζ.unique ?_)
-  simp only [one_right_iff]
-  simp only [sub_eq_zero] at h
-  exact h
-
-omit [NumberField K] in
-theorem IsPrimitiveRoot.two_not_mem_one_sub_zeta [hp : Fact p.Prime] (h : 2 < p) :
-    (2 : 𝓞 K) ∉ I := by
-  have hpm := hζ.p_mem_one_sub_zeta
-  obtain ⟨k, hk⟩ := hp.1.odd_of_ne_two h.ne'
-  apply_fun (fun n : ℕ => (n : 𝓞 K)) at hk
-  rw [Nat.cast_add, Nat.cast_mul, Nat.cast_two, Nat.cast_one, add_comm] at hk
-  intro h2m
-  have := Ideal.sub_mem I hpm (Ideal.mul_mem_right (↑k) I h2m)
-  rw [sub_eq_of_eq_add hk] at this
-  exact hζ.isPrime_one_sub_zeta.ne_top (Ideal.eq_top_of_isUnit_mem I this isUnit_one)
 
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
@@ -257,9 +209,9 @@ theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Pr
     rw [← neg_eq_iff_eq_neg, ← map_neg, ← Units.val_pow_eq_pow_val, ← Units.val_neg, ← H]
     apply unit_inv_conj_not_neg_zeta_runity_aux hζ u hp
   haveI := Fact.mk hp
-  apply hζ.two_not_mem_one_sub_zeta hp
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_ofNat, ← one_add_one_eq_two, ← neg_eq_iff_add_eq_zero,
-    ← hμ', hμ]
+  apply (IsCyclotomicExtension.Rat.two_not_mem_span_zeta_sub_one' _ hζ hp : (2 : 𝓞 K) ∉ I)
+  rw [← Ideal.Quotient.eq_zero_iff_mem, map_ofNat, ← one_add_one_eq_two, ← neg_eq_iff_add_eq_zero]
+  exact hμ'.symm.trans hμ
 
 theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
@@ -279,7 +231,8 @@ theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp
       rw [← map_mul, ← Units.val_mul, ← map_pow, ← Units.val_pow_eq_pow_val] at hz
       norm_cast at hz
       rw [hz]
-      refine (exists_congr fun a => ?_).mp (zeta_runity_pow_even hζ hpo n)
+      refine (exists_congr fun a => ?_).mp
+        ((hζ.toInteger_isPrimitiveRoot.isUnit_unit (NeZero.ne p)).exists_pow_eq_pow_two_mul hpo n)
       · rw [mul_comm]
     · by_contra
       simp only [hk.neg_one_pow, neg_mul, one_mul] at hz

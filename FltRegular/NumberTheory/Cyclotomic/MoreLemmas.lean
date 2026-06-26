@@ -1,10 +1,8 @@
 module
 
-public import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.RingTheory.NormTrace
-import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 @[expose] public section
 
@@ -14,35 +12,9 @@ variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [CharZero K]
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
 open scoped nonZeroDivisors NumberField
-open Polynomial
+open Polynomial IsCyclotomicExtension.Rat
 
 variable (hp : p ≠ 2)
-
-omit [CharZero K] [IsCyclotomicExtension {p} ℚ K] in
-lemma associated_zeta_sub_one_pow_prime :
-    Associated ((hζ.toInteger - 1 : 𝓞 K) ^ (p - 1)) p := by
-  rw [← eval_one_cyclotomic_prime (R := 𝓞 K) (p := p),
-    cyclotomic_eq_prod_X_sub_primitiveRoots hζ.toInteger_isPrimitiveRoot, eval_prod]
-  simp only [eval_sub, eval_X, eval_C]
-  rw [← Nat.totient_prime hpri.out, ← hζ.toInteger_isPrimitiveRoot.card_primitiveRoots,
-    ← Finset.prod_const]
-  apply Associated.prod
-  intro η hη
-  refine hζ.toInteger_isPrimitiveRoot.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime
-    hpri.out (one_mem_nthRootsFinset hpri.out.pos) ?_ ?_
-  · exact ((isPrimitiveRoot_of_mem_primitiveRoots hη).mem_nthRootsFinset hpri.out.pos)
-  · exact ((isPrimitiveRoot_of_mem_primitiveRoots hη).ne_one hpri.out.one_lt).symm
-
-lemma isCoprime_of_not_zeta_sub_one_dvd {x : 𝓞 K} (hx : ¬ (hζ.toInteger : 𝓞 K) - 1 ∣ x) :
-    IsCoprime ↑p x := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  rwa [← Ideal.isCoprime_span_singleton_iff,
-    ← Ideal.span_singleton_eq_span_singleton.mpr (associated_zeta_sub_one_pow_prime hζ),
-    ← Ideal.span_singleton_pow, IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd,
-    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').irreducible.gcd_eq_one_iff,
-    Ideal.dvd_span_singleton,
-    Ideal.mem_span_singleton]
-  · simpa only [ge_iff_le, tsub_pos_iff_lt] using hpri.out.one_lt
 
 lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.toInteger - 1 : 𝓞 K) ∣ a - b := by
   letI : Fact (Nat.Prime p) := hpri
@@ -59,21 +31,13 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b
     hpri.1.ne_zero
   obtain ⟨b, k, e⟩ := exists_zeta_sub_one_dvd_sub_Int hζ a
   obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hpri.out a (-b)
-  obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime hζ).symm
+  obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime _ hζ).symm
   rw [(Nat.Prime.odd_of_ne_two hpri.out hp).neg_pow, ← sub_eq_add_neg, e,
     mul_pow, ← sub_eq_add_neg] at hr
   use b, ↑u * ((hζ.toInteger - 1 : 𝓞 K) * k ^ p) - r * a * (-b)
   rw [← sub_eq_iff_eq_add.mpr hr, mul_sub, ← mul_assoc, ← mul_assoc, hu, ← pow_succ,
     Nat.sub_add_cancel (n := p) (m := 1) hpri.out.one_lt.le]
   ring
-
-section
-
-variable {α} [CommMonoidWithZero α]
-
-theorem prime_units_mul (a : αˣ) (b : α) : Prime (↑a * b) ↔ Prime b := by simp [Prime]
-
-end
 
 lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.toInteger : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -100,7 +64,7 @@ lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
     ζ - 1 ∣ η₁ - η₂ := by
   by_cases h : η₁ = η₂
   · rw [h, sub_self]; exact dvd_zero _
-  · exact (hζ.ntRootsFinset_pairwise_associated_sub_one_sub_of_prime hp hη₁ hη₂ h).dvd
+  · exact (hζ.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime hp hη₁ hη₂ h).dvd
 
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.toInteger : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
@@ -147,7 +111,7 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
   letI := IsCyclotomicExtension.numberField {p} ℚ K
   obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
   obtain ⟨s, hs⟩ := zeta_sub_one_dvd_trace_sub_smul hζ x
-  obtain ⟨t, ht⟩ := (associated_zeta_sub_one_pow_prime hζ).dvd
+  obtain ⟨t, ht⟩ := (associated_zeta_sub_one_pow_prime _ hζ).dvd
   rw [sub_eq_iff_eq_add] at hs
   simp only [zsmul_eq_mul, Int.cast_natCast] at hr
   simp only [nsmul_eq_mul, hr, Int.cast_add, Int.cast_one, Int.cast_mul, hs, NeZero.pos p,

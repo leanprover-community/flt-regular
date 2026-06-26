@@ -5,6 +5,7 @@ import FltRegular.CaseI.AuxLemmas
 import FltRegular.MayAssume.Lemmas
 import FltRegular.NumberTheory.Cyclotomic.CaseI
 import Mathlib.NumberTheory.FLT.Three
+import FltRegular.NumberTheory.Cyclotomic.CyclRat
 
 @[expose] public section
 
