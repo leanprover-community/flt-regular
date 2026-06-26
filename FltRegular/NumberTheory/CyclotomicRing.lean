@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
 @[expose] public section
@@ -76,7 +77,7 @@ lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
   have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
   rw [← map_dvd_iff (equiv p), map_sub, map_one, equiv_zeta, map_intCast,
     ← neg_dvd, neg_sub]
-  exact zeta_sub_one_dvd_Int_iff H
+  exact IsCyclotomicExtension.Rat.zeta_sub_one_dvd_intCast_iff' p H
 
 lemma one_sub_zeta_dvd : 1 - zeta p ∣ p :=
   (one_sub_zeta_dvd_int_iff _ _).2 dvd_rfl

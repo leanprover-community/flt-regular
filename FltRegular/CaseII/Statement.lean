@@ -5,6 +5,7 @@ import FltRegular.CaseII.InductionStep
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import Mathlib.Order.CompletePartialOrder
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 @[expose] public section
 
@@ -66,7 +67,8 @@ lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRe
   haveI := CyclotomicField.isCyclotomicExtension p ℚ
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot
     ℚ (B := (CyclotomicField p ℚ)) (Set.mem_singleton p) hpri.1.ne_zero
-  have := fun n ↦ zeta_sub_one_dvd_Int_iff (K := CyclotomicField p ℚ) hζ (n := n)
+  have := fun n ↦
+    IsCyclotomicExtension.Rat.zeta_sub_one_dvd_intCast_iff' (K := CyclotomicField p ℚ) p hζ (n := n)
   simp_rw [← this]
   rintro ⟨x, y, z, hy, hz, hz', e⟩
   refine not_exists_solution' (K := CyclotomicField p ℚ) hodd ?_

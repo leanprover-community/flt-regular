@@ -39,33 +39,6 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b
     Nat.sub_add_cancel (n := p) (m := 1) hpri.out.one_lt.le]
   ring
 
-lemma zeta_sub_one_dvd_Int_iff {n : ℤ} : (hζ.toInteger : 𝓞 K) - 1 ∣ n ↔ ↑p ∣ n := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  by_cases hp : p = 2
-  · subst hp
-    have : IsCyclotomicExtension {2 ^ (0 + 1)} ℚ K := by rwa [zero_add, pow_one]
-    have hζ' : IsPrimitiveRoot ζ (2 ^ (0 + 1)) := by simpa
-    have := hζ'.norm_toInteger_pow_sub_one_of_two
-    rw [pow_zero, pow_one, pow_one (-2)] at this
-    replace this : (Algebra.norm ℤ) (hζ.toInteger - 1) = -2 := this
-    have hprime : Prime ((Algebra.norm ℤ) (hζ.toInteger - 1)) := by
-      rw [this]
-      exact Prime.neg Int.prime_two
-    simp only [Nat.cast_ofNat]
-    rw [← neg_dvd (a := (2 : ℤ)), ← this, Ideal.norm_dvd_iff hprime]
-  have hprime : Prime ((Algebra.norm ℤ) (hζ.toInteger - 1)) := by
-    rw [hζ.norm_toInteger_sub_one_of_prime_ne_two' hp, ← Nat.prime_iff_prime_int]
-    exact hpri.1
-  rw [← hζ.norm_toInteger_sub_one_of_prime_ne_two' hp, Ideal.norm_dvd_iff hprime]
-
-lemma IsPrimitiveRoot.sub_one_dvd_sub {A : Type*} [CommRing A] [IsDomain A]
-    {p : ℕ} (hp : p.Prime) {ζ : A} (hζ : IsPrimitiveRoot ζ p) {η₁ : A}
-    (hη₁ : η₁ ∈ nthRootsFinset p 1) {η₂ : A} (hη₂ : η₂ ∈ nthRootsFinset p 1) :
-    ζ - 1 ∣ η₁ - η₂ := by
-  by_cases h : η₁ = η₂
-  · rw [h, sub_self]; exact dvd_zero _
-  · exact (hζ.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime hp hη₁ hη₂ h).dvd
-
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.toInteger : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
   have : Fact (Nat.Prime p) := hpri
