@@ -9,8 +9,7 @@ import Mathlib.RingTheory.Polynomial.Cyclotomic.Factorization
 @[expose] public section
 
 lemma uff {n p : ℕ} [hp : Fact p.Prime] (hn : n.Prime) (hpn : p ≠ n) : p.Coprime n :=
-  hp.1.coprime_iff_not_dvd.mpr (fun h ↦ hpn <|
-    Nat.prime_eq_prime_of_dvd_pow hp.1 hn (m := 1) (by simpa))
+  (Nat.coprime_primes hp.1 hn).mpr hpn
 
 open NumberField Module NumberField.InfinitePlace Nat Real RingOfIntegers Finset Multiset
   IsCyclotomicExtension.Rat Polynomial cyclotomic UniqueFactorizationMonoid Ideal

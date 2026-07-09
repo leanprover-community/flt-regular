@@ -17,13 +17,11 @@ open Polynomial IsCyclotomicExtension.Rat
 variable (hp : p ≠ 2)
 
 lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.toInteger - 1 : 𝓞 K) ∣ a - b := by
-  letI : Fact (Nat.Prime p) := hpri
-  simp_rw [← Ideal.Quotient.eq_zero_iff_dvd, ← Ideal.Quotient.mk_eq_mk, Submodule.Quotient.mk_sub,
-    sub_eq_zero, ← SModEq.def]
-  obtain ⟨n, hn⟩ := hζ.subOneIntegralPowerBasis.exists_smodEq a
-  refine ⟨n, ?_⟩
-  rw [hζ.subOneIntegralPowerBasis_gen] at hn
-  exact hn
+  have H := hζ.subOneIntegralPowerBasis.exists_gen_dvd_sub a
+  rw [hζ.subOneIntegralPowerBasis_gen] at H
+  convert H using 3 with b
+  · ext; simp [IsPrimitiveRoot.toInteger]
+  · simp
 
 include hp in
 lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b : 𝓞 K) ^ p := by

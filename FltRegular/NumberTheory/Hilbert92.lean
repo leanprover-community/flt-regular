@@ -206,12 +206,6 @@ lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k)
 
 variable [NumberField K] [NumberField k]
 
-section Mathlib.Algebra.Algebra.Hom
-
-variable {R A' : Type*} [CommSemiring R] [Semiring A'] [Algebra R A'] (φ ψ : A' →ₐ[R] A')
-
-end Mathlib.Algebra.Algebra.Hom
-
 /-- The map on relative units induced by an algebra endomorphism of the extension. -/
 noncomputable
 def relativeUnitsMap (σ : K →ₐ[k] K) : RelativeUnits k K →* RelativeUnits k K := by
@@ -640,8 +634,6 @@ lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),
   exact ⟨i, congr_arg Subtype.val hi⟩
 
 local notation "r" => NumberField.Units.rank k
-
-instance instCommGroupUnitsRingOfIntegersFltRegular : CommGroup ((𝓞 k))ˣ := inferInstance
 
 include hp hKL hσ in
 -- TODO : remove `p ≠ 2`. The offending case is when `K = k[i]`.

@@ -43,20 +43,12 @@ lemma not_exists_solution' :
   obtain ⟨m, z, hm, hz'', rfl⟩ :
       ∃ m z', 1 ≤ m ∧ ¬((hζ.toInteger : 𝓞 K) - 1 ∣ z') ∧
         z = ((hζ.toInteger : 𝓞 K) - 1) ^ m * z' := by
-    classical
-    have H : FiniteMultiplicity ((hζ.toInteger : 𝓞 K) - 1) z := FiniteMultiplicity.of_not_isUnit
-      hζ.zeta_sub_one_prime'.not_unit hz'
-    obtain ⟨z', h⟩ := pow_multiplicity_dvd ((hζ.toInteger : 𝓞 K) - 1) z
-    refine ⟨_, _, ?_, ?_, h⟩
-    · rwa [← Nat.cast_le (α := ENat), ← FiniteMultiplicity.emultiplicity_eq_multiplicity H,
-        ← pow_dvd_iff_le_emultiplicity, pow_one]
-    · intro h'
-      have := mul_dvd_mul_left
-        (((hζ.toInteger : 𝓞 K) - 1) ^ (multiplicity ((hζ.toInteger : 𝓞 K) - 1) z)) h'
-      rw [← pow_succ, ← h] at this
-      refine not_pow_dvd_of_emultiplicity_lt ?_ this
-      rw [FiniteMultiplicity.emultiplicity_eq_multiplicity H, Nat.cast_lt]
-      exact Nat.lt_succ_self _
+    obtain ⟨m, z', hz'', rfl⟩ :=
+      WfDvdMonoid.max_power_factor hz' hζ.zeta_sub_one_prime'.irreducible
+    refine ⟨m, z', ?_, hz'', rfl⟩
+    rcases Nat.eq_zero_or_pos m with rfl | h
+    · simp only [pow_zero, one_mul] at hz; exact absurd hz hz''
+    · exact h
   refine not_exists_solution hp hreg hζ hm ⟨x, y, z, 1, hy, hz'', ?_⟩
   rwa [Units.val_one, one_mul]
 

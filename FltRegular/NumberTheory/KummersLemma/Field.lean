@@ -189,23 +189,6 @@ theorem map_poly_eq_prod {L : Type*} [Field L] [Algebra K L] (α : L)
     roots_poly hp hζ u hcong α e, Multiset.map_map, ← Finset.prod_eq_multiset_prod]
   simp [polyRoot]
 
-lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [CommRing K]
-    [CommRing L] [CommRing B] [Algebra R K] [Algebra A K] [Algebra R L] [Algebra B L]
-    [Algebra A L] [Algebra R A] [IsScalarTower R A K] [IsScalarTower R A L]
-    [IsIntegralClosure A R K] [IsIntegralClosure B R L] :
-    IsIntegralClosure B A L where
-  algebraMap_injective := IsIntegralClosure.algebraMap_injective B R L
-  isIntegral_iff := fun {x} ↦ by
-    refine Iff.trans ?_ (IsIntegralClosure.isIntegral_iff (R := R) (A := B) (B := L))
-    have := (IsIntegralClosure.isIntegral_algebra R (A := A) K)
-    exact ⟨isIntegral_trans x, IsIntegral.tower_top⟩
-
-instance {K L} [Field K] [Field L] [Algebra K L] :
-    IsIntegralClosure (𝓞 L) (𝓞 K) L := isIntegralClosure_of_isScalarTower ℤ _ K _ _
-
-instance {K L} [Field K] [Field L] [Algebra K L] :
-    IsScalarTower (𝓞 K) (𝓞 L) L := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
-
 include hu in
 lemma minpoly_polyRoot'' {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) (i) :
