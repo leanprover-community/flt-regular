@@ -30,11 +30,10 @@ theorem PIDGalois [IsGalois ℚ K] {θ : 𝓞 K} (hθ : exponent θ = 1)
   let P := Ideal.primesOverSpanEquivMonicFactorsMod (hθ ▸ hp.not_dvd_one) ⟨I, hI⟩
   let J := (Ideal.primesOverSpanEquivMonicFactorsMod (hθ ▸ hp.not_dvd_one)).symm ⟨Q, hQ⟩
   have := hI.1; have := hI.2
-  by_cases h : ⌊(M K)⌋₊ < p ^ (I.inertiaDeg' ℤ)
+  by_cases h : ⌊(M K)⌋₊ < p ^ (I.inertiaDeg ℤ)
   · linarith
   rw [← Ideal.inertiaDeg_primesOverSpanEquivMonicFactorsMod_symm_apply'
-    (hθ ▸ hp.not_dvd_one) hQ, inertiaDeg_eq_inertiaDeg', inertiaDeg_eq_of_isGaloisGroup
-    (span ({↑p} : Set ℤ)) J I Gal(K/ℚ)] at H
+    (hθ ▸ hp.not_dvd_one) hQ, inertiaDeg_eq_of_isGaloisGroup (span {↑p}) J I Gal(K/ℚ)] at H
   obtain ⟨σ, rfl⟩ := exists_smul_eq_of_isGaloisGroup (span ({↑p} : Set ℤ)) J I Gal(K/ℚ)
   exact (H.resolve_left h).map_ringHom _
 

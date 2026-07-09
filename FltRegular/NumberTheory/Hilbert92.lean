@@ -634,7 +634,7 @@ lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ),
   obtain ⟨j, _, hj'⟩ := (Nat.dvd_prime_pow hp).mp (orderOf_dvd_of_pow_eq_one hiν)
   refine ⟨j, ν, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ν.1),
     fun ε n hn ↦ ?_⟩
-  let _ : Fintype (Units.torsion k) := inferInstance
+  let _ : Fintype (Units.torsion k) := Fintype.ofFinite _
   have : Fintype H := Set.fintypeSubset (NumberField.Units.torsion k) this
   obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hν ⟨ε, ⟨_, n, rfl⟩, hn⟩)
   exact ⟨i, congr_arg Subtype.val hi⟩

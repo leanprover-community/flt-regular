@@ -31,7 +31,6 @@ variable {R} {S}
 lemma prod_primesOverFinset_of_unramified [Algebra.Unramified R S] [IsDedekindDomain S]
     [Module.IsTorsionFree R S] (p : Ideal R) [p.IsPrime] (hp : p ≠ ⊥) :
     ∏ P ∈ IsDedekindDomain.primesOverFinset p S, P = p.map (algebraMap R S) := by
-  classical
   have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective
       (Module.isTorsionFree_iff_algebraMap_injective.mp inferInstance)).not.mpr hp
   rw [← associated_iff_eq.mp (factors_pow_count_prod hpbot')]
@@ -40,12 +39,12 @@ lemma prod_primesOverFinset_of_unramified [Algebra.Unramified R S] [IsDedekindDo
   convert (pow_one _).symm
   have : p.IsMaximal := Ring.DimensionLEOne.maximalOfPrime hp ‹_›
   rw [← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset hp] at hP
-  rw [← Ideal.IsDedekindDomain.ramificationIdx_eq_factors_count hpbot' hP.1
+  rw [← Ideal.IsDedekindDomain.ramificationIdx'_eq_factors_count hpbot' hP.1
     (ne_bot_of_mem_primesOver hp hP)]
   letI : P.IsPrime := hP.1
   letI : P.LiesOver p := hP.2
-  rw [Ideal.ramificationIdx_eq_ramificationIdx' p P hp]
-  exact Ideal.ramificationIdx'_eq_one P R
+  rw [Ideal.ramificationIdx'_eq_ramificationIdx p P hp]
+  exact Ideal.ramificationIdx_eq_one P R
 
 lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Ideal S)
     (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
@@ -74,16 +73,12 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
     simp_rw [← Ideal.mapHom_apply, ← map_pow, ← map_prod, Ideal.mapHom_apply] at this
     rw [this, Ideal.map_comap_map]
   conv_lhs => rw [← associated_iff_eq.mp (factors_pow_count_prod hIbot)]
-  rw [← Finset.prod_fiberwise_of_maps_to
-    (g := (Ideal.comap (algebraMap R S) : Ideal S → Ideal R))
-    (t := (factors (I.comap (algebraMap R S))).toFinset)]
+  rw [← Finset.prod_fiberwise_of_maps_to (g := Ideal.comap (algebraMap R S))]
   · apply Finset.prod_congr rfl
     intros p hp
     simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
       Ideal.mem_normalizedFactors_iff hIbot'] at hp
     have hpbot : p ≠ ⊥ := fun hp' ↦ hIbot' (eq_bot_iff.mpr (hp.2.trans_eq hp'))
-    have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective hRS).not.mpr
-      hpbot
     have := hp.1
     rw [← prod_primesOverFinset_of_unramified p hpbot, ← Finset.prod_pow]
     have : p.IsMaximal := Ring.DimensionLEOne.maximalOfPrime hpbot this
