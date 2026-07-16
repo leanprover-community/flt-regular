@@ -29,3 +29,7 @@ rev = "master"
 [[lean_lib]]
 name = "FltRegular"
 globs = ["FltRegular"]
+
+[[lean_lib]]
+name = "BealRegular"
+globs = ["BealRegular"]

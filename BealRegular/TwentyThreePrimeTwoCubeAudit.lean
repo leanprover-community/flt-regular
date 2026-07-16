@@ -1,0 +1,13 @@
+import BealRegular.TwentyThreePrimeTwoCube
+
+#print axioms BealRegular.TwentyThreePrimeTwoCube.polynomial_certificate
+#print axioms BealRegular.TwentyThreePrimeTwoCube.Phi_eq_cyclotomic
+#print axioms BealRegular.TwentyThreePrimeTwoCube.aeval_Phi_theta
+#print axioms BealRegular.TwentyThreePrimeTwoCube.F_dvd_cyclotomic_mod_two
+#print axioms BealRegular.TwentyThreePrimeTwoCube.order_two_mod_twentyThree
+#print axioms BealRegular.TwentyThreePrimeTwoCube.map_F_irreducible
+#print axioms BealRegular.TwentyThreePrimeTwoCube.map_F_mem_monicFactorsMod
+#print axioms BealRegular.TwentyThreePrimeTwoCube.primeIdealTwo_mem_primesOver
+#print axioms BealRegular.TwentyThreePrimeTwoCube.primeIdealTwo_eq_span
+#print axioms BealRegular.TwentyThreePrimeTwoCube.primeIdealTwo_cube_eq_span_generator
+#print axioms BealRegular.TwentyThreePrimeTwoCube.primeIdealTwo_cube_isPrincipal

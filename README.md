@@ -2,6 +2,43 @@
 The goal of this project is to prove Fermat's Last Theorem for [regular primes](https://en.wikipedia.org/wiki/Regular_prime)
 in [Lean](https://leanprover-community.github.io/).
 
+## Beal companion extension
+
+The `BealRegular` library adds assumption-free, kernel-checked FLT coverage for
+every equal exponent `3 <= n <= 22`.  Composite exponents are reduced to the
+formal FLT theorems at `3`, `4`, `5`, `7`, `11`, `13`, `17`, or `19`.  The
+same reduction excludes a mixed-power equation whenever one of those integers
+from `3` through `22` divides all three exponents.
+
+The regular-prime results at `17` and `19` are proved here by exact cyclotomic
+PID certificates, not by assuming their class numbers.  Sage was used only to
+discover the integer-polynomial witnesses.  Lean checks all `103` certificates
+for `17` and all `558` certificates for `19`; independent Node validators
+check the generated data and dispatch tables, and the renderers are byte-
+idempotent.
+
+Exponent `23` is deliberately separated from the unconditional range.  The
+project kernel-checks the finite Bernoulli numerator condition and proves that
+an exponent-three certificate for the cyclotomic class group would imply
+regularity and FLT23.  `BealRegular/CubicIdealCertificate.lean` also verifies
+the exact five-polynomial certificate showing that a Kummer--Dedekind ideal
+has principal cube.  `BealRegular/TwentyThreePrimeTwoCube.lean` applies that
+checker to a concrete irreducible degree-11 factor modulo `2`, identifies the
+resulting prime ideal above `2`, and proves its cube principal.  This is one
+class relation, not a proof that every class has exponent three.  The project
+does not assume Kummer's Bernoulli criterion or claim that the non-PID
+cyclotomic field is a PID.  See `TwentyThreeBernoulli.md` and
+`TwentyThreeDesign.md` for the explicit proof routes and remaining gap.
+
+Useful verification commands are:
+
+```sh
+lake build BealRegular
+lake env lean BealRegularAudit.lean
+node scripts/validate_17_certificates.mjs
+node scripts/validate_19_certificates.mjs
+```
+
 The following readme has been shamelessly copied from the [Liquid Tensor Experiment](https://github.com/leanprover-community/lean-liquid/).
 
 ## How to browse this repository

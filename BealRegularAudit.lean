@@ -1,0 +1,39 @@
+import BealRegular
+
+/-! Kernel axiom audit for the regular-prime companion layer. -/
+
+#print axioms flt_regular
+#print axioms fermatLastTheoremFive
+#print axioms fermatLastTheoremSeven
+#print axioms fermatLastTheoremEleven
+#print axioms fermatLastTheoremThirteen
+#print axioms fermatLastTheoremSeventeen
+#print axioms fermatLastTheoremNineteen
+#print axioms BealRegular.no_solution_of_flt_divides_exponents
+#print axioms BealRegular.no_solution_equal_exponent_regular_prime
+#print axioms BealRegular.no_solution_if_regular_prime_dvd_exponents
+#print axioms BealRegular.no_solution_equal_exponent_three_regular
+#print axioms BealRegular.no_solution_if_three_regular_dvd_exponents
+#print axioms BealRegular.no_solution_equal_exponent_small
+#print axioms BealRegular.no_solution_if_small_dvd_exponents
+#print axioms BealRegular.FLT_three_through_nineteen
+#print axioms BealRegular.no_solution_equal_exponent_through_nineteen
+#print axioms BealRegular.no_solution_if_three_through_nineteen_dvd_exponents
+#print axioms BealRegular.FLT_three_through_twentyTwo
+#print axioms BealRegular.no_solution_equal_exponent_through_twentyTwo
+#print axioms BealRegular.no_solution_if_three_through_twentyTwo_dvd_exponents
+#print axioms BealRegular.FLT_three_through_twentyThree_of_twentyThree
+#print axioms BealRegular.no_solution_equal_exponent_through_twentyThree_of_twentyThree
+#print axioms BealRegular.no_solution_if_three_through_twentyThree_dvd_exponents_of_twentyThree
+#print axioms BealRegular.no_solution_equal_exponent_five
+#print axioms BealRegular.no_solution_equal_exponent_seven
+#print axioms BealRegular.no_solution_equal_exponent_eleven
+#print axioms BealRegular.no_solution_equal_exponent_thirteen
+#print axioms BealRegular.no_solution_equal_exponent_seventeen
+#print axioms BealRegular.no_solution_equal_exponent_nineteen
+#print axioms BealRegular.no_solution_if_five_dvd_exponents
+#print axioms BealRegular.no_solution_if_seven_dvd_exponents
+#print axioms BealRegular.no_solution_if_eleven_dvd_exponents
+#print axioms BealRegular.no_solution_if_thirteen_dvd_exponents
+#print axioms BealRegular.no_solution_if_seventeen_dvd_exponents
+#print axioms BealRegular.no_solution_if_nineteen_dvd_exponents

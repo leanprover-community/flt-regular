@@ -1,0 +1,8 @@
+import BealRegular.ClassGroupExponentMinkowski
+
+namespace BealRegular.ClassGroupExponentMinkowski
+
+#print axioms classGroup_pow_eq_one_of_isPrincipal_pow_of_norm_le_of_isPrime
+#print axioms classGroup_pow_eq_one_of_one_prime_above
+
+end BealRegular.ClassGroupExponentMinkowski
