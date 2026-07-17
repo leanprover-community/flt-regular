@@ -24,10 +24,15 @@ regularity and FLT23.  `BealRegular/CubicIdealCertificate.lean` also verifies
 the exact five-polynomial certificate showing that a Kummer--Dedekind ideal
 has principal cube.  `BealRegular/TwentyThreePrimeTwoCube.lean` applies that
 checker to a concrete irreducible degree-11 factor modulo `2`, identifies the
-resulting prime ideal above `2`, and proves its cube principal.  This is one
-class relation, not a proof that every class has exponent three.  The project
-does not assume Kummer's Bernoulli criterion or claim that the non-PID
-cyclotomic field is a PID.  See `TwentyThreeBernoulli.md` and
+resulting prime ideal above `2`, and proves its cube principal.
+`BealRegular/TwentyThreePrimeThreeCube.lean` checks the analogous certificate
+for a prime above `3`.  Galois conjugacy makes one selected prime sufficient
+for each rational prime, so these two relations finish the two degree-11
+rational primes in the full-field Minkowski sieve.  They do not prove that
+every class has exponent three: `28,262` degree-one and `19` degree-two
+rational primes, as well as the ramified prime, remain on that brute-force
+route.  The project does not assume Kummer's Bernoulli criterion or claim that
+the non-PID cyclotomic field is a PID.  See `TwentyThreeBernoulli.md` and
 `TwentyThreeDesign.md` for the explicit proof routes and remaining gap.
 
 Useful verification commands are:
@@ -37,6 +42,8 @@ lake build BealRegular
 lake env lean BealRegularAudit.lean
 node scripts/validate_17_certificates.mjs
 node scripts/validate_19_certificates.mjs
+node scripts/validate_23_prime2_cube_certificate.mjs
+node scripts/validate_23_prime3_cube_certificate.mjs
 ```
 
 The following readme has been shamelessly copied from the [Liquid Tensor Experiment](https://github.com/leanprover-community/lean-liquid/).

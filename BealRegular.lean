@@ -4,6 +4,7 @@ import BealRegular.CubicIdealCertificate
 import BealRegular.TwentyThreeBernoulli
 import BealRegular.TwentyThreeDesign
 import BealRegular.TwentyThreePrimeTwoCube
+import BealRegular.TwentyThreePrimeThreeCube
 import FltRegular.SmallNumbers.SmallNumbers
 
 /-!
