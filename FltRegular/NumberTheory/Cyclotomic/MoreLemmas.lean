@@ -18,10 +18,7 @@ variable (hp : p ≠ 2)
 
 lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) : ∃ b : ℤ, (hζ.toInteger - 1 : 𝓞 K) ∣ a - b := by
   have H := hζ.subOneIntegralPowerBasis.exists_gen_dvd_sub a
-  rw [hζ.subOneIntegralPowerBasis_gen] at H
-  convert H using 3 with b
-  · ext; simp [IsPrimitiveRoot.toInteger]
-  · simp
+  rwa [hζ.subOneIntegralPowerBasis_gen] at H
 
 include hp in
 lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b : 𝓞 K) ^ p := by

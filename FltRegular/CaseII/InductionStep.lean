@@ -14,6 +14,8 @@ import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 open scoped nonZeroDivisors NumberField
 open Polynomial IsCyclotomicExtension.Rat
 
+attribute [local implicit_reducible] integralClosure NumberField.RingOfIntegers
+
 variable {K : Type} {p : ℕ} [NeZero p] [Field K] [NumberField K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p) {x y z : 𝓞 K} {ε : (𝓞 K)ˣ}
@@ -123,7 +125,9 @@ fun η ↦ ⟨(x + y * η.1) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
 lemma div_zeta_sub_one_mul_zeta_sub_one (η) :
     divZetaSubOne hp hζ e η * (π) = x + y * η := by
   ext
-  simp [divZetaSubOne, div_mul_cancel₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)]
+  change ((x : K) + (y : K) * ((η : 𝓞 K) : K)) / (ζ - 1) * (ζ - 1) =
+    (x : K) + (y : K) * ((η : 𝓞 K) : K)
+  exact div_mul_cancel₀ _ (hζ.sub_one_ne_zero hpri.out.one_lt)
 
 lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
     Associated y (divZetaSubOne hp hζ e η₁ - divZetaSubOne hp hζ e η₂) := by

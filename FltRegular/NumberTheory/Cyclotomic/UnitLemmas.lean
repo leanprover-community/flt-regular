@@ -76,25 +76,26 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
   simp_rw [PowerBasis.basis_eq_pow, IsPrimitiveRoot.integralPowerBasis_gen] at hu
   have hu' := congr_arg (ringOfIntegersComplexConj K) hu
   replace hu' : ∑ x : Fin φn, (a u) x • (ringOfIntegersComplexConj K)
-      (⟨ζ, hζ.isIntegral (NeZero.pos p)⟩ ^ (x : ℕ)) = unitsComplexConj K u := by
+      (hζ.toInteger ^ (x : ℕ)) = unitsComplexConj K u := by
     refine Eq.trans ?_ hu'
     rw [map_sum]
     congr 1
     ext x
     congr 1
     rw [map_zsmul]
-  have : ∀ x : Fin φn, ringOfIntegersComplexConj K (⟨ζ, hζ.isIntegral (NeZero.pos p)⟩ ^ (x : ℕ)) =
-      ⟨ζ⁻¹, hζ.inv.isIntegral (NeZero.pos p)⟩ ^ (x : ℕ) := by
+  have : ∀ x : Fin φn, ringOfIntegersComplexConj K (hζ.toInteger ^ (x : ℕ)) =
+      hζ.inv.toInteger ^ (x : ℕ) := by
     intro x
     ext
-    simp only [map_pow, coe_ringOfIntegersComplexConj, RingOfIntegers.map_mk, inv_pow]
+    simp only [map_pow, coe_ringOfIntegersComplexConj]
     suffices η ∈ Units.torsion K by
       have H := RingOfIntegers.ext_iff.1 <|
         Units.ext_iff.1 <| unitsComplexConj_torsion K ⟨η, ‹_›⟩
       have : ↑↑η = ζ := rfl
       simp only [Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv, RingOfIntegers.mapRingEquiv_apply,
         this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv, map_units_inv] at H
-      simp [H]
+      change (complexConj K) ζ ^ (x : ℕ) = ζ⁻¹ ^ (x : ℕ)
+      rw [H]
     refine (CommGroup.mem_torsion _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
     ext
     exact hζ.pow_eq_one

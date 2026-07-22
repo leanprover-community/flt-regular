@@ -28,7 +28,8 @@ variable (n K) in
 lemma minpoly : minpoly ℤ θ = cyclotomic n ℤ := by
   have := cyclotomic_eq_minpoly (zeta_spec n ℚ K) (NeZero.pos n)
   rw [← (zeta_spec n ℚ K).coe_toInteger] at this
-  simpa [this] using (minpoly.algebraMap_eq RingOfIntegers.coe_injective θ).symm
+  rw [(minpoly.algebraMap_eq RingOfIntegers.coe_injective θ).symm, this]
+  rfl
 
 variable (n) in
 lemma exponent : exponent θ = 1 := by

@@ -9,6 +9,8 @@ import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 open scoped NumberField
 
+attribute [local implicit_reducible] integralClosure NumberField.RingOfIntegers
+
 variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [NumberField K] (hp : p ≠ 2)
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)

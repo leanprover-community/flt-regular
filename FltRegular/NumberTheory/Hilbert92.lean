@@ -538,7 +538,8 @@ def unitlifts (S : systemOfUnits p G (NumberField.Units.rank k + 1)) :
 lemma unitlifts_spec (S : systemOfUnits p G (NumberField.Units.rank k + 1)) (i) :
     mkG (Additive.toMul <| unitlifts p hp hKL σ hσ S i) = S.units i := by
   delta unitToU unitlifts
-  simp only [toMul_ofMul, Quotient.out_eq', ofMul_toMul]
+  simp only [toMul_ofMul]
+  exact (congrArg _ (Quotient.out_eq _)).trans (Quotient.out_eq _)
 
 lemma u_lemma2 (u v : (𝓞 K)ˣ) (hu : u = v / (σ v : K)) :
     mkG u = (1 - zeta p : A) • mkG v := by
