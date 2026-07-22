@@ -102,7 +102,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
       rw [Finsupp.coe_add, Pi.add_apply, Finsupp.single_apply]
       have : i = j ↔ j ∉ Set.range (Fin.succAbove i) := by simp [@eq_comm _ i]
       split_ifs with hij
-      · rw [Finsupp.mapDomain_notin_range, zero_add, hij]
+      · rw [Finsupp.mapDomain_of_notMem_range, zero_add, hij]
         rwa [← this]
       · obtain ⟨j, rfl⟩ := not_imp_comm.mp this.mpr hij
         rw [Finsupp.mapDomain_apply Fin.succAbove_right_injective, add_zero,
