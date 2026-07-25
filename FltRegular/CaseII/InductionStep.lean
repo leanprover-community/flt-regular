@@ -402,7 +402,7 @@ include hreg in
 lemma a_div_principal (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) :
     Submodule.IsPrincipal
       ((𝔞 η₁ / 𝔞 η₂ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) := by
-  apply isPrincipal_of_isPrincipal_pow_of_Coprime' _ hreg
+  apply FractionalIdeal.isPrincipal.of_isPrincipal_pow_of_coprime hreg
   rw [div_pow, ← FractionalIdeal.coeIdeal_pow, ← FractionalIdeal.coeIdeal_pow,
     root_div_zeta_sub_one_dvd_gcd_spec, root_div_zeta_sub_one_dvd_gcd_spec]
   exact c_div_principal hp hζ e hy η₁ η₂

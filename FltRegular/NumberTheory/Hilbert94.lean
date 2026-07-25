@@ -141,5 +141,5 @@ theorem dvd_card_classGroup_of_unramified_isCyclic {K L : Type}
   obtain ⟨I, hI, hI'⟩ := exists_not_isPrincipal_and_isPrincipal_map K L hKL hKL'
   have := Fact.mk hKL
   rw [hKL.dvd_iff_not_coprime]
-  exact fun h ↦ hI (isPrincipal_of_isPrincipal_pow_of_coprime h
+  exact fun h ↦ hI (Ideal.IsPrincipal.of_isPrincipal_pow_of_coprime h
     (Ideal.isPrincipal_pow_finrank_of_isPrincipal_map hI'))

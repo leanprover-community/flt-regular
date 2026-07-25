@@ -133,7 +133,7 @@ theorem is_principal_aux {K' : Type*} [Field K'] [CharZero K'] [IsCyclotomicExte
     ∃ (u : (𝓞 K')ˣ) (α : 𝓞 K'), ↑u * α ^ p = ↑a + ζ * ↑b := by
   let : NumberField K' := IsCyclotomicExtension.numberField {p} ℚ K'
   obtain ⟨α, hα⟩ : I.IsPrincipal := by
-    apply isPrincipal_of_isPrincipal_pow_of_coprime hreg
+    apply Ideal.IsPrincipal.of_isPrincipal_pow_of_coprime hreg
     exact ⟨⟨↑a + ζ * ↑b, by rw [submodule_span_eq, hI]⟩⟩
   replace hα := congr_arg (fun (J : Submodule _ _) => J ^ p) hα
   simp only [← hI, submodule_span_eq, span_singleton_pow, span_singleton_eq_span_singleton] at hα

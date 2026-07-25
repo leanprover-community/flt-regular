@@ -10,21 +10,6 @@ variable {K : Type*} {p : ℕ} [Field K] [CharZero K] {ζ : K}
 open scoped nonZeroDivisors
 open Polynomial
 
-theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
-    {A K : Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
-    [Field K] [Algebra A K] [IsFractionRing A K] (p : ℕ)
-    (H : p.Coprime <| Fintype.card <| ClassGroup A) (I : FractionalIdeal A⁰ K)
-    (hI : (↑(I ^ p) : Submodule A K).IsPrincipal) : (I : Submodule A K).IsPrincipal := by
-  by_cases Izero : I = 0
-  · rw [Izero, FractionalIdeal.coe_zero]
-    exact bot_isPrincipal
-  rw [← Ne, ← isUnit_iff_ne_zero] at Izero
-  change Submodule.IsPrincipal ((Izero.unit' : FractionalIdeal A⁰ K) : Submodule A K)
-  rw [← ClassGroup.mk_eq_one_iff]
-  refine (pow_eq_one_iff_of_coprime H).mp ⟨?_, pow_card_eq_one⟩
-  rw [← map_pow, ClassGroup.mk_eq_one_iff]
-  simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
-
 open FractionalIdeal in
 lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain R]
     {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]

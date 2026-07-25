@@ -89,16 +89,3 @@ theorem isRegularPrime_three :
     (IsCyclotomicExtension.Rat.three_pid (CyclotomicField _ ℚ))
 
 end TwoRegular
-
-theorem isPrincipal_of_isPrincipal_pow_of_coprime
-    {A : Type*} [CommRing A] [IsDedekindDomain A] [Fintype (ClassGroup A)]
-    {p : ℕ}
-    (H : p.Coprime <| Fintype.card <| ClassGroup A) {I : Ideal A}
-    (hI : (I ^ p).IsPrincipal) : I.IsPrincipal := by
-  by_cases Izero : I = 0
-  · rw [Izero]
-    exact bot_isPrincipal
-  rw [← ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero Izero)]
-  refine (pow_eq_one_iff_of_coprime H).mp ⟨?_, pow_card_eq_one⟩
-  rw [← map_pow, SubmonoidClass.mk_pow]
-  exact (ClassGroup.mk0_eq_one_iff _).mpr hI
