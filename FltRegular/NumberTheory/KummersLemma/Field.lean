@@ -37,7 +37,6 @@ namespace KummersLemma
 omit [NumberField K] in
 lemma natDegree_poly_aux :
     natDegree ((C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K)) = p := by
-  haveI : Fact (Nat.Prime p) := hpri
   rw [natDegree_add_C, natDegree_pow, ← C.map_one, natDegree_sub_C, natDegree_mul_X, natDegree_C,
     zero_add, mul_one]
   exact C_ne_zero.mpr (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
@@ -46,7 +45,6 @@ omit [NumberField K] in
 lemma monic_poly_aux :
     leadingCoeff ((C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K)) =
       (hζ.toInteger - 1 : 𝓞 K) ^ p := by
-  haveI : Fact (Nat.Prime p) := hpri
   trans leadingCoeff ((C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p)
   · rw [leadingCoeff, leadingCoeff, coeff_add]
     nth_rewrite 1 [natDegree_add_C]
@@ -67,7 +65,6 @@ lemma poly_spec :
   (zeta_sub_one_pow_dvd_poly hp hζ u hcong).choose_spec.symm
 
 lemma monic_poly : Monic (poly hp hζ u hcong) := by
-  haveI : Fact (Nat.Prime p) := hpri
   have := congr_arg leadingCoeff (poly_spec hp hζ u hcong)
   simp only [map_pow, leadingCoeff_mul, leadingCoeff_pow, leadingCoeff_C,
     monic_poly_aux hζ] at this
@@ -75,7 +72,6 @@ lemma monic_poly : Monic (poly hp hζ u hcong) := by
   exact pow_ne_zero _ (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
 
 lemma natDegree_poly : natDegree (poly hp hζ u hcong) = p := by
-  haveI : Fact (Nat.Prime p) := hpri
   have := congr_arg natDegree (poly_spec hp hζ u hcong)
   rwa [natDegree_C_mul, natDegree_poly_aux hζ] at this
   exact pow_ne_zero _ (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
@@ -261,7 +257,7 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
   let J := I.map (algebraMap (𝓞 K) (𝓞 L))
   let i : 𝓞 K ⧸ I →+* 𝓞 L ⧸ J := Ideal.quotientMap _
     (algebraMap (𝓞 K) (𝓞 L)) Ideal.le_comap_map
-  haveI : Nontrivial (𝓞 L ⧸ J) := by
+  have : Nontrivial (𝓞 L ⧸ J) := by
     apply Ideal.Quotient.nontrivial_iff.mpr
     rw [ne_eq, Ideal.map_eq_top_iff]
     · exact Ideal.IsMaximal.ne_top ‹_›
@@ -295,8 +291,8 @@ attribute [local instance] Ideal.Quotient.field in
 lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ p - C (u : K))] :
     Algebra.Unramified (𝓞 K) (𝓞 L) := by
   let α := polyRoot hp hζ u hcong _ (rootOfSplitsXPowSubC_pow _ L) 0
-  haveI := Polynomial.IsSplittingField.finiteDimensional L (X ^ p - C (u : K))
-  haveI : Module.Finite (𝓞 K) (𝓞 L) := IsIntegralClosure.finite (𝓞 K) K L (𝓞 L)
+  have := Polynomial.IsSplittingField.finiteDimensional L (X ^ p - C (u : K))
+  have : Module.Finite (𝓞 K) (𝓞 L) := IsIntegralClosure.finite (𝓞 K) K L (𝓞 L)
   have hα : Algebra.adjoin K {(α : L)} = ⊤ := by
     rw [eq_top_iff, ← Algebra.adjoin_root_eq_top_of_isSplittingField
       ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩
@@ -305,14 +301,13 @@ lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ p - C 
     exact mem_adjoin_polyRoot hp hζ u hcong _ _ 0
   refine Algebra.unramified_iff_forall.mpr ?_
   rintro ⟨P, hP⟩
-  letI : P.IsPrime := hP
   by_cases hPbot : P = ⊥
   · subst P
     exact Algebra.isUnramifiedAt_bot
   refine isUnramifiedAt_of_Separable_minpoly K L P hPbot α (IsIntegral.tower_top α.prop) hα ?_
   rw [minpoly_polyRoot' hp hζ u hcong hu]
   have hPbot' : P.under (𝓞 K) ≠ ⊥ := Ideal.under_ne_bot (𝓞 K) hPbot
-  haveI : (P.under (𝓞 K)).IsMaximal := (inferInstance : (P.under (𝓞 K)).IsPrime).isMaximal hPbot'
+  have : (P.under (𝓞 K)).IsMaximal := (inferInstance : (P.under (𝓞 K)).IsPrime).isMaximal hPbot'
   exact separable_poly hp hζ u hcong hu (P.under (𝓞 K))
 
 end KummersLemma

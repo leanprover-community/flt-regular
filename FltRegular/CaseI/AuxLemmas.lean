@@ -30,9 +30,7 @@ theorem aux_cong0k₁ {k : Fin p} (hcong : k ≡ -1 [ZMOD p]) :
   suffices ((k : ℤ) : ZMod p).val = p.pred by simpa
   rw [← ZMod.intCast_eq_intCast_iff] at hcong
   rw [hcong, cast_neg, Int.cast_one, pred_eq_sub_one]
-  haveI : NeZero p := ⟨hpri.ne_zero⟩
-  haveI : Fact p.Prime := ⟨hpri⟩
-  haveI : Fact (1 < p) := ⟨hpri.one_lt⟩
+  have : Fact p.Prime := ⟨hpri⟩
   simp [ZMod.neg_val, ZMod.val_one]
 
 /-- Auxiliary function. -/
@@ -88,7 +86,7 @@ theorem aux_cong0k₂ {k : Fin p} (hcong : k ≡ 1 [ZMOD p]) : k = ⟨1, hpri.on
   suffices ((k : ℤ) : ZMod p).val = 1 by simpa
   rw [← ZMod.intCast_eq_intCast_iff] at hcong
   rw [hcong, Int.cast_one]
-  haveI : Fact p.Prime := ⟨hpri⟩
+  have : Fact p.Prime := ⟨hpri⟩
   simp [ZMod.val_one]
 
 theorem auxf0k₂ (hp5 : 5 ≤ p) (a b : ℤ) : ∃ i : Fin p, f0k₂ a b (i : ℕ) = 0 :=
@@ -133,7 +131,6 @@ theorem aux_cong1k₁ {k : Fin p} (hcong : k ≡ 0 [ZMOD p]) : k = ⟨0, hpri.po
   suffices ((k : ℤ) : ZMod p).val = 0 by simpa
   rw [← ZMod.intCast_eq_intCast_iff] at hcong
   rw [hcong, Int.cast_zero]
-  haveI : Fact p.Prime := ⟨hpri⟩
   simp
 
 include hpri in
@@ -165,7 +162,7 @@ theorem aux_cong1k₂ {k : Fin p} (hpri : p.Prime) (hp5 : 5 ≤ p)
   rw [← ZMod.intCast_eq_intCast_iff] at hcong
   rw [hcong]
   simp only [Int.cast_add]
-  haveI : Fact p.Prime := ⟨hpri⟩
+  have : Fact p.Prime := ⟨hpri⟩
   have := congr_arg Nat.succ (Nat.succ_pred_eq_of_pos hpri.pred_pos)
   rw [succ_pred_prime hpri] at this
   rw [ZMod.val_add, Int.cast_one, ZMod.val_one, ← Nat.mod_add_mod, ← this, one_mod, this,
@@ -208,7 +205,7 @@ section KoneKtwo
 
 theorem auxk₁k₂ {k₁ k₂ : Fin p} (hpri : p.Prime) (hcong : k₂ ≡ k₁ - 1 [ZMOD p]) :
     (k₁ : ℕ) ≠ (k₂ : ℕ) := by
-  haveI := (⟨hpri⟩ : Fact p.Prime)
+  have := (⟨hpri⟩ : Fact p.Prime)
   intro habs
   rw [habs, ← ZMod.intCast_eq_intCast_iff, Int.cast_sub, ← sub_eq_zero] at hcong
   simp at hcong

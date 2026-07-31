@@ -37,8 +37,8 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.toInteger : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
   have : Fact (Nat.Prime p) := hpri
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  letI : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.toInteger - 1 : 𝓞 K))) := inferInstance
+  have := IsCyclotomicExtension.numberField {p} ℚ K
+  let : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.toInteger - 1 : 𝓞 K))) := inferInstance
   apply RingHom.toIntAlgHom_injective
   apply hζ.integralPowerBasis.algHom_ext
   have h : hζ.integralPowerBasis.gen = hζ.toInteger := by
@@ -58,8 +58,8 @@ lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
 open NumberField.RingOfIntegers in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
     (hζ.toInteger - 1 : 𝓞 K) ∣ Algebra.trace ℤ _ x - (p - 1) • x := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  letI := IsCyclotomicExtension.isGalois {p} ℚ K
+  have := IsCyclotomicExtension.numberField {p} ℚ K
+  have := IsCyclotomicExtension.isGalois {p} ℚ K
   have : (Algebra.trace ℤ _ x : 𝓞 K) = ∑ σ : K ≃ₐ[ℚ] K, (mapAlgHom σ).toRingHom x := by
     apply (show Function.Injective (algebraMap (𝓞 K) K) from Subtype.val_injective)
     rw [← eq_intCast (algebraMap ℤ (𝓞 K)), ← IsScalarTower.algebraMap_apply,
@@ -76,7 +76,7 @@ lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
 
 lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
     (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (Algebra.norm ℤ (1 + p • x) : 𝓞 K) - 1 + p • x := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
+  have := IsCyclotomicExtension.numberField {p} ℚ K
   obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
   obtain ⟨s, hs⟩ := zeta_sub_one_dvd_trace_sub_smul hζ x
   obtain ⟨t, ht⟩ := (associated_zeta_sub_one_pow_prime _ hζ).dvd

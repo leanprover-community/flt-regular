@@ -34,8 +34,8 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) 
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     ringOfIntegersComplexConj K (x + y * ↑(zetaUnit ^ i) : 𝓞 K) =
       x + y * (zetaUnit ^ (-i) : (𝓞 K)ˣ) := by
-  haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
-  ext1
+  have := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
+  ext
   simp only [map_add, map_intCast, map_mul, coe_ringOfIntegersComplexConj, zpow_neg, map_units_inv,
     add_right_inj, mul_eq_mul_left_iff, Int.cast_eq_zero]
   simp_rw [NumberField.Units.coe_zpow]

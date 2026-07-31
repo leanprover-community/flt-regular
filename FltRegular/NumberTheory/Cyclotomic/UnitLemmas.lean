@@ -65,11 +65,11 @@ theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     algebraMap (𝓞 K) (𝓞 K ⧸ I) (unitsMulComplexConjInv K u).1 = 1 := by
-  haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
+  have := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
   have := Units.coe_map_inv (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitsComplexConj K u)
   rw [unitsMulComplexConjInv_apply, Units.val_mul, map_mul, ← MonoidHom.coe_coe, ← this,
     Units.mul_inv_eq_one, Units.coe_map, MonoidHom.coe_coe]
-  haveI := Fact.mk hp
+  have := Fact.mk hp
   have hu := hζ.integralPowerBasis.basis.sum_repr u
   let a := hζ.integralPowerBasis.basis.repr
   let φn := hζ.integralPowerBasis.dim
@@ -121,7 +121,7 @@ theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Pr
   have hμ' : algebraMap (𝓞 K) (𝓞 K ⧸ I) ((η : 𝓞 K) ^ n) = -1 := by
     rw [← neg_eq_iff_eq_neg, ← map_neg, ← Units.val_pow_eq_pow_val, ← Units.val_neg, ← H]
     apply unit_inv_conj_not_neg_zeta_runity_aux hζ u hp
-  haveI := Fact.mk hp
+  have := Fact.mk hp
   apply (IsCyclotomicExtension.Rat.two_not_mem_span_zeta_sub_one' _ hζ hp : (2 : 𝓞 K) ∉ I)
   rw [← Ideal.Quotient.eq_zero_iff_mem, map_ofNat, ← one_add_one_eq_two, ← neg_eq_iff_add_eq_zero]
   exact hμ'.symm.trans hμ
@@ -129,12 +129,10 @@ theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Pr
 theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     ∃ m : ℕ, u * (unitsComplexConj K u)⁻¹ = (η ^ m) ^ 2 := by
-  haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
+  have := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
   have hpo : Odd p := H.out.odd_of_ne_two hp.ne'
-  haveI : NormedAlgebra ℚ ℂ := normedAlgebraRat
-  have :=
-    @NumberField.Embeddings.pow_eq_one_of_norm_eq_one K _ _ ℂ _ _ _
-      (u * (unitsComplexConj K u)⁻¹ : K) ?_ ?_
+  let : NormedAlgebra ℚ ℂ := normedAlgebraRat
+  have := Embeddings.pow_eq_one_of_norm_eq_one K ℂ (x := u * (unitsComplexConj K u)⁻¹) ?_ ?_
   · have H := roots_of_unity_in_cyclo hζ hpo (u * (unitsComplexConj K u)⁻¹ : K) this
     obtain ⟨n, k, hz⟩ := H
     simp_rw [← pow_mul]

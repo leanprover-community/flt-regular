@@ -53,7 +53,7 @@ lemma systemOfUnits.IsFundamental.maximal' [Module A G] (S : systemOfUnits p G r
     (hs : S.IsFundamental) (a : systemOfUnits p G r) [a.IsMaximal] :
     (Submodule.span A (Set.range S.units)).toAddSubgroup.index ≤
       (Submodule.span A (Set.range a.units)).toAddSubgroup.index := by
-  letI := hs.choose
+  let := hs.choose
   convert hs.choose_spec a ‹_› <;> symm <;> exact Nat.card_eq_fintype_card.symm
 namespace systemOfUnits.IsFundamental
 
@@ -68,7 +68,7 @@ variable [Module.Finite ℤ G]
 lemma existence [Module.Free ℤ G] [Module A G] :
     ∃ S : systemOfUnits p G s, S.IsFundamental := by
   obtain ⟨S⟩ := systemOfUnits.existence p hp G s hf
-  letI := S.isMaximal p hp G hf
+  let := S.isMaximal p hp G hf
   have : { a | ∃ (S : systemOfUnits p G s) (_ : S.IsMaximal), a = S.index p G }.Nonempty :=
     ⟨S.index, S, S.isMaximal p hp G hf, rfl⟩
   obtain ⟨S', hS', ha⟩ := Nat.sInf_mem this

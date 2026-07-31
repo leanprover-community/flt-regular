@@ -91,8 +91,6 @@ variable [IsCyclotomicExtension {p} ℚ K]
 
 include e hp in
 lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
-  letI : Fact (Nat.Prime p) := hpri
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
   have h := zeta_sub_one_dvd hζ e
   have root_eq_one_mod {ξ : 𝓞 K} (hξ : ξ ∈ nthRootsFinset p (1 : 𝓞 K)) :
       Ideal.Quotient.mk 𝔭 ξ = 1 := by
@@ -131,7 +129,6 @@ lemma div_zeta_sub_one_mul_zeta_sub_one (η) :
 
 lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
     Associated y (divZetaSubOne hp hζ e η₁ - divZetaSubOne hp hζ e η₂) := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
   apply Associated.of_mul_right _ (Associated.refl (π))
     (hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt)
   convert_to! Associated _ (y * (η₁ - η₂))
@@ -144,7 +141,6 @@ lemma div_zeta_sub_one_sub (η₁ η₂) (hη : η₁ ≠ η₂) :
 include hy in
 lemma div_zeta_sub_one_Injective :
     Function.Injective (fun η ↦ Ideal.Quotient.mk 𝔭 (divZetaSubOne hp hζ e η)) := by
-  letI : AddGroup (𝓞 K ⧸ 𝔭) := inferInstance
   intros η₁ η₂
   contrapose
   intro e₁ e₂
@@ -155,15 +151,13 @@ lemma div_zeta_sub_one_Injective :
     u.isUnit.dvd_mul_right] at e₂
 
 instance : Finite (𝓞 K ⧸ 𝔭) := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
   rw [← Ideal.absNorm_ne_zero_iff, Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
   exact hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt
 
 include hy in
 lemma div_zeta_sub_one_Bijective :
     Function.Bijective (fun η ↦ Ideal.Quotient.mk 𝔭 (divZetaSubOne hp hζ e η)) := by
-  letI := Fintype.ofFinite (𝓞 K ⧸ 𝔭)
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
+  let := Fintype.ofFinite (𝓞 K ⧸ 𝔭)
   rw [Fintype.bijective_iff_injective_and_card]
   use div_zeta_sub_one_Injective hp hζ e hy
   simp only [Fintype.card_coe]

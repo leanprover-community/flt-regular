@@ -34,11 +34,8 @@ lemma not_exists_solution {m : ℕ} (hm : 1 ≤ m) :
       exact IH (exists_solution' hp hζ e hy hz hreg)
 
 include hp hreg in
-lemma not_exists_solution' :
-    ¬∃ (x y z : 𝓞 K), ¬(hζ.toInteger : 𝓞 K) - 1 ∣ y ∧
-      (hζ.toInteger : 𝓞 K) - 1 ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
-  letI : Fact (Nat.Prime p) := hpri
-  letI : WfDvdMonoid (𝓞 K) := IsNoetherianRing.wfDvdMonoid
+lemma not_exists_solution' : ¬∃ (x y z : 𝓞 K), ¬(hζ.toInteger : 𝓞 K) - 1 ∣ y ∧
+    (hζ.toInteger : 𝓞 K) - 1 ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
   rintro ⟨x, y, z, hy, hz, hz', e⟩
   obtain ⟨m, z, hm, hz'', rfl⟩ :
       ∃ m z', 1 ≤ m ∧ ¬((hζ.toInteger : 𝓞 K) - 1 ∣ z') ∧
@@ -56,7 +53,6 @@ set_option backward.isDefEq.respectTransparency false in
 lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p)
     (hodd : p ≠ 2) :
     ¬∃ (x y z : ℤ), ¬↑p ∣ y ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
-  haveI := CyclotomicField.isCyclotomicExtension p ℚ
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot
     ℚ (B := (CyclotomicField p ℚ)) (Set.mem_singleton p) hpri.1.ne_zero
   have := fun n ↦

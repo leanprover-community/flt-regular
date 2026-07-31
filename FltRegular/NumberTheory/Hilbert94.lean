@@ -58,8 +58,8 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
   have := isCyclic_iff_exists_zpowers_eq_top.2 ⟨σ, (Subgroup.eq_top_iff' _).2 hσ⟩
   obtain ⟨β, hβ_zero, hβ⟩ := groupCohomology.exists_mul_galRestrict_of_norm_eq_one (A := A)
     (B := B) hσ hη
-  haveI : IsDomain B :=
-    (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
+  have : IsDomain B := (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain
+    (integralClosure A L)
   have hβ' := comap_map_eq_of_unramified K L _
     (comap_span_galRestrict_eq_of_cyclic σ hσ (A := A) (B := B) β η hβ)
   refine ⟨(Ideal.span {β}).comap (algebraMap A B), ?_, ?_⟩
@@ -82,19 +82,17 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
 
 theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I : Ideal A}
     (hI : (I.map (algebraMap A B)).IsPrincipal) : (I ^ finrank K L).IsPrincipal := by
-  haveI : IsDomain B :=
-    (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
-  haveI := IsIntegralClosure.isNoetherian A K L B
-  haveI := IsIntegralClosure.isDedekindDomain A K L B
-  haveI := IsIntegralClosure.isFractionRing_of_finite_extension A K L B
+  have : IsDomain B := (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain
+    (integralClosure A L)
+  have := IsIntegralClosure.isNoetherian A K L B
+  have := IsIntegralClosure.isDedekindDomain A K L B
+  have := IsIntegralClosure.isFractionRing_of_finite_extension A K L B
   have hAB : Function.Injective (algebraMap A B) := by
     refine Function.Injective.of_comp (f := algebraMap B L) ?_
     rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq A K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
   rw [← Module.isTorsionFree_iff_algebraMap_injective] at hAB
-  letI : Algebra (FractionRing A) (FractionRing B) := FractionRing.liftAlgebra _ _
-  have : IsScalarTower A (FractionRing A) (FractionRing B) :=
-    FractionRing.isScalarTower_liftAlgebra _ _
+  let : Algebra (FractionRing A) (FractionRing B) := FractionRing.liftAlgebra _ _
   have H : RingHom.comp (algebraMap (FractionRing A) (FractionRing B))
     (FractionRing.algEquiv A K).symm.toRingEquiv =
       RingHom.comp (FractionRing.algEquiv B L).symm.toRingEquiv (algebraMap K L) := by
@@ -109,8 +107,8 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
     simpa only [Cardinal.toNat_lift] using! congr_arg Cardinal.toNat
       (Algebra.lift_rank_eq_of_equiv_equiv (FractionRing.algEquiv A K).symm.toRingEquiv
         (FractionRing.algEquiv B L).symm.toRingEquiv H).symm
-  rw [← hLK, ← Ideal.relNorm_algebraMap, ← (I.map (algebraMap A B)).span_singleton_generator,
-    Ideal.relNorm_singleton]
+  rw [IsFractionRing.finrank_eq A K B L, ← Ideal.relNorm_algebraMap,
+    ← (I.map (algebraMap A B)).span_singleton_generator, Ideal.relNorm_singleton]
   exact ⟨⟨_, rfl⟩⟩
 
 /-- This is the first part of **Hilbert Theorem 94**, which states that if `L/K` is an unramified

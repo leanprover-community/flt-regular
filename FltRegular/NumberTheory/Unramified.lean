@@ -41,8 +41,8 @@ lemma prod_primesOverFinset_of_unramified [Algebra.Unramified R S] [IsDedekindDo
   rw [← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset hp] at hP
   rw [← Ideal.IsDedekindDomain.ramificationIdx'_eq_factors_count hpbot' hP.1
     (ne_bot_of_mem_primesOver hp hP)]
-  letI : P.IsPrime := hP.1
-  letI : P.LiesOver p := hP.2
+  have : P.IsPrime := hP.1
+  have : P.LiesOver p := hP.2
   rw [Ideal.ramificationIdx'_eq_ramificationIdx p P hp]
   exact Ideal.ramificationIdx_eq_one P R
 
@@ -60,7 +60,7 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
   have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
   by_cases hIbot : I = ⊥
   · rw [hIbot, Ideal.comap_bot_of_injective _ hRS, Ideal.map_bot]
-  haveI : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
+  have : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
   have hIbot' : I.comap (algebraMap R S) ≠ ⊥ := mt Ideal.eq_bot_of_comap_eq_bot hIbot
   have : ∀ p, (p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) →
       ∃ P ≥ I, P ∈ primesOver p S := by
@@ -140,9 +140,6 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
   have := IsIntegralClosure.isNoetherian R K L S
   have := IsIntegralClosure.isDedekindDomain R K L S
   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  haveI : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
-  haveI : Module.Finite R S := IsIntegralClosure.finite R K L S
-  have := aeval_derivative_mem_differentIdeal R K L x hx'
   have H : RingHom.comp (algebraMap (FractionRing R) (FractionRing S))
     (FractionRing.algEquiv R K).symm.toRingEquiv =
       RingHom.comp (FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L) := by
@@ -159,14 +156,9 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
     (Ideal.dvd_iff_le.mp hPdiv) (aeval_derivative_mem_differentIdeal R K L _ hx')
   rw [← Ideal.Quotient.eq_zero_iff_mem, ← Ideal.Quotient.algebraMap_eq] at hxP
   let p : Ideal R := P.under R
-  haveI : p.IsPrime := inferInstance
   have hpbot : p ≠ ⊥ := Ideal.under_ne_bot R hPbot
-  haveI : p.IsMaximal := (show p.IsPrime from inferInstance).isMaximal hpbot
-  haveI : P.IsMaximal := (show P.IsPrime from inferInstance).isMaximal hPbot
-  letI : IsScalarTower S (S ⧸ P) (S ⧸ P) := IsScalarTower.right
-  have hle : p ≤ P.comap (algebraMap R S) := by
-    change P.under R ≤ P.comap (algebraMap R S)
-    rw [Ideal.under_def]
+  have : p.IsMaximal := (show p.IsPrime from inferInstance).isMaximal hpbot
+  have hle : p ≤ P.comap (algebraMap R S) := Localization.le_comap_primeCompl_iff.mp fun _ a ↦ a
   have := (separable_map (Ideal.quotientMap P (algebraMap R S) hle)).mpr h
   rw [Polynomial.map_map, Ideal.quotientMap_comp_mk] at this
   obtain ⟨a, b, e⟩ := this
