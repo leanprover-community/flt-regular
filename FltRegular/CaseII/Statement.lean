@@ -75,7 +75,7 @@ lemma not_exists_Int_solution' {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsR
   have := dvd_sub (dvd_pow hz hpri.out.ne_zero) (dvd_pow hy hpri.out.ne_zero)
   rw [← e, add_sub_cancel_right] at this
   replace this := (Nat.prime_iff_prime_int.mp hpri.out).dvd_of_dvd_pow this
-  apply (Nat.prime_iff_prime_int.mp hpri.out).not_unit
+  apply (Nat.prime_iff_prime_int.mp hpri.out).not_isUnit
   rw [isUnit_iff_dvd_one, ← hgcd]
   simp [dvd_gcd_iff, hz, hy, this]
 

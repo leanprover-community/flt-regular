@@ -86,9 +86,9 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
   by_cases h : s = 0
   · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
     exact hI' ha
-  obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hx.not_unit h
+  obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hx.not_isUnit h
   obtain ⟨m, hm⟩ :=
-    FiniteMultiplicity.of_not_isUnit hx.not_unit (nonZeroDivisors.ne_zero t.prop)
+    FiniteMultiplicity.of_not_isUnit hx.not_isUnit (nonZeroDivisors.ne_zero t.prop)
   rw [IsFractionRing.mk'_eq_div] at ha
   refine this (n + m + 1) (Nat.le_add_left 1 (n + m))
     ⟨s, t, (fun hs ↦ ?_), (fun ht ↦ ?_), ha.symm⟩

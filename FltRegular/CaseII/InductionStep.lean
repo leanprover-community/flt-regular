@@ -369,7 +369,7 @@ lemma one_le_m : 1 ≤ m := by
   rw [← a_eta_zero_dvd_p_pow_spec, mul_comm, ← dvd_gcd_mul_iff_dvd_mul, ha, one_mul] at this
   nth_rw 1 [← pow_one 𝔭] at this
   rwa [← pow_dvd_pow_iff (p_ne_zero hζ)
-    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').not_unit]
+    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').not_isUnit]
 
 include hp in
 lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)

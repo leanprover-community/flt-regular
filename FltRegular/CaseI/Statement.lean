@@ -87,7 +87,7 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
     simp only [mem_insert, mem_singleton] at hx
     rcases hx with (H | H | H) <;> simpa [H]
   rw [hgcd] at Hq
-  exact hqpri.not_unit (isUnit_of_dvd_one Hq)
+  exact hqpri.not_isUnit (isUnit_of_dvd_one Hq)
 
 /-- Auxiliary function. -/
 def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>
