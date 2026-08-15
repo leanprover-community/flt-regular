@@ -74,12 +74,6 @@ theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
     ZMod.intCast_zmod_eq_zero_iff_dvd] at H
   exact caseI (Dvd.dvd.mul_left H _)
 
-set_option backward.isDefEq.respectTransparency false in
-theorem one_sub_zeta_prime [Fact p.Prime] {η : R} (hη : η ∈ nthRootsFinset p 1)
-    (hne1 : η ≠ 1) : Prime (1 - η) := by
-  have h := coe_submonoidClass_iff.mpr (isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη hne1)
-  simpa using! h.zeta_sub_one_prime'.neg
-
 theorem diff_of_roots [hp : Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1) (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂)
     (hwlog : η₁ ≠ 1) : ∃ u : Rˣ, η₁ - η₂ = u * (1 - η₁) := by
