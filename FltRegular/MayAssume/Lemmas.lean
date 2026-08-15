@@ -75,22 +75,8 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p)
     symm
     rw [neg_add_eq_iff_eq_add, add_comm]
     exact h.symm
-  · convert hgcd using 1
-    have : ({a, -c, -b} : Finset ℤ) = {a, -b, -c} := by
-      refine Finset.ext fun x => ⟨fun hx => ?_, fun hx => ?_⟩ <;>
-        · simp only [mem_insert, mem_singleton] at hx
-          rcases hx with (H | H | H) <;> simp [H]
-    rw [this]
-    simp only [gcd_insert, id, gcd_singleton, normalize_apply, neg_mul]
-    congr 1
-    rw [← coe_gcd, ← coe_gcd, Int.gcd_eq_natAbs, Int.gcd_eq_natAbs]
-    simp only [natAbs_neg, Nat.cast_inj]
-    rcases Int.isUnit_iff.1 (normUnit (-c)).isUnit, Int.isUnit_iff.1 (normUnit c).isUnit with
-      ⟨H₁ | H₂, H₃ | H₄⟩
-    · simp [H₁, H₃]
-    · simp [H₁, H₄]
-    · simp [H₂, H₃]
-    · simp [H₂, H₄]
+  · simp only [← hgcd, Finset.gcd_insert, id_eq, ← Int.coe_gcd, Int.neg_gcd,
+      ← LawfulSingleton.insert_empty_eq, Finset.gcd_empty, Int.gcd_left_comm]
   · have hp3 : p ≠ 3 := by linarith
     rw [← ZMod.intCast_eq_intCast_iff] at habs H
     rw [H] at habs

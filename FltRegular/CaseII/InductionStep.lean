@@ -362,14 +362,12 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
 
 include hp hζ e hy hz in
 lemma one_le_m : 1 ≤ m := by
-  have ha := not_p_div_a_zero hp hζ e hy hz
-  have hprime := Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime'
-  rw [← hprime.irreducible.gcd_eq_one_iff] at ha
-  have := (p_dvd_a_iff hp hζ e hy η₀).mpr rfl
-  rw [← a_eta_zero_dvd_p_pow_spec, mul_comm, ← dvd_gcd_mul_iff_dvd_mul, ha, one_mul] at this
-  nth_rw 1 [← pow_one 𝔭] at this
-  rwa [← pow_dvd_pow_iff (p_ne_zero hζ)
-    (Ideal.prime_span_singleton_iff.mpr hζ.zeta_sub_one_prime').not_isUnit]
+  apply Nat.one_le_iff_ne_zero.mpr
+  intro hm
+  apply not_p_div_a_zero hp hζ e hy hz
+  have hdiv := (p_dvd_a_iff hp hζ e hy η₀).mpr rfl
+  rw [← a_eta_zero_dvd_p_pow_spec] at hdiv
+  simpa [hm] using hdiv
 
 include hp in
 lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)

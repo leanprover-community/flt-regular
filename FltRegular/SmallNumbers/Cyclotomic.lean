@@ -69,13 +69,9 @@ theorem pid1 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → p �
     right
     rw [primesOverSpanEquivMonicFactorsMod_symm_apply_eq_span (ne_dvd_exponent p) hQ]
     simp only [map_sub, aeval_X, map_one, Q]
-    refine ⟨θ - 1, le_antisymm (span_le.mpr <| fun x hx ↦ ?_) (span_le.mpr ?_)⟩
-    · rcases hx with rfl | rfl
-      · subst hpn
-        simp [mem_span_singleton, (zeta_spec _ ℚ K).toInteger_sub_one_dvd_prime']
-      · exact subset_span (by simp)
-    · simp only [Set.singleton_subset_iff, SetLike.mem_coe]
-      exact subset_span (by simp)
+    refine ⟨θ - 1, Ideal.span_pair_eq_span_right_iff_dvd.mpr ?_⟩
+    subst p
+    exact (zeta_spec n ℚ K).toInteger_sub_one_dvd_prime'
   · exact h p hple hp hpn
 
 theorem pid2 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → p ≠ n →

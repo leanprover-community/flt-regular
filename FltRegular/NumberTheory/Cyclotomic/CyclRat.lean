@@ -99,11 +99,8 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
     (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
     (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) :
     (fltIdeals p x y hη₁) ⊔ (fltIdeals p x y hη₂) = ⊤ := by
-  apply by_contradiction
-  intro h
   let I := fltIdeals p x y hη₁ ⊔ fltIdeals p x y hη₂
-  obtain ⟨P, hP1, hP2⟩ := exists_le_maximal I h
-  have hiP : fltIdeals p x y hη₁ ≤ P := le_trans le_sup_left hP2
+  change I = ⊤
   have hel1 : ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I := by
     obtain ⟨v, hv⟩ := diff_of_roots ph hη₁ hη₂ hdiff hwlog
     refine ⟨v, ?_⟩
@@ -117,81 +114,34 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
         (mul_mem_left _ (-η₁) (mem_sup_right (mem_fltIdeals x y hη₂)))
     have h1 : η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) = (η₂ - η₁) * x := by ring
     rwa [h1, hv, mul_right_comm] at this
-  have hel11 : (y : R) * (1 - η₁) ∈ P := by
+  have hy : (y : R) * (1 - η₁) ∈ I := by
     obtain ⟨v, hv⟩ := hel1
     rw [mul_assoc] at hv
-    exact (unit_mul_mem_iff_mem P v.isUnit).1 (hP2 hv)
-  have hel22 : (x : R) * (1 - η₁) ∈ P := by
+    exact (unit_mul_mem_iff_mem I v.isUnit).1 hv
+  have hx : (x : R) * (1 - η₁) ∈ I := by
     obtain ⟨v, hv⟩ := hel2
     rw [mul_assoc] at hv
-    exact (unit_mul_mem_iff_mem P v.isUnit).1 (hP2 hv)
-  have hPrime := hP1.isPrime
-  have hprime2 := IsPrime.mem_or_mem hPrime hel11
-  have hprime3 := IsPrime.mem_or_mem hPrime hel22
-  have HC : 1 - η₁ ∈ P → False := by
-    intro h
-    have eta_sub_one_ne_zero := sub_ne_zero.mpr (Ne.symm hwlog)
-    have hηprime : IsPrime (Ideal.span ({1 - η₁} : Set R)) := by
-      rw [span_singleton_prime eta_sub_one_ne_zero]
-      apply one_sub_zeta_prime hη₁ hwlog
-    have H5 : IsPrime (Ideal.span ({(p : ℤ)} : Set ℤ)) := by
-      have h2 : (p : ℤ) ≠ 0 := by simp [NeZero.ne p]
-      have h1 : Prime (p : ℤ) := by
-        rw [← prime_iff_prime_int]
-        exact Fact.out
-      rw [span_singleton_prime h2]
-      apply h1
-    have hηP : Ideal.span ({1 - η₁} : Set R) = P := by
-      have hle : Ideal.span ({1 - η₁} : Set R) ≤ P := by
-        rw [span_le]
-        simp [h]
-      apply (@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ _ _ _ hηprime hPrime _).1 hle
-      intro hbot
-      rw [span_eq_bot] at hbot
-      simp only [Set.mem_singleton_iff, forall_eq, sub_eq_zero] at hbot
-      exact hwlog hbot.symm
-    have hcapZ : P.comap (Int.castRingHom R) = Ideal.span ({(p : ℤ)} : Set ℤ) := by
-      have H1 : Ideal.span ({(p : ℤ)} : Set ℤ) ≤ P.comap (Int.castRingHom R) := by
-        rw [← hηP]
-        apply le_comap_of_map_le _
-        rw [map_span]
-        simp only [eq_intCast, Set.image_singleton, Int.cast_natCast]
-        rw [span_singleton_le_span_singleton, ← neg_sub, neg_dvd]
-        exact sub_one_dvd_natCast_of_pow_eq_one
-          ((mem_nthRootsFinset (NeZero.pos p) 1).mp hη₁) hwlog
-      have H2 : IsPrime (P.comap (Int.castRingHom R)) := IsPrime.comap _
-      have H4 : Ideal.span ({(p : ℤ)} : Set ℤ) ≠ ⊥ := by simp [NeZero.ne p]
-      apply ((@Ring.DimensionLeOne.prime_le_prime_iff_eq _ _ _ _ _ H5 H2 H4).1 H1).symm
-    have hxyinP : (x + y : R) ∈ P := by
-      have H1 : (x : R) + η₁ * y ∈ P := by
-        apply hiP
-        apply Submodule.mem_span_singleton_self
-      have H2 : η₁ * y = y - y * (1 - η₁) := by ring
-      rw [H2] at H1
-      have H3 : ↑x + (↑y - ↑y * (1 - η₁)) = ↑x + ↑y + -↑y * (1 - η₁) := by ring
-      rw [H3] at H1
-      have H4 : -↑y * (1 - η₁) ∈ P := by
-        rw [← hηP, Ideal.mem_span_singleton']
-        exact ⟨-(y : R), rfl⟩
-      apply (Ideal.add_mem_iff_left P H4).1 H1
-    have hxyinP2 : x + y ∈ Ideal.span ({(p : ℤ)} : Set ℤ) := by
-      rw [← hcapZ]
-      simp [hxyinP]
-    rw [mem_span_singleton] at hxyinP2
-    apply absurd hxyinP2 hp2
-  rcases hprime2 with hprime2 | hprime2
-  · rcases hprime3 with hprime3 | hprime3
-    · obtain ⟨a, b, hab⟩ := hp
-      have hone := P.add_mem (Ideal.mul_mem_left P a hprime3) (Ideal.mul_mem_left P b hprime2)
-      norm_cast at hone
-      rw [hab] at hone
-      norm_cast at hone
-      rw [← eq_top_iff_one] at hone
-      have hcontra := IsPrime.ne_top hPrime
-      rw [hone] at hcontra
-      simp only [Ne, not_true] at hcontra
-    apply HC hprime3
-  · apply HC hprime2
+    exact (unit_mul_mem_iff_mem I v.isUnit).1 hv
+  have hone : 1 - η₁ ∈ I := by
+    obtain ⟨a, b, hab⟩ := hp
+    have H := I.add_mem (I.mul_mem_left (a : R) hx) (I.mul_mem_left (b : R) hy)
+    simpa only [← mul_assoc, ← add_mul, ← Int.cast_mul, ← Int.cast_add, hab, Int.cast_one,
+      one_mul] using H
+  have hxy : (x + y : R) ∈ I := by
+    have H := I.add_mem (mem_sup_left (mem_fltIdeals x y hη₁)) hy
+    convert H using 1
+    ring
+  have hdvd : (1 - η₁ : R) ∣ p := by
+    rw [← neg_sub, neg_dvd]
+    exact sub_one_dvd_natCast_of_pow_eq_one
+      ((mem_nthRootsFinset (NeZero.pos p) 1).mp hη₁) hwlog
+  have hcop : IsCoprime (1 - η₁ : R) (x + y : R) := by
+    simpa only [map_add, eq_intCast] using
+      (((Nat.prime_iff_prime_int.mp Fact.out).coprime_iff_not_dvd.mpr hp2).map
+        (algebraMap ℤ R)).of_isCoprime_of_dvd_left hdvd
+  obtain ⟨a, b, hab⟩ := hcop
+  rw [eq_top_iff_one, ← hab]
+  exact I.add_mem (I.mul_mem_left a hone) (I.mul_mem_left b hxy)
 
 theorem fltIdeals_coprime2 [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1)
