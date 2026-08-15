@@ -49,7 +49,7 @@ lemma monic_poly_aux :
   · rw [leadingCoeff, leadingCoeff, coeff_add]
     nth_rewrite 1 [natDegree_add_C]
     convert add_zero _ using 2
-    rw [natDegree_poly_aux hζ, coeff_C, if_neg (NeZero.pos p).ne.symm]
+    rw [natDegree_poly_aux hζ, coeff_C, ite_eq_right (NeZero.pos p).ne.symm]
   · rw [leadingCoeff_pow, ← C.map_one, leadingCoeff, natDegree_sub_C, natDegree_mul_X]
     · simp only [map_one, natDegree_C, zero_add, coeff_sub, coeff_mul_X, coeff_C,
         coeff_one, sub_zero, one_ne_zero, ↓reduceIte]

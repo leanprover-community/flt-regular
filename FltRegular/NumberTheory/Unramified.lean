@@ -97,7 +97,7 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
     · intro P hP
       rw [← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset hpbot S] at hP
       congr
-      rw [dif_pos hp, ← Nat.cast_inj (R := ENat), ← normalize_eq P,
+      rw [dite_eq_left hp, ← Nat.cast_inj (R := ENat), ← normalize_eq P,
         factors_eq_normalizedFactors,
         ← emultiplicity_eq_count_normalizedFactors
           (prime_of_mem_primesOver hpbot hP).irreducible hIbot,

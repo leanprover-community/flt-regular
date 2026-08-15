@@ -242,9 +242,7 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     simp_rw [f, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right h01, and_assoc,
       ne_and_eq_iff_right h1k₁, ne_and_eq_iff_right h0k₁, ne_and_eq_iff_right hk₁k₂,
       ne_and_eq_iff_right h1k₂, ne_and_eq_iff_right h0k₂, Finset.range_filter_eq]
-    simp only [hpri.out.pos, hpri.out.one_lt, if_true, zsmul_eq_mul, sum_singleton, _root_.pow_zero,
-      mul_one, pow_one, Fin.is_lt, neg_smul, sum_neg_distrib, Ne, zero_smul, sum_const_zero,
-      add_zero]
+    simp [hpri.out.pos, hpri.out.one_lt]
     ring
   rw [sum_range] at key
   refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ?_ _) _)
