@@ -1,6 +1,5 @@
 module
 
-import FltRegular.CaseI.AuxLemmas
 import FltRegular.CaseI.Statement
 import FltRegular.CaseII.AuxLemmas
 import FltRegular.CaseII.InductionStep

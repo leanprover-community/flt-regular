@@ -1,7 +1,6 @@
 module
 
 public import FltRegular.NumberTheory.RegularPrimes
-import FltRegular.CaseI.AuxLemmas
 import FltRegular.MayAssume.Lemmas
 import FltRegular.NumberTheory.Cyclotomic.CaseI
 import Mathlib.NumberTheory.FLT.Three
@@ -89,38 +88,37 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   rw [hgcd] at Hq
   exact hqpri.not_isUnit (isUnit_of_dvd_one Hq)
 
-/-- Auxiliary function. -/
-def f (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun x =>
-  if x = 0 then a else if x = 1 then b else if x = k₁ then -a else if x = k₂ then -b else 0
+private def caseICoeff (a b : ℤ) (k₁ k₂ : ℕ) : ℕ → ℤ := fun j ↦
+  (if j = 0 then a else 0) + (if j = 1 then b else 0) -
+    (if j = k₁ then a else 0) - (if j = k₂ then b else 0)
 
-theorem auxf' (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
-    ∃ i ∈ range p, f a b k₁ k₂ (i : ℕ) = 0 := by
-  have h0 : 0 < p := by linarith
-  have h1 : 1 < p := by linarith
-  let s := ({0, 1, k₁.1, k₂.1} : Finset ℕ)
-  have : s.card ≤ 4 := by
-    repeat refine le_trans (card_insert_le _ _) (succ_le_succ ?_)
-    exact rfl.ge
-  replace this : s.card < 5 := lt_of_le_of_lt this (by norm_num)
-  have hs : s ⊆ range p := insert_subset_iff.2 ⟨mem_range.2 h0, insert_subset_iff.2
-    ⟨mem_range.2 h1, insert_subset_iff.2 ⟨mem_range.2 (Fin.is_lt _),
-    singleton_subset_iff.2 (mem_range.2 (Fin.is_lt _))⟩⟩⟩
-  have hcard := card_sdiff_of_subset hs
-  replace hcard : (range p \ s).Nonempty := by
-    rw [← Finset.card_pos, hcard, card_range]
-    exact Nat.sub_pos_of_lt (lt_of_lt_of_le this hp5)
-  obtain ⟨i, hi⟩ := hcard
-  refine ⟨i, sdiff_subset hi, ?_⟩
-  have hi0 : i ≠ 0 := fun h => by simp [h, s] at hi
-  have hi1 : i ≠ 1 := fun h => by simp [h, s] at hi
-  have hik₁ : i ≠ k₁ := fun h => by simp [h, s] at hi
-  have hik₂ : i ≠ k₂ := fun h => by simp [h, s] at hi
-  simp [f, hi0, hi1, hik₁, hik₂]
+private theorem sum_caseICoeff {R : Type*} [Ring R] (hp : 1 < p) (a b : ℤ)
+    (k₁ k₂ : Fin p) (ζ : R) :
+    ∑ j : Fin p, caseICoeff a b k₁ k₂ j • ζ ^ (j : ℕ) =
+      ↑a + ↑b * ζ - ↑a * ζ ^ (k₁ : ℕ) - ↑b * ζ ^ (k₂ : ℕ) := by
+  change (∑ j : Fin p, (fun j : ℕ ↦ caseICoeff a b k₁ k₂ j • ζ ^ j) j) = _
+  rw [Fin.sum_univ_eq_sum_range
+    (fun j : ℕ ↦ caseICoeff a b k₁ k₂ j • ζ ^ j) p]
+  simp only [caseICoeff, add_smul, sub_smul, ite_smul, sum_add_distrib,
+    sum_sub_distrib, sum_ite, Finset.range_filter_eq]
+  simp [Nat.zero_lt_of_lt hp, hp, Fin.is_lt]
 
-theorem auxf (hp5 : 5 ≤ p) (a b : ℤ) (k₁ k₂ : Fin p) :
-    ∃ i : Fin p, f a b k₁ k₂ (i : ℕ) = 0 := by
-  obtain ⟨i, hrange, hi⟩ := auxf' hp5 a b k₁ k₂
-  exact ⟨⟨i, mem_range.1 hrange⟩, hi⟩
+private theorem exists_caseICoeff_eq_zero (hp5 : 5 ≤ p) (a b : ℤ)
+    (k₁ k₂ : Fin p) : ∃ j : Fin p, caseICoeff a b k₁ k₂ j = 0 := by
+  let zero : Fin p := ⟨0, by omega⟩
+  let one : Fin p := ⟨1, by omega⟩
+  let s : Finset (Fin p) := {zero, one, k₁, k₂}
+  have hs : s.card ≤ 4 := card_le_four
+  have hslt : s.card < Fintype.card (Fin p) := by
+    simpa using lt_of_le_of_lt hs hp5
+  obtain ⟨j, -, hj⟩ := Finset.exists_mem_notMem_of_card_lt_card hslt
+  refine ⟨j, ?_⟩
+  simp only [s, mem_insert, mem_singleton, not_or] at hj
+  have hj0 : (j : ℕ) ≠ 0 := fun h ↦ hj.1 (Fin.ext h)
+  have hj1 : (j : ℕ) ≠ 1 := fun h ↦ hj.2.1 (Fin.ext (by simpa [one] using h))
+  have hjk₁ : (j : ℕ) ≠ k₁ := fun h ↦ hj.2.2.1 (Fin.ext h)
+  have hjk₂ : (j : ℕ) ≠ k₂ := fun h ↦ hj.2.2.2 (Fin.ext h)
+  simp [caseICoeff, hj0, hj1, hjk₁, hjk₂]
 
 local notation "K" => CyclotomicField p ℚ
 
@@ -231,23 +229,33 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
   have hζ := zeta_spec p ℤ R
   intro H
   obtain ⟨k₁, k₂, hcong, hdiv⟩ := ex_fin_div hp5 hreg hζ hgcd caseI H
-  have key : ↑(p : ℤ) ∣ ∑ j ∈ range p, f a b k₁ k₂ j • ζ ^ j := by
-    convert! hdiv using 1
-    have h01 : 0 ≠ 1 := zero_ne_one
-    have h0k₁ := aux0k₁ hpri.out hp5 hζ caseI hcong hdiv
-    have h0k₂ := aux0k₂ hpri.out hp5 hζ hab hcong hdiv
-    have h1k₁ := aux1k₁ hpri.out hp5 hζ hab hcong hdiv
-    have h1k₂ := aux1k₂ hpri.out hp5 hζ caseI hcong hdiv
-    have hk₁k₂ : (k₁ : ℕ) ≠ (k₂ : ℕ) := auxk₁k₂ hpri.out hcong
-    simp_rw [f, ite_smul, sum_ite, filter_filter, ← Ne.eq_def, ne_and_eq_iff_right h01, and_assoc,
-      ne_and_eq_iff_right h1k₁, ne_and_eq_iff_right h0k₁, ne_and_eq_iff_right hk₁k₂,
-      ne_and_eq_iff_right h1k₂, ne_and_eq_iff_right h0k₂, Finset.range_filter_eq]
-    simp [hpri.out.pos, hpri.out.one_lt]
-    ring
-  rw [sum_range] at key
-  refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ?_ _) _)
-  exact dvd_coeff_cycl_integer hpri.out hζ (auxf hp5 a b k₁ k₂) key
-    ⟨0, hpri.out.pos⟩
+  have key :
+      ↑(p : ℤ) ∣ ∑ j : Fin p, caseICoeff a b k₁ k₂ j • ζ ^ (j : ℕ) := by
+    rw [sum_caseICoeff hpri.out.one_lt]
+    exact hdiv
+  have hall := dvd_coeff_cycl_integer hpri.out hζ
+    (exists_caseICoeff_eq_zero hp5 a b k₁ k₂) key
+  by_cases hk₁ : (k₁ : ℕ) = 0
+  · have hk₂ : (k₂ : ℕ) ≠ 1 := by
+      intro hk₂
+      have hp2z : (p : ℤ) ∣ 2 := by
+        rw [← Int.dvd_neg]
+        simpa [hk₁, hk₂] using hcong.dvd
+      have hp2 : p ∣ 2 := by exact_mod_cast hp2z
+      have := Nat.le_of_dvd (by omega : 0 < 2) hp2
+      omega
+    have hb : (p : ℤ) ∣ b := by
+      simpa [caseICoeff, hk₁, hk₂, Ne.symm hk₂] using hall ⟨1, by omega⟩
+    exact caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_left hb a) c)
+  · by_cases hk₂ : (k₂ : ℕ) = 0
+    · have habdvd : (p : ℤ) ∣ a - b := by
+        simpa [caseICoeff, hk₁, Ne.symm hk₁, hk₂] using hall ⟨0, by omega⟩
+      apply hab
+      rw [Int.modEq_iff_dvd]
+      simpa only [neg_sub] using Int.dvd_neg.mpr habdvd
+    · have ha : (p : ℤ) ∣ a := by
+        simpa [caseICoeff, hk₁, hk₂, Ne.symm hk₁, Ne.symm hk₂] using hall ⟨0, by omega⟩
+      exact caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ha b) c)
 
 /-- Case I. -/
 theorem caseI {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p)
