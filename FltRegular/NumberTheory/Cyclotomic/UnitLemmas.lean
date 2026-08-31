@@ -3,6 +3,7 @@ module
 public import Mathlib.NumberTheory.NumberField.CMField
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
 @[expose] public section
 
@@ -28,27 +29,19 @@ theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
     Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem]
   exact Ideal.subset_span (Set.mem_singleton _)
 
-set_option backward.isDefEq.respectTransparency false in
-theorem aux {t} {l : 𝓞 K} {f : Fin t → ℤ} {μ : K} (hμ : IsPrimitiveRoot μ p)
-    (h : ∑ x : Fin t, f x • (⟨μ, hμ.isIntegral (NeZero.pos p)⟩ : 𝓞 K) ^ (x : ℕ) = l) :
-    algebraMap (𝓞 K) (𝓞 K ⧸ I) l = ∑ x : Fin t, (f x : 𝓞 K ⧸ I) := by
-  apply_fun algebraMap (𝓞 K) (𝓞 K ⧸ I) at h
-  simp only [map_sum, map_zsmul] at h
-  convert h.symm using 1
-  congr
-  funext x
-  have : (⟨μ, hμ.isIntegral (NeZero.pos p)⟩ : 𝓞 K) ^ p = 1 := by
-    ext
-    push_cast
-    exact hμ.pow_eq_one
-  obtain ⟨k, -, hk⟩ := hζ.toInteger_isPrimitiveRoot.eq_pow_of_pow_eq_one this
-  have : algebraMap (𝓞 K) (𝓞 K ⧸ I) (⟨μ, hμ.isIntegral (NeZero.pos p)⟩ : 𝓞 K) = 1 := by
-    rw [← hk, map_pow]
-    change (algebraMap (𝓞 K) (𝓞 K ⧸ I) (η : 𝓞 K)) ^ k = 1
-    rw [eq_one_mod_one_sub, one_pow]
-  simp only [map_pow (algebraMap (𝓞 K) (𝓞 K ⧸ I)), this, one_pow, zsmul_one]
-
 variable [NumberField K] [IsCyclotomicExtension {p} ℚ K]
+
+include hζ in
+/-- Complex conjugation sends a primitive `p`-th root of unity to its inverse. -/
+theorem complexConj_zeta [Fact (p.Prime)] (hp : 2 < p) :
+    haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
+    complexConj K ζ = ζ⁻¹ := by
+  have := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
+  have hη : η ∈ Units.torsion K := by
+    refine (CommGroup.mem_torsion _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, NeZero.pos p, ?_⟩)
+    ext
+    exact hζ.pow_eq_one
+  exact complexConj_torsion (K := K) ⟨η, hη⟩
 
 theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
     (h : ∃ (n : ℕ) (_ : 0 < n), x ^ n = 1) :
@@ -69,42 +62,8 @@ lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (h
   have := Units.coe_map_inv (N := 𝓞 K ⧸ I) (algebraMap (𝓞 K) (𝓞 K ⧸ I)) (unitsComplexConj K u)
   rw [unitsMulComplexConjInv_apply, Units.val_mul, map_mul, ← MonoidHom.coe_coe, ← this,
     Units.mul_inv_eq_one, Units.coe_map, MonoidHom.coe_coe]
-  have := Fact.mk hp
-  have hu := hζ.integralPowerBasis.basis.sum_repr u
-  let a := hζ.integralPowerBasis.basis.repr
-  let φn := hζ.integralPowerBasis.dim
-  simp_rw [PowerBasis.basis_eq_pow, IsPrimitiveRoot.integralPowerBasis_gen] at hu
-  have hu' := congr_arg (ringOfIntegersComplexConj K) hu
-  replace hu' : ∑ x : Fin φn, (a u) x • (ringOfIntegersComplexConj K)
-      (hζ.toInteger ^ (x : ℕ)) = unitsComplexConj K u := by
-    refine Eq.trans ?_ hu'
-    rw [map_sum]
-    congr 1
-    ext x
-    congr 1
-    rw [map_zsmul]
-  have : ∀ x : Fin φn, ringOfIntegersComplexConj K (hζ.toInteger ^ (x : ℕ)) =
-      hζ.inv.toInteger ^ (x : ℕ) := by
-    intro x
-    ext
-    simp only [map_pow, coe_ringOfIntegersComplexConj]
-    suffices η ∈ Units.torsion K by
-      have H := RingOfIntegers.ext_iff.1 <|
-        Units.ext_iff.1 <| unitsComplexConj_torsion K ⟨η, ‹_›⟩
-      have : ↑↑η = ζ := rfl
-      simp only [Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv, RingOfIntegers.mapRingEquiv_apply,
-        this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv, map_units_inv] at H
-      change (complexConj K) ζ ^ (x : ℕ) = ζ⁻¹ ^ (x : ℕ)
-      rw [H]
-    refine (CommGroup.mem_torsion _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
-    ext
-    exact hζ.pow_eq_one
-  conv_lhs at hu' =>
-    congr
-    congr
-    ext a
-    rw [this a]
-  exact (aux hζ hζ hu).trans (aux hζ hζ.inv hu').symm
+  exact (RingHom.congr_fun (quotient_zero_sub_one_comp_aut hζ
+    (ringOfIntegersComplexConj K).toRingEquiv.toRingHom) (u : 𝓞 K)).symm
 
 theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩

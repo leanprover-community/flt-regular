@@ -1,6 +1,7 @@
 module
 
 import FltRegular.NumberTheory.Cyclotomic.CyclRat
+import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 public import Mathlib.NumberTheory.NumberField.CMField
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
@@ -19,15 +20,15 @@ open FractionalIdeal NumberField IsCMField
 
 namespace FltRegular.CaseI
 
+omit [NeZero p] in
 theorem pow_sub_intGalConj_mem (α : 𝓞 K) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     (α ^ p - ringOfIntegersComplexConj K (α ^ p)) ∈ Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
-  obtain ⟨a, ha⟩ := exists_int_sub_pow_prime_dvd p α
-  rw [Ideal.mem_span_singleton] at ha ⊢
-  obtain ⟨γ, hγ⟩ := ha
+  obtain ⟨a, γ, hγ⟩ := exists_dvd_pow_sub_Int_pow hp.ne' α
+  rw [Ideal.mem_span_singleton]
   rw [sub_eq_iff_eq_add] at hγ
-  rw [hγ, _root_.map_add, _root_.map_mul, map_natCast, map_intCast, add_sub_add_right_eq_sub,
-    ← mul_sub]
+  rw [hγ, _root_.map_add, _root_.map_mul, map_natCast, map_pow, map_intCast,
+    add_sub_add_right_eq_sub, ← mul_sub]
   exact dvd_mul_right _ _
 
 theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) :
@@ -43,17 +44,8 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) 
   simp only [map_zpow₀]
   rw [← inv_zpow]
   congr
-  suffices zetaUnit ∈ Units.torsion K by
-    have H := RingOfIntegers.ext_iff.1 <|
-        Units.ext_iff.1 <| unitsComplexConj_torsion K ⟨zetaUnit, ‹_›⟩
-    have : ↑↑zetaUnit = ζ := rfl
-    simp only [Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv, RingOfIntegers.mapRingEquiv_apply,
-      this, AlgEquiv.coe_ringEquiv, InvMemClass.coe_inv, map_units_inv] at H
-    change (complexConj K) ζ = ζ⁻¹
-    rw [H]
-  refine (CommGroup.mem_torsion _).2 (isOfFinOrder_iff_pow_eq_one.2 ⟨p, by lia, ?_⟩)
-  ext
-  exact hζ.pow_eq_one
+  change (complexConj K) ζ = ζ⁻¹
+  exact complexConj_zeta hζ hp
 
 theorem exists_int_sum_eq_zero' (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
     (h : (x : 𝓞 K) + y * (zetaUnit ^ i : (𝓞 K)ˣ) = u * α ^ p) [Fact (p.Prime)]

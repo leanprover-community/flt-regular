@@ -6,10 +6,6 @@ The following readme has been shamelessly copied from the [Liquid Tensor Experim
 
 ## How to browse this repository
 
-### Blueprint
-
-Here are a draft [blueprint](https://leanprover-community.github.io/flt-regular/blueprint) and  [dependency graph](https://leanprover-community.github.io/flt-regular/blueprint/dep_graph_document.html).
-
 ### Getting the project
 
 The recommended way of browsing this repository is by using a Lean development environment.

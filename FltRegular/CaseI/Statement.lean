@@ -72,13 +72,8 @@ theorem ab_coprime {a b c : ℤ} (H : a ^ p + b ^ p = c ^ p) (hpzero : p ≠ 0)
   by_contra! h
   obtain ⟨q, hqpri, hq⟩ := exists_prime_and_dvd h
   replace hqpri : Prime (q : ℤ) := prime_iff_natAbs_prime.2 (by simp [hqpri])
-  obtain ⟨n, hn⟩ := hq
-  have haq : ↑q ∣ a := by
-    obtain ⟨m, hm⟩ := Int.gcd_dvd_left a b
-    exact ⟨n * m, by rw [hm, hn]; simp [mul_assoc]⟩
-  have hbq : ↑q ∣ b := by
-    obtain ⟨m, hm⟩ := Int.gcd_dvd_right a b
-    exact ⟨n * m, by rw [hm, hn]; simp [mul_assoc]⟩
+  have haq : ↑q ∣ a := (Int.natCast_dvd_natCast.2 hq).trans (Int.gcd_dvd_left a b)
+  have hbq : ↑q ∣ b := (Int.natCast_dvd_natCast.2 hq).trans (Int.gcd_dvd_right a b)
   have hcq : ↑q ∣ c :=
     hqpri.dvd_of_dvd_pow (H ▸ dvd_add (dvd_pow haq hpzero) (dvd_pow hbq hpzero))
   have Hq : ↑q ∣ ({a, b, c} : Finset ℤ).gcd id := by

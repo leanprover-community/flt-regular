@@ -30,32 +30,12 @@ jobs:
       - name: Build documentation
         run: ~/.elan/bin/lake -Kenv=dev build Std:docs Mathlib:docs FltRegular:docs
 
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          cache: 'pip' # caching pip dependencies
-
-      - name: Install blueprint apt deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y graphviz libgraphviz-dev pdf2svg dvisvgm texlive-full
-
-      - name: Install blueprint deps
-        run: |
-          cd blueprint && pip install -r requirements.txt
-
-      - name: Build blueprint
-        run: |
-          cd blueprint && inv all
-
       - name: Copy documentation
         run: |
           mkdir -p _site
           mv build/doc _site/doc
-          mv blueprint/web _site/blueprint
 
-      - name: Deploy doc & blueprint
+      - name: Deploy documentation
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.github_token }}

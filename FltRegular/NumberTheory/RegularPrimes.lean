@@ -51,18 +51,10 @@ def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := b
 
 instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
     (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :
-    IsPrincipalIdealRing (𝓞 L) := by
-  have : IsIntegralClosure ℤ ℤ L :=
-    { algebraMap_injective := (algebraMap ℤ L).injective_int
-      isIntegral_iff := fun {x} ↦ by
-        let f := cyclotomicFieldTwoEquiv ℚ L
-        refine ⟨fun hx ↦ ⟨IsIntegralClosure.mk' ℤ _ (map_isIntegral_int f hx), f.injective ?_⟩, ?_⟩
-        · convert IsIntegralClosure.algebraMap_mk' ℤ _ (map_isIntegral_int f hx)
-          simp
-        · rintro ⟨y, hy⟩
-          simpa [← hy] using! isIntegral_algebraMap }
-  let F : 𝓞 L ≃+* ℤ := NumberField.RingOfIntegers.equiv _
-  exact IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
+    IsPrincipalIdealRing (𝓞 L) :=
+  let F : 𝓞 L ≃+* ℤ := (RingOfIntegers.mapRingEquiv
+    (cyclotomicFieldTwoEquiv ℚ L).toRingEquiv).trans Rat.ringOfIntegersEquiv
+  IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
 
 instance : IsCyclotomicExtension {2} ℚ (CyclotomicField 2 ℚ) :=
   CyclotomicField.isCyclotomicExtension 2 ℚ

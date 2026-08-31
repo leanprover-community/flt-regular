@@ -29,6 +29,15 @@ variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Fi
 
 variable {R} {S}
 
+omit [IsDedekindDomain R] [IsIntegralClosure S R L] [FiniteDimensional K L] in
+include K L in
+/-- In the AKLB setup, the map from `R` to the integral closure `S` of `R` in `L` is
+injective. -/
+lemma algebraMap_injective_of_isIntegralClosure : Function.Injective (algebraMap R S) := by
+  refine Function.Injective.of_comp (f := algebraMap S L) ?_
+  rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
+  exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
+
 lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Ideal S)
     (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
     (I.comap (algebraMap R S)).map (algebraMap R S) = I := by
@@ -36,10 +45,7 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
   have : IsDomain S :=
     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
   have := IsIntegralClosure.isDedekindDomain R K L S
-  have hRS : Function.Injective (algebraMap R S) := by
-    refine Function.Injective.of_comp (f := algebraMap S L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
+  have hRS := algebraMap_injective_of_isIntegralClosure K L (R := R) (S := S)
   have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
   by_cases hIbot : I = ⊥
   · rw [hIbot, Ideal.comap_bot_of_injective _ hRS, Ideal.map_bot]
@@ -117,24 +123,16 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
   classical
   have : IsDomain S :=
     (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
-  have hRS : Function.Injective (algebraMap R S) := by
-    refine Function.Injective.of_comp (f := algebraMap S L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
+  have hRS := algebraMap_injective_of_isIntegralClosure K L (R := R) (S := S)
   have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
   have := IsIntegralClosure.isNoetherian R K L S
   have := IsIntegralClosure.isDedekindDomain R K L S
   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  have H : RingHom.comp (algebraMap (FractionRing R) (FractionRing S))
-    (FractionRing.algEquiv R K).symm.toRingEquiv =
-      RingHom.comp (FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L) := by
-    apply IsLocalization.ringHom_ext R⁰
-    ext
-    simp only [RingHom.coe_comp, RingHom.coe_coe, AlgEquiv.coe_ringEquiv, Function.comp_apply,
-      AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-    rw [IsScalarTower.algebraMap_apply R S L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
   have : Algebra.IsSeparable (FractionRing R) (FractionRing S) :=
-    Algebra.IsSeparable.of_equiv_equiv _ _ H
+    Algebra.IsSeparable.of_equiv_equiv (FractionRing.algEquiv R K).symm.toRingEquiv
+      (FractionRing.algEquiv S L).symm.toRingEquiv (RingHom.ext fun x ↦
+        IsFractionRing.algEquiv_commutes (FractionRing.algEquiv R K).symm
+          (FractionRing.algEquiv S L).symm x)
   rw [← not_dvd_differentIdeal_iff (A := R) (B := S) (P := P)]
   intro hPdiv
   have hxP : aeval x (derivative (minpoly R x)) ∈ P :=

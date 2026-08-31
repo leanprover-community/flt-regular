@@ -87,26 +87,8 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
   have := IsIntegralClosure.isNoetherian A K L B
   have := IsIntegralClosure.isDedekindDomain A K L B
   have := IsIntegralClosure.isFractionRing_of_finite_extension A K L B
-  have hAB : Function.Injective (algebraMap A B) := by
-    refine Function.Injective.of_comp (f := algebraMap B L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq A K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  rw [← Module.isTorsionFree_iff_algebraMap_injective] at hAB
-  let : Algebra (FractionRing A) (FractionRing B) := FractionRing.liftAlgebra _ _
-  have H : RingHom.comp (algebraMap (FractionRing A) (FractionRing B))
-    (FractionRing.algEquiv A K).symm.toRingEquiv =
-      RingHom.comp (FractionRing.algEquiv B L).symm.toRingEquiv (algebraMap K L) := by
-    apply IsLocalization.ringHom_ext (nonZeroDivisors A)
-    ext
-    simp only [RingHom.coe_comp, RingHom.coe_coe, AlgEquiv.coe_ringEquiv, Function.comp_apply,
-      AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-    rw [IsScalarTower.algebraMap_apply A B L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-  have : Algebra.IsSeparable (FractionRing A) (FractionRing B) :=
-    Algebra.IsSeparable.of_equiv_equiv _ _ H
-  have hLK : finrank (FractionRing A) (FractionRing B) = finrank K L := by
-    simpa only [Cardinal.toNat_lift] using! congr_arg Cardinal.toNat
-      (Algebra.lift_rank_eq_of_equiv_equiv (FractionRing.algEquiv A K).symm.toRingEquiv
-        (FractionRing.algEquiv B L).symm.toRingEquiv H).symm
+  have hAB := Module.isTorsionFree_iff_algebraMap_injective.mpr
+    (algebraMap_injective_of_isIntegralClosure K L (R := A) (S := B))
   rw [IsFractionRing.finrank_eq A K B L, ← Ideal.relNorm_algebraMap,
     ← (I.map (algebraMap A B)).span_singleton_generator, Ideal.relNorm_singleton]
   exact ⟨⟨_, rfl⟩⟩
