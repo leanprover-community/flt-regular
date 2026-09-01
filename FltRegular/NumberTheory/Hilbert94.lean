@@ -1,21 +1,22 @@
 module
 
 public import Mathlib.NumberTheory.NumberField.ClassNumber
+import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
+
 import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.RegularPrimes
-import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
 import FltRegular.NumberTheory.Unramified
 
 @[expose] public section
 
 open scoped NumberField
 
-variable {K : Type} {p : ℕ} [hpri : Fact p.Prime] [Field K]
+variable {K : Type} [Field K]
 
 open Polynomial Module
 
 variable {L : Type} [Field L] [Algebra K L] [FiniteDimensional K L]
-  (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ) (hKL : finrank K L = p)
+  (σ : L ≃ₐ[K] L) (hσ : ∀ x, x ∈ Subgroup.zpowers σ)
 
 variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
@@ -34,8 +35,8 @@ lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ)
   rw [← Ideal.span_singleton_mul_span_singleton, Ideal.span_singleton_eq_top.mpr η.isUnit,
     ← Ideal.one_eq_top, one_mul, ← Set.image_singleton, ← Ideal.map_span] at hβ
   change Ideal.map (galRestrict A K L B σ : B →+* B) _ = _ at hβ
-  generalize σ'⁻¹ = σ'
-  obtain ⟨n, rfl : σ ^ n = σ'⟩ := mem_powers_iff_mem_zpowers.mpr (hσ σ')
+  generalize σ'⁻¹ = τ
+  obtain ⟨n, rfl : σ ^ n = τ⟩ := mem_powers_iff_mem_zpowers.mpr (hσ τ)
   rw [map_pow]
   induction n with
   | zero =>
@@ -69,7 +70,9 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     rw [map_mul, AlgEquiv.commutes, mul_left_comm, (mul_right_injective₀ _).eq_iff] at hβ
     · apply hη'
       use a
-      conv_rhs => enter [1]; rw [← hβ]
+      conv_rhs =>
+        enter [1]
+        rw [← hβ]
       rw [map_mul, ← algebraMap_galRestrict_apply A]
       refine (mul_div_cancel_right₀ _ ?_).symm
       · rw [ne_eq,
@@ -99,9 +102,7 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
 theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type)
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [Algebra.Unramified (𝓞 K) (𝓞 L)]
-    [h : IsCyclic (L ≃ₐ[K] L)]
-    (hKL : Nat.Prime (finrank K L))
-    (hKL' : finrank K L ≠ 2) :
+    [h : IsCyclic (L ≃ₐ[K] L)] (hKL : Nat.Prime (finrank K L)) (hKL' : finrank K L ≠ 2) :
     ∃ I : Ideal (𝓞 K), ¬I.IsPrincipal ∧
       (I.map (algebraMap (𝓞 K) (𝓞 L))).IsPrincipal := by
   obtain ⟨⟨σ, hσ⟩⟩ := h
@@ -114,9 +115,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map (K L : Type)
 theorem dvd_card_classGroup_of_unramified_isCyclic {K L : Type}
     [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
     [FiniteDimensional K L] [IsGalois K L] [Algebra.Unramified (𝓞 K) (𝓞 L)]
-    [IsCyclic (L ≃ₐ[K] L)]
-    (hKL : Nat.Prime (finrank K L))
-    (hKL' : finrank K L ≠ 2) :
+    [IsCyclic (L ≃ₐ[K] L)] (hKL : Nat.Prime (finrank K L)) (hKL' : finrank K L ≠ 2) :
     finrank K L ∣ Fintype.card (ClassGroup (𝓞 K)) := by
   obtain ⟨I, hI, hI'⟩ := exists_not_isPrincipal_and_isPrincipal_map K L hKL hKL'
   have := Fact.mk hKL

@@ -2,9 +2,17 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 public import Mathlib.NumberTheory.NumberField.Ideal.KummerDedekind
-import FltRegular.SmallNumbers.PID
 import Mathlib.NumberTheory.NumberField.ClassNumber
 import Mathlib.RingTheory.Polynomial.Cyclotomic.Factorization
+
+import FltRegular.SmallNumbers.PID
+
+/-!
+# Principal ideal criteria for cyclotomic fields
+
+This file gives successive polynomial criteria for proving that a cyclotomic ring of integers
+is a principal ideal ring.
+-/
 
 @[expose] public section
 
@@ -36,8 +44,7 @@ lemma exponent : exponent θ = 1 := by
   simp [exponent_eq_one_iff, ← ((zeta_spec n ℚ K).integralPowerBasis).adjoin_gen_eq_top]
 
 lemma ne_dvd_exponent (p : ℕ) [hp : Fact p.Prime] : ¬ (p ∣ RingOfIntegers.exponent θ) := by
-  rw [exponent, dvd_one]
-  exact hp.1.ne_one
+  simpa [exponent, dvd_one] using hp.1.ne_one
 
 variable (n)
 
@@ -64,7 +71,7 @@ theorem pid1 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → p �
       rw [← pow_succ' (X - 1)]
       congr
       have := hp.two_le
-      omega
+      lia
     refine ⟨Q.map (Int.castRingHom (ZMod p)), hQ, ?_⟩
     right
     rw [primesOverSpanEquivMonicFactorsMod_symm_apply_eq_span (ne_dvd_exponent p) hQ]
@@ -124,8 +131,7 @@ theorem pid4 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → (hpn
   obtain ⟨P, Q, A, G, Qp, Rp, QP, RP, C1, C2, hPmo, hP, hQA, hM⟩ := h p hple hp hpn
   refine ⟨P, Q, A, hPmo, hP, hQA, ?_⟩
   rcases hM with H | ⟨Hp, HP, HG⟩
-  · left
-    assumption
+  · exact Or.inl H
   · right
     refine ⟨aeval θ G, le_antisymm (span_le.mpr <| fun x hx ↦ ?_) (span_le.mpr ?_)⟩
     · rcases hx with rfl | rfl

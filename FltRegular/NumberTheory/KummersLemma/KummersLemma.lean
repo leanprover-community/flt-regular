@@ -1,13 +1,20 @@
 module
 
 public import Mathlib.RingTheory.ClassGroup.Basic
+import Mathlib.FieldTheory.KummerExtension
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.Hilbert94
 import FltRegular.NumberTheory.KummersLemma.Field
-import Mathlib.FieldTheory.KummerExtension
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+
+/-!
+# Kummer's lemma for regular primes
+
+This file proves the unit form of Kummer's lemma for regular primes.
+-/
 
 @[expose] public section
 
@@ -72,7 +79,9 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     rw [hx]
     rw [sub_eq_iff_eq_add, add_comm] at hx
     have H : Algebra.norm ℤ (1 + p • x) = 1 := norm_add_one_smul_of_isUnit hpri.out
-      hp x (by rw [nsmul_eq_mul, ← hx]; exact Units.isUnit _)
+      hp x (by
+        rw [nsmul_eq_mul, ← hx]
+        exact Units.isUnit _)
     have := H ▸ zeta_sub_one_pow_dvd_norm_sub_pow hζ x
     simpa [ge_iff_le, Int.cast_one, sub_self, nsmul_eq_mul, Nat.cast_mul, PNat.pos,
       Nat.cast_pred, zero_sub, IsUnit.mul_iff, ne_eq, tsub_eq_zero_iff_le, not_le, dvd_neg,
@@ -82,10 +91,13 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     IsIntegral.of_pow (NeZero.pos p) (hv ▸ NumberField.RingOfIntegers.isIntegral_coe _)
   set w : 𝓞 K := ⟨v, hv'⟩
   have : IsUnit w := by
-    rw [← isUnit_pow_iff (NeZero.pos p).ne.symm]; convert (u ^ (p - 1) : (𝓞 K)ˣ).isUnit; ext
+    rw [← isUnit_pow_iff (NeZero.pos p).ne.symm]
+    convert (u ^ (p - 1) : (𝓞 K)ˣ).isUnit
+    ext
     exact hv
   have hv'' : this.unit ^ p = u ^ (p - 1) := by
-    ext; simpa using! hv
+    ext
+    simpa using! hv
   use u / this.unit
   rw [div_pow, hv'', div_eq_mul_inv, ← pow_sub _ tsub_le_self,
     tsub_tsub_cancel_of_le (Nat.Prime.one_lt hpri.out).le, pow_one]

@@ -79,9 +79,7 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
       · have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) H
         rw [← hσ, ← hI σ]
         exact Ideal.comap_mono (h𝔓 _ hp)
-      · have := H.2.1
-        rw [Ideal.under_def] at this
-        exact this.symm
+      · simpa only [Ideal.under_def] using H.2.1.symm
     · intro P hP
       rw [Set.mem_toFinset] at hP
       have : P.IsPrime := hP.1
@@ -107,10 +105,6 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
     simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
       Ideal.mem_normalizedFactors_iff hIbot']
     exact ⟨hP.1.comap _, Ideal.comap_mono hP.2⟩
-
-section KummerDedekind
-
-end KummerDedekind
 
 open nonZeroDivisors Polynomial
 

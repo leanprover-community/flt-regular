@@ -1,16 +1,25 @@
 module
 
-import FltRegular.NumberTheory.Cyclotomic.CyclRat
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 public import Mathlib.NumberTheory.NumberField.CMField
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+
+import FltRegular.NumberTheory.Cyclotomic.CyclRat
+import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
+
+/-!
+# Cyclotomic lemmas for Case I
+
+This file establishes the complex-conjugation congruence used in the first case of Fermat's Last
+Theorem for regular primes.
+-/
 
 @[expose] public section
 
 open scoped NumberField nonZeroDivisors
 
-variable {p : ℕ} [NeZero p] {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
+variable {p : ℕ} [NeZero p] {K : Type*} [Field K] [NumberField K]
+  [IsCyclotomicExtension {p} ℚ K]
 
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
@@ -21,9 +30,11 @@ open FractionalIdeal NumberField IsCMField
 namespace FltRegular.CaseI
 
 omit [NeZero p] in
+/-- The difference between a `p`-th power and its complex conjugate is divisible by `p`. -/
 theorem pow_sub_intGalConj_mem (α : 𝓞 K) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
-    (α ^ p - ringOfIntegersComplexConj K (α ^ p)) ∈ Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
+    (α ^ p - ringOfIntegersComplexConj K (α ^ p)) ∈
+      Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
   obtain ⟨a, γ, hγ⟩ := exists_dvd_pow_sub_Int_pow hp.ne' α
   rw [Ideal.mem_span_singleton]
   rw [sub_eq_iff_eq_add] at hγ
@@ -31,6 +42,7 @@ theorem pow_sub_intGalConj_mem (α : 𝓞 K) [Fact (p.Prime)] (hp : 2 < p) :
     add_sub_add_right_eq_sub, ← mul_sub]
   exact dvd_mul_right _ _
 
+/-- Complex conjugation negates the exponent of the distinguished cyclotomic unit. -/
 theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     ringOfIntegersComplexConj K (x + y * ↑(zetaUnit ^ i) : 𝓞 K) =
@@ -47,6 +59,7 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) 
   change (complexConj K) ζ = ζ⁻¹
   exact complexConj_zeta hζ hp
 
+/-- A natural exponent giving the Case I complex-conjugation congruence modulo `p`. -/
 theorem exists_int_sum_eq_zero' (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
     (h : (x : 𝓞 K) + y * (zetaUnit ^ i : (𝓞 K)ˣ) = u * α ^ p) [Fact (p.Prime)]
     (hp : 2 < p) :
@@ -54,13 +67,18 @@ theorem exists_int_sum_eq_zero' (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
       ((zetaUnit ^ k) ^ 2 : (𝓞 K)ˣ) *
         (x + y * (zetaUnit ^ (-i) : (𝓞 K)ˣ)) ∈
       Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
-  obtain ⟨k, H⟩ := unit_inv_conj_is_root_of_unity hζ u hp
+  obtain ⟨k, hroot⟩ := unit_inv_conj_is_root_of_unity hζ u hp
   refine ⟨k, ?_⟩
-  rw [← exists_int_sum_eq_zero'_aux _ _ _ _ hp, h, ← H, Units.val_mul, mul_assoc, ← mul_sub]
+  rw [← exists_int_sum_eq_zero'_aux _ _ _ _ hp, h, ← hroot, Units.val_mul, mul_assoc,
+    ← mul_sub]
   convert Ideal.mul_mem_left _ ↑u (pow_sub_intGalConj_mem α hp) using 3
   ext
-  simp
+  simp only [map_mul, map_pow, map_units_inv, Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv,
+    RingOfIntegers.mapRingEquiv_apply, RingEquiv.coe_mk, AlgEquiv.toEquiv_eq_coe, EquivLike.coe_coe,
+    coe_ringOfIntegersComplexConj, ne_eq, EmbeddingLike.map_eq_zero_iff,
+    FaithfulSMul.algebraMap_eq_zero_iff, Units.ne_zero, not_false_eq_true, inv_mul_cancel_left₀]
 
+/-- An integer exponent giving the Case I complex-conjugation congruence modulo `p`. -/
 theorem exists_int_sum_eq_zero (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
     (h : (x : 𝓞 K) + y * (zetaUnit ^ i : (𝓞 K)ˣ) = u * α ^ p) [Fact (p.Prime)]
     (hp : 2 < p) :
@@ -72,7 +90,8 @@ theorem exists_int_sum_eq_zero (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
   refine ⟨k, ?_⟩
   have hz : ((zetaUnit ^ k) ^ 2 : (𝓞 K)ˣ) = (zetaUnit ^ (2 * (k : ℤ)) : (𝓞 K)ˣ) := by
     rw [← zpow_natCast (zetaUnit ^ k) 2, ← zpow_natCast zetaUnit k, ← zpow_mul]
-    grind
-  grind
+    congr 1
+    exact mul_comm _ _
+  exact hz ▸ hk
 
 end FltRegular.CaseI

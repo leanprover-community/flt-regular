@@ -7,15 +7,10 @@ public import FltRegular.NumberTheory.CyclotomicRing
 open FiniteDimensional
 open NumberField
 
-variable (p : ℕ) {K : Type*} [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-variable {k : Type*} [Field k] [NumberField k] (hp : Nat.Prime p)
+variable (p : ℕ) (hp : Nat.Prime p)
 
 open Module Finset
-open CyclotomicIntegers (zeta)
-
-variable
-  (G : Type*) {H : Type*} [AddCommGroup G] (s : ℕ)
-  (hf : finrank ℤ G = s * (p - 1))
+variable (G : Type*) [AddCommGroup G] (s : ℕ) (hf : finrank ℤ G = s * (p - 1))
 
 local notation "A" => (CyclotomicIntegers p)
 
@@ -89,8 +84,7 @@ lemma existence' [Module A G] {R : ℕ} (S : systemOfUnits p G R) (hR : R < s) :
   rw [hy']
   exact Submodule.neg_mem _ (Submodule.smul_mem _ _ hy)
 
-lemma existence'' [Module A G] {R : ℕ} (hR : R ≤ s) :
-    Nonempty (systemOfUnits p G R) := by
+lemma existence'' [Module A G] {R : ℕ} (hR : R ≤ s) : Nonempty (systemOfUnits p G R) := by
   induction R with
   | zero => exact existence0 p G
   | succ n ih =>

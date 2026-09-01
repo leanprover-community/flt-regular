@@ -23,17 +23,19 @@ theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a *
   have hadiv : d ∣ a := gcd_dvd (by grind)
   have hbdiv : d ∣ b := gcd_dvd (by grind)
   have hcdiv : d ∣ c := gcd_dvd (by grind)
-  have hdzero : d ≠ 0 := fun hdzero ↦ by grind [Finset.gcd_eq_zero_iff.1 hdzero a (by grind)]
-  have hdp : d ^ n ≠ 0 := fun hdn => hdzero (eq_zero_of_pow_eq_zero hdn)
-  refine ⟨?_, ?_, fun habs => ?_⟩
-  · obtain ⟨na, hna⟩ := hadiv; obtain ⟨nb, hnb⟩ := hbdiv; obtain ⟨nc, hnc⟩ := hcdiv
+  have hdzero : d ≠ 0 := fun hd ↦ by grind [Finset.gcd_eq_zero_iff.1 hd a (by grind)]
+  have hdp : d ^ n ≠ 0 := pow_ne_zero _ hdzero
+  refine ⟨?_, ?_, fun habs ↦ ?_⟩
+  · obtain ⟨na, hna⟩ := hadiv
+    obtain ⟨nb, hnb⟩ := hbdiv
+    obtain ⟨nc, hnc⟩ := hcdiv
     rwa [← mul_left_inj' hdp, add_mul, ← mul_pow, ← mul_pow, ← mul_pow, hna, hnb, hnc,
       Int.mul_ediv_cancel_left _ hdzero, Int.mul_ediv_cancel_left _ hdzero,
       Int.mul_ediv_cancel_left _ hdzero, mul_comm, ← hna, mul_comm, ← hnb, mul_comm, ← hnc]
   · simpa [gcd_eq_gcd_image, d] using
       Finset.gcd_div_id_eq_one (show a ∈ ({a, b, c} : Finset ℤ) by simp) ha
   · simp only [mul_eq_zero] at habs
-    rcases habs with ((Ha | Hb) | Hc) <;>
+    rcases habs with ((ha' | hb') | hc') <;>
     grind [Int.eq_zero_of_ediv_eq_zero]
 
 end MayAssume
@@ -50,12 +52,10 @@ theorem p_dvd_c_of_ab_of_anegc {p : ℕ} {a b c : ℤ} (hpri : p.Prime)
   ring_nf at h
   simp only [Int.cast_neg, Int.cast_mul, Int.cast_ofNat, neg_eq_zero, mul_eq_zero] at h
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-  refine Or.resolve_right h fun h3 => ?_
+  refine Or.resolve_right h fun h3 ↦ ?_
   rw [show (3 : ZMod p) = ((3 : ℕ) : ZMod p) by simp, ZMod.natCast_eq_zero_iff,
     Nat.dvd_prime Nat.prime_three] at h3
-  rcases h3 with H₁ | H₂
-  · exact hpri.ne_one H₁
-  · exact hp H₂
+  exact h3.elim hpri.ne_one hp
 
 theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p)
     (hprod : a * b * c ≠ 0)
@@ -64,20 +64,20 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p)
     ∃ x y z : ℤ, x ^ p + y ^ p = z ^ p ∧
       ({x, y, z} : Finset ℤ).gcd id = 1 ∧ ¬x ≡ y [ZMOD p] ∧ x * y * z ≠ 0 ∧
         ¬↑p ∣ x * y * z := by
-  by_cases H : a ≡ b [ZMOD p]
+  by_cases hab : a ≡ b [ZMOD p]
   swap
-  · exact ⟨a, b, c, ⟨h, hgcd, H, hprod, caseI⟩⟩
-  refine ⟨a, -c, -b, ⟨?_, ?_, fun habs => ?_, ?_, ?_⟩⟩
-  · have hodd : Odd p := hpri.odd_of_ne_two (by linarith)
+  · exact ⟨a, b, c, ⟨h, hgcd, hab, hprod, caseI⟩⟩
+  refine ⟨a, -c, -b, ⟨?_, ?_, fun habs ↦ ?_, ?_, ?_⟩⟩
+  · have hodd : Odd p := hpri.odd_of_ne_two (by omega)
     rw [hodd.neg_pow, hodd.neg_pow]
     linarith
   · simp only [← hgcd, Finset.gcd_insert, id_eq, ← Int.coe_gcd, Int.neg_gcd,
       ← LawfulSingleton.insert_empty_eq, Finset.gcd_empty, Int.gcd_left_comm]
-  · have hp3 : p ≠ 3 := by linarith
-    rw [← ZMod.intCast_eq_intCast_iff] at habs H
-    rw [H] at habs
-    rw [ZMod.intCast_eq_intCast_iff] at habs H
-    obtain ⟨n, hn⟩ := p_dvd_c_of_ab_of_anegc hpri hp3 h H habs
+  · have hp3 : p ≠ 3 := by omega
+    rw [← ZMod.intCast_eq_intCast_iff] at habs hab
+    rw [hab] at habs
+    rw [ZMod.intCast_eq_intCast_iff] at habs hab
+    obtain ⟨n, hn⟩ := p_dvd_c_of_ab_of_anegc hpri hp3 h hab habs
     refine caseI ⟨a * b * n, ?_⟩
     rw [hn]
     ring

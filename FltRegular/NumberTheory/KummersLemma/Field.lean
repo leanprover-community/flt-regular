@@ -2,8 +2,16 @@ module
 
 import Mathlib.FieldTheory.KummerExtension
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-import FltRegular.NumberTheory.Unramified
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+
+import FltRegular.NumberTheory.Unramified
+
+/-!
+# The field-theoretic part of Kummer's lemma
+
+This file constructs Kummer's auxiliary polynomial and proves the associated splitting field is
+unramified.
+-/
 
 @[expose] public section
 
@@ -21,6 +29,8 @@ variable (u : (𝓞 K)ˣ)
 open Polynomial IsCyclotomicExtension.Rat
 
 include hcong hp in
+-- The cyclotomic-extension instance is retained for compatibility with existing callers.
+@[nolint unusedArguments]
 lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
     C ((hζ.toInteger - 1 : 𝓞 K) ^ p) ∣
       (C (hζ.toInteger - 1 : 𝓞 K) * X - 1) ^ p + C (u : 𝓞 K) := by
@@ -84,17 +94,16 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
   rw [← coeff_map] at this
   replace this : (ζ - 1) ^ p * ↑((poly hp hζ u hcong).coeff i) =
     (((C ζ - 1) * X - 1) ^ p).coeff i +
-    (C ((algebraMap ((𝓞 K)) K) ↑u)).coeff i := by
-      simp only [map_pow, map_sub, map_one, Polynomial.map_add, Polynomial.map_pow,
-        Polynomial.map_sub, Polynomial.map_mul, map_C,
-        Polynomial.map_one, map_X, coeff_add] at this
-      convert this
-      · simp only [← Polynomial.coeff_map]
-        simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
-          Polynomial.map_one]
-        rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
-        simp
-      · rfl
+    (C ((algebraMap (𝓞 K) K) ↑u)).coeff i := by
+    simp only [map_pow, map_sub, map_one, Polynomial.map_add, Polynomial.map_pow,
+      Polynomial.map_sub, Polynomial.map_mul, map_C, Polynomial.map_one, map_X, coeff_add] at this
+    convert this
+    · simp only [← Polynomial.coeff_map]
+      simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
+        Polynomial.map_one]
+      rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
+      simp
+    · rfl
   apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
   simp only [coeff_map, one_div, coeff_add, this, mul_add]
   simp_rw [← smul_eq_mul (α := K), ← coeff_smul]
@@ -152,7 +161,8 @@ theorem roots_poly {L : Type*} [Field L] [Algebra K L] (α : L)
   have hζ' : algebraMap K L ζ - 1 ≠ 0 := by
     simpa using (algebraMap K L).injective.ne (hζ.sub_one_ne_zero hpri.out.one_lt)
   classical
-  symm; apply Multiset.eq_of_le_of_card_le
+  symm
+  apply Multiset.eq_of_le_of_card_le
   · rw [← Finset.image_val_of_injOn, Finset.val_le_iff_val_subset]
     · intro x hx
       simp only [Finset.image_val, Finset.range_val, Multiset.mem_dedup, Multiset.mem_map,
@@ -231,11 +241,16 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
   have hcoe : (algebraMap (𝓞 K) K) (↑hζ.toInteger) = ζ := rfl
   simp only [map_mul, map_sub, map_one, map_pow, hcoe] at hv
   have hα : IsIntegral (𝓞 K) α := by
-    apply IsIntegral.of_pow (NeZero.pos p); rw [e]; exact isIntegral_algebraMap
+    apply IsIntegral.of_pow (NeZero.pos p)
+    rw [e]
+    exact isIntegral_algebraMap
   have : IsUnit (⟨α, isIntegral_trans _ hα⟩ : 𝓞 L) := by
     rw [← isUnit_pow_iff (NeZero.pos p).ne.symm]
-    have hpow : (⟨α, isIntegral_trans _ hα⟩ : 𝓞 L) ^ p = algebraMap (𝓞 K) (𝓞 L) ↑u := by
-      ext; simp only [SubmonoidClass.coe_pow, e]; rfl
+    have hpow : (⟨α, isIntegral_trans _ hα⟩ : 𝓞 L) ^ p =
+        algebraMap (𝓞 K) (𝓞 L) ↑u := by
+      ext
+      simp only [SubmonoidClass.coe_pow, e]
+      rfl
     rw [hpow]
     exact (algebraMap (𝓞 K) (𝓞 L)).isUnit_map u.isUnit
   convert ((algebraMap (𝓞 K) (𝓞 L)).isUnit_map v.isUnit).mul this using 1
@@ -261,8 +276,11 @@ lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     apply Ideal.Quotient.nontrivial_iff.mpr
     rw [ne_eq, Ideal.map_eq_top_iff]
     · exact Ideal.IsMaximal.ne_top ‹_›
-    · intros x y e; ext; exact (algebraMap K L).injective (congr_arg Subtype.val e)
-    · intros x; exact IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ L x)
+    · intros x y e
+      ext
+      exact (algebraMap K L).injective (congr_arg Subtype.val e)
+    · intro x
+      exact IsIntegral.tower_top (IsIntegralClosure.isIntegral ℤ L x)
   rw [← Polynomial.separable_map i, map_map, Ideal.quotientMap_comp_mk, ← map_map]
   exact Separable.map <|
     separable_poly_aux hp hζ u hcong (AdjoinRoot.root _) (root_X_pow_sub_C_pow _ _)
@@ -282,7 +300,9 @@ lemma polyRoot_spec {L : Type*} [Field L] [Algebra K L] (α : L)
 lemma mem_adjoin_polyRoot {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) (i) :
     α ∈ Algebra.adjoin K {(polyRoot hp hζ u hcong α e i : L)} := by
-  conv => enter [2]; rw [polyRoot_spec hp hζ u hcong α e i]
+  conv =>
+    enter [2]
+    rw [polyRoot_spec hp hζ u hcong α e i]
   exact Subalgebra.smul_mem _ (sub_mem (one_mem _)
     (Subalgebra.smul_mem _ (Algebra.self_mem_adjoin_singleton K _) _)) _
 
@@ -307,7 +327,8 @@ lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ p - C 
   refine isUnramifiedAt_of_Separable_minpoly K L P hPbot α (IsIntegral.tower_top α.prop) hα ?_
   rw [minpoly_polyRoot' hp hζ u hcong hu]
   have hPbot' : P.under (𝓞 K) ≠ ⊥ := Ideal.under_ne_bot (𝓞 K) hPbot
-  have : (P.under (𝓞 K)).IsMaximal := (inferInstance : (P.under (𝓞 K)).IsPrime).isMaximal hPbot'
+  have : (P.under (𝓞 K)).IsMaximal :=
+    (inferInstance : (P.under (𝓞 K)).IsPrime).isMaximal hPbot'
   exact separable_poly hp hζ u hcong hu (P.under (𝓞 K))
 
 end KummersLemma

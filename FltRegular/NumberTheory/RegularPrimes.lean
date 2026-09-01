@@ -1,8 +1,8 @@
 module
 
+public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
-public import Mathlib.NumberTheory.Cyclotomic.Basic
 
 /-!
 # Regular primes
@@ -22,7 +22,7 @@ open Nat Polynomial NumberField
 
 open scoped NumberField
 
-variable (n p : ℕ) [hp : Fact p.Prime]
+variable (n p : ℕ)
 
 /-- A natural number `n` is regular if `n` is coprime with the cardinal of the class group. -/
 def IsRegularNumber : Prop :=
@@ -34,7 +34,7 @@ def IsRegularPrime : Prop :=
 
 section TwoRegular
 
-variable (A K : Type*) [CommRing A] [IsDomain A] [Field K] [Algebra A K] [IsFractionRing A K]
+variable (K : Type*) [Field K]
 
 variable (L : Type*) [Field L] [Algebra K L]
 
@@ -43,9 +43,8 @@ def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := b
   suffices IsSplittingField K K (cyclotomic 2 K) by
     have : IsSplittingField K L (cyclotomic 2 K) :=
       IsCyclotomicExtension.splitting_field_cyclotomic 2 K L
-    exact
-      (IsSplittingField.algEquiv L (cyclotomic 2 K)).trans
-        (IsSplittingField.algEquiv K <| cyclotomic 2 K).symm
+    exact (IsSplittingField.algEquiv L (cyclotomic 2 K)).trans
+      (IsSplittingField.algEquiv K <| cyclotomic 2 K).symm
   exact ⟨by simpa using Splits.X_sub_C (-1 : K),
     by simp [eq_iff_true_of_subsingleton]⟩
 
@@ -65,8 +64,7 @@ instance : IsPrincipalIdealRing (𝓞 (CyclotomicField 2 ℚ)) :=
 theorem isRegularPrime_two : IsRegularPrime 2 := by
   rw [IsRegularPrime, IsRegularNumber]
   convert coprime_one_right _
-  apply (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField 2 ℚ))).2
-  infer_instance
+  exact (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField 2 ℚ))).2 inferInstance
 
 set_option backward.isDefEq.respectTransparency false in
 theorem isRegularPrime_three :

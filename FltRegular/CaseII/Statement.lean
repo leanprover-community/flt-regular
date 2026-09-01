@@ -44,7 +44,8 @@ lemma not_exists_solution' : ¬∃ (x y z : 𝓞 K), ¬(hζ.toInteger : 𝓞 K) 
       WfDvdMonoid.max_power_factor hz' hζ.zeta_sub_one_prime'.irreducible
     refine ⟨m, z', ?_, hz'', rfl⟩
     rcases Nat.eq_zero_or_pos m with rfl | h
-    · simp only [pow_zero, one_mul] at hz; exact absurd hz hz''
+    · simp only [pow_zero, one_mul] at hz
+      exact absurd hz hz''
     · exact h
   refine not_exists_solution hp hreg hζ hm ⟨x, y, z, 1, hy, hz'', ?_⟩
   rwa [Units.val_one, one_mul]
@@ -55,8 +56,8 @@ lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRe
     ¬∃ (x y z : ℤ), ¬↑p ∣ y ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot
     ℚ (B := (CyclotomicField p ℚ)) (Set.mem_singleton p) hpri.1.ne_zero
-  have := fun n ↦
-    IsCyclotomicExtension.Rat.zeta_sub_one_dvd_intCast_iff' (K := CyclotomicField p ℚ) p hζ (n := n)
+  have := fun n ↦ IsCyclotomicExtension.Rat.zeta_sub_one_dvd_intCast_iff'
+    (K := CyclotomicField p ℚ) p hζ (n := n)
   simp_rw [← this]
   rintro ⟨x, y, z, hy, hz, hz', e⟩
   refine not_exists_solution' (K := CyclotomicField p ℚ) hodd ?_

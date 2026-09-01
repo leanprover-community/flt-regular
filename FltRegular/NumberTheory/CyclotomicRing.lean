@@ -4,6 +4,13 @@ public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 
+/-!
+# Cyclotomic integers
+
+This file defines cyclotomic integers using `AdjoinRoot` and relates them to the ring of
+integers of the corresponding rational cyclotomic field.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -15,7 +22,9 @@ variable (p : ℕ) [hpri : Fact p.Prime]
 /-- The cyclotomic integers of conductor `p`, defined as an `AdjoinRoot`. -/
 def CyclotomicIntegers : Type := AdjoinRoot (cyclotomic p ℤ)
 
-instance : CommRing (CyclotomicIntegers p) := by delta CyclotomicIntegers; infer_instance
+instance : CommRing (CyclotomicIntegers p) := by
+  delta CyclotomicIntegers
+  infer_instance
 
 set_option backward.isDefEq.respectTransparency false in
 open Polynomial in
@@ -61,23 +70,21 @@ lemma prime_one_sub_zeta :
   rw [← prime_units_mul (u := -1), Units.val_neg, Units.val_one, neg_mul, one_mul, neg_sub]
   apply (MulEquiv.prime_iff (equiv p)).1
   simp only [(equiv p).map_sub, (equiv p).map_one, equiv_zeta]
-  have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
-  exact H.zeta_sub_one_prime'
+  exact (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).zeta_sub_one_prime'
 
 lemma one_sub_zeta_mem_nonZeroDivisors :
     1 - zeta p ∈ nonZeroDivisors (CyclotomicIntegers p) := by
-  rw [mem_nonZeroDivisors_iff_ne_zero]
-  exact (prime_one_sub_zeta p).1
+  simpa only [mem_nonZeroDivisors_iff_ne_zero] using (prime_one_sub_zeta p).1
 
 lemma not_isUnit_one_sub_zeta :
     ¬ IsUnit (1 - zeta p) := (prime_one_sub_zeta p).irreducible.1
 
 set_option backward.isDefEq.respectTransparency false in
 lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
-  have H := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
   rw [← map_dvd_iff (equiv p), map_sub, map_one, equiv_zeta, map_intCast,
     ← neg_dvd, neg_sub]
-  exact IsCyclotomicExtension.Rat.zeta_sub_one_dvd_intCast_iff' p H
+  exact IsCyclotomicExtension.Rat.zeta_sub_one_dvd_intCast_iff' p
+    (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ))
 
 lemma one_sub_zeta_dvd : 1 - zeta p ∣ p :=
   (one_sub_zeta_dvd_int_iff _ _).2 dvd_rfl
@@ -110,9 +117,9 @@ lemma nontrivial {p} (hp : p ≠ 0) : Nontrivial (CyclotomicIntegers p) := by
   apply Ideal.Quotient.nontrivial_iff.mpr
   simp only [ne_eq, Ideal.span_singleton_eq_top]
   intro h
-  have := natDegree_eq_zero_of_isUnit h
-  rw [natDegree_cyclotomic] at this
-  exact this.not_gt (Nat.totient_pos.2 <| Nat.zero_lt_of_ne_zero hp)
+  have hdegree := natDegree_eq_zero_of_isUnit h
+  rw [natDegree_cyclotomic] at hdegree
+  exact hdegree.not_gt (Nat.totient_pos.2 <| Nat.zero_lt_of_ne_zero hp)
 
 lemma charZero {p} (hp : p ≠ 0) : CharZero (CyclotomicIntegers p) :=
   have := nontrivial hp

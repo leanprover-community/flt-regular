@@ -1,14 +1,23 @@
 module
 
 public import Mathlib.NumberTheory.FLT.Basic
-import FltRegular.SmallNumbers.Five.FLT5
-import FltRegular.SmallNumbers.Seven.FLT7
 import Mathlib.NumberTheory.FLT.Four
 import Mathlib.NumberTheory.FLT.Three
 import Mathlib.Tactic.NormNum.Prime
 
+import FltRegular.SmallNumbers.Five.FLT5
+import FltRegular.SmallNumbers.Seven.FLT7
+
+/-!
+# Fermat's Last Theorem for exponents from three through ten
+
+This file combines the known results for exponents `3`, `4`, `5`, and `7` with divisibility of
+exponents to cover the interval from `3` through `10`.
+-/
+
 @[expose] public section
 
+/-- Fermat's Last Theorem holds for every exponent in the interval `[3, 10]`. -/
 theorem FLT_small {n : ℕ} (hn : n ∈ Finset.Icc 3 10) : FermatLastTheoremFor n := by
   fin_cases hn
   · exact fermatLastTheoremThree
