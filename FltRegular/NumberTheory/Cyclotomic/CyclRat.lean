@@ -32,10 +32,6 @@ def fltIdeals [Fact p.Prime] (x y : ℤ) {η : R} (_ : η ∈ nthRootsFinset p 1
 
 variable {p}
 
-theorem mem_fltIdeals [Fact p.Prime] (x y : ℤ) {η : R} (hη : η ∈ nthRootsFinset p 1) :
-    ↑x + η * ↑y ∈ fltIdeals p x y hη :=
-  mem_span_singleton.mpr dvd_rfl
-
 open IsPrimitiveRoot
 
 theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
@@ -56,14 +52,7 @@ theorem diff_of_roots [hp : Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
   have h := isPrimitiveRoot_of_mem_nthRootsFinset Fact.out hη₁ hwlog
   rcases h.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime hp.out hη₁ hη₂ hdiff with
     ⟨u, hu⟩
-  refine ⟨-u, by grind [Units.val_neg]⟩
-
-theorem diff_of_roots2 [Fact p.Prime] (ph : 5 ≤ p) {η₁ η₂ : R}
-    (hη₁ : η₁ ∈ nthRootsFinset p 1) (hη₂ : η₂ ∈ nthRootsFinset p 1)
-    (hdiff : η₁ ≠ η₂) (hwlog : η₁ ≠ 1) :
-    ∃ u : Rˣ, η₂ - η₁ = u * (1 - η₁) := by
-  obtain ⟨u, hu⟩ := diff_of_roots ph hη₁ hη₂ hdiff hwlog
-  exact ⟨-u, by simp [← hu]⟩
+  exact ⟨-u, by grind [Units.val_neg]⟩
 
 lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1)

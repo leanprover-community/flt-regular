@@ -52,16 +52,6 @@ theorem complexConj_zeta [Fact (p.Prime)] (hp : 2 < p) :
     exact hζ.pow_eq_one
   exact complexConj_torsion (K := K) ⟨η, hη⟩
 
-theorem roots_of_unity_in_cyclo (hpo : Odd p) (x : K)
-    (h : ∃ (n : ℕ) (_ : 0 < n), x ^ n = 1) :
-    ∃ (m k : ℕ), x = (-1) ^ k * (η.1 : K) ^ m := by
-  obtain ⟨n, hn, hxn⟩ := h
-  have hη : (η.1 : K) = ζ := by rw [IsUnit.unit_spec]; rfl
-  simp only [hη]
-  obtain ⟨r, -, hr | hr⟩ := hζ.exists_pow_or_neg_mul_pow_of_isOfFinOrder hpo
-    (isOfFinOrder_iff_pow_eq_one.mpr ⟨n, hn, hxn⟩)
-  · exact ⟨r, 2, by simp [hr]⟩
-  · exact ⟨r, 1, by simp [hr]⟩
 lemma unit_inv_conj_not_neg_zeta_runity_aux (u : (𝓞 K)ˣ) [Fact (p.Prime)] (hp : 2 < p) :
     haveI := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
     algebraMap (𝓞 K) (𝓞 K ⧸ I) (unitsMulComplexConjInv K u).1 = 1 := by
