@@ -111,11 +111,8 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
 lemma norm_add_one_smul_of_isUnit {K} [Field K] [NumberField K] {p : ℕ} (hpri : p.Prime)
     (hp : p ≠ 2) (x : 𝓞 K)
     (hx : IsUnit (1 + p • x)) : Algebra.norm ℤ (1 + p • x) = 1 := by
-  have hnorm : Algebra.norm ℤ (1 + p • x) = 1 ∨ Algebra.norm ℤ (1 + p • x) = -1 := by
-    apply Int.natAbs_eq_iff.mp
-    apply (Int.cast_injective (α := ℚ)).comp Nat.cast_injective
-    simp only [Int.cast_abs, Function.comp_apply, Nat.cast_one, Int.cast_one, ← Int.abs_eq_natAbs,
-      Algebra.coe_norm_int, ← NumberField.isUnit_iff_norm.mp hx, RingOfIntegers.coe_norm]
+  have hnorm : Algebra.norm ℤ (1 + p • x) = 1 ∨ Algebra.norm ℤ (1 + p • x) = -1 :=
+    Int.isUnit_iff.mp (hx.map (Algebra.norm ℤ))
   have hne : Algebra.norm ℤ (1 + p • x) ≠ -1 := by
     intro e
     apply hp

@@ -78,13 +78,7 @@ theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Pr
     u * (unitsComplexConj K u)⁻¹ ≠ -η ^ n := by
   by_contra H
   have hμ : algebraMap (𝓞 K) (𝓞 K ⧸ I) ((η : 𝓞 K) ^ n) = 1 := by
-    have hpow : ((η : 𝓞 K) ^ n) ^ p = 1 := by
-      change (hζ.toInteger ^ n) ^ p = 1
-      rw [← pow_mul, mul_comm, pow_mul, hζ.toInteger_isPrimitiveRoot.pow_eq_one, one_pow]
-    obtain ⟨k, -, hk⟩ := hζ.toInteger_isPrimitiveRoot.eq_pow_of_pow_eq_one hpow
-    rw [← hk, map_pow]
-    change (algebraMap (𝓞 K) (𝓞 K ⧸ I) (η : 𝓞 K)) ^ k = 1
-    rw [eq_one_mod_one_sub, one_pow]
+    rw [map_pow, eq_one_mod_one_sub, one_pow]
   have hμ' : algebraMap (𝓞 K) (𝓞 K ⧸ I) ((η : 𝓞 K) ^ n) = -1 := by
     rw [← neg_eq_iff_eq_neg, ← map_neg, ← Units.val_pow_eq_pow_val, ← Units.val_neg, ← H]
     apply unit_inv_conj_not_neg_zeta_runity_aux hζ u hp
@@ -99,26 +93,22 @@ theorem unit_inv_conj_is_root_of_unity (u : (𝓞 K)ˣ) [H : Fact (p.Prime)] (hp
     ∃ m : ℕ, u * (unitsComplexConj K u)⁻¹ = (η ^ m) ^ 2 := by
   let _ := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
   have hpo : Odd p := H.out.odd_of_ne_two hp.ne'
-  let : NormedAlgebra ℚ ℂ := normedAlgebraRat
-  have hroot := Embeddings.pow_eq_one_of_norm_eq_one K ℂ
-    (x := u * (unitsComplexConj K u)⁻¹) ?_ ?_
-  · obtain ⟨n, k, hz⟩ :=
-      roots_of_unity_in_cyclo hζ hpo (u * (unitsComplexConj K u)⁻¹ : K) hroot
-    simp_rw [← pow_mul]
-    rcases Nat.even_or_odd k with hk | hk
-    · simp only [hk.neg_one_pow, one_mul] at hz
-      rw [← map_mul, ← Units.val_mul, ← map_pow, ← Units.val_pow_eq_pow_val] at hz
-      norm_cast at hz
-      rw [hz]
-      simpa only [mul_comm] using
-        ((hζ.toInteger_isPrimitiveRoot.isUnit_unit (NeZero.ne p)).exists_pow_eq_pow_two_mul hpo n)
-    · by_contra
-      simp only [hk.neg_one_pow, neg_mul, one_mul] at hz
-      rw [← map_mul, ← Units.val_mul, ← map_pow, ← Units.val_pow_eq_pow_val,
-        ← map_neg] at hz
-      norm_cast at hz
-      simpa [hz] using unit_inv_conj_not_neg_zeta_runity hζ u n hp
-  · apply RingHom.IsIntegralElem.mul
-    · exact NumberField.RingOfIntegers.isIntegral_coe _
-    · exact NumberField.RingOfIntegers.isIntegral_coe _
-  · simp
+  have hη : (η : K) = ζ := by rw [IsUnit.unit_spec]; rfl
+  have hroot : IsOfFinOrder (u * (unitsComplexConj K u)⁻¹ : K) := by
+    have h : IsOfFinOrder (u * (unitsComplexConj K u)⁻¹) :=
+      (CommGroup.mem_torsion _).mp (unitsMulComplexConjInv K u).property
+    exact (Function.Injective.isOfFinOrder_iff
+      (f := (algebraMap (𝓞 K) K).toMonoidHom.comp (Units.coeHom (𝓞 K)))
+      (NumberField.Units.coe_injective K)).mpr h
+  obtain ⟨n, -, hz | hz⟩ := hζ.exists_pow_or_neg_mul_pow_of_isOfFinOrder hpo hroot
+  · have hz' : u * (unitsComplexConj K u)⁻¹ = η ^ n := by
+      apply NumberField.Units.coe_injective
+      simpa only [NumberField.Units.coe_mul, NumberField.Units.coe_pow, hη] using hz
+    rw [hz']
+    simpa only [pow_mul, mul_comm] using
+      ((hζ.toInteger_isPrimitiveRoot.isUnit_unit (NeZero.ne p)).exists_pow_eq_pow_two_mul hpo n)
+  · exfalso
+    apply unit_inv_conj_not_neg_zeta_runity hζ u n hp
+    apply NumberField.Units.coe_injective
+    simpa only [NumberField.Units.coe_mul, NumberField.Units.coe_pow,
+      Units.val_neg, map_neg, hη] using hz

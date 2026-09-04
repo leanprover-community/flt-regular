@@ -31,21 +31,17 @@ instance Nat.fact_prime_seven : Fact (Nat.Prime 7) :=
 lemma crazy7 : ⌊(4 / π) ^ 3 * (6! / 6 ^ 6 * √16807)⌋₊ = 4 := by
   refine (floor_eq_iff (by positivity)).mpr ⟨?_, ?_⟩
   · calc
-      _ ≥ (4 / 3.14159265358979323847) ^ 3 * (6! / 6 ^ 6 * √16807) := by
+      (4 : ℝ) ≤ (4 / 3.15) ^ 3 * (6! / 6 ^ 6 * 129) := by norm_num
+      _ ≤ (4 / π) ^ 3 * (6! / 6 ^ 6 * √16807) := by
         gcongr
-        exact pi_lt_d20.le
-      _ ≥ (4 / 3.14159265358979323847) ^ 3 * (6! / 6 ^ 6 * 129) := by
-        gcongr
-        exact (le_sqrt (by norm_num) (by norm_num)).mpr (by norm_num)
-      _ ≥ 4 := by norm_num
+        · exact pi_lt_d2.le
+        · exact (le_sqrt (by norm_num) (by norm_num)).mpr (by norm_num)
   · calc
-      _ < (4 / 3.14159265358979323846) ^ 3 * (6! / 6 ^ 6 * √16807) := by
+      (4 / π) ^ 3 * (6! / 6 ^ 6 * √16807) ≤ (4 / 3) ^ 3 * (6! / 6 ^ 6 * 130) := by
         gcongr
-        exact pi_gt_d20
-      _ ≤ (4 / 3.14159265358979323846) ^ 3 * (6! / 6 ^ 6 * 130) := by
-        gcongr
-        exact (sqrt_le_left (by norm_num)).mpr (by norm_num)
-      _ ≤ _ := by norm_num
+        · exact pi_gt_three.le
+        · exact (sqrt_le_left (by norm_num)).mpr (by norm_num)
+      _ < _ := by norm_num
 
 variable [IsCyclotomicExtension {7} ℚ K]
 

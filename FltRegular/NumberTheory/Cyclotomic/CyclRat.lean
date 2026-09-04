@@ -70,40 +70,7 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
     (hη₂ : η₂ ∈ nthRootsFinset p 1) (hdiff : η₁ ≠ η₂) (hp : IsCoprime x y)
     (hp2 : ¬(p : ℤ) ∣ (x + y : ℤ)) (hwlog : η₁ ≠ 1) :
     (fltIdeals p x y hη₁) ⊔ (fltIdeals p x y hη₂) = ⊤ := by
-  let I := fltIdeals p x y hη₁ ⊔ fltIdeals p x y hη₂
-  change I = ⊤
-  have hel1 : ∃ v : Rˣ, (v : R) * y * (1 - η₁) ∈ I := by
-    obtain ⟨v, hv⟩ := diff_of_roots ph hη₁ hη₂ hdiff hwlog
-    refine ⟨v, ?_⟩
-    have := Ideal.sub_mem _
-      (mem_sup_left (mem_fltIdeals x y hη₁)) (mem_sup_right (mem_fltIdeals x y hη₂))
-    rwa [add_sub_add_left_eq_sub, ← sub_mul, hv, mul_right_comm] at this
-  have hel2 : ∃ v : Rˣ, (v : R) * x * (1 - η₁) ∈ I := by
-    obtain ⟨v, hv⟩ := diff_of_roots2 ph hη₁ hη₂ hdiff hwlog
-    refine ⟨v, ?_⟩
-    have := Ideal.add_mem _ (mul_mem_left _ η₂ (mem_sup_left (mem_fltIdeals x y hη₁)))
-        (mul_mem_left _ (-η₁) (mem_sup_right (mem_fltIdeals x y hη₂)))
-    have h1 : η₂ * (↑x + η₁ * ↑y) + -η₁ * (↑x + η₂ * ↑y) =
-        (η₂ - η₁) * x := by
-      ring
-    rwa [h1, hv, mul_right_comm] at this
-  have hy : (y : R) * (1 - η₁) ∈ I := by
-    obtain ⟨v, hv⟩ := hel1
-    rw [mul_assoc] at hv
-    exact (unit_mul_mem_iff_mem I v.isUnit).1 hv
-  have hx : (x : R) * (1 - η₁) ∈ I := by
-    obtain ⟨v, hv⟩ := hel2
-    rw [mul_assoc] at hv
-    exact (unit_mul_mem_iff_mem I v.isUnit).1 hv
-  have hone : 1 - η₁ ∈ I := by
-    obtain ⟨a, b, hab⟩ := hp
-    have H := I.add_mem (I.mul_mem_left (a : R) hx) (I.mul_mem_left (b : R) hy)
-    simpa only [← mul_assoc, ← add_mul, ← Int.cast_mul, ← Int.cast_add, hab, Int.cast_one,
-      one_mul] using H
-  have hxy : (x + y : R) ∈ I := by
-    have H := I.add_mem (mem_sup_left (mem_fltIdeals x y hη₁)) hy
-    convert H using 1
-    ring
+  rw [fltIdeals, fltIdeals, Ideal.sup_eq_top_iff_isCoprime]
   have hdvd : (1 - η₁ : R) ∣ p := by
     rw [← neg_sub, neg_dvd]
     exact sub_one_dvd_natCast_of_pow_eq_one
@@ -112,9 +79,15 @@ lemma fltIdeals_coprime2_lemma [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ 
     simpa only [map_add, eq_intCast] using
       (((Nat.prime_iff_prime_int.mp Fact.out).coprime_iff_not_dvd.mpr hp2).map
         (algebraMap ℤ R)).of_isCoprime_of_dvd_left hdvd
-  obtain ⟨a, b, hab⟩ := hcop
-  rw [eq_top_iff_one, ← hab]
-  exact I.add_mem (I.mul_mem_left a hone) (I.mul_mem_left b hxy)
+  have hroot : IsCoprime (x + η₁ * y : R) (1 - η₁) := by
+    convert hcop.symm.add_mul_left_left (-y) using 1
+    ring
+  obtain ⟨u, hu⟩ := diff_of_roots ph hη₁ hη₂ hdiff hwlog
+  have hdiff : IsCoprime (x + η₁ * y : R) ((η₁ - η₂) * y) := by
+    rw [hu, mul_assoc, isCoprime_mul_unit_left_right u.isUnit]
+    exact hroot.mul_right (hp.intCast.add_mul_right_left η₁)
+  convert hdiff.neg_right.add_mul_right_right 1 using 1
+  ring
 
 theorem fltIdeals_coprime2 [Fact p.Prime] (ph : 5 ≤ p) {x y : ℤ} {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1) (hη₂ : η₂ ∈ nthRootsFinset p 1)

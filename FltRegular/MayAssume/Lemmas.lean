@@ -26,12 +26,8 @@ theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a *
   have hdzero : d ≠ 0 := fun hd ↦ by grind [Finset.gcd_eq_zero_iff.1 hd a (by grind)]
   have hdp : d ^ n ≠ 0 := pow_ne_zero _ hdzero
   refine ⟨?_, ?_, fun habs ↦ ?_⟩
-  · obtain ⟨na, hna⟩ := hadiv
-    obtain ⟨nb, hnb⟩ := hbdiv
-    obtain ⟨nc, hnc⟩ := hcdiv
-    rwa [← mul_left_inj' hdp, add_mul, ← mul_pow, ← mul_pow, ← mul_pow, hna, hnb, hnc,
-      Int.mul_ediv_cancel_left _ hdzero, Int.mul_ediv_cancel_left _ hdzero,
-      Int.mul_ediv_cancel_left _ hdzero, mul_comm, ← hna, mul_comm, ← hnb, mul_comm, ← hnc]
+  · rwa [← mul_left_inj' hdp, add_mul, ← mul_pow, ← mul_pow, ← mul_pow,
+      Int.ediv_mul_cancel hadiv, Int.ediv_mul_cancel hbdiv, Int.ediv_mul_cancel hcdiv]
   · simpa [gcd_eq_gcd_image, d] using
       Finset.gcd_div_id_eq_one (show a ∈ ({a, b, c} : Finset ℤ) by simp) ha
   · simp only [mul_eq_zero] at habs

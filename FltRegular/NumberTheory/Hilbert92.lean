@@ -82,62 +82,56 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
     (i : Fin s) (a : Fin s →₀ A) (ha : a i = 1) :
     ∀ g : G, (1 - zeta p) • g ≠ Finsupp.linearCombination A S.units a := by
   let := hs.choose
-  cases s with
-  | zero => exact isEmptyElim i
-  | succ s =>
-    intro g hg
-    have := Fact.mk hp
-    let S' : systemOfUnits p G (s + 1) := ⟨Function.update S.units i g,
-      LinearIndependent.update S.linearIndependent i g ⟨_,
-        CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p, a, ha ▸ one_mem A⁰, hg⟩⟩
-    let a' := a.comapDomain (Fin.succAbove i) Fin.succAbove_right_injective.injOn
-    have hS' : S'.units ∘ Fin.succAbove i = S.units ∘ Fin.succAbove i := by
-      ext
-      simp only [Function.comp_apply, ne_eq, Fin.succAbove_ne, not_false_eq_true,
-        Function.update_of_ne, S']
-    have ha' : Finsupp.linearCombination A (S'.units ∘ Fin.succAbove i) a' + S.units i =
-        (1 - zeta p) • g := by
-      rw [hS', Finsupp.linearCombination_comp, LinearMap.comp_apply, Finsupp.lmapDomain_apply,
-        ← one_smul A (S.units i), hg, ← ha, ← Finsupp.linearCombination_single, ← map_add]
-      congr 1
-      ext j
-      rw [Finsupp.coe_add, Pi.add_apply, Finsupp.single_apply]
-      have : i = j ↔ j ∉ Set.range (Fin.succAbove i) := by simp [@eq_comm _ i]
-      split_ifs with hij
-      · rw [Finsupp.mapDomain_of_notMem_range, zero_add, hij]
-        rwa [← this]
-      · obtain ⟨j, rfl⟩ := not_imp_comm.mp this.mpr hij
-        rw [Finsupp.mapDomain_apply Fin.succAbove_right_injective, add_zero,
-          Finsupp.comapDomain_apply]
-    have := S'.isMaximal p hp G hf
-    suffices Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units) by
-      exact (hs.maximal' _ _ _ S').not_gt <| AddSubgroup.index_strictAnti ‹_›
-    rw [SetLike.lt_iff_le_and_exists]
-    constructor
-    · rw [Submodule.span_le]
-      rintro _ ⟨j, rfl⟩
-      by_cases hij : i = j
-      · rw [add_comm, ← eq_sub_iff_add_eq] at ha'
-        rw [← hij, ha']
-        apply sub_mem
-        · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, Function.update_self _ _ _⟩)
-        · rw [← Finsupp.range_linearCombination, Finsupp.linearCombination_comp,
-            LinearMap.comp_apply]
-          exact ⟨_, rfl⟩
-      · exact Submodule.subset_span ⟨j, Function.update_of_ne (Ne.symm hij) _ _⟩
-    · refine ⟨g, Submodule.subset_span ⟨i, Function.update_self _ _ _⟩, ?_⟩
-      rw [← Finsupp.range_linearCombination]
-      rintro ⟨l, rfl⟩
-      let _ := (Algebra.id A).toModule
-      let _ : SMulZeroClass A A := SMulWithZero.toSMulZeroClass
-      let _ : Module A (Fin s →₀ A) := Finsupp.module (Fin s) A
-      rw [← LinearMap.map_smul, ← sub_eq_zero,
-        ← (Finsupp.linearCombination A S.units).map_sub] at hg
-      have := DFunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
-      simp only [Finsupp.coe_sub, Finsupp.coe_smul, ha, Pi.sub_apply, Finsupp.coe_zero,
-        Pi.zero_apply, sub_eq_zero] at this
-      exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
-        (IsUnit.of_mul_eq_one _ this)
+  intro g hg
+  have := Fact.mk hp
+  let S' : systemOfUnits p G s := ⟨Function.update S.units i g,
+    LinearIndependent.update S.linearIndependent i g ⟨_,
+      CyclotomicIntegers.one_sub_zeta_mem_nonZeroDivisors p, a, ha ▸ one_mem A⁰, hg⟩⟩
+  have ha' : Finsupp.linearCombination A S'.units (a.erase i) + S.units i =
+      (1 - zeta p) • g := by
+    have he : Finsupp.linearCombination A S'.units (a.erase i) =
+        Finsupp.linearCombination A S.units (a.erase i) := by
+      apply Finsupp.sum_congr
+      intro j hj
+      have hji : j ≠ i := by
+        rintro rfl
+        simp at hj
+      change (a.erase i) j • Function.update S.units i g j = (a.erase i) j • S.units j
+      rw [Function.update_of_ne hji]
+    calc
+      _ = Finsupp.linearCombination A S.units (a.erase i) + a i • S.units i := by
+        rw [he, ha, one_smul]
+      _ = Finsupp.linearCombination A S.units (a.erase i + Finsupp.single i (a i)) := by
+        rw [map_add, Finsupp.linearCombination_single]
+      _ = _ := by rw [Finsupp.erase_add_single, ← hg]
+  have := S'.isMaximal p hp G hf
+  suffices Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units) by
+    exact (hs.maximal' _ _ _ S').not_gt <| AddSubgroup.index_strictAnti ‹_›
+  rw [SetLike.lt_iff_le_and_exists]
+  constructor
+  · rw [Submodule.span_le]
+    rintro _ ⟨j, rfl⟩
+    by_cases hij : i = j
+    · rw [add_comm, ← eq_sub_iff_add_eq] at ha'
+      rw [← hij, ha']
+      apply sub_mem
+      · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, Function.update_self _ _ _⟩)
+      · rw [← Finsupp.range_linearCombination]
+        exact ⟨_, rfl⟩
+    · exact Submodule.subset_span ⟨j, Function.update_of_ne (Ne.symm hij) _ _⟩
+  · refine ⟨g, Submodule.subset_span ⟨i, Function.update_self _ _ _⟩, ?_⟩
+    rw [← Finsupp.range_linearCombination]
+    rintro ⟨l, rfl⟩
+    let _ := (Algebra.id A).toModule
+    let _ : SMulZeroClass A A := SMulWithZero.toSMulZeroClass
+    let _ : Module A (Fin s →₀ A) := Finsupp.module (Fin s) A
+    rw [← LinearMap.map_smul, ← sub_eq_zero,
+      ← (Finsupp.linearCombination A S.units).map_sub] at hg
+    have := DFunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
+    simp only [Finsupp.coe_sub, Finsupp.coe_smul, ha, Pi.sub_apply, Finsupp.coe_zero,
+      Pi.zero_apply, sub_eq_zero] at this
+    exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
+      (IsUnit.of_mul_eq_one _ this)
 
 lemma corollary [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental) (a : Fin s → ℤ)
     (ha : ∃ i, ¬ (p : ℤ) ∣ a i) :
@@ -477,28 +471,16 @@ lemma Hilbert92_aux1 (n : ℕ) (H : Fin n → Additive (𝓞 K)ˣ) (ν : (𝓞 k
     letI J : (𝓞 K)ˣ := (Additive.toMul (∑ i : Fin n, ι i • H i)) *
       (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ν) ^ (-a)
     Algebra.norm k (S := K) ((J : (𝓞 K)ˣ) : K) = 1 := by
-  have hcoe : ((algebraMap (𝓞 K) K) ((algebraMap (𝓞 k) (𝓞 K)) ((ν ^ a)⁻¹).1)) =
-    algebraMap (𝓞 k) (𝓞 K) ((ν ^ a)⁻¹).1 := rfl
-  simp only [toMul_sum, toMul_zsmul, zpow_neg, Units.val_mul, Units.coe_prod, map_mul, map_prod,
-    Units.coe_zpow, map_mul, map_prod, Algebra.norm_zpow]
-  rw [← map_zpow, Units.coe_map_inv]
-  simp only [RingHom.toMonoidHom_eq_coe, MonoidHom.coe_coe]
-  have hcoe1 :
-      algebraMap (𝓞 k) k (((ν ^ p) ^ a)⁻¹).1 = ((((ν : 𝓞 k) : k) ^ p) ^ a)⁻¹ := by
-    change ((Units.map (algebraMap (𝓞 k) k : (𝓞 k) →* k)) _).1 = _
-    simp
-  have hcoe2 :
-      ((algebraMap (𝓞 k) (𝓞 K) ((ν ^ a)⁻¹).1 : 𝓞 K) : K) =
-        algebraMap k K ((ν ^ a)⁻¹).1 := rfl
-  rw [hcoe, hcoe2, Algebra.norm_algebraMap, hKL, ← map_pow,
-    ← Units.val_pow_eq_pow_val, inv_pow, ← zpow_natCast, ← zpow_mul, mul_comm a, zpow_mul,
-      zpow_natCast, hcoe1]
-  apply_fun Additive.toMul at ha
-  apply_fun ((↑) : (𝓞 k)ˣ → k) at ha
-  simp only [toMul_sum, toMul_zsmul, Units.coe_prod, map_prod, hη,
-    Units.coe_zpow, toMul_ofMul] at ha
-  rwa [← zpow_natCast, ← zpow_mul, mul_comm _ a, mul_inv_eq_one₀]
-  simp [← Units.coe_zpow]
+  have h := congrArg (fun x : Additive (𝓞 k)ˣ ↦ ((↑(Additive.toMul x) : 𝓞 k) : k)) ha
+  simp only [toMul_sum, toMul_zsmul, Units.coe_prod, map_prod, Units.coe_zpow,
+    toMul_ofMul, hη] at h
+  simp only [toMul_sum, toMul_zsmul, Units.val_mul, Units.coe_prod, map_prod,
+    Units.coe_zpow, map_mul, Algebra.norm_zpow]
+  rw [h]
+  change (ν : k) ^ (a * (p : ℤ)) * (Algebra.norm k) (algebraMap k K ν) ^ (-a) = 1
+  rw [Algebra.norm_algebraMap, hKL, ← zpow_natCast, ← zpow_mul, mul_comm (p : ℤ),
+    neg_mul, zpow_neg, mul_inv_cancel₀]
+  exact zpow_ne_zero _ (by simp)
 
 variable [IsGalois k K]
 
@@ -700,10 +682,10 @@ lemma almostHilbert92 (hpodd : p ≠ 2) : ∃ η : (𝓞 K)ˣ, Algebra.norm k (�
             rw [Fin.sum_univ_castSucc] at ha
             simp (config := { zeta := false, proj := false }) only
               [hι', Fin.snoc_castSucc, Fin.snoc_last, mul_smul, η] at ha
-            rw [← smul_sum, add_comm, ← eq_sub_iff_add_eq, smul_comm, ← smul_sub] at ha
+            rw [Finset.sum_zsmul, add_comm, ← eq_sub_iff_add_eq, smul_comm, ← zsmul_sub] at ha
             apply_fun ((p : ℤ) • (α • Additive.ofMul NE) + β • ·) at ha
-            conv_rhs at ha => rw [smul_comm β, ← smul_add]
-            rw [smul_smul, smul_smul, ← add_smul, mul_comm _ α, hαβ, one_smul] at ha
+            conv_rhs at ha => rw [smul_comm β, ← zsmul_add]
+            rw [smul_smul, smul_smul, ← add_zsmul, mul_comm _ α, hαβ, one_zsmul] at ha
             exact ⟨_, ha.symm⟩
           have hν'' := (hν.pow (pow_pos hp.pos _) (pow_succ _ _)).map_of_injective
             (algebraMap k K).injective

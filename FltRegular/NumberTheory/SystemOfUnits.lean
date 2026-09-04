@@ -34,16 +34,11 @@ include hp
 
 lemma finrank_spanA {R : ℕ} (f : Fin R → G) (hf : LinearIndependent A f) :
     finrank ℤ (Submodule.span A (Set.range f)) = (p - 1) * R := by
-  classical
   have := Fact.mk hp
-  have := finrank_span_set_eq_card (R := A) (s := Set.range f)
-    ((linearIndepOn_id_range_iff hf.injective).mpr hf)
-  simp only [Set.toFinset_range, Finset.card_image_of_injective _ hf.injective, card_fin] at this
-  rw [← CyclotomicIntegers.powerBasis_dim, ← PowerBasis.finrank]
-  conv_rhs => rw [← this]
   have := Module.Free.of_basis (Basis.span hf)
   have := Module.Finite.of_basis (Basis.span hf)
-  rw [finrank_mul_finrank]
+  rw [← finrank_mul_finrank ℤ A, finrank_span_eq_card hf, Fintype.card_fin,
+    PowerBasis.finrank (CyclotomicIntegers.powerBasis p), CyclotomicIntegers.powerBasis_dim]
 
 include hf
 

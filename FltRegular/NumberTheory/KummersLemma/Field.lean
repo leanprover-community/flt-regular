@@ -88,30 +88,17 @@ lemma natDegree_poly : natDegree (poly hp hζ u hcong) = p := by
 
 lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
     (X - C (1 / (ζ - 1))) ^ p + C (u / (ζ - 1) ^ p : K) := by
-  ext i
-  have := congr_arg (fun P : (𝓞 K)[X] ↦ (↑(coeff P i) : K)) (poly_spec hp hζ u hcong)
-  change _ = algebraMap (𝓞 K) K _ at this
-  rw [← coeff_map] at this
-  replace this : (ζ - 1) ^ p * ↑((poly hp hζ u hcong).coeff i) =
-    (((C ζ - 1) * X - 1) ^ p).coeff i +
-    (C ((algebraMap (𝓞 K) K) ↑u)).coeff i := by
-    simp only [map_pow, map_sub, map_one, Polynomial.map_add, Polynomial.map_pow,
-      Polynomial.map_sub, Polynomial.map_mul, map_C, Polynomial.map_one, map_X, coeff_add] at this
-    convert this
-    · simp only [← Polynomial.coeff_map]
-      simp only [coeff_map, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_sub, map_C,
-        Polynomial.map_one]
-      rw [← Polynomial.coeff_map, mul_comm, ← Polynomial.coeff_mul_C, mul_comm]
-      simp
-    · rfl
-  apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
-  simp only [coeff_map, one_div, coeff_add, this, mul_add]
-  simp_rw [← smul_eq_mul (α := K), ← coeff_smul]
-  rw [smul_C, smul_eq_mul, ← _root_.smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub,
-    smul_C, smul_eq_mul, mul_inv_cancel₀, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub,
-    map_one]
-  · exact hζ.sub_one_ne_zero hpri.out.one_lt
-  · exact pow_ne_zero _ (hζ.sub_one_ne_zero hpri.out.one_lt)
+  have hζ0 := hζ.sub_one_ne_zero hpri.out.one_lt
+  apply mul_left_cancel₀ (C_ne_zero.mpr (pow_ne_zero p hζ0))
+  have hspec := congr_arg (Polynomial.map (algebraMap (𝓞 K) K))
+    (poly_spec hp hζ u hcong)
+  simp only [Polynomial.map_mul, map_C, map_pow, map_sub, map_one, Polynomial.map_add,
+    Polynomial.map_pow, Polynomial.map_sub, Polynomial.map_one, map_X] at hspec
+  change (C ζ - 1) ^ p * _ = ((C ζ - 1) * X - 1) ^ p + C (u : K) at hspec
+  rw [map_pow, map_sub, map_one, hspec, mul_add, ← mul_pow]
+  congr 1
+  · rw [mul_sub, ← C_1, ← C_sub, ← C_mul, mul_one_div_cancel hζ0]
+  · rw [← C_1, ← C_sub, ← C_pow, ← C_mul, mul_div_cancel₀ _ (pow_ne_zero p hζ0)]
 
 include hu in
 lemma irreducible_map_poly :
@@ -202,11 +189,9 @@ lemma minpoly_polyRoot'' {L : Type*} [Field L] [Algebra K L] (α : L)
     (e : α ^ p = algebraMap K L u) (i) :
     minpoly K (polyRoot hp hζ u hcong α e i : L) =
       (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) := by
-  have : IsIntegral K (polyRoot hp hζ u hcong α e i : L) :=
-    IsIntegral.tower_top (polyRoot hp hζ u hcong α e i).prop
-  apply eq_of_monic_of_associated (minpoly.monic this) ((monic_poly hp hζ u hcong).map _)
-  refine Irreducible.associated_of_dvd (minpoly.irreducible this)
-    (irreducible_map_poly hp hζ u hcong hu) (minpoly.dvd _ _ ?_)
+  symm
+  refine minpoly.eq_of_irreducible_of_monic (irreducible_map_poly hp hζ u hcong hu)
+    ?_ ((monic_poly hp hζ u hcong).map _)
   rw [aeval_def, eval₂_map, ← IsScalarTower.algebraMap_eq, ← aeval_def]
   exact aeval_poly hp hζ u hcong α e i
 

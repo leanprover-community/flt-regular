@@ -18,7 +18,6 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
     (h : Submodule.IsPrincipal ((I / J : FractionalIdeal R⁰ K) : Submodule R K)) : ∃ a b : R,
     ¬(x ∣ a) ∧ ¬(x ∣ b) ∧
       spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
-  by_contra hcontra
   have hI' : (I : FractionalIdeal R⁰ K) ≠ 0 := by
     rw [← coeIdeal_bot, Ne, coeIdeal_inj]
     rintro rfl
@@ -27,69 +26,50 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
     rw [← coeIdeal_bot, Ne, coeIdeal_inj]
     rintro rfl
     exact hJ (dvd_zero _)
-  have hpow : ∀ n : ℕ, 1 ≤ n → ¬∃ a b : R, ¬(x ^ n ∣ a) ∧ ¬(x ^ n ∣ b) ∧
-    spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
-    intro n hn
-    induction n, hn using Nat.le_induction with
-    | base =>
-        simp_rw [pow_one]
-        exact hcontra
-    | succ n' hn' IH =>
-        rintro ⟨a, b, ha, hb, e⟩
-        have e₀ := e
-        rw [div_eq_mul_inv, ← spanSingleton_mul_spanSingleton,
-          ← one_div_spanSingleton, ← mul_div_assoc, mul_one, div_eq_iff,
-          ← mul_div_right_comm, eq_div_iff hJ', ← coeIdeal_span_singleton,
-          ← coeIdeal_span_singleton, ← coeIdeal_mul, ← coeIdeal_mul, coeIdeal_inj] at e
-        on_goal 2 =>
-          rw [Ne, spanSingleton_eq_zero_iff, ← (algebraMap R K).map_zero,
-            (IsFractionRing.injective R K).eq_iff]
-          rintro rfl
-          exact hb (dvd_zero _)
-        by_cases h : x ^ n' ∣ a
-        · have ha' : x ∣ a := (dvd_pow_self _ (Nat.one_le_iff_ne_zero.mp hn')).trans h
-          have hb' : x ∣ b := by
-            have : gcd (Ideal.span <| singleton x) I = 1 := by
-              rwa [Irreducible.gcd_eq_one_iff]
-              · rwa [irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
-                · exact hx.ne_zero
-                · rw [Ne, Ideal.span_singleton_eq_bot]
-                  exact hx.ne_zero
-            rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton] at ha' ⊢
-            replace h := ha'.trans (dvd_mul_right _ J)
-            rwa [e, ← dvd_gcd_mul_iff_dvd_mul, this, one_mul] at h
-          obtain ⟨a', rfl⟩ := ha'
-          obtain ⟨b', rfl⟩ := hb'
-          rw [pow_succ', mul_dvd_mul_iff_left hx.ne_zero] at ha hb
-          rw [_root_.map_mul, _root_.map_mul, mul_div_mul_left] at e₀
-          · exact IH ⟨a', b', ha, hb, e₀⟩
-          · rw [Ne, ← (algebraMap R K).map_zero, (IsFractionRing.injective R K).eq_iff]
-            exact hx.ne_zero
-        · refine IH ⟨a, b, h, ?_, e₀⟩
-          intro hb
-          apply h
-          rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton] at hb ⊢
-          replace hb := hb.trans (dvd_mul_left _ I)
-          have : gcd (Ideal.span <| singleton <| x ^ n') J = 1 := by
-            rwa [← Ideal.isCoprime_iff_gcd, ← Ideal.span_singleton_pow,
-              IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd, Irreducible.gcd_eq_one_iff]
-            · rwa [irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
-              · exact hx.ne_zero
-              · rw [Ne, Ideal.span_singleton_eq_bot]
-                exact hx.ne_zero
-            · rwa [Nat.pos_iff_ne_zero, ← Nat.one_le_iff_ne_zero]
-          rwa [← e, mul_comm, ← dvd_gcd_mul_iff_dvd_mul, this, one_mul] at hb
   rw [isPrincipal_iff] at h
-  obtain ⟨a, ha⟩ := h
-  obtain ⟨s, t, rfl⟩ := IsLocalization.exists_mk'_eq R⁰ a
-  by_cases h : s = 0
-  · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
-    exact hI' ha
-  obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hx.not_isUnit h
-  obtain ⟨m, hm⟩ :=
-    FiniteMultiplicity.of_not_isUnit hx.not_isUnit (nonZeroDivisors.ne_zero t.prop)
-  rw [IsFractionRing.mk'_eq_div] at ha
-  refine hpow (n + m + 1) (Nat.le_add_left 1 (n + m))
-    ⟨s, t, (fun hs ↦ ?_), (fun ht ↦ ?_), ha.symm⟩
-  · exact hn (dvd_trans (pow_dvd_pow _ (by lia)) hs)
-  · exact hm (dvd_trans (pow_dvd_pow _ (Nat.le_add_left _ _)) ht)
+  obtain ⟨r, hr⟩ := h
+  obtain ⟨s, t, rfl⟩ := IsLocalization.exists_mk'_eq R⁰ r
+  rw [IsFractionRing.mk'_eq_div] at hr
+  have hs : s ≠ 0 := by
+    rintro rfl
+    simp only [map_zero, zero_div, spanSingleton_zero, div_eq_zero_iff, hJ', or_false] at hr
+    exact hI' hr
+  have ht : algebraMap R K (t : R) ≠ 0 := by
+    simpa only [map_zero] using
+      (IsFractionRing.injective R K).ne (nonZeroDivisors.ne_zero t.prop)
+  have he : Ideal.span {s} * J = I * Ideal.span {(t : R)} := by
+    apply coeIdeal_injective (K := K)
+    simp only [coeIdeal_mul, coeIdeal_span_singleton]
+    apply (div_eq_div_iff (spanSingleton_eq_zero_iff.not.mpr ht) hJ').mp
+    simpa only [spanSingleton_div_spanSingleton] using hr.symm
+  -- Remove the maximal power of `x` from the numerator.
+  obtain ⟨n, a, ha, hs⟩ := WfDvdMonoid.max_power_factor hs hx.irreducible
+  have hcoprime : IsCoprime (Ideal.span {x}) I := by
+    rwa [Ideal.isCoprime_iff_gcd,
+      (Ideal.prime_span_singleton_iff.mpr hx).irreducible.gcd_eq_one_iff]
+  have htn : x ^ n ∣ (t : R) := by
+    rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton, ← Ideal.span_singleton_pow]
+    apply (hcoprime.pow_left (m := n)).dvd_of_dvd_mul_left
+    rw [← he]
+    exact dvd_mul_of_dvd_left (by
+      rw [Ideal.span_singleton_pow, Ideal.dvd_span_singleton, Ideal.mem_span_singleton]
+      exact ⟨a, hs⟩) J
+  obtain ⟨b, hb⟩ := htn
+  have hab : spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
+    rw [hs, hb, map_mul, map_mul, mul_div_mul_left] at hr
+    · exact hr.symm
+    · simpa only [map_zero] using (IsFractionRing.injective R K).ne (pow_ne_zero n hx.ne_zero)
+  have he' : Ideal.span {a} * J = I * Ideal.span {b} := by
+    rw [hs, hb, ← Ideal.span_singleton_mul_span_singleton,
+      ← Ideal.span_singleton_mul_span_singleton, mul_assoc, mul_left_comm I] at he
+    exact mul_left_cancel₀ (by
+      simpa only [ne_eq, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
+        using pow_ne_zero n hx.ne_zero) he
+  refine ⟨a, b, ha, ?_, hab⟩
+  intro hxb
+  apply ha
+  rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton]
+  have hd : Ideal.span {x} ∣ Ideal.span {a} * J := by
+    rw [he']
+    exact dvd_mul_of_dvd_right (by rwa [Ideal.dvd_span_singleton, Ideal.mem_span_singleton]) I
+  exact ((Ideal.prime_span_singleton_iff.mpr hx).dvd_or_dvd hd).resolve_right hJ
