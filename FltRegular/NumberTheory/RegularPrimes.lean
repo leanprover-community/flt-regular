@@ -3,6 +3,7 @@ module
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
+public import FltRegular.NumberTheory.Cyclotomic.Rat
 
 /-!
 # Regular primes
@@ -32,6 +33,13 @@ def IsRegularNumber : Prop :=
 def IsRegularPrime : Prop :=
   IsRegularNumber p
 
+/-- If the ring of integers of the `p`-th cyclotomic field is a principal ideal ring, then `p` is
+a regular prime. -/
+theorem isRegularPrime_of_isPrincipalIdealRing [IsPrincipalIdealRing (𝓞 (CyclotomicField p ℚ))] :
+    IsRegularPrime p := by
+  rw [IsRegularPrime, IsRegularNumber, card_classGroup_eq_one_iff.2 ‹_›]
+  exact coprime_one_right _
+
 section TwoRegular
 
 variable (K : Type*) [Field K]
@@ -55,24 +63,10 @@ instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
     (cyclotomicFieldTwoEquiv ℚ L).toRingEquiv).trans Rat.ringOfIntegersEquiv
   IsPrincipalIdealRing.of_surjective F.symm.toRingHom F.symm.surjective
 
-instance : IsCyclotomicExtension {2} ℚ (CyclotomicField 2 ℚ) :=
-  CyclotomicField.isCyclotomicExtension 2 ℚ
+theorem isRegularPrime_two : IsRegularPrime 2 := isRegularPrime_of_isPrincipalIdealRing 2
 
-instance : IsPrincipalIdealRing (𝓞 (CyclotomicField 2 ℚ)) :=
-  IsPrincipalIdealRing_of_IsCyclotomicExtension_two _
-
-theorem isRegularPrime_two : IsRegularPrime 2 := by
-  rw [IsRegularPrime, IsRegularNumber]
-  convert coprime_one_right _
-  exact (card_classGroup_eq_one_iff (R := 𝓞 (CyclotomicField 2 ℚ))).2 inferInstance
-
-set_option backward.isDefEq.respectTransparency false in
-theorem isRegularPrime_three :
-    haveI : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
-    IsRegularPrime 3 := by
-  rw [IsRegularPrime, IsRegularNumber]
-  convert coprime_one_right _
-  exact classNumber_eq_one_iff.2
-    (IsCyclotomicExtension.Rat.three_pid (CyclotomicField _ ℚ))
+theorem isRegularPrime_three : IsRegularPrime 3 :=
+  have := IsCyclotomicExtension.Rat.three_pid (CyclotomicField 3 ℚ)
+  isRegularPrime_of_isPrincipalIdealRing 3
 
 end TwoRegular

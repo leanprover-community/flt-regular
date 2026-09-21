@@ -4,7 +4,6 @@ public import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 import Mathlib.NumberTheory.RamificationInertia.Galois
 import Mathlib.RingTheory.DedekindDomain.Different
 import Mathlib.RingTheory.DedekindDomain.Factorization
-public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 public import Mathlib.RingTheory.Unramified.Locus
 
 /-!
@@ -50,7 +49,7 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
   by_cases hIbot : I = ⊥
   · rw [hIbot, Ideal.comap_bot_of_injective _ hRS, Ideal.map_bot]
   have : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
-  have hIbot' : I.comap (algebraMap R S) ≠ ⊥ := mt Ideal.eq_bot_of_comap_eq_bot hIbot
+  have hIbot' : I.comap (algebraMap R S) ≠ ⊥ := mt Ideal.eq_bot_of_under_eq_bot hIbot
   have : ∀ p, (p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) →
       ∃ P ≥ I, P ∈ primesOver p S := by
     intro p ⟨hp₁, hp₂⟩

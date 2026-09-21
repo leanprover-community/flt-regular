@@ -16,14 +16,10 @@ This file proves that `5` is regular and applies the regular-prime theorem to ex
 
 open Nat NumberField IsCyclotomicExtension
 
-set_option backward.isDefEq.respectTransparency false in
 /-- Five is a regular prime. -/
-theorem isRegularPrime_five :
-    haveI : Fact (Nat.Prime 5) := ⟨Nat.prime_five⟩
-    IsRegularPrime 5 := by
-  rw [IsRegularPrime, IsRegularNumber]
-  convert coprime_one_right _
-  exact classNumber_eq_one_iff.2 (Rat.five_pid (CyclotomicField _ ℚ))
+theorem isRegularPrime_five : IsRegularPrime 5 :=
+  have := Rat.five_pid (CyclotomicField 5 ℚ)
+  isRegularPrime_of_isPrincipalIdealRing 5
 
 /-- Fermat's Last Theorem for exponent five. -/
 theorem fermatLastTheoremFive : FermatLastTheoremFor 5 :=

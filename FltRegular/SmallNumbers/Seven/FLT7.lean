@@ -17,14 +17,10 @@ This file proves that `7` is regular and applies the regular-prime theorem to ex
 
 open Nat NumberField IsCyclotomicExtension
 
-set_option backward.isDefEq.respectTransparency false in
 /-- Seven is a regular prime. -/
-theorem isRegularPrime_seven :
-    haveI : Fact (Nat.Prime 7) := ⟨Nat.prime_seven⟩
-    IsRegularPrime 7 := by
-  rw [IsRegularPrime, IsRegularNumber]
-  convert coprime_one_right _
-  exact classNumber_eq_one_iff.2 (Rat.seven_pid (CyclotomicField _ ℚ))
+theorem isRegularPrime_seven : IsRegularPrime 7 :=
+  have := Rat.seven_pid (CyclotomicField 7 ℚ)
+  isRegularPrime_of_isPrincipalIdealRing 7
 
 /-- Fermat's Last Theorem for exponent seven. -/
 theorem fermatLastTheoremSeven : FermatLastTheoremFor 7 :=

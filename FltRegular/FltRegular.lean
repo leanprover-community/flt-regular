@@ -5,7 +5,6 @@ public import Mathlib.NumberTheory.FLT.Basic
 public import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.CaseI.Statement
 import FltRegular.CaseII.Statement
-import FltRegular.MayAssume.Lemmas
 
 /-!
 # Fermat's Last Theorem for regular primes

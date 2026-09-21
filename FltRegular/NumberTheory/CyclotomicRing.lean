@@ -2,7 +2,7 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
+public import FltRegular.NumberTheory.Cyclotomic.Rat
 
 /-!
 # Cyclotomic integers
@@ -26,7 +26,6 @@ instance : CommRing (CyclotomicIntegers p) := by
   delta CyclotomicIntegers
   infer_instance
 
-set_option backward.isDefEq.respectTransparency false in
 open Polynomial in
 lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
     (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot x.1 p) :
@@ -39,7 +38,6 @@ lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
 
 namespace CyclotomicIntegers
 
-set_option backward.isDefEq.respectTransparency false in
 /-- The canonical equivalence between `CyclotomicIntegers p` and the ring of integers of the
 `p`-th cyclotomic field. -/
 @[simps! -isSimp]
@@ -59,12 +57,10 @@ instance : IsDomain (CyclotomicIntegers p) :=
 /-- The tautological primitive root of unity in `CyclotomicIntegers p`. -/
 def zeta : CyclotomicIntegers p := AdjoinRoot.root _
 
-set_option backward.isDefEq.respectTransparency false in
 lemma equiv_zeta : equiv p (zeta p) = (IsCyclotomicExtension.zeta_spec
     p ℚ (CyclotomicField p ℚ)).toInteger := by
   simp [equiv_apply, zeta]
 
-set_option backward.isDefEq.respectTransparency false in
 lemma prime_one_sub_zeta :
     Prime (1 - zeta p) := by
   rw [← prime_units_mul (u := -1), Units.val_neg, Units.val_one, neg_mul, one_mul, neg_sub]
@@ -79,7 +75,6 @@ lemma one_sub_zeta_mem_nonZeroDivisors :
 lemma not_isUnit_one_sub_zeta :
     ¬ IsUnit (1 - zeta p) := (prime_one_sub_zeta p).irreducible.1
 
-set_option backward.isDefEq.respectTransparency false in
 lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
   rw [← map_dvd_iff (equiv p), map_sub, map_one, equiv_zeta, map_intCast,
     ← neg_dvd, neg_sub]
@@ -97,8 +92,6 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) :
     ∃ m : ℤ, m ≠ 0 ∧ n ∣ m := by
   refine ⟨Algebra.norm ℤ ((equiv p) n), by simpa, ?_⟩
   rw [← map_dvd_iff (equiv p), map_intCast]
-  have : IsCyclotomicExtension {p} ℚ (CyclotomicField p ℚ) :=
-    CyclotomicField.instIsCyclotomicExtensionSingletonNatSetOfCharZero p ℚ
   have : IsGalois ℚ (CyclotomicField p ℚ) := IsCyclotomicExtension.isGalois {p} _ _
   convert RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
   ext1

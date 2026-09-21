@@ -4,7 +4,6 @@ public import Mathlib.NumberTheory.NumberField.ClassNumber
 import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
 
 import FltRegular.NumberTheory.Hilbert92
-import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.NumberTheory.Unramified
 
 @[expose] public section
@@ -21,8 +20,6 @@ variable {L : Type} [Field L] [Algebra K L] [FiniteDimensional K L]
 variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [Algebra A L] [Algebra A K]
     [Algebra B L] [IsScalarTower A B L] [IsScalarTower A K L] [IsFractionRing A K]
     [IsIntegralClosure B A L]
-
-instance : Algebra.IsAlgebraic K L := Algebra.IsAlgebraic.of_finite K L
 
 include hσ in
 lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ)

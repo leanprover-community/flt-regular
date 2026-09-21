@@ -6,7 +6,6 @@ public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
-import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.Hilbert94
 import FltRegular.NumberTheory.KummersLemma.Field
 

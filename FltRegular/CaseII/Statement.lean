@@ -2,8 +2,6 @@ module
 
 public import FltRegular.NumberTheory.RegularPrimes
 import FltRegular.CaseII.InductionStep
-import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
-import Mathlib.Order.CompletePartialOrder
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 
@@ -50,7 +48,6 @@ lemma not_exists_solution' : ¬∃ (x y z : 𝓞 K), ¬(hζ.toInteger : 𝓞 K) 
   refine not_exists_solution hp hreg hζ hm ⟨x, y, z, 1, hy, hz'', ?_⟩
   rwa [Units.val_one, one_mul]
 
-set_option backward.isDefEq.respectTransparency false in
 lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p)
     (hodd : p ≠ 2) :
     ¬∃ (x y z : ℤ), ¬↑p ∣ y ∧ ↑p ∣ z ∧ z ≠ 0 ∧ x ^ p + y ^ p = z ^ p := by

@@ -7,7 +7,6 @@ public import Mathlib.RingTheory.ClassGroup.Basic
 import FltRegular.CaseII.AuxLemmas
 import FltRegular.NumberTheory.Cyclotomic.MoreLemmas
 import FltRegular.NumberTheory.Cyclotomic.UnitLemmas
-import FltRegular.NumberTheory.Hilbert92
 import FltRegular.NumberTheory.KummersLemma.KummersLemma
 
 /-!
