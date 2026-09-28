@@ -16,7 +16,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@36e9a5af4eddb91fc11aec4c6f6f79b3cc0cb523 # main
         with:
           # this might remove tools that are actually needed,
           # if set to "true" but frees about 6 GB
@@ -32,7 +32,7 @@ jobs:
           swap-storage: true
 
       - name: Checkout project
-        uses: actions/checkout@v2
+        uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
         with:
           fetch-depth: 0
 
