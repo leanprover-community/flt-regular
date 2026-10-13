@@ -23,4 +23,4 @@ theorem isRegularPrime_five : IsRegularPrime 5 :=
 
 /-- Fermat's Last Theorem for exponent five. -/
 theorem fermatLastTheoremFive : FermatLastTheoremFor 5 :=
-  @flt_regular 5 ⟨Nat.prime_five⟩ isRegularPrime_five (by omega)
+  @flt_regular 5 ⟨Nat.prime_five⟩ isRegularPrime_five (by lia)

@@ -64,12 +64,12 @@ theorem a_not_cong_b {p : ℕ} {a b c : ℤ} (hpri : p.Prime) (hp5 : 5 ≤ p)
   swap
   · exact ⟨a, b, c, ⟨h, hgcd, hab, hprod, caseI⟩⟩
   refine ⟨a, -c, -b, ⟨?_, ?_, fun habs ↦ ?_, ?_, ?_⟩⟩
-  · have hodd : Odd p := hpri.odd_of_ne_two (by omega)
+  · have hodd : Odd p := hpri.odd_of_ne_two (by lia)
     rw [hodd.neg_pow, hodd.neg_pow]
     linarith
   · simp only [← hgcd, Finset.gcd_insert, id_eq, ← Int.coe_gcd, Int.neg_gcd,
       ← LawfulSingleton.insert_empty_eq, Finset.gcd_empty, Int.gcd_left_comm]
-  · have hp3 : p ≠ 3 := by omega
+  · have hp3 : p ≠ 3 := by lia
     rw [← ZMod.intCast_eq_intCast_iff] at habs hab
     rw [hab] at habs
     rw [ZMod.intCast_eq_intCast_iff] at habs hab

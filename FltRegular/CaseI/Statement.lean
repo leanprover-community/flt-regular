@@ -109,8 +109,8 @@ private theorem sum_caseICoeff {R : Type*} [Ring R] (hp : 1 < p) (a b : ℤ)
 
 private theorem exists_caseICoeff_eq_zero (hp5 : 5 ≤ p) (a b : ℤ)
     (k₁ k₂ : Fin p) : ∃ j : Fin p, caseICoeff a b k₁ k₂ j = 0 := by
-  let zero : Fin p := ⟨0, by omega⟩
-  let one : Fin p := ⟨1, by omega⟩
+  let zero : Fin p := ⟨0, by lia⟩
+  let one : Fin p := ⟨1, by lia⟩
   let s : Finset (Fin p) := {zero, one, k₁, k₂}
   have hs : s.card ≤ 4 := card_le_four
   have hslt : s.card < Fintype.card (Fin p) := by
@@ -245,20 +245,18 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
       have hp2z : (p : ℤ) ∣ 2 := by
         rw [← Int.dvd_neg]
         simpa [hk₁, hk₂] using hcong.dvd
-      have hp2 : p ∣ 2 := by exact_mod_cast hp2z
-      have := Nat.le_of_dvd (by omega : 0 < 2) hp2
-      omega
+      lia [Nat.le_of_dvd two_pos (by exact_mod_cast hp2z : p ∣ 2)]
     have hb : (p : ℤ) ∣ b := by
-      simpa [caseICoeff, hk₁, hk₂, Ne.symm hk₂] using hall ⟨1, by omega⟩
+      simpa [caseICoeff, hk₁, hk₂, Ne.symm hk₂] using hall ⟨1, by lia⟩
     exact caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_left hb a) c)
   · by_cases hk₂ : (k₂ : ℕ) = 0
     · have habdvd : (p : ℤ) ∣ a - b := by
-        simpa [caseICoeff, hk₁, Ne.symm hk₁, hk₂] using hall ⟨0, by omega⟩
+        simpa [caseICoeff, hk₁, Ne.symm hk₁, hk₂] using hall ⟨0, by lia⟩
       apply hab
       rw [Int.modEq_iff_dvd]
       simpa only [neg_sub] using Int.dvd_neg.mpr habdvd
     · have ha : (p : ℤ) ∣ a := by
-        simpa [caseICoeff, hk₁, hk₂, Ne.symm hk₁, Ne.symm hk₂] using hall ⟨0, by omega⟩
+        simpa [caseICoeff, hk₁, hk₂, Ne.symm hk₁, Ne.symm hk₂] using hall ⟨0, by lia⟩
       exact caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ha b) c)
 
 /-- Case I. -/

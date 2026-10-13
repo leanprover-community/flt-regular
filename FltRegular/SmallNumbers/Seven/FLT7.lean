@@ -24,4 +24,4 @@ theorem isRegularPrime_seven : IsRegularPrime 7 :=
 
 /-- Fermat's Last Theorem for exponent seven. -/
 theorem fermatLastTheoremSeven : FermatLastTheoremFor 7 :=
-  @flt_regular 7 ⟨Nat.prime_seven⟩ isRegularPrime_seven (by omega)
+  @flt_regular 7 ⟨Nat.prime_seven⟩ isRegularPrime_seven (by lia)

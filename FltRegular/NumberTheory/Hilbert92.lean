@@ -5,6 +5,7 @@ public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 public import Mathlib.RingTheory.Henselian
 public import Mathlib.GroupTheory.FiniteAbelian.Basic
 public import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
+import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
 
 @[expose] public section
 
@@ -295,6 +296,11 @@ instance : CommGroup (relativeUnitsWithGenerator p hp hKL σ hσ) := by
 
 end
 
+/- Mathlib only provides `IsAddTorsionFree` for this quotient. For commutative groups this is
+equivalent to `HasUniqueDiv` (needed for `Module.IsTorsionFree ℤ`), but there is no instance. -/
+local instance {M : Type*} [AddCommGroup M] : HasUniqueDiv (M ⧸ AddCommGroup.torsion M) :=
+  ⟨fun _ hn _ _ ↦ eq_of_nsmul_eq_nsmul_of_addCommute hn (.all _ _)⟩
+
 local notation "G" =>
   Additive (relativeUnitsWithGenerator p hp hKL σ hσ) ⧸
     AddCommGroup.torsion (Additive (relativeUnitsWithGenerator p hp hKL σ hσ))
@@ -572,8 +578,7 @@ lemma NumberField.Units.rank_of_isUnramified :
   infer_instance
 
 lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
-  rw [← Submodule.torsion_int]
-  refine (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion le_rfl)).trans ?_
+  refine finrank_quotient_torsion_eq.trans ?_
   change finrank ℤ (Additive (𝓞 K)ˣ ⧸ AddSubgroup.toIntSubmodule (Subgroup.toAddSubgroup
     (MonoidHom.range <| Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))))) = _
   rw [Submodule.finrank_quotient]

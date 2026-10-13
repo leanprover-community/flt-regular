@@ -70,8 +70,7 @@ theorem pid1 (h : ∀ p ∈ Finset.Icc 1 ⌊(M K)⌋₊, (hp : p.Prime) → p �
       simp only [cyclotomic_one, pow_one, tsub_self, pow_zero]
       rw [← pow_succ' (X - 1)]
       congr
-      have := hp.two_le
-      lia
+      lia [hp.two_le]
     refine ⟨Q.map (Int.castRingHom (ZMod p)), hQ, ?_⟩
     right
     rw [primesOverSpanEquivMonicFactorsMod_symm_apply_eq_span (ne_dvd_exponent p) hQ]

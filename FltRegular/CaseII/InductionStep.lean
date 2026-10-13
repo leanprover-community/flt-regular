@@ -2,6 +2,7 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 public import Mathlib.RingTheory.ClassGroup.Basic
 
 import FltRegular.CaseII.AuxLemmas
@@ -404,7 +405,7 @@ lemma isPrincipal_a_div_a_zero : Submodule.IsPrincipal
     FractionalIdeal.isPrincipal_iff] at this
   obtain ⟨a, ha⟩ := this
   rw [div_eq_iff, Ideal.span_singleton_pow, FractionalIdeal.coeIdeal_span_singleton,
-    FractionalIdeal.spanSingleton_mul_spanSingleton] at ha
+    ← map_mul] at ha
   · rw [FractionalIdeal.isPrincipal_iff]
     exact ⟨_, ha⟩
   · rw [← FractionalIdeal.coeIdeal_bot,
@@ -529,7 +530,7 @@ lemma exists_solution :
     rw [← Subtype.coe_injective.ne_iff]
     change (η₀ * hζ.toInteger * hζ.toInteger : 𝓞 K) ≠ η₀
     rw [Ne, mul_assoc, ← pow_two, mul_right_eq_self₀, not_or]
-    exact ⟨hζ.toInteger_isPrimitiveRoot.pow_ne_one_of_pos_of_lt (by omega)
+    exact ⟨hζ.toInteger_isPrimitiveRoot.pow_ne_one_of_pos_of_lt (by lia)
       (hpri.out.two_le.lt_or_eq.resolve_right hp.symm),
       ne_zero_of_mem_nthRootsFinset one_ne_zero (η₀ : _).prop⟩
   have hη : η₂ ≠ η₁ := by

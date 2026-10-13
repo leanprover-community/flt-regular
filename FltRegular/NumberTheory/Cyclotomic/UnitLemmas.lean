@@ -30,11 +30,8 @@ set_option quotPrecheck false
 local notation "I" => (Ideal.span ({(η - 1 : 𝓞 K)} : Set (𝓞 K)) : Ideal (𝓞 K))
 
 theorem eq_one_mod_one_sub {A : Type*} [CommRing A] {t : A} :
-    algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 := by
-  rw [← map_one <| algebraMap A <| A ⧸ Ideal.span ({t - 1} : Set A),
-    ← sub_eq_zero, ← map_sub,
-    Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem]
-  exact Ideal.subset_span (Set.mem_singleton _)
+    algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 :=
+  (Ideal.Quotient.mk_eq_one_iff_sub_mem _).mpr (Ideal.mem_span_singleton_self _)
 
 variable [NumberField K] [IsCyclotomicExtension {p} ℚ K]
 
@@ -73,7 +70,7 @@ theorem unit_inv_conj_not_neg_zeta_runity (u : (𝓞 K)ˣ) (n : ℕ) [Fact (p.Pr
     rw [← neg_eq_iff_eq_neg, ← map_neg, ← Units.val_pow_eq_pow_val, ← Units.val_neg, ← H]
     apply unit_inv_conj_not_neg_zeta_runity_aux hζ u hp
   let _ := Fact.mk hp
-  apply (IsCyclotomicExtension.Rat.two_not_mem_span_zeta_sub_one' _ hζ hp : (2 : 𝓞 K) ∉ I)
+  apply (IsCyclotomicExtension.Rat.two_notMem_span_zeta_sub_one' _ hζ hp : (2 : 𝓞 K) ∉ I)
   rw [← Ideal.Quotient.eq_zero_iff_mem, map_ofNat, ← one_add_one_eq_two,
     ← neg_eq_iff_add_eq_zero]
   exact hμ'.symm.trans hμ

@@ -32,7 +32,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
   rw [IsFractionRing.mk'_eq_div] at hr
   have hs : s ≠ 0 := by
     rintro rfl
-    simp only [map_zero, zero_div, spanSingleton_zero, div_eq_zero_iff, hJ', or_false] at hr
+    simp only [map_zero, zero_div, div_eq_zero_iff, hJ', or_false] at hr
     exact hI' hr
   have ht : algebraMap R K (t : R) ≠ 0 := by
     simpa only [map_zero] using
