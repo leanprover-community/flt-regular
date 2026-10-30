@@ -41,8 +41,7 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
     (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
     (I.comap (algebraMap R S)).map (algebraMap R S) = I := by
   classical
-  have : IsDomain S :=
-    (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
+  have : IsDomain S := Function.Injective.isDomain _ (IsIntegralClosure.algebraMap_injective S R L)
   have := IsIntegralClosure.isDedekindDomain R K L S
   have hRS := algebraMap_injective_of_isIntegralClosure K L (R := R) (S := S)
   have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
@@ -114,8 +113,7 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
     (h : Polynomial.Separable ((minpoly R x).map (Ideal.Quotient.mk (P.under R)))) :
     Algebra.IsUnramifiedAt R P := by
   classical
-  have : IsDomain S :=
-    (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
+  have : IsDomain S := Function.Injective.isDomain _ (IsIntegralClosure.algebraMap_injective S R L)
   have hRS := algebraMap_injective_of_isIntegralClosure K L (R := R) (S := S)
   have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
   have := IsIntegralClosure.isNoetherian R K L S

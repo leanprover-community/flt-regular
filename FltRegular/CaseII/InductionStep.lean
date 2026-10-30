@@ -156,9 +156,12 @@ lemma div_zeta_sub_one_Injective :
   rwa [← sub_eq_zero, ← map_sub, ← e, Ideal.Quotient.eq_zero_iff_dvd,
     u.isUnit.dvd_mul_right] at e₂
 
-instance : Finite (𝓞 K ⧸ 𝔭) := by
-  rw [← Ideal.absNorm_ne_zero_iff, Ne, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
+omit [NumberField K] [IsCyclotomicExtension {p} ℚ K] in
+lemma p_ne_zero : 𝔭 ≠ 0 := by
+  rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
   exact hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt
+
+instance : Finite (𝓞 K ⧸ 𝔭) := Ring.HasFiniteQuotients.finiteQuotient (p_ne_zero hζ)
 
 include hy in
 lemma div_zeta_sub_one_Bijective :
@@ -203,11 +206,6 @@ lemma div_zeta_sub_one_dvd_gcd_spec :
 lemma m_mul_c_mul_p : 𝔪 * 𝔠 η * 𝔭 = 𝔦 η := by
   rw [div_zeta_sub_one_dvd_gcd_spec, Ideal.span_singleton_mul_span_singleton,
     div_zeta_sub_one_mul_zeta_sub_one]
-
-omit [NumberField K] [IsCyclotomicExtension {p} ℚ K] in
-lemma p_ne_zero : 𝔭 ≠ 0 := by
-  rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
-  exact hζ.toInteger_isPrimitiveRoot.sub_one_ne_zero hpri.out.one_lt
 
 lemma coprime_c (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) (hη : η₁ ≠ η₂) :
     IsCoprime (𝔠 η₁) (𝔠 η₂) := by

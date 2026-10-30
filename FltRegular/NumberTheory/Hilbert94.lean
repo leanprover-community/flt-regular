@@ -56,8 +56,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
   have := isCyclic_iff_exists_zpowers_eq_top.2 ⟨σ, (Subgroup.eq_top_iff' _).2 hσ⟩
   obtain ⟨β, hβ_zero, hβ⟩ := groupCohomology.exists_mul_galRestrict_of_norm_eq_one (A := A)
     (B := B) hσ hη
-  have : IsDomain B := (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain
-    (integralClosure A L)
+  have : IsDomain B := Function.Injective.isDomain _ (IsIntegralClosure.algebraMap_injective B A L)
   have hβ' := comap_map_eq_of_unramified K L _
     (comap_span_galRestrict_eq_of_cyclic σ hσ (A := A) (B := B) β η hβ)
   refine ⟨(Ideal.span {β}).comap (algebraMap A B), ?_, ?_⟩
@@ -82,8 +81,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
 
 theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I : Ideal A}
     (hI : (I.map (algebraMap A B)).IsPrincipal) : (I ^ finrank K L).IsPrincipal := by
-  have : IsDomain B := (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain
-    (integralClosure A L)
+  have : IsDomain B := Function.Injective.isDomain _ (IsIntegralClosure.algebraMap_injective B A L)
   have := IsIntegralClosure.isNoetherian A K L B
   have := IsIntegralClosure.isDedekindDomain A K L B
   have := IsIntegralClosure.isFractionRing_of_finite_extension A K L B

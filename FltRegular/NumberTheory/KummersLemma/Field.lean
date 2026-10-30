@@ -109,7 +109,7 @@ lemma irreducible_map_poly :
   simp only [one_div, map_add, algEquivAevalXAddC_apply, map_pow, map_sub, aeval_X, aeval_C,
     algebraMap_eq, add_sub_cancel_right]
   rw [← sub_neg_eq_add, ← (C : K →+* _).map_neg]
-  apply X_pow_sub_C_irreducible_of_prime hpri.out
+  apply irreducible_X_pow_sub_C_of_prime hpri.out
   intro b hb
   apply hu (- b * (ζ - 1))
   rw [mul_pow, (hpri.out.odd_of_ne_two hp).neg_pow, hb, neg_neg,
@@ -254,7 +254,7 @@ attribute [local instance] Ideal.Quotient.field in
 lemma separable_poly (I : Ideal (𝓞 K)) [I.IsMaximal] :
     Separable ((poly hp hζ u hcong).map (Ideal.Quotient.mk I)) := by
   let L := K[p√(u : K)]
-  have := Fact.mk (X_pow_sub_C_irreducible_of_prime hpri.out hu)
+  have := Fact.mk (irreducible_X_pow_sub_C_of_prime hpri.out hu)
   let J := I.map (algebraMap (𝓞 K) (𝓞 L))
   let i : 𝓞 K ⧸ I →+* 𝓞 L ⧸ J := Ideal.quotientMap _
     (algebraMap (𝓞 K) (𝓞 L)) Ideal.le_comap_map
@@ -302,7 +302,7 @@ lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ p - C 
   have hα : Algebra.adjoin K {(α : L)} = ⊤ := by
     rw [eq_top_iff, ← Algebra.adjoin_root_eq_top_of_isSplittingField
       ⟨ζ, (mem_primitiveRoots (NeZero.pos p)).mpr hζ⟩
-      (X_pow_sub_C_irreducible_of_prime hpri.out hu) (rootOfSplitsXPowSubC_pow (u : K) L),
+      (irreducible_X_pow_sub_C_of_prime hpri.out hu) (rootOfSplitsXPowSubC_pow (u : K) L),
       Algebra.adjoin_le_iff, Set.singleton_subset_iff]
     exact mem_adjoin_polyRoot hp hζ u hcong _ _ 0
   refine Algebra.unramified_iff_forall.mpr ?_
