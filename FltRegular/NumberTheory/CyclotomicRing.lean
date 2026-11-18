@@ -22,9 +22,7 @@ variable (p : ℕ) [hpri : Fact p.Prime]
 /-- The cyclotomic integers of conductor `p`, defined as an `AdjoinRoot`. -/
 def CyclotomicIntegers : Type := AdjoinRoot (cyclotomic p ℤ)
 
-instance : CommRing (CyclotomicIntegers p) := by
-  delta CyclotomicIntegers
-  infer_instance
+instance : CommRing (CyclotomicIntegers p) := inferInstanceAs (CommRing (AdjoinRoot _))
 
 lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
     (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot x.1 p) :
@@ -56,19 +54,16 @@ lemma equiv_zeta : equiv p (zeta p) = (IsCyclotomicExtension.zeta_spec
     p ℚ (CyclotomicField p ℚ)).toInteger := by
   simp [equiv_apply, zeta]
 
-lemma prime_one_sub_zeta :
-    Prime (1 - zeta p) := by
-  rw [← prime_units_mul (u := -1), Units.val_neg, Units.val_one, neg_mul, one_mul, neg_sub]
-  apply (MulEquiv.prime_iff (equiv p)).1
-  simp only [(equiv p).map_sub, (equiv p).map_one, equiv_zeta]
-  exact (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).zeta_sub_one_prime'
+lemma prime_one_sub_zeta : Prime (1 - zeta p) := by
+  rw [← prime_units_mul (-1), ← MulEquiv.prime_iff (equiv p)]
+  simpa [equiv_zeta] using
+    (IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)).zeta_sub_one_prime'
 
 lemma one_sub_zeta_mem_nonZeroDivisors :
-    1 - zeta p ∈ nonZeroDivisors (CyclotomicIntegers p) := by
-  simpa only [mem_nonZeroDivisors_iff_ne_zero] using (prime_one_sub_zeta p).1
+    1 - zeta p ∈ nonZeroDivisors (CyclotomicIntegers p) :=
+  mem_nonZeroDivisors_iff_ne_zero.mpr (prime_one_sub_zeta p).ne_zero
 
-lemma not_isUnit_one_sub_zeta :
-    ¬ IsUnit (1 - zeta p) := (prime_one_sub_zeta p).irreducible.1
+lemma not_isUnit_one_sub_zeta : ¬ IsUnit (1 - zeta p) := (prime_one_sub_zeta p).not_isUnit
 
 lemma one_sub_zeta_dvd_int_iff (n : ℤ) : 1 - zeta p ∣ n ↔ ↑p ∣ n := by
   rw [← map_dvd_iff (equiv p), map_sub, map_one, equiv_zeta, map_intCast,
@@ -88,7 +83,7 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) :
   refine ⟨Algebra.norm ℤ ((equiv p) n), by simpa, ?_⟩
   rw [← map_dvd_iff (equiv p), map_intCast]
   have : IsGalois ℚ (CyclotomicField p ℚ) := IsCyclotomicExtension.isGalois {p} _ _
-  convert RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
+  convert NumberField.RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
   ext1
   exact DFunLike.congr_arg (algebraMap ℚ _) (Algebra.coe_norm_int (equiv p n))
 

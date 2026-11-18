@@ -38,14 +38,13 @@ theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
   have := isGalois_of_isSplittingField_X_pow_sub_C hζ' hirr L
   have := IsSplittingField.finiteDimensional L (X ^ p - C (u : K))
   have := isCyclic_of_isSplittingField_X_pow_sub_C hζ' hirr L
-  have : CharZero L := charZero_of_injective_algebraMap (algebraMap K L).injective
-  have : FiniteDimensional ℚ L := Module.Finite.trans K L
-  have : NumberField L := ⟨⟩
+  have : NumberField L :=
+    { to_charZero := charZero_of_injective_algebraMap (algebraMap K L).injective
+      to_finiteDimensional := Module.Finite.trans K L }
   have hKL : Module.finrank K L = p := finrank_of_isSplittingField_X_pow_sub_C hζ' hirr L
   have := KummersLemma.isUnramified hp hζ u hcong hu L
   have := dvd_card_classGroup_of_unramified_isCyclic (hKL.symm ▸ hpri.out) (hKL.symm ▸ hp)
-  rw [hKL, hpri.out.dvd_iff_not_coprime] at this
-  exact this (by convert hreg)
+  exact (hpri.out.dvd_iff_not_coprime.mp (hKL ▸ this)) (by convert hreg)
 
 variable [IsCyclotomicExtension {p} ℚ K]
 
@@ -54,8 +53,7 @@ modulo `p`, then it is a `p`-th power. -/
 theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     (hcong : ∃ n : ℤ, (p : 𝓞 K) ∣ (u - n : 𝓞 K)) :
     ∃ v, u = v ^ p := by
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot ℚ (B := K)
-    (Set.mem_singleton p) (NeZero.ne p)
+  have hζ := IsCyclotomicExtension.zeta_spec p ℚ K
   obtain ⟨x, hx⟩ : (p : 𝓞 K) ∣ (↑(u ^ (p - 1)) : 𝓞 K) - 1 := by
     obtain ⟨n, hn⟩ := hcong
     have hn' : (p : ℤ) ∣ n ^ (p - 1) - 1 := by
@@ -72,29 +70,17 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
     rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq_zero_iff_mem,
       RingHom.map_sub, sub_eq_zero] at hn hn' ⊢
     rw [Units.val_pow_eq_pow_val, RingHom.map_pow, hn, ← RingHom.map_pow, hn']
-  have : (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (↑(u ^ (p - 1)) : 𝓞 K) - 1 := by
-    rw [hx]
-    rw [sub_eq_iff_eq_add, add_comm] at hx
-    have H : Algebra.norm ℤ (1 + p • x) = 1 := norm_add_one_smul_of_isUnit hpri.out
-      hp x (by
-        rw [nsmul_eq_mul, ← hx]
-        exact Units.isUnit _)
+  have hdvd : (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (↑(u ^ (p - 1)) : 𝓞 K) - 1 := by
+    have H := norm_add_one_smul_of_isUnit hpri.out hp x
+      (nsmul_eq_mul p x ▸ add_comm (p * x) 1 ▸ sub_eq_iff_eq_add.mp hx ▸ (u ^ (p - 1)).isUnit)
     have := H ▸ zeta_sub_one_pow_dvd_norm_sub_pow hζ x
-    simpa [ge_iff_le, Int.cast_one, sub_self, nsmul_eq_mul, Nat.cast_mul, PNat.pos,
-      Nat.cast_pred, zero_sub, IsUnit.mul_iff, ne_eq, tsub_eq_zero_iff_le, not_le, dvd_neg,
-      Units.isUnit, and_true, zero_add] using this
-  obtain ⟨v, hv⟩ := exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one hp hreg hζ this
-  have hv' : IsIntegral ℤ v :=
-    IsIntegral.of_pow (NeZero.pos p) (hv ▸ NumberField.RingOfIntegers.isIntegral_coe _)
-  set w : 𝓞 K := ⟨v, hv'⟩
-  have : IsUnit w := by
-    rw [← isUnit_pow_iff (NeZero.pos p).ne.symm]
-    convert (u ^ (p - 1) : (𝓞 K)ˣ).isUnit
-    ext
-    exact hv
-  have hv'' : this.unit ^ p = u ^ (p - 1) := by
-    ext
-    simpa using! hv
-  use u / this.unit
-  rw [div_pow, hv'', div_eq_mul_inv, ← pow_sub _ tsub_le_self,
-    tsub_tsub_cancel_of_le (Nat.Prime.one_lt hpri.out).le, pow_one]
+    simpa [nsmul_eq_mul, ← hx] using this
+  obtain ⟨v, hv⟩ := exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one hp hreg hζ hdvd
+  let w : 𝓞 K := ⟨v, IsIntegral.of_pow (NeZero.pos p)
+    (hv ▸ NumberField.RingOfIntegers.isIntegral_coe _)⟩
+  have hw : IsUnit w := (isUnit_pow_iff (NeZero.ne p)).mp <| by
+    rw [show w ^ p = ↑(u ^ (p - 1) : (𝓞 K)ˣ) by ext; exact hv]
+    exact (u ^ (p - 1)).isUnit
+  have hv'' : hw.unit ^ p = u ^ (p - 1) := Units.ext (Subtype.ext hv)
+  exact ⟨u / hw.unit, by rw [div_pow, hv'', div_eq_mul_inv, ← pow_sub _ tsub_le_self,
+    tsub_tsub_cancel_of_le hpri.out.one_lt.le, pow_one]⟩

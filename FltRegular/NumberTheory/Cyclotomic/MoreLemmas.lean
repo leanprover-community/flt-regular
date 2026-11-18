@@ -36,33 +36,25 @@ lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b
   obtain ⟨b, k, e⟩ := exists_zeta_sub_one_dvd_sub_Int hζ a
   obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hpri.out a (-b)
   obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime _ hζ).symm
-  rw [(Nat.Prime.odd_of_ne_two hpri.out hp).neg_pow, ← sub_eq_add_neg, e,
-    mul_pow, ← sub_eq_add_neg] at hr
+  rw [(hpri.out.odd_of_ne_two hp).neg_pow, ← sub_eq_add_neg, e, mul_pow, ← sub_eq_add_neg] at hr
   use b, ↑u * ((hζ.toInteger - 1 : 𝓞 K) * k ^ p) - r * a * (-b)
   rw [← sub_eq_iff_eq_add.mpr hr, mul_sub, ← mul_assoc, ← mul_assoc, hu, ← pow_succ,
-    Nat.sub_add_cancel (n := p) (m := 1) hpri.out.one_lt.le]
+    Nat.sub_add_cancel hpri.out.one_lt.le]
   ring
 
 lemma quotient_zero_sub_one_comp_aut (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.toInteger : 𝓞 K) - 1})).comp σ =
       Ideal.Quotient.mk _ := by
   let _ := IsCyclotomicExtension.numberField {p} ℚ K
-  let : AddGroup (𝓞 K ⧸ Ideal.span (singleton (hζ.toInteger - 1 : 𝓞 K))) := inferInstance
   apply RingHom.toIntAlgHom_injective
   apply hζ.integralPowerBasis.algHom_ext
-  have hgen : hζ.integralPowerBasis.gen = hζ.toInteger := by
-    simp only [IsPrimitiveRoot.integralPowerBasis_gen]
-  rw [hgen]
-  simp only [RingHom.toIntAlgHom, AlgHom.coe_mk, RingHom.coe_comp, Function.comp_apply]
-  rw [← sub_eq_zero, ← Ideal.Quotient.mk_eq_mk, ← Ideal.Quotient.mk_eq_mk,
-    ← Submodule.Quotient.mk_sub, Ideal.Quotient.mk_eq_mk, Ideal.Quotient.eq_zero_iff_mem,
-    Ideal.mem_span_singleton]
-  apply hζ.toInteger_isPrimitiveRoot.sub_one_dvd_sub hpri.out
-  · rw [mem_nthRootsFinset (NeZero.pos p), ← map_pow]
-    change σ (hζ.toInteger ^ p) = 1
-    rw [hζ.toInteger_isPrimitiveRoot.pow_eq_one, map_one]
-  · rw [mem_nthRootsFinset (NeZero.pos p)]
-    exact hζ.toInteger_isPrimitiveRoot.pow_eq_one
+  rw [hζ.integralPowerBasis_gen]
+  simp only [RingHom.toIntAlgHom, AlgHom.coe_mk, RingHom.coe_comp, Function.comp_apply,
+    Ideal.Quotient.eq, Ideal.mem_span_singleton]
+  exact hζ.toInteger_isPrimitiveRoot.sub_one_dvd_sub hpri.out
+    ((mem_nthRootsFinset (NeZero.pos p) 1).mpr
+      (by rw [← map_pow, hζ.toInteger_isPrimitiveRoot.pow_eq_one, map_one]))
+    (hζ.toInteger_isPrimitiveRoot.mem_nthRootsFinset (NeZero.pos p))
 
 open NumberField.RingOfIntegers in
 lemma zeta_sub_one_dvd_trace_sub_smul (x : 𝓞 K) :
@@ -100,28 +92,17 @@ lemma zeta_sub_one_pow_dvd_norm_sub_pow (x : 𝓞 K) :
     convert this using 1
     ring
   apply dvd_add
-  · apply dvd_mul_of_dvd_left
-    rw [ht, ← mul_assoc, ← pow_succ', tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le]
-    exact dvd_mul_right _ _
+  · rw [ht, ← mul_assoc, ← pow_succ', tsub_add_cancel_of_le hpri.out.one_lt.le]
+    exact (dvd_mul_right _ _).mul_right s
   · rw [ht, mul_pow, ← pow_mul, mul_assoc]
-    apply dvd_mul_of_dvd_left
-    apply pow_dvd_pow
-    zify [(Nat.Prime.one_lt hpri.out).le]
-    linarith only [Nat.Prime.two_le hpri.out]
+    exact (pow_dvd_pow _ (by lia [hpri.out.two_le])).mul_right _
 
 lemma norm_add_one_smul_of_isUnit {K} [Field K] [NumberField K] {p : ℕ} (hpri : p.Prime)
     (hp : p ≠ 2) (x : 𝓞 K)
     (hx : IsUnit (1 + p • x)) : Algebra.norm ℤ (1 + p • x) = 1 := by
-  have hnorm : Algebra.norm ℤ (1 + p • x) = 1 ∨ Algebra.norm ℤ (1 + p • x) = -1 :=
-    Int.isUnit_iff.mp (hx.map (Algebra.norm ℤ))
-  have hne : Algebra.norm ℤ (1 + p • x) ≠ -1 := by
-    intro e
-    apply hp
-    obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
-    have heq : (p : ℤ) * (- Algebra.trace ℤ _ x - r * p) = 2 := by
-      rw [zsmul_eq_mul, Int.cast_natCast, ← nsmul_eq_mul, e, eq_comm, ← sub_eq_zero] at hr
-      rw [eq_comm, ← sub_eq_zero, ← hr]
-      ring
-    exact (Nat.prime_two.eq_one_or_self_of_dvd _
-      (Int.natCast_dvd_natCast.mp ⟨_, heq.symm⟩)).resolve_left hpri.ne_one
-  exact hnorm.resolve_right hne
+  refine (Int.isUnit_iff.mp (hx.map (Algebra.norm ℤ))).resolve_right fun e ↦ hp ?_
+  obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
+  have hp2 : (p : ℤ) ∣ 2 :=
+    ⟨-Algebra.trace ℤ _ x - r * p, by rw [natCast_zsmul] at hr; linear_combination -hr + e⟩
+  exact (Nat.prime_two.eq_one_or_self_of_dvd _ (Int.natCast_dvd_natCast.mp hp2)).resolve_left
+    hpri.ne_one

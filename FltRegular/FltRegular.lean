@@ -19,10 +19,8 @@ open FltRegular
 
 /-- Fermat's last theorem for regular primes. -/
 theorem flt_regular {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) (hodd : p ≠ 2) :
-    FermatLastTheoremFor p := by
-  rw [fermatLastTheoremFor_iff_int]
-  apply fermatLastTheoremWith_of_fermatLastTheoremWith_coprime
-  intro a b c ha hb hc hgcd
-  by_cases hcase : ↑p ∣ a * b * c
-  · exact caseII hreg hodd (mul_ne_zero (mul_ne_zero ha hb) hc) hgcd hcase
-  · exact caseI hreg hcase
+    FermatLastTheoremFor p :=
+  fermatLastTheoremFor_iff_int.2 <| fermatLastTheoremWith_of_fermatLastTheoremWith_coprime
+    fun a b c ha hb hc hgcd ↦ if hcase : ↑p ∣ a * b * c then
+      caseII hreg hodd (by simp [ha, hb, hc]) hgcd hcase
+    else caseI hreg hcase

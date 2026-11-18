@@ -36,14 +36,12 @@ variable {p}
 open IsPrimitiveRoot
 
 theorem aux_lem_flt [Fact p.Prime] {x y z : ℤ} (H : x ^ p + y ^ p = z ^ p)
-    (caseI : ¬↑p ∣ x * y * z) : ¬(p : ℤ) ∣ (x + y : ℤ) := by
-  intro habs
-  replace habs : ↑p ∣ (x + y : ℤ) := by simpa using habs
+    (caseI : ¬↑p ∣ x * y * z) : ¬(p : ℤ) ∣ (x + y : ℤ) := fun habs ↦ by
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd, Int.cast_add] at habs
-  replace H := congr_arg (fun x : ℤ ↦ (x : ZMod p)) H.symm
+  replace H := congr_arg (· : ℤ → ZMod p) H.symm
   simp only [Int.cast_add, Int.cast_pow, ZMod.pow_card, habs,
     ZMod.intCast_zmod_eq_zero_iff_dvd] at H
-  exact caseI (Dvd.dvd.mul_left H _)
+  exact caseI (H.mul_left _)
 
 theorem diff_of_roots [hp : Fact p.Prime] {η₁ η₂ : R}
     (hη₁ : η₁ ∈ nthRootsFinset p 1) (hη₂ : η₂ ∈ nthRootsFinset p 1)
@@ -121,28 +119,21 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
   -- coordinates `f j - f (Fin.last n)` in the integral power basis `1, ζ, …, ζ ^ (n - 1)`.
   have hsum : (∑ j, f j • ζ ^ (j : ℕ)) = b.basis.equivFun.symm
       fun i ↦ f ⟨i, (i.2.trans_le hdim.le).trans n.lt_succ_self⟩ - f (Fin.last n) := by
-    rw [Module.Basis.equivFun_symm_apply, Fintype.sum_equiv (finCongr hdim)
-      (fun i : Fin b.dim ↦
-        (f ⟨i, (i.2.trans_le hdim.le).trans n.lt_succ_self⟩ - f (Fin.last n)) • b.basis i)
+    rw [Module.Basis.equivFun_symm_apply, Fintype.sum_equiv (finCongr hdim) _
       (fun i : Fin n ↦ (f ⟨i, i.2.trans n.lt_succ_self⟩ - f (Fin.last n)) • ζ ^ (i : ℕ))
-      fun i ↦ by
-        rw [hbasis]
-        rfl]
+      fun i ↦ by rw [hbasis]; rfl]
     simp only [sub_smul, sum_sub_distrib, ← Finset.smul_sum, hgeom, smul_neg, sub_neg_eq_add]
     exact Fin.sum_univ_castSucc fun j : Fin (n + 1) ↦ f j • ζ ^ (j : ℕ)
   obtain ⟨y, hy⟩ := hdiv
   rw [hsum, ← zsmul_eq_mul] at hy
   have key (i : Fin b.dim) :
       m ∣ f ⟨i, (i.2.trans_le hdim.le).trans n.lt_succ_self⟩ - f (Fin.last n) := by
-    have h1 : f ⟨i, (i.2.trans_le hdim.le).trans n.lt_succ_self⟩ - f (Fin.last n) =
-        b.basis.coord i (m • y) := by rw [← hy, b.basis.coord_equivFun_symm]
-    rw [h1]
-    exact b.basis.dvd_coord_smul i y m
+    convert b.basis.dvd_coord_smul i y m
+    rw [← hy, b.basis.coord_equivFun_symm]
   have hlast : m ∣ f (Fin.last n) := by
     obtain ⟨i, hi⟩ := hf
     rcases (Nat.lt_succ_iff.mp i.2).eq_or_lt with h | h
-    · rw [← show i = Fin.last n from Fin.ext h, hi]
-      exact dvd_zero m
+    · simp [← show i = Fin.last n from Fin.ext h, hi]
     · simpa [hi] using key ⟨i, hdim.symm ▸ h⟩
   intro j
   rcases (Nat.lt_succ_iff.mp j.2).eq_or_lt with h | h

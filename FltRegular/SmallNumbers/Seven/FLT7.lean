@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.NumberTheory.FLT.Basic
-import Mathlib.Tactic.NormNum.Prime
 
 import FltRegular.FltRegular
 public import FltRegular.NumberTheory.RegularPrimes
@@ -24,4 +23,4 @@ theorem isRegularPrime_seven : IsRegularPrime 7 :=
 
 /-- Fermat's Last Theorem for exponent seven. -/
 theorem fermatLastTheoremSeven : FermatLastTheoremFor 7 :=
-  @flt_regular 7 ⟨Nat.prime_seven⟩ isRegularPrime_seven (by lia)
+  flt_regular isRegularPrime_seven (by decide)

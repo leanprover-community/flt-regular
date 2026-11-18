@@ -37,8 +37,7 @@ def IsRegularPrime : Prop :=
 a regular prime. -/
 theorem isRegularPrime_of_isPrincipalIdealRing [IsPrincipalIdealRing (𝓞 (CyclotomicField p ℚ))] :
     IsRegularPrime p := by
-  rw [IsRegularPrime, IsRegularNumber, card_classGroup_eq_one_iff.2 ‹_›]
-  exact coprime_one_right _
+  simp [IsRegularPrime, IsRegularNumber, card_classGroup_eq_one_iff.2 ‹_›]
 
 section TwoRegular
 
@@ -48,13 +47,11 @@ variable (L : Type*) [Field L] [Algebra K L]
 
 /-- The second cyclotomic field is equivalent to the base field. -/
 def cyclotomicFieldTwoEquiv [IsCyclotomicExtension {2} K L] : L ≃ₐ[K] K := by
-  suffices IsSplittingField K K (cyclotomic 2 K) by
-    have : IsSplittingField K L (cyclotomic 2 K) :=
-      IsCyclotomicExtension.splitting_field_cyclotomic 2 K L
-    exact (IsSplittingField.algEquiv L (cyclotomic 2 K)).trans
-      (IsSplittingField.algEquiv K <| cyclotomic 2 K).symm
-  exact ⟨by simpa using Splits.X_sub_C (-1 : K),
-    by simp [eq_iff_true_of_subsingleton]⟩
+  have : IsSplittingField K K (cyclotomic 2 K) :=
+    ⟨by simpa using Splits.X_sub_C (-1 : K), by simp [eq_iff_true_of_subsingleton]⟩
+  have := IsCyclotomicExtension.splitting_field_cyclotomic 2 K L
+  exact (IsSplittingField.algEquiv L (cyclotomic 2 K)).trans
+    (IsSplittingField.algEquiv K (cyclotomic 2 K)).symm
 
 instance IsPrincipalIdealRing_of_IsCyclotomicExtension_two
     (L : Type*) [Field L] [CharZero L] [IsCyclotomicExtension {2} ℚ L] :

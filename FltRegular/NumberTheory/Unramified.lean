@@ -32,10 +32,10 @@ omit [IsDedekindDomain R] [IsIntegralClosure S R L] [FiniteDimensional K L] in
 include K L in
 /-- In the AKLB setup, the map from `R` to the integral closure `S` of `R` in `L` is
 injective. -/
-lemma algebraMap_injective_of_isIntegralClosure : Function.Injective (algebraMap R S) := by
-  refine Function.Injective.of_comp (f := algebraMap S L) ?_
-  rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-  exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
+lemma algebraMap_injective_of_isIntegralClosure : Function.Injective (algebraMap R S) :=
+  Function.Injective.of_comp (f := algebraMap S L) <| by
+    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
+    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
 
 lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Ideal S)
     (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
@@ -43,18 +43,19 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
   classical
   have : IsDomain S := Function.Injective.isDomain _ (IsIntegralClosure.algebraMap_injective S R L)
   have := IsIntegralClosure.isDedekindDomain R K L S
-  have hRS := algebraMap_injective_of_isIntegralClosure K L (R := R) (S := S)
-  have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
+  have : Module.IsTorsionFree R L := .trans_faithfulSMul R K L
+  have := IsIntegralClosure.isTorsionFree R L (A := S)
   by_cases hIbot : I = ⊥
-  · rw [hIbot, Ideal.comap_bot_of_injective _ hRS, Ideal.map_bot]
+  · rw [hIbot, Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective R S),
+      Ideal.map_bot]
   have : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
   have hIbot' : I.comap (algebraMap R S) ≠ ⊥ := mt Ideal.eq_bot_of_under_eq_bot hIbot
-  have : ∀ p, (p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) →
-      ∃ P ≥ I, P ∈ primesOver p S := by
-    intro p ⟨hp₁, hp₂⟩
-    obtain ⟨P, hP1, hP2, hP3⟩ := Ideal.exists_ideal_over_prime_of_isIntegral _ _ hp₂
-    exact ⟨P, hP1, hP2, ⟨hP3.symm⟩⟩
-  choose 𝔓 h𝔓 h𝔓' using this
+  have hover (p : Ideal R) (hp : p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) :
+      ∃ P ≥ I, P ∈ primesOver p S :=
+    have := hp.1
+    let ⟨P, hP1, hP2, hP3⟩ := Ideal.exists_ideal_over_prime_of_isIntegral _ _ hp.2
+    ⟨P, hP1, hP2, ⟨hP3.symm⟩⟩
+  choose 𝔓 h𝔓 h𝔓' using hover
   suffices I = ∏ p ∈ (factors (I.comap <| algebraMap R S)).toFinset,
     (p.map (algebraMap R S)) ^ (if h : _ then (factors I).count (𝔓 p h) else 0) by
     simp_rw [← Ideal.mapHom_apply, ← map_pow, ← map_prod, Ideal.mapHom_apply] at this
@@ -99,9 +100,7 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
         Ideal.map_comap_of_surjective _ (AlgEquiv.surjective _)]
   · intro P hP
     simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
-      Ideal.mem_normalizedFactors_iff hIbot] at hP
-    simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
-      Ideal.mem_normalizedFactors_iff hIbot']
+      Ideal.mem_normalizedFactors_iff hIbot, Ideal.mem_normalizedFactors_iff hIbot'] at hP ⊢
     exact ⟨hP.1.comap _, Ideal.comap_mono hP.2⟩
 
 open nonZeroDivisors Polynomial
@@ -114,8 +113,8 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
     Algebra.IsUnramifiedAt R P := by
   classical
   have : IsDomain S := Function.Injective.isDomain _ (IsIntegralClosure.algebraMap_injective S R L)
-  have hRS := algebraMap_injective_of_isIntegralClosure K L (R := R) (S := S)
-  have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
+  have : Module.IsTorsionFree R L := .trans_faithfulSMul R K L
+  have := IsIntegralClosure.isTorsionFree R L (A := S)
   have := IsIntegralClosure.isNoetherian R K L S
   have := IsIntegralClosure.isDedekindDomain R K L S
   have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
@@ -129,13 +128,10 @@ lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
   have hxP : aeval x (derivative (minpoly R x)) ∈ P :=
     (Ideal.dvd_iff_le.mp hPdiv) (aeval_derivative_mem_differentIdeal R K L _ hx')
   rw [← Ideal.Quotient.eq_zero_iff_mem, ← Ideal.Quotient.algebraMap_eq] at hxP
-  let p : Ideal R := P.under R
-  have hpbot : p ≠ ⊥ := Ideal.under_ne_bot R hPbot
-  have : p.IsMaximal := (show p.IsPrime from inferInstance).isMaximal hpbot
-  have hle : p ≤ P.comap (algebraMap R S) := Localization.le_comap_primeCompl_iff.mp fun _ a ↦ a
-  have hs := (separable_map (Ideal.quotientMap P (algebraMap R S) hle)).mpr h
+  have : (P.under R).IsMaximal := (hP.under R).isMaximal (Ideal.under_ne_bot R hPbot)
+  have hs := (separable_map (Ideal.quotientMap P (algebraMap R S) le_rfl)).mpr h
   rw [Polynomial.map_map, Ideal.quotientMap_comp_mk] at hs
-  apply hs.aeval_derivative_ne_zero (x := Ideal.Quotient.mk P x)
+  refine hs.aeval_derivative_ne_zero (x := Ideal.Quotient.mk P x) ?_ ?_
   · rw [← Polynomial.map_map]
     simp
   · rw [derivative_map, ← Polynomial.map_map]

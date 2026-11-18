@@ -35,10 +35,8 @@ theorem pow_sub_intGalConj_mem (α : 𝓞 K) [Fact (p.Prime)] (hp : 2 < p) :
     (α ^ p - ringOfIntegersComplexConj K (α ^ p)) ∈
       Ideal.span ({(p : 𝓞 K)} : Set (𝓞 K)) := by
   obtain ⟨a, γ, hγ⟩ := exists_dvd_pow_sub_Int_pow hp.ne' α
-  rw [Ideal.mem_span_singleton]
-  rw [sub_eq_iff_eq_add] at hγ
-  rw [hγ, _root_.map_add, _root_.map_mul, map_natCast, map_pow, map_intCast,
-    add_sub_add_right_eq_sub, ← mul_sub]
+  rw [Ideal.mem_span_singleton, sub_eq_iff_eq_add.mp hγ, _root_.map_add, _root_.map_mul,
+    map_natCast, map_pow, map_intCast, add_sub_add_right_eq_sub, ← mul_sub]
   exact dvd_mul_right _ _
 
 /-- Complex conjugation negates the exponent of the distinguished cyclotomic unit. -/
@@ -48,15 +46,8 @@ theorem exists_int_sum_eq_zero'_aux (x y i : ℤ) [Fact (p.Prime)] (hp : 2 < p) 
       x + y * (zetaUnit ^ (-i) : (𝓞 K)ˣ) := by
   have := IsCyclotomicExtension.Rat.isCMField (S := {p}) K ⟨p, rfl, hp⟩
   ext
-  simp only [map_add, map_intCast, map_mul, coe_ringOfIntegersComplexConj, zpow_neg, map_units_inv,
-    add_right_inj, mul_eq_mul_left_iff, Int.cast_eq_zero]
-  simp_rw [NumberField.Units.coe_zpow]
-  left
-  simp only [map_zpow₀]
-  rw [← inv_zpow]
-  congr
-  change (complexConj K) ζ = ζ⁻¹
-  exact complexConj_zeta hζ hp
+  simp [NumberField.Units.coe_zpow, coe_ringOfIntegersComplexConj,
+    show (algebraMap (𝓞 K) K) hζ.toInteger = ζ from rfl, complexConj_zeta hζ hp]
 
 /-- A natural exponent giving the Case I complex-conjugation congruence modulo `p`. -/
 theorem exists_int_sum_eq_zero' (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
@@ -72,10 +63,7 @@ theorem exists_int_sum_eq_zero' (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}
     ← mul_sub]
   convert Ideal.mul_mem_left _ ↑u (pow_sub_intGalConj_mem α hp) using 3
   ext
-  simp only [map_mul, map_pow, map_units_inv, Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv,
-    RingOfIntegers.mapRingEquiv_apply, RingEquiv.coe_mk, AlgEquiv.toEquiv_eq_coe, EquivLike.coe_coe,
-    coe_ringOfIntegersComplexConj, ne_eq, EmbeddingLike.map_eq_zero_iff,
-    FaithfulSMul.algebraMap_eq_zero_iff, Units.ne_zero, not_false_eq_true, inv_mul_cancel_left₀]
+  simp [coe_ringOfIntegersComplexConj]
 
 /-- An integer exponent giving the Case I complex-conjugation congruence modulo `p`. -/
 theorem exists_int_sum_eq_zero (x y i : ℤ) {u : (𝓞 K)ˣ} {α : 𝓞 K}

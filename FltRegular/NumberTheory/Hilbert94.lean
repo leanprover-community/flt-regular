@@ -36,9 +36,7 @@ lemma comap_span_galRestrict_eq_of_cyclic (β : B) (η : Bˣ)
   obtain ⟨n, rfl : σ ^ n = τ⟩ := mem_powers_iff_mem_zpowers.mpr (hσ τ)
   rw [map_pow]
   induction n with
-  | zero =>
-    simp only [pow_zero, RingEquiv.toRingHom_eq_coe]
-    exact Ideal.map_id _
+  | zero => exact Ideal.map_id _
   | succ n IH =>
     simp only [RingEquiv.toRingHom_eq_coe, pow_succ] at IH ⊢
     conv_lhs at IH => rw [← hβ, Ideal.map_map]
@@ -59,25 +57,18 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
   have : IsDomain B := Function.Injective.isDomain _ (IsIntegralClosure.algebraMap_injective B A L)
   have hβ' := comap_map_eq_of_unramified K L _
     (comap_span_galRestrict_eq_of_cyclic σ hσ (A := A) (B := B) β η hβ)
-  refine ⟨(Ideal.span {β}).comap (algebraMap A B), ?_, ?_⟩
-  · rintro ⟨⟨γ, hγ : _ = Ideal.span _⟩⟩
-    rw [hγ, Ideal.map_span, Set.image_singleton, Ideal.span_singleton_eq_span_singleton] at hβ'
-    obtain ⟨a, rfl⟩ := hβ'
-    rw [map_mul, AlgEquiv.commutes, mul_left_comm, (mul_right_injective₀ _).eq_iff] at hβ
-    · apply hη'
-      use a
-      conv_rhs =>
-        enter [1]
-        rw [← hβ]
-      rw [map_mul, ← algebraMap_galRestrict_apply A]
-      refine (mul_div_cancel_right₀ _ ?_).symm
-      · rw [ne_eq,
-          (injective_iff_map_eq_zero' _).mp (IsIntegralClosure.algebraMap_injective B A L),
-          (injective_iff_map_eq_zero' _).mp (galRestrict A K L B σ).injective]
-        exact a.isUnit.ne_zero
-    · exact (mul_ne_zero_iff.mp hβ_zero).1
-  · rw [hβ']
-    exact ⟨⟨_, rfl⟩⟩
+  refine ⟨(Ideal.span {β}).comap (algebraMap A B), ?_, by rw [hβ']; exact ⟨⟨_, rfl⟩⟩⟩
+  rintro ⟨⟨γ, hγ : _ = Ideal.span _⟩⟩
+  rw [hγ, Ideal.map_span, Set.image_singleton, Ideal.span_singleton_eq_span_singleton] at hβ'
+  obtain ⟨a, rfl⟩ := hβ'
+  rw [map_mul, AlgEquiv.commutes, mul_left_comm,
+    (mul_right_injective₀ (mul_ne_zero_iff.mp hβ_zero).1).eq_iff] at hβ
+  refine hη' ⟨a, ?_⟩
+  conv_rhs => enter [1]; rw [← hβ]
+  rw [map_mul, ← algebraMap_galRestrict_apply A]
+  exact (mul_div_cancel_right₀ _ ((map_ne_zero_iff _
+    (IsIntegralClosure.algebraMap_injective B A L)).mpr
+      ((map_ne_zero_iff _ (galRestrict A K L B σ).injective).mpr a.ne_zero))).symm
 
 theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I : Ideal A}
     (hI : (I.map (algebraMap A B)).IsPrincipal) : (I ^ finrank K L).IsPrincipal := by
@@ -85,8 +76,8 @@ theorem Ideal.isPrincipal_pow_finrank_of_isPrincipal_map [IsDedekindDomain A] {I
   have := IsIntegralClosure.isNoetherian A K L B
   have := IsIntegralClosure.isDedekindDomain A K L B
   have := IsIntegralClosure.isFractionRing_of_finite_extension A K L B
-  have hAB := Module.isTorsionFree_iff_algebraMap_injective.mpr
-    (algebraMap_injective_of_isIntegralClosure K L (R := A) (S := B))
+  have : Module.IsTorsionFree A L := .trans_faithfulSMul A K L
+  have := IsIntegralClosure.isTorsionFree A L (A := B)
   rw [IsFractionRing.finrank_eq A K B L, ← Ideal.relNorm_algebraMap,
     ← (I.map (algebraMap A B)).span_singleton_generator, Ideal.relNorm_singleton]
   exact ⟨⟨_, rfl⟩⟩

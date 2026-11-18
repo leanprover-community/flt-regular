@@ -69,14 +69,10 @@ lemma existence [Module.Free ℤ G] [Module A G] :
     ∃ S : systemOfUnits p G s, S.IsFundamental := by
   obtain ⟨S⟩ := systemOfUnits.existence p hp G s hf
   let := S.isMaximal p hp G hf
-  have : { a | ∃ (S : systemOfUnits p G s) (_ : S.IsMaximal), a = S.index p G }.Nonempty :=
-    ⟨S.index, S, S.isMaximal p hp G hf, rfl⟩
-  obtain ⟨S', hS', ha⟩ := Nat.sInf_mem this
-  use S', hS'
-  intro a' ha'
-  rw [← ha]
-  apply csInf_le (OrderBot.bddBelow _)
-  use a', ha'
+  obtain ⟨S', hS', ha⟩ := Nat.sInf_mem
+    (s := { a | ∃ (S : systemOfUnits p G s) (_ : S.IsMaximal), a = S.index p G })
+    ⟨S.index, S, ‹_›, rfl⟩
+  exact ⟨S', hS', fun a' ha' ↦ ha ▸ csInf_le (OrderBot.bddBelow _) ⟨a', ha', rfl⟩⟩
 
 lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
     (i : Fin s) (a : Fin s →₀ A) (ha : a i = 1) :
@@ -90,14 +86,10 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
   have ha' : Finsupp.linearCombination A S'.units (a.erase i) + S.units i =
       (1 - zeta p) • g := by
     have he : Finsupp.linearCombination A S'.units (a.erase i) =
-        Finsupp.linearCombination A S.units (a.erase i) := by
-      apply Finsupp.sum_congr
-      intro j hj
-      have hji : j ≠ i := by
-        rintro rfl
-        simp at hj
-      change (a.erase i) j • Function.update S.units i g j = (a.erase i) j • S.units j
-      rw [Function.update_of_ne hji]
+        Finsupp.linearCombination A S.units (a.erase i) :=
+      Finsupp.sum_congr fun j hj ↦ by
+        change (a.erase i) j • Function.update S.units i g j = (a.erase i) j • S.units j
+        rw [Function.update_of_ne (by rintro rfl; simp at hj)]
     calc
       _ = Finsupp.linearCombination A S.units (a.erase i) + a i • S.units i := by
         rw [he, ha, one_smul]
@@ -111,14 +103,11 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
   constructor
   · rw [Submodule.span_le]
     rintro _ ⟨j, rfl⟩
-    by_cases hij : i = j
-    · rw [add_comm, ← eq_sub_iff_add_eq] at ha'
-      rw [← hij, ha']
-      apply sub_mem
-      · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, Function.update_self _ _ _⟩)
-      · rw [← Finsupp.range_linearCombination]
-        exact ⟨_, rfl⟩
-    · exact Submodule.subset_span ⟨j, Function.update_of_ne (Ne.symm hij) _ _⟩
+    rcases eq_or_ne i j with rfl | hij
+    · rw [eq_sub_of_add_eq' ha']
+      exact sub_mem (Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, Function.update_self _ _ _⟩))
+        (Finsupp.range_linearCombination A (v := S'.units) ▸ ⟨_, rfl⟩)
+    · exact Submodule.subset_span ⟨j, Function.update_of_ne hij.symm _ _⟩
   · refine ⟨g, Submodule.subset_span ⟨i, Function.update_self _ _ _⟩, ?_⟩
     rw [← Finsupp.range_linearCombination]
     rintro ⟨l, rfl⟩
@@ -130,8 +119,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
     have := DFunLike.congr_fun (linearIndependent_iff.mp S.linearIndependent _ hg) i
     simp only [Finsupp.coe_sub, Finsupp.coe_smul, ha, Pi.sub_apply, Finsupp.coe_zero,
       Pi.zero_apply, sub_eq_zero] at this
-    exact CyclotomicIntegers.not_isUnit_one_sub_zeta p
-      (IsUnit.of_mul_eq_one _ this)
+    exact CyclotomicIntegers.not_isUnit_one_sub_zeta p (IsUnit.of_mul_eq_one _ this)
 
 lemma corollary [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental) (a : Fin s → ℤ)
     (ha : ∃ i, ¬ (p : ℤ) ∣ a i) :
@@ -142,19 +130,15 @@ lemma corollary [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental) (a
   obtain ⟨x, y, e⟩ := CyclotomicIntegers.isCoprime_one_sub_zeta p (a i) hi
   let b' : Fin s → A := fun j ↦ x * (1 - zeta ↑p) + y * (a j)
   let b := Finsupp.ofSupportFinite b' (Set.toFinite (Function.support _))
-  have hb : b i = 1 := by
-    rw [← e]
-    rfl
+  have hb : b i = 1 := by rw [← e]; rfl
   apply lemma2 p hp G s hf S hs i b hb (x • ∑ i, S.units i + y • g)
   rw [smul_add, smul_smul _ y, mul_comm, ← smul_smul, hg, smul_sum, smul_sum, smul_sum,
-    ← sum_add_distrib, Finsupp.linearCombination_apply, Finsupp.sum_fintype]
-  · congr
-    · ext j
-      simp only [smul_smul, Finsupp.ofSupportFinite_coe, add_smul, b', b]
-      congr 1
-      · rw [mul_comm]
-      · rw [← Int.cast_smul_eq_zsmul (R := A), smul_smul]
-  · simp
+    ← sum_add_distrib, Finsupp.linearCombination_apply, Finsupp.sum_fintype _ _ (by simp)]
+  refine Finset.sum_congr rfl fun j _ ↦ ?_
+  simp only [smul_smul, Finsupp.ofSupportFinite_coe, add_smul, ← Int.cast_smul_eq_zsmul (R := A),
+    b', b]
+  congr 2
+  ring
 
 end systemOfUnits.IsFundamental
 section application
@@ -168,9 +152,7 @@ def RelativeUnits (k K : Type*) [Field k] [Field K] [Algebra k K] :=
   (𝓞 K)ˣ ⧸ MonoidHom.range
     (Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K)))
 
-instance : CommGroup (RelativeUnits k K) := by
-  delta RelativeUnits
-  infer_instance
+instance : CommGroup (RelativeUnits k K) := inferInstanceAs (CommGroup (_ ⧸ _))
 
 section
 
@@ -190,16 +172,11 @@ lemma Hilbert92_aux0 (h : ℕ) (ν : (𝓞 k)ˣ) (hν : IsPrimitiveRoot (ν : k)
     (H : ∀ ε : (𝓞 K)ˣ, algebraMap k K ν ^ (p ^ (h - 1)) ≠ ε / (σ ε : K)) :
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧
       ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) := by
-  let η := (Units.map (algebraMap (𝓞 k) (𝓞 K)) ν : (𝓞 K)ˣ)
-  use η ^ (p ^ (h - 1))
-  refine ⟨?_, H⟩
+  refine ⟨Units.map (algebraMap (𝓞 k) (𝓞 K) : 𝓞 k →* 𝓞 K) ν ^ p ^ (h - 1), ?_, H⟩
   simp only [Units.val_pow_eq_pow_val, map_pow]
-  change (Algebra.norm k) ((algebraMap k K) _) ^ _ = 1
-  rw [Algebra.norm_algebraMap, hKL, ← pow_mul]
-  nth_rewrite 1 [← pow_one p]
-  rw [← pow_add]
-  apply (hν.pow_eq_one_iff_dvd _).2
-  cases h <;> simp [add_comm]
+  change Algebra.norm k (algebraMap k K ν) ^ _ = 1
+  rw [Algebra.norm_algebraMap, hKL, ← pow_mul, ← pow_succ', hν.pow_eq_one_iff_dvd]
+  cases h <;> simp
 
 variable [NumberField K] [NumberField k]
 
@@ -234,12 +211,8 @@ theorem relativeUnitsMap_mul_apply {f g} (x : RelativeUnits k K) :
 noncomputable
 def relativeUnitsMapHom : (K →ₐ[k] K) →* (Monoid.End (RelativeUnits k K)) where
   toFun := relativeUnitsMap
-  map_one' := by
-    ext x
-    exact relativeUnitsMap_one x
-  map_mul' f g := by
-    ext x
-    exact relativeUnitsMap_mul_apply x
+  map_one' := MonoidHom.ext relativeUnitsMap_one
+  map_mul' _ _ := MonoidHom.ext relativeUnitsMap_mul_apply
 
 @[simp]
 theorem relativeUnitsMapHom_apply (σ : K →ₐ[k] K) :
@@ -272,9 +245,9 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
       AddMonoidHom.coe_toIntLinearMap, MulEquiv.monoidEnd_apply_apply, toMul_ofMul,
       relativeUnitsMap_mk]
   rw [← ofMul_prod, ← QuotientGroup.mk_prod, ofMul_eq_zero, QuotientGroup.eq_one_iff]
-  use Units.map (RingOfIntegers.norm k) x
+  use Units.map (NumberField.RingOfIntegers.norm k) x
   ext
-  simp only [Units.coe_map, MonoidHom.coe_ofClass, RingOfIntegers.coe_algebraMap_norm,
+  simp only [Units.coe_map, MonoidHom.coe_ofClass, NumberField.RingOfIntegers.coe_algebraMap_norm,
     Units.coe_prod, Algebra.norm_eq_prod_automorphisms]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank,
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
@@ -290,9 +263,8 @@ def relativeUnitsWithGenerator (_hp : Nat.Prime p)
   (_hKL : finrank k K = p) (σ : K ≃ₐ[k] K) (_hσ : ∀ x, x ∈ Subgroup.zpowers σ) :=
   RelativeUnits k K
 
-instance : CommGroup (relativeUnitsWithGenerator p hp hKL σ hσ) := by
-  delta relativeUnitsWithGenerator
-  infer_instance
+instance : CommGroup (relativeUnitsWithGenerator p hp hKL σ hσ) :=
+  inferInstanceAs (CommGroup (RelativeUnits k K))
 
 end
 
@@ -322,20 +294,13 @@ lemma unit_to_U_div (x y) : mkG (x / y) = mkG x - mkG y := by
 lemma unit_to_U_prod {ι} (s : Finset ι) (f : ι → _) :
     mkG (∏ i ∈ s, f i) = ∑ i ∈ s, mkG (f i) := by
   classical
-  induction s using Finset.induction with
-  | empty => simp [unit_to_U_one]
-  | @insert x s hxs IH =>
-    simp [hxs, unit_to_U_mul, IH]
+  induction s using Finset.induction <;> simp [*, unit_to_U_one, unit_to_U_mul]
 
 lemma unit_to_U_pow (x) (n : ℕ) : mkG (x ^ n) = n • (mkG x) := by
-  induction n with
-  | zero => simp [unit_to_U_one]
-  | succ n IH => simp [unit_to_U_mul, pow_succ, succ_nsmul, IH]
+  induction n <;> simp [*, pow_succ, succ_nsmul, unit_to_U_one, unit_to_U_mul]
 
 lemma unit_to_U_zpow (x) (n : ℤ) : mkG (x ^ n) = n • (mkG x) := by
-  cases n with
-  | ofNat n => simp [unit_to_U_pow]
-  | negSucc n => simp [unit_to_U_inv, unit_to_U_pow]
+  cases n <;> simp [unit_to_U_inv, unit_to_U_pow]
 
 set_option backward.isDefEq.respectTransparency false in
 lemma unit_to_U_map (x : (𝓞 k)ˣ) : mkG (Units.map (algebraMap (𝓞 k) (𝓞 K)) x) = 0 := by
@@ -352,9 +317,8 @@ lemma exists_pow_smul_eq_and_not_dvd
     {ι : Type*} [Finite ι] (f : ι → ℤ) (hf : f ≠ 0) (p : ℕ) (hp : p ≠ 1) :
     ∃ (n : ℕ) (f' : ι → ℤ), (f = p ^ n • f') ∧ ∃ i, ¬ ↑p ∣ f' i := by
   cases nonempty_fintype ι
-  have : (univ.filter (fun i ↦ f i ≠ 0)).Nonempty := by
-    by_contra h
-    exact hf (funext <| by simpa [filter_eq_empty_iff] using h)
+  have : (univ.filter (f · ≠ 0)).Nonempty := by
+    simpa [filter_nonempty_iff, Function.ne_iff] using hf
   obtain ⟨i, hfi, hi⟩ := exists_min_image _ (padicValInt p ∘ f) this
   replace hfi : f i ≠ 0 := by simpa using hfi
   let n := padicValInt p (f i)
@@ -362,11 +326,10 @@ lemma exists_pow_smul_eq_and_not_dvd
     (pow_dvd_pow _ (hi _ (mem_filter.mpr ⟨mem_univ j, h⟩))).trans (padicValInt_dvd _)
   simp_rw [← Nat.cast_pow] at this
   choose f' hf' using this
-  use n, f', funext hf', i
-  intro hi
+  refine ⟨n, f', funext hf', i, fun hi ↦ ?_⟩
   have : (p : ℤ) ^ (n + 1) ∣ f i := by
     rw [hf', pow_succ, Nat.cast_pow]
-    exact _root_.mul_dvd_mul_left _ hi
+    exact mul_dvd_mul_left _ hi
   simp only [padicValInt_dvd_iff_of_ne_one hp, hfi, false_or] at this
   lia
 
@@ -409,21 +372,20 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
         rw [← e₁]
         simp [Fin.sum_univ_castSucc, (Fin.castSucc_injective r).extend_apply,
           (Fin.castSucc_lt_last _).ne]
-      · rintro -
-        simp [(Fin.is_lt _).ne]
+      · exact fun _ ↦ (Fin.is_lt i₁).ne
     by_cases ha₁ : ↑p ∣ a₁
-    · obtain ⟨b, hb⟩ := ha₁
+    · obtain ⟨b, rfl⟩ := ha₁
       refine ⟨b, Function.extend Fin.castSucc ι₁ 0, Fin.castSucc i₁, ?_,
         by rwa [(Fin.castSucc_injective r).extend_apply], fun H ↦ (hν' H).elim⟩
-      rw [← hb.trans (mul_comm _ _), ← e₁]
+      rw [mul_comm, ← e₁]
       simp [Fin.sum_univ_castSucc, (Fin.castSucc_injective r).extend_apply,
         (Fin.castSucc_lt_last _).ne]
     by_cases ha₂ : ↑p ∣ a₂
-    · obtain ⟨b, hb⟩ := ha₂
+    · obtain ⟨b, rfl⟩ := ha₂
       refine ⟨b, Function.extend (Fin.succAbove i₁.castSucc) ι₂ 0,
         Fin.succAbove i₁.castSucc i₂, ?_,
         by rwa [Fin.succAbove_right_injective.extend_apply], fun H ↦ (hν' H).elim⟩
-      rw [← hb.trans (mul_comm _ _), ← e₂]
+      rw [mul_comm, ← e₂]
       simp [Fin.sum_univ_succAbove _ i₁.castSucc, Fin.succAbove_right_injective.extend_apply]
     obtain ⟨α₁, β₁, h₁⟩ := (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd.mpr ha₁
     obtain ⟨α₂, β₂, h₂⟩ := (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd.mpr ha₂
@@ -443,9 +405,8 @@ lemma lh_pow_free' {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
         Fin.exists_succAbove_eq_iff, ne_eq, not_false_eq_true, Function.extend_apply',
         Pi.zero_apply, mul_zero, sub_zero, (Nat.prime_iff_prime_int.mp hp).dvd_mul, hi₁, not_or,
         and_true]
-      intro H
-      exact (Nat.prime_iff_prime_int.mp hp).not_dvd_one
-        (h₁ ▸ dvd_add (dvd_mul_left (p : ℤ) α₁) (dvd_mul_of_dvd_left H a₁))
+      exact fun H ↦ (Nat.prime_iff_prime_int.mp hp).not_dvd_one
+        (h₁ ▸ dvd_add (dvd_mul_left _ _) (H.mul_right a₁))
 
 include hp in
 lemma lh_pow_free (ν : (𝓞 k)ˣ)
@@ -455,10 +416,8 @@ lemma lh_pow_free (ν : (𝓞 k)ˣ)
       (i₀ : Fin (NumberField.Units.rank k + 2)),
       ∑ i, ι i • η i = (a * p) • Additive.ofMul ν ∧
         ¬ (p : ℤ) ∣ ι i₀ ∧ (ν = 1 → i₀ ≠ Fin.last _) := by
-  convert lh_pow_free' p hp ν hk _ ?_ η
-  · simp [Fin.ext_iff]
-  · rw [NumberField.Units.finrank_eq]
-    exact Nat.lt_add_one _
+  convert lh_pow_free' p hp ν hk _ (NumberField.Units.finrank_eq k ▸ Nat.lt_add_one _) η
+  simp [Fin.ext_iff]
 
 variable [NumberField K]
 
@@ -539,17 +498,13 @@ include hKL hσ hp in
 lemma Hilbert92_aux2 (E : (𝓞 K)ˣ) (ν : k) (hE : algebraMap k K ν = E / σ E)
   (hν : (ν : k) ^ p = 1) (hpodd : p ≠ 2) :
     algebraMap k K (Algebra.norm k (S := K) E) = E ^ p := by
-  have h1 : ∀ (i : ℕ), (σ ^ i) E = ((algebraMap k K ν)⁻¹)^i * E := by
-    intro i
+  have h1 (i : ℕ) : (σ ^ i) E = (algebraMap k K ν)⁻¹ ^ i * E := by
     induction i with
-    | zero =>
-      simp only [pow_zero, AlgEquiv.one_apply, one_mul]
+    | zero => simp
     | succ n ih =>
-      rw [pow_succ', AlgEquiv.mul_apply, ih, pow_succ']
-      simp only [inv_pow, map_mul, map_inv₀, map_pow, AlgEquiv.commutes]
-      have h0 : algebraMap k K ν ≠ 0 := fun h ↦ by
-        simp [(map_eq_zero _).1 h, hp.ne_zero] at hν
-      rw [hE]
+      have : algebraMap k K ν ≠ 0 := fun h ↦ by simp [(map_eq_zero _).1 h, hp.ne_zero] at hν
+      rw [pow_succ', AlgEquiv.mul_apply, ih, pow_succ', map_mul, map_pow, map_inv₀,
+        AlgEquiv.commutes, hE]
       field_simp
   rw [norm_eq_prod_pow_gen σ hσ, orderOf_eq_card_of_forall_mem_zpowers hσ,
     IsGalois.card_aut_eq_finrank, hKL]
@@ -566,11 +521,8 @@ variable [IsUnramifiedAtInfinitePlaces k K]
 lemma NumberField.Units.rank_of_isUnramified :
     NumberField.Units.rank K = (finrank k K) * NumberField.Units.rank k + (finrank k K) - 1 := by
   delta NumberField.Units.rank
-  rw [IsUnramifiedAtInfinitePlaces.card_infinitePlace k,
-    mul_comm, mul_tsub, mul_one, tsub_add_cancel_of_le]
-  refine (mul_one _).symm.trans_le (Nat.mul_le_mul_left _ ?_)
-  rw [Nat.one_le_iff_ne_zero, ← Nat.pos_iff_ne_zero, Fintype.card_pos_iff]
-  infer_instance
+  rw [IsUnramifiedAtInfinitePlaces.card_infinitePlace k, mul_comm, mul_tsub, mul_one,
+    tsub_add_cancel_of_le (Nat.le_mul_of_pos_right _ Fintype.card_pos)]
 
 lemma finrank_G : finrank ℤ G = (Units.rank k + 1) * (↑p - 1) := by
   refine finrank_quotient_torsion_eq.trans ?_
@@ -599,16 +551,14 @@ lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ), IsPrimitiveRoot (ν : k) (p ^
   classical
   let H := Subgroup.toAddSubgroup.symm
     (Submodule.torsion' ℤ (Additive (𝓞 k)ˣ) (Submonoid.powers p)).toAddSubgroup
-  have : H ≤ NumberField.Units.torsion k := by
-    rintro x ⟨⟨_, i, rfl⟩, hnx : x ^ (p ^ i) = 1⟩
-    exact isOfFinOrder_iff_pow_eq_one.mpr ⟨p ^ i, Fin.pos', hnx⟩
-  obtain ⟨ν, hν⟩ := Subgroup.isCyclic_of_le this
+  have hle : H ≤ NumberField.Units.torsion k := fun x ⟨⟨_, i, rfl⟩, (hnx : x ^ p ^ i = 1)⟩ ↦
+    isOfFinOrder_iff_pow_eq_one.mpr ⟨p ^ i, Fin.pos', hnx⟩
+  obtain ⟨ν, hν⟩ := Subgroup.isCyclic_of_le hle
   obtain ⟨⟨_, i, rfl⟩, hiν : (ν : (𝓞 k)ˣ) ^ (p ^ i) = 1⟩ := ν.prop
   obtain ⟨j, _, hj'⟩ := (Nat.dvd_prime_pow hp).mp (orderOf_dvd_of_pow_eq_one hiν)
+  have : Finite H := Finite.of_injective (Subgroup.inclusion hle) (Subgroup.inclusion_injective hle)
   refine ⟨j, ν, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ν.1),
     fun ε n hn ↦ ?_⟩
-  let _ : Fintype (Units.torsion k) := Fintype.ofFinite _
-  have : Fintype H := Set.fintypeSubset (NumberField.Units.torsion k) this
   obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hν ⟨ε, ⟨_, n, rfl⟩, hn⟩)
   exact ⟨i, congr_arg Subtype.val hi⟩
 
@@ -624,7 +574,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) : ∃ η : (𝓞 K)ˣ, Algebra.norm k (�
   · exact Hilbert92_aux0 p hKL σ h ν hν H
   simp only [ne_eq, not_forall, not_not] at H
   obtain ⟨E, hE⟩ := H
-  let NE := Units.map (RingOfIntegers.norm k) E
+  let NE := Units.map (NumberField.RingOfIntegers.norm k) E
   obtain ⟨S, hS⟩ := Hilbert91 p (K := K) (k := k) hp hKL σ hσ
   have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ p := by
     ext
@@ -632,44 +582,31 @@ lemma almostHilbert92 (hpodd : p ≠ 2) : ∃ η : (𝓞 K)ˣ, Algebra.norm k (�
       RingOfIntegers.coe_eq_algebraMap, Units.val_pow_eq_pow_val, map_pow]
     rw [← map_pow] at hE
     refine Hilbert92_aux2 p hp hKL σ hσ E _ hE ?_ hpodd
-    rw [← pow_mul, ← pow_succ]
-    apply (hν.pow_eq_one_iff_dvd _).2
-    cases h <;> simp only [pow_zero, zero_le, tsub_eq_zero_of_le, zero_add, pow_one, one_dvd,
-      Nat.succ_sub_succ_eq_sub, tsub_zero, dvd_refl]
+    rw [← pow_mul, ← pow_succ, hν.pow_eq_one_iff_dvd]
+    cases h <;> simp
   let H := unitlifts p hp hKL σ hσ S
   let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
-    fun e ↦ Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
+    fun e ↦ Additive.ofMul (Units.map (NumberField.RingOfIntegers.norm k) (Additive.toMul (H e)))
   let η : Fin (r + 2) → Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
   obtain ⟨a, ι, i, ha, ha', ha''⟩ := lh_pow_free p hp ν (k := k) hν' η
   let H2 : Fin (r + 2) → Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul E)
   let J :=
     Additive.toMul (∑ i : Fin (r + 2), ι i • H2 i) *
       (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ν) ^ (-a)
-  refine ⟨J, ?_⟩
-  constructor
-  · apply Hilbert92_aux1 p hKL (r + 2) H2 ν a ι η ha
-    intro i
-    induction i using Fin.lastCases with
-    | last =>
-      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE, η, H2]
-    | cast i =>
-      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE,
-        η, H2, N, H]
+  refine ⟨J, ?_, ?_⟩
+  · refine Hilbert92_aux1 p hKL (r + 2) H2 ν a ι η ha fun i ↦ ?_
+    induction i using Fin.lastCases <;>
+      simp [NumberField.RingOfIntegers.coe_norm, NE, η, H2, N, H]
   · intro ε hε
     refine hS.corollary p hp _ _ (finrank_G p hp hKL σ hσ) _ (ι ∘ Fin.castSucc) ?_ (mkG ε) ?_
     · by_contra hε'
       simp only [Function.comp_apply, not_exists, not_not] at hε'
-      have : i ∉ Set.range Fin.castSucc := by
-        rintro ⟨i, rfl⟩
-        exact ha' (hε' i)
+      have : i ∉ Set.range Fin.castSucc := by rintro ⟨i, rfl⟩; exact ha' (hε' i)
       rw [← Fin.succAbove_last, Fin.range_succAbove, Set.mem_compl_iff,
         Set.mem_singleton_iff, not_not] at this
       rw [this] at ha'
       cases h with
-      | zero =>
-          refine ha'' ?_ this
-          ext
-          simpa only [Units.val_one, map_one, pow_zero, IsPrimitiveRoot.one_right_iff] using hν
+      | zero => exact ha'' (by simpa using hν) this
       | succ h =>
           obtain ⟨ε', hε'⟩ : ∃ ε' : (𝓞 k)ˣ, ε' ^ p = NE := by
             rw [← (Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd] at ha'
@@ -688,37 +625,29 @@ lemma almostHilbert92 (hpodd : p ≠ 2) : ∃ η : (𝓞 K)ˣ, Algebra.norm k (�
           obtain ⟨ε'', hε''⟩ :
               ∃ ε'' : (𝓞 k)ˣ,
                 E = Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom ε'' := by
-              rw [← hε', map_pow, eq_comm, ← mul_inv_eq_one, ← inv_pow,
-                ← mul_pow] at NE_p_pow
+              rw [← hε', map_pow, eq_comm, ← mul_inv_eq_one, ← inv_pow, ← mul_pow] at NE_p_pow
               apply_fun ((↑) : (𝓞 K)ˣ → K) at NE_p_pow
               simp only [RingHom.toMonoidHom_eq_coe, Units.val_pow_eq_pow_val, Units.val_mul,
                 Units.coe_map_inv, MonoidHom.coe_ofClass, Units.val_one] at NE_p_pow
               have : NeZero p := ⟨hp.pos.ne'⟩
               obtain ⟨i, -, e⟩ := hν''.eq_pow_of_pow_eq_one NE_p_pow
-              use ((ν ^ p ^ h) ^ i * ε')
-              rw [map_mul, ← mul_inv_eq_iff_eq_mul]
-              ext
-              simpa using! e.symm
+              exact ⟨(ν ^ p ^ h) ^ i * ε',
+                by rw [map_mul, ← mul_inv_eq_iff_eq_mul]; ext; simpa using! e.symm⟩
           have hε''coe :
-              ((algebraMap (𝓞 k) (𝓞 K) (ε'' : 𝓞 k) : 𝓞 K) : K) =
-                algebraMap k K (ε'' : k) := rfl
+              ((algebraMap (𝓞 k) (𝓞 K) (ε'' : 𝓞 k) : 𝓞 K) : K) = algebraMap k K (ε'' : k) := rfl
           simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, ← map_pow, hε'',
             RingHom.toMonoidHom_eq_coe, Units.coe_map, MonoidHom.coe_ofClass,
             hε''coe, AlgEquiv.commutes] at hE
-          replace hE : (algebraMap k K) (((ν : 𝓞 k) : k) ^ p ^ h) = 1 := by
-            rwa [div_self (by simp)] at hE
-          rw [hE] at hν''
-          rw [IsPrimitiveRoot.one_left_iff] at hν''
-          exact hp.one_lt.ne.symm hν''
+          rw [div_self (by simp)] at hE
+          exact hp.one_lt.ne' (IsPrimitiveRoot.one_left_iff.mp (hE ▸ hν''))
     · rw [← u_lemma2 p hp hKL σ hσ _ _ hε, unit_to_U_mul, toMul_sum, unit_to_U_prod,
         Fin.sum_univ_castSucc]
       simp only [Fin.snoc_castSucc, toMul_zsmul, unit_to_U_zpow, unitlifts_spec, Fin.snoc_last,
         toMul_ofMul, RingHom.toMonoidHom_eq_coe, zpow_neg, unit_to_U_inv, Function.comp_apply,
         unit_to_U_map, smul_zero, neg_zero, add_zero, add_eq_left, H2, H]
-      apply_fun mkG at NE_p_pow
-      simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map, unit_to_U_pow] at NE_p_pow
-      rw [eq_comm, smul_eq_zero] at NE_p_pow
-      simp only [hp.ne_zero, false_or] at NE_p_pow
+      replace NE_p_pow := congr_arg mkG NE_p_pow
+      simp only [RingHom.toMonoidHom_eq_coe, unit_to_U_map, unit_to_U_pow, eq_comm, smul_eq_zero,
+        hp.ne_zero, false_or] at NE_p_pow
       rw [NE_p_pow, smul_zero]
 
 end application
@@ -729,7 +658,6 @@ lemma Hilbert92 [Algebra k K] [IsGalois k K] [NumberField k] [NumberField K]
     ∃ η : (𝓞 K)ˣ, Algebra.norm k (η : K) = 1 ∧
       ∀ ε : (𝓞 K)ˣ, (η : K) ≠ ε / (σ ε : K) :=
   have := IsUnramifiedAtInfinitePlaces_of_odd_finrank (hKL.odd_of_ne_two hpodd)
-  have : IsCyclic (K ≃ₐ[k] K) := ⟨σ, hσ⟩
   almostHilbert92 (finrank k K) hKL rfl σ hσ hpodd
 
 end thm91
