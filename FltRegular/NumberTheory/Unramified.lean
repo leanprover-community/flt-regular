@@ -28,15 +28,6 @@ variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Fi
 
 variable {R} {S}
 
-omit [IsDedekindDomain R] [IsIntegralClosure S R L] [FiniteDimensional K L] in
-include K L in
-/-- In the AKLB setup, the map from `R` to the integral closure `S` of `R` in `L` is
-injective. -/
-lemma algebraMap_injective_of_isIntegralClosure : Function.Injective (algebraMap R S) :=
-  Function.Injective.of_comp (f := algebraMap S L) <| by
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-
 lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Ideal S)
     (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
     (I.comap (algebraMap R S)).map (algebraMap R S) = I := by
