@@ -100,7 +100,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
   have := S'.isMaximal p hp G hf
   suffices Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units) by
     exact (hs.maximal' _ _ _ S').not_gt <| AddSubgroup.index_strictAnti ‹_›
-  rw [lt_iff_le_and_exists_mem_notMem]
+  rw [IsConcreteLE.lt_iff_le_and_exists]
   constructor
   · rw [Submodule.span_le]
     rintro _ ⟨j, rfl⟩
