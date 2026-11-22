@@ -111,7 +111,7 @@ lemma div_one_sub_zeta_mem : IsIntegral ℤ ((x + y * η : 𝓞 K) / (ζ - 1)) :
 
 /-- The integral quotient `(x + y * η) / (ζ - 1)` for a `p`-th root of unity `η`. -/
 def divZetaSubOne : nthRootsFinset p (1 : 𝓞 K) → 𝓞 K :=
-  fun η ↦ ⟨(x + y * η.1) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
+  fun η ↦ ⟨(x + y * (η : 𝓞 K)) / (ζ - 1), div_one_sub_zeta_mem hp hζ e η⟩
 
 lemma div_zeta_sub_one_mul_zeta_sub_one (η) : divZetaSubOne hp hζ e η * π = x + y * η := by
   ext

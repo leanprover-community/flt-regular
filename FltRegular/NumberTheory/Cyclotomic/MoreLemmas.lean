@@ -32,7 +32,7 @@ lemma exists_zeta_sub_one_dvd_sub_Int (a : 𝓞 K) :
 include hp in
 lemma exists_dvd_pow_sub_Int_pow (a : 𝓞 K) : ∃ b : ℤ, ↑p ∣ a ^ p - (b : 𝓞 K) ^ p := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot ℚ K (Set.mem_singleton p)
-    hpri.1.ne_zero
+    hpri.out.ne_zero
   obtain ⟨b, k, e⟩ := exists_zeta_sub_one_dvd_sub_Int hζ a
   obtain ⟨r, hr⟩ := exists_add_pow_prime_eq hpri.out a (-b)
   obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime _ hζ).symm

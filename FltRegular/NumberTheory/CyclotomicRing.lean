@@ -25,7 +25,7 @@ def CyclotomicIntegers : Type := AdjoinRoot (cyclotomic p ℤ)
 instance : CommRing (CyclotomicIntegers p) := inferInstanceAs (CommRing (AdjoinRoot _))
 
 lemma IsPrimitiveRoot.cyclotomic_eq_minpoly
-    (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot x.1 p) :
+    (x : 𝓞 (CyclotomicField p ℚ)) (hx : IsPrimitiveRoot (x : CyclotomicField p ℚ) p) :
     minpoly ℤ x = cyclotomic p ℤ :=
   (RingOfIntegers.minpoly_coe x).symm.trans (Polynomial.cyclotomic_eq_minpoly hx hpri.out.pos).symm
 

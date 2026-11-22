@@ -216,7 +216,6 @@ lemma separable_poly_aux {L : Type*} [Field L] [Algebra K L] (α : L)
     mul_div_cancel_left₀ _ hζ']
   rfl
 
-set_option backward.isDefEq.respectTransparency false in
 include hu in
 open scoped KummerExtension in
 attribute [local instance] Ideal.Quotient.field in

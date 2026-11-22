@@ -2,6 +2,7 @@ module
 
 public import FltRegular.NumberTheory.SystemOfUnits
 public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
+public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.RingTheory.Henselian
 public import Mathlib.GroupTheory.FiniteAbelian.Basic
 public import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
@@ -99,7 +100,7 @@ lemma lemma2 [Module A G] (S : systemOfUnits p G s) (hs : S.IsFundamental)
   have := S'.isMaximal p hp G hf
   suffices Submodule.span A (Set.range S.units) < Submodule.span A (Set.range S'.units) by
     exact (hs.maximal' _ _ _ S').not_gt <| AddSubgroup.index_strictAnti ‹_›
-  rw [IsConcreteLE.lt_iff_le_and_exists]
+  rw [lt_iff_le_and_exists_mem_notMem]
   constructor
   · rw [Submodule.span_le]
     rintro _ ⟨j, rfl⟩
@@ -557,8 +558,8 @@ lemma h_exists' : ∃ (h : ℕ) (ν : (𝓞 k)ˣ), IsPrimitiveRoot (ν : k) (p ^
   obtain ⟨⟨_, i, rfl⟩, hiν : (ν : (𝓞 k)ˣ) ^ (p ^ i) = 1⟩ := ν.prop
   obtain ⟨j, _, hj'⟩ := (Nat.dvd_prime_pow hp).mp (orderOf_dvd_of_pow_eq_one hiν)
   have : Finite H := Finite.of_injective (Subgroup.inclusion hle) (Subgroup.inclusion_injective hle)
-  refine ⟨j, ν, IsPrimitiveRoot.coe_coe_iff.mpr (hj' ▸ IsPrimitiveRoot.orderOf ν.1),
-    fun ε n hn ↦ ?_⟩
+  refine ⟨j, ν, IsPrimitiveRoot.coe_coe_iff.mpr
+    (hj' ▸ IsPrimitiveRoot.orderOf (ν : (𝓞 k)ˣ)), fun ε n hn ↦ ?_⟩
   obtain ⟨i, hi⟩ := mem_powers_iff_mem_zpowers.mpr (hν ⟨ε, ⟨_, n, rfl⟩, hn⟩)
   exact ⟨i, congr_arg Subtype.val hi⟩
 

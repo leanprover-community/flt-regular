@@ -69,7 +69,7 @@ lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Id
       · have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) H
         rw [← hσ, ← hI σ]
         exact Ideal.comap_mono (h𝔓 _ hp)
-      · simpa only [Ideal.under_def] using H.2.1.symm
+      · simpa using H.2.over.symm
     · intro P hP
       rw [Set.mem_toFinset] at hP
       have : P.IsPrime := hP.1

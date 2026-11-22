@@ -54,7 +54,7 @@ theorem Rat.seven_pid : IsPrincipalIdealRing (𝓞 K) := by
   have : (span {(p : ℤ)}).IsPrime :=
     isPrime_of_prime (prime_span_singleton_iff.mpr (prime_iff_prime_int.mp hprime))
   obtain ⟨P⟩ := (span {(p : ℤ)}).nonempty_primesOver (S := 𝓞 K)
-  refine ⟨P, P.2, Or.inl ?_⟩
+  refine ⟨P, P.property, Or.inl ?_⟩
   rw [M7] at hp ⊢
   fin_cases hp
   · norm_num at hprime

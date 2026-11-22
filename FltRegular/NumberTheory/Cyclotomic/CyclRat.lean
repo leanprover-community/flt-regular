@@ -118,25 +118,26 @@ theorem dvd_coeff_cycl_integer (hp : p.Prime) {ζ : 𝓞 L} (hζ : IsPrimitiveRo
   -- Since `ζ ^ n = -(1 + ζ + ⋯ + ζ ^ (n - 1))`, the sum `∑ j, f j • ζ ^ j` has
   -- coordinates `f j - f (Fin.last n)` in the integral power basis `1, ζ, …, ζ ^ (n - 1)`.
   have hsum : (∑ j, f j • ζ ^ (j : ℕ)) = b.basis.equivFun.symm
-      fun i ↦ f ⟨i, (i.2.trans_le hdim.le).trans n.lt_succ_self⟩ - f (Fin.last n) := by
+      fun i ↦ f ⟨i, (i.isLt.trans_le hdim.le).trans n.lt_succ_self⟩ - f (Fin.last n) := by
     rw [Module.Basis.equivFun_symm_apply, Fintype.sum_equiv (finCongr hdim) _
-      (fun i : Fin n ↦ (f ⟨i, i.2.trans n.lt_succ_self⟩ - f (Fin.last n)) • ζ ^ (i : ℕ))
+      (fun i : Fin n ↦ (f ⟨i, i.isLt.trans n.lt_succ_self⟩ - f (Fin.last n)) •
+        ζ ^ (i : ℕ))
       fun i ↦ by rw [hbasis]; rfl]
     simp only [sub_smul, sum_sub_distrib, ← Finset.smul_sum, hgeom, smul_neg, sub_neg_eq_add]
     exact Fin.sum_univ_castSucc fun j : Fin (n + 1) ↦ f j • ζ ^ (j : ℕ)
   obtain ⟨y, hy⟩ := hdiv
   rw [hsum, ← zsmul_eq_mul] at hy
   have key (i : Fin b.dim) :
-      m ∣ f ⟨i, (i.2.trans_le hdim.le).trans n.lt_succ_self⟩ - f (Fin.last n) := by
+      m ∣ f ⟨i, (i.isLt.trans_le hdim.le).trans n.lt_succ_self⟩ - f (Fin.last n) := by
     convert b.basis.dvd_coord_smul i y m
     rw [← hy, b.basis.coord_equivFun_symm]
   have hlast : m ∣ f (Fin.last n) := by
     obtain ⟨i, hi⟩ := hf
-    rcases (Nat.lt_succ_iff.mp i.2).eq_or_lt with h | h
+    rcases (Nat.lt_succ_iff.mp i.isLt).eq_or_lt with h | h
     · simp [← show i = Fin.last n from Fin.ext h, hi]
     · simpa [hi] using key ⟨i, hdim.symm ▸ h⟩
   intro j
-  rcases (Nat.lt_succ_iff.mp j.2).eq_or_lt with h | h
+  rcases (Nat.lt_succ_iff.mp j.isLt).eq_or_lt with h | h
   · exact (show j = Fin.last n from Fin.ext h) ▸ hlast
   · simpa using (key ⟨j, hdim.symm ▸ h⟩).add hlast
 

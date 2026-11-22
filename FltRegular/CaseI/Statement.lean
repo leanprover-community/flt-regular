@@ -131,7 +131,7 @@ theorem exists_ideal {a b c : ℤ} (h5p : 5 ≤ p) (H : a ^ p + b ^ p = c ^ p)
   have H₁ := congr_arg (@Int.cast R _) H
   simp only [Int.cast_add, Int.cast_pow] at H₁
   have hζ' := (zeta_spec p ℚ K).toInteger_isPrimitiveRoot
-  rw [hζ'.pow_add_pow_eq_prod_add_mul _ _ (hpri.1.odd_of_ne_two (by lia))] at H₁
+  rw [hζ'.pow_add_pow_eq_prod_add_mul _ _ (hpri.out.odd_of_ne_two (by lia))] at H₁
   replace H₁ := congr_arg (fun x ↦ span ({x} : Set R)) H₁
   simp only [← prod_span_singleton, ← span_singleton_pow] at H₁
   exact exists_eq_pow_of_mul_eq_pow_of_coprime (fun η₁ hη₁ η₂ hη₂ hη ↦
